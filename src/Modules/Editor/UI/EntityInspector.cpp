@@ -25,14 +25,13 @@ EntityInspector::EntityInspector(Engine* engine, LevelEditor_Module* editor)
 void EntityInspector::tick(const float& deltaTime)
 {
 	if (m_open) {
-		auto& world = m_engine->getModule_World();
 		const auto& selectedEntities = m_editor->getSelection();		
 		ImGui::SetNextWindowDockID(ImGui::GetID("RightDock"), ImGuiCond_FirstUseEver);
 		if (ImGui::Begin("Entity Inspector", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
 			// Render the selected component attributes that we have widgets for
 			const auto text = std::string("Entities Selected: (" + std::to_string(selectedEntities.size()) + ")");
 			ImGui::Text(text.c_str());
-			world.updateSystems(m_inspectorSystems, deltaTime);
+			m_engine->getModule_ECS().updateSystems(m_inspectorSystems, deltaTime);
 		}
 		ImGui::End();
 	}

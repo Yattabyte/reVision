@@ -3,7 +3,7 @@
 #define SCENEINSPECTOR_H
 
 #include "Modules/UI/UI_M.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsSystem.h"
 #include <map>
 
 

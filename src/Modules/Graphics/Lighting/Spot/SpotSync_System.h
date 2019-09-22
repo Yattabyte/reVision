@@ -2,13 +2,13 @@
 #ifndef SPOTSYNC_SYSTEM_H
 #define SPOTSYNC_SYSTEM_H
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/Graphics/Lighting/Point/PointData.h"
 
 
 /** An ECS system responsible for syncronizing spot lighting components and sending data to the GPU. */
-class SpotSync_System : public BaseECSSystem {
+class SpotSync_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -17,19 +17,19 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline SpotSync_System(const std::shared_ptr<SpotData> & frameData)
 		: m_frameData(frameData) {
-		addComponentType(LightSpot_Component::ID, FLAG_REQUIRED);
-		addComponentType(LightColor_Component::ID, FLAG_OPTIONAL);
-		addComponentType(LightRadius_Component::ID, FLAG_OPTIONAL);
-		addComponentType(LightCutoff_Component::ID, FLAG_OPTIONAL);
-		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
-		addComponentType(Shadow_Component::ID, FLAG_OPTIONAL);
-		addComponentType(Camera_Component::ID, FLAG_OPTIONAL);
-		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
+		addComponentType(LightSpot_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(LightColor_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(LightRadius_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(LightCutoff_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(Transform_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(Shadow_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(Camera_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(BoundingSphere_Component::m_ID, FLAG_OPTIONAL);
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
 		// Resize light buffers to match number of entities this frame
 		m_frameData->lightBuffer.resize(components.size());
 		m_frameData->lightBuffer.beginWriting();

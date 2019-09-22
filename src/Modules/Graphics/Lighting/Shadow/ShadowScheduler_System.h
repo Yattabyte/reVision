@@ -2,14 +2,14 @@
 #ifndef SHADOWSCHEDULER_SYSTEM_H
 #define SHADOWSCHEDULER_SYSTEM_H
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
 #include "Engine.h"
 
 
 /** An ECS system responsible for scheduling when light & shadow related entities should be updated. */
-class ShadowScheduler_System : public BaseECSSystem {
+class ShadowScheduler_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -22,9 +22,9 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline ShadowScheduler_System(Engine * engine, const std::shared_ptr<ShadowData> & frameData)
 		: m_engine(engine), m_frameData(frameData) {
-		addComponentType(Shadow_Component::ID, FLAG_REQUIRED);
-		addComponentType(Camera_Component::ID, FLAG_OPTIONAL);
-		addComponentType(CameraArray_Component::ID, FLAG_OPTIONAL);
+		addComponentType(Shadow_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(Camera_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(CameraArray_Component::m_ID, FLAG_OPTIONAL);
 
 		auto & preferences = engine->getPreferenceState();
 		m_maxShadowsCasters = 1u;
@@ -34,7 +34,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
 		// Maintain list of shadows, update with oldest within range
 		// Technique will clear list when ready
 		auto & shadows = m_frameData->shadowsToUpdate;

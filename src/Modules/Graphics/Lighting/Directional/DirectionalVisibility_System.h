@@ -2,13 +2,13 @@
 #ifndef DIRECTIONALVISIBILITY_SYSTEM_H
 #define DIRECTIONALVISIBILITY_SYSTEM_H
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/Graphics/Lighting/Point/PointData.h"
 
 
 /** An ECS system responsible for populating render lists PER active perspective in a given frame, for all directional light related entities. */
-class DirectionalVisibility_System : public BaseECSSystem {
+class DirectionalVisibility_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -17,14 +17,14 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline DirectionalVisibility_System(const std::shared_ptr<DirectionalData> & frameData)
 		: m_frameData(frameData) {
-		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
-		addComponentType(Shadow_Component::ID, FLAG_REQUIRED);
-		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
+		addComponentType(LightDirectional_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(Shadow_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(CameraArray_Component::m_ID, FLAG_REQUIRED);
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
 		// Compile results PER viewport
 		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
 			auto & viewInfo = m_frameData->viewInfo[x];

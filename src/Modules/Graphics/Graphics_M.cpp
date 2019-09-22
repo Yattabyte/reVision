@@ -108,7 +108,7 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_rhVolume->updateVolume(m_clientCamera.get());
 
 	// All ECS Systems updated once per frame, updating components pertaining to all viewing perspectives
-	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
+	m_engine->getModule_ECS().updateSystems(m_systems, deltaTime);
 	m_cameraBuffer->resize(m_sceneCameras->size());
 	for (size_t x = 0ull; x < m_sceneCameras->size(); ++x)
 		(*m_cameraBuffer)[x] = *(*m_sceneCameras)[x]->get();

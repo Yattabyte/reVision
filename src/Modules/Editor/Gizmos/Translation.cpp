@@ -1,6 +1,6 @@
 #include "Modules/Editor/Gizmos/Translation.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/UI/dear imgui/imgui.h"
-#include "Modules/World/ECS/components.h"
 #include "Utilities/Intersection.h"
 #include "Engine.h"
 
@@ -303,11 +303,11 @@ bool Translation_Gizmo::checkMousePress()
 			Move_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::vec3& newPosition, const unsigned int& axis)
 				: m_engine(engine), m_editor(editor), m_oldPosition(m_editor->getGizmoTransform().m_position), m_newPosition(newPosition), m_axis(axis), m_uuids(m_editor->getSelection()) {}
 			void move(const glm::vec3& position) {
-				auto& world = m_engine->getModule_World();
+				auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
 				for each (const auto & entityHandle in m_uuids)
-					if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
+					if (auto * transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
 						center += transform->m_localTransform.m_position;
 					}

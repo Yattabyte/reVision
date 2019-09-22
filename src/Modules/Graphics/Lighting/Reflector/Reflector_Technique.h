@@ -7,7 +7,7 @@
 #include "Modules/Graphics/Lighting/Reflector/ReflectorVisibility_System.h"
 #include "Modules/Graphics/Lighting/Reflector/ReflectorScheduler_System.h"
 #include "Modules/Graphics/Lighting/Reflector/ReflectorSync_System.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
@@ -24,7 +24,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Reflector_Technique(Engine * engine, const std::shared_ptr<std::vector<Camera*>> & cameras, ECSSystemList & auxilliarySystems)
+	inline Reflector_Technique(Engine * engine, const std::shared_ptr<std::vector<Camera*>> & cameras, ecsSystemList & auxilliarySystems)
 		: m_engine(engine), m_sceneCameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<ReflectorData>();

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ECSHANDLE_H
-#define ECSHANDLE_H
+#ifndef ECS_HANDLE_H
+#define ECS_HANDLE_H
 
 #include <cstring>
 #include <iterator>
@@ -49,4 +49,4 @@ struct ecsHandle {
 	}
 };
 
-#endif // ECSHANDLE_H
+#endif // ECS_HANDLE_H

@@ -1,12 +1,17 @@
 #pragma once
-#ifndef ECSENTITY_H
-#define ECSENTITY_H
+#ifndef ECS_ENTITY_H
+#define ECS_ENTITY_H
 
-#include "Modules/World/ECS/ecsHandle.h"
+#include "Modules/ECS/ecsHandle.h"
+#include "Modules/ECS/ecsComponent.h"
 #include <map>
 #include <string>
 #include <vector>
 
+
+// Definitions to make life easier
+struct ecsEntity;
+using EntityMap = std::map<ecsHandle, ecsEntity*>;
 
 /** An entity in the ECS paradigm - holds components and heirarchical information. */
 struct ecsEntity {
@@ -15,11 +20,11 @@ struct ecsEntity {
 	// The index this entity is found at in the entity vector
 	int m_entityIndex = -1;
 	// The list of component raw-types held by this entity. First of pair is the component ID, second is id to the create function
-	std::vector<std::pair<int, int>> m_components = {};
+	std::vector<std::pair<ComponentID, ComponentID>> m_components = {};
 	// An optional parent for this entity, used when forming larger mega-entities
 	ecsHandle m_parent;
 	// An optional set of children for this entity, whom this entity will be the parent of
-	std::map<ecsHandle, ecsEntity*> m_children;
+	EntityMap m_children;
 };
 
-#endif // ECSENTITY_H
+#endif // ECS_ENTITY_H

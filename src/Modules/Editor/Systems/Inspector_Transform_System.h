@@ -4,15 +4,15 @@
 
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/World/World_M.h"
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "glm/gtc/type_ptr.hpp"
 #include "Engine.h"
 
 
 /** An ECS system allowing the user to inspect selected component transforms.*/
-class Inspector_Transform_System : public BaseECSSystem {
+class Inspector_Transform_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -22,14 +22,14 @@ public:
 	inline Inspector_Transform_System(Engine* engine, LevelEditor_Module* editor)
 		: m_engine(engine), m_editor(editor) {
 		// Declare component types used
-		addComponentType(Selected_Component::ID);
-		addComponentType(Transform_Component::ID);
+		addComponentType(Selected_Component::m_ID);
+		addComponentType(Transform_Component::m_ID);
 	}
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<BaseECSComponent*> >& components) override {		
-		const auto text = Transform_Component::STRING_NAME + ": (" + std::to_string(components.size()) + ")";
+	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override {		
+		const auto text = std::string(Transform_Component::CHARS()) + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
 			const auto getUUIDS = [&]() {
@@ -44,14 +44,14 @@ public:
 			auto posInput = ((Transform_Component*)components[0][1])->m_localTransform.m_position;
 			if (ImGui::DragFloat3("Position", glm::value_ptr(posInput))) {
 				struct Move_Command : Editor_Command {
-					World_Module& m_world;
+					ecsWorld& m_ecsWorld;
 					LevelEditor_Module& m_editor;
 					const std::vector<ecsHandle> m_uuids;
 					std::vector<glm::vec3> m_oldData, m_newData;
-					Move_Command(World_Module& world, LevelEditor_Module& editor, const std::vector<ecsHandle>& uuids, const glm::vec3& newPosition)
-						: m_world(world), m_editor(editor), m_uuids(uuids) {
+					Move_Command(ecsWorld& world, LevelEditor_Module& editor, const std::vector<ecsHandle>& uuids, const glm::vec3& newPosition)
+						: m_ecsWorld(world), m_editor(editor), m_uuids(uuids) {
 						for each (const auto & entityHandle in m_uuids) {
-							const auto* component = m_world.getComponent<Transform_Component>(entityHandle);
+							const auto* component = m_ecsWorld.getComponent<Transform_Component>(entityHandle);
 							m_oldData.push_back(component->m_localTransform.m_position);
 							m_newData.push_back(newPosition);
 						}
@@ -60,7 +60,7 @@ public:
 						if (positions.size()) {
 							size_t index(0ull);
 							for each (const auto & entityHandle in m_uuids) {
-								auto* component = m_world.getComponent<Transform_Component>(entityHandle);
+								auto* component = m_ecsWorld.getComponent<Transform_Component>(entityHandle);
 								component->m_localTransform.m_position = positions[index++];
 								component->m_localTransform.update();
 							}
@@ -86,20 +86,20 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Move_Command>(m_engine->getModule_World(), *m_editor, getUUIDS(), posInput));
+				m_editor->doReversableAction(std::make_shared<Move_Command>(m_engine->getModule_ECS().getWorld(), *m_editor, getUUIDS(), posInput));
 			}
 
 			// Rotation
 			auto rotInput = glm::degrees(glm::eulerAngles(((Transform_Component*)components[0][1])->m_localTransform.m_orientation));
 			if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotInput))) {
 				struct Rotate_Command : Editor_Command {
-					World_Module& m_world;
+					ecsWorld& m_ecsWorld;
 					const std::vector<ecsHandle> m_uuids;
 					std::vector<glm::quat> m_oldData, m_newData;
-					Rotate_Command(World_Module& world, const std::vector<ecsHandle>& uuids, const glm::quat& newOrientation)
-						: m_world(world), m_uuids(uuids) {
+					Rotate_Command(ecsWorld& world, const std::vector<ecsHandle>& uuids, const glm::quat& newOrientation)
+						: m_ecsWorld(world), m_uuids(uuids) {
 						for each (const auto & entityHandle in m_uuids) {
-							const auto* component = m_world.getComponent<Transform_Component>(entityHandle);
+							const auto* component = m_ecsWorld.getComponent<Transform_Component>(entityHandle);
 							m_oldData.push_back(component->m_localTransform.m_orientation);
 							m_newData.push_back(newOrientation);
 						}
@@ -107,7 +107,7 @@ public:
 					void setOrientation(const std::vector<glm::quat>& orientations) {
 						size_t index(0ull);
 						for each (const auto & entityHandle in m_uuids) {
-							auto* component = m_world.getComponent<Transform_Component>(entityHandle);
+							auto* component = m_ecsWorld.getComponent<Transform_Component>(entityHandle);
 							component->m_localTransform.m_orientation = orientations[index++];
 							component->m_localTransform.update();
 						}
@@ -128,20 +128,20 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Rotate_Command>(m_engine->getModule_World(), getUUIDS(), glm::quat(glm::radians(rotInput))));
+				m_editor->doReversableAction(std::make_shared<Rotate_Command>(m_engine->getModule_ECS().getWorld(), getUUIDS(), glm::quat(glm::radians(rotInput))));
 			}
 
 			// Sclaing
 			auto sclInput = ((Transform_Component*)components[0][1])->m_localTransform.m_scale;
 			if (ImGui::DragFloat3("Scale", glm::value_ptr(sclInput))) {
 				struct Scale_Command : Editor_Command {
-					World_Module& m_world;
+					ecsWorld& m_ecsWorld;
 					const std::vector<ecsHandle> m_uuids;
 					std::vector<glm::vec3> m_oldData, m_newData;
-					Scale_Command(World_Module& world, const std::vector<ecsHandle>& uuids, const glm::vec3& newScale)
-						: m_world(world), m_uuids(uuids) {
+					Scale_Command(ecsWorld& world, const std::vector<ecsHandle>& uuids, const glm::vec3& newScale)
+						: m_ecsWorld(world), m_uuids(uuids) {
 						for each (const auto & entityHandle in m_uuids) {
-							const auto* component = m_world.getComponent<Transform_Component>(entityHandle);
+							const auto* component = m_ecsWorld.getComponent<Transform_Component>(entityHandle);
 							m_oldData.push_back(component->m_localTransform.m_scale);
 							m_newData.push_back(newScale);
 						}
@@ -150,7 +150,7 @@ public:
 						if (scales.size()) {
 							size_t index(0ull);
 							for each (const auto & entityHandle in m_uuids) {
-								auto* component = m_world.getComponent<Transform_Component>(entityHandle);
+								auto* component = m_ecsWorld.getComponent<Transform_Component>(entityHandle);
 								component->m_localTransform.m_scale = scales[index++];
 								component->m_localTransform.update();
 							}
@@ -172,7 +172,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Scale_Command>(m_engine->getModule_World(), getUUIDS(), sclInput));
+				m_editor->doReversableAction(std::make_shared<Scale_Command>(m_engine->getModule_ECS().getWorld(), getUUIDS(), sclInput));
 			}
 		}
 	}

@@ -2,8 +2,8 @@
 #ifndef MOUSEPICKER_SYSTEM_H
 #define MOUSEPICKER_SYSTEM_H 
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Utilities/Intersection.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
@@ -11,7 +11,7 @@
 
 
 /** An ECS system allowing the user to ray-pick entities by selecting against their components. */
-class MousePicker_System : public BaseECSSystem {
+class MousePicker_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -24,11 +24,11 @@ public:
 	inline MousePicker_System(Engine * engine)
 		: m_engine(engine) {
 		// Declare component types used
-		addComponentType(Transform_Component::ID);
-		addComponentType(BoundingBox_Component::ID, FLAG_OPTIONAL);
-		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
-		addComponentType(Collider_Component::ID, FLAG_OPTIONAL);
-		addComponentType(Prop_Component::ID, FLAG_OPTIONAL);
+		addComponentType(Transform_Component::m_ID);
+		addComponentType(BoundingBox_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(BoundingSphere_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(Collider_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(Prop_Component::m_ID, FLAG_OPTIONAL);
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -44,7 +44,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override {
 		const auto & actionState = m_engine->getActionState();
 		const auto & clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
 		const auto ray_origin = clientCamera.EyePosition;

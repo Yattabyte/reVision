@@ -3,7 +3,7 @@
 #define PREFABS_H
 
 #include "Modules/UI/UI_M.h"
-#include "Modules/World/ECS/ecsEntity.h"
+#include "Modules/ECS/ecsEntity.h"
 #include "Assets/Texture.h"
 
 
@@ -53,6 +53,7 @@ private:
 		enum type {
 			none,
 			file,
+			def,
 			folder,
 			back
 		} type = none;

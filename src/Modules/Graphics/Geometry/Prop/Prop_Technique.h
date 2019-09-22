@@ -7,7 +7,7 @@
 #include "Modules/Graphics/Geometry/Prop/PropUpload_System.h"
 #include "Modules/Graphics/Geometry/Prop/PropVisibility_System.h"
 #include "Modules/Graphics/Geometry/Prop/PropSync_System.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
 #include "Engine.h"
@@ -23,7 +23,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Prop_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& viewports, ECSSystemList& auxilliarySystems)
+	inline Prop_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& viewports, ecsSystemList& auxilliarySystems)
 		: m_engine(engine), m_cameras(viewports) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<PropData>();

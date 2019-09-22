@@ -2,13 +2,13 @@
 #ifndef SKELETALANIMATION_SYSTEM_H
 #define SKELETALANIMATION_SYSTEM_H 
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Engine.h"
 
 
 /** A system responsible for animating props with skeleton components. */
-class Skeletal_Animation : public BaseECSSystem {
+class Skeletal_Animation : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy the skeletal animation system. */
@@ -17,12 +17,12 @@ public:
 	inline Skeletal_Animation(Engine * engine) 
 		: m_engine(engine) {
 		// Declare component types used
-		addComponentType(Skeleton_Component::ID, FLAG_REQUIRED);
+		addComponentType(Skeleton_Component::m_ID, FLAG_REQUIRED);
 	}
 
 
 	// Public Interface Implementation	
-	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override {
 		for each (const auto & componentParam in components) {
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[0];
 			

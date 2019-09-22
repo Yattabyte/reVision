@@ -1,7 +1,7 @@
 #include "Modules/Editor/UI/SceneInspector.h"
 #include "Modules/Editor/Editor_M.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/UI/dear imgui/imgui.h"
-#include "Modules/World/ECS/components.h"
 #include "Engine.h"
 
 
@@ -14,7 +14,7 @@ SceneInspector::SceneInspector(Engine* engine, LevelEditor_Module* editor)
 void SceneInspector::tick(const float& deltaTime)
 {
 	if (m_open) {
-		auto& world = m_engine->getModule_World();
+		auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 		const auto& selectedEntities = m_editor->getSelection();
 		ImGui::SetNextWindowDockID(ImGui::GetID("RightDock"), ImGuiCond_FirstUseEver);
 		if (ImGui::Begin("Scene Inspector", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
@@ -27,12 +27,12 @@ void SceneInspector::tick(const float& deltaTime)
 			size_t displayCount(0ull);
 			std::function<void(const ecsHandle&)> displayEntity = [&](const ecsHandle& entityHandle) {
 				bool entity_or_components_pass_filter = false;
-				if (auto * entity = world.getEntity(entityHandle)) {
+				if (auto * entity = ecsWorld.getEntity(entityHandle)) {
 					auto& entityName = entity->m_name;
 					const auto& components = entity->m_components;
 					entity_or_components_pass_filter += filter.PassFilter(entityName.c_str());
 					for each (const auto & component in components)
-						entity_or_components_pass_filter += filter.PassFilter(BaseECSComponent::findName(component.first));
+						entity_or_components_pass_filter += filter.PassFilter(ecsWorld.getComponent(entityHandle, component.first)->m_name);
 
 					// Check if the entity or its components matched search criteria
 					if (entity_or_components_pass_filter) {
@@ -62,14 +62,14 @@ void SceneInspector::tick(const float& deltaTime)
 								ImGui::Separator();
 								if (const auto selectionSize = selectedEntities.size()) {
 									if (selectionSize >= 2ull) {
-										const auto text = "Join to \"" + world.getEntity(selectedEntities[0])->m_name + "\"";
+										const auto text = "Join to \"" + ecsWorld.getEntity(selectedEntities[0])->m_name + "\"";
 										if (ImGui::MenuItem(text.c_str())) { m_editor->mergeSelection(); }
 										if (ImGui::MenuItem("Group Selection")) { m_editor->groupSelection(); }
 										ImGui::Separator();
 									}
 									if (ImGui::MenuItem("Make Prefab", "CTRL+G", nullptr, selectedEntities.size())) { m_editor->makePrefab(); }
 									for each (const auto & entityHandle in selectedEntities)
-										if (world.getEntity(entityHandle)->m_children.size()) {
+										if (ecsWorld.getEntity(entityHandle)->m_children.size()) {
 											if (ImGui::MenuItem("Ungroup")) { m_editor->ungroupSelection(); }
 											ImGui::Separator();
 											break;
@@ -106,7 +106,7 @@ void SceneInspector::tick(const float& deltaTime)
 							tryLeftClickElement();
 							tryRightClickElement();
 							tryDragElement();
-							for each (const auto & subEntityHandle in world.getEntityHandles(entityHandle))
+							for each (const auto & subEntityHandle in ecsWorld.getEntityHandles(entityHandle))
 								displayEntity(subEntityHandle);
 							for (int x = 0; x < components.size(); ++x) {
 								const auto& component = components[x];
@@ -118,7 +118,7 @@ void SceneInspector::tick(const float& deltaTime)
 								const auto buttonPressed = ImGui::Button("-");
 								ImGui::PopStyleColor(3);
 								ImGui::SameLine();
-								ImGui::Text(BaseECSComponent::findName(component.first));
+								ImGui::Text(ecsWorld.getComponent(entityHandle, component.first)->m_name);
 								ImGui::PopID();
 								if (buttonPressed)
 									m_editor->deleteComponent(entityHandle, component.first);
@@ -134,24 +134,24 @@ void SceneInspector::tick(const float& deltaTime)
 								ImGui::Separator();
 								ImGui::Spacing();
 								constexpr const char* items[] = {
-									Transform_Component::NAME(),
-									PlayerSpawn_Component::NAME(),
-									Player3D_Component::NAME(),
-									Camera_Component::NAME(),
-									CameraArray_Component::NAME(),
-									BoundingSphere_Component::NAME(),
-									BoundingBox_Component::NAME(),
-									Prop_Component::NAME(),
-									Skeleton_Component::NAME(),
-									Shadow_Component::NAME(),
-									LightColor_Component::NAME(),
-									LightRadius_Component::NAME(),
-									LightCutoff_Component::NAME(),
-									LightDirectional_Component::NAME(),
-									LightPoint_Component::NAME(),
-									LightSpot_Component::NAME(),
-									Reflector_Component::NAME(),
-									Collider_Component::NAME()
+									Transform_Component::CHARS(),
+									PlayerSpawn_Component::CHARS(),
+									Player3D_Component::CHARS(),
+									Camera_Component::CHARS(),
+									CameraArray_Component::CHARS(),
+									BoundingSphere_Component::CHARS(),
+									BoundingBox_Component::CHARS(),
+									Prop_Component::CHARS(),
+									Skeleton_Component::CHARS(),
+									Shadow_Component::CHARS(),
+									LightColor_Component::CHARS(),
+									LightRadius_Component::CHARS(),
+									LightCutoff_Component::CHARS(),
+									LightDirectional_Component::CHARS(),
+									LightPoint_Component::CHARS(),
+									LightSpot_Component::CHARS(),
+									Reflector_Component::CHARS(),
+									Collider_Component::CHARS()
 								};
 								static int item_current = 0;
 								ImGui::Combo("", &item_current, items, IM_ARRAYSIZE(items));
@@ -186,7 +186,7 @@ void SceneInspector::tick(const float& deltaTime)
 			};
 
 			ImGui::Separator();
-			for each (const auto & entityHandle in world.getEntityHandles())
+			for each (const auto & entityHandle in ecsWorld.getEntityHandles())
 				displayEntity(entityHandle);
 
 			// Special case to allow dragging to end of scene list

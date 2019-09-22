@@ -4,15 +4,15 @@
 
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/World/World_M.h"
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "glm/gtc/type_ptr.hpp"
 #include "Engine.h"
 
 
 /** An ECS system allowing the user to inspect selected light cutoff components. */
-class Inspector_LightCutoff_System : public BaseECSSystem {
+class Inspector_LightCutoff_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -21,14 +21,14 @@ public:
 	inline Inspector_LightCutoff_System(Engine* engine, LevelEditor_Module* editor)
 		: m_engine(engine), m_editor(editor) {
 		// Declare component types used
-		addComponentType(Selected_Component::ID);
-		addComponentType(LightCutoff_Component::ID);
+		addComponentType(Selected_Component::m_ID);
+		addComponentType(LightCutoff_Component::m_ID);
 	}
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<BaseECSComponent*> >& components) override {
-		const auto text = LightCutoff_Component::STRING_NAME + ": (" + std::to_string(components.size()) + ")";
+	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override {
+		const auto text = std::string(LightCutoff_Component::CHARS()) + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
 			const auto getUUIDS = [&]() {
@@ -42,13 +42,13 @@ public:
 			auto cutoffInput = ((LightCutoff_Component*)components[0][1])->m_cutoff;
 			if (ImGui::DragFloat("Cutoff", &cutoffInput)) {
 				struct Cutoff_Command : Editor_Command {
-					World_Module& m_world;
+					ecsWorld& m_ecsWorld;
 					const std::vector<ecsHandle> m_uuids;
 					std::vector<float> m_oldData, m_newData;
-					Cutoff_Command(World_Module& world, const std::vector<ecsHandle>& uuids, const float& data)
-						: m_world(world), m_uuids(uuids) {
+					Cutoff_Command(ecsWorld& world, const std::vector<ecsHandle>& uuids, const float& data)
+						: m_ecsWorld(world), m_uuids(uuids) {
 						for each (const auto & entityHandle in m_uuids) {
-							const auto* component = m_world.getComponent<LightCutoff_Component>(entityHandle);
+							const auto* component = m_ecsWorld.getComponent<LightCutoff_Component>(entityHandle);
 							m_oldData.push_back(component->m_cutoff);
 							m_newData.push_back(data);
 						}
@@ -57,7 +57,7 @@ public:
 						if (data.size()) {
 							size_t index(0ull);
 							for each (const auto & entityHandle in m_uuids) {
-								auto* component = m_world.getComponent<LightCutoff_Component>(entityHandle);
+								auto* component = m_ecsWorld.getComponent<LightCutoff_Component>(entityHandle);
 								component->m_cutoff = data[index++];
 							}
 						}
@@ -78,7 +78,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Cutoff_Command>(m_engine->getModule_World(), getUUIDS(), cutoffInput));
+				m_editor->doReversableAction(std::make_shared<Cutoff_Command>(m_engine->getModule_ECS().getWorld(), getUUIDS(), cutoffInput));
 			}
 		}
 	}

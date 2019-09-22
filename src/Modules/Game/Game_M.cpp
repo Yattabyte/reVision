@@ -14,8 +14,8 @@ void Game_Module::initialize(Engine * engine)
 	m_engine->getManager_Messages().statement("Loading Module: Game...");
 
 	// Initialize ECS Systems
-	m_ecsSystems.makeSystem<PlayerSpawn_System>(m_engine);
-	m_ecsSystems.makeSystem<PlayerFreeLook_System>(m_engine);
+	m_Systems.makeSystem<PlayerSpawn_System>(m_engine);
+	m_Systems.makeSystem<PlayerFreeLook_System>(m_engine);
 
 	// Create Overlay Effects
 	m_loadingRing = std::make_shared<LoadingIndicator>(m_engine);
@@ -59,7 +59,7 @@ void Game_Module::frameTick(const float & deltaTime)
 	}
 
 	// Update our own ECS systems
-	m_engine->getModule_World().updateSystems(m_ecsSystems, deltaTime);
+	m_engine->getModule_ECS().updateSystems(m_Systems, deltaTime);
 }
 
 void Game_Module::renderOverlays(const float & deltaTime)

@@ -3,7 +3,7 @@
 #define ENTITYINSPECTOR_H
 
 #include "Modules/UI/UI_M.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsSystem.h"
 #include <map>
 
 
@@ -31,7 +31,7 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	LevelEditor_Module * m_editor = nullptr;
-	ECSSystemList m_inspectorSystems;
+	ecsSystemList m_inspectorSystems;
 };
 
 #endif // ENTITYINSPECTOR_H

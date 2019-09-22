@@ -3,8 +3,8 @@
 #define GAME_MODULE_H
 
 #include "Modules/Engine_Module.h"
+#include "Modules/ECS/ecsSystem.h"
 #include "Modules/Game/Overlays/Overlay.h"
-#include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include <memory>
 
@@ -46,7 +46,7 @@ public:
 private:
 	// Private Attributes
 	Game_State m_gameState = in_game;
-	ECSSystemList m_ecsSystems;
+	ecsSystemList m_Systems;
 	std::shared_ptr<UI_Element> m_pauseMenu;
 	std::shared_ptr<Overlay> m_loadingRing, m_frameTime;
 };

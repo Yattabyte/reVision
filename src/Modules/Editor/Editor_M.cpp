@@ -6,8 +6,8 @@
 #include "Modules/Editor/Gizmos/Mouse.h"
 #include "Modules/Editor/Systems/ClearSelection_System.h"
 #include "Modules/Editor/Systems/Wireframe_System.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/UI/dear imgui/imgui.h"
-#include "Modules/World/ECS/components.h"
 #include "Engine.h"
 #include <filesystem>
 
@@ -27,8 +27,8 @@ void LevelEditor_Module::initialize(Engine* engine)
 	m_mouseGizmo = std::make_shared<Mouse_Gizmo>(engine, this);
 
 	// Systems
+	m_engine->getModule_ECS().makeSystem<Wireframe_System>(engine, this);
 	m_selectionClearer = std::make_shared<ClearSelection_System>(engine);
-	m_systems.makeSystem<Wireframe_System>(engine, this);
 
 	// Preferences
 	auto& preferences = engine->getPreferenceState();
@@ -102,7 +102,6 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 		glDisable(GL_STENCIL_TEST);
 
 		// Tick all tools this frame
-		m_engine->getModule_World().updateSystems(m_systems, deltaTime);
 		m_mouseGizmo->frameTick(deltaTime);
 
 		glDepthMask(false);
@@ -356,15 +355,16 @@ void LevelEditor_Module::clearSelection()
 			: m_engine(engine), m_editor(editor), m_uuids_old(m_editor->getSelection()) {}
 		void switchSelection(const std::vector<ecsHandle>& uuids) {
 			// Remove all selection components from world
-			auto& world = m_engine->getModule_World();
-			world.updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
+			auto& ecs = m_engine->getModule_ECS();
+			auto& ecsWorld = ecs.getWorld();
+			ecs.updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
 			m_editor->m_mouseGizmo->getSelection().clear();
 
 			// Add selection component to new selection
 			m_editor->m_mouseGizmo->setSelection(uuids);
 			for each (const auto& entityHandle in uuids) {
 				const Selected_Component component;
-				world.addComponent(entityHandle, &component);
+				ecsWorld.addComponent(entityHandle, &component);
 			}
 
 			// Transform gizmo to center of group
@@ -372,7 +372,7 @@ void LevelEditor_Module::clearSelection()
 			size_t count(0ull);
 			glm::vec3 center(0.0f), scale(0.0f);
 			for each (const auto & entityHandle in uuids)
-				if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
+				if (auto * transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 					center += transform->m_localTransform.m_position;
 					scale += transform->m_localTransform.m_scale;
 					count++;
@@ -386,21 +386,20 @@ void LevelEditor_Module::clearSelection()
 		};
 		virtual void execute() {
 			// Remove all selection components from world
-			auto& world = m_engine->getModule_World();
-			world.updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
+			m_engine->getModule_ECS().getWorld().updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
 			m_editor->m_mouseGizmo->getSelection().clear();
 		}
 		virtual void undo() {
 			// Remove all selection components from world
-			auto& world = m_engine->getModule_World();
-			world.updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
+			m_engine->getModule_ECS().getWorld().updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
 			m_editor->m_mouseGizmo->getSelection().clear();
 
 			// Add selection component to new selection
 			m_editor->m_mouseGizmo->setSelection(m_uuids_old);
 			for each (const auto& entityHandle in m_uuids_old) {
 				const Selected_Component component;
-				world.addComponent(entityHandle, &component);
+				ecsWorld.addComponent(entityHandle, &component);
 			}
 
 			// Transform gizmo to center of group
@@ -408,7 +407,7 @@ void LevelEditor_Module::clearSelection()
 			size_t count(0ull);
 			glm::vec3 center(0.0f), scale(0.0f);
 			for each (const auto & entityHandle in m_uuids_old)
-				if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
+				if (auto * transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 					center += transform->m_localTransform.m_position;
 					scale += transform->m_localTransform.m_scale;
 					count++;
@@ -433,7 +432,7 @@ void LevelEditor_Module::clearSelection()
 
 void LevelEditor_Module::selectAll()
 {
-	setSelection(m_engine->getModule_World().getEntityHandles());
+	setSelection(m_engine->getModule_ECS().getWorld().getEntityHandles());
 }
 
 void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
@@ -446,15 +445,16 @@ void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
 			: m_engine(engine), m_editor(editor), m_uuids_new(newSelection), m_uuids_old(m_editor->getSelection()) {}
 		void switchSelection(const std::vector<ecsHandle>& uuids) {
 			// Remove all selection components from world
-			auto& world = m_engine->getModule_World();
-			world.updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
+			auto& ecs = m_engine->getModule_ECS();
+			auto& ecsWorld = ecs.getWorld();
+			ecs.updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
 			m_editor->m_mouseGizmo->getSelection().clear();
 
 			// Add selection component to new selection
 			m_editor->m_mouseGizmo->setSelection(uuids);
 			for each (const auto& entityHandle in uuids) {
 				const Selected_Component component;
-				world.addComponent(entityHandle, &component);
+				ecsWorld.addComponent(entityHandle, &component);
 			}
 
 			// Transform gizmo to center of group
@@ -462,7 +462,7 @@ void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
 			size_t count(0ull);
 			glm::vec3 center(0.0f), scale(0.0f);
 			for each (const auto & entityHandle in uuids)
-				if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
+				if (auto * transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 					center += transform->m_localTransform.m_position;
 					scale += transform->m_localTransform.m_scale;
 					count++;
@@ -509,25 +509,25 @@ void LevelEditor_Module::mergeSelection()
 		Merge_Selection_Command(Engine* engine, LevelEditor_Module* editor)
 			: m_engine(engine), m_editor(editor), m_uuids(m_editor->getSelection()) {}
 		virtual void execute() {
-			auto& world = m_engine->getModule_World();
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			// Find the root element
 			const auto& root = m_uuids[0];
 			if (root.isValid()) {
 				// Parent remaining entities in the selection to the root
 				for (size_t x = 1ull, selSize = m_uuids.size(); x < selSize; ++x) 
 					if (const auto & entityHandle = m_uuids[x])
-						world.parentEntity(root, entityHandle);				
+						ecsWorld.parentEntity(root, entityHandle);
 				m_editor->m_mouseGizmo->getSelection() = { root };
 			}
 		}
 		virtual void undo() {
-			auto& world = m_engine->getModule_World();
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			// Find the root element
-			if (auto * root = world.getEntity(m_uuids[0])) {
+			if (auto * root = ecsWorld.getEntity(m_uuids[0])) {
 				// Unparent remaining entities from the root
 				for (size_t x = 1ull, selSize = m_uuids.size(); x < selSize; ++x) 
 					if (const auto & entityHandle = m_uuids[x])
-						world.unparentEntity(entityHandle);				
+						ecsWorld.unparentEntity(entityHandle);
 			}
 		}
 		virtual bool join(Editor_Command* const other) {
@@ -560,11 +560,11 @@ void LevelEditor_Module::groupSelection()
 			: m_engine(engine), m_editor(editor), m_uuids(m_editor->getSelection()) {}
 		virtual void execute() {
 			// Determine a new central transform for the whole group
-			auto& world = m_engine->getModule_World();
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			Transform_Component rootTransform;
 			size_t posCount(0ull);
 			for each (const auto& entityHandle in m_uuids)
-				if (const auto & transform = world.getComponent<Transform_Component>(entityHandle)) {
+				if (const auto & transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 					rootTransform.m_localTransform.m_position += transform->m_localTransform.m_position;
 					posCount++;
 				}
@@ -573,26 +573,25 @@ void LevelEditor_Module::groupSelection()
 			rootTransform.m_worldTransform = rootTransform.m_localTransform;
 
 			// Make a new root entity for the selection
-			BaseECSComponent* entityComponents[] = { &rootTransform };
-			int types[] = { Transform_Component::ID };
-			auto root = world.makeEntity(entityComponents, types, 1ull, "Group", m_rootUUID);
+			ecsBaseComponent* entityComponents[] = { &rootTransform };
+			auto root = ecsWorld.makeEntity(entityComponents, 1ull, "Group", m_rootUUID);
 			if (m_rootUUID == ecsHandle())
 				m_rootUUID = root;
 
 			// Offset children by new center position
 			for each (auto & uuid in m_uuids)
-				world.parentEntity(root, uuid);
+				ecsWorld.parentEntity(root, uuid);
 		}
 		virtual void undo() {
-			auto& world = m_engine->getModule_World();
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			auto& selection = m_editor->m_mouseGizmo->getSelection();
 			selection.clear();
 			if (m_rootUUID != ecsHandle()) {
-				for each (const auto & child in world.getEntityHandles(m_rootUUID)) {
-					world.unparentEntity(child);
+				for each (const auto & child in ecsWorld.getEntityHandles(m_rootUUID)) {
+					ecsWorld.unparentEntity(child);
 					selection.push_back(child);
 				}
-				world.removeEntity(m_rootUUID);
+				ecsWorld.removeEntity(m_rootUUID);
 			}
 		}
 		virtual bool join(Editor_Command* const other) {
@@ -614,26 +613,26 @@ void LevelEditor_Module::ungroupSelection()
 		std::vector<std::vector<ecsHandle>> m_children;
 		Ungroup_Selection_Command(Engine* engine, LevelEditor_Module* editor)
 			: m_engine(engine), m_editor(editor), m_uuids(m_editor->getSelection()) {
-			auto& world = m_engine->getModule_World();
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			for each (const auto & entityHandle in m_uuids) {
 				std::vector<ecsHandle> childrenUUIDS;
-				for each (const auto & childHandle in world.getEntityHandles(entityHandle))
+				for each (const auto & childHandle in ecsWorld.getEntityHandles(entityHandle))
 					childrenUUIDS.push_back(childHandle);
 				m_children.push_back(childrenUUIDS);
 			}
 		}
 		virtual void execute() {
-			auto& world = m_engine->getModule_World();
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			for each (const auto & entityHandle in m_uuids)
-				for each (const auto & childHandle in world.getEntityHandles(entityHandle))
-					world.unparentEntity(childHandle);
+				for each (const auto & childHandle in ecsWorld.getEntityHandles(entityHandle))
+					ecsWorld.unparentEntity(childHandle);
 		}
 		virtual void undo() {
-			auto& world = m_engine->getModule_World();
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			size_t childIndex(0ull);
 			for each (const auto & enityUUID in m_uuids)
 				for each (const auto & childUUID in m_children[childIndex++]) 
-					world.parentEntity(enityUUID, childUUID);
+					ecsWorld.parentEntity(enityUUID, childUUID);
 		}
 		virtual bool join(Editor_Command* const other) {
 			// Disallow Joining
@@ -659,9 +658,9 @@ void LevelEditor_Module::cutSelection()
 void LevelEditor_Module::copySelection()
 {
 	m_copiedData.clear();
-	auto& world = m_engine->getModule_World();
+	auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 	for each (const auto & entityHandle in getSelection()) {
-		const auto entData = world.serializeEntity(entityHandle);
+		const auto entData = ecsWorld.serializeEntity(entityHandle);
 		m_copiedData.insert(m_copiedData.end(), entData.begin(), entData.end());
 	}
 }
@@ -679,17 +678,17 @@ void LevelEditor_Module::deleteSelection()
 		const std::vector<char> m_data;
 		const std::vector<ecsHandle> m_uuids;
 		Delete_Selection_Command(Engine* engine, const std::vector<ecsHandle>& selection)
-			: m_engine(engine), m_data(m_engine->getModule_World().serializeEntities(selection)), m_uuids(selection) {}
+			: m_engine(engine), m_data(m_engine->getModule_ECS().getWorld().serializeEntities(selection)), m_uuids(selection) {}
 		virtual void execute() {
-			auto& world = m_engine->getModule_World();
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			for each (const auto& entityHandle in m_uuids)
-				world.removeEntity(entityHandle);
+				ecsWorld.removeEntity(entityHandle);
 		}
 		virtual void undo() {
-			auto& world = m_engine->getModule_World();
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			size_t dataRead(0ull), uuidIndex(0ull);
 			while (dataRead < m_data.size())
-				world.deserializeEntity(m_data.data(), m_data.size(), dataRead);			
+				ecsWorld.deserializeEntity(m_data.data(), m_data.size(), dataRead);
 		}
 		virtual bool join(Editor_Command* const other) {
 			// Disallow Joining
@@ -712,21 +711,24 @@ void LevelEditor_Module::addComponent(const ecsHandle& entityHandle, const char*
 		Spawn_Component_Command(Engine* engine, LevelEditor_Module* editor, const ecsHandle& entityHandle, const char* name)
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentName(name) {}
 		virtual void execute() {
-			if (const auto & [templateComponent, componentID, componentSize] = BaseECSComponent::findTemplate(m_componentName); templateComponent != nullptr) {
-				auto& world = m_engine->getModule_World();
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
+			if (const auto & templateParams = ecsWorld.findTemplate(m_componentName)) {
+				const auto& [templateComponent, componentID, componentSize] = *templateParams;
 				auto* clone = templateComponent->clone();
-				world.addComponent(m_entityHandle, clone);
+				ecsWorld.addComponent(m_entityHandle, clone);
 				delete clone;
 			}
 		}
 		virtual void undo() {
-			auto& world = m_engine->getModule_World();
-			if (const auto & [templateComponent, componentID, componentSize] = BaseECSComponent::findTemplate(m_componentName); templateComponent != nullptr)
-				for each (auto & component in world.getEntity(m_entityHandle)->m_components)
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
+			if (const auto & templateParams = ecsWorld.findTemplate(m_componentName)) {
+				const auto& [templateComponent, componentID, componentSize] = *templateParams;
+				for each (auto & component in ecsWorld.getEntity(m_entityHandle)->m_components)
 					if (component.first == componentID) {
-						world.removeComponent(m_entityHandle, component.first);
+						ecsWorld.removeComponent(m_entityHandle, component.first);
 						break;
 					}
+			}
 		}
 		virtual bool join(Editor_Command* const other) {
 			// Disallow Joining
@@ -747,21 +749,20 @@ void LevelEditor_Module::deleteComponent(const ecsHandle& entityHandle, const in
 		std::vector<char> m_componentData;
 		Delete_Component_Command(Engine* engine, LevelEditor_Module* editor, const ecsHandle& entityHandle, const int componentID)
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentID(componentID) {
-			auto& world = m_engine->getModule_World();
-			if (const auto & component = world.getComponent(m_entityHandle, m_componentID))
-				m_componentData = world.serializeComponent(component);
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
+			if (const auto & component = ecsWorld.getComponent(m_entityHandle, m_componentID))
+				m_componentData = ecsWorld.serializeComponent(component);
 			
 		}
 		virtual void execute() {
-			auto& world = m_engine->getModule_World();
-			world.removeComponent(m_entityHandle, m_componentID);
+			m_engine->getModule_ECS().getWorld().removeComponent(m_entityHandle, m_componentID);
 		}
 		virtual void undo() {
-			auto& world = m_engine->getModule_World();
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			if (m_componentData.size()) {
 				size_t dataRead(0ull);
-				auto copy = world.deserializeComponent(m_componentData.data(), m_componentData.size(), dataRead);
-				world.addComponent(m_entityHandle, copy.first);
+				auto copy = ecsWorld.deserializeComponent(m_componentData.data(), m_componentData.size(), dataRead);
+				ecsWorld.addComponent(m_entityHandle, copy.first);
 				delete copy.first;
 			}
 		}
@@ -786,17 +787,17 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const ec
 		Spawn_Command(Engine* engine, LevelEditor_Module* editor, const std::vector<char>& data, const ecsHandle& pUUID)
 			: m_engine(engine), m_editor(editor), m_data(data), m_parentUUID(pUUID), m_cursor(m_editor->getSpawnTransform()) {}
 		virtual void execute() {
-			auto& world = m_engine->getModule_World();
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			size_t dataRead(0ull), handleCount(0ull);
 			glm::vec3 center(0.0f);
 			std::vector<Transform_Component*> transformComponents;
 			while (dataRead < m_data.size()) {
 				// Ensure we have a vector large enough to hold all UUIDs, but maintain previous data
 				m_uuids.resize(std::max<size_t>(m_uuids.size(), handleCount + 1ull));
-				const auto desiredHandle = m_uuids[handleCount].isValid() ? m_uuids[handleCount] : world.generateUUID();
-				const auto& [entityHandle, entity] = world.deserializeEntity(m_data.data(), m_data.size(), dataRead, ecsHandle(), desiredHandle);
+				const auto desiredHandle = m_uuids[handleCount].isValid() ? m_uuids[handleCount] : ecsWorld.generateUUID();
+				const auto& [entityHandle, entity] = ecsWorld.deserializeEntity(m_data.data(), m_data.size(), dataRead, ecsHandle(), desiredHandle);
 				if (entityHandle.isValid() && entity) {
-					if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
+					if (auto * transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
 						center += transform->m_localTransform.m_position;
 					}
@@ -813,9 +814,9 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const ec
 			}
 		}
 		virtual void undo() {
-			auto& world = m_engine->getModule_World();
+			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			for each (const auto& entityHandle in m_uuids)
-				world.removeEntity(entityHandle);
+				ecsWorld.removeEntity(entityHandle);
 		}
 		virtual bool join(Editor_Command* const other) {
 			// Disallow Joining

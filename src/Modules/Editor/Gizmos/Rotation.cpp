@@ -1,6 +1,6 @@
 #include "Modules/Editor/Gizmos/Rotation.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/UI/dear imgui/imgui.h"
-#include "Modules/World/ECS/components.h"
 #include "Utilities/Intersection.h"
 #include "Engine.h"
 #include "glm/gtx/vector_angle.hpp"
@@ -251,11 +251,11 @@ bool Rotation_Gizmo::checkMousePress()
 			Rotate_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::quat& oldRotation, const glm::quat& newRotation, const unsigned int& axis)
 				: m_engine(engine), m_editor(editor), m_oldRotation(oldRotation), m_newRotation(newRotation), m_axis(axis), m_uuids(m_editor->getSelection()) {}
 			void rotate(const glm::quat& rotation) {
-				auto& world = m_engine->getModule_World();
+				auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
 				for each (const auto & entityHandle in m_uuids)
-					if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
+					if (auto * transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
 						center += transform->m_localTransform.m_position;
 					}

@@ -1,13 +1,13 @@
 #pragma once
-#ifndef COMPONENTS_H
-#define COMPONENTS_H
+#ifndef ECS_COMPONENT_TYPES_H
+#define ECS_COMPONENT_TYPES_H
 
 #include "Assets/Mesh.h"
 #include "Assets/Model.h"
 #include "Assets/Collider.h"
+#include "Modules/ECS/ecsComponent.h"
 #include "Modules/Graphics/Common/Viewport.h"
 #include "Modules/Graphics/Common/Camera.h"
-#include "Modules/World/ECS/ecsComponent.h"
 #include "Utilities/Transform.h"
 #include "Utilities/GL/GL_ArrayBuffer.h"
 #include "glm/glm.hpp"
@@ -15,28 +15,28 @@
 
 
 constexpr static const char selectedComponentName[] = "Selected_Component";
-struct Selected_Component : public ECSComponent<Selected_Component, selectedComponentName> {
+struct Selected_Component : public ecsComponent<Selected_Component, selectedComponentName> {
 };
 
 constexpr static const char transformName[] = "Transform_Component";
-struct Transform_Component : public ECSComponent<Transform_Component, transformName> {
+struct Transform_Component : public ecsComponent<Transform_Component, transformName> {
 	// Default Serialization
 	Transform m_localTransform, m_worldTransform;
 };
 
 constexpr static const char playerSpawnName[] = "PlayerSpawn_Component";
-struct PlayerSpawn_Component : public ECSComponent<PlayerSpawn_Component, playerSpawnName> {
+struct PlayerSpawn_Component : public ecsComponent<PlayerSpawn_Component, playerSpawnName> {
 	// Default Serialization
 };
 
 constexpr static const char player3DName[] = "Player3D_Component";
-struct Player3D_Component : public ECSComponent<Player3D_Component, player3DName> {
+struct Player3D_Component : public ecsComponent<Player3D_Component, player3DName> {
 	// Default Serialization
 	glm::vec3 m_rotation = glm::vec3(0.0f);
 };
 
 constexpr static const char cameraName[] = "Camera_Component";
-struct Camera_Component : public ECSComponent<Camera_Component, cameraName> {
+struct Camera_Component : public ecsComponent<Camera_Component, cameraName> {
 	Camera m_camera;
 	float m_updateTime = 0.0f;
 
@@ -51,7 +51,7 @@ struct Camera_Component : public ECSComponent<Camera_Component, cameraName> {
 };
 
 constexpr static const char cameraArrayName[] = "CameraArray_Component";
-struct CameraArray_Component : public ECSComponent<CameraArray_Component, cameraArrayName> {
+struct CameraArray_Component : public ecsComponent<CameraArray_Component, cameraArrayName> {
 	std::vector<Camera> m_cameras;
 	std::vector<float> m_updateTimes;
 
@@ -66,7 +66,7 @@ struct CameraArray_Component : public ECSComponent<CameraArray_Component, camera
 };
 
 constexpr static const char boundingSphereName[] = "BoundingSphere_Component";
-struct BoundingSphere_Component : public ECSComponent<BoundingSphere_Component, boundingSphereName> {
+struct BoundingSphere_Component : public ecsComponent<BoundingSphere_Component, boundingSphereName> {
 	// Default Serialization
 	glm::vec3 m_positionOffset = glm::vec3(0.0f);
 	float m_radius = 1.0f;
@@ -76,7 +76,7 @@ struct BoundingSphere_Component : public ECSComponent<BoundingSphere_Component, 
 };
 
 constexpr static const char boundingBoxName[] = "BoundingBox_Component";
-struct BoundingBox_Component : public ECSComponent<BoundingBox_Component, boundingBoxName> {
+struct BoundingBox_Component : public ecsComponent<BoundingBox_Component, boundingBoxName> {
 	// Default Serialization
 	glm::vec3 m_positionOffset = glm::vec3(0.0f), m_extent = glm::vec3(0), m_min = glm::vec3(0.0f), m_max = glm::vec3(0.0f);
 	enum CameraCollision {
@@ -85,7 +85,7 @@ struct BoundingBox_Component : public ECSComponent<BoundingBox_Component, boundi
 };
 
 constexpr static const char propName[] = "Prop_Component";
-struct Prop_Component : public ECSComponent<Prop_Component, propName> {
+struct Prop_Component : public ecsComponent<Prop_Component, propName> {
 	// Serialized Attributes
 	std::string m_modelName;
 	unsigned int m_skin = 0u;
@@ -143,7 +143,7 @@ struct Prop_Component : public ECSComponent<Prop_Component, propName> {
 };
 
 constexpr static const char skeletonName[] = "Skeleton_Component";
-struct Skeleton_Component : public ECSComponent<Skeleton_Component, skeletonName> {
+struct Skeleton_Component : public ecsComponent<Skeleton_Component, skeletonName> {
 	// Serialized Attributes
 	std::string m_modelName;
 	int m_animation = -1;
@@ -195,7 +195,7 @@ struct Skeleton_Component : public ECSComponent<Skeleton_Component, skeletonName
 };
 
 constexpr static const char shadowName[] = "Shadow_Component";
-struct Shadow_Component : public ECSComponent<Shadow_Component, shadowName> {
+struct Shadow_Component : public ecsComponent<Shadow_Component, shadowName> {
 	int m_shadowSpot = -1;
 
 	inline virtual std::vector<char> serialize()  override {
@@ -206,26 +206,26 @@ struct Shadow_Component : public ECSComponent<Shadow_Component, shadowName> {
 };
 
 constexpr static const char lightColorName[] = "LightColor_Component";
-struct LightColor_Component : public ECSComponent<LightColor_Component, lightColorName> {
+struct LightColor_Component : public ecsComponent<LightColor_Component, lightColorName> {
 	// Default Serialization
 	glm::vec3 m_color = glm::vec3(1.0f);
 	float m_intensity = 1.0f;
 };
 
 constexpr static const char lightRadiusName[] = "LightRadius_Component";
-struct LightRadius_Component : public ECSComponent<LightRadius_Component, lightRadiusName> {
+struct LightRadius_Component : public ecsComponent<LightRadius_Component, lightRadiusName> {
 	// Default Serialization
 	float m_radius = 1.0f;
 };
 
 constexpr static const char lightCutoffName[] = "LightCutoff_Component";
-struct LightCutoff_Component : public ECSComponent<LightCutoff_Component, lightCutoffName> {
+struct LightCutoff_Component : public ecsComponent<LightCutoff_Component, lightCutoffName> {
 	// Default Serialization
 	float m_cutoff = 45.0f;
 };
 
 constexpr static const char lightDirectionalName[] = "LightDirectional_Component";
-struct LightDirectional_Component : public ECSComponent<LightDirectional_Component, lightDirectionalName> {
+struct LightDirectional_Component : public ecsComponent<LightDirectional_Component, lightDirectionalName> {
 #define NUM_CASCADES 4
 	// Default Serialization
 	glm::mat4 m_pvMatrices[NUM_CASCADES] = { glm::mat4(1.0f),glm::mat4(1.0f), glm::mat4(1.0f), glm::mat4(1.0f) };
@@ -233,17 +233,17 @@ struct LightDirectional_Component : public ECSComponent<LightDirectional_Compone
 };
 
 constexpr static const char lightPointName[] = "LightPoint_Component";
-struct LightPoint_Component : public ECSComponent<LightPoint_Component, lightPointName> {
+struct LightPoint_Component : public ecsComponent<LightPoint_Component, lightPointName> {
 	// Default Serialization
 };
 
 constexpr static const char lightSpotName[] = "LightSpot_Component";
-struct LightSpot_Component : public ECSComponent<LightSpot_Component, lightSpotName> {
+struct LightSpot_Component : public ecsComponent<LightSpot_Component, lightSpotName> {
 	// Default Serialization
 };
 
 constexpr static const char reflectorName[] = "Reflector_Component";
-struct Reflector_Component : public ECSComponent<Reflector_Component, reflectorName> {
+struct Reflector_Component : public ecsComponent<Reflector_Component, reflectorName> {
 	float m_updateTime = 0.0f;
 	int m_cubeSpot = -1;
 
@@ -255,7 +255,7 @@ struct Reflector_Component : public ECSComponent<Reflector_Component, reflectorN
 };
 
 constexpr static const char colliderName[] = "Collider_Component";
-struct Collider_Component : public ECSComponent<Collider_Component, colliderName> {
+struct Collider_Component : public ecsComponent<Collider_Component, colliderName> {	
 	float m_restitution = 1.0f;
 	float m_friction = 1.0f;
 	btScalar m_mass = btScalar(0);
@@ -274,4 +274,4 @@ struct Collider_Component : public ECSComponent<Collider_Component, colliderName
 	}
 };
 
-#endif // COMPONENTS_H
+#endif // ECS_COMPONENT_TYPES_H

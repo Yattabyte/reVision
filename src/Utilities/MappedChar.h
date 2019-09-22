@@ -3,6 +3,7 @@
 #define MAPPEDCHAR_H
 
 #include <map>
+#include <optional>
 #include <vector>
 
 
@@ -37,6 +38,12 @@ public:
 	@param	key		the new key to insert into the map */	
 	inline void insert(const char * key) {
 		m_map.insert(std::pair<const char *, T>(key, T())); 
+	}
+	/** Insert or ovewrite the value T at the index of key. 
+	@param	key		the key to insert or use in the map.
+	@param	t		the value to newely insert or overwrite, pairing to the key. */
+	inline void insertOrAssign(const char* key, const T& t) {
+		m_map.insert_or_assign(key, t);
 	}
 	/** Remove the element found in the map matching the key specified. 
 	@param	key		the key to erase from the map. */
@@ -95,6 +102,13 @@ public:
 	@return			the ending constant iterator */
 	inline const_iterator end() const {
 		return m_map.cend();
+	}
+	/** Check if the given key exists in the map, and optionally return its value.
+	@return			true if the key exists, false otherwise */
+	inline std::optional<T> search(const char* key) const {
+		if (find_I(key) != end())
+			return m_map.at(key);
+		return {};
 	}
 	/** Check if the given key exists in the map.
 	@return			true if the key exists, false otherwise */

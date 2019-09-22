@@ -18,7 +18,7 @@
 #include "Modules/Graphics/Effects/FXAA.h"
 
 
-Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<Camera> & clientCamera, const std::shared_ptr<std::vector<Camera*>> & cameras, const std::shared_ptr<RH_Volume> & rhVolume, ECSSystemList & auxilliarySystems)
+Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<Camera> & clientCamera, const std::shared_ptr<std::vector<Camera*>> & cameras, const std::shared_ptr<RH_Volume> & rhVolume, ecsSystemList & auxilliarySystems)
 	: m_engine(engine)
 {
 	auto propView = new Prop_Technique(engine, cameras, auxilliarySystems);

@@ -2,14 +2,14 @@
 #ifndef PLAYERFREELOOK_SYSTEM_H
 #define PLAYERFREELOOK_SYSTEM_H 
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
 
 
 /** A system responsible for updating player components based on keyboard/mouse. */
-class PlayerFreeLook_System : public BaseECSSystem {
+class PlayerFreeLook_System : public ecsBaseSystem {
 public: 
 	// Public (de)Constructors
 	/** Destroy this free-look system. */
@@ -17,8 +17,8 @@ public:
 	/** Construct a free-look system. */
 	inline PlayerFreeLook_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
-		addComponentType(Transform_Component::ID);
-		addComponentType(Player3D_Component::ID);
+		addComponentType(Transform_Component::m_ID);
+		addComponentType(Player3D_Component::m_ID);
 
 		// Error Reporting
 		if (!isValid())
@@ -27,7 +27,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override {
 		auto & graphicsModule = m_engine->getModule_Graphics();
 		for each (const auto & componentParam in components) {
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[0];

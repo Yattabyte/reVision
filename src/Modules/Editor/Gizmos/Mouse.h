@@ -4,9 +4,9 @@
 
 #include "Assets/Auto_Model.h"
 #include "Assets/Shader.h"
-#include "Modules/World/ECS/ecsComponent.h"
-#include "Modules/World/ECS/ecsEntity.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsComponent.h"
+#include "Modules/ECS/ecsEntity.h"
+#include "Modules/ECS/ecsSystem.h"
 #include "Utilities/Transform.h"
 #include "Utilities/GL/IndirectDraw.h"
 #include <memory>
@@ -66,7 +66,7 @@ private:
 	LevelEditor_Module* m_editor = nullptr;
 	Transform m_selectionTransform, m_spawnTransform;
 	std::vector<ecsHandle> m_selection;
-	std::shared_ptr<BaseECSSystem> m_pickerSystem;
+	std::shared_ptr<ecsBaseSystem> m_pickerSystem;
 	unsigned int m_inputMode = 0;
 	std::shared_ptr<Translation_Gizmo> m_translationGizmo;
 	std::shared_ptr<Scaling_Gizmo> m_scalingGizmo;

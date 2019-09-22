@@ -18,6 +18,7 @@ Engine::~Engine()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
+	m_moduleECS.deinitialize();
 	m_moduleWorld.deinitialize();
 	m_moduleGraphics.deinitialize();
 	m_moduleUI.deinitialize();
@@ -42,6 +43,7 @@ Engine::Engine() :
 	m_inputBindings.loadFile("binds");
 
 	printBoilerPlate();
+	m_moduleECS.initialize(this);
 	m_moduleWorld.initialize(this);
 	m_moduleGraphics.initialize(this);
 	m_moduleUI.initialize(this);
@@ -339,6 +341,7 @@ void Engine::tick()
 	m_moduleUI.applyActionState(m_actionState);
 
 	// Tick relevant systems
+	m_moduleECS.frameTick(deltaTime);
 	m_modulePhysics.frameTick(deltaTime);
 	m_moduleWorld.frameTick(deltaTime);
 	if (m_engineState == in_startMenu)

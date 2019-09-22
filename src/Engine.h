@@ -8,6 +8,7 @@
 #include "Managers/SoundManager.h"
 
 // Modules
+#include "Modules/ECS/ECS_M.h"
 #include "Modules/StartScreen/StartScreen_M.h"
 #include "Modules/Game/Game_M.h"
 #include "Modules/Editor/Editor_M.h"
@@ -25,7 +26,7 @@
 // Other
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "4.12.7";
+constexpr char ENGINE_VERSION[] = "4.13.0";
 struct GLFWwindow;
 
 
@@ -103,6 +104,8 @@ public:
 	SoundManager & getManager_Sounds() { return m_soundManager; }
 
 	// Module Accessors
+	/** Returns this engine's ECS module. */
+	ECS_Module & getModule_ECS() { return m_moduleECS; }
 	/** Returns this engine's game module. */
 	Game_Module & getModule_Game() { return m_moduleGame; }
 	/** Returns this engine's editor module. */
@@ -157,6 +160,7 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 
 	// Private Modules
+	ECS_Module m_moduleECS;
 	World_Module m_moduleWorld;
 	StartScreen_Module m_moduleStartScreen;
 	Game_Module m_moduleGame;

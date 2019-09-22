@@ -2,13 +2,13 @@
 #ifndef REFLECTORVISIBILITY_SYSTEM_H
 #define REFLECTORVISIBILITY_SYSTEM_H
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
 
 
 /** An ECS system responsible for populating render lists PER active perspective in a given frame, for all reflector related entities. */
-class ReflectorVisibility_System : public BaseECSSystem {
+class ReflectorVisibility_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -17,14 +17,14 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline ReflectorVisibility_System(const std::shared_ptr<ReflectorData> & visibility)
 		: m_frameData(visibility) {
-		addComponentType(Reflector_Component::ID, FLAG_REQUIRED);
-		addComponentType(Transform_Component::ID, FLAG_REQUIRED);
-		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
+		addComponentType(Reflector_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(CameraArray_Component::m_ID, FLAG_REQUIRED);
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
 		// Compile results PER viewport
 		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
 			auto & viewInfo = m_frameData->viewInfo[x];

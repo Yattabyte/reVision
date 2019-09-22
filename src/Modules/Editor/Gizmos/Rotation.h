@@ -4,8 +4,8 @@
 
 #include "Assets/Auto_Model.h"
 #include "Assets/Shader.h"
-#include "Modules/World/ECS/ecsComponent.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsComponent.h"
+#include "Modules/ECS/ecsSystem.h"
 #include "Utilities/GL/IndirectDraw.h"
 #include "Utilities/Transform.h"
 #include <vector>

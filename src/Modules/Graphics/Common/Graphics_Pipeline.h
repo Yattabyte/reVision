@@ -6,7 +6,7 @@
 #include "Modules/Graphics/Geometry/Geometry_Technique.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Common/Viewport.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsSystem.h"
 #include <vector>
 
 
@@ -22,7 +22,7 @@ public:
 	@param	engine			the engine to use.
 	@param	cameras			all the cameras active in the scene.
 	@param	auxSystems		container to add extra render-related ecs systems to. */
-	Graphics_Pipeline(Engine * engine, const std::shared_ptr<Camera> & clientCamera, const std::shared_ptr<std::vector<Camera*>> & cameras, const std::shared_ptr<RH_Volume> & rhVolume, ECSSystemList & auxSystems);
+	Graphics_Pipeline(Engine * engine, const std::shared_ptr<Camera> & clientCamera, const std::shared_ptr<std::vector<Camera*>> & cameras, const std::shared_ptr<RH_Volume> & rhVolume, ecsSystemList & auxSystems);
 
 
 	// Public Methods

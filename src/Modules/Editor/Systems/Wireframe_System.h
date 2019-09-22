@@ -2,8 +2,8 @@
 #ifndef WIREFRAME_SYSTEM_H
 #define WIREFRAME_SYSTEM_H 
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/Editor/Editor_M.h"
 #include "Assets/Mesh.h"
 #include "Assets/Shader.h"
@@ -13,7 +13,7 @@
 
 
 /** An ECS system responsible for rendering wireframe outlines of selected entities bounding objects. */
-class Wireframe_System : public BaseECSSystem {
+class Wireframe_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -32,12 +32,12 @@ public:
 	inline Wireframe_System(Engine * engine, LevelEditor_Module * editor)
 		: m_engine(engine), m_editor(editor) {
 		// Declare component types used
-		addComponentType(Selected_Component::ID);
-		addComponentType(Transform_Component::ID);
-		addComponentType(BoundingBox_Component::ID, FLAG_OPTIONAL);
-		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
-		addComponentType(LightSpot_Component::ID, FLAG_OPTIONAL);
-		//addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
+		addComponentType(Selected_Component::m_ID);
+		addComponentType(Transform_Component::m_ID);
+		addComponentType(BoundingBox_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(BoundingSphere_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(LightSpot_Component::m_ID, FLAG_OPTIONAL);
+		//addComponentType(BoundingSphere_Component::m_ID, FLAG_OPTIONAL);
 
 		m_indirectGeometry = StaticBuffer(sizeof(glm::ivec4) * 3, 0, GL_DYNAMIC_STORAGE_BIT);
 
@@ -61,7 +61,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<BaseECSComponent*> >& components) override {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override {
 		if (m_shader->existsYet() && m_sphere->existsYet() && m_cone->existsYet() && m_cube->existsYet()) {
 			const auto pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
 			const auto vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;

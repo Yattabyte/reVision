@@ -2,13 +2,13 @@
 #ifndef CLEARSELECTION_SYSTEM_H
 #define CLEARSELECTION_SYSTEM_H 
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Engine.h"
 
 
 /** An ECS system responsible for deleting all Selected Components from entities. */
-class ClearSelection_System : public BaseECSSystem {
+class ClearSelection_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -18,15 +18,15 @@ public:
 	inline ClearSelection_System(Engine* engine)
 		: m_engine(engine) {
 		// Declare component types used
-		addComponentType(Selected_Component::ID);
+		addComponentType(Selected_Component::m_ID);
 	}
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<BaseECSComponent*>>& components) override {	
-		auto& world = m_engine->getModule_World();
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override {
+		auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 		for each (const auto & componentParam in components) 
-			world.removeComponent<Selected_Component>(((Selected_Component*)(componentParam[0]))->m_entity);
+			ecsWorld.removeComponent<Selected_Component>(((Selected_Component*)(componentParam[0]))->m_entity);
 	}
 
 

@@ -3,7 +3,7 @@
 #define PHYSICS_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsSystem.h"
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
 #include <memory>
@@ -37,7 +37,7 @@ private:
 	btCollisionDispatcher * m_dispatcher = nullptr;
 	btSequentialImpulseConstraintSolver * m_solver = nullptr;
 	btDiscreteDynamicsWorld * m_world = nullptr;
-	ECSSystemList m_physicsSystems; 
+	ecsSystemList m_physicsSystems; 
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

@@ -2,13 +2,13 @@
 #ifndef PROPVISIBILITY_SYSTEM_H
 #define PROPVISIBILITY_SYSTEM_H
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/Graphics/Geometry/Prop/PropData.h"
 
 
 /** An ECS system responsible for populating render lists PER active perspective in a given frame, for all prop related entities. */
-class PropVisibility_System : public BaseECSSystem {
+class PropVisibility_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -17,14 +17,14 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline PropVisibility_System(const std::shared_ptr<PropData> & frameData, const std::shared_ptr<std::vector<Camera*>> & cameras)
 		: m_frameData(frameData), m_cameras(cameras) {
-		addComponentType(Prop_Component::ID, FLAG_REQUIRED);
-		addComponentType(Skeleton_Component::ID, FLAG_OPTIONAL);
-		addComponentType(BoundingBox_Component::ID, FLAG_OPTIONAL);
+		addComponentType(Prop_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(Skeleton_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(BoundingBox_Component::m_ID, FLAG_OPTIONAL);
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
 		// Link together the dimensions of view info and viewport vectors
 		m_frameData->viewInfo.resize(m_cameras->size());
 

@@ -3,25 +3,25 @@
 #define TRANSFORMSYNC_PHYS_S_H
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
 #include "glm/gtx/component_wise.hpp"
 
 
 /** A system responsible for updating physics components that share a common transformation. */
-class TransformSync_Phys_System : public BaseECSSystem {
+class TransformSync_Phys_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this physics sync system. */
 	inline ~TransformSync_Phys_System() = default;
 	/** Construct a physics sync system. */
 	inline TransformSync_Phys_System(Engine * engine, btDiscreteDynamicsWorld * world)
-		: BaseECSSystem(), m_world(world) {
+		: ecsBaseSystem(), m_world(world) {
 		// Declare component types used
-		addComponentType(Transform_Component::ID);
-		addComponentType(Collider_Component::ID, FLAG_OPTIONAL);
+		addComponentType(Transform_Component::m_ID);
+		addComponentType(Collider_Component::m_ID, FLAG_OPTIONAL);
 
 		// Error Reporting
 		if (!isValid())
@@ -30,7 +30,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto * transformComponent = (Transform_Component*)componentParam[0];
 			auto * colliderComponent = (Collider_Component*)componentParam[1];

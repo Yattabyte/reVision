@@ -2,8 +2,8 @@
 #ifndef PROPUPLOAD_SYSTEM_H
 #define PROPUPLOAD_SYSTEM_H
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/Graphics/Geometry/Prop/PropData.h"
 #include "Engine.h"
 
@@ -11,7 +11,7 @@
 
 
 /** An ECS system responsible for uploading prop data to the GPU, such as geometrical data and material textures. */
-class PropUpload_System : public BaseECSSystem {
+class PropUpload_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -22,7 +22,7 @@ public:
 	/** Construct this system. */
 	inline PropUpload_System(Engine * engine, const std::shared_ptr<PropData> & frameData)
 		: m_engine(engine), m_frameData(frameData) {
-		addComponentType(Prop_Component::ID, FLAG_REQUIRED);
+		addComponentType(Prop_Component::m_ID, FLAG_REQUIRED);
 
 		// Create VBO's
 		glCreateBuffers(1, &m_vboID);
@@ -76,7 +76,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
 		for each (const auto & componentParam in components) {
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
 			auto & offset = propComponent->m_offset;

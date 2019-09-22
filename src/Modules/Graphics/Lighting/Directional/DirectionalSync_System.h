@@ -2,13 +2,13 @@
 #ifndef DIRECTIONALSYNC_SYSTEM_H
 #define DIRECTIONALSYNC_SYSTEM_H
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/Graphics/Lighting/Directional/DirectionalData.h"
 
 
 /** An ECS system responsible for syncronizing directional lighting components and sending data to the GPU. */
-class DirectionalSync_System : public BaseECSSystem {
+class DirectionalSync_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -17,16 +17,16 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline DirectionalSync_System(const std::shared_ptr<DirectionalData> & frameData)
 		: m_frameData(frameData) {
-		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
-		addComponentType(Shadow_Component::ID, FLAG_REQUIRED);
-		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
-		addComponentType(LightColor_Component::ID, FLAG_OPTIONAL);
-		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
+		addComponentType(LightDirectional_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(Shadow_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(CameraArray_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(LightColor_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(Transform_Component::m_ID, FLAG_OPTIONAL);
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
 		// Resize light buffers to match number of entities this frame
 		m_frameData->lightBuffer.resize(components.size());
 		m_frameData->lightBuffer.beginWriting();

@@ -3,8 +3,8 @@
 #define EDITOR_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/World/ECS/ecsEntity.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsEntity.h"
+#include "Modules/ECS/ecsSystem.h"
 #include "Modules/UI/UI_M.h"
 #include "Utilities/Transform.h"
 #include <deque>
@@ -125,11 +125,11 @@ public:
 	/** Retrieve if we have any data on the clipboard. 
 	@return					true if clipboard data present, false otherwise. */
 	bool hasCopy() const;
-	/***/
+	/** Make the scene inspector visible. */
 	void openSceneInspector();
-	/***/
+	/** Make the entity inspector visible. */
 	void openEntityInspector();
-	/***/
+	/** Make the prefabs window visible. */
 	void openPrefabs();
 	/** Perform an action following the Command design pattern, executing it and appending it to an undo list. 
 	@param	command			the command to execute and store. */
@@ -143,11 +143,10 @@ private:
 	std::string m_currentLevelName = "My Map.bmap";
 	std::shared_ptr<Editor_Interface> m_editorInterface;
 	std::shared_ptr<Mouse_Gizmo> m_mouseGizmo;
-	std::shared_ptr<BaseECSSystem> m_selectionClearer;
+	std::shared_ptr<ecsBaseSystem> m_selectionClearer;
 	GLuint m_fboID = 0, m_texID = 0, m_depthID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::vector<char> m_copiedData;
-	ECSSystemList m_systems;
 	std::deque<std::shared_ptr<Editor_Command>> m_undoStack, m_redoStack;
 	int m_maxUndo = 500.0f;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
@@ -161,7 +160,9 @@ struct Editor_Command {
 	virtual void execute() = 0;
 	/** Perform the reverse, undo the command. */
 	virtual void undo() = 0;
-	/***/
+	/** Join into this command the data found in another newer command. 
+	@param	newerCommand	the newer of the two commands, to take data from.
+	@return					true if this command supports & successfully joined with a newer command, false otherwise. */
 	virtual bool join(Editor_Command* const newerCommand) { return false; }
 };
 

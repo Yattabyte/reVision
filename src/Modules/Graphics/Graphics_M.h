@@ -3,7 +3,7 @@
 #define GRAPHICS_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Common/Viewport.h"
@@ -63,7 +63,7 @@ private:
 
 	// Private Attributes
 	glm::ivec2										m_renderSize = glm::ivec2(1);
-	ECSSystemList									m_systems;
+	ecsSystemList									m_systems;
 	std::unique_ptr<Graphics_Pipeline>				m_pipeline;
 	std::shared_ptr<Viewport>						m_viewport;
 	std::shared_ptr<Camera>							m_clientCamera;

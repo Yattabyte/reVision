@@ -2,13 +2,13 @@
 #ifndef REFLECTORSYNC_SYSTEM_H
 #define REFLECTORSYNC_SYSTEM_H
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
 
 
 /** An ECS system responsible for syncronizing reflector components and sending data to the GPU. */
-class ReflectorSync_System : public BaseECSSystem {
+class ReflectorSync_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -17,14 +17,14 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline ReflectorSync_System(const std::shared_ptr<ReflectorData> & frameData)
 		: m_frameData(frameData) {
-		addComponentType(Reflector_Component::ID, FLAG_REQUIRED);
-		addComponentType(Transform_Component::ID, FLAG_REQUIRED);
-		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
+		addComponentType(Reflector_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(CameraArray_Component::m_ID, FLAG_REQUIRED);
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
 		// Resize light buffers to match number of entities this frame
 		m_frameData->lightBuffer.resize(components.size());
 		m_frameData->lightBuffer.beginWriting();

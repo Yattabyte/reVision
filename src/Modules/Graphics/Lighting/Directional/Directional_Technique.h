@@ -6,7 +6,7 @@
 #include "Modules/Graphics/Lighting/Directional/DirectionalData.h"
 #include "Modules/Graphics/Lighting/Directional/DirectionalVisibility_System.h"
 #include "Modules/Graphics/Lighting/Directional/DirectionalSync_System.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
@@ -24,7 +24,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Directional_Technique(Engine * engine, const std::shared_ptr<ShadowData> & shadowData, const std::shared_ptr<RH_Volume> & rhVolume, const std::shared_ptr<Camera> & clientCamera, const std::shared_ptr<std::vector<Camera*>> & cameras, ECSSystemList & auxilliarySystems)
+	inline Directional_Technique(Engine * engine, const std::shared_ptr<ShadowData> & shadowData, const std::shared_ptr<RH_Volume> & rhVolume, const std::shared_ptr<Camera> & clientCamera, const std::shared_ptr<std::vector<Camera*>> & cameras, ecsSystemList & auxilliarySystems)
 		: m_engine(engine), m_rhVolume(rhVolume), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<DirectionalData>();

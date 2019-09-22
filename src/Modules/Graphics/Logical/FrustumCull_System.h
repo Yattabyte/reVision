@@ -2,14 +2,14 @@
 #ifndef FRUSTUMCULL_SYSTEM_H
 #define FRUSTUMCULL_SYSTEM_H
 
-#include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/components.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/component_types.h"
 #include "glm/gtc/type_ptr.hpp"
 #include <memory>
 
 
 /** An ECS system responsible for frustum culling all renderable components with a bounding sphere and a position. */
-class FrustumCull_System : public BaseECSSystem {
+class FrustumCull_System : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -18,14 +18,14 @@ public:
 	@param	cameras		list of all the active cameras in the scene, updated per frame. */
 	inline FrustumCull_System(const std::shared_ptr<std::vector<Camera*>> & cameras)
 		: m_cameras(cameras) {
-		addComponentType(Transform_Component::ID, FLAG_REQUIRED);
-		addComponentType(BoundingBox_Component::ID, FLAG_OPTIONAL);
-		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
+		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(BoundingBox_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(BoundingSphere_Component::m_ID, FLAG_OPTIONAL);
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
 		for each (const auto & componentParam in components) {
 			auto* transformComponent = (Transform_Component*)componentParam[0];
 			auto* bboxComponent = (BoundingBox_Component*)componentParam[1];
