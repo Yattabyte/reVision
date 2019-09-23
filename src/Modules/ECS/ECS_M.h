@@ -48,10 +48,9 @@ public:
 	void updateSystem(const std::shared_ptr<ecsBaseSystem>& system, const float& deltaTime);
 	/** Update the components of a single system.
 	@param	deltaTime			the delta time.
-	@param	types				list of component types to retrieve.
-	@param	flags				list of flags, designating a component as required or optional.
+	@param	componentTypes		list of component types to retrieve.
 	@param	func				lambda function serving as a system. */
-	void updateSystem(const float& deltaTime, const std::vector<ComponentID>& types, const std::vector<ecsBaseSystem::RequirementsFlag>& flags, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func);
+	void updateSystem(const float& deltaTime, const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func);
 
 	
 private:

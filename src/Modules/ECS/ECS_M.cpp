@@ -28,7 +28,7 @@ void ECS_Module::updateSystem(const std::shared_ptr<ecsBaseSystem>& system, cons
 	m_world.updateSystem(system, deltaTime);
 }
 
-void ECS_Module::updateSystem(const float& deltaTime, const std::vector<ComponentID>& types, const std::vector<ecsBaseSystem::RequirementsFlag>& flags, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func)
+void ECS_Module::updateSystem(const float& deltaTime, const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func)
 {
-	m_world.updateSystem(deltaTime, types, flags, func);
+	m_world.updateSystem(deltaTime, componentTypes, func);
 }

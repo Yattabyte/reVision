@@ -25,19 +25,14 @@ public:
 	// Public Methods
 	/** Returns the component types supported by this system.
 	@return		the component types supported by this system. */
-	inline const std::vector<ComponentID>& getComponentTypes() {
-		return componentTypes;
-	};
-	/** Returns the component flags requested by this system.
-	@return		the component flags requested by this system. */
-	inline const std::vector<RequirementsFlag>& getComponentFlags() {
-		return componentFlags;
+	inline const std::vector<std::pair<ComponentID, RequirementsFlag>>& getComponentTypes() {
+		return m_componentTypes;
 	};
 	/** Returns whether or not this system is valid (has at least 1 non-optional component type)
 	@return		true if the system is valid, false otherwise. */
 	inline const bool isValid() const {
-		for each (const auto& flag in componentFlags)
-			if ((flag & FLAG_OPTIONAL) == 0)
+		for (const auto& [componentID, componentFlag] : m_componentTypes)
+			if ((componentFlag & FLAG_OPTIONAL) == 0)
 				return true;
 		return false;
 	}
@@ -56,15 +51,13 @@ protected:
 	@param	componentType	the type of component to use
 	@param	componentFlag	flag indicating required/optional */
 	inline void addComponentType(const ComponentID& componentType, const RequirementsFlag& componentFlag = FLAG_REQUIRED) {
-		componentTypes.push_back(componentType);
-		componentFlags.push_back(componentFlag);
+		m_componentTypes.push_back({ componentType, componentFlag } );
 	}
 
 
 private:
 	//private attributes
-	std::vector<ComponentID> componentTypes;
-	std::vector<RequirementsFlag> componentFlags;
+	std::vector<std::pair<ComponentID, RequirementsFlag>> m_componentTypes;
 };
 
 /** An ordered list of systems to be updated. */
@@ -72,8 +65,6 @@ class ecsSystemList {
 public:
 	// Public (de)Constructors
 	inline explicit ecsSystemList() = default;
-	inline ecsSystemList(const std::vector<std::shared_ptr<ecsBaseSystem>>& systems)
-		: m_systems(systems) {}
 
 
 	// Public Methods

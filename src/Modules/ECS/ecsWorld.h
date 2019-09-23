@@ -136,10 +136,9 @@ public:
 	void updateSystem(const std::shared_ptr<ecsBaseSystem>& system, const float& deltaTime);
 	/** Update the components of a single system.
 	@param	deltaTime			the delta time.
-	@param	types				list of component types to retrieve.
-	@param	flags				list of flags, designating a component as required or optional.
+	@param	componentTypes		list of component types to retrieve.
 	@param	func				lambda function serving as a system. */
-	void updateSystem(const float& deltaTime, const std::vector<ComponentID>& types, const std::vector<ecsBaseSystem::RequirementsFlag>& flags, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func);
+	void updateSystem(const float& deltaTime, const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func);
 
 	
 private:
@@ -153,13 +152,11 @@ private:
 	@param	index				the component index to delete. */
 	void deleteComponent(const ComponentID& componentID, const ComponentID& index);
 	/** Retrieve the components relevant to an ecs system.
-	@param	componentTypes		list of component types to retrieve.
-	@param	componentFlags		list of flags, designating a component as required or optional. */
-	std::vector<std::vector<ecsBaseComponent*>> getRelevantComponents(const std::vector<ComponentID>& componentTypes, const std::vector<ecsBaseSystem::RequirementsFlag>& componentFlags);
+	@param	componentTypes		list of component types to retrieve. */
+	std::vector<std::vector<ecsBaseComponent*>> getRelevantComponents(const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes);
 	/** Find the least common component.
-	@param	componentTypes		the component types.
-	@param	componentFlags		the component flags. */
-	size_t findLeastCommonComponent(const std::vector<ComponentID>& componentTypes, const std::vector<ecsBaseSystem::RequirementsFlag>& componentFlags);
+	@param	componentTypes		the component types. */
+	size_t findLeastCommonComponent(const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes);
 
 
 	// Private Attributes
