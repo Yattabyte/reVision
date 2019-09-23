@@ -34,23 +34,6 @@ public:
 	inline void setWorld(const ecsWorld& newWorld) {
 		m_world = newWorld;
 	}
-	/** Generate a system with a specifc type and input arguments.
-	@param	<T>		the system class type.
-	@param	...Args	variadic arguments to forward to the system constructor. */
-	template <typename T, class...Args>
-	inline const bool makeSystem(Args ...args) {
-		return m_systems.makeSystem<T, Args...>(args...);
-	}
-	/** Adds a system to the list.
-	@param	system	the system to add. */
-	inline const bool addSystem(const std::shared_ptr<ecsBaseSystem>& system) {
-		return m_systems.addSystem(system);
-	}
-	/** Removes a system from the list.
-	@param	system	the system to remove. */
-	inline const bool removeSystem(const std::shared_ptr<ecsBaseSystem>& system) {
-		return m_systems.removeSystem(system);
-	}
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */
@@ -74,7 +57,6 @@ public:
 private:
 	// Private Attributes
 	ecsWorld m_world;
-	ecsSystemList m_systems;
 };
 
 #endif // ECS_MODULE_H

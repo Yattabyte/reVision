@@ -28,7 +28,8 @@ public:
 	@param	numComponents		the number of components in the array.
 	@param	name				optional entity name, more for use in the level editor.
 	@param	UUID				optional entity UUID, if empty will auto-generate.
-	@param	parentUUID			optional parent entity UUID, if not at the level root. */
+	@param	parentUUID			optional parent entity UUID, if not at the level root.
+	@return						handle to the entity on success, empty on failure. */
 	ecsHandle makeEntity(ecsBaseComponent** components, const size_t& numComponents, const std::string& name = "Entity", const ecsHandle& UUID = ecsHandle(), const ecsHandle& parentUUID = ecsHandle());
 	/** Remove an entity.
 	@param	entityHandle		handle to the entity to be removed. */
@@ -38,6 +39,11 @@ public:
 	@param	component			the component being added.
 	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
 	bool addComponent(const ecsHandle& entityHandle, const ecsBaseComponent* component);
+	/** Adds a component to an entity.
+	@param	entityHandle		handle to the entity to add the component to.
+	@param	component			the component being added.
+	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
+	bool addComponent(const ecsHandle& entityHandle, const ComponentID& componentID, const ecsBaseComponent* component = nullptr);
 	/** Removes a component from an entity.
 	@param	entityHandle		handle to the entity to remove the component from.
 	@param	<T>					the category of component being removed.
@@ -108,10 +114,14 @@ public:
 	@param	desiredHandle		optional specific handle to use, if empty will use handle held in data stream.
 	@return						a handle and a pointer pair to the entity created. */
 	std::pair<ecsHandle, ecsEntity*> deserializeEntity(const char* data, const size_t& dataSize, size_t& dataRead, const ecsHandle& parentHandle = ecsHandle(), const ecsHandle& desiredHandle = ecsHandle());
+	/** Try to find a component ID based on the component ID. 
+	@param	name				the component class name to search for.
+	@return						optional component ID on success, nullptr on failure. */
+	std::optional<ComponentID> nameToComponentID(const char* name);
 	/** Search for a component template with a matching class name.
 	@param	name				the component class name to search for.
-	@return						pointer to the template parameters if true, nullptr otherwise. */
-	std::optional<std::tuple<ecsBaseComponent*, ComponentID, size_t>> findTemplate(const char* name);
+	@return						shared pointer to the a new component with a matching class name if successfull, nullptr otherwise. */
+	std::shared_ptr<ecsBaseComponent> makeComponentType(const char* name);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */

@@ -71,7 +71,6 @@ private:
 class ecsSystemList {
 public:
 	// Public (de)Constructors
-	inline ~ecsSystemList() = default;
 	inline explicit ecsSystemList() = default;
 	inline ecsSystemList(const std::vector<std::shared_ptr<ecsBaseSystem>>& systems)
 		: m_systems(systems) {}

@@ -11,7 +11,6 @@ void ECS_Module::deinitialize()
 
 void ECS_Module::frameTick(const float& deltaTime)
 {
-	updateSystems(m_systems, deltaTime);
 }
 
 void ECS_Module::updateSystems(ecsSystemList& systems, const float& deltaTime)

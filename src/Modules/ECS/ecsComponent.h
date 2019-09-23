@@ -19,6 +19,7 @@ using ComponentID = int;
 using ComponentDataSpace = std::vector<uint8_t>;
 using ComponentMap = std::map<ComponentID, ComponentDataSpace>;
 using ComponentCreateFunction = std::function<ComponentID(ComponentDataSpace& memory, const ecsHandle& entityHandle, const ecsBaseComponent* comp)>;
+using ComponentNewFunction = std::function<std::shared_ptr<ecsBaseComponent>()>;
 using ComponentFreeFunction = std::function<void(ecsBaseComponent* comp)>;
 
 
@@ -26,13 +27,12 @@ using ComponentFreeFunction = std::function<void(ecsBaseComponent* comp)>;
 struct ecsBaseComponent {
 	// Public (de)Constructors
 	inline virtual ~ecsBaseComponent() = default;
-	inline ecsBaseComponent() = default;
 	inline ecsBaseComponent(const ComponentID& ID, const size_t& size, const char* name)
-		: m_ID(ID), m_size(size), m_name(name) {}
+		: m_ID(ID), m_size(size), m_name(name) { }
 
 
 	// Public Methods
-	/** Save this component to a char buffer.
+	/** Save this component to a char buffer. Fulfilled by sub-class using CRTP.
 	@return				serialized version of self. */
 	virtual std::vector<char> to_buffer() = 0;
 	/** Recover and generate a component from a char buffer.
@@ -40,9 +40,6 @@ struct ecsBaseComponent {
 	@param	dataRead	reference updated with the number of bytes read.
 	@return				if successfull a shared pointer to a new component, nullptr otherwise. */
 	static std::shared_ptr<ecsBaseComponent> from_buffer(const char* data, size_t& dataRead);
-	/** Generate a clone of this component.
-	@return				clone of this component. */
-	virtual std::shared_ptr<ecsBaseComponent> clone() const = 0;
 
 
 	// Public Attributes
@@ -65,7 +62,7 @@ protected:
 	@param	string		type-name of the component, for name-lookups between since component ID's can change.
 	@param	templateC	template component used for copying from. 
 	@return				runtime component ID. */
-	static ComponentID registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const size_t& size, const char* string, ecsBaseComponent* templateC);
+	static ComponentID registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string);
 	/** Recover and load component data into this component from a char buffer.
 	param	data		serialized component data. */
 	virtual void recover_data(const char* data) = 0;
@@ -73,9 +70,9 @@ protected:
 
 	// Protected Attributes
 	/** Runtime container mapping indicies to creation/destruction functions for components. */
-	static std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, size_t>> _componentRegister;
+	static std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>> _componentRegistry;
 	/** A map between component class name's and it's runtime variables like ID and size. */
-	static MappedChar<std::tuple<ecsBaseComponent*, ComponentID, size_t>> _templateMap;
+	static MappedChar<ComponentID> _nameRegistry;
 	/** Allow the ecs world to interact with these members. */
 	friend class ecsWorld;
 };
@@ -124,14 +121,6 @@ struct ecsComponent : public ecsBaseComponent {
 		output.insert(output.end(), classData.cbegin(), classData.cend()); // then data (data count + data)
 		return output;
 	}
-	/** Generate a clone of this component.
-	@return				clone of this component. */
-	inline virtual std::shared_ptr<ecsBaseComponent> clone() const override {
-		const auto& component = std::shared_ptr<ecsBaseComponent>(new C(static_cast<C const&>(*this)));
-		// Always clear the entity handle
-		component->m_entity = ecsHandle();
-		return component;
-	}
 
 
 	// Static Type-Specific Attributes
@@ -159,30 +148,35 @@ protected:
 };
 
 
-/////////////////////////////////////
-/// Static Member Initializations ///
-/////////////////////////////////////
-
 /** Constructs a new component of type <C> into the memory space provided.
 @param	memory			raw data vector representing all components of type <C>.
 @param	entityHandle	handle to the component's parent entity, the one who'll own this component.
-@param	comp			temporary pre-constructed component to copy data from. 
-@return					component ID - the index into the memory array where this component was created at. */
+@param	comp			temporary pre-constructed component to copy data from, or nullptr. 
+@return					the index into the memory array where this component was created at. */
 template <typename C>
-inline constexpr static const int createFn(ComponentDataSpace& memory, const ecsHandle& entityHandle, const ecsBaseComponent* comp) {
+inline constexpr static const int createFn(ComponentDataSpace& memory, const ecsHandle& entityHandle, const ecsBaseComponent* comp = nullptr) {
 	const size_t index = memory.size();
 	memory.resize(index + sizeof(C));
-	(new(&memory[index])C(*(C*)comp))->m_entity = entityHandle;
+	C* component = comp ? new(&memory[index])C(*(C*)comp) : new(&memory[index])C();
+	component->m_entity = entityHandle;
 	return (int)index;
 }
+
+/** Construct a new component of type <C> on the heap.
+@return					shared pointer to the new component. */
+template <typename C>
+inline constexpr static const auto newFn() {
+	return std::make_shared<C>();
+}
+
 /** Destructs the supplied component, invalidating the memory range it occupied.
 @param	comp			the component to destruct. */
 template <typename C>
 inline constexpr static const void freeFn(ecsBaseComponent* comp) {
-	C* component = (C*)comp;
-	component->~C();
+	((C*)comp)->~C();
 }
+
 template <typename C, const char* chars>
-const ComponentID ecsComponent<C, chars>::m_ID( registerType(createFn<C>, freeFn<C>, sizeof(C), chars, new C()) );
+const ComponentID ecsComponent<C, chars>::m_ID( registerType(createFn<C>, freeFn<C>, newFn<C>, sizeof(C), chars) );
 
 #endif // ECS_COMPONENT_H

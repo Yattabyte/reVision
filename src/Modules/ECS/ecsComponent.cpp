@@ -2,14 +2,14 @@
 #include "ecsComponent.h"
 
 
-std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, size_t>> ecsBaseComponent::_componentRegister = std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, size_t>>();
-MappedChar<std::tuple<ecsBaseComponent*, ComponentID, size_t>> ecsBaseComponent::_templateMap = MappedChar<std::tuple<ecsBaseComponent*, ComponentID, size_t>>();
+std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>> ecsBaseComponent::_componentRegistry = std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>>();
+MappedChar<ComponentID> ecsBaseComponent::_nameRegistry = MappedChar<ComponentID>();
 
-ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const size_t& size, const char* string, ecsBaseComponent* templateComponent)
+ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string)
 {
-	const auto componentID = (ComponentID)_componentRegister.size();
-	_componentRegister.push_back({ createFn, freeFn, size });
-	_templateMap.insertOrAssign(string, std::make_tuple(templateComponent, componentID, size));
+	const auto componentID = (ComponentID)_componentRegistry.size();
+	_componentRegistry.push_back({ createFn, freeFn, newFn, size });
+	_nameRegistry.insertOrAssign(string, componentID);
 
 	return componentID;
 }
@@ -31,9 +31,9 @@ std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const char* data
 	dataRead += sizeof(size_t);
 
 	// Create new component of class matching the name
-	if (const auto & templateParams = _templateMap.search(componentTypeName.c_str())) {
-		const auto& [templateComponent, componentID, componentSize] = *templateParams;
-		const auto& clone = templateComponent->clone();
+	if (const auto & componentID = _nameRegistry.search(componentTypeName.c_str())) {
+		const auto& [createFn, freeFn, newFn, size] = _componentRegistry[*componentID];
+		const auto& clone = newFn();
 		clone->recover_data(&data[dataRead]);
 		dataRead += classDataSize;
 		return clone;

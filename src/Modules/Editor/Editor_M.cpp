@@ -713,16 +713,13 @@ void LevelEditor_Module::addComponent(const ecsHandle& entityHandle, const char*
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentName(name) {}
 		virtual void execute() {
 			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
-			if (const auto & templateParams = ecsWorld.findTemplate(m_componentName)) {
-				const auto& [templateComponent, componentID, componentSize] = *templateParams;
-				const auto& clone = templateComponent->clone();
-				ecsWorld.addComponent(m_entityHandle, clone.get());
+			if (const auto& componentID = ecsWorld.nameToComponentID(m_componentName)) {
+				ecsWorld.addComponent(m_entityHandle, *componentID);
 			}
 		}
 		virtual void undo() {
 			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
-			if (const auto & templateParams = ecsWorld.findTemplate(m_componentName)) {
-				const auto& [templateComponent, componentID, componentSize] = *templateParams;
+			if (const auto & componentID = ecsWorld.nameToComponentID(m_componentName)) {
 				for each (auto & component in ecsWorld.getEntity(m_entityHandle)->m_components)
 					if (component.first == componentID) {
 						ecsWorld.removeComponent(m_entityHandle, component.first);
