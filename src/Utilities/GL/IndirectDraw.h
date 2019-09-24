@@ -15,17 +15,17 @@ public:
 	inline IndirectDraw() = default;
 	/** Construct an Indirect Draw Object. */
 	inline IndirectDraw(
-		const GLuint & count,
-		const GLuint & primitiveCount,
-		const GLuint & first,
+		const GLuint& count,
+		const GLuint& primitiveCount,
+		const GLuint& first,
 		const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT
-	)	: m_count(count), m_primitiveCount(primitiveCount), m_first(first) {
+	) : m_count(count), m_primitiveCount(primitiveCount), m_first(first) {
 		// Populate Buffer
 		const GLuint data[4] = { count, primitiveCount, first, 0 };
 		m_buffer = StaticTripleBuffer(sizeof(GLuint) * 4, data, storageFlags);
 	}
 	/** Copy an Indirect Draw Object. */
-	inline IndirectDraw(const IndirectDraw& other) 
+	inline IndirectDraw(const IndirectDraw& other)
 		: m_buffer(other.m_buffer) {
 		m_count = other.m_count;
 		m_primitiveCount = other.m_primitiveCount;
@@ -55,10 +55,10 @@ public:
 		m_buffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	}
 	/** Bind this buffer and also perform an indirect draw call. */
-	inline void drawCall(const void * indirect = 0) {
+	inline void drawCall(const void* indirect = 0) {
 		bind();
 		glDrawArraysIndirect(GL_TRIANGLES, indirect);
-	}	
+	}
 	/** Prepare this buffer for writing, waiting on its sync fence. */
 	inline void beginWriting() {
 		m_buffer.beginWriting();

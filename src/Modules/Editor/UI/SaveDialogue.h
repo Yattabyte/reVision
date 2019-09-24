@@ -13,7 +13,7 @@ class Engine;
 class LevelEditor_Module;
 
 /** A level editor UI element allowing the user to save levels in the maps folder. */
-class SaveDialogue : public ImGUI_Element {
+class SaveDialogue final : public ImGUI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy this level save dialogue. */
@@ -25,7 +25,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override;
+	virtual void tick(const float& deltaTime) override final;
 
 
 private:

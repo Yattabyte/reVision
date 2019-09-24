@@ -12,7 +12,7 @@
 
 
 /** An ECS system allowing the user to inspect selected component transforms.*/
-class Inspector_Transform_System : public ecsBaseSystem {
+class Inspector_Transform_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -28,7 +28,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override {		
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {		
 		const auto text = std::string(Transform_Component::m_name) + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
@@ -43,7 +43,7 @@ public:
 			// Position
 			auto posInput = ((Transform_Component*)components[0][1])->m_localTransform.m_position;
 			if (ImGui::DragFloat3("Position", glm::value_ptr(posInput))) {
-				struct Move_Command : Editor_Command {
+				struct Move_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
 					LevelEditor_Module& m_editor;
 					const std::vector<ecsHandle> m_uuids;
@@ -70,13 +70,13 @@ public:
 							m_editor.setGizmoTransform(newTransform);
 						}
 					}
-					virtual void execute() {
+					virtual void execute() override final {
 						setPosition(m_newData);
 					}
-					virtual void undo() {
+					virtual void undo() override final {
 						setPosition(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) {
+					virtual bool join(Editor_Command* const other) override final {
 						if (auto newCommand = dynamic_cast<Move_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;
@@ -92,7 +92,7 @@ public:
 			// Rotation
 			auto rotInput = glm::degrees(glm::eulerAngles(((Transform_Component*)components[0][1])->m_localTransform.m_orientation));
 			if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotInput))) {
-				struct Rotate_Command : Editor_Command {
+				struct Rotate_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
 					const std::vector<ecsHandle> m_uuids;
 					std::vector<glm::quat> m_oldData, m_newData;
@@ -112,13 +112,13 @@ public:
 							component->m_localTransform.update();
 						}
 					}
-					virtual void execute() {
+					virtual void execute() override final {
 						setOrientation(m_newData);
 					}
-					virtual void undo() {
+					virtual void undo() override final {
 						setOrientation(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) {
+					virtual bool join(Editor_Command* const other) override final {
 						if (auto newCommand = dynamic_cast<Rotate_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;
@@ -134,7 +134,7 @@ public:
 			// Sclaing
 			auto sclInput = ((Transform_Component*)components[0][1])->m_localTransform.m_scale;
 			if (ImGui::DragFloat3("Scale", glm::value_ptr(sclInput))) {
-				struct Scale_Command : Editor_Command {
+				struct Scale_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
 					const std::vector<ecsHandle> m_uuids;
 					std::vector<glm::vec3> m_oldData, m_newData;
@@ -156,13 +156,13 @@ public:
 							}
 						}
 					}
-					virtual void execute() {
+					virtual void execute() override final {
 						setScale(m_newData);
 					}
-					virtual void undo() {
+					virtual void undo() override final {
 						setScale(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) {
+					virtual bool join(Editor_Command* const other) override final {
 						if (auto newCommand = dynamic_cast<Scale_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;

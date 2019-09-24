@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.12.0</span>
+   &#160;<span id="projectnumber">4.13.4</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -67,7 +67,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_reflector_scheduler___system-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ReflectorScheduler_System Class Reference</div>  </div>
+<div class="title">ReflectorScheduler_System Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -81,7 +81,7 @@ Inheritance diagram for ReflectorScheduler_System:</div>
  <div class="center">
   <img src="class_reflector_scheduler___system.png" usemap="#ReflectorScheduler_5FSystem_map" alt=""/>
   <map id="ReflectorScheduler_5FSystem_map" name="ReflectorScheduler_5FSystem_map">
-<area href="class_base_e_c_s_system.html" title="An interface for ECS Systems." alt="BaseECSSystem" shape="rect" coords="0,0,168,24"/>
+<area href="classecs_base_system.html" title="An interface for an ecs system." alt="ecsBaseSystem" shape="rect" coords="0,0,168,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -93,34 +93,32 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac409b500a2b6d42b938667d7781b01f5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_reflector_scheduler___system.html#ac409b500a2b6d42b938667d7781b01f5">ReflectorScheduler_System</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::shared_ptr&lt; <a class="el" href="struct_reflector_data.html">ReflectorData</a> &gt; &amp;frameData)</td></tr>
 <tr class="memdesc:ac409b500a2b6d42b938667d7781b01f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct this system.  <a href="#ac409b500a2b6d42b938667d7781b01f5">More...</a><br /></td></tr>
 <tr class="separator:ac409b500a2b6d42b938667d7781b01f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0db29784989112b7ec573d821bdddb9"><td class="memItemLeft" align="right" valign="top"><a id="aa0db29784989112b7ec573d821bdddb9"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>updateComponents</b> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt;&gt; &amp;components) override</td></tr>
-<tr class="separator:aa0db29784989112b7ec573d821bdddb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_class_base_e_c_s_system"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_base_e_c_s_system')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a></td></tr>
-<tr class="memitem:a96f2f52c6ff6d93b20ad1659669b0b0c inherit pub_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; int &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a96f2f52c6ff6d93b20ad1659669b0b0c">getComponentTypes</a> ()</td></tr>
-<tr class="memdesc:a96f2f52c6ff6d93b20ad1659669b0b0c inherit pub_methods_class_base_e_c_s_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the component types supported by this system.  <a href="class_base_e_c_s_system.html#a96f2f52c6ff6d93b20ad1659669b0b0c">More...</a><br /></td></tr>
-<tr class="separator:a96f2f52c6ff6d93b20ad1659669b0b0c inherit pub_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93e0c7e3f3266ff0e0d3112e98da7a0c inherit pub_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; int &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a93e0c7e3f3266ff0e0d3112e98da7a0c">getComponentFlags</a> ()</td></tr>
-<tr class="memdesc:a93e0c7e3f3266ff0e0d3112e98da7a0c inherit pub_methods_class_base_e_c_s_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the component flags requested by this system.  <a href="class_base_e_c_s_system.html#a93e0c7e3f3266ff0e0d3112e98da7a0c">More...</a><br /></td></tr>
-<tr class="separator:a93e0c7e3f3266ff0e0d3112e98da7a0c inherit pub_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a119213270722fb067888a799a17d5845 inherit pub_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a119213270722fb067888a799a17d5845">isValid</a> () const</td></tr>
-<tr class="memdesc:a119213270722fb067888a799a17d5845 inherit pub_methods_class_base_e_c_s_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether or not this system is valid (has at least 1 non-optional component type)  <a href="class_base_e_c_s_system.html#a119213270722fb067888a799a17d5845">More...</a><br /></td></tr>
-<tr class="separator:a119213270722fb067888a799a17d5845 inherit pub_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4acdd4d378f0793eebfc7b5feae249cf inherit pub_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a4acdd4d378f0793eebfc7b5feae249cf">updateComponents</a> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt; &gt; &amp;components)=0</td></tr>
-<tr class="memdesc:a4acdd4d378f0793eebfc7b5feae249cf inherit pub_methods_class_base_e_c_s_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tick this system by deltaTime, passing in all the components matching this system's requirements.  <a href="class_base_e_c_s_system.html#a4acdd4d378f0793eebfc7b5feae249cf">More...</a><br /></td></tr>
-<tr class="separator:a4acdd4d378f0793eebfc7b5feae249cf inherit pub_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3c7a521318226e4b24f354561f36a34"><td class="memItemLeft" align="right" valign="top"><a id="af3c7a521318226e4b24f354561f36a34"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>updateComponents</b> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="structecs_base_component.html">ecsBaseComponent</a> * &gt;&gt; &amp;components) override final</td></tr>
+<tr class="separator:af3c7a521318226e4b24f354561f36a34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classecs_base_system"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classecs_base_system')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classecs_base_system.html">ecsBaseSystem</a></td></tr>
+<tr class="memitem:ae440b392d3740debd6f4c18a11e8cb7b inherit pub_methods_classecs_base_system"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::pair&lt; ComponentID, <a class="el" href="classecs_base_system.html#ad108633ea2f2ea57dd11012298bff896">RequirementsFlag</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classecs_base_system.html#ae440b392d3740debd6f4c18a11e8cb7b">getComponentTypes</a> ()</td></tr>
+<tr class="memdesc:ae440b392d3740debd6f4c18a11e8cb7b inherit pub_methods_classecs_base_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the component types supported by this system.  <a href="classecs_base_system.html#ae440b392d3740debd6f4c18a11e8cb7b">More...</a><br /></td></tr>
+<tr class="separator:ae440b392d3740debd6f4c18a11e8cb7b inherit pub_methods_classecs_base_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84c1ae650b2868d5bc7ba93de2879034 inherit pub_methods_classecs_base_system"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classecs_base_system.html#a84c1ae650b2868d5bc7ba93de2879034">isValid</a> () const</td></tr>
+<tr class="memdesc:a84c1ae650b2868d5bc7ba93de2879034 inherit pub_methods_classecs_base_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether or not this system is valid (has at least 1 non-optional component type)  <a href="classecs_base_system.html#a84c1ae650b2868d5bc7ba93de2879034">More...</a><br /></td></tr>
+<tr class="separator:a84c1ae650b2868d5bc7ba93de2879034 inherit pub_methods_classecs_base_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17f8de608ebac6c9efca7ce12431df6e inherit pub_methods_classecs_base_system"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classecs_base_system.html#a17f8de608ebac6c9efca7ce12431df6e">updateComponents</a> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="structecs_base_component.html">ecsBaseComponent</a> * &gt; &gt; &amp;components)=0</td></tr>
+<tr class="memdesc:a17f8de608ebac6c9efca7ce12431df6e inherit pub_methods_classecs_base_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tick this system by deltaTime, passing in all the components matching this system's requirements.  <a href="classecs_base_system.html#a17f8de608ebac6c9efca7ce12431df6e">More...</a><br /></td></tr>
+<tr class="separator:a17f8de608ebac6c9efca7ce12431df6e inherit pub_methods_classecs_base_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_types_class_base_e_c_s_system"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_base_e_c_s_system')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a></td></tr>
-<tr class="memitem:a2d64b0f24d1159e1f633f079ef3c0181 inherit pub_types_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top"><a id="a2d64b0f24d1159e1f633f079ef3c0181"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>RequirementsFlag</b> { <b>FLAG_REQUIRED</b> = 0, 
+<tr class="inherit_header pub_types_classecs_base_system"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classecs_base_system')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classecs_base_system.html">ecsBaseSystem</a></td></tr>
+<tr class="memitem:ad108633ea2f2ea57dd11012298bff896 inherit pub_types_classecs_base_system"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classecs_base_system.html#ad108633ea2f2ea57dd11012298bff896">RequirementsFlag</a> { <b>FLAG_REQUIRED</b> = 0, 
 <b>FLAG_OPTIONAL</b> = 1
  }</td></tr>
-<tr class="separator:a2d64b0f24d1159e1f633f079ef3c0181 inherit pub_types_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_methods_class_base_e_c_s_system"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_base_e_c_s_system')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a></td></tr>
-<tr class="memitem:a151e6da2b55dbfc557d5c66e3d52fbc8 inherit pro_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a151e6da2b55dbfc557d5c66e3d52fbc8">addComponentType</a> (const int &amp;componentType, const int &amp;componentFlag=FLAG_REQUIRED)</td></tr>
-<tr class="memdesc:a151e6da2b55dbfc557d5c66e3d52fbc8 inherit pro_methods_class_base_e_c_s_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a component type to be used by this system.  <a href="class_base_e_c_s_system.html#a151e6da2b55dbfc557d5c66e3d52fbc8">More...</a><br /></td></tr>
-<tr class="separator:a151e6da2b55dbfc557d5c66e3d52fbc8 inherit pro_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:ad108633ea2f2ea57dd11012298bff896"><td class="mdescLeft">&#160;</td><td class="mdescRight">Component flag types.  <a href="classecs_base_system.html#ad108633ea2f2ea57dd11012298bff896">More...</a><br /></td></tr>
+<tr class="separator:ad108633ea2f2ea57dd11012298bff896 inherit pub_types_classecs_base_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_classecs_base_system"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classecs_base_system')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classecs_base_system.html">ecsBaseSystem</a></td></tr>
+<tr class="memitem:a5097a7f3fc4a50405d4d99cc4337b3c7 inherit pro_methods_classecs_base_system"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classecs_base_system.html#a5097a7f3fc4a50405d4d99cc4337b3c7">addComponentType</a> (const ComponentID &amp;componentType, const <a class="el" href="classecs_base_system.html#ad108633ea2f2ea57dd11012298bff896">RequirementsFlag</a> &amp;componentFlag=FLAG_REQUIRED)</td></tr>
+<tr class="memdesc:a5097a7f3fc4a50405d4d99cc4337b3c7 inherit pro_methods_classecs_base_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a component type to be used by this system.  <a href="classecs_base_system.html#a5097a7f3fc4a50405d4d99cc4337b3c7">More...</a><br /></td></tr>
+<tr class="separator:a5097a7f3fc4a50405d4d99cc4337b3c7 inherit pro_methods_classecs_base_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An ECS system responsible for scheduling when reflector related entities should be updated. </p>

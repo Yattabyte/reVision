@@ -13,7 +13,7 @@
 
 
 /** An ECS system responsible for rendering wireframe outlines of selected entities bounding objects. */
-class Wireframe_System : public ecsBaseSystem {
+class Wireframe_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -61,7 +61,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		if (m_shader->existsYet() && m_sphere->existsYet() && m_cone->existsYet() && m_cube->existsYet()) {
 			const auto pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
 			const auto vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
@@ -98,7 +98,7 @@ public:
 			m_ssbo.beginWriting();
 			m_ssbo.write(0, sizeof(glm::mat4) * sphereCount, sphereData.data());
 			m_ssbo.write(sizeof(glm::mat4) * sphereCount, sizeof(glm::mat4) * coneCount, coneData.data());
-			m_ssbo.write(sizeof(glm::mat4) * (sphereCount + coneCount), sizeof(glm::mat4) * cubeCount, cubeData.data());
+			m_ssbo.write(sizeof(glm::mat4) * (size_t(sphereCount) + size_t(coneCount)), sizeof(glm::mat4) * cubeCount, cubeData.data());
 			m_indirectGeometry.write(0, sizeof(glm::ivec4) * 3, drawData);
 
 			m_shader->bind();
@@ -141,9 +141,9 @@ private:
 			glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
 			glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
 
-			m_sphereSize = m_sphere->m_geometry.vertices.size();
-			m_coneSize = m_cone->m_geometry.vertices.size();
-			m_cubeSize = m_cube->m_geometry.vertices.size();
+			m_sphereSize = (int)m_sphere->m_geometry.vertices.size();
+			m_coneSize = (int)m_cone->m_geometry.vertices.size();
+			m_cubeSize = (int)m_cube->m_geometry.vertices.size();
 			m_sphereOffset = 0;
 			m_coneOffset = m_sphereSize;
 			m_cubeOffset = m_sphereSize + m_coneSize;

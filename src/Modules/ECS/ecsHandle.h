@@ -11,17 +11,17 @@
 struct ecsHandle {
 	char uuid[32] = { '\0' };
 	/** Default Constructor. */
-	ecsHandle() = default;
+	inline ecsHandle() = default;
 	/** E/xplicit Constructor. */
-	explicit ecsHandle(const char id[32]) {
+	inline explicit ecsHandle(const char id[32]) {
 		std::memcpy(uuid, id, size_t(sizeof(char) * 32));
 	}
 	/** Copy Constructor. */
-	ecsHandle(const ecsHandle& other) {
+	inline ecsHandle(const ecsHandle& other) {
 		std::memcpy(uuid, other.uuid, size_t(sizeof(char) * 32));
 	}
 	/** Move Constructor. */
-	ecsHandle(ecsHandle&& other) noexcept {
+	inline ecsHandle(ecsHandle&& other) noexcept {
 		std::move(std::begin(other.uuid), std::end(other.uuid), uuid);
 	}
 	// Copy from another handle

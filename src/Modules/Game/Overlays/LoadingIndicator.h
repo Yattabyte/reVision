@@ -11,7 +11,7 @@
 
 
 /** Graphics effect responsible for showing a loading spinner ring while the engine is loading. */
-class LoadingIndicator : public Overlay {
+class LoadingIndicator final : public Overlay {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
@@ -53,7 +53,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyEffect(const float & deltaTime) override final {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_texture->existsYet())
 			return;
 		if (m_show)

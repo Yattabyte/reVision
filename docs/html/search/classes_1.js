@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['baseecscomponent',['BaseECSComponent',['../struct_base_e_c_s_component.html',1,'']]],
-  ['baseecssystem',['BaseECSSystem',['../class_base_e_c_s_system.html',1,'']]],
   ['bloom',['Bloom',['../class_bloom.html',1,'']]],
   ['border',['Border',['../class_border.html',1,'']]],
   ['boundingbox_5fcomponent',['BoundingBox_Component',['../struct_bounding_box___component.html',1,'']]],

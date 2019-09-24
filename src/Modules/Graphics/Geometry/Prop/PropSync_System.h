@@ -10,7 +10,7 @@
 
 
 /** An ECS system responsible for syncronizing prop components and sending data to the GPU. */
-class PropSync_System : public ecsBaseSystem {
+class PropSync_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -27,7 +27,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
 		// Resize BOTH buffers to match number of entities this frame, even though not all models have skeletons
 		m_frameData->modelBuffer.resize(components.size());
 		m_frameData->skeletonBuffer.resize(components.size());

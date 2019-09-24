@@ -127,7 +127,6 @@ var searchData=
   ['imvector_3c_20unsigned_20char_20_3e',['ImVector&lt; unsigned char &gt;',['../struct_im_vector.html',1,'']]],
   ['indirectdraw',['IndirectDraw',['../class_indirect_draw.html',1,'']]],
   ['inputbinding',['InputBinding',['../class_input_binding.html',1,'']]],
-  ['inspector',['Inspector',['../class_inspector.html',1,'']]],
   ['inspector_5flightcolor_5fsystem',['Inspector_LightColor_System',['../class_inspector___light_color___system.html',1,'']]],
   ['inspector_5flightcutoff_5fsystem',['Inspector_LightCutoff_System',['../class_inspector___light_cutoff___system.html',1,'']]],
   ['inspector_5flightradius_5fsystem',['Inspector_LightRadius_System',['../class_inspector___light_radius___system.html',1,'']]],

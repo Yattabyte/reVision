@@ -105,7 +105,7 @@ public:
 				m_children[m_hoverIndex]->setHovered();
 		}
 	}
-	inline virtual void userAction(ActionState & actionState) {
+	inline virtual void userAction(ActionState & actionState) override {
 		// User can go up or down the list_Horizontal with an input device
 		// User input wraps around, and if an item is selected, moving will deselect it
 		if (m_children.size()) {

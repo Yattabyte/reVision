@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.12.0</span>
+   &#160;<span id="projectnumber">4.13.4</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -67,7 +67,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_g_l___array_buffer-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">GL_ArrayBuffer&lt; T &gt; Class Template Reference</div>  </div>
+<div class="title">GL_ArrayBuffer&lt; T &gt; Class Template Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -99,12 +99,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a896b0aba3916151ded9a01e9d09f7a4f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a896b0aba3916151ded9a01e9d09f7a4f">operator=</a> (<a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a> &amp;&amp;o) noexcept</td></tr>
 <tr class="memdesc:a896b0aba3916151ded9a01e9d09f7a4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignment operator, for moving 1 buffer to another.  <a href="#a896b0aba3916151ded9a01e9d09f7a4f">More...</a><br /></td></tr>
 <tr class="separator:a896b0aba3916151ded9a01e9d09f7a4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a964c4a77312d6d03affdd943090f20d0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">bindBuffer</a> (const GLenum &amp;target) const override</td></tr>
-<tr class="memdesc:a964c4a77312d6d03affdd943090f20d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to the target specified.  <a href="#a964c4a77312d6d03affdd943090f20d0">More...</a><br /></td></tr>
-<tr class="separator:a964c4a77312d6d03affdd943090f20d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f2f17aa9e56d6757290707f7c3fd237"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">bindBufferBase</a> (const GLenum &amp;target, const GLuint &amp;index) const override</td></tr>
-<tr class="memdesc:a7f2f17aa9e56d6757290707f7c3fd237"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to a particular binding point, such as for shaders to read.  <a href="#a7f2f17aa9e56d6757290707f7c3fd237">More...</a><br /></td></tr>
-<tr class="separator:a7f2f17aa9e56d6757290707f7c3fd237"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91302a88a6b861c724c3dc8f94a52d92"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a91302a88a6b861c724c3dc8f94a52d92">bindBuffer</a> (const GLenum &amp;target) const override final</td></tr>
+<tr class="memdesc:a91302a88a6b861c724c3dc8f94a52d92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to the target specified.  <a href="#a91302a88a6b861c724c3dc8f94a52d92">More...</a><br /></td></tr>
+<tr class="separator:a91302a88a6b861c724c3dc8f94a52d92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99caaa5d63ceb32978030eff7a60a504"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a99caaa5d63ceb32978030eff7a60a504">bindBufferBase</a> (const GLenum &amp;target, const GLuint &amp;index) const override final</td></tr>
+<tr class="memdesc:a99caaa5d63ceb32978030eff7a60a504"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to a particular binding point, such as for shaders to read.  <a href="#a99caaa5d63ceb32978030eff7a60a504">More...</a><br /></td></tr>
+<tr class="separator:a99caaa5d63ceb32978030eff7a60a504"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03e5e7d54098cee221cc2dc4e6108267"><td class="memItemLeft" align="right" valign="top"><a id="a03e5e7d54098cee221cc2dc4e6108267"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>resize</b> (const size_t &amp;size)</td></tr>
 <tr class="separator:a03e5e7d54098cee221cc2dc4e6108267"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -271,8 +271,8 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="a964c4a77312d6d03affdd943090f20d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a964c4a77312d6d03affdd943090f20d0">&#9670;&nbsp;</a></span>bindBuffer()</h2>
+<a id="a91302a88a6b861c724c3dc8f94a52d92"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91302a88a6b861c724c3dc8f94a52d92">&#9670;&nbsp;</a></span>bindBuffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -292,7 +292,7 @@ template&lt;typename T&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">final</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -309,8 +309,8 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="a7f2f17aa9e56d6757290707f7c3fd237"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7f2f17aa9e56d6757290707f7c3fd237">&#9670;&nbsp;</a></span>bindBufferBase()</h2>
+<a id="a99caaa5d63ceb32978030eff7a60a504"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99caaa5d63ceb32978030eff7a60a504">&#9670;&nbsp;</a></span>bindBufferBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -340,7 +340,7 @@ template&lt;typename T&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">final</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

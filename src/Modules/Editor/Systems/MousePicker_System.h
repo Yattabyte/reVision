@@ -11,7 +11,7 @@
 
 
 /** An ECS system allowing the user to ray-pick entities by selecting against their components. */
-class MousePicker_System : public ecsBaseSystem {
+class MousePicker_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -44,7 +44,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override final {
 		const auto & actionState = m_engine->getActionState();
 		const auto & clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
 		const auto ray_origin = clientCamera.EyePosition;
@@ -133,7 +133,7 @@ private:
 				v2 /= v2.w;
 				if (RayTriangleIntersection(
 					ray_origin, ray_direction,
-					glm::vec3(v0), glm::vec3(v1), glm::vec3(v2),
+					glm::vec3(v0), glm::vec3(v1), glm::vec3(v2), glm::vec2(),
 					distance
 				)) {
 					distanceFromScreen = distance;

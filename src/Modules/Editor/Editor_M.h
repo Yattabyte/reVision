@@ -16,7 +16,7 @@ class Mouse_Gizmo;
 struct Editor_Command;
 
 /** A level editor module. */
-class LevelEditor_Module : public Engine_Module {
+class LevelEditor_Module final : public Engine_Module {
 public:
 	// Public (de)Constructors
 	/** Destroy this game module. */
@@ -26,9 +26,9 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void initialize(Engine * engine) override;
-	virtual void deinitialize() override;
-	virtual void frameTick(const float & deltaTime) override;
+	virtual void initialize(Engine* engine) override final;
+	virtual void deinitialize() override final;
+	virtual void frameTick(const float& deltaTime) override final;
 
 
 	// Public Methods
@@ -148,7 +148,7 @@ private:
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::vector<char> m_copiedData;
 	std::deque<std::shared_ptr<Editor_Command>> m_undoStack, m_redoStack;
-	int m_maxUndo = 500.0f;
+	int m_maxUndo = 500;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
@@ -163,7 +163,7 @@ struct Editor_Command {
 	/** Join into this command the data found in another newer command. 
 	@param	newerCommand	the newer of the two commands, to take data from.
 	@return					true if this command supports & successfully joined with a newer command, false otherwise. */
-	virtual bool join(Editor_Command* const newerCommand) { return false; }
+	inline virtual bool join(Editor_Command* const newerCommand) { return false; }
 };
 
 #endif // EDITOR_MODULE_H

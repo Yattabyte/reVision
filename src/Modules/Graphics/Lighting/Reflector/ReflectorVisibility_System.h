@@ -8,7 +8,7 @@
 
 
 /** An ECS system responsible for populating render lists PER active perspective in a given frame, for all reflector related entities. */
-class ReflectorVisibility_System : public ecsBaseSystem {
+class ReflectorVisibility_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -24,7 +24,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
 		// Compile results PER viewport
 		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
 			auto & viewInfo = m_frameData->viewInfo[x];

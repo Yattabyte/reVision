@@ -10,7 +10,7 @@
 
 
 /** A module responsible for the starting screen logic. */
-class StartScreen_Module : public Engine_Module {
+class StartScreen_Module final : public Engine_Module {
 public:
 	// Public (de)Constructors
 	/** Destroy this start screen module. */
@@ -20,8 +20,8 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void initialize(Engine * engine) override;
-	virtual void deinitialize() override;
+	virtual void initialize(Engine * engine) override final;
+	virtual void deinitialize() override final;
 
 
 	// Public Methods

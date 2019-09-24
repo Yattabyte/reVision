@@ -7,7 +7,7 @@
 
 
 /** Encapsulates an OpenGL buffer that is fixed in size. */
-class StaticTripleBuffer : public Buffer_Interface {
+class StaticTripleBuffer final : public Buffer_Interface {
 public:
 	// Public (de)Constructors
 	inline ~StaticTripleBuffer() {
@@ -23,7 +23,7 @@ public:
 	/** Default Constructor. */
 	inline StaticTripleBuffer() = default;
 	/** Explicit Instantion. */
-	inline StaticTripleBuffer(const GLsizeiptr & size, const void * data = 0, const GLbitfield & storageFlags = GL_DYNAMIC_STORAGE_BIT)
+	inline StaticTripleBuffer(const GLsizeiptr& size, const void* data = 0, const GLbitfield & storageFlags = GL_DYNAMIC_STORAGE_BIT)
 		: m_size(size) {
 		glCreateBuffers(3, m_bufferID);
 		for (int x = 0; x < 3; ++x) {
@@ -34,17 +34,17 @@ public:
 		}
 	}
 	/** Explicit Instantion. */
-	inline StaticTripleBuffer(const StaticTripleBuffer & other)
+	inline StaticTripleBuffer(const StaticTripleBuffer& other)
 		: StaticTripleBuffer(other.m_size, 0) {
 		for (int x = 0; x < 3; ++x)
 			glCopyNamedBufferSubData(other.m_bufferID[x], m_bufferID[x], 0, 0, m_size);
 	}
 	/** Explicit Instantion. */
-	inline StaticTripleBuffer(StaticTripleBuffer && other) noexcept {
+	inline StaticTripleBuffer(StaticTripleBuffer&& other) noexcept {
 		*this = std::move(other);
 	}
 	/** Move gl object from 1 instance to another. */
-	inline StaticTripleBuffer & operator=(StaticTripleBuffer && o) noexcept {
+	inline StaticTripleBuffer& operator=(StaticTripleBuffer&& o) noexcept {
 		m_bufferID[0] = (std::move(o.m_bufferID[0]));
 		m_bufferID[1] = (std::move(o.m_bufferID[1]));
 		m_bufferID[2] = (std::move(o.m_bufferID[2]));
@@ -64,20 +64,20 @@ public:
 
 
 	// Public Inteface Implementations
-	inline virtual void bindBuffer(const GLenum & target) const override {
+	inline virtual void bindBuffer(const GLenum& target) const override final {
 		glBindBuffer(target, m_bufferID[m_writeIndex]);
 	}
-	inline virtual void bindBufferBase(const GLenum & target, const GLuint & index) const override {
+	inline virtual void bindBufferBase(const GLenum& target, const GLuint& index) const override final {
 		glBindBufferBase(target, index, m_bufferID[m_writeIndex]);
 	}
-		
+
 
 	// Public Methods
 	/** Write the supplied data to GPU memory
 	@param	offset	byte offset from the beginning
 	@param	size	the size of the data to write
 	@param	data	the data to write */
-	inline void write(const GLsizeiptr & offset, const GLsizeiptr & size, const void * data) {
+	inline void write(const GLsizeiptr& offset, const GLsizeiptr& size, const void* data) {
 		std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr[m_writeIndex]) + offset, data, size);
 	}
 	/** Wait for the current fence to pass, for the current frame index. */
@@ -105,7 +105,7 @@ private:
 	// Private Attributes
 	int m_writeIndex = 0;
 	GLuint m_bufferID[3] = { 0,0,0 };
-	void * m_bufferPtr[3] = { nullptr, nullptr, nullptr };
+	void* m_bufferPtr[3] = { nullptr, nullptr, nullptr };
 	GLsync m_fence[3] = { nullptr, nullptr, nullptr };
 	size_t m_size = 0ull;
 	GLbitfield m_mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;

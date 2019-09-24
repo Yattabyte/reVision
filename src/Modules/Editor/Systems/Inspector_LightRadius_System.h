@@ -12,7 +12,7 @@
 
 
 /** An ECS system allowing the user to inpect selected light radius components. */
-class Inspector_LightRadius_System : public ecsBaseSystem {
+class Inspector_LightRadius_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -27,7 +27,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		const auto text = std::string(LightRadius_Component::m_name) + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
@@ -41,7 +41,7 @@ public:
 
 			auto radiusInput = ((LightRadius_Component*)components[0][1])->m_radius;
 			if (ImGui::DragFloat("Radius", &radiusInput)) {
-				struct Radius_Command : Editor_Command {
+				struct Radius_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
 					const std::vector<ecsHandle> m_uuids;
 					std::vector<float> m_oldData, m_newData;
@@ -62,13 +62,13 @@ public:
 							}
 						}
 					}
-					virtual void execute() {
+					virtual void execute() override final {
 						setData(m_newData);
 					}
-					virtual void undo() {
+					virtual void undo() override final {
 						setData(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) {
+					virtual bool join(Editor_Command* const other) override final {
 						if (auto newCommand = dynamic_cast<Radius_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.12.0</span>
+   &#160;<span id="projectnumber">4.13.4</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -101,9 +101,9 @@ Inheritance diagram for Asset:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:affea7a67e3a2b71c57992a5a46e6ea50"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">~Asset</a> ()=default</td></tr>
-<tr class="memdesc:affea7a67e3a2b71c57992a5a46e6ea50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the asset only when all references are destroyed.  <a href="#affea7a67e3a2b71c57992a5a46e6ea50">More...</a><br /></td></tr>
-<tr class="separator:affea7a67e3a2b71c57992a5a46e6ea50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3391343ebc3486a192673a01f1953bf"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#ae3391343ebc3486a192673a01f1953bf">~Asset</a> ()=default</td></tr>
+<tr class="memdesc:ae3391343ebc3486a192673a01f1953bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the asset only when all references are destroyed.  <a href="#ae3391343ebc3486a192673a01f1953bf">More...</a><br /></td></tr>
+<tr class="separator:ae3391343ebc3486a192673a01f1953bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a693cba605321f0a0e82ada91cde7da12"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">getFileName</a> () const</td></tr>
 <tr class="memdesc:a693cba605321f0a0e82ada91cde7da12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the file name of this asset.  <a href="#a693cba605321f0a0e82ada91cde7da12">More...</a><br /></td></tr>
 <tr class="separator:a693cba605321f0a0e82ada91cde7da12"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,8 +159,8 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>AssetManager</b></td
 <dd>
 should be created once, and its pointer passed around using shared pointers. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="affea7a67e3a2b71c57992a5a46e6ea50"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#affea7a67e3a2b71c57992a5a46e6ea50">&#9670;&nbsp;</a></span>~Asset()</h2>
+<a id="ae3391343ebc3486a192673a01f1953bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3391343ebc3486a192673a01f1953bf">&#9670;&nbsp;</a></span>~Asset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -169,7 +169,7 @@ should be created once, and its pointer passed around using shared pointers. </d
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Asset::~Asset </td>
+          <td class="memname">virtual Asset::~Asset </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -177,7 +177,7 @@ should be created once, and its pointer passed around using shared pointers. </d
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -354,7 +354,7 @@ should be created once, and its pointer passed around using shared pointers. </d
 
 <p>Initializes the asset. </p>
 
-<p>Implemented in <a class="el" href="class_collider.html#ae968d796cd7f6a4bf04a5b8ab7fdbf72">Collider</a>, and <a class="el" href="class_sound.html#a11ed2377b609b19eb25d81163e57a100">Sound</a>.</p>
+<p>Implemented in <a class="el" href="class_collider.html#ac4198ba19c1a88e339503f11fd991c50">Collider</a>, and <a class="el" href="class_sound.html#a71853bc538952df35eeef52019c35f09">Sound</a>.</p>
 
 </div>
 </div>

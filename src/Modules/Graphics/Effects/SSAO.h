@@ -13,7 +13,7 @@
 
 
 /** A core-rendering technique for deriving an ambient occlusion factor from the viewport itself. */
-class SSAO : public Graphics_Technique {
+class SSAO final : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
@@ -86,14 +86,14 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void prepareForNextFrame(const float & deltaTime) override {
+	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
 		for (auto &[camIndexBuffer, indirectQuad] : m_drawData) {
 			camIndexBuffer.endWriting();
 			indirectQuad.endWriting();
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_shaderCopyAO->existsYet() && m_shaderGB_A->existsYet())
 			return;
 

@@ -18,7 +18,7 @@
 
 /** A module responsible for rendering.
 @note	performs physically based rendering techniques using deferred rendering. */
-class Graphics_Module : public Engine_Module {
+class Graphics_Module final : public Engine_Module {
 public:
 	// Public (de)Constructors
 	/** Destroy this graphics rendering module. */
@@ -28,9 +28,9 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void initialize(Engine * engine) override;
-	virtual void deinitialize() override;
-	virtual void frameTick(const float & deltaTime) override;
+	virtual void initialize(Engine * engine) override final;
+	virtual void deinitialize() override final;
+	virtual void frameTick(const float & deltaTime) override final;
 
 
 	// Public Methods

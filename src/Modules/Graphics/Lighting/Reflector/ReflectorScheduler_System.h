@@ -9,7 +9,7 @@
 
 
 /** An ECS system responsible for scheduling when reflector related entities should be updated. */
-class ReflectorScheduler_System : public ecsBaseSystem {
+class ReflectorScheduler_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -33,7 +33,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
 		// Maintain list of reflectors, update with oldest within range
 		// Technique will clear list when ready
 		auto & reflectors = m_frameData->reflectorsToUpdate;

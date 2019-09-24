@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.12.0</span>
+   &#160;<span id="projectnumber">4.13.4</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,7 +70,7 @@ $(function() {
 : <a class="el" href="class_radiance___hints.html#a1fa029bd271e707a4ad55a225bf1c741">Radiance_Hints</a>
 </li>
 <li>ReadNodeHeirarchy()
-: <a class="el" href="class_skeletal___animation.html#a1c13be3b908034c5e1224367bb5f14cc">Skeletal_Animation</a>
+: <a class="el" href="class_skeletal___animation___system.html#a74249232f8a8a024d7b3f43d52f9f23f">Skeletal_Animation_System</a>
 </li>
 <li>readPrimary()
 : <a class="el" href="class_r_h___volume.html#a38a18d4ab7b090747feb4012cb5b4496">RH_Volume</a>
@@ -81,6 +81,10 @@ $(function() {
 <li>readyToUse()
 : <a class="el" href="class_asset_manager.html#ad72d1ad886de2d65a31692396d6edcb7">AssetManager</a>
 </li>
+<li>recover_data()
+: <a class="el" href="structecs_base_component.html#af5f88ea6decb6623a58b640b692e57e1">ecsBaseComponent</a>
+, <a class="el" href="structecs_component.html#a07077330a5f2fc9767bc40a7f83f7fef">ecsComponent&lt; C, chars &gt;</a>
+</li>
 <li>RecoverDialogue()
 : <a class="el" href="class_recover_dialogue.html#a7e1084ae91328533ed556c5c17e8ef2e">RecoverDialogue</a>
 </li>
@@ -88,7 +92,7 @@ $(function() {
 : <a class="el" href="class_level_editor___module.html#a1247de47691bdab2199a1ac61413afb9">LevelEditor_Module</a>
 </li>
 <li>Reflector_Technique()
-: <a class="el" href="class_reflector___technique.html#a6acd5d622067edd360f5aca81609a40f">Reflector_Technique</a>
+: <a class="el" href="class_reflector___technique.html#a040b6c884b3837206a101623dd396908">Reflector_Technique</a>
 </li>
 <li>ReflectorScheduler_System()
 : <a class="el" href="class_reflector_scheduler___system.html#ac409b500a2b6d42b938667d7781b01f5">ReflectorScheduler_System</a>
@@ -99,20 +103,23 @@ $(function() {
 <li>ReflectorVisibility_System()
 : <a class="el" href="class_reflector_visibility___system.html#ad00f7e6942aa710d70bb7596940a4e32">ReflectorVisibility_System</a>
 </li>
+<li>registerType()
+: <a class="el" href="structecs_base_component.html#a81684eb8270d0e870c76c1f0f4e15ad8">ecsBaseComponent</a>
+</li>
 <li>Release()
 : <a class="el" href="class_shader.html#ab54c6fe63a0961380132be979f00a791">Shader</a>
 </li>
 <li>removeComponent()
-: <a class="el" href="class_world___module.html#a2f3b89088c4b9b2794224b0241109b09">World_Module</a>
+: <a class="el" href="classecs_world.html#a0282282d6b76989edc826c95e24287ec">ecsWorld</a>
 </li>
 <li>removeElement()
 : <a class="el" href="class_focus_map.html#a7a29e5ecaae8a9a5ce2dc46d7a5b5dd0">FocusMap</a>
 </li>
 <li>removeEntity()
-: <a class="el" href="class_world___module.html#aec0544cebee1d8f15365cbcf002a1501">World_Module</a>
+: <a class="el" href="classecs_world.html#a14845eac10c4efc702a9250590954dcd">ecsWorld</a>
 </li>
 <li>removeSystem()
-: <a class="el" href="class_e_c_s_system_list.html#a64b5668e7b5e559bf8ff950a84298721">ECSSystemList</a>
+: <a class="el" href="classecs_system_list.html#aa0df478bbe39cc6c52ca54fd4b99d00b">ecsSystemList</a>
 </li>
 <li>render()
 : <a class="el" href="class_graphics___pipeline.html#affcf66be36d94a5a4762baf9a1f6c368">Graphics_Pipeline</a>
@@ -150,27 +157,30 @@ $(function() {
 : <a class="el" href="class_geometry___technique.html#ac842c87a7cdccf74a0a54480f9cfb4ab">Geometry_Technique</a>
 , <a class="el" href="class_graphics___module.html#a34541a9d268a28ab99056140e77f1359">Graphics_Module</a>
 , <a class="el" href="class_graphics___pipeline.html#afbdca0dfff9079f8796d3c4d2d7f6fdc">Graphics_Pipeline</a>
-, <a class="el" href="class_prop___technique.html#ac4dee313d56a361395b461f8c80f06ab">Prop_Technique</a>
+, <a class="el" href="class_prop___technique.html#a87ac821ecf5f4e3e2ca91635a13ff406">Prop_Technique</a>
 </li>
 <li>renderTechnique()
-: <a class="el" href="class_bloom.html#acf1340584a7128c183fc4ca04c08d333">Bloom</a>
-, <a class="el" href="class_directional___technique.html#af78f684247fa5abeb12c7d6f6e60dad9">Directional_Technique</a>
-, <a class="el" href="class_f_x_a_a.html#aa573cc811b36a3401ea36842522e0c5a">FXAA</a>
+: <a class="el" href="class_bloom.html#a65875f2efe207b100d35a15df6c90664">Bloom</a>
+, <a class="el" href="class_directional___technique.html#adc9c97d942434313be2bf9198ca9a425">Directional_Technique</a>
+, <a class="el" href="class_f_x_a_a.html#af164aa59d17294ac99222503ef6af175">FXAA</a>
 , <a class="el" href="class_geometry___technique.html#aad324bbac411834483c825b41b82110e">Geometry_Technique</a>
 , <a class="el" href="class_graphics___technique.html#a1bd6331a66784d6cddbe0f9b6bd91624">Graphics_Technique</a>
-, <a class="el" href="class_h_d_r.html#a71b99c5f2258ea5b49f40a4cfe8ed8f5">HDR</a>
-, <a class="el" href="class_join___reflections.html#add1a110a37e2900352a0eeb94f96e29d">Join_Reflections</a>
-, <a class="el" href="class_point___technique.html#a91ab51c565aa7919b81ef8dd3321bc01">Point_Technique</a>
-, <a class="el" href="class_prop___technique.html#acfddc6d57525b6f378f5127ef23da1d0">Prop_Technique</a>
-, <a class="el" href="class_radiance___hints.html#a37be339eb3182dcb1ea88caebd0c22dd">Radiance_Hints</a>
-, <a class="el" href="class_reflector___technique.html#a8a6a3a543aaaf85389930debdf0d97a7">Reflector_Technique</a>
-, <a class="el" href="class_skybox.html#ad0d94f774eb33abb7ead4d85de8b1f63">Skybox</a>
-, <a class="el" href="class_spot___technique.html#a5d7d30aa052b11c29297e37248eaa2bf">Spot_Technique</a>
-, <a class="el" href="class_s_s_a_o.html#a4ff15e2e189dd98b0c4084c09736fb8b">SSAO</a>
-, <a class="el" href="class_s_s_r.html#a707598c7d7541b827b9558725303e2b2">SSR</a>
+, <a class="el" href="class_h_d_r.html#a4dda80b23127b5fb70e47c2fa075cb77">HDR</a>
+, <a class="el" href="class_join___reflections.html#a5f397b012f11d1b5a0b357b2482bb517">Join_Reflections</a>
+, <a class="el" href="class_point___technique.html#a1a4cdb0b47fc1be79b1e91d102ea3e5a">Point_Technique</a>
+, <a class="el" href="class_prop___technique.html#a7323fbdc3aaf495ebacac717b362279d">Prop_Technique</a>
+, <a class="el" href="class_radiance___hints.html#adfa8e4747d0d80a207e85cc5f710088d">Radiance_Hints</a>
+, <a class="el" href="class_reflector___technique.html#a91cc49f11c45238904d0d1fafbd63c75">Reflector_Technique</a>
+, <a class="el" href="class_skybox.html#abda85c3d20ec924a9ed9792619843286">Skybox</a>
+, <a class="el" href="class_spot___technique.html#ac7fafe68ee1d95fad9d59ae595a167e3">Spot_Technique</a>
+, <a class="el" href="class_s_s_a_o.html#afc8d7ae77cd7930a9690de3798bd6aa0">SSAO</a>
+, <a class="el" href="class_s_s_r.html#a8b414f8078017cc1405b1b3585a9f494">SSR</a>
 </li>
 <li>rentImporter()
 : <a class="el" href="struct_importer___pool.html#a3e6ac5a23d47bdb660aca26b6ad76447">Importer_Pool</a>
+</li>
+<li>RequirementsFlag
+: <a class="el" href="classecs_base_system.html#ad108633ea2f2ea57dd11012298bff896">ecsBaseSystem</a>
 </li>
 <li>resize()
 : <a class="el" href="class_f_b_o___env___reflector.html#a5c63d3dd72671d5694eb6d4fca9e4a92">FBO_Env_Reflector</a>
@@ -191,9 +201,6 @@ $(function() {
 </li>
 <li>RH_Volume()
 : <a class="el" href="class_r_h___volume.html#afa445f3eac6a0b31a799ddaef0ebec83">RH_Volume</a>
-</li>
-<li>rotateSelection()
-: <a class="el" href="class_level_editor___module.html#a8628632bccb0473ce58e24eb7117f0aa">LevelEditor_Module</a>
 </li>
 <li>Rotation_Gizmo()
 : <a class="el" href="class_rotation___gizmo.html#ad1bcea9459fdb1cfc5a2e9023cb21bc0">Rotation_Gizmo</a>

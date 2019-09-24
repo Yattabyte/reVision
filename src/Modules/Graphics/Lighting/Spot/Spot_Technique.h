@@ -13,7 +13,7 @@
 
 
 /** A core lighting technique responsible for all spot lights. */
-class Spot_Technique : public Graphics_Technique {
+class Spot_Technique final : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Destructor. */
@@ -44,7 +44,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void prepareForNextFrame(const float & deltaTime) override {
+	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
 		m_frameData->lightBuffer.endWriting();
 		for (auto & drawBuffer : m_drawData) {
 			drawBuffer.bufferCamIndex.endWriting();
@@ -53,11 +53,11 @@ public:
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void updateTechnique(const float & deltaTime) override {
+	inline virtual void updateTechnique(const float & deltaTime) override final {
 		// Link together the dimensions of view info to that of the viewport vectors
 		m_frameData->viewInfo.resize(m_cameras->size());
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
 		// Render direct lights	
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCone->existsYet() && m_shader_Lighting->existsYet() && m_shader_Stencil->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())

@@ -13,7 +13,7 @@ class Shader_Pkg;
 
 /** Shared version of a Shader_Pkg asset.
 Responsible for the creation, containing, and sharing of assets. */
-class Shared_Shader_Pkg : public std::shared_ptr<Shader_Pkg> {
+class Shared_Shader_Pkg final : public std::shared_ptr<Shader_Pkg> {
 public:
 	// Public (de)Constructors
 	/** Constructs an empty asset. */
@@ -23,13 +23,13 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Shader_Pkg(Engine * engine, const std::string & filename, const bool & threaded = true);
+	explicit Shared_Shader_Pkg(Engine* engine, const std::string& filename, const bool& threaded = true);
 };
 
 /** An accessory asset for loading shader code chunks.
 An accessory asset for shaders that stores code blocks for other shaders to use.
 Provides no functionality on its own, but can recursively import more code blocks for other shaders and itself. */
-class Shader_Pkg : public Asset {
+class Shader_Pkg final : public Asset {
 public:
 	// Public (de)Constructors
 	/** Destroy the Shader Package. */
@@ -37,9 +37,9 @@ public:
 	/** Construct the Shader Package.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Shader_Pkg(Engine * engine, const std::string & filename);
+	Shader_Pkg(Engine* engine, const std::string& filename);
 
-	
+
 	// Public Methods
 	/** Retrieves this package's content as a std::string.
 	* @return				package contents. */
@@ -47,14 +47,14 @@ public:
 		return m_packageText;
 	}
 
-	
+
 	// Public Attributes
 	std::string m_packageText = "";
 
 
 private:
 	// Private Interface Implementation
-	virtual void initialize() override;
+	virtual void initialize() override final;
 
 
 	// Private Attributes

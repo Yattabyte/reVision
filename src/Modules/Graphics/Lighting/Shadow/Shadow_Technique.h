@@ -11,7 +11,7 @@
 
 
 /** A rendering technique responsible for rendering/updating shadow casters in the scene. */
-class Shadow_Technique : public Graphics_Technique {
+class Shadow_Technique final : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Destructor. */
@@ -44,7 +44,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateTechnique(const float & deltaTime) override {
+	inline virtual void updateTechnique(const float & deltaTime) override final {
 		// Render important shadows
 		if (m_enabled)
 			updateShadows(deltaTime);

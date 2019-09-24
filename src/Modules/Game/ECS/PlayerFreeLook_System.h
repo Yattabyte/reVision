@@ -9,7 +9,7 @@
 
 
 /** A system responsible for updating player components based on keyboard/mouse. */
-class PlayerFreeLook_System : public ecsBaseSystem {
+class PlayerFreeLook_System final : public ecsBaseSystem {
 public: 
 	// Public (de)Constructors
 	/** Destroy this free-look system. */
@@ -27,7 +27,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override final {
 		auto & graphicsModule = m_engine->getModule_Graphics();
 		for each (const auto & componentParam in components) {
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[0];

@@ -15,7 +15,7 @@
 
 
 /** A core lighting technique responsible for all parallax reflectors. */
-class Reflector_Technique : public Graphics_Technique {
+class Reflector_Technique final : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Destructor. */
@@ -68,7 +68,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void prepareForNextFrame(const float & deltaTime) override {
+	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
 		m_frameData->lightBuffer.endWriting();
 		for (auto & drawBuffer : m_drawData) {
 			drawBuffer.bufferCamIndex.endWriting();
@@ -79,7 +79,7 @@ public:
 		m_indirectQuadConvolute.endWriting();
 		m_drawIndex = 0;
 	}
-	inline virtual void updateTechnique(const float & deltaTime) override {
+	inline virtual void updateTechnique(const float & deltaTime) override final {
 		// Link together the dimensions of view info to that of the viewport vectors
 		m_frameData->viewInfo.resize(m_sceneCameras->size());
 
@@ -87,7 +87,7 @@ public:
 		if (m_enabled && m_shapeQuad->existsYet() && m_shaderCopy->existsYet() && m_shaderConvolute->existsYet())
 			updateReflectors(deltaTime);		
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
 		// Exit Early
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderLighting->existsYet() && m_shaderStencil->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())

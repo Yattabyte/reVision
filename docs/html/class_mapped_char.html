@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.12.0</span>
+   &#160;<span id="projectnumber">4.13.4</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -88,6 +88,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3b53fb85c72ef6649e10d0e2f76167eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a3b53fb85c72ef6649e10d0e2f76167eb">insert</a> (const char *key)</td></tr>
 <tr class="memdesc:a3b53fb85c72ef6649e10d0e2f76167eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new key into the map.  <a href="#a3b53fb85c72ef6649e10d0e2f76167eb">More...</a><br /></td></tr>
 <tr class="separator:a3b53fb85c72ef6649e10d0e2f76167eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad763c6adcece5d00e4c3abe2b4be1b0e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#ad763c6adcece5d00e4c3abe2b4be1b0e">insertOrAssign</a> (const char *key, const T &amp;t)</td></tr>
+<tr class="memdesc:ad763c6adcece5d00e4c3abe2b4be1b0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert or ovewrite the value T at the index of key.  <a href="#ad763c6adcece5d00e4c3abe2b4be1b0e">More...</a><br /></td></tr>
+<tr class="separator:ad763c6adcece5d00e4c3abe2b4be1b0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada37faecf34afdbcd7f1782b66279090"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#ada37faecf34afdbcd7f1782b66279090">erase</a> (const char *key)</td></tr>
 <tr class="memdesc:ada37faecf34afdbcd7f1782b66279090"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove the element found in the map matching the key specified.  <a href="#ada37faecf34afdbcd7f1782b66279090">More...</a><br /></td></tr>
 <tr class="separator:ada37faecf34afdbcd7f1782b66279090"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -118,6 +121,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a18dcc3e785cb5563d5688cf9ea21634e"><td class="memItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a18dcc3e785cb5563d5688cf9ea21634e">end</a> () const</td></tr>
 <tr class="memdesc:a18dcc3e785cb5563d5688cf9ea21634e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ending constant iterator.  <a href="#a18dcc3e785cb5563d5688cf9ea21634e">More...</a><br /></td></tr>
 <tr class="separator:a18dcc3e785cb5563d5688cf9ea21634e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a017a7cb8cdd4db900702f13f683d8f40"><td class="memItemLeft" align="right" valign="top">std::optional&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a017a7cb8cdd4db900702f13f683d8f40">search</a> (const char *key) const</td></tr>
+<tr class="memdesc:a017a7cb8cdd4db900702f13f683d8f40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given key exists in the map, and optionally return its value.  <a href="#a017a7cb8cdd4db900702f13f683d8f40">More...</a><br /></td></tr>
+<tr class="separator:a017a7cb8cdd4db900702f13f683d8f40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98fb9129ecba80ca80c0790cc9267df3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a98fb9129ecba80ca80c0790cc9267df3">find</a> (const char *key) const</td></tr>
 <tr class="memdesc:a98fb9129ecba80ca80c0790cc9267df3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given key exists in the map.  <a href="#a98fb9129ecba80ca80c0790cc9267df3">More...</a><br /></td></tr>
 <tr class="separator:a98fb9129ecba80ca80c0790cc9267df3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -588,6 +594,53 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
+<a id="ad763c6adcece5d00e4c3abe2b4be1b0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad763c6adcece5d00e4c3abe2b4be1b0e">&#9670;&nbsp;</a></span>insertOrAssign()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_mapped_char.html">MappedChar</a>&lt; T &gt;::insertOrAssign </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>t</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Insert or ovewrite the value T at the index of key. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>the key to insert or use in the map. </td></tr>
+    <tr><td class="paramname">t</td><td>the value to newely insert or overwrite, pairing to the key. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="acf81bd6f9f12042f9e3b7befd35aa5a9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acf81bd6f9f12042f9e3b7befd35aa5a9">&#9670;&nbsp;</a></span>operator[]()</h2>
 
@@ -623,6 +676,37 @@ template&lt;typename T&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the element paired with the key supplied </dd></dl>
+
+</div>
+</div>
+<a id="a017a7cb8cdd4db900702f13f683d8f40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a017a7cb8cdd4db900702f13f683d8f40">&#9670;&nbsp;</a></span>search()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;T&gt; <a class="el" href="class_mapped_char.html">MappedChar</a>&lt; T &gt;::search </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if the given key exists in the map, and optionally return its value. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the key exists, false otherwise </dd></dl>
 
 </div>
 </div>

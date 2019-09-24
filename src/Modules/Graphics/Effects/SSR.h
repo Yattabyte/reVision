@@ -12,7 +12,7 @@
 
 
 /** A core-rendering technique for deriving extra reflection information from the viewport itself. */
-class SSR : public Graphics_Technique {
+class SSR final : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
@@ -56,14 +56,14 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void prepareForNextFrame(const float & deltaTime) override {
+	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
 		for (auto &[camIndexBuffer, indirectQuad] : m_drawData) {
 			camIndexBuffer.endWriting();
 			indirectQuad.endWriting();
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet())
 			return;
 

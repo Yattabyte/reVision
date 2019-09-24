@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.12.0</span>
+   &#160;<span id="projectnumber">4.13.4</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -76,11 +76,11 @@ $(function() {
   <tr><td class="entry"><a class="el" href="class_u_i___module.html#a8131c41c9544361830740a7f141441f1">applyCursorPos</a>(const double &amp;xPos, const double &amp;yPos)</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_u_i___module.html#a14b2ced8b59b35e34327a1832e76a55e">applyKey</a>(const int &amp;key, const int &amp;scancode, const int &amp;action, const int &amp;mods)</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_u_i___module.html#a465785c8a10972c37e7126137b98d139">clear</a>()</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_u_i___module.html#a7bdad141214f515201ca82d67f336bf0">deinitialize</a>() override</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_u_i___module.html#ae078668732810237b1a3eb69bbb2c019">deinitialize</a>() override final</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_engine___module.html#ab31ce873a9023ad9515caeb2d6376530">Engine_Module</a>()=default</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_u_i___module.html#ac4d406906621b085935a11be8dfbd415">frameTick</a>(const float &amp;deltaTime) override</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_u_i___module.html#a771ae07b47164d6ac8e6b2e3827e4f72">frameTick</a>(const float &amp;deltaTime) override final</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_u_i___module.html#af32e194fe855c2ad121dd17f98f4b931">getFocusMap</a>() const</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_u_i___module.html#a9a872f7bfd2281fca03725e97ffac732">initialize</a>(Engine *engine) override</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_u_i___module.html#a480b7962978b4f8e313df19da1921714">initialize</a>(Engine *engine) override final</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>m_engine</b> (defined in <a class="el" href="class_engine___module.html">Engine_Module</a>)</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_u_i___module.html#a1dbd4da9123bd57be8604b1faa1fa787">popRootElement</a>()</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_u_i___module.html#afbce6c8afa4b6610cd15718bcc63f6bc">pushCallback</a>(const std::function&lt; void()&gt; &amp;callback)</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"></td></tr>
@@ -88,7 +88,7 @@ $(function() {
   <tr><td class="entry"><a class="el" href="class_u_i___module.html#a57f000f0368efea800995a7170ada7de">setFocusMap</a>(const std::shared_ptr&lt; FocusMap &gt; &amp;focusMap)</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_u_i___module.html#af086563bd448489afc8606b1d21309ea">setRootElement</a>(const std::shared_ptr&lt; ImGUI_Element &gt; &amp;rootElement)</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_u_i___module.html#a80eb3437584dbad9e3c8b2431f0de2e2">UI_Module</a>()=default</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_engine___module.html#ab2bc3cf4b727ceff475c0442d2be3426">~Engine_Module</a>()=default</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_engine___module.html#a538d8464650a6112e7605c8e8973cd4c">~Engine_Module</a>()=default</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_u_i___module.html#a5ba37a57586af178fd844bd126b5b642">~UI_Module</a>()=default</td><td class="entry"><a class="el" href="class_u_i___module.html">UI_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->

@@ -9,7 +9,7 @@
 
 
 /** An ECS system responsible for updating a shared pointer with a list of all active cameras in the scene. */
-class CameraPerspective_System : public ecsBaseSystem {
+class CameraPerspective_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -23,7 +23,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
 		for each (const auto & componentParam in components) {
 			Camera_Component * cameraComponent = (Camera_Component*)componentParam[0];
 			m_cameras->push_back(&(cameraComponent->m_camera));

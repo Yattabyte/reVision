@@ -8,7 +8,7 @@
 
 
 /** An ECS system responsible for syncronizing reflector components and sending data to the GPU. */
-class ReflectorSync_System : public ecsBaseSystem {
+class ReflectorSync_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -24,7 +24,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
 		// Resize light buffers to match number of entities this frame
 		m_frameData->lightBuffer.resize(components.size());
 		m_frameData->lightBuffer.beginWriting();

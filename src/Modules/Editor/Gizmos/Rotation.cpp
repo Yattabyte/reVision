@@ -242,7 +242,7 @@ bool Rotation_Gizmo::checkMousePress()
 			m_startingAngle = glm::atan(m_startPoint.y - position.y, m_startPoint.x - position.x);
 		m_deltaAngle = glm::degrees(gridSnappedAngle);
 
-		struct Rotate_Selection_Command : Editor_Command {
+		struct Rotate_Selection_Command final : Editor_Command {
 			Engine* const m_engine = nullptr;
 			LevelEditor_Module* const m_editor = nullptr;
 			glm::quat m_oldRotation, m_newRotation;
@@ -274,13 +274,13 @@ bool Rotation_Gizmo::checkMousePress()
 				gizmoTransform.update();
 				m_editor->setGizmoTransform(gizmoTransform);
 			}
-			virtual void execute() {
+			virtual void execute() override final {
 				rotate(m_newRotation * glm::inverse(m_oldRotation));
 			}
-			virtual void undo() {
+			virtual void undo() override final {
 				rotate(glm::inverse(m_newRotation) * m_oldRotation);
 			}
-			virtual bool join(Editor_Command* const other) {
+			virtual bool join(Editor_Command* const other) override final {
 				if (auto newCommand = dynamic_cast<Rotate_Selection_Command*>(other)) {
 					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 						m_newRotation = newCommand->m_newRotation;

@@ -14,7 +14,7 @@
 
 
 /** A core rendering technique for rendering props from a given viewing perspective. */
-class Prop_Technique : public Geometry_Technique {
+class Prop_Technique final : public Geometry_Technique {
 public:
 	// Public (de)Constructors
 	/** Destructor. */
@@ -47,7 +47,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void prepareForNextFrame(const float& deltaTime) override {
+	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
 		m_frameData->modelBuffer.endWriting();
 		m_frameData->skeletonBuffer.endWriting();
 		for (auto& drawBuffer : m_drawData) {
@@ -59,7 +59,7 @@ public:
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
 		// Exit Early
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderCull->existsYet() && m_shaderGeometry->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
@@ -140,7 +140,7 @@ public:
 		else
 			viewport->m_gfxFBOS->clearDepthStencil();
 	}
-	inline virtual void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) override {
+	inline virtual void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) override final {
 		// Exit Early
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
@@ -202,7 +202,7 @@ public:
 			}
 		}
 	}
-	inline virtual void renderShadows(const float& deltaTime) override {
+	inline virtual void renderShadows(const float& deltaTime) override final {
 		// Exit Early
 		if (m_enabled && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {
 			if (m_count) {

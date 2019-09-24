@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.12.0</span>
+   &#160;<span id="projectnumber">4.13.4</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -68,7 +68,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_open_dialogue-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">OpenDialogue Class Reference</div>  </div>
+<div class="title">OpenDialogue Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -94,12 +94,23 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5f180a209296ad844cdffba402897e1c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_dialogue.html#a5f180a209296ad844cdffba402897e1c">OpenDialogue</a> (<a class="el" href="class_engine.html">Engine</a> *engine, <a class="el" href="class_level_editor___module.html">LevelEditor_Module</a> *editor)</td></tr>
 <tr class="memdesc:a5f180a209296ad844cdffba402897e1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a level opening diaglogue.  <a href="#a5f180a209296ad844cdffba402897e1c">More...</a><br /></td></tr>
 <tr class="separator:a5f180a209296ad844cdffba402897e1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31021f02a90a456d81ceef93fc2de61d"><td class="memItemLeft" align="right" valign="top"><a id="a31021f02a90a456d81ceef93fc2de61d"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>tick</b> (const float &amp;deltaTime) override</td></tr>
-<tr class="separator:a31021f02a90a456d81ceef93fc2de61d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78129dd2dbddef7e81207a6d6a81f928"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_dialogue.html#a78129dd2dbddef7e81207a6d6a81f928">startDialogue</a> ()</td></tr>
-<tr class="memdesc:a78129dd2dbddef7e81207a6d6a81f928"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trigger the dialogue for opening a level.  <a href="#a78129dd2dbddef7e81207a6d6a81f928">More...</a><br /></td></tr>
-<tr class="separator:a78129dd2dbddef7e81207a6d6a81f928"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abea4e0f6a89aa907f952556666bcd68f"><td class="memItemLeft" align="right" valign="top"><a id="abea4e0f6a89aa907f952556666bcd68f"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>tick</b> (const float &amp;deltaTime) override final</td></tr>
+<tr class="separator:abea4e0f6a89aa907f952556666bcd68f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_struct_im_g_u_i___element"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_struct_im_g_u_i___element')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a></td></tr>
+<tr class="memitem:a6bbb6f20a0798e81ad4ec12874da357b inherit pub_methods_struct_im_g_u_i___element"><td class="memItemLeft" align="right" valign="top"><a id="a6bbb6f20a0798e81ad4ec12874da357b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>open</b> ()</td></tr>
+<tr class="separator:a6bbb6f20a0798e81ad4ec12874da357b inherit pub_methods_struct_im_g_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef240a427e2527d273550e28eb18c4bf inherit pub_methods_struct_im_g_u_i___element"><td class="memItemLeft" align="right" valign="top"><a id="aef240a427e2527d273550e28eb18c4bf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> ()</td></tr>
+<tr class="separator:aef240a427e2527d273550e28eb18c4bf inherit pub_methods_struct_im_g_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_attribs_struct_im_g_u_i___element"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_struct_im_g_u_i___element')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a></td></tr>
+<tr class="memitem:a2707479bdd9c04f96c17cd926a1680ec inherit pub_attribs_struct_im_g_u_i___element"><td class="memItemLeft" align="right" valign="top"><a id="a2707479bdd9c04f96c17cd926a1680ec"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_open</b> = true</td></tr>
+<tr class="separator:a2707479bdd9c04f96c17cd926a1680ec inherit pub_attribs_struct_im_g_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A level editor UI element allowing the user to open levels in the maps folder. </p>
@@ -165,26 +176,6 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>tick</b> (con
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a78129dd2dbddef7e81207a6d6a81f928"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a78129dd2dbddef7e81207a6d6a81f928">&#9670;&nbsp;</a></span>startDialogue()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void OpenDialogue::startDialogue </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Trigger the dialogue for opening a level. </p>
 
 </div>
 </div>

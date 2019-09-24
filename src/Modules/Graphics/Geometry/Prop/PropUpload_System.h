@@ -11,7 +11,7 @@
 
 
 /** An ECS system responsible for uploading prop data to the GPU, such as geometrical data and material textures. */
-class PropUpload_System : public ecsBaseSystem {
+class PropUpload_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -76,7 +76,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
 		for each (const auto & componentParam in components) {
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
 			auto & offset = propComponent->m_offset;

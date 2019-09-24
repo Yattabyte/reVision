@@ -13,7 +13,7 @@ class Engine;
 class LevelEditor_Module;
 
 /** A top-level UI element representing the entire level editor's GUI. */
-class Editor_Interface : public ImGUI_Element {
+class Editor_Interface final : public ImGUI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy the level editor UI. */
@@ -25,7 +25,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float & deltaTime) override;
+	virtual void tick(const float & deltaTime) override final;
 
 
 	// Public Attributes

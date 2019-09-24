@@ -15,7 +15,7 @@ class Shader_Geometry;
 
 /** Shared version of a Shader_Geometry asset.
 Responsible for the creation, containing, and sharing of assets. */
-class Shared_Shader_Geometry : public std::shared_ptr<Shader_Geometry> {
+class Shared_Shader_Geometry final : public std::shared_ptr<Shader_Geometry> {
 public:
 	// Public (de)Constructors
 	/** Constructs an empty asset. */
@@ -25,7 +25,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Shader_Geometry(Engine * engine, const std::string & filename, const bool & threaded = true);
+	explicit Shared_Shader_Geometry(Engine* engine, const std::string& filename, const bool& threaded = true);
 };
 
 /** An entire OpenGL vertex/geometry/fragment shader program.
@@ -41,21 +41,21 @@ public:
 	/** Construct the Shader.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Shader_Geometry(Engine * engine, const std::string & filename);
+	Shader_Geometry(Engine* engine, const std::string& filename);
 
-	
+
 	// Public Attributes
 	ShaderObj m_geometryShader = ShaderObj(GL_GEOMETRY_SHADER);
 
 
 protected:
 	// Interface Implementation
-	virtual bool initShaders(const std::string & relativePath) override;
+	virtual bool initShaders(const std::string& relativePath) override final;
 
 
 private:
 	// Private Interface Implementation
-	virtual void initialize() override;
+	virtual void initialize() override final;
 
 
 	// Private Attributes

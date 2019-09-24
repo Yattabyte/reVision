@@ -8,7 +8,7 @@
 
 
 /** An ECS system responsible for deleting all Selected Components from entities. */
-class ClearSelection_System : public ecsBaseSystem {
+class ClearSelection_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -23,7 +23,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 		for each (const auto & componentParam in components) 
 			ecsWorld.removeComponent<Selected_Component>(((Selected_Component*)(componentParam[0]))->m_entity);

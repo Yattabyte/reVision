@@ -11,17 +11,19 @@
 #include "glm/gtx/matrix_decompose.hpp"
 
 
-/** A 3D transformation object. 
+/** A 3D transformation object.
 Takes in position, orientation, and scaling attributes, and calculates a transformation matrix. */
 struct Transform {
 	// (de)Constructors
+	/** Default Destructor. */
+	inline ~Transform() = default;
 	/** Default Constructor. */
-	Transform() = default;
+	inline Transform() = default;
 	/** Constructs a transformation object with any of the supplied parameters.
 	@param position			the desired position
 	@param orientation		the desired orientation
 	@param scale			the desired scale */
-	Transform(const glm::vec3 & position, const glm::quat & orientation, const glm::vec3 & scale) {
+	inline Transform(const glm::vec3& position, const glm::quat& orientation, const glm::vec3& scale) {
 		m_position = position;
 		m_orientation = orientation;
 		m_scale = scale;
@@ -29,7 +31,7 @@ struct Transform {
 	}
 	/** Constructs a transformation object with only orientation.
 	* @param orientation	the desired orientation	*/
-	Transform(const glm::quat &orientation) {
+	inline Transform(const glm::quat& orientation) {
 		m_position = glm::vec3(0.0f);
 		m_orientation = orientation;
 		m_scale = glm::vec3(1.0f);
@@ -40,13 +42,13 @@ struct Transform {
 	// Public Methods
 	/** Recalculates the transformation matrix (and inverse) using this transformations current data. */
 	inline void update() {
-		m_modelMatrix = glm::translate( glm::mat4(1.0f), m_position ) * 
-						glm::mat4_cast( m_orientation ) *
-						glm::scale( glm::mat4(1.0f), m_scale );
+		m_modelMatrix = glm::translate(glm::mat4(1.0f), m_position) *
+			glm::mat4_cast(m_orientation) *
+			glm::scale(glm::mat4(1.0f), m_scale);
 		m_inverseModelMatrix = glm::inverse(m_modelMatrix);
 	}
 	inline Transform inverse() {
-		Transform n(*this); 
+		Transform n(*this);
 		n.m_modelMatrix = m_inverseModelMatrix;
 		n.m_inverseModelMatrix = m_modelMatrix;
 		glm::vec3 skew;
@@ -55,13 +57,13 @@ struct Transform {
 		return n;
 
 	}
-	inline bool operator==(const Transform & other) {
+	inline bool operator==(const Transform& other) {
 		return (m_position == other.m_position && m_orientation == other.m_orientation && m_scale == other.m_scale);
 	}
-	inline bool operator!=(const Transform & other) {
-		return !((*this)==other);
+	inline bool operator!=(const Transform& other) {
+		return !((*this) == other);
 	}
-	inline Transform & operator*=(const Transform& o) {
+	inline Transform& operator*=(const Transform& o) {
 		m_position += o.m_position;
 		m_orientation *= o.m_orientation;
 		m_scale *= o.m_scale;

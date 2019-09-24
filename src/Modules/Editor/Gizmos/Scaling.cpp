@@ -301,7 +301,7 @@ bool Scaling_Gizmo::checkMousePress()
 			gridSnappedScale.z += 0.0001F;
 		m_transform.m_scale = gridSnappedScale;
 
-		struct Scale_Selection_Command : Editor_Command {
+		struct Scale_Selection_Command final : Editor_Command {
 			Engine* const m_engine = nullptr;
 			LevelEditor_Module* const m_editor = nullptr;
 			glm::vec3 m_oldScale, m_newScale;
@@ -330,13 +330,13 @@ bool Scaling_Gizmo::checkMousePress()
 				gizmoTransform.update();
 				m_editor->setGizmoTransform(gizmoTransform);
 			}
-			virtual void execute() {
+			virtual void execute() override final {
 				scale(m_newScale);
 			}
-			virtual void undo() {
+			virtual void undo() override final {
 				scale(m_oldScale);
 			}
-			virtual bool join(Editor_Command* const other) {
+			virtual bool join(Editor_Command* const other) override final {
 				if (auto newCommand = dynamic_cast<Scale_Selection_Command*>(other)) {
 					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 						m_newScale = newCommand->m_newScale;

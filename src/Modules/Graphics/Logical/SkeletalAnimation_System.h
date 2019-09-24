@@ -8,13 +8,13 @@
 
 
 /** A system responsible for animating props with skeleton components. */
-class Skeletal_Animation : public ecsBaseSystem {
+class Skeletal_Animation_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy the skeletal animation system. */
-	inline ~Skeletal_Animation() = default;
+	inline ~Skeletal_Animation_System() = default;
 	/** Construct a skeletal animation system. */
-	inline Skeletal_Animation(Engine * engine) 
+	inline Skeletal_Animation_System(Engine * engine) 
 		: m_engine(engine) {
 		// Declare component types used
 		addComponentType(Skeleton_Component::m_ID, FLAG_REQUIRED);
@@ -22,7 +22,7 @@ public:
 
 
 	// Public Interface Implementation	
-	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		for each (const auto & componentParam in components) {
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[0];
 			
@@ -90,13 +90,13 @@ protected:
 		assert(keyCount > 0);
 		const auto & Result = keyVector[0].value;
 		if (keyCount > 1) { // Ensure we have 2 values to interpolate between
-			const size_t Index = Skeletal_Animation::FindKey(AnimationTime, keyCount - 1, keyVector);
+			const size_t Index = Skeletal_Animation_System::FindKey(AnimationTime, keyCount - 1, keyVector);
 			const size_t NextIndex = (Index + 1) > keyCount ? 0 : (Index + 1);
 			const auto & Key = keyVector[Index];
 			const auto & NextKey = keyVector[NextIndex];
 			const float DeltaTime = (float)(NextKey.time - Key.time);
 			const float Factor = glm::clamp((AnimationTime - (float)Key.time) / DeltaTime, 0.0f, 1.0f);
-			return Skeletal_Animation::valueMix(Key.value, NextKey.value, Factor);
+			return Skeletal_Animation_System::valueMix(Key.value, NextKey.value, Factor);
 		}
 		return Result;
 	};

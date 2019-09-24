@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.12.0</span>
+   &#160;<span id="projectnumber">4.13.4</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -68,7 +68,7 @@ $(function() {
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="class_editor___interface-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Editor_Interface Class Reference</div>  </div>
+<div class="title">Editor_Interface Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -94,42 +94,56 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:adc82e3b0d3365be923d0c7e67f777e6d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_editor___interface.html#adc82e3b0d3365be923d0c7e67f777e6d">Editor_Interface</a> (<a class="el" href="class_engine.html">Engine</a> *engine, <a class="el" href="class_level_editor___module.html">LevelEditor_Module</a> *editor)</td></tr>
 <tr class="memdesc:adc82e3b0d3365be923d0c7e67f777e6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates the level editor UI.  <a href="#adc82e3b0d3365be923d0c7e67f777e6d">More...</a><br /></td></tr>
 <tr class="separator:adc82e3b0d3365be923d0c7e67f777e6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69cdbe3bc4de34bcb5402bbacd503bf2"><td class="memItemLeft" align="right" valign="top"><a id="a69cdbe3bc4de34bcb5402bbacd503bf2"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>tick</b> (const float &amp;deltaTime) override</td></tr>
-<tr class="separator:a69cdbe3bc4de34bcb5402bbacd503bf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8870f3bef4251a1c5f54b5b48bbe811e"><td class="memItemLeft" align="right" valign="top"><a id="a8870f3bef4251a1c5f54b5b48bbe811e"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>tick</b> (const float &amp;deltaTime) override final</td></tr>
+<tr class="separator:a8870f3bef4251a1c5f54b5b48bbe811e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_struct_im_g_u_i___element"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_struct_im_g_u_i___element')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a></td></tr>
+<tr class="memitem:a6bbb6f20a0798e81ad4ec12874da357b inherit pub_methods_struct_im_g_u_i___element"><td class="memItemLeft" align="right" valign="top"><a id="a6bbb6f20a0798e81ad4ec12874da357b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>open</b> ()</td></tr>
+<tr class="separator:a6bbb6f20a0798e81ad4ec12874da357b inherit pub_methods_struct_im_g_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef240a427e2527d273550e28eb18c4bf inherit pub_methods_struct_im_g_u_i___element"><td class="memItemLeft" align="right" valign="top"><a id="aef240a427e2527d273550e28eb18c4bf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> ()</td></tr>
+<tr class="separator:aef240a427e2527d273550e28eb18c4bf inherit pub_methods_struct_im_g_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a5cc3cd4cad90461ac8de770a44ebf850"><td class="memItemLeft" align="right" valign="top"><a id="a5cc3cd4cad90461ac8de770a44ebf850"></a>
-std::shared_ptr&lt; <a class="el" href="class_camera_controller.html">CameraController</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiCamController</b></td></tr>
-<tr class="separator:a5cc3cd4cad90461ac8de770a44ebf850"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89fead9b31f84ff9a68f6c3485c206d8"><td class="memItemLeft" align="right" valign="top"><a id="a89fead9b31f84ff9a68f6c3485c206d8"></a>
-std::shared_ptr&lt; <a class="el" href="class_title_bar.html">TitleBar</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiTitlebar</b></td></tr>
-<tr class="separator:a89fead9b31f84ff9a68f6c3485c206d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd9568931c2f9b289400793800257cc5"><td class="memItemLeft" align="right" valign="top"><a id="abd9568931c2f9b289400793800257cc5"></a>
-std::shared_ptr&lt; <a class="el" href="class_prefabs.html">Prefabs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiPrefabs</b></td></tr>
-<tr class="separator:abd9568931c2f9b289400793800257cc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41c502ad345c33afe56fed35ee916e3f"><td class="memItemLeft" align="right" valign="top"><a id="a41c502ad345c33afe56fed35ee916e3f"></a>
-std::shared_ptr&lt; <a class="el" href="class_inspector.html">Inspector</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiInspector</b></td></tr>
-<tr class="separator:a41c502ad345c33afe56fed35ee916e3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a156fb7c9ef70f91ff53f9c317ac9c06d"><td class="memItemLeft" align="right" valign="top"><a id="a156fb7c9ef70f91ff53f9c317ac9c06d"></a>
-std::shared_ptr&lt; <a class="el" href="class_rotation_indicator.html">RotationIndicator</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiRotIndicator</b></td></tr>
-<tr class="separator:a156fb7c9ef70f91ff53f9c317ac9c06d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41bc030fe0d23c105b16efc9dd755609"><td class="memItemLeft" align="right" valign="top"><a id="a41bc030fe0d23c105b16efc9dd755609"></a>
-std::shared_ptr&lt; <a class="el" href="class_recover_dialogue.html">RecoverDialogue</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiRecoverDialogue</b></td></tr>
-<tr class="separator:a41bc030fe0d23c105b16efc9dd755609"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c92d0b75eb2c323d85947b929e0f457"><td class="memItemLeft" align="right" valign="top"><a id="a7c92d0b75eb2c323d85947b929e0f457"></a>
-std::shared_ptr&lt; <a class="el" href="class_open_dialogue.html">OpenDialogue</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiOpenDialogue</b></td></tr>
-<tr class="separator:a7c92d0b75eb2c323d85947b929e0f457"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0cac676078b8e546a5f79d45a0575c7"><td class="memItemLeft" align="right" valign="top"><a id="ad0cac676078b8e546a5f79d45a0575c7"></a>
-std::shared_ptr&lt; <a class="el" href="class_save_dialogue.html">SaveDialogue</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiSaveDialogue</b></td></tr>
-<tr class="separator:ad0cac676078b8e546a5f79d45a0575c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6e59f213d86333954ee60b6f1d09a83"><td class="memItemLeft" align="right" valign="top"><a id="ad6e59f213d86333954ee60b6f1d09a83"></a>
-std::shared_ptr&lt; <a class="el" href="class_unsaved_changes_dialogue.html">UnsavedChangesDialogue</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiUnsavedDialogue</b></td></tr>
-<tr class="separator:ad6e59f213d86333954ee60b6f1d09a83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6748de4421631ff09313ad00946bcc85"><td class="memItemLeft" align="right" valign="top"><a id="a6748de4421631ff09313ad00946bcc85"></a>
-std::shared_ptr&lt; <a class="el" href="class_settings_dialogue.html">SettingsDialogue</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiSettingsDialogue</b></td></tr>
-<tr class="separator:a6748de4421631ff09313ad00946bcc85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad69de6dc526f269f3798bca2bf631224"><td class="memItemLeft" align="right" valign="top"><a id="ad69de6dc526f269f3798bca2bf631224"></a>
+std::shared_ptr&lt; <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiCamController</b></td></tr>
+<tr class="separator:ad69de6dc526f269f3798bca2bf631224"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ec31c8a84a8223646f45381ee39ee14"><td class="memItemLeft" align="right" valign="top"><a id="a6ec31c8a84a8223646f45381ee39ee14"></a>
+std::shared_ptr&lt; <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiRotIndicator</b></td></tr>
+<tr class="separator:a6ec31c8a84a8223646f45381ee39ee14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ac3ae494b68bb68eb6060aea502f78a"><td class="memItemLeft" align="right" valign="top"><a id="a6ac3ae494b68bb68eb6060aea502f78a"></a>
+std::shared_ptr&lt; <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiTitlebar</b></td></tr>
+<tr class="separator:a6ac3ae494b68bb68eb6060aea502f78a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b1914b8592511c32e3d62bcf397ea34"><td class="memItemLeft" align="right" valign="top"><a id="a6b1914b8592511c32e3d62bcf397ea34"></a>
+std::shared_ptr&lt; <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiPrefabs</b></td></tr>
+<tr class="separator:a6b1914b8592511c32e3d62bcf397ea34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66746f684dfbf0e2425bacc77fa095c9"><td class="memItemLeft" align="right" valign="top"><a id="a66746f684dfbf0e2425bacc77fa095c9"></a>
+std::shared_ptr&lt; <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiSceneInspector</b></td></tr>
+<tr class="separator:a66746f684dfbf0e2425bacc77fa095c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9a0f116952aeb94b0b9530447bcf8df"><td class="memItemLeft" align="right" valign="top"><a id="ae9a0f116952aeb94b0b9530447bcf8df"></a>
+std::shared_ptr&lt; <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiEntityInspector</b></td></tr>
+<tr class="separator:ae9a0f116952aeb94b0b9530447bcf8df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03888689232efbc25e3f78ae21ecc6a7"><td class="memItemLeft" align="right" valign="top"><a id="a03888689232efbc25e3f78ae21ecc6a7"></a>
+std::shared_ptr&lt; <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiSettings</b></td></tr>
+<tr class="separator:a03888689232efbc25e3f78ae21ecc6a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5b2161c02478a1b1d4586e52cbdcfd9"><td class="memItemLeft" align="right" valign="top"><a id="ac5b2161c02478a1b1d4586e52cbdcfd9"></a>
+std::shared_ptr&lt; <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiRecoverDialogue</b></td></tr>
+<tr class="separator:ac5b2161c02478a1b1d4586e52cbdcfd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec1361a8908a642015d52cabed1f8b29"><td class="memItemLeft" align="right" valign="top"><a id="aec1361a8908a642015d52cabed1f8b29"></a>
+std::shared_ptr&lt; <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiOpenDialogue</b></td></tr>
+<tr class="separator:aec1361a8908a642015d52cabed1f8b29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a512a662b6931ce3e56c532cadb72a8ca"><td class="memItemLeft" align="right" valign="top"><a id="a512a662b6931ce3e56c532cadb72a8ca"></a>
+std::shared_ptr&lt; <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiSaveDialogue</b></td></tr>
+<tr class="separator:a512a662b6931ce3e56c532cadb72a8ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace619d8055dfba976081f9b7b9c7fb64"><td class="memItemLeft" align="right" valign="top"><a id="ace619d8055dfba976081f9b7b9c7fb64"></a>
+std::shared_ptr&lt; <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uiUnsavedDialogue</b></td></tr>
+<tr class="separator:ace619d8055dfba976081f9b7b9c7fb64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_attribs_struct_im_g_u_i___element"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_struct_im_g_u_i___element')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="struct_im_g_u_i___element.html">ImGUI_Element</a></td></tr>
+<tr class="memitem:a2707479bdd9c04f96c17cd926a1680ec inherit pub_attribs_struct_im_g_u_i___element"><td class="memItemLeft" align="right" valign="top"><a id="a2707479bdd9c04f96c17cd926a1680ec"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_open</b> = true</td></tr>
+<tr class="separator:a2707479bdd9c04f96c17cd926a1680ec inherit pub_attribs_struct_im_g_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A top-level UI element representing the entire level editor's GUI. </p>

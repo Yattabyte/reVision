@@ -12,7 +12,7 @@ class Engine;
 class LevelEditor_Module;
 
 /** A level editor UI element which prompts the user to save or ignore unsaved changes in a level. */
-class UnsavedChangesDialogue : public ImGUI_Element {
+class UnsavedChangesDialogue final : public ImGUI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy this Unsaved Changes dialogue. */
@@ -24,7 +24,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override;
+	virtual void tick(const float& deltaTime) override final;
 
 
 	// Public Methods

@@ -12,7 +12,7 @@
 
 
 /** An ECS system allowing the user to inpsect selected prop components. */
-class Inspector_Prop_System : public ecsBaseSystem {
+class Inspector_Prop_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -27,7 +27,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		const auto text = std::string(Prop_Component::m_name) + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
@@ -44,7 +44,7 @@ public:
 				nameInput[x] = ((Prop_Component*)components[0][1])->m_modelName[x];
 			nameInput[std::min(256ull, ((Prop_Component*)components[0][1])->m_modelName.length())] = '\0';
 			if (ImGui::InputText("Model Name", nameInput, IM_ARRAYSIZE(nameInput))) {
-				struct Name_Command : Editor_Command {
+				struct Name_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
 					const std::vector<ecsHandle> m_uuids;
 					std::vector<std::string> m_oldData, m_newData;
@@ -71,13 +71,13 @@ public:
 							}
 						}
 					}
-					virtual void execute() {
+					virtual void execute() override final {
 						setData(m_newData);
 					}
-					virtual void undo() {
+					virtual void undo() override final {
 						setData(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) {
+					virtual bool join(Editor_Command* const other) override final {
 						if (auto newCommand = dynamic_cast<Name_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;
@@ -92,7 +92,7 @@ public:
 
 			auto skinInput = (int)((Prop_Component*)components[0][1])->m_skin;
 			if (ImGui::DragInt("Skin", &skinInput)) {
-				struct Skin_Command : Editor_Command {
+				struct Skin_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
 					const std::vector<ecsHandle> m_uuids;
 					std::vector<unsigned int> m_oldData, m_newData;
@@ -113,13 +113,13 @@ public:
 							}
 						}
 					}
-					virtual void execute() {
+					virtual void execute() override final {
 						setData(m_newData);
 					}
-					virtual void undo() {
+					virtual void undo() override final {
 						setData(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) {
+					virtual bool join(Editor_Command* const other) override final {
 						if (auto newCommand = dynamic_cast<Skin_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;

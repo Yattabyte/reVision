@@ -10,7 +10,7 @@
 
 
 /** An ECS system responsible for applying a transformation hierarchy between parent and child entities. */
-class Transform_System : public ecsBaseSystem {
+class Transform_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -24,7 +24,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		// Reset the world transform to be the local transform of all components
 		for each (const auto & componentParam in components) {
 			auto* transformComponent = (Transform_Component*)componentParam[0];

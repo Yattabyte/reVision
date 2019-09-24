@@ -12,7 +12,7 @@ class Engine;
 class LevelEditor_Module;
 
 /** A level editor UI element responsible for allowing the user to inspect selected entity components. */
-class EntityInspector : public ImGUI_Element {
+class EntityInspector final : public ImGUI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy this inspector. */
@@ -24,7 +24,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float & deltaTime) override;
+	virtual void tick(const float & deltaTime) override final;
 
 
 private:

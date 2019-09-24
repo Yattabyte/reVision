@@ -9,7 +9,7 @@
 
 
 /** An ECS system responsible for frustum culling all renderable components with a bounding sphere and a position. */
-class FrustumCull_System : public ecsBaseSystem {
+class FrustumCull_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -25,7 +25,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
 		for each (const auto & componentParam in components) {
 			auto* transformComponent = (Transform_Component*)componentParam[0];
 			auto* bboxComponent = (BoundingBox_Component*)componentParam[1];

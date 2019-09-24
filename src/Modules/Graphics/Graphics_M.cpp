@@ -78,7 +78,7 @@ void Graphics_Module::initialize(Engine * engine)
 	m_systems.makeSystem<CameraPerspective_System>(m_sceneCameras);
 	m_systems.makeSystem<CameraArrayPerspective_System>(m_sceneCameras);
 	m_systems.makeSystem<FrustumCull_System>(m_sceneCameras);
-	m_systems.makeSystem<Skeletal_Animation>(m_engine);
+	m_systems.makeSystem<Skeletal_Animation_System>(m_engine);
 	m_pipeline = std::make_unique<Graphics_Pipeline>(engine, m_clientCamera, m_sceneCameras, m_rhVolume, m_systems);
 
 	// Report invalid ecs systems

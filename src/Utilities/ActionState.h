@@ -8,7 +8,7 @@
 
 
 /** A container class that holds the action state for the engine, such as forward/back/left/right and amount. */
-class ActionState : public std::map<unsigned int, float> {
+class ActionState final : public std::map<unsigned int, float> {
 public:
 	// Public (de)Constructors
 	/** Destroy the action state. */

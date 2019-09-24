@@ -13,7 +13,7 @@ class Engine;
 class LevelEditor_Module;
 
 /** A level editor UI element allowing the user to open levels in the maps folder. */
-class OpenDialogue : public ImGUI_Element {
+class OpenDialogue final : public ImGUI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy this level opening dialogue. */
@@ -25,7 +25,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override;
+	virtual void tick(const float& deltaTime) override final;
 
 
 private:

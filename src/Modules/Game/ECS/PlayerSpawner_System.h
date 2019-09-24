@@ -10,7 +10,7 @@
 
 
 /** A system responsible for spawning players at a specific spawn point. */
-class PlayerSpawn_System : public ecsBaseSystem {
+class PlayerSpawn_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this free-look system. */
@@ -37,7 +37,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override final {
 		auto & graphicsModule = m_engine->getModule_Graphics();
 		for each (const auto & componentParam in components) {
 			PlayerSpawn_Component * spawnComponent = (PlayerSpawn_Component*)componentParam[0];

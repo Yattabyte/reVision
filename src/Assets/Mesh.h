@@ -17,7 +17,7 @@ class Mesh;
 
 /** Shared version of a Mesh asset.
 Responsible for the creation, containing, and sharing of assets. */
-class Shared_Mesh : public std::shared_ptr<Mesh> {
+class Shared_Mesh final : public std::shared_ptr<Mesh> {
 public:
 	// Public (de)Constructors
 	/** Constructs an empty asset. */
@@ -27,13 +27,13 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Mesh(Engine * engine, const std::string & filename, const bool & threaded = true);
+	explicit Shared_Mesh(Engine* engine, const std::string& filename, const bool& threaded = true);
 };
 
 
 /** A data set representing a 3D mesh.
 This asset contains raw unformatted geometric data. */
-class Mesh : public Asset {
+class Mesh final : public Asset {
 public:
 	// Public (de)Constructors
 	/** Destroy the Mesh. */
@@ -41,7 +41,7 @@ public:
 	/** Construct the Mesh.
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
-	Mesh(Engine * engine, const std::string & filename);
+	Mesh(Engine* engine, const std::string& filename);
 
 
 	// Public Attributes
@@ -50,7 +50,7 @@ public:
 
 private:
 	// Private Interface Implementation
-	virtual void initialize() override;
+	virtual void initialize() override final;
 
 
 	// Private Attributes

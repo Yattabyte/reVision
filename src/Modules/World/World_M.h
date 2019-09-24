@@ -13,7 +13,7 @@
 
 
 /** A module responsible for the world/level. */
-class World_Module : public Engine_Module {
+class World_Module final : public Engine_Module {
 public:
 	// Public Enumerations
 	const enum WorldState {
@@ -32,9 +32,9 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void initialize(Engine* engine) override;
-	virtual void deinitialize() override;
-	virtual void frameTick(const float& deltaTime) override;
+	virtual void initialize(Engine* engine) override final;
+	virtual void deinitialize() override final;
+	virtual void frameTick(const float& deltaTime) override final;
 
 
 	// Public Methods

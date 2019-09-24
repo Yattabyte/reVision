@@ -8,7 +8,7 @@
 
 
 /** An ECS system responsible for populating render lists PER active perspective in a given frame, for all prop related entities. */
-class PropVisibility_System : public ecsBaseSystem {
+class PropVisibility_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -24,7 +24,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
 		// Link together the dimensions of view info and viewport vectors
 		m_frameData->viewInfo.resize(m_cameras->size());
 

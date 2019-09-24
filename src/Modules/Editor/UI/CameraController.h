@@ -9,7 +9,7 @@
 class Engine;
 
 /** Allows the user to control the camera whenever not interacting with other UI elements. */
-class CameraController : public ImGUI_Element {
+class CameraController final : public ImGUI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy the camera controller. */
@@ -20,7 +20,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float & deltaTime) override;
+	virtual void tick(const float & deltaTime) override final;
 
 
 private:

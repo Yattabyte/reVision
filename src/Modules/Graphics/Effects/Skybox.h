@@ -12,7 +12,7 @@
 
 
 /** A core-rendering technique for writing the frame time to the screen. */
-class Skybox : public Graphics_Technique {
+class Skybox final : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
@@ -64,7 +64,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void prepareForNextFrame(const float & deltaTime) override {
+	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
 		for (auto &[camIndexBuffer, indirectQuad, quad6IndirectBuffer] : m_drawData) {
 			camIndexBuffer.endWriting();
 			indirectQuad.endWriting();
@@ -72,7 +72,7 @@ public:
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
 

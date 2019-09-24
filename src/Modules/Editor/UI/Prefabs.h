@@ -12,7 +12,7 @@ class Engine;
 class LevelEditor_Module;
 
 /** A level editor UI element allowing the user to spawn previously made prefab object sets. */
-class Prefabs : public ImGUI_Element {
+class Prefabs final : public ImGUI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy this prefab UI element. */
@@ -24,7 +24,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override;
+	virtual void tick(const float& deltaTime) override final;
 
 
 	// Public Methods

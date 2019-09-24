@@ -11,7 +11,7 @@ class Collider;
 
 /** Shared version of a Collider asset.
 Responsible for the creation, containing, and sharing of assets. */
-class Shared_Collider : public std::shared_ptr<Collider> {
+class Shared_Collider final : public std::shared_ptr<Collider> {
 public:
 	// Public (de)Constructors
 	/** Constructs an empty asset. */
@@ -21,13 +21,13 @@ public:
 	@param	filename		the filename to use
 	@param	threaded		create in a separate thread
 	@return					the desired asset */
-	explicit Shared_Collider(Engine * engine, const std::string & filename, const bool & threaded = true);
+	explicit Shared_Collider(Engine* engine, const std::string& filename, const bool& threaded = true);
 };
 
 /** A collision shape asset used in physics.
-Represents a 3D mesh asset tuned for use in physics simulations instead of rendering. 
+Represents a 3D mesh asset tuned for use in physics simulations instead of rendering.
 @note	uses Bullet library. */
-class Collider : public Asset {
+class Collider final : public Asset {
 public:
 	// Public (de)Constructors
 	/** Destroy the Collider. */
@@ -35,17 +35,17 @@ public:
 	/** Construct the Collider.
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
-	Collider(Engine * engine, const std::string & filename);
-	
-	
+	Collider(Engine* engine, const std::string& filename);
+
+
 	// Public Attributes
 	Shared_Mesh m_mesh;
-	btCollisionShape * m_shape = nullptr;
+	btCollisionShape* m_shape = nullptr;
 
 
 protected:
 	// Private Interface Implementation
-	virtual void initialize() override;
+	virtual void initialize() override final;
 
 
 	// Private Attributes

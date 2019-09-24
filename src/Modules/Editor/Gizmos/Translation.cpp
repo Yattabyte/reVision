@@ -294,7 +294,7 @@ bool Translation_Gizmo::checkMousePress()
 		auto gridSnappedPosition = m_gridSnap ? (glm::vec3(glm::ivec3((position + (m_gridSnap / 2.0F)) / m_gridSnap)) * m_gridSnap) : position;
 		m_transform.m_position = gridSnappedPosition;
 
-		struct Move_Selection_Command : Editor_Command {
+		struct Move_Selection_Command final : Editor_Command {
 			Engine* const m_engine = nullptr;
 			LevelEditor_Module* const m_editor = nullptr;
 			glm::vec3 m_oldPosition, m_newPosition;
@@ -321,13 +321,13 @@ bool Translation_Gizmo::checkMousePress()
 				gizmoTransform.update();
 				m_editor->setGizmoTransform(gizmoTransform);
 			}
-			virtual void execute() {
+			virtual void execute() override final {
 				move(m_newPosition);
 			}
-			virtual void undo() {
+			virtual void undo() override final {
 				move(m_oldPosition);
 			}
-			virtual bool join(Editor_Command* const other) {
+			virtual bool join(Editor_Command* const other) override final {
 				if (auto newCommand = dynamic_cast<Move_Selection_Command*>(other)) {
 					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 						m_newPosition = newCommand->m_newPosition;

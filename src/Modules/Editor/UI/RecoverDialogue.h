@@ -11,7 +11,7 @@ class Engine;
 class LevelEditor_Module;
 
 /** A level editor UI element prompting the user to recover an auto-saved file. */
-class RecoverDialogue : public ImGUI_Element {
+class RecoverDialogue final : public ImGUI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy this level dialogue. */
@@ -23,7 +23,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override;
+	virtual void tick(const float& deltaTime) override final;
 
 
 	// Public Methods

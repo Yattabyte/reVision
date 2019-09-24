@@ -11,7 +11,7 @@
 
 
 /** A system responsible for updating physics components that share a common transformation. */
-class TransformSync_Phys_System : public ecsBaseSystem {
+class TransformSync_Phys_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this physics sync system. */
@@ -30,7 +30,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override final {
 		for each (const auto & componentParam in components) {
 			auto * transformComponent = (Transform_Component*)componentParam[0];
 			auto * colliderComponent = (Collider_Component*)componentParam[1];

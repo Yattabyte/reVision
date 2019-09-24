@@ -32,7 +32,7 @@ public:
 
 	// Public (de)Constructors
 	/** Destroy this ui element. */
-	inline ~UI_Element() = default;
+	inline virtual ~UI_Element() = default;
 	/** Construct a ui element. 
 	@param	engine		the engine to use. */
 	UI_Element(Engine * engine);

@@ -15,7 +15,7 @@
 
 
 /** A core-rendering technique for approximating indirect diffuse lighting (irradiant light, global illumination, etc) */
-class Radiance_Hints : public Graphics_Technique {
+class Radiance_Hints final : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
@@ -41,7 +41,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void prepareForNextFrame(const float & deltaTime) override {
+	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
 		for (auto &[camBufferRebounce, camBufferRecon, indirectQuad, indirectQuadRecon] : m_drawData) {
 			camBufferRebounce.endWriting();
 			camBufferRecon.endWriting();
@@ -50,7 +50,7 @@ public:
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderRecon->existsYet() || !m_shaderRebounce->existsYet())
 			return;
 

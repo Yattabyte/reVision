@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.12.0</span>
+   &#160;<span id="projectnumber">4.13.4</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -65,6 +65,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="struct_im_g_u_i___element-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">ImGUI_Element Struct Reference</div>  </div>
@@ -83,23 +84,36 @@ Inheritance diagram for ImGUI_Element:</div>
   <map id="ImGUI_5FElement_map" name="ImGUI_5FElement_map">
 <area href="class_camera_controller.html" title="Allows the user to control the camera whenever not interacting with other UI elements." alt="CameraController" shape="rect" coords="171,56,332,80"/>
 <area href="class_editor___interface.html" title="A top-level UI element representing the entire level editor&#39;s GUI." alt="Editor_Interface" shape="rect" coords="171,112,332,136"/>
-<area href="class_inspector.html" title="A level editor UI element responsible for allowing the user to inspect selected entity components." alt="Inspector" shape="rect" coords="171,168,332,192"/>
+<area href="class_entity_inspector.html" title="A level editor UI element responsible for allowing the user to inspect selected entity components." alt="EntityInspector" shape="rect" coords="171,168,332,192"/>
 <area href="class_open_dialogue.html" title="A level editor UI element allowing the user to open levels in the maps folder." alt="OpenDialogue" shape="rect" coords="171,224,332,248"/>
 <area href="class_prefabs.html" title="A level editor UI element allowing the user to spawn previously made prefab object sets." alt="Prefabs" shape="rect" coords="171,280,332,304"/>
 <area href="class_recover_dialogue.html" title="A level editor UI element prompting the user to recover an auto-saved file." alt="RecoverDialogue" shape="rect" coords="171,336,332,360"/>
 <area href="class_rotation_indicator.html" title="A level editor UI element displaying which direction the camera is rotated towards." alt="RotationIndicator" shape="rect" coords="171,392,332,416"/>
 <area href="class_save_dialogue.html" title="A level editor UI element allowing the user to save levels in the maps folder." alt="SaveDialogue" shape="rect" coords="171,448,332,472"/>
-<area href="class_settings_dialogue.html" title="A level editor dialogue allowing the user to modify level editor settings." alt="SettingsDialogue" shape="rect" coords="171,504,332,528"/>
-<area href="class_title_bar.html" title="A level editor UI element acting as a titlebar with File, Edit, menus." alt="TitleBar" shape="rect" coords="171,560,332,584"/>
-<area href="class_unsaved_changes_dialogue.html" title="A level editor UI element which prompts the user to save or ignore unsaved changes in a level." alt="UnsavedChangesDialogue" shape="rect" coords="171,616,332,640"/>
+<area href="class_scene_inspector.html" title="A level editor UI element responsible for allowing the user to see all the elements of the active sce..." alt="SceneInspector" shape="rect" coords="171,504,332,528"/>
+<area href="class_settings.html" title="A level editor dialogue allowing the user to modify level editor settings." alt="Settings" shape="rect" coords="171,560,332,584"/>
+<area href="class_title_bar.html" title="A level editor UI element acting as a titlebar with File, Edit, menus." alt="TitleBar" shape="rect" coords="171,616,332,640"/>
+<area href="class_unsaved_changes_dialogue.html" title="A level editor UI element which prompts the user to save or ignore unsaved changes in a level." alt="UnsavedChangesDialogue" shape="rect" coords="171,672,332,696"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a6bbb6f20a0798e81ad4ec12874da357b"><td class="memItemLeft" align="right" valign="top"><a id="a6bbb6f20a0798e81ad4ec12874da357b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>open</b> ()</td></tr>
+<tr class="separator:a6bbb6f20a0798e81ad4ec12874da357b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef240a427e2527d273550e28eb18c4bf"><td class="memItemLeft" align="right" valign="top"><a id="aef240a427e2527d273550e28eb18c4bf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> ()</td></tr>
+<tr class="separator:aef240a427e2527d273550e28eb18c4bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeabe2210c0309c258ec37a33ff502255"><td class="memItemLeft" align="right" valign="top"><a id="aeabe2210c0309c258ec37a33ff502255"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>tick</b> (const float &amp;deltaTime)</td></tr>
 <tr class="separator:aeabe2210c0309c258ec37a33ff502255"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a2707479bdd9c04f96c17cd926a1680ec"><td class="memItemLeft" align="right" valign="top"><a id="a2707479bdd9c04f96c17cd926a1680ec"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_open</b> = true</td></tr>
+<tr class="separator:a2707479bdd9c04f96c17cd926a1680ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>UI element representing an ImGUI element. </p>

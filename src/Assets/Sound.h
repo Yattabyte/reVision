@@ -11,7 +11,7 @@ class SoundObj;
 
 /** Shared version of a Sound asset.
 Responsible for the creation, containing, and sharing of assets. */
-class Shared_Sound : public std::shared_ptr<Sound> {
+class Shared_Sound final : public std::shared_ptr<Sound> {
 public:
 	// Public (de)Constructors
 	/** Constructs an empty asset. */
@@ -21,7 +21,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Sound(Engine * engine, const std::string & filename, const bool & threaded = true);
+	explicit Shared_Sound(Engine* engine, const std::string& filename, const bool& threaded = true);
 };
 
 /** A sound byte object.
@@ -35,16 +35,16 @@ public:
 	/** Construct the Sound.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Sound(Engine * engine, const std::string & filename);
+	Sound(Engine* engine, const std::string& filename);
 
 
 	// Public Attributes
-	SoundObj * m_soundObj = nullptr;
+	SoundObj* m_soundObj = nullptr;
 
 
 protected:
 	// Private Interface Implementation
-	virtual void initialize() override;
+	virtual void initialize() override final;
 
 
 	// Private Attributes

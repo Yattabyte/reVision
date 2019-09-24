@@ -11,7 +11,7 @@
 
 
 /** A post-processing technique for writing the frame time to the screen. */
-class Frametime_Counter : public Overlay {
+class Frametime_Counter final : public Overlay {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
@@ -38,7 +38,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyEffect(const float & deltaTime) override final {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_numberTexture->existsYet())
 			return;
 		glEnable(GL_BLEND);

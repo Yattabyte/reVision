@@ -191,6 +191,8 @@ void ecsWorld::parentEntity(const ecsHandle& parentHandle, const ecsHandle& chil
 	Transform newParentTransform, oldParentTransform;
 
 	// Check for parent transformations
+	if (!childEntity)
+		return;
 	if (parentEntity)
 		if (const auto & transformComponent = getComponent<Transform_Component>(parentHandle))
 			newParentTransform = transformComponent->m_worldTransform;
@@ -217,7 +219,7 @@ void ecsWorld::parentEntity(const ecsHandle& parentHandle, const ecsHandle& chil
 
 	// Make this child a child of the new parent, change its index
 	childEntity->m_parent = parentHandle;
-	childEntity->m_entityIndex = newRoot->size();
+	childEntity->m_entityIndex = (int)newRoot->size();
 	newRoot->insert_or_assign(childHandle, childEntity);
 	if (const auto & transform = getComponent<Transform_Component>(childHandle)) {
 		// Transform the child entity, moving it into its new parent's space
@@ -468,8 +470,8 @@ std::vector<std::vector<ecsBaseComponent*>> ecsWorld::getRelevantComponents(cons
 
 size_t ecsWorld::findLeastCommonComponent(const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes)
 {
-	auto minSize = (size_t)(-1ull);
-	auto minIndex = (size_t)(-1ull);
+	auto minSize = std::numeric_limits<size_t>::max();
+	auto minIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < componentTypes.size(); ++i) {
 		const auto& [componentID, componentFlag] = componentTypes[i];
 		if ((componentFlag & ecsBaseSystem::FLAG_OPTIONAL) != 0)

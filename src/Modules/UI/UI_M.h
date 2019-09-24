@@ -15,7 +15,7 @@
 struct ImGUI_Element;
 
 /** A module responsible for the overall user interface. */
-class UI_Module : public Engine_Module {
+class UI_Module final : public Engine_Module {
 public:
 	// Public (de)Constructors
 	/** Destroy the UI module. */
@@ -25,9 +25,9 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void initialize(Engine * engine) override;
-	virtual void deinitialize() override;
-	virtual void frameTick(const float & deltaTime) override;
+	virtual void initialize(Engine * engine) override final;
+	virtual void deinitialize() override final;
+	virtual void frameTick(const float & deltaTime) override final;
 
 
 	// Public Methods
@@ -93,10 +93,12 @@ private:
 
 /** UI element representing an ImGUI element. */
 struct ImGUI_Element {
+	inline virtual ~ImGUI_Element() = default;
+	inline ImGUI_Element() = default;
 	bool m_open = true;
-	void open() { m_open = true; }
-	void close() { m_open = false; }
-	virtual void tick(const float& deltaTime) {};
+	inline void open() { m_open = true; }
+	inline void close() { m_open = false; }
+	inline virtual void tick(const float& deltaTime) {};
 };
 
 #endif // UI_MODULE_H

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.12.0</span>
+   &#160;<span id="projectnumber">4.13.4</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -84,6 +84,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9b0d0a03d6a46f47ac6e0e4fa6291ea6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_editor___command.html#a9b0d0a03d6a46f47ac6e0e4fa6291ea6">undo</a> ()=0</td></tr>
 <tr class="memdesc:a9b0d0a03d6a46f47ac6e0e4fa6291ea6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform the reverse, undo the command.  <a href="#a9b0d0a03d6a46f47ac6e0e4fa6291ea6">More...</a><br /></td></tr>
 <tr class="separator:a9b0d0a03d6a46f47ac6e0e4fa6291ea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ac09ff83f0448df7aa106565623be58"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_editor___command.html#a3ac09ff83f0448df7aa106565623be58">join</a> (<a class="el" href="struct_editor___command.html">Editor_Command</a> *const newerCommand)</td></tr>
+<tr class="memdesc:a3ac09ff83f0448df7aa106565623be58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Join into this command the data found in another newer command.  <a href="#a3ac09ff83f0448df7aa106565623be58">More...</a><br /></td></tr>
+<tr class="separator:a3ac09ff83f0448df7aa106565623be58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A command used by the level editor. </p>
@@ -113,6 +116,41 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Perform the command. </p>
+
+</div>
+</div>
+<a id="a3ac09ff83f0448df7aa106565623be58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ac09ff83f0448df7aa106565623be58">&#9670;&nbsp;</a></span>join()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool Editor_Command::join </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_editor___command.html">Editor_Command</a> *const&#160;</td>
+          <td class="paramname"><em>newerCommand</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Join into this command the data found in another newer command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newerCommand</td><td>the newer of the two commands, to take data from. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if this command supports &amp; successfully joined with a newer command, false otherwise. </dd></dl>
 
 </div>
 </div>

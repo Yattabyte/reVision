@@ -7,11 +7,11 @@
 #include <vector>
 
 
-/** A data buffer that resides locally as well as on the GPU. 
+/** A data buffer that resides locally as well as on the GPU.
 Forms an expandable array of elements type T.
 @param	<T>		the type of element to construct an array of. */
 template <typename T>
-class GL_ArrayBuffer : public Buffer_Interface {
+class GL_ArrayBuffer final : public Buffer_Interface {
 public:
 	// Public (de)Constructors
 	/** Destroy this buffer. */
@@ -27,7 +27,7 @@ public:
 	}
 	/** Construct a buffer.
 	@param	capacity		the starting capacity (1 or more). */
-	inline GL_ArrayBuffer(const size_t & capacity = 1) : m_capacity(std::max<size_t>(1ull, capacity)) {
+	inline GL_ArrayBuffer(const size_t& capacity = 1) : m_capacity(std::max<size_t>(1ull, capacity)) {
 		// WRITE ONLY, DON'T READ FROM IT (on our side, not GPU side)
 		constexpr GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 		const auto bufferSize = sizeof(T) * m_capacity;
@@ -39,7 +39,7 @@ public:
 	}
 	/** Assignment constructor, for moving 1 buffer to another.
 	@param	o				the other buffer to move to here (invalidating it). */
-	inline GL_ArrayBuffer(GL_ArrayBuffer && o) {
+	inline GL_ArrayBuffer(GL_ArrayBuffer&& o) {
 		m_bufferID[0] = (std::move(o.m_bufferID[0]));
 		m_bufferID[1] = (std::move(o.m_bufferID[1]));
 		m_bufferID[2] = (std::move(o.m_bufferID[2]));
@@ -56,9 +56,9 @@ public:
 		o.m_bufferPtr[2] = nullptr;
 		o.m_capacity = 0;
 	}
-	/** Assignment operator, for moving 1 buffer to another. 
+	/** Assignment operator, for moving 1 buffer to another.
 	@param	o				the other buffer to move to here (invalidating it). */
-	inline GL_ArrayBuffer & operator=(GL_ArrayBuffer && o) noexcept {
+	inline GL_ArrayBuffer& operator=(GL_ArrayBuffer&& o) noexcept {
 		m_bufferID[0] = (std::move(o.m_bufferID[0]));
 		m_bufferID[1] = (std::move(o.m_bufferID[1]));
 		m_bufferID[2] = (std::move(o.m_bufferID[2]));
@@ -79,16 +79,16 @@ public:
 
 
 	// Public Inteface Implementations
-	inline virtual void bindBuffer(const GLenum & target) const override {
+	inline virtual void bindBuffer(const GLenum& target) const override final {
 		glBindBuffer(target, m_bufferID[m_writeIndex]);
 	}
-	inline virtual void bindBufferBase(const GLenum & target, const GLuint & index) const override {
+	inline virtual void bindBufferBase(const GLenum& target, const GLuint& index) const override final {
 		glBindBufferBase(target, index, m_bufferID[m_writeIndex]);
 	}
 
 
 	// Public Methods
-	inline void resize(const size_t & size) {
+	inline void resize(const size_t& size) {
 		// See if we must expand this container
 		if (size > m_capacity) {
 			const auto oldSize = sizeof(T) * m_capacity;
@@ -132,7 +132,7 @@ public:
 	/** Retrieve a reference to the element contained at the index specified.
 	@param	index			index to the element desired.
 	@return					reference to the element desired. */
-	inline T& operator [] (const size_t & index) {
+	inline T& operator [] (const size_t& index) {
 		return m_bufferPtr[m_writeIndex][index];
 	}
 	/** Retrieve the length of this array (the number of elements in it).
@@ -165,7 +165,7 @@ private:
 	// Private Attributes
 	int m_writeIndex = 0;
 	GLuint m_bufferID[3] = { 0,0,0 };
-	T  * m_bufferPtr[3] = { nullptr, nullptr, nullptr };
+	T* m_bufferPtr[3] = { nullptr, nullptr, nullptr };
 	GLsync m_fence[3] = { nullptr, nullptr, nullptr };
 	size_t m_capacity = 0;
 };

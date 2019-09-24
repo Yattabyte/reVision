@@ -22,9 +22,9 @@ static bool RayTriangleIntersection(
 	const glm::vec3& v0,
 	const glm::vec3& v1,
 	const glm::vec3& v2,
+	glm::vec2& baryPos,
 	float& intersectionDistance
 ) {
-	glm::vec2 baryPos;
 	return glm::intersectRayTriangle(ray_origin, ray_direction, v0, v1, v2, baryPos, intersectionDistance);
 }
 

@@ -18,8 +18,8 @@ private:
 		// Public Members
 		T_key m_key;
 		T_elmt m_value;
-		Element() : m_key(0), m_value(0) {}
-		Element(const T_key & key, const T_elmt & value) : m_key(key), m_value(value) {}
+		inline Element() : m_key(0), m_value(0) {}
+		inline Element(const T_key & key, const T_elmt & value) : m_key(key), m_value(value) {}
 	};
 	std::vector<Element> m_list;
 	T_compare m_comparator;

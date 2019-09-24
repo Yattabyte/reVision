@@ -10,7 +10,7 @@ class Engine;
 class LevelEditor_Module;
 
 /** A level editor dialogue allowing the user to modify level editor settings. */
-class Settings : public ImGUI_Element {
+class Settings final : public ImGUI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy this settings dialogue. */
@@ -22,7 +22,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override;
+	virtual void tick(const float& deltaTime) override final;
 
 
 private:

@@ -145,7 +145,7 @@ protected:
 			m_children[1]->setPosition(glm::vec2(getScale().x - 12.5f, -getScale().y + 12.5f));
 
 			// Panel
-			m_children[2]->setMaxScale(glm::vec2(12.5f, m_scale.y - 25.0f - 12.5));
+			m_children[2]->setMaxScale(glm::vec2(12.5f, m_scale.y - 25.0f - 12.5f));
 			m_children[2]->setPosition(glm::vec2(getScale().x - 12.5f, m_linear * (m_scale.y - 25.0f - 12.5f)));
 		}
 	}

@@ -13,7 +13,7 @@
 class Engine;
 
 /** A level editor UI element displaying which direction the camera is rotated towards. */
-class RotationIndicator : public ImGUI_Element {
+class RotationIndicator final : public ImGUI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy the rotation indicator. */
@@ -25,7 +25,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override;
+	virtual void tick(const float& deltaTime) override final;
 
 
 private:

@@ -132,7 +132,7 @@ struct ecsComponent : public ecsBaseComponent {
 
 protected:
 	// Protected Interface Implementation
-	inline virtual void recover_data(const char* data) override {
+	inline virtual void recover_data(const char* data) override final {
 		// Previously recovered type name, created this class
 		// Next recover data
 		static_cast<C*>(this)->deserialize(data);

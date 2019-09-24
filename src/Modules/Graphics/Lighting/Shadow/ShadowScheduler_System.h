@@ -9,7 +9,7 @@
 
 
 /** An ECS system responsible for scheduling when light & shadow related entities should be updated. */
-class ShadowScheduler_System : public ecsBaseSystem {
+class ShadowScheduler_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
@@ -34,7 +34,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
 		// Maintain list of shadows, update with oldest within range
 		// Technique will clear list when ready
 		auto & shadows = m_frameData->shadowsToUpdate;
