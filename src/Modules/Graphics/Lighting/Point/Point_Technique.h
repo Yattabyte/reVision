@@ -108,14 +108,14 @@ private:
 		glStencilMask(0xFF);
 
 		// Draw only into depth-stencil buffer
-		m_shader_Stencil->bind();																		// Shader (point)
-		viewport->m_gfxFBOS->bindForWriting("LIGHTING");												// Ensure writing to lighting FBO
-		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);												// Read from Geometry FBO
-		glBindTextureUnit(4, m_frameData->shadowData->shadowFBO.m_texDepth);									// Shadow map(linear depth texture)
+		m_shader_Stencil->bind();															// Shader (point)
+		viewport->m_gfxFBOS->bindForWriting("LIGHTING");									// Ensure writing to lighting FBO
+		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);									// Read from Geometry FBO
+		glBindTextureUnit(4, m_frameData->shadowData->shadowFBO.m_texDepth);				// Shadow map(linear depth texture)
 		m_drawData[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		m_drawData[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible light indices
+		m_drawData[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);		// SSBO visible light indices
 		m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-		m_drawData[m_drawIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
+		m_drawData[m_drawIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);			// Draw call buffer
 		glBindVertexArray(m_shapeSphere->m_vaoID);
 		glDepthMask(GL_FALSE);
 		glEnable(GL_DEPTH_TEST);

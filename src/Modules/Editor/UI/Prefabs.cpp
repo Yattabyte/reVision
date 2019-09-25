@@ -193,6 +193,8 @@ void Prefabs::populatePrefabs(const std::string & directory)
 	}
 	if (directory == "Default") {
 		m_prefabs.push_back({"Hydrant", "Hydrant", Prefab::def});
+		m_prefabs.push_back({"Chest", "Chest", Prefab::def});
+		m_prefabs.push_back({"Gun", "Gun", Prefab::def});
 	}
 	else {
 		for (auto& entry : std::filesystem::directory_iterator(path)) {
@@ -233,6 +235,26 @@ void Prefabs::openPrefabEntry()
 			a.m_localTransform.m_scale = glm::vec3(15.0f);
 			a.m_localTransform.update();
 			c.m_modelName = "FireHydrant\\FireHydrantMesh.obj";
+			ecsBaseComponent* entityComponents[] = { &a, &b, &c };
+			m_engine->getModule_ECS().getWorld().makeEntity(entityComponents, 3ull, selectedPrefab.name);
+		}
+		if (selectedPrefab.name == "Chest") {
+			Transform_Component a;
+			BoundingBox_Component b;
+			Prop_Component c;
+			a.m_localTransform.m_scale = glm::vec3(20.0F);
+			a.m_localTransform.update();
+			c.m_modelName = "Chest\\chest.obj";
+			ecsBaseComponent* entityComponents[] = { &a, &b, &c };
+			m_engine->getModule_ECS().getWorld().makeEntity(entityComponents, 3ull, selectedPrefab.name);
+		}
+		if (selectedPrefab.name == "Gun") {
+			Transform_Component a;
+			BoundingBox_Component b;
+			Prop_Component c;
+			a.m_localTransform.m_scale = glm::vec3(25.0F);
+			a.m_localTransform.update();
+			c.m_modelName = "Cerberus\\Cerberus_LP.obj";
 			ecsBaseComponent* entityComponents[] = { &a, &b, &c };
 			m_engine->getModule_ECS().getWorld().makeEntity(entityComponents, 3ull, selectedPrefab.name);
 		}

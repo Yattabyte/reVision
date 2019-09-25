@@ -5,7 +5,7 @@
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
 #include "Modules/Editor/Gizmos/Mouse.h"
 #include "Modules/Editor/Systems/ClearSelection_System.h"
-#include "Modules/Editor/Systems/Wireframe_System.h"
+#include "Modules/Editor/Systems/Outline_System.h"
 #include "Modules/ECS/component_types.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Engine.h"
@@ -27,7 +27,7 @@ void LevelEditor_Module::initialize(Engine* engine)
 	m_mouseGizmo = std::make_shared<Mouse_Gizmo>(engine, this);
 
 	// Systems
-	m_systemWireframe = std::make_shared<Wireframe_System>(engine, this);
+	m_systemOutline = std::make_shared<Outline_System>(engine, this);
 	m_systemSelClearer = std::make_shared<ClearSelection_System>(engine);
 
 	// Preferences
@@ -102,7 +102,7 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 		glDisable(GL_STENCIL_TEST);
 
 		// Tick all tools this frame
-		m_engine->getModule_ECS().updateSystem(m_systemWireframe, deltaTime);
+		m_engine->getModule_ECS().updateSystem(m_systemOutline, deltaTime);
 		m_mouseGizmo->frameTick(deltaTime);
 
 		glDepthMask(false);

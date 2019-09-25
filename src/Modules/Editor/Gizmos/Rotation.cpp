@@ -35,6 +35,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 		m_indirectIndicator = IndirectDraw((GLuint)m_model->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 	});
 
+	// Preferences
 	auto& preferences = m_engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);

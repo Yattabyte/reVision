@@ -104,10 +104,11 @@ bool ecsWorld::addComponent(const ecsHandle& entityHandle, const ComponentID& co
 				if (ID == componentID)
 					return false;
 
+			const auto componentHandle = generateUUID();
 			const auto& createfn = std::get<0>(ecsBaseComponent::_componentRegistry[componentID]);
 			std::pair<ComponentID, int> newPair;
 			newPair.first = componentID;
-			newPair.second = createfn(m_components[componentID], entityHandle, component);
+			newPair.second = createfn(m_components[componentID], componentHandle, entityHandle, component);
 			entity->m_components.push_back(newPair);
 			return true;
 		}

@@ -27,13 +27,12 @@ Shared_Asset AssetManager::shareAsset(const char * assetType, const std::string 
 	asset_write_guard.release();
 
 	// Initialize now or later, depending if we are threading this order or not
-	const auto & initFunction = std::bind(&Asset::initialize, asset);
 	if (threaded) {
 		std::unique_lock<std::shared_mutex> worker_write_guard(m_Mutex_Workorders);
-		m_Workorders.push_back(std::move(initFunction));
+		m_Workorders.push_back(std::move(std::bind(&Asset::initialize, asset)));
 	}
 	else
-		initFunction();
+		asset->initialize();
 	return asset;
 }
 

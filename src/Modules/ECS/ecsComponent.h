@@ -18,7 +18,7 @@ class ecsWorld;
 using ComponentID = int;
 using ComponentDataSpace = std::vector<uint8_t>;
 using ComponentMap = std::map<ComponentID, ComponentDataSpace>;
-using ComponentCreateFunction = std::function<ComponentID(ComponentDataSpace& memory, const ecsHandle& entityHandle, const ecsBaseComponent* comp)>;
+using ComponentCreateFunction = std::function<ComponentID(ComponentDataSpace& memory, const ecsHandle& componentHandle, const ecsHandle &entityHandle, const ecsBaseComponent* comp)>;
 using ComponentNewFunction = std::function<std::shared_ptr<ecsBaseComponent>()>;
 using ComponentFreeFunction = std::function<void(ecsBaseComponent* comp)>;
 
@@ -49,7 +49,9 @@ struct ecsBaseComponent {
 	size_t m_size;
 	/** Specific class name. */
 	const char* m_name;
-	/** Parent entity's UUID. */
+	/** This component's UUID. */
+	ecsHandle m_handle;
+	/** This component's parent-entity's UUID. */
 	ecsHandle m_entity;
 
 
@@ -154,10 +156,11 @@ protected:
 @param	comp			temporary pre-constructed component to copy data from, or nullptr. 
 @return					the index into the memory array where this component was created at. */
 template <typename C>
-inline constexpr static const int createFn(ComponentDataSpace& memory, const ecsHandle& entityHandle, const ecsBaseComponent* comp = nullptr) {
+inline constexpr static const int createFn(ComponentDataSpace& memory, const ecsHandle& componentHandle, const ecsHandle& entityHandle, const ecsBaseComponent* comp = nullptr) {
 	const size_t index = memory.size();
 	memory.resize(index + sizeof(C));
 	C* component = comp ? new(&memory[index])C(*(C*)comp) : new(&memory[index])C();
+	component->m_handle = componentHandle;
 	component->m_entity = entityHandle;
 	return (int)index;
 }

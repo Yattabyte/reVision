@@ -143,7 +143,7 @@ private:
 	std::string m_currentLevelName = "My Map.bmap";
 	std::shared_ptr<Editor_Interface> m_editorInterface;
 	std::shared_ptr<Mouse_Gizmo> m_mouseGizmo;
-	std::shared_ptr<ecsBaseSystem> m_systemSelClearer, m_systemWireframe;
+	std::shared_ptr<ecsBaseSystem> m_systemSelClearer, m_systemOutline;
 	GLuint m_fboID = 0, m_texID = 0, m_depthID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::vector<char> m_copiedData;
