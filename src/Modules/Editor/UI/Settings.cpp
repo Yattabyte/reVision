@@ -54,6 +54,20 @@ void Settings::tickMainDialogue()
 					ImGui::EndTooltip();
 				}
 
+				static float outlineScale = 0.05f;
+				m_engine->getPreferenceState().getOrSetValue(PreferenceState::E_OUTLINE_SCALE, outlineScale);
+				outlineScale *= 1000.0f;
+				if (ImGui::DragFloat("Outline Size", &outlineScale, 1, 0, 100, "%.0f%%")) {
+					outlineScale = std::clamp(outlineScale, 0.0f, 100.0f);
+					m_engine->getPreferenceState().setValue(PreferenceState::E_OUTLINE_SCALE, outlineScale / 1000.0f);
+				}
+				if (ImGui::IsItemHovered()) {
+					ImGui::BeginTooltip();
+					const auto description = "Set the outline size of selected objects to " + std::to_string(outlineScale) + ".";
+					ImGui::Text(description.c_str());
+					ImGui::EndTooltip();
+				}
+
 				static float gizmoScale = 0.02f;
 				m_engine->getPreferenceState().getOrSetValue(PreferenceState::E_GIZMO_SCALE, gizmoScale);
 				gizmoScale *= 1000.0f;

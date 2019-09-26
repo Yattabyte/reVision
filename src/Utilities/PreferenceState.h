@@ -65,6 +65,7 @@ public:
 		// Editor Options
 		E_AUTOSAVE_INTERVAL,
 		E_UNDO_STACKSIZE,
+		E_OUTLINE_SCALE,
 		E_GIZMO_SCALE,
 		E_GRID_SNAP,
 		E_ANGLE_SNAP,
@@ -110,6 +111,7 @@ public:
 			// Editor Options
 			"E_AUTOSAVE_INTERVAL",
 			"E_UNDO_STACKSIZE",
+			"E_OUTLINE_SCALE",
 			"E_GIZMO_SCALE",
 			"E_GRID_SNAP",
 			"E_ANGLE_SNAP",

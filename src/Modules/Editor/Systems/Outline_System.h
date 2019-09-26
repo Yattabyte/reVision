@@ -35,16 +35,13 @@ public:
 		addComponentType(Selected_Component::m_ID);
 		addComponentType(Transform_Component::m_ID);
 		addComponentType(Prop_Component::m_ID, FLAG_OPTIONAL);
-
-		m_indirectGeometry = StaticBuffer(sizeof(glm::ivec4) * 3, 0, GL_DYNAMIC_STORAGE_BIT);
-
-		// Assets
-		m_shader = Shared_Shader(engine, "Editor//outline");
+		addComponentType(LightPoint_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(LightSpot_Component::m_ID, FLAG_OPTIONAL);
 		
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::E_GIZMO_SCALE, m_renderScale);
-		preferences.addCallback(PreferenceState::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) {
+		preferences.getOrSetValue(PreferenceState::E_OUTLINE_SCALE, m_renderScale);
+		preferences.addCallback(PreferenceState::E_OUTLINE_SCALE, m_aliveIndicator, [&](const float& f) {
 			m_renderScale = f;
 		});
 
@@ -61,6 +58,11 @@ public:
 		glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
 		glVertexArrayAttribFormat(m_vaoID, 1, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3));
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3) * 2);
+
+		// Assets
+		m_shader = Shared_Shader(engine, "Editor//outline");
+		m_sphere = Shared_Mesh(engine, "//Models//sphere.obj");
+		m_cone = Shared_Mesh(engine, "//Models//cone.obj");
 	}
 
 
@@ -77,14 +79,31 @@ public:
 				//auto* selectedComponent = (Selected_Component*)componentParam[0];
 				auto* trans = (Transform_Component*)componentParam[1];
 				auto* prop = (Prop_Component*)componentParam[2];
+				auto* point = (LightPoint_Component*)componentParam[3];
+				auto* spot = (LightSpot_Component*)componentParam[4];
 		
-				if (prop && prop->m_model && prop->m_model->existsYet()) {
-					if (m_geometryParams.find(prop->m_handle) == m_geometryParams.end()) {
+				const auto tryRegisterComponentModel = [&](const ecsHandle& componentHandle, const Shared_Mesh& mesh) {
+					if (m_geometryParams.find(componentHandle) == m_geometryParams.end()) {
 						// Upload data once
-						tryInsertModel(prop->m_model);
-						m_geometryParams.insert_or_assign(prop->m_handle, m_modelMap[prop->m_model]);
+						tryInsertModel(mesh);
+						m_geometryParams.insert_or_assign(componentHandle, m_meshMap[mesh]);
 					}
+				};
+				if (prop && prop->m_model && prop->m_model->existsYet()) {
+					tryRegisterComponentModel(prop->m_handle, prop->m_model->m_mesh);
 					const auto& [offset, count] = m_geometryParams[prop->m_handle];
+					drawData.push_back({ count, 1, offset, 1 });
+					baseTransforms.push_back(pMatrix * vMatrix * trans->m_worldTransform.m_modelMatrix);
+				}
+				if (point && m_sphere && m_sphere->existsYet()) {
+					tryRegisterComponentModel(point->m_handle, m_sphere);
+					const auto& [offset, count] = m_geometryParams[point->m_handle];
+					drawData.push_back({ count, 1, offset, 1 });
+					baseTransforms.push_back(pMatrix * vMatrix * trans->m_worldTransform.m_modelMatrix);
+				}
+				if (spot && m_cone && m_cone->existsYet()) {
+					tryRegisterComponentModel(spot->m_handle, m_cone);
+					const auto& [offset, count] = m_geometryParams[spot->m_handle];
 					drawData.push_back({ count, 1, offset, 1 });
 					baseTransforms.push_back(pMatrix * vMatrix * trans->m_worldTransform.m_modelMatrix);
 				}
@@ -120,6 +139,7 @@ public:
 			// Render the shapes larger, cutting out previous region
 			m_shader->setUniform(0, 0.01f * m_renderScale);
 			m_shader->setUniform(3, glm::vec4(1, 0.8, 0.1, 1.0));
+			glStencilMask(0x00);
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, drawData.size(), 0);
 
@@ -136,12 +156,12 @@ public:
 
 private:
 	// Private Methods
-	/** Attempt to insert the model supplied into the model map, failing only if it is already present.
-	@param	model		the model to insert only 1 copy of. */
-	inline void tryInsertModel(const Shared_Model& model) {
-		if (m_modelMap.find(model) == m_modelMap.end()) {
+	/** Attempt to insert the mesh supplied into the mesh map, failing only if it is already present.
+	@param	mesh		the mesh to insert only 1 copy of. */
+	inline void tryInsertModel(const Shared_Mesh& mesh) {
+		if (m_meshMap.find(mesh) == m_meshMap.end()) {
 			// Prop hasn't been uploaded yet
-			const size_t arraySize = model->m_mesh->m_geometry.vertices.size() * (sizeof(glm::vec3) * 2);
+			const size_t arraySize = mesh->m_geometry.vertices.size() * (sizeof(glm::vec3) * 2);
 			// Check if we can fit the desired data
 			waitOnFence();
 			tryToExpand(arraySize);
@@ -150,17 +170,17 @@ private:
 
 			// Upload vertex data
 			std::vector<glm::vec3> mergedData;
-			mergedData.reserve(model->m_data.m_vertices.size() * 2);
-			for each (const auto & data in model->m_data.m_vertices) {
-				mergedData.push_back(data.vertex);
-				mergedData.push_back(data.normal);
+			mergedData.reserve(mesh->m_geometry.vertices.size() * 2);
+			for (int x = 0, size = std::min(mesh->m_geometry.vertices.size(), mesh->m_geometry.normals.size()); x < size; ++x) {
+				mergedData.push_back(mesh->m_geometry.vertices[x]);
+				mergedData.push_back(mesh->m_geometry.normals[x]);
 			}
 			glNamedBufferSubData(m_vboID, m_currentSize, arraySize, mergedData.data());
 			m_currentSize += arraySize;
 
 			// Prepare fence
 			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-			m_modelMap[model] = { offset, count };
+			m_meshMap[mesh] = { offset, count };
 		}
 	}
 	/** Wait on the prop fence if it still exists. */
@@ -210,14 +230,14 @@ private:
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
 	float m_renderScale = 0.02f;
+	Shared_Mesh m_sphere, m_cone;
 	Shared_Shader m_shader;
-	StaticBuffer m_indirectGeometry;
-	DynamicBuffer m_ssboTransforms;
+	DynamicBuffer m_indirectGeometry, m_ssboTransforms;
 	GLuint m_vaoID = 0, m_vboID = 0;
 	size_t m_currentSize = 0ull, m_maxCapacity = 256ull;
 	GLsync m_fence = nullptr;
 	std::map<ecsHandle, std::pair<GLuint, GLuint>> m_geometryParams;
-	std::map<Shared_Model, std::pair<GLuint, GLuint>> m_modelMap;
+	std::map<Shared_Mesh, std::pair<GLuint, GLuint>> m_meshMap;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
