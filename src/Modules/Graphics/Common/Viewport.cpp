@@ -4,7 +4,7 @@
 #include <algorithm>
 
 
-Viewport::Viewport(const glm::ivec2 & screenPosition, const glm::ivec2 & dimensions)
+Viewport::Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions)
 	: m_screenPosition(screenPosition), m_dimensions(dimensions)
 {
 	// Initialize FBO's
@@ -13,7 +13,7 @@ Viewport::Viewport(const glm::ivec2 & screenPosition, const glm::ivec2 & dimensi
 	glNamedFramebufferTexture(m_gfxFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_gfxFBOS->getTexID("GEOMETRY", 3), 0);
 }
 
-void Viewport::resize(const glm::ivec2 & size, const int & layerFaces)
+void Viewport::resize(const glm::ivec2& size, const int& layerFaces)
 {
 	if (m_dimensions != size || m_layerFaces != layerFaces) {
 		m_dimensions = size;

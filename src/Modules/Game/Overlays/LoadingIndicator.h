@@ -20,7 +20,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline LoadingIndicator(Engine * engine)
+	inline LoadingIndicator(Engine* engine)
 		: m_engine(engine) {
 		// Asset Loading
 		m_texture = Shared_Texture(engine, "spinner.png", GL_TEXTURE_2D);
@@ -28,32 +28,32 @@ public:
 		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preferences
-		auto & preferences = m_engine->getPreferenceState();
+		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { resize(glm::vec2(f, m_renderSize.y)); });
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { resize(glm::vec2(m_renderSize.x, f)); });
+		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) { resize(glm::vec2(f, m_renderSize.y)); });
+		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) { resize(glm::vec2(m_renderSize.x, f)); });
 		resize(m_renderSize);
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			m_indirectQuad = IndirectDraw((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
-		});
-		
+			});
+
 		// World-Changed Callback
-		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
+		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
 			if (state == World_Module::unloaded || state == World_Module::finishLoading)
 				m_show = false;
-			else if (state == World_Module::startLoading) 
+			else if (state == World_Module::startLoading)
 				m_show = true;
-			else if (state == World_Module::updated) 
-				m_blendAmt = 1.0f;			
-		});
+			else if (state == World_Module::updated)
+				m_blendAmt = 1.0f;
+			});
 	}
 
 
 	// Public Interface Implementations.
-	inline virtual void applyEffect(const float & deltaTime) override final {
+	inline virtual void applyEffect(const float& deltaTime) override final {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_texture->existsYet())
 			return;
 		if (m_show)
@@ -85,14 +85,14 @@ public:
 
 private:
 	// Private Methods
-	inline void resize(const glm::ivec2 &s) {
+	inline void resize(const glm::ivec2& s) {
 		m_renderSize = s;
 		m_projMatrix = glm::ortho(0.0f, (float)s.x, 0.0f, (float)s.y);
 	}
 
 
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	Shared_Shader m_shader;
 	Shared_Texture m_texture;
 	Shared_Auto_Model m_shapeQuad;

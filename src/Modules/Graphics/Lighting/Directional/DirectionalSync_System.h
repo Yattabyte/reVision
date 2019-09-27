@@ -15,7 +15,7 @@ public:
 	inline ~DirectionalSync_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline DirectionalSync_System(const std::shared_ptr<DirectionalData> & frameData)
+	inline DirectionalSync_System(const std::shared_ptr<DirectionalData>& frameData)
 		: m_frameData(frameData) {
 		addComponentType(LightDirectional_Component::m_ID, FLAG_REQUIRED);
 		addComponentType(Shadow_Component::m_ID, FLAG_REQUIRED);
@@ -26,7 +26,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		// Resize light buffers to match number of entities this frame
 		m_frameData->lightBuffer.resize(components.size());
 		m_frameData->lightBuffer.beginWriting();
@@ -134,7 +134,7 @@ public:
 			// Sync Buffer Attributes
 			m_frameData->lightBuffer[index].Shadow_Spot = shadowComponent->m_shadowSpot;
 		}
-		index++;		
+		index++;
 	}
 
 

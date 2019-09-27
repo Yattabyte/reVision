@@ -27,27 +27,27 @@ Scaling_Gizmo::Scaling_Gizmo(Engine* engine, LevelEditor_Module* editor)
 
 	// Asset-Finished Callbacks
 	m_model->addCallback(m_aliveIndicator, [&]() mutable {
-		m_indirectIndicator = IndirectDraw((GLuint)m_model->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT); 
-	});
+		m_indirectIndicator = IndirectDraw((GLuint)m_model->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
+		});
 
 	auto& preferences = m_engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.x = (int)f;
-	});
+		});
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
-	});
+		});
 	preferences.getOrSetValue(PreferenceState::E_GIZMO_SCALE, m_renderScale);
 	preferences.addCallback(PreferenceState::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) {
 		m_renderScale = f;
-	});
+		});
 	preferences.getOrSetValue(PreferenceState::E_GRID_SNAP, m_gridSnap);
 	preferences.addCallback(PreferenceState::E_GRID_SNAP, m_aliveIndicator, [&](const float& f) {
 		m_gridSnap = f;
-	});
-	
+		});
+
 	// Axis Lines
 	const glm::vec3 axisData[] = { glm::vec3(-1,0,0), glm::vec3(1,0,0) };
 	glCreateBuffers(1, &m_axisVBO);
@@ -212,7 +212,7 @@ bool Scaling_Gizmo::checkMousePress()
 {
 	const auto& position = m_transform.m_position;
 	const auto& clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
-	const auto ray_origin = clientCamera.EyePosition;	
+	const auto ray_origin = clientCamera.EyePosition;
 
 	// Check if the user selected an axis
 	if (m_selectedAxes == NONE && !ImGui::IsMouseDragging(0)) {
@@ -314,7 +314,7 @@ bool Scaling_Gizmo::checkMousePress()
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
 				for each (const auto & entityHandle in m_uuids)
-					if (auto * transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
+					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
 						center += transform->m_localTransform.m_position;
 					}

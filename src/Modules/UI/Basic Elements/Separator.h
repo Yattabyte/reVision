@@ -17,9 +17,9 @@ public:
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	/** Construct a separator. 
+	/** Construct a separator.
 	@param	engine		the engine to use. */
-	inline Separator(Engine * engine)
+	inline Separator(Engine* engine)
 		: UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Separator");
@@ -47,10 +47,10 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet()) return;
-		
+
 		// Render
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
@@ -60,7 +60,7 @@ public:
 		m_shader->setUniform(2, m_color);
 		glBindVertexArray(m_vaoID);
 		m_indirect.drawCall();
-		
+
 		// Render Children
 		UI_Element::renderElement(deltaTime, position, scale);
 	}
@@ -69,7 +69,7 @@ public:
 	// Public Methods
 	/** Set this element's color.
 	@param	text	the new color to render with. */
-	inline void setColor(const glm::vec4 & color) {
+	inline void setColor(const glm::vec4& color) {
 		m_color = color;
 	}
 	/** Retrieve this element's color.

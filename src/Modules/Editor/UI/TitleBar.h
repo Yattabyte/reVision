@@ -19,11 +19,11 @@ public:
 	/** Construct a title bar.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	TitleBar(Engine * engine, LevelEditor_Module * editor);
+	TitleBar(Engine* engine, LevelEditor_Module* editor);
 
 
 	// Public Interface Implementation
-	virtual void tick(const float & deltaTime) override final;
+	virtual void tick(const float& deltaTime) override final;
 
 
 private:

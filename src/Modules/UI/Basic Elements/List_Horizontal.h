@@ -27,7 +27,7 @@ public:
 	}
 	/** Constructs a list_Horizontal.
 	@param	engine		the engine. */
-	inline List_Horizontal(Engine * engine)
+	inline List_Horizontal(Engine* engine)
 		: UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\List_Horizontal");
@@ -43,21 +43,21 @@ public:
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
 
 		// Add Callbacks
-		addCallback(UI_Element::on_resize, [&]() { 
+		addCallback(UI_Element::on_resize, [&]() {
 			alignChildren();
 			updateSelectionGeometry();
-		});
-		addCallback(UI_Element::on_childrenChange, [&]() { 
+			});
+		addCallback(UI_Element::on_childrenChange, [&]() {
 			alignChildren();
-		});
+			});
 	}
 
 
 	// Public Interface Implementation
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
 		// Exit Early
 		if (!getVisible() || !m_children.size() || !m_shader->existsYet()) return;
-		
+
 		// Render
 		m_shader->bind();
 		glBindVertexArray(m_vaoID);
@@ -77,11 +77,11 @@ public:
 			m_shader->setUniform(2, glm::vec4(0.8, 0.6, 0.1, 1));
 			glDrawArrays(GL_TRIANGLES, 24, 24);
 		}
-		
+
 		// Render Children
 		UI_Element::renderElement(deltaTime, position, scale);
 	}
-	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
+	inline virtual void mouseAction(const MouseEvent& mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			// Move hover selection to whatever is beneath mouse
@@ -90,9 +90,9 @@ public:
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
 			int index(0);
 			for each (auto & child in m_children) {
-				if (child->mouseWithin(subEvent)) {					
+				if (child->mouseWithin(subEvent)) {
 					setHoverIndex(index); // Set hovered item to whatever is beneath mouse
-					if (mouseEvent.m_action == MouseEvent::RELEASE)						
+					if (mouseEvent.m_action == MouseEvent::RELEASE)
 						setSelectionIndex(index); // Set selected item to whatever is beneath mouse
 					break;
 				}
@@ -105,7 +105,7 @@ public:
 				m_children[m_hoverIndex]->setHovered();
 		}
 	}
-	inline virtual void userAction(ActionState & actionState) override {
+	inline virtual void userAction(ActionState& actionState) override {
 		// User can go up or down the list_Horizontal with an input device
 		// User input wraps around, and if an item is selected, moving will deselect it
 		if (m_children.size()) {
@@ -127,8 +127,8 @@ public:
 					setSelectionIndex(-1);
 			}
 			else if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS) {
-				if (m_hoverIndex > -1 && m_hoverIndex < m_children.size()) 
-					setSelectionIndex(m_hoverIndex);			
+				if (m_hoverIndex > -1 && m_hoverIndex < m_children.size())
+					setSelectionIndex(m_hoverIndex);
 			}
 		}
 	}
@@ -136,7 +136,7 @@ public:
 	// Public Methods
 	/** Change the item this list_Horizontal is hovered over.
 	@param	newIndex		the new hover index to use. */
-	inline void setHoverIndex(const int & newIndex) {
+	inline void setHoverIndex(const int& newIndex) {
 		m_hoverIndex = newIndex;
 		if (m_children.size()) {
 			for each (auto & child in m_children)
@@ -153,7 +153,7 @@ public:
 	}
 	/** Change this list_Horizontals selected item.
 	@param	newIndex		the new selected index. */
-	inline void setSelectionIndex(const int & newIndex) {
+	inline void setSelectionIndex(const int& newIndex) {
 		m_selectionIndex = newIndex;
 		m_focusMap.focusIndex(m_selectionIndex);
 		updateSelectionGeometry();
@@ -167,12 +167,12 @@ public:
 	/** Retrieve this list_Horizontal's focus map.
 	List_Horizontals use a separate focus map, because the top-level element in each list_Horizontal slot may be a container or cosmetic only.
 	@return					the focus map for this list_Horizontal. */
-	FocusMap & getFocusMap() {
+	FocusMap& getFocusMap() {
 		return m_focusMap;
 	}
 	/** Set the margin distance between elements and the edge of this layout.
 	@param	margin		the margin for this layout. */
-	inline void setMargin(const float & margin) {
+	inline void setMargin(const float& margin) {
 		m_margin = margin;
 		alignChildren();
 	}
@@ -183,7 +183,7 @@ public:
 	}
 	/** Set the spacing distance between elements in this layout.
 	@param	spacing		the spacing distance between elements. */
-	inline void setSpacing(const float & spacing) {
+	inline void setSpacing(const float& spacing) {
 		m_spacing = spacing;
 		alignChildren();
 		updateSelectionGeometry();
@@ -195,7 +195,7 @@ public:
 	}
 	/** Set the border size.
 	@param		size		the new border size to use. */
-	inline void setBorderSize(const float & size) {
+	inline void setBorderSize(const float& size) {
 		m_borderSize = size;
 		updateSelectionGeometry();
 	}
@@ -222,7 +222,7 @@ protected:
 			m_children[x]->setPosition(glm::vec2(positionFromLeft, 0));
 			positionFromLeft += size + (m_spacing * 2.0f);
 		}
-	}	
+	}
 	/** Update the geometry of the selection box. */
 	inline void updateSelectionGeometry() {
 		if (m_children.size() < 1) return;
@@ -263,7 +263,7 @@ protected:
 			m_data[22] = { scale.x - m_borderSize, scale.y + m_borderSize, 0 };
 			m_data[23] = { scale.x - m_borderSize, -scale.y - m_borderSize, 0 };
 		}
-		
+
 		if (m_selectionIndex > -1) {
 			auto scale = glm::min(m_children[m_selectionIndex]->getScale() + m_spacing, m_scale - m_borderSize);
 			// Bottom Bar
@@ -308,8 +308,8 @@ protected:
 		m_margin = 10.0f,
 		m_spacing = 10.0f,
 		m_borderSize = 2.0f;
-	int 
-		m_hoverIndex = -1, 
+	int
+		m_hoverIndex = -1,
 		m_selectionIndex = -1;
 	GLuint
 		m_vaoID = 0,

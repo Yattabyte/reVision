@@ -12,10 +12,10 @@ public:
 	// Public (de)Constructors
 	/** Destroy the button. */
 	inline ~Button() = default;
-	/** Creates a button with specific text inside. 
+	/** Creates a button with specific text inside.
 	@param	engine		the engine.
 	@param	text		the button text. */
-	inline Button(Engine * engine, const std::string & text = "Button")
+	inline Button(Engine* engine, const std::string& text = "Button")
 		: UI_Element(engine) {
 		// All buttons have labels
 		m_label = std::make_shared<Label>(engine, text);
@@ -29,12 +29,12 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void userAction(ActionState & actionState) override {
+	inline virtual void userAction(ActionState& actionState) override {
 		// Only thing a user can do is press the button
 		if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS)
 			pressButton();
 	}
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
 		// Update Colors
 		glm::vec4 color(0.75);
 		if (m_pressed)
@@ -55,7 +55,7 @@ public:
 	}
 	/** Set this label element's text.
 	@param	text	the text to use. */
-	inline void setText(const std::string & text) {
+	inline void setText(const std::string& text) {
 		m_label->setText(text);
 	}
 	/** Retrieve this buttons' labels text.
@@ -65,7 +65,7 @@ public:
 	}
 	/** Set this label element's text scaling factor.
 	@param	text	the new scaling factor to use. */
-	inline void setTextScale(const float & textScale) {
+	inline void setTextScale(const float& textScale) {
 		m_label->setTextScale(textScale);
 	}
 
@@ -76,7 +76,7 @@ public:
 	}
 	/** Set the bevel radius for this button.
 	@param radius	the new radius to use. */
-	inline void setBevelRadius(const float & radius) {
+	inline void setBevelRadius(const float& radius) {
 		m_bevelRadius = radius;
 	}
 	/** Get the bevel radius from this button.

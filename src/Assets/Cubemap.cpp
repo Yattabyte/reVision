@@ -4,7 +4,7 @@
 
 constexpr char* DIRECTORY_CUBEMAP = "\\Textures\\Cubemaps\\";
 
-Shared_Cubemap::Shared_Cubemap(Engine * engine, const std::string & filename, const bool & threaded)
+Shared_Cubemap::Shared_Cubemap(Engine* engine, const std::string& filename, const bool& threaded)
 {
 	(*(std::shared_ptr<Cubemap>*)(this)) = std::dynamic_pointer_cast<Cubemap>(
 		engine->getManager_Assets().shareAsset(
@@ -23,7 +23,7 @@ Cubemap::~Cubemap()
 	}
 }
 
-Cubemap::Cubemap(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
+Cubemap::Cubemap(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Cubemap::initialize()
 {
@@ -44,14 +44,14 @@ void Cubemap::initialize()
 		// Forward image creation
 		// Enforce same size for all images, use the size of the first found image
 		m_images[side] = Shared_Image(
-			m_engine, specific_side_directory, 
-			(size == glm::ivec2(0)) ? std::optional<glm::ivec2>() : size, 
+			m_engine, specific_side_directory,
+			(size == glm::ivec2(0)) ? std::optional<glm::ivec2>() : size,
 			false
 		);
 		size = m_images[side]->m_size;
-	}	
+	}
 
-	// Create the final texture	
+	// Create the final texture
 	glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_glTexID);
 	glCreateBuffers(6, m_pboIDs);
 
@@ -76,7 +76,7 @@ void Cubemap::initialize()
 	Asset::finalize();
 }
 
-void Cubemap::bind(const unsigned int & texture_unit)
+void Cubemap::bind(const unsigned int& texture_unit)
 {
 	glBindTextureUnit(texture_unit, m_glTexID);
 }

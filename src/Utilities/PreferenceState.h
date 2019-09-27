@@ -23,10 +23,10 @@ public:
 	/** Construct the preference state.
 	@param	engine		the engine
 	@param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
-	inline PreferenceState(Engine * engine, const std::string & filename = "preferences") : m_engine(engine) {
+	inline PreferenceState(Engine* engine, const std::string& filename = "preferences") : m_engine(engine) {
 		loadFile(filename);
 	}
-	
+
 
 	// Public Static Enumerations
 	/** Enumeration for indexing into preferences. */
@@ -123,7 +123,7 @@ public:
 	// Public Methods
 	/** Loads a preference file from disk.
 	@param	filename	the relative path to the preference file to load */
-	inline void loadFile(const std::string & filename) {
+	inline void loadFile(const std::string& filename) {
 		m_preferences = Shared_Config(m_engine, filename, PreferenceState::Preference_Strings(), false);
 	}
 	/** Saves the preference file to disk, using the same filename as when loaded. */
@@ -135,7 +135,7 @@ public:
 	@param	targetKey	the preference key to look up
 	@param	container	the object to update */
 	template <typename T>
-	inline void getOrSetValue(const Preference & targetKey, T & container) {
+	inline void getOrSetValue(const Preference& targetKey, T& container) {
 		if (m_preferences->existsYet()) {
 			const float value = m_preferences->getValue(targetKey);
 
@@ -148,10 +148,10 @@ public:
 	}
 	/** Sets a value for a preference with the given ID.
 	@param	targetKey	the preference key to set the value to
-	@param	targetValue	the value to tie to the key supplied 
+	@param	targetValue	the value to tie to the key supplied
 	@param	<T>			the value type to use */
 	template <typename T>
-	inline void setValue(const Preference & targetKey, const T & targetValue)	{
+	inline void setValue(const Preference& targetKey, const T& targetValue) {
 		const float castValue = (float)targetValue;
 		if (m_preferences) {
 			m_preferences->setValue(targetKey, castValue);
@@ -159,27 +159,26 @@ public:
 			// Call callbacks
 			size_t index = 0;
 			if (m_callbacks.find(targetKey) != m_callbacks.end())
-				for each (const auto &pair in m_callbacks[targetKey]) {
+				for each (const auto & pair in m_callbacks[targetKey]) {
 					if (pair.first)
 						pair.second(castValue);
 					else
 						m_callbacks[targetKey].erase(m_callbacks[targetKey].begin() + index);
 					index++;
 				}
-			
 		}
 	}
 	/** Attaches a callback method to be triggered when the supplied preference updates.
 	@param	targetKey	the preference-ID to which this callback will be attached
 	@param	alive		the
-	@param	callback	the method to be triggered on value update */	
-	inline void addCallback(const Preference & targetKey, const std::shared_ptr<bool> & alive, const std::function<void(float)> & callback) {
+	@param	callback	the method to be triggered on value update */
+	inline void addCallback(const Preference& targetKey, const std::shared_ptr<bool>& alive, const std::function<void(float)>& callback) {
 		m_callbacks[targetKey].emplace_back(std::make_pair(alive, callback));
 	}
 
-	
+
 private:
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	Shared_Config m_preferences;
 	std::map< Preference, std::vector<std::pair<std::shared_ptr<bool>, std::function<void(float)>>> > m_callbacks;
 };

@@ -15,17 +15,17 @@ public:
 	inline ~PointVisibility_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline PointVisibility_System(const std::shared_ptr<PointData> & frameData)
+	inline PointVisibility_System(const std::shared_ptr<PointData>& frameData)
 		: m_frameData(frameData) {
 		addComponentType(LightPoint_Component::m_ID, FLAG_REQUIRED);
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		// Compile results PER viewport
 		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
-			auto & viewInfo = m_frameData->viewInfo[x];
+			auto& viewInfo = m_frameData->viewInfo[x];
 
 			viewInfo.lightIndices.clear();
 			int index = 0;

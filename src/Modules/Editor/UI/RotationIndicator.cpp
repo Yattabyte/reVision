@@ -15,20 +15,20 @@ RotationIndicator::~RotationIndicator()
 	glDeleteTextures(1, &m_depthID);
 }
 
-RotationIndicator::RotationIndicator(Engine * engine)
+RotationIndicator::RotationIndicator(Engine* engine)
 	: m_engine(engine)
 {
 	m_open = true;
 
-	auto & preferences = engine->getPreferenceState();
+	auto& preferences = engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
+	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.x = (int)f;
-	});
-	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
+		});
+	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
-	});
+		});
 
 	// Assets
 	m_colorPalette = Shared_Texture(engine, "Editor\\colors.png");
@@ -36,9 +36,9 @@ RotationIndicator::RotationIndicator(Engine * engine)
 	m_shader = Shared_Shader(engine, "Editor\\3dindShader");
 
 	// Asset-Finished Callbacks
-	m_3dIndicator->addCallback(m_aliveIndicator, [&]() mutable {		
+	m_3dIndicator->addCallback(m_aliveIndicator, [&]() mutable {
 		m_indirectIndicator = IndirectDraw((GLuint)m_3dIndicator->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
-	});
+		});
 
 	// GL structures
 	glCreateFramebuffers(1, &m_fboID);
@@ -59,7 +59,7 @@ RotationIndicator::RotationIndicator(Engine * engine)
 	glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 }
 
-void RotationIndicator::tick(const float & deltaTime)
+void RotationIndicator::tick(const float& deltaTime)
 {
 	if (m_open && m_3dIndicator->existsYet() && m_colorPalette->existsYet() && m_shader->existsYet()) {
 		// Set up state
@@ -95,8 +95,8 @@ void RotationIndicator::tick(const float & deltaTime)
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 		ImGui::SetNextWindowDockID(ImGui::GetID("LeftDock"), ImGuiCond_FirstUseEver);
-		if (ImGui::Begin("Rotation Indicator", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_AlwaysAutoResize)) 
-			ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_texID), { 128.0f, 128.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });		
+		if (ImGui::Begin("Rotation Indicator", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_AlwaysAutoResize))
+			ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_texID), { 128.0f, 128.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 		ImGui::End();
 	}
 }

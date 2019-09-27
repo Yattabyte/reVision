@@ -33,7 +33,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	// Asset-Finished Callbacks
 	m_model->addCallback(m_aliveIndicator, [&]() mutable {
 		m_indirectIndicator = IndirectDraw((GLuint)m_model->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
-	});
+		});
 
 	// Preferences
 	auto& preferences = m_engine->getPreferenceState();
@@ -41,18 +41,18 @@ Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.x = (int)f;
-	});
+		});
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
-	}); 
+		});
 	preferences.getOrSetValue(PreferenceState::E_GIZMO_SCALE, m_renderScale);
 	preferences.addCallback(PreferenceState::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) {
 		m_renderScale = f;
-	});
+		});
 	preferences.getOrSetValue(PreferenceState::E_ANGLE_SNAP, m_angleSnapping);
 	preferences.addCallback(PreferenceState::E_ANGLE_SNAP, m_aliveIndicator, [&](const float& f) {
 		m_angleSnapping = f;
-	});
+		});
 
 	// Axis Lines
 	const glm::vec3 axisData[] = { glm::vec3(-1,0,0), glm::vec3(1,0,0) };
@@ -79,8 +79,8 @@ bool Rotation_Gizmo::checkMouseInput(const float& deltaTime)
 {
 	// See if the mouse intersects any entities
 	checkMouseHover();
-	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(0)) 
-		return checkMousePress();	
+	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(0))
+		return checkMousePress();
 	else {
 		if (m_selectedAxes != NONE) {
 			m_selectedAxes = NONE;
@@ -126,7 +126,7 @@ void Rotation_Gizmo::render(const float& deltaTime)
 			m_indirectDisk.drawCall();
 			m_indirectDisk.endWriting();
 		}
-						
+
 		// Render Axis Lines
 		glBindVertexArray(m_axisVAO);
 		if (m_selectedAxes & X_AXIS) {
@@ -152,7 +152,7 @@ void Rotation_Gizmo::render(const float& deltaTime)
 	}
 }
 
-void Rotation_Gizmo::setTransform(const Transform & transform)
+void Rotation_Gizmo::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
@@ -256,7 +256,7 @@ bool Rotation_Gizmo::checkMousePress()
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
 				for each (const auto & entityHandle in m_uuids)
-					if (auto * transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
+					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
 						center += transform->m_localTransform.m_position;
 					}
@@ -307,7 +307,7 @@ void Rotation_Gizmo::updateDisk()
 		const auto startAngle = glm::radians(float(n) * (m_deltaAngle / float(steps))) + m_startingAngle;
 		const auto endAngle = glm::radians(float(n + 1) * (m_deltaAngle / float(steps))) + m_startingAngle;
 
-		const auto x1 = 8.0f * cosf(startAngle), y1 = 8.0f * sinf(startAngle), 
+		const auto x1 = 8.0f * cosf(startAngle), y1 = 8.0f * sinf(startAngle),
 			x2 = 8.0f * cosf(endAngle), y2 = 8.0f * sinf(endAngle);
 
 		glm::vec3 v1(0.0f), v2(0.0f);

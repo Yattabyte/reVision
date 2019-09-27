@@ -1,7 +1,7 @@
 #include "Managers/AssetManager.h"
 
 
-Shared_Asset AssetManager::shareAsset(const char * assetType, const std::string & filename, const std::function<Shared_Asset(void)> & constructor, const bool & threaded)
+Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& filename, const std::function<Shared_Asset(void)>& constructor, const bool& threaded)
 {
 	// Find out if the asset already exists
 	std::shared_lock<std::shared_mutex> asset_read_guard(m_Mutex_Assets);
@@ -21,7 +21,7 @@ Shared_Asset AssetManager::shareAsset(const char * assetType, const std::string 
 
 	// Create the asset
 	std::unique_lock<std::shared_mutex> asset_write_guard(m_Mutex_Assets);
-	const auto & asset = constructor();
+	const auto& asset = constructor();
 	m_AssetMap[assetType].push_back(asset);
 	asset_write_guard.unlock();
 	asset_write_guard.release();
@@ -52,7 +52,7 @@ void AssetManager::beginWorkOrder()
 	}
 }
 
-void AssetManager::submitNotifyee(const std::pair<std::shared_ptr<bool>, std::function<void()>> & callBack)
+void AssetManager::submitNotifyee(const std::pair<std::shared_ptr<bool>, std::function<void()>>& callBack)
 {
 	std::unique_lock<std::shared_mutex> writeGuard(m_mutexNofications);
 	m_notifyees.push_back(callBack);
@@ -73,7 +73,7 @@ void AssetManager::notifyObservers()
 }
 
 bool AssetManager::readyToUse()
-{	
+{
 	{
 		std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Workorders);
 		if (m_Workorders.size())

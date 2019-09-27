@@ -58,7 +58,7 @@ public:
 	/** Retrieve the current set of selected entities.
 	@return					the active set of selected entity handles. */
 	std::vector<ecsHandle>& getSelection();
-	
+
 
 private:
 	// Private Attributes

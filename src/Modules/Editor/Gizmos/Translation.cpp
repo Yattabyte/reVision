@@ -28,25 +28,25 @@ Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	// Asset-Finished Callbacks
 	m_model->addCallback(m_aliveIndicator, [&]() mutable {
 		m_indirectIndicator = IndirectDraw((GLuint)m_model->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
-	});
+		});
 
 	auto& preferences = m_engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.x = (int)f;
-	});
+		});
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
-	});
+		});
 	preferences.getOrSetValue(PreferenceState::E_GIZMO_SCALE, m_renderScale);
 	preferences.addCallback(PreferenceState::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) {
 		m_renderScale = f;
-	}); 
+		});
 	preferences.getOrSetValue(PreferenceState::E_GRID_SNAP, m_gridSnap);
 	preferences.addCallback(PreferenceState::E_GRID_SNAP, m_aliveIndicator, [&](const float& f) {
 		m_gridSnap = f;
-	});
+		});
 
 	// Axis Lines
 	const glm::vec3 axisData[] = { glm::vec3(-1,0,0), glm::vec3(1,0,0) };
@@ -65,8 +65,8 @@ bool Translation_Gizmo::checkMouseInput(const float& deltaTime)
 {
 	// See if the mouse intersects any entities.
 	checkMouseHover();
-	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(0)) 
-		return checkMousePress();	
+	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(0))
+		return checkMousePress();
 	else {
 		if (m_selectedAxes != NONE) {
 			m_selectedAxes = NONE;
@@ -99,7 +99,7 @@ void Translation_Gizmo::render(const float& deltaTime)
 		m_gizmoShader->setUniform(4, GLuint(m_selectedAxes));
 		m_gizmoShader->setUniform(5, GLuint(m_hoveredAxes));
 		m_indirectIndicator.drawCall();
-				
+
 		// Render Axis Lines
 		m_axisShader->bind();
 		glBindVertexArray(m_axisVAO);
@@ -126,7 +126,7 @@ void Translation_Gizmo::render(const float& deltaTime)
 	}
 }
 
-void Translation_Gizmo::setTransform(const Transform & transform)
+void Translation_Gizmo::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
@@ -194,15 +194,15 @@ void Translation_Gizmo::checkMouseHover()
 
 	// Set the appropriate selected axis
 	m_hoveredAxes = NONE;
-	if (hoveredAxis == 0) 
-		m_hoveredAxes |= X_AXIS;	
-	else if (hoveredAxis == 1) 
-		m_hoveredAxes |= Y_AXIS;	
-	else if (hoveredAxis == 2) 
+	if (hoveredAxis == 0)
+		m_hoveredAxes |= X_AXIS;
+	else if (hoveredAxis == 1)
+		m_hoveredAxes |= Y_AXIS;
+	else if (hoveredAxis == 2)
 		m_hoveredAxes |= Z_AXIS;
 	else if (hoveredAxis == 3)
 		m_hoveredAxes |= X_AXIS | Y_AXIS;
-	else if (hoveredAxis == 4) 
+	else if (hoveredAxis == 4)
 		m_hoveredAxes |= X_AXIS | Z_AXIS;
 	else if (hoveredAxis == 5)
 		m_hoveredAxes |= Y_AXIS | Z_AXIS;
@@ -307,7 +307,7 @@ bool Translation_Gizmo::checkMousePress()
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
 				for each (const auto & entityHandle in m_uuids)
-					if (auto * transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
+					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
 						center += transform->m_localTransform.m_position;
 					}

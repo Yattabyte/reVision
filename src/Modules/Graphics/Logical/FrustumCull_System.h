@@ -14,9 +14,9 @@ public:
 	// Public (de)Constructors
 	/** Destroy this system. */
 	inline ~FrustumCull_System() = default;
-	/** Construct this system. 
+	/** Construct this system.
 	@param	cameras		list of all the active cameras in the scene, updated per frame. */
-	inline FrustumCull_System(const std::shared_ptr<std::vector<Camera*>> & cameras)
+	inline FrustumCull_System(const std::shared_ptr<std::vector<Camera*>>& cameras)
 		: m_cameras(cameras) {
 		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
 		addComponentType(BoundingBox_Component::m_ID, FLAG_OPTIONAL);
@@ -25,7 +25,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		for each (const auto & componentParam in components) {
 			auto* transformComponent = (Transform_Component*)componentParam[0];
 			auto* bboxComponent = (BoundingBox_Component*)componentParam[1];
@@ -37,7 +37,7 @@ public:
 
 				// Err on the side of caution and say its visible by default
 				// Our visibility tests will try to EXCLUDE, not INCLUDE
-				const auto & camPosition = camera->get()->EyePosition;
+				const auto& camPosition = camera->get()->EyePosition;
 				auto objPosition = transformComponent->m_worldTransform.m_position;
 				const auto objScale = transformComponent->m_worldTransform.m_scale;
 

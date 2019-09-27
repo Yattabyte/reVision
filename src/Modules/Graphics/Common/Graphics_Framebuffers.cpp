@@ -5,16 +5,16 @@
 Graphics_Framebuffers::~Graphics_Framebuffers()
 {
 	// Destroy OpenGL objects
-	for (auto&[name, fboData] : m_fbos) {
-		auto&[fboID, mipmapped, texdata] = fboData;
+	for (auto& [name, fboData] : m_fbos) {
+		auto& [fboID, mipmapped, texdata] = fboData;
 		glDeleteFramebuffers(1, &fboID);
-		for (const auto[texID, internalFormat, format, type, attachment] : texdata)
+		for (const auto [texID, internalFormat, format, type, attachment] : texdata)
 			glDeleteTextures(1, &texID);
 	}
 }
 
-Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2 & size)
-{	
+Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2& size)
+{
 	m_renderSize = size;
 	createFBO("GEOMETRY", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGBA16F, GL_RGBA, GL_FLOAT }, { GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } });
 	createFBO("LIGHTING", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
@@ -28,7 +28,7 @@ Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2 & size)
 	createFBO("FXAA", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 }
 
-void Graphics_Framebuffers::createFBO(const char * name, const std::vector<std::tuple<GLenum, GLenum, GLenum>> & textureFormats, const bool & mipmapped)
+void Graphics_Framebuffers::createFBO(const char* name, const std::vector<std::tuple<GLenum, GLenum, GLenum>>& textureFormats, const bool& mipmapped)
 {
 	//  Variables for this frame buffer entry
 	GLuint fboID(0);	// FBO ID
@@ -38,7 +38,7 @@ void Graphics_Framebuffers::createFBO(const char * name, const std::vector<std::
 		GLenum,			// Format
 		GLenum,			// Type
 		GLenum			// Attachment
-	>> textures;
+		>> textures;
 	std::vector<GLenum> drawBuffers;
 
 	// Create the framebuffer
@@ -46,7 +46,7 @@ void Graphics_Framebuffers::createFBO(const char * name, const std::vector<std::
 	// Create all the textures
 	int counter(0);
 	for each (const auto & texture in textureFormats) {
-		const auto&[internalFormat, format, type] = texture;
+		const auto& [internalFormat, format, type] = texture;
 		GLuint texID(0);
 		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &texID);
 		glTextureParameteri(texID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -86,25 +86,25 @@ void Graphics_Framebuffers::createFBO(const char * name, const std::vector<std::
 	m_fbos[name] = { fboID, mipmapped, textures };
 }
 
-void Graphics_Framebuffers::bindForWriting(const char * name)
+void Graphics_Framebuffers::bindForWriting(const char* name)
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getFboID(name));
 }
 
-void Graphics_Framebuffers::bindForReading(const char * name, const GLuint & binding) 
+void Graphics_Framebuffers::bindForReading(const char* name, const GLuint& binding)
 {
 	int counter(0);
-	for (const auto[texID, internalFormat, format, type, attachment] : std::get<2>(m_fbos[name]))
+	for (const auto [texID, internalFormat, format, type, attachment] : std::get<2>(m_fbos[name]))
 		glBindTextureUnit(binding + counter++, texID);
 }
 
 void Graphics_Framebuffers::clear()
 {
 	constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	for (auto&[name, fboData] : m_fbos) {
-		auto&[fboID, mipmapped, texdata] = fboData;
+	for (auto& [name, fboData] : m_fbos) {
+		auto& [fboID, mipmapped, texdata] = fboData;
 		int counter(0);
-		for (const auto[texID, internalFormat, format, type, attachment] : texdata) {
+		for (const auto [texID, internalFormat, format, type, attachment] : texdata) {
 			if (attachment != GL_DEPTH_STENCIL_ATTACHMENT && attachment != GL_DEPTH_ATTACHMENT && attachment != GL_STENCIL_ATTACHMENT)
 				glClearNamedFramebufferfv(fboID, GL_COLOR, counter++, clearColor);
 		}
@@ -115,26 +115,26 @@ void Graphics_Framebuffers::clearDepthStencil()
 {
 	constexpr GLfloat clearDepth = 1.0f;
 	constexpr GLint clearStencil = 0;
-	for (auto&[name, fboData] : m_fbos) {
-		auto&[fboID, mipmapped, texdata] = fboData;
-		for (auto&[texID, internalFormat, format, type, attachment] : texdata) {
-			if (attachment == GL_DEPTH_STENCIL_ATTACHMENT) 
+	for (auto& [name, fboData] : m_fbos) {
+		auto& [fboID, mipmapped, texdata] = fboData;
+		for (auto& [texID, internalFormat, format, type, attachment] : texdata) {
+			if (attachment == GL_DEPTH_STENCIL_ATTACHMENT)
 				glClearNamedFramebufferfi(fboID, GL_DEPTH_STENCIL, 0, clearDepth, clearStencil);
-			else if (attachment == GL_DEPTH_ATTACHMENT) 
+			else if (attachment == GL_DEPTH_ATTACHMENT)
 				glClearNamedFramebufferfv(fboID, GL_DEPTH, 0, &clearDepth);
-			else if (attachment == GL_STENCIL_ATTACHMENT) 
+			else if (attachment == GL_STENCIL_ATTACHMENT)
 				glClearNamedFramebufferiv(fboID, GL_STENCIL, 0, &clearStencil);
 		}
 	}
 }
 
-void Graphics_Framebuffers::resize(const glm::ivec2 & newSize, const int & layerFaces)
+void Graphics_Framebuffers::resize(const glm::ivec2& newSize, const int& layerFaces)
 {
 	m_renderSize = newSize;
 	m_layerFaces = layerFaces;
-	for (auto&[name, fboData] : m_fbos) {
-		auto&[fboID, mipmapped, texdata] = fboData;
-		for (const auto[texID, internalFormat, format, type, attachment] : texdata) {
+	for (auto& [name, fboData] : m_fbos) {
+		auto& [fboID, mipmapped, texdata] = fboData;
+		for (const auto [texID, internalFormat, format, type, attachment] : texdata) {
 			if (mipmapped) {
 				for (int x = 0; x < 6; ++x) {
 					const glm::ivec2 mippedSize(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
@@ -142,21 +142,20 @@ void Graphics_Framebuffers::resize(const glm::ivec2 & newSize, const int & layer
 				}
 			}
 			else
-				glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_renderSize.x, m_renderSize.y, m_layerFaces, 0, format, type, NULL);			
+				glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_renderSize.x, m_renderSize.y, m_layerFaces, 0, format, type, NULL);
 			glNamedFramebufferTexture(fboID, attachment, texID, 0);
 		}
 	}
 }
 
-GLuint Graphics_Framebuffers::getFboID(const char * name)
+GLuint Graphics_Framebuffers::getFboID(const char* name)
 {
 	return std::get<0>(m_fbos[name]);
 }
 
-GLuint Graphics_Framebuffers::getTexID(const char * name, const size_t & index)
+GLuint Graphics_Framebuffers::getTexID(const char* name, const size_t& index)
 {
 	return std::get<0>(
 		(std::get<2>(m_fbos[name]))[index] // inner '() brackets' is the vector
-	);
+		);
 }
-

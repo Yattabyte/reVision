@@ -15,7 +15,7 @@ public:
 	inline ~SpotSync_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline SpotSync_System(const std::shared_ptr<SpotData> & frameData)
+	inline SpotSync_System(const std::shared_ptr<SpotData>& frameData)
 		: m_frameData(frameData) {
 		addComponentType(LightSpot_Component::m_ID, FLAG_REQUIRED);
 		addComponentType(LightColor_Component::m_ID, FLAG_OPTIONAL);
@@ -29,7 +29,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		// Resize light buffers to match number of entities this frame
 		m_frameData->lightBuffer.resize(components.size());
 		m_frameData->lightBuffer.beginWriting();
@@ -100,7 +100,7 @@ public:
 			}
 
 			// Sync Buffer Attributes
-			m_frameData->lightBuffer[index].Shadow_Spot = shadowComponent ? shadowComponent->m_shadowSpot : -1;			
+			m_frameData->lightBuffer[index].Shadow_Spot = shadowComponent ? shadowComponent->m_shadowSpot : -1;
 			index++;
 		}
 	}

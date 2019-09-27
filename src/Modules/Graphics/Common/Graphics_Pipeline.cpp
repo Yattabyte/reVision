@@ -18,7 +18,7 @@
 #include "Modules/Graphics/Effects/FXAA.h"
 
 
-Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<Camera> & clientCamera, const std::shared_ptr<std::vector<Camera*>> & cameras, const std::shared_ptr<RH_Volume> & rhVolume, ecsSystemList & auxilliarySystems)
+Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras, const std::shared_ptr<RH_Volume>& rhVolume, ecsSystemList& auxilliarySystems)
 	: m_engine(engine)
 {
 	auto propView = new Prop_Technique(engine, cameras, auxilliarySystems);
@@ -56,32 +56,32 @@ Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<Came
 		m_allTechniques.push_back(tech);
 }
 
-void Graphics_Pipeline::prepareForNextFrame(const float & deltaTime)
+void Graphics_Pipeline::prepareForNextFrame(const float& deltaTime)
 {
 	for each (auto * tech in m_allTechniques)
 		tech->prepareForNextFrame(deltaTime);
 }
 
-void Graphics_Pipeline::update(const float & deltaTime)
+void Graphics_Pipeline::update(const float& deltaTime)
 {
 	for each (auto * tech in m_allTechniques)
 		tech->updateTechnique(deltaTime);
 }
 
-void Graphics_Pipeline::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives, const unsigned int & allowedCategories)
+void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& allowedCategories)
 {
 	for each (auto * tech in m_allTechniques)
 		if (allowedCategories & tech->getCategory())
-			tech->renderTechnique(deltaTime, viewport, perspectives);	
+			tech->renderTechnique(deltaTime, viewport, perspectives);
 }
 
-void Graphics_Pipeline::cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>>& perspectives)
+void Graphics_Pipeline::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives)
 {
 	for each (auto * tech in m_geometryTechniques)
 		tech->cullShadows(deltaTime, perspectives);
 }
 
-void Graphics_Pipeline::renderShadows(const float & deltaTime)
+void Graphics_Pipeline::renderShadows(const float& deltaTime)
 {
 	for each (auto * tech in m_geometryTechniques)
 		tech->renderShadows(deltaTime);

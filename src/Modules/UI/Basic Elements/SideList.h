@@ -28,7 +28,7 @@ public:
 	}
 	/** Construct the side list.
 	@param	engine		the engine to use. */
-	inline SideList(Engine * engine)
+	inline SideList(Engine* engine)
 		: UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\SideList");
@@ -70,7 +70,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
+	inline virtual void mouseAction(const MouseEvent& mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			const float mx = float(mouseEvent.m_xPos) - m_position.x;
@@ -99,22 +99,22 @@ public:
 			m_lhighlighted = false;
 			m_rhighlighted = false;
 			m_lpressed = false;
-			m_rpressed = false;			
+			m_rpressed = false;
 		}
 	}
-	inline virtual void userAction(ActionState & actionState) override {
+	inline virtual void userAction(ActionState& actionState) override {
 		// User can only change selection by using the left/right directional key actions
 		if (actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
 			setIndex(m_index - 1);
-		else if (actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS) 
+		else if (actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS)
 			setIndex(m_index + 1);
 	}
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet()) return;
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
-		
+
 		// Render (background)
 		m_shader->bind();
 		m_shader->setUniform(0, newPosition);
@@ -136,7 +136,7 @@ public:
 	// Public Methods
 	/** Set the index to display as selected in the list.
 	@param		index		the new integer index to use. */
-	inline void setIndex(const int & index) {
+	inline void setIndex(const int& index) {
 		if (m_index != index) {
 			m_index = std::clamp<int>(index, 0, int(m_strings.size()) - 1);
 			m_label->setText(m_strings[m_index]);
@@ -153,11 +153,11 @@ public:
 	}
 	/** Set the strings to display in this list.
 	@param		strings		the new strings to use in this list. */
-	inline void setStrings(const std::vector<std::string> & strings) {
+	inline void setStrings(const std::vector<std::string>& strings) {
 		m_strings = strings;
 		setIndex(getIndex());
 	}
-	/** Retrieve the strings this list uses for each item in this list. 
+	/** Retrieve the strings this list uses for each item in this list.
 	@return					the list of strgings describing each item. */
 	inline std::vector<std::string> getStrings() const {
 		return m_strings;
@@ -173,8 +173,8 @@ protected:
 		m_backPanel->setScale(glm::vec2(getScale().x - (arrowHeight * 2.0f), getScale().y));
 
 		// Adjust the size of the text font, ensuring it at least fits within bounds (automatic when setting scale)
-		m_label->setScale(m_backPanel->getScale());		
-		
+		m_label->setScale(m_backPanel->getScale());
+
 		constexpr auto num_data = 2 * 3;
 		std::vector<glm::vec3> data(num_data);
 		std::vector<int> objIndices(num_data);

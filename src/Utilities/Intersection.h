@@ -52,7 +52,7 @@ static bool RayOOBBIntersection(
 			float t2 = (e + aabb_max.x) / f; // Intersection with the "right" plane
 			// t1 and t2 now contain distances betwen ray origin and ray-plane intersections
 
-			// We want t1 to represent the nearest intersection, 
+			// We want t1 to represent the nearest intersection,
 			// so if it's not the case, invert t1 and t2
 			if (t1 > t2) {
 				float w = t1;
@@ -145,7 +145,7 @@ static bool RayOOBBIntersection(
 static float RaySphereIntersection(
 	const glm::vec3& ray_origin,
 	const glm::vec3& ray_direction,
-	const glm::vec3& center, 
+	const glm::vec3& center,
 	const float& radius
 ) {
 	const auto oc = ray_origin - center;

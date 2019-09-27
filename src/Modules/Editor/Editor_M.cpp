@@ -38,22 +38,22 @@ void LevelEditor_Module::initialize(Engine* engine)
 		m_renderSize.x = (int)f;
 		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, 0);
 		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
-	});
+		});
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
 		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, 0);
 		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
-	});
+		});
 	preferences.getOrSetValue(PreferenceState::E_AUTOSAVE_INTERVAL, m_autosaveInterval);
 	preferences.addCallback(PreferenceState::E_AUTOSAVE_INTERVAL, m_aliveIndicator, [&](const float& f) {
 		m_autosaveInterval = f;
-	});
+		});
 	float undoStacksize = 500.0f;
 	preferences.getOrSetValue(PreferenceState::E_UNDO_STACKSIZE, undoStacksize);
 	m_maxUndo = int(undoStacksize);
 	preferences.addCallback(PreferenceState::E_UNDO_STACKSIZE, m_aliveIndicator, [&](const float& f) {
 		m_maxUndo = int(f);
-	});
+		});
 
 	// GL structures
 	glCreateFramebuffers(1, &m_fboID);
@@ -92,9 +92,9 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 		constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		constexpr GLfloat clearDepth = 1.0f;
 		constexpr GLint clearStencil = 0;
-		glEnable(GL_DEPTH_TEST); 
+		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_STENCIL_TEST);
-		glDepthMask(true);	
+		glDepthMask(true);
 		glStencilMask(0xFF);
 		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
 		glClearNamedFramebufferfi(m_fboID, GL_DEPTH_STENCIL, 0, clearDepth, clearStencil);
@@ -205,7 +205,7 @@ void LevelEditor_Module::exit()
 		m_undoStack = {};
 		m_redoStack = {};
 		m_active = false;
-	});
+		});
 }
 
 bool LevelEditor_Module::hasUnsavedChanges() const
@@ -227,8 +227,8 @@ void LevelEditor_Module::newLevel()
 		// Starting new level, changes will be discarded
 		m_unsavedChanges = false;
 		m_undoStack = {};
-		m_redoStack = {}; 
-	});
+		m_redoStack = {};
+		});
 }
 
 void LevelEditor_Module::openLevel(const std::string& name)
@@ -246,7 +246,7 @@ void LevelEditor_Module::openLevelDialogue()
 {
 	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() {
 		m_editorInterface->m_uiOpenDialogue->open();
-	});
+		});
 }
 
 void LevelEditor_Module::saveLevel(const std::string& name)
@@ -340,7 +340,7 @@ void LevelEditor_Module::doReversableAction(const std::shared_ptr<Editor_Command
 	// Otherwise add action to the undo stack
 	else
 		m_undoStack.push_front(command);
-	
+
 	while (m_undoStack.size() > m_maxUndo)
 		m_undoStack.pop_back();
 	m_unsavedChanges = true;
@@ -363,7 +363,7 @@ void LevelEditor_Module::clearSelection()
 
 			// Add selection component to new selection
 			m_editor->m_mouseGizmo->setSelection(uuids);
-			for each (const auto& entityHandle in uuids) {
+			for each (const auto & entityHandle in uuids) {
 				const Selected_Component component;
 				ecsWorld.addComponent(entityHandle, &component);
 			}
@@ -373,7 +373,7 @@ void LevelEditor_Module::clearSelection()
 			size_t count(0ull);
 			glm::vec3 center(0.0f), scale(0.0f);
 			for each (const auto & entityHandle in uuids)
-				if (auto * transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
+				if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 					center += transform->m_localTransform.m_position;
 					scale += transform->m_localTransform.m_scale;
 					count++;
@@ -398,7 +398,7 @@ void LevelEditor_Module::clearSelection()
 
 			// Add selection component to new selection
 			m_editor->m_mouseGizmo->setSelection(m_uuids_old);
-			for each (const auto& entityHandle in m_uuids_old) {
+			for each (const auto & entityHandle in m_uuids_old) {
 				const Selected_Component component;
 				ecsWorld.addComponent(entityHandle, &component);
 			}
@@ -408,7 +408,7 @@ void LevelEditor_Module::clearSelection()
 			size_t count(0ull);
 			glm::vec3 center(0.0f), scale(0.0f);
 			for each (const auto & entityHandle in m_uuids_old)
-				if (auto * transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
+				if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 					center += transform->m_localTransform.m_position;
 					scale += transform->m_localTransform.m_scale;
 					count++;
@@ -422,7 +422,7 @@ void LevelEditor_Module::clearSelection()
 		}
 		virtual bool join(Editor_Command* const other) override final {
 			if (auto newCommand = dynamic_cast<Clear_Selection_Command*>(other))
-				return true;	
+				return true;
 			return false;
 		}
 	};
@@ -453,7 +453,7 @@ void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
 
 			// Add selection component to new selection
 			m_editor->m_mouseGizmo->setSelection(uuids);
-			for each (const auto& entityHandle in uuids) {
+			for each (const auto & entityHandle in uuids) {
 				const Selected_Component component;
 				ecsWorld.addComponent(entityHandle, &component);
 			}
@@ -463,7 +463,7 @@ void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
 			size_t count(0ull);
 			glm::vec3 center(0.0f), scale(0.0f);
 			for each (const auto & entityHandle in uuids)
-				if (auto * transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
+				if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 					center += transform->m_localTransform.m_position;
 					scale += transform->m_localTransform.m_scale;
 					count++;
@@ -486,7 +486,7 @@ void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
 				// Join the 2 'new' sets together, make sure it's unique
 				m_uuids_new.insert(m_uuids_new.begin(), newCommand->m_uuids_new.cbegin(), newCommand->m_uuids_new.cend());
 				std::unique(m_uuids_new.begin(), m_uuids_new.end());
-				return true;				
+				return true;
 			}
 			return false;
 		}
@@ -515,8 +515,8 @@ void LevelEditor_Module::mergeSelection()
 			const auto& root = m_uuids[0];
 			if (root.isValid()) {
 				// Parent remaining entities in the selection to the root
-				for (size_t x = 1ull, selSize = m_uuids.size(); x < selSize; ++x) 
-					if (const auto & entityHandle = m_uuids[x])
+				for (size_t x = 1ull, selSize = m_uuids.size(); x < selSize; ++x)
+					if (const auto& entityHandle = m_uuids[x])
 						ecsWorld.parentEntity(root, entityHandle);
 				m_editor->m_mouseGizmo->getSelection() = { root };
 			}
@@ -524,10 +524,10 @@ void LevelEditor_Module::mergeSelection()
 		virtual void undo() override final {
 			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			// Find the root element
-			if (auto * root = ecsWorld.getEntity(m_uuids[0])) {
+			if (auto* root = ecsWorld.getEntity(m_uuids[0])) {
 				// Unparent remaining entities from the root
-				for (size_t x = 1ull, selSize = m_uuids.size(); x < selSize; ++x) 
-					if (const auto & entityHandle = m_uuids[x])
+				for (size_t x = 1ull, selSize = m_uuids.size(); x < selSize; ++x)
+					if (const auto& entityHandle = m_uuids[x])
 						ecsWorld.unparentEntity(entityHandle);
 			}
 		}
@@ -564,8 +564,8 @@ void LevelEditor_Module::groupSelection()
 			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			Transform_Component rootTransform;
 			size_t posCount(0ull);
-			for each (const auto& entityHandle in m_uuids)
-				if (const auto & transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
+			for each (const auto & entityHandle in m_uuids)
+				if (const auto& transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 					rootTransform.m_localTransform.m_position += transform->m_localTransform.m_position;
 					posCount++;
 				}
@@ -632,7 +632,7 @@ void LevelEditor_Module::ungroupSelection()
 			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			size_t childIndex(0ull);
 			for each (const auto & enityUUID in m_uuids)
-				for each (const auto & childUUID in m_children[childIndex++]) 
+				for each (const auto & childUUID in m_children[childIndex++])
 					ecsWorld.parentEntity(enityUUID, childUUID);
 		}
 		virtual bool join(Editor_Command* const other) override final {
@@ -682,7 +682,7 @@ void LevelEditor_Module::deleteSelection()
 			: m_engine(engine), m_data(m_engine->getModule_ECS().getWorld().serializeEntities(selection)), m_uuids(selection) {}
 		virtual void execute() override final {
 			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
-			for each (const auto& entityHandle in m_uuids)
+			for each (const auto & entityHandle in m_uuids)
 				ecsWorld.removeEntity(entityHandle);
 		}
 		virtual void undo() override final {
@@ -719,7 +719,7 @@ void LevelEditor_Module::addComponent(const ecsHandle& entityHandle, const char*
 		}
 		virtual void undo() override final {
 			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
-			if (const auto & componentID = ecsWorld.nameToComponentID(m_componentName)) {
+			if (const auto& componentID = ecsWorld.nameToComponentID(m_componentName)) {
 				for each (auto & component in ecsWorld.getEntity(m_entityHandle)->m_components)
 					if (component.first == componentID) {
 						ecsWorld.removeComponent(m_entityHandle, component.first);
@@ -747,8 +747,8 @@ void LevelEditor_Module::deleteComponent(const ecsHandle& entityHandle, const in
 		Delete_Component_Command(Engine* engine, LevelEditor_Module* editor, const ecsHandle& entityHandle, const int componentID)
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentID(componentID) {
 			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
-			if (const auto & component = ecsWorld.getComponent(m_entityHandle, m_componentID))
-				m_componentData = component->to_buffer();			
+			if (const auto& component = ecsWorld.getComponent(m_entityHandle, m_componentID))
+				m_componentData = component->to_buffer();
 		}
 		virtual void execute() override final {
 			m_engine->getModule_ECS().getWorld().removeComponent(m_entityHandle, m_componentID);
@@ -791,7 +791,7 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const ec
 				const auto desiredHandle = m_uuids[handleCount].isValid() ? m_uuids[handleCount] : ecsWorld.generateUUID();
 				const auto& [entityHandle, entity] = ecsWorld.deserializeEntity(m_data.data(), m_data.size(), dataRead, ecsHandle(), desiredHandle);
 				if (entityHandle.isValid() && entity) {
-					if (auto * transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
+					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
 						center += transform->m_localTransform.m_position;
 					}
@@ -809,7 +809,7 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const ec
 		}
 		virtual void undo() override final {
 			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
-			for each (const auto& entityHandle in m_uuids)
+			for each (const auto & entityHandle in m_uuids)
 				ecsWorld.removeEntity(entityHandle);
 		}
 		virtual bool join(Editor_Command* const other) override final {

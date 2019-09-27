@@ -16,14 +16,14 @@ public:
 	/** Construct a viewport, given an offset and size.
 	@param	screenPosition	the offset relative to the bottom left of the screen.
 	@param	dimensions		the size of the viewport. */
-	Viewport(const glm::ivec2 & screenPosition, const glm::ivec2 & dimensions);
-	
+	Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions);
+
 
 	// Public Methods
 	/** Change the size of this viewport.
 	@param	size			the new size to use.
 	@param	layerFaces		the number of layer faces to use. */
-	void resize(const glm::ivec2 & size, const int & layerFaces);
+	void resize(const glm::ivec2& size, const int& layerFaces);
 	/** Bind this viewport. */
 	void bind();
 	/** Clear the data held by this viewport, such as it's framebuffers. */

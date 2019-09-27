@@ -36,7 +36,7 @@ public:
 	void render(const float& deltaTime);
 	/** Apply a specific transform.
 	@param	transform	the new transform to use. */
-	void setTransform(const Transform & transform);
+	void setTransform(const Transform& transform);
 
 
 private:
@@ -53,10 +53,10 @@ private:
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	Transform m_transform;
 	enum SelectedAxes : unsigned int {
-		NONE	= 0b0000'0000,
-		X_AXIS	= 0b0000'0001,
-		Y_AXIS	= 0b0000'0010,
-		Z_AXIS	= 0b0000'0100,
+		NONE = 0b0000'0000,
+		X_AXIS = 0b0000'0001,
+		Y_AXIS = 0b0000'0010,
+		Z_AXIS = 0b0000'0100,
 	};
 	float m_renderScale = 0.02f, m_gridSnap = 1.0f;
 	unsigned int m_selectedAxes = NONE, m_hoveredAxes = NONE;

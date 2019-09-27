@@ -17,7 +17,7 @@ public:
 	/** Destroy this physics sync system. */
 	inline ~TransformSync_Phys_System() = default;
 	/** Construct a physics sync system. */
-	inline TransformSync_Phys_System(Engine * engine, btDiscreteDynamicsWorld * world)
+	inline TransformSync_Phys_System(Engine* engine, btDiscreteDynamicsWorld* world)
 		: ecsBaseSystem(), m_world(world) {
 		// Declare component types used
 		addComponentType(Transform_Component::m_ID);
@@ -30,20 +30,19 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override final {
 		for each (const auto & componentParam in components) {
-			auto * transformComponent = (Transform_Component*)componentParam[0];
-			auto * colliderComponent = (Collider_Component*)componentParam[1];
+			auto* transformComponent = (Transform_Component*)componentParam[0];
+			auto* colliderComponent = (Collider_Component*)componentParam[1];
 
-			const auto & position = transformComponent->m_worldTransform.m_position;
-			const auto & orientation = transformComponent->m_worldTransform.m_orientation;
-			const auto & scale = transformComponent->m_worldTransform.m_scale;
+			const auto& position = transformComponent->m_worldTransform.m_position;
+			const auto& orientation = transformComponent->m_worldTransform.m_orientation;
+			const auto& scale = transformComponent->m_worldTransform.m_scale;
 
 			if (colliderComponent) {
 				if (colliderComponent->m_collider->existsYet()) {
 					// If the collider's transformation is out of date
 					if (colliderComponent->m_worldTransform != transformComponent->m_localTransform) {
-
 						// Remove from the physics simulation
 						if (colliderComponent->m_rigidBody) {
 							m_world->removeRigidBody(colliderComponent->m_rigidBody);
@@ -56,7 +55,7 @@ public:
 						colliderComponent->m_motionState->setWorldTransform(btTransform(btTransform(btQuaternion(orientation.x, orientation.y, orientation.z, orientation.w), btVector3(position.x, position.y, position.z))));
 
 						// Resize the collider shape to fit
-						if (colliderComponent->m_worldTransform.m_scale != transformComponent->m_worldTransform.m_scale || !colliderComponent->m_shape) {	
+						if (colliderComponent->m_worldTransform.m_scale != transformComponent->m_worldTransform.m_scale || !colliderComponent->m_shape) {
 							if (!colliderComponent->m_shape)
 								delete colliderComponent->m_shape;
 							colliderComponent->m_shape = new btConvexHullShape(*(btConvexHullShape*)colliderComponent->m_collider->m_shape);
@@ -75,7 +74,7 @@ public:
 						// Update the transform
 						colliderComponent->m_worldTransform = transformComponent->m_worldTransform;
 					}
-					
+
 					// Otherwise update the transform with the collider info
 					else {
 						btTransform trans;
@@ -95,7 +94,7 @@ public:
 
 private:
 	// Private Attributes
-	btDiscreteDynamicsWorld * m_world = nullptr;
+	btDiscreteDynamicsWorld* m_world = nullptr;
 };
 
 #endif // TRANSFORMSYNC_PHYS_S_H

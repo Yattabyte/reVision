@@ -82,7 +82,7 @@ void OpenDialogue::tickMainDialogue()
 	static bool freshlyOpened = true; // flag used for operations that should happen only once-per-opening
 	const auto title = "Open Level";
 	if (m_open)
-		ImGui::OpenPopup(title);	
+		ImGui::OpenPopup(title);
 	ImGui::SetNextWindowSize({ 600, 500 }, ImGuiCond_Appearing);
 	if (ImGui::BeginPopupModal(title, &m_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 		enum DialogueOptions {
@@ -92,8 +92,8 @@ void OpenDialogue::tickMainDialogue()
 			rename,
 			del,
 		} option = none;
-		if (freshlyOpened) 
-			populateLevels();		
+		if (freshlyOpened)
+			populateLevels();
 
 		// Header
 		ImGui::Text("Choose a level to open...");
@@ -191,7 +191,7 @@ void OpenDialogue::tickMainDialogue()
 			int count = 1;
 			while (std::filesystem::exists(dstPath))
 				dstPath.replace_filename(
-				(srcPath.has_stem() ? srcPath.stem().string() : srcPath.filename().string()) 
+				(srcPath.has_stem() ? srcPath.stem().string() : srcPath.filename().string())
 					+ " - Copy (" + std::to_string(count++) + ")"
 					+ (srcPath.has_extension() ? srcPath.extension().string() : "")
 				);

@@ -22,7 +22,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Bloom(Engine * engine)
+	inline Bloom(Engine* engine)
 		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
 		// Asset Loading
 		m_shaderBloomExtract = Shared_Shader(engine, "Effects\\Bloom Extraction");
@@ -31,34 +31,34 @@ public:
 		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preference Callbacks
-		auto & preferences = m_engine->getPreferenceState();
+		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_BLOOM, m_enabled);
-		preferences.addCallback(PreferenceState::C_BLOOM, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
+		preferences.addCallback(PreferenceState::C_BLOOM, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
 		preferences.getOrSetValue(PreferenceState::C_BLOOM_STRENGTH, m_bloomStrength);
-		preferences.addCallback(PreferenceState::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float &f) { setBloomStrength((int)f); });
+		preferences.addCallback(PreferenceState::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float& f) { setBloomStrength((int)f); });
 	}
 
 
 	// Public Interface Implementations.
-	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
-		for (auto &[camIndexBuffer, indirectQuad] : m_drawData) {
+	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+		for (auto& [camIndexBuffer, indirectQuad] : m_drawData) {
 			camIndexBuffer.endWriting();
 			indirectQuad.endWriting();
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet() || !m_shaderGB->existsYet())
 			return;
 
 		// Prepare camera index
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);
-		auto &[camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
+		auto& [camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
 		camBufferIndex.beginWriting();
 		indirectQuad.beginWriting();
 		std::vector<glm::ivec2> camIndices;
-		for (auto &[camIndex, layer] : perspectives)
+		for (auto& [camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 		indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
@@ -111,13 +111,13 @@ private:
 	// Private Methods
 	/** Change the strength of the bloom effect.
 	@param	strength		the new strength of the bloom effect. */
-	inline void setBloomStrength(const int & strength) {
+	inline void setBloomStrength(const int& strength) {
 		m_bloomStrength = strength;
 	}
 
 
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	Shared_Shader m_shaderBloomExtract, m_shaderCopy, m_shaderGB;
 	Shared_Auto_Model m_shapeQuad;
 	int m_bloomStrength = 5;

@@ -1,6 +1,6 @@
 #pragma once
 #ifndef OUTLINE_SYSTEM_H
-#define OUTLINE_SYSTEM_H 
+#define OUTLINE_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
@@ -29,7 +29,7 @@ public:
 	/** Construct this system.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	inline Outline_System(Engine * engine, LevelEditor_Module * editor)
+	inline Outline_System(Engine* engine, LevelEditor_Module* editor)
 		: m_engine(engine), m_editor(editor) {
 		// Declare component types used
 		addComponentType(Selected_Component::m_ID);
@@ -37,13 +37,13 @@ public:
 		addComponentType(Prop_Component::m_ID, FLAG_OPTIONAL);
 		addComponentType(LightPoint_Component::m_ID, FLAG_OPTIONAL);
 		addComponentType(LightSpot_Component::m_ID, FLAG_OPTIONAL);
-		
+
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::E_OUTLINE_SCALE, m_renderScale);
 		preferences.addCallback(PreferenceState::E_OUTLINE_SCALE, m_aliveIndicator, [&](const float& f) {
 			m_renderScale = f;
-		});
+			});
 
 		// Create VBO's
 		glCreateBuffers(1, &m_vboID);
@@ -81,7 +81,7 @@ public:
 				auto* prop = (Prop_Component*)componentParam[2];
 				auto* point = (LightPoint_Component*)componentParam[3];
 				auto* spot = (LightSpot_Component*)componentParam[4];
-		
+
 				const auto tryRegisterComponentModel = [&](const ecsHandle& componentHandle, const Shared_Mesh& mesh) {
 					if (m_geometryParams.find(componentHandle) == m_geometryParams.end()) {
 						// Upload data once
@@ -108,7 +108,7 @@ public:
 					baseTransforms.push_back(pMatrix * vMatrix * trans->m_worldTransform.m_modelMatrix);
 				}
 			}
-			
+
 			// Write data
 			m_ssboTransforms.beginWriting();
 			m_ssboTransforms.write(0, sizeof(glm::mat4) * baseTransforms.size(), baseTransforms.data());

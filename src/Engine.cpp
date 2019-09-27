@@ -13,7 +13,6 @@
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
-
 Engine::~Engine()
 {
 	// Update indicator
@@ -108,47 +107,47 @@ void Engine::initWindow()
 	m_preferenceState.getOrSetValue(PreferenceState::C_VSYNC, m_vsync);
 
 	// Preference Callbacks
-	m_preferenceState.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
+	m_preferenceState.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_windowSize.x = int(f);
 		configureWindow();
-	});
-	m_preferenceState.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
+		});
+	m_preferenceState.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_windowSize.y = int(f);
 		configureWindow();
-	});
-	m_preferenceState.addCallback(PreferenceState::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float &f) {
+		});
+	m_preferenceState.addCallback(PreferenceState::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float& f) {
 		m_refreshRate = f;
 		configureWindow();
-	});
-	m_preferenceState.addCallback(PreferenceState::C_WINDOW_FULLSCREEN, m_aliveIndicator, [&](const float &f) {
+		});
+	m_preferenceState.addCallback(PreferenceState::C_WINDOW_FULLSCREEN, m_aliveIndicator, [&](const float& f) {
 		m_useFullscreen = f;
 		configureWindow();
-	});
-	m_preferenceState.addCallback(PreferenceState::C_VSYNC, m_aliveIndicator, [&](const float &f) {
+		});
+	m_preferenceState.addCallback(PreferenceState::C_VSYNC, m_aliveIndicator, [&](const float& f) {
 		m_vsync = f;
 		glfwSwapInterval((int)f);
-	});
+		});
 	configureWindow();
 	glfwSwapInterval((int)m_vsync);
 	glfwSetInputMode(m_window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
 	glfwSetWindowUserPointer(m_window, this);
-	glfwSetWindowSizeCallback(m_window, [](GLFWwindow * window, int width, int height) {
-		auto & preferences = ((Engine*)glfwGetWindowUserPointer(window))->getPreferenceState();
+	glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
+		auto& preferences = ((Engine*)glfwGetWindowUserPointer(window))->getPreferenceState();
 		preferences.setValue(PreferenceState::C_WINDOW_WIDTH, width);
 		preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, height);
-	});
+		});
 	glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xPos, double yPos) {
 		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyCursorPos(xPos, yPos);
-	});
+		});
 	glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) {
 		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyCursorButton(button, action, mods);
-	});
+		});
 	glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int character) {
 		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyChar(character);
-	});
+		});
 	glfwSetKeyCallback(m_window, [](GLFWwindow* window, int a, int b, int c, int d) {
 		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyKey(a, b, c, d);
-	});
+		});
 #ifdef DEBUG
 	if (GLAD_GL_KHR_debug) {
 		GLint v;
@@ -157,7 +156,7 @@ void Engine::initWindow()
 			glEnable(GL_DEBUG_OUTPUT);
 			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 			m_messageManager.statement(">>> KHR DEBUG MODE ENABLED <<<");
-			auto myCallback = [](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *msg, const void *data) {
+			auto myCallback = [](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* msg, const void* data) {
 				char* _source;
 				char* _type;
 				char* _severity;
@@ -294,7 +293,7 @@ void Engine::printBoilerPlate()
 #else
 	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + " (DEBUG)\t*");
 #endif // DEBUG
-	m_messageManager.statement("*  - Build Date   September 25th, 2019\t*");
+	m_messageManager.statement("*  - Build Date   September 27th, 2019\t*");
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > Library Info:\t\t\t*");
 	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t\t*");
@@ -306,9 +305,9 @@ void Engine::printBoilerPlate()
 	m_messageManager.statement("*  - SoLoud       " + std::to_string(m_soundManager.GetVersion()) + "\t\t*");
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > Graphics Info:\t\t\t*");
-	m_messageManager.statement("*  - " + std::string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))) + "\t\t*");
-	m_messageManager.statement("*  - OpenGL " + std::string(reinterpret_cast<char const *>(glGetString(GL_VERSION))) + "\t\t*");
-	m_messageManager.statement("*  - GLSL " + std::string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))) + "\t\t\t*");
+	m_messageManager.statement("*  - " + std::string(reinterpret_cast<char const*>(glGetString(GL_RENDERER))) + "\t\t*");
+	m_messageManager.statement("*  - OpenGL " + std::string(reinterpret_cast<char const*>(glGetString(GL_VERSION))) + "\t\t*");
+	m_messageManager.statement("*  - GLSL " + std::string(reinterpret_cast<char const*>(glGetString(GL_SHADING_LANGUAGE_VERSION))) + "\t\t\t*");
 	m_messageManager.statement("*****************************************");
 }
 
@@ -320,7 +319,7 @@ void Engine::tick()
 
 	// Update Managers
 	m_assetManager.notifyObservers();
-	
+
 	// Updated mouse states, manually
 	double mouseX, mouseY;
 	glfwGetCursorPos(m_window, &mouseX, &mouseY);
@@ -329,12 +328,12 @@ void Engine::tick()
 	m_actionState[ActionState::MOUSE_X] = (float)mouseX;
 	m_actionState[ActionState::MOUSE_Y] = (float)mouseY;
 	if (m_mouseInputMode == FREE_LOOK)
-		glfwSetCursorPos(m_window, 0, 0);	
+		glfwSetCursorPos(m_window, 0, 0);
 
 	// Update key binding states, manually
-	if (const auto &bindings = m_inputBindings.getBindings())
+	if (const auto& bindings = m_inputBindings.getBindings())
 		if (bindings->existsYet())
-			for each (const auto &pair in bindings.get()->m_configuration)
+			for each (const auto & pair in bindings.get()->m_configuration)
 				m_actionState[pair.first] = glfwGetKey(m_window, (int)pair.second) ? 1.0f : 0.0f;
 
 	// Update UI module based on action state, manually
@@ -351,10 +350,10 @@ void Engine::tick()
 	m_moduleGraphics.frameTick(deltaTime);
 	if (m_engineState == in_editor)
 		m_moduleEditor.frameTick(deltaTime);
-	m_moduleUI.frameTick(deltaTime);	
+	m_moduleUI.frameTick(deltaTime);
 
 	// This is done last so they can appear over-top
-	m_moduleGame.renderOverlays(deltaTime); 
+	m_moduleGame.renderOverlays(deltaTime);
 
 	// Swap buffers and end
 	glfwSwapBuffers(m_window);
@@ -362,7 +361,7 @@ void Engine::tick()
 	///*-----------------------------------------------------END FRAME-----------------------------------------------------*///
 }
 
-void Engine::tickThreaded(std::future<void> exitObject, GLFWwindow * const window)
+void Engine::tickThreaded(std::future<void> exitObject, GLFWwindow* const window)
 {
 	glfwMakeContextCurrent(window);
 
@@ -381,7 +380,7 @@ void Engine::shutDown()
 	glfwSetWindowShouldClose(m_window, GLFW_TRUE);
 }
 
-void Engine::setMouseInputMode(const MouseInputMode & mode)
+void Engine::setMouseInputMode(const MouseInputMode& mode)
 {
 	m_mouseInputMode = mode;
 	switch (mode) {
@@ -439,7 +438,7 @@ std::string Engine::Get_Current_Dir()
 	return std::string(cCurrentPath);
 }
 
-bool Engine::File_Exists(const std::string & name)
+bool Engine::File_Exists(const std::string& name)
 {
 	// Technique to return whether or not a given file or folder exists
 	struct stat buffer;

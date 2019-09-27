@@ -16,19 +16,18 @@ public:
 	inline ~CameraController() = default;
 	/** Construct a camera controller.
 	@param	engine		the currently active engine. */
-	CameraController(Engine * engine);
+	CameraController(Engine* engine);
 
 
 	// Public Interface Implementation
-	virtual void tick(const float & deltaTime) override final;
+	virtual void tick(const float& deltaTime) override final;
 
 
 private:
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	bool m_beginPress = false;
 	glm::vec2 m_startPos = glm::vec2(0.0f), m_rotation = glm::vec2(0), m_lastRotation = glm::vec2(0);
-
 };
 
 #endif // CAMERACONTROLLER_H

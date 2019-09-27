@@ -20,39 +20,39 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline FXAA(Engine * engine) 
+	inline FXAA(Engine* engine)
 		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
 		// Asset Loading
 		m_shaderFXAA = Shared_Shader(engine, "Effects\\FXAA");
 		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preferences
-		auto & preferences = m_engine->getPreferenceState();
+		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_FXAA, m_enabled);
-		preferences.addCallback(PreferenceState::C_FXAA, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
+		preferences.addCallback(PreferenceState::C_FXAA, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
 	}
 
 
 	// Public Interface Implementations.
-	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
-		for (auto &[camIndexBuffer, indirectQuad] : m_drawData) {
+	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+		for (auto& [camIndexBuffer, indirectQuad] : m_drawData) {
 			camIndexBuffer.endWriting();
 			indirectQuad.endWriting();
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderFXAA->existsYet())
 			return;
 
 		// Prepare camera index
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);
-		auto &[camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
+		auto& [camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
 		camBufferIndex.beginWriting();
 		indirectQuad.beginWriting();
 		std::vector<glm::ivec2> camIndices;
-		for (auto &[camIndex, layer] : perspectives)
+		for (auto& [camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 		indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
@@ -65,15 +65,15 @@ public:
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		indirectQuad.drawCall();
 
-		// Bind for reading by next effect	
+		// Bind for reading by next effect
 		glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("FXAA", 0));
 		m_drawIndex++;
 	}
-	
+
 
 private:
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	Shared_Shader m_shaderFXAA;
 	Shared_Auto_Model m_shapeQuad;
 	struct DrawData {

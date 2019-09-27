@@ -25,7 +25,7 @@ public:
 	const enum STATE {
 		RELEASE,
 		PRESS,
-		REPEAT		
+		REPEAT
 	};
 	/** Enumeration for indexing into actions. */
 	const enum ACTION_ENUM {
@@ -82,14 +82,14 @@ public:
 			"UI_ESCAPE",
 		};
 		return actionStrings;
-	};	
+	};
 
 
 	// Public Methods
-	inline ActionState::STATE isAction(const ActionState::ACTION_ENUM & actionEnum) {
+	inline ActionState::STATE isAction(const ActionState::ACTION_ENUM& actionEnum) {
 		return isAction(actionEnum, &m_keyStates);
 	}
-	inline ActionState::STATE isAction(const ActionState::ACTION_ENUM & actionEnum, std::map<ActionState::ACTION_ENUM, bool> * keyStates) const {
+	inline ActionState::STATE isAction(const ActionState::ACTION_ENUM& actionEnum, std::map<ActionState::ACTION_ENUM, bool>* keyStates) const {
 		if (find(actionEnum) != end())
 			if (at(actionEnum) > 0.5f) {
 				if (!(*keyStates)[actionEnum]) {

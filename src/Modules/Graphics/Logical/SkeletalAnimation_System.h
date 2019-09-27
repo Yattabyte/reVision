@@ -1,6 +1,6 @@
 #pragma once
 #ifndef SKELETALANIMATION_SYSTEM_H
-#define SKELETALANIMATION_SYSTEM_H 
+#define SKELETALANIMATION_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
@@ -14,18 +14,18 @@ public:
 	/** Destroy the skeletal animation system. */
 	inline ~Skeletal_Animation_System() = default;
 	/** Construct a skeletal animation system. */
-	inline Skeletal_Animation_System(Engine * engine) 
+	inline Skeletal_Animation_System(Engine* engine)
 		: m_engine(engine) {
 		// Declare component types used
 		addComponentType(Skeleton_Component::m_ID, FLAG_REQUIRED);
 	}
 
 
-	// Public Interface Implementation	
+	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		for each (const auto & componentParam in components) {
-			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[0];
-			
+			Skeleton_Component* skeletonComponent = (Skeleton_Component*)componentParam[0];
+
 			// Ensure skeleton has a mesh
 			if (!skeletonComponent->m_mesh)
 				skeletonComponent->m_mesh = Shared_Mesh(m_engine, "\\Models\\" + skeletonComponent->m_modelName);
@@ -52,8 +52,8 @@ public:
 
 
 	// Public functions
-	template <typename T> inline static T valueMix(const T &t1, const T &t2, const float &f) { return glm::mix(t1, t2, f); }
-	template <> inline static glm::quat valueMix(const glm::quat &t1, const glm::quat &t2, const float &f) { return glm::slerp(t1, t2, f); }
+	template <typename T> inline static T valueMix(const T& t1, const T& t2, const float& f) { return glm::mix(t1, t2, f); }
+	template <> inline static glm::quat valueMix(const glm::quat& t1, const glm::quat& t2, const float& f) { return glm::slerp(t1, t2, f); }
 
 
 protected:
@@ -62,9 +62,9 @@ protected:
 	@param	pAnimation		the animation system to search through.
 	@param	NodeName		the name of the node to find.
 	@return					pointer to the node matching the name specified if found, nullptr otherwise. */
-	inline static constexpr auto FindNodeAnim = [](const Animation & pAnimation, const std::string & NodeName) -> const Node_Animation* {
+	inline static constexpr auto FindNodeAnim = [](const Animation& pAnimation, const std::string& NodeName) -> const Node_Animation* {
 		for (unsigned int i = 0; i < pAnimation.numChannels; i++) {
-			const Node_Animation * pNodeAnim = pAnimation.channels[i];
+			const Node_Animation* pNodeAnim = pAnimation.channels[i];
 			if (pNodeAnim->nodeName == NodeName)
 				return pNodeAnim;
 		}
@@ -75,7 +75,7 @@ protected:
 	@param	count			the number of key frames.
 	@param	keyVector		array of key frames.
 	@return					an appropriate keyframe, 0 otherwise. */
-	inline static constexpr auto FindKey = [](const float & AnimationTime, const size_t & count, const auto & keyVector) -> const size_t {
+	inline static constexpr auto FindKey = [](const float& AnimationTime, const size_t& count, const auto& keyVector) -> const size_t {
 		for (size_t i = 0; i < count; i++)
 			if (AnimationTime < (float)(keyVector[i + 1]).time)
 				return i;
@@ -85,15 +85,15 @@ protected:
 	@param	AnimationTime	the current time in the animation.
 	@param	keyVector		array of key frames.
 	@return					a new keyframe value. */
-	inline static constexpr auto InterpolateKeys = [](const float &AnimationTime, const auto & keyVector) {
-		const size_t & keyCount = keyVector.size();
+	inline static constexpr auto InterpolateKeys = [](const float& AnimationTime, const auto& keyVector) {
+		const size_t& keyCount = keyVector.size();
 		assert(keyCount > 0);
-		const auto & Result = keyVector[0].value;
+		const auto& Result = keyVector[0].value;
 		if (keyCount > 1) { // Ensure we have 2 values to interpolate between
 			const size_t Index = Skeletal_Animation_System::FindKey(AnimationTime, keyCount - 1, keyVector);
 			const size_t NextIndex = (Index + 1) > keyCount ? 0 : (Index + 1);
-			const auto & Key = keyVector[Index];
-			const auto & NextKey = keyVector[NextIndex];
+			const auto& Key = keyVector[Index];
+			const auto& NextKey = keyVector[NextIndex];
 			const float DeltaTime = (float)(NextKey.time - Key.time);
 			const float Factor = glm::clamp((AnimationTime - (float)Key.time) / DeltaTime, 0.0f, 1.0f);
 			return Skeletal_Animation_System::valueMix(Key.value, NextKey.value, Factor);
@@ -107,10 +107,10 @@ protected:
 	@param	parentNode		parent node in the node hierarchy.
 	@param	model			the model to process the animations from.
 	@param	ParentTransform	parent transform in the node hierarchy. */
-	inline static void ReadNodeHeirarchy(std::vector<glm::mat4> & transforms, const float & AnimationTime, const int & animation_ID, const Node * parentNode, const Shared_Mesh & model, const glm::mat4 & ParentTransform) {
-		const std::string & NodeName = parentNode->name;
-		const Animation & pAnimation = model->m_geometry.animations[animation_ID];
-		const Node_Animation * pNodeAnim = FindNodeAnim(pAnimation, NodeName);
+	inline static void ReadNodeHeirarchy(std::vector<glm::mat4>& transforms, const float& AnimationTime, const int& animation_ID, const Node* parentNode, const Shared_Mesh& model, const glm::mat4& ParentTransform) {
+		const std::string& NodeName = parentNode->name;
+		const Animation& pAnimation = model->m_geometry.animations[animation_ID];
+		const Node_Animation* pNodeAnim = FindNodeAnim(pAnimation, NodeName);
 		glm::mat4 NodeTransformation = parentNode->transformation;
 
 		// Interpolate scaling, rotation, and translation.
@@ -125,7 +125,7 @@ protected:
 
 		const glm::mat4 GlobalTransformation = ParentTransform * NodeTransformation;
 		const glm::mat4 GlobalInverseTransform = glm::inverse(model->m_geometry.rootNode->transformation);
-		const std::map<std::string, size_t> &BoneMap = model->m_geometry.boneMap;
+		const std::map<std::string, size_t>& BoneMap = model->m_geometry.boneMap;
 		if (BoneMap.find(NodeName) != BoneMap.end()) {
 			size_t BoneIndex = BoneMap.at(NodeName);
 			transforms.at(BoneIndex) = GlobalInverseTransform * GlobalTransformation * model->m_geometry.boneTransforms.at(BoneIndex);
@@ -138,7 +138,7 @@ protected:
 
 private:
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 };
 
 #endif // SKELETALANIMATION_SYSTEM_H

@@ -24,7 +24,7 @@ public:
 		glDeleteTextures(1, &m_bayerID);
 	}
 	/** Constructor. */
-	inline SSR(Engine * engine)
+	inline SSR(Engine* engine)
 		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
 		m_shaderSSR1 = Shared_Shader(engine, "Effects\\SSR part 1");
@@ -34,9 +34,9 @@ public:
 		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preferences
-		auto & preferences = m_engine->getPreferenceState();
+		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_SSR, m_enabled);
-		preferences.addCallback(PreferenceState::C_SSR, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
+		preferences.addCallback(PreferenceState::C_SSR, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
 
 		// Bayer matrix
 		GLubyte data[16] = { 0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5 };
@@ -49,32 +49,32 @@ public:
 		glTextureParameteri(m_bayerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 		// Error Reporting
-		auto & msgMgr = m_engine->getManager_Messages();
+		auto& msgMgr = m_engine->getManager_Messages();
 		if (!glIsTexture(m_bayerID))
 			msgMgr.error("SSR Bayer Matrix Texture is incomplete.");
 	}
 
 
 	// Public Interface Implementations.
-	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
-		for (auto &[camIndexBuffer, indirectQuad] : m_drawData) {
+	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+		for (auto& [camIndexBuffer, indirectQuad] : m_drawData) {
 			camIndexBuffer.endWriting();
 			indirectQuad.endWriting();
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet())
 			return;
 
 		// Prepare camera index
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);
-		auto &[camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
+		auto& [camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
 		camBufferIndex.beginWriting();
 		indirectQuad.beginWriting();
 		std::vector<glm::ivec2> camIndices;
-		for (auto &[camIndex, layer] : perspectives)
+		for (auto& [camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 		indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
@@ -110,7 +110,7 @@ private:
 	// Private Methods
 	/** Convolute the lighting buffer into each of its mip levels.
 	@param	viewport	the viewport to render from. */
-	inline void updateMIPChain(const std::shared_ptr<Viewport> & viewport) {
+	inline void updateMIPChain(const std::shared_ptr<Viewport>& viewport) {
 		const auto mipFboID = viewport->m_gfxFBOS->getFboID("SSR_MIP");
 		const auto mipTexID = viewport->m_gfxFBOS->getTexID("SSR_MIP", 0);
 		const auto dimensions = glm::vec2(viewport->m_dimensions);
@@ -160,7 +160,7 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	Shared_Shader m_shaderSSR1, m_shaderSSR2, m_shaderCopy, m_shaderConvMips;
 	Shared_Auto_Model m_shapeQuad;
 	GLuint m_bayerID = 0;

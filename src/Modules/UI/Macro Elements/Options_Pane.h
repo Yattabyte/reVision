@@ -20,7 +20,7 @@ public:
 	inline ~Options_Pane() = default;
 	/** Construct a options pane.
 	@param	engine		the engine to use. */
-	inline Options_Pane(Engine * engine)
+	inline Options_Pane(Engine* engine)
 		: UI_Element(engine) {
 		// Make a background panel for cosemetic purposes
 		m_backPanel = std::make_shared<Panel>(engine);
@@ -33,11 +33,11 @@ public:
 		m_layout->setMargin(50.0f);
 		m_layout->addCallback(List::on_selection, [&]() {
 			const auto index = m_layout->getSelectionIndex();
-			if (index > -1 && size_t(index) < m_descriptions.size()) 
+			if (index > -1 && size_t(index) < m_descriptions.size())
 				std::dynamic_pointer_cast<Label>(m_description)->setText(m_descriptions[index]);
 			else
 				std::dynamic_pointer_cast<Label>(m_description)->setText("");
-		});
+			});
 		m_backPanel->addElement(m_layout);
 
 		// Title
@@ -75,18 +75,18 @@ public:
 			m_separatorBot->setPosition({ 0, -scale.y + 100 });
 			m_description->setScale(scale);
 			m_description->setPosition({ 50, -scale.y + 50 });
-		});
+			});
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void userAction(ActionState & actionState) override {
+	inline virtual void userAction(ActionState& actionState) override {
 		// Options menu doesn't implement any custom controls, focus is on the list
 		m_layout->userAction(actionState);
 		if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
 			m_engine->getModule_UI().getFocusMap()->back();
 	}
-	
+
 
 protected:
 	// Protected Methods
@@ -95,7 +95,7 @@ protected:
 	@param	element		the element to add to the options menu.
 	@param	text		the text to title the option.
 	@param	description	the text to describe the option. */
-	inline void addOption(Engine * engine, std::shared_ptr<UI_Element> element, const float & ratio, const std::string & text, const std::string & description, const int & eventType, const std::function<void()> & callback) {
+	inline void addOption(Engine* engine, std::shared_ptr<UI_Element> element, const float& ratio, const std::string& text, const std::string& description, const int& eventType, const std::function<void()>& callback) {
 		auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
 		auto label = std::make_shared<Label>(engine, text);
 		label->setColor(glm::vec3(0.75f));

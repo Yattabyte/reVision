@@ -1,6 +1,6 @@
 #pragma once
 #ifndef INSPECTOR_PROP_SYSTEM_H
-#define INSPECTOR_PROP_SYSTEM_H 
+#define INSPECTOR_PROP_SYSTEM_H
 
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/World/World_M.h"
@@ -131,8 +131,8 @@ public:
 				};
 				m_editor->doReversableAction(std::make_shared<Skin_Command>(m_engine->getModule_ECS().getWorld(), getUUIDS(), skinInput));
 			}
-				for each (auto & componentParam in components)
-					((Prop_Component*)componentParam[1])->m_skin = (unsigned int)skinInput;
+			for each (auto & componentParam in components)
+				((Prop_Component*)componentParam[1])->m_skin = (unsigned int)skinInput;
 		}
 	}
 

@@ -1,6 +1,6 @@
 #pragma once
 #ifndef CLEARSELECTION_SYSTEM_H
-#define CLEARSELECTION_SYSTEM_H 
+#define CLEARSELECTION_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
@@ -25,7 +25,7 @@ public:
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		auto& ecsWorld = m_engine->getModule_ECS().getWorld();
-		for each (const auto & componentParam in components) 
+		for each (const auto & componentParam in components)
 			ecsWorld.removeComponent<Selected_Component>(((Selected_Component*)(componentParam[0]))->m_entity);
 	}
 

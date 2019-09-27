@@ -19,7 +19,7 @@ public:
 	ecsWorld(const std::vector<char>& data);
 
 
-	// Public Methods	
+	// Public Methods
 	/** Generate a universally unique identifier for entities or components.
 	@return						a new ID. */
 	static ecsHandle generateUUID();
@@ -70,7 +70,7 @@ public:
 	@param	componentID			the runtime ID identifying the component class.
 	@return						the specific component on success, nullptr otherwise. */
 	inline ecsBaseComponent* getComponent(const ecsHandle& entityHandle, const ComponentID& componentID) {
-		if (auto * entity = getEntity(entityHandle))
+		if (auto* entity = getEntity(entityHandle))
 			return getComponent(entity->m_components, m_components[componentID], componentID);
 		return nullptr;
 	}
@@ -114,7 +114,7 @@ public:
 	@param	desiredHandle		optional specific handle to use, if empty will use handle held in data stream.
 	@return						a handle and a pointer pair to the entity created. */
 	std::pair<ecsHandle, ecsEntity*> deserializeEntity(const char* data, const size_t& dataSize, size_t& dataRead, const ecsHandle& parentHandle = ecsHandle(), const ecsHandle& desiredHandle = ecsHandle());
-	/** Try to find a component ID based on the component ID. 
+	/** Try to find a component ID based on the component ID.
 	@param	name				the component class name to search for.
 	@return						optional component ID on success, nullptr on failure. */
 	std::optional<ComponentID> nameToComponentID(const char* name);
@@ -140,10 +140,10 @@ public:
 	@param	func				lambda function serving as a system. */
 	void updateSystem(const float& deltaTime, const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func);
 
-	
+
 private:
 	// Private Methods
-	/** Check if a given component ID has been previously registered and deemed valid. 
+	/** Check if a given component ID has been previously registered and deemed valid.
 	@param	componentID			the component ID to verify.
 	@return						true if valid and registered, false otherwise. */
 	static bool isComponentIDValid(const ComponentID& componentID);

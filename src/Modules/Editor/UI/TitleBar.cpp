@@ -4,21 +4,21 @@
 #include "Engine.h"
 
 
-TitleBar::TitleBar(Engine * engine, LevelEditor_Module * editor)
+TitleBar::TitleBar(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
 	m_open = true;
 
 	// Preferences
-	auto & preferences = engine->getPreferenceState();
+	auto& preferences = engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
+	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.x = (int)f;
-	});
-	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
+		});
+	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
-	});
+		});
 
 	// Assets
 	m_iconNew = Shared_Texture(engine, "Editor//iconNew.png");
@@ -36,7 +36,7 @@ TitleBar::TitleBar(Engine * engine, LevelEditor_Module * editor)
 	m_iconSettings = Shared_Texture(engine, "Editor//iconOptions.png");
 }
 
-void TitleBar::tick(const float & deltaTime)
+void TitleBar::tick(const float& deltaTime)
 {
 	if (m_open) {
 		constexpr static auto BeginMenuWIcon = [](const char* string, const Shared_Texture& iconTexture, const char* shortcut = NULL, bool* selected = NULL, const bool& enabled = true) -> bool {

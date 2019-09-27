@@ -26,7 +26,7 @@ public:
 	inline ~OptionsMenu() = default;
 	/** Construct an options menu.
 	@param	engine		the engine to use. */
-	inline OptionsMenu(Engine * engine)
+	inline OptionsMenu(Engine* engine)
 		: Menu(engine) {
 		// Title
 		m_title->setText("OPTIONS");
@@ -56,7 +56,7 @@ public:
 			m_gfxMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f });
 			m_videoMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
 			m_gfxMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
-		});
+			});
 
 		m_focusMap = std::make_shared<FocusMap>();
 		m_focusMap->addElement(m_layout);

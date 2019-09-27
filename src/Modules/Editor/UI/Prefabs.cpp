@@ -171,7 +171,7 @@ void Prefabs::makePrefab(const std::vector<ecsHandle>& entityHandles)
 	m_selectedIndex = (int)(m_prefabs.size()) - 1;
 
 	// Save Prefab to disk
-	std::ofstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path , std::ios::binary | std::ios::out);
+	std::ofstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path, std::ios::binary | std::ios::out);
 	if (!mapFile.is_open())
 		m_engine->getManager_Messages().error("Cannot write the binary map file to disk!");
 	else
@@ -179,7 +179,7 @@ void Prefabs::makePrefab(const std::vector<ecsHandle>& entityHandles)
 	mapFile.close();
 }
 
-void Prefabs::populatePrefabs(const std::string & directory)
+void Prefabs::populatePrefabs(const std::string& directory)
 {
 	m_prefabs.clear();
 	m_prefabSubDirectory = directory;
@@ -192,9 +192,9 @@ void Prefabs::populatePrefabs(const std::string & directory)
 		m_prefabs.push_back(Prefab{ "Default", "Default", Prefab::folder, {} });
 	}
 	if (directory == "Default") {
-		m_prefabs.push_back({"Hydrant", "Hydrant", Prefab::def});
-		m_prefabs.push_back({"Chest", "Chest", Prefab::def});
-		m_prefabs.push_back({"Gun", "Gun", Prefab::def});
+		m_prefabs.push_back({ "Hydrant", "Hydrant", Prefab::def });
+		m_prefabs.push_back({ "Chest", "Chest", Prefab::def });
+		m_prefabs.push_back({ "Gun", "Gun", Prefab::def });
 	}
 	else {
 		for (auto& entry : std::filesystem::directory_iterator(path)) {
@@ -259,6 +259,6 @@ void Prefabs::openPrefabEntry()
 			m_engine->getModule_ECS().getWorld().makeEntity(entityComponents, 3ull, selectedPrefab.name);
 		}
 	}
-	else 
-		m_editor->addEntity(selectedPrefab.serialData);	
+	else
+		m_editor->addEntity(selectedPrefab.serialData);
 }

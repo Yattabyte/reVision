@@ -19,7 +19,7 @@ private:
 		T_key m_key;
 		T_elmt m_value;
 		inline Element() : m_key(0), m_value(0) {}
-		inline Element(const T_key & key, const T_elmt & value) : m_key(key), m_value(value) {}
+		inline Element(const T_key& key, const T_elmt& value) : m_key(key), m_value(value) {}
 	};
 	std::vector<Element> m_list;
 	T_compare m_comparator;
@@ -31,7 +31,7 @@ public:
 	inline ~PriorityList() = default;
 	/** Construct a priority list, optionally reserve a given capacity.
 	@param	capacity	the amount to reserve */
-	inline PriorityList(const unsigned int & capacity = 16) {
+	inline PriorityList(const unsigned int& capacity = 16) {
 		m_list.reserve(capacity);
 	}
 
@@ -49,12 +49,12 @@ public:
 	/** Insert a new element into the lsit into a correct relative position.
 	@param	key		the key used to sort this element
 	@param	value	the value paired with the key to be inserted */
-	inline void insert(const T_key & key, const T_elmt & value) {
+	inline void insert(const T_key& key, const T_elmt& value) {
 		for (auto walk = m_list.begin(); walk != m_list.end(); ++walk) {
 			if (m_comparator(key, (*walk).m_key)) {
-				m_list.insert(walk, Element(key, value)); 
+				m_list.insert(walk, Element(key, value));
 				return;
-			}			
+			}
 		}
 		// List was empty
 		m_list.push_back(Element(key, value));
@@ -64,7 +64,7 @@ public:
 	inline const std::vector<T_elmt> toList() const {
 		std::vector<T_elmt> outList;
 		outList.reserve(m_list.size());
-		for each (const auto &element in m_list)
+		for each (const auto & element in m_list)
 			outList.push_back(element.m_value);
 		return outList;
 	}

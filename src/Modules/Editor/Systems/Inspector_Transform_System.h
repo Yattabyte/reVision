@@ -1,6 +1,6 @@
 #pragma once
 #ifndef INSPECTOR_TRANSFORM_SYSTEM_H
-#define INSPECTOR_TRANSFORM_SYSTEM_H 
+#define INSPECTOR_TRANSFORM_SYSTEM_H
 
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/World/World_M.h"
@@ -17,7 +17,7 @@ public:
 	// Public (de)Constructors
 	/** Destroy this system. */
 	inline ~Inspector_Transform_System() = default;
-	/** Construct this system. 
+	/** Construct this system.
 	@param	editor		the level editor. */
 	inline Inspector_Transform_System(Engine* engine, LevelEditor_Module* editor)
 		: m_engine(engine), m_editor(editor) {
@@ -28,7 +28,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {		
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		const auto text = std::string(Transform_Component::m_name) + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use

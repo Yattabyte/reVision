@@ -102,7 +102,7 @@ struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
 			sizeof(unsigned int) + sizeof(float) + sizeof(glm::vec3);
 		std::vector<char> data(propSize);
-		void * ptr = &data[0];
+		void* ptr = &data[0];
 
 		const auto nameCount = (int)m_modelName.size();
 		std::memcpy(ptr, &nameCount, sizeof(int));
@@ -126,7 +126,7 @@ struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 		int nameCount(0ull);
 		std::memcpy(&nameCount, ptr, sizeof(int));
 		ptr = static_cast<char*>(ptr) + sizeof(int);
-		char * modelName = new char[size_t(nameCount) + 1ull];
+		char* modelName = new char[size_t(nameCount) + 1ull];
 		std::fill(&modelName[0], &modelName[nameCount + 1], '\0');
 		std::memcpy(&modelName[0], ptr, nameCount);
 		ptr = static_cast<char*>(ptr) + (size_t)nameCount;
@@ -158,7 +158,7 @@ struct Skeleton_Component final : public ecsComponent<Skeleton_Component, skelet
 		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
 			sizeof(int) + sizeof(bool);
 		std::vector<char> data(propSize);
-		void * ptr = &data[0];
+		void* ptr = &data[0];
 
 		const auto nameCount = (int)m_modelName.size();
 		std::memcpy(ptr, &nameCount, sizeof(unsigned int));
@@ -180,7 +180,7 @@ struct Skeleton_Component final : public ecsComponent<Skeleton_Component, skelet
 		int nameCount(0ull);
 		std::memcpy(&nameCount, ptr, sizeof(int));
 		ptr = static_cast<char*>(ptr) + sizeof(int);
-		char * modelName = new char[size_t(nameCount) + 1ull];
+		char* modelName = new char[size_t(nameCount) + 1ull];
 		std::fill(&modelName[0], &modelName[nameCount + 1], '\0');
 		std::memcpy(&modelName[0], ptr, nameCount);
 		ptr = static_cast<char*>(ptr) + (size_t)nameCount;
@@ -255,14 +255,14 @@ struct Reflector_Component final : public ecsComponent<Reflector_Component, refl
 };
 
 constexpr static const char colliderName[] = "Collider_Component";
-struct Collider_Component final : public ecsComponent<Collider_Component, colliderName> {	
+struct Collider_Component final : public ecsComponent<Collider_Component, colliderName> {
 	float m_restitution = 1.0f;
 	float m_friction = 1.0f;
 	btScalar m_mass = btScalar(0);
 	Shared_Collider m_collider;
-	btDefaultMotionState * m_motionState = nullptr;
-	btRigidBody * m_rigidBody = nullptr;
-	btConvexHullShape * m_shape = nullptr;
+	btDefaultMotionState* m_motionState = nullptr;
+	btRigidBody* m_rigidBody = nullptr;
+	btConvexHullShape* m_shape = nullptr;
 	Transform m_worldTransform;
 
 	inline std::vector<char> serialize() {

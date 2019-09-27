@@ -51,7 +51,7 @@ protected:
 	@param	componentType	the type of component to use
 	@param	componentFlag	flag indicating required/optional */
 	inline void addComponentType(const ComponentID& componentType, const RequirementsFlag& componentFlag = FLAG_REQUIRED) {
-		m_componentTypes.push_back({ componentType, componentFlag } );
+		m_componentTypes.push_back({ componentType, componentFlag });
 	}
 
 

@@ -20,17 +20,17 @@ public:
 	/** Construct a scene inspector.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	SceneInspector(Engine * engine, LevelEditor_Module * editor);
+	SceneInspector(Engine* engine, LevelEditor_Module* editor);
 
 
 	// Public Interface Implementation
-	virtual void tick(const float & deltaTime) override final;
+	virtual void tick(const float& deltaTime) override final;
 
 
 private:
 	// Private Attributes
-	Engine * m_engine = nullptr;
-	LevelEditor_Module * m_editor = nullptr;
+	Engine* m_engine = nullptr;
+	LevelEditor_Module* m_editor = nullptr;
 };
 
 #endif // SCENEINSPECTOR_H

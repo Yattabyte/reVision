@@ -28,7 +28,7 @@ public:
 	}
 	/** Construct a text input.
 	@param	engine		the engine to use. */
-	inline TextInput(Engine * engine)
+	inline TextInput(Engine* engine)
 		: UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\TextInput");
@@ -43,7 +43,7 @@ public:
 		addCallback(UI_Element::on_resize, [&]() {
 			m_label->setScale(getScale());
 			updateGeometry();
-		});
+			});
 
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
@@ -64,7 +64,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
+	inline virtual void mouseAction(const MouseEvent& mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			if (m_clicked) {
@@ -78,10 +78,10 @@ public:
 				return;
 			}
 		}
-		else 
-			m_edit = false;		
+		else
+			m_edit = false;
 	}
-	inline virtual void keyboardAction(const KeyboardEvent & keyboardEvent) override {
+	inline virtual void keyboardAction(const KeyboardEvent& keyboardEvent) override {
 		if (m_edit) {
 			// Check for a text stream
 			if (auto character = keyboardEvent.getChar()) {
@@ -113,12 +113,12 @@ public:
 			}
 		}
 	}
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet()) return;
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
-		
+
 		// Render (background)
 		m_shader->bind();
 		m_shader->setUniform(0, newPosition);
@@ -136,7 +136,7 @@ public:
 	// Public Methods
 	/** Set the text to display in this field.
 	@param		string		the new text to display. */
-	inline void setText(const std::string & text) {
+	inline void setText(const std::string& text) {
 		m_text = text;
 		m_label->setText(text);
 	}
@@ -150,7 +150,7 @@ public:
 protected:
 	// Protected Methods
 	/** Set the caret position in this text box. */
-	inline void setCaret(const int & index) {
+	inline void setCaret(const int& index) {
 		m_caretIndex = std::clamp<int>(index, 0, (int)m_text.size());
 		updateGeometry();
 	}

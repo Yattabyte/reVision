@@ -24,7 +24,7 @@ public:
 
 
 	// Public Methods
-	/** Retrieve the currently active ecs-world. 
+	/** Retrieve the currently active ecs-world.
 	@return			the current ecs-world.*/
 	inline ecsWorld& getWorld() {
 		return m_world;
@@ -52,7 +52,7 @@ public:
 	@param	func				lambda function serving as a system. */
 	void updateSystem(const float& deltaTime, const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func);
 
-	
+
 private:
 	// Private Attributes
 	ecsWorld m_world;

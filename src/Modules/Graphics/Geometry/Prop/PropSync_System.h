@@ -17,7 +17,7 @@ public:
 	inline ~PropSync_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline PropSync_System(const std::shared_ptr<PropData> & frameData)
+	inline PropSync_System(const std::shared_ptr<PropData>& frameData)
 		: m_frameData(frameData) {
 		addComponentType(Prop_Component::m_ID, FLAG_REQUIRED);
 		addComponentType(Skeleton_Component::m_ID, FLAG_OPTIONAL);
@@ -27,7 +27,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		// Resize BOTH buffers to match number of entities this frame, even though not all models have skeletons
 		m_frameData->modelBuffer.resize(components.size());
 		m_frameData->skeletonBuffer.resize(components.size());
@@ -44,9 +44,9 @@ public:
 			if (propComponent->m_model->existsYet()) {
 				// Sync Transform Attributes
 				if (transformComponent) {
-					const auto & position = transformComponent->m_worldTransform.m_position;
-					const auto & orientation = transformComponent->m_worldTransform.m_orientation;
-					const auto & scale = transformComponent->m_worldTransform.m_scale;
+					const auto& position = transformComponent->m_worldTransform.m_position;
+					const auto& orientation = transformComponent->m_worldTransform.m_orientation;
+					const auto& scale = transformComponent->m_worldTransform.m_scale;
 					const auto matRot = glm::mat4_cast(orientation);
 					m_frameData->modelBuffer[index].mMatrix = transformComponent->m_worldTransform.m_modelMatrix;
 
@@ -63,7 +63,7 @@ public:
 					propComponent->m_radius = radius;
 					propComponent->m_position = propComponent->m_model->m_bboxCenter + position;
 				}
-				if (bboxComponent) {					
+				if (bboxComponent) {
 					bboxComponent->m_extent = propComponent->m_model->m_bboxScale;
 					bboxComponent->m_min = propComponent->m_model->m_bboxMin;
 					bboxComponent->m_max = propComponent->m_model->m_bboxMax;
@@ -72,7 +72,7 @@ public:
 
 				// Sync Animation Attributes
 				if (skeletonComponent) {
-					auto & bones = m_frameData->skeletonBuffer[index].bones;
+					auto& bones = m_frameData->skeletonBuffer[index].bones;
 					for (size_t i = 0, total = std::min(skeletonComponent->m_transforms.size(), size_t(NUM_MAX_BONES)); i < total; ++i)
 						bones[i] = skeletonComponent->m_transforms[i];
 				}

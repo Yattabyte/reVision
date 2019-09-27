@@ -15,7 +15,7 @@ public:
 	inline ~ReflectorSync_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline ReflectorSync_System(const std::shared_ptr<ReflectorData> & frameData)
+	inline ReflectorSync_System(const std::shared_ptr<ReflectorData>& frameData)
 		: m_frameData(frameData) {
 		addComponentType(Reflector_Component::m_ID, FLAG_REQUIRED);
 		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
@@ -24,7 +24,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		// Resize light buffers to match number of entities this frame
 		m_frameData->lightBuffer.resize(components.size());
 		m_frameData->lightBuffer.beginWriting();
@@ -72,7 +72,7 @@ public:
 			}
 
 			// Sync Buffer Attributes
-			m_frameData->lightBuffer[index].CubeSpot = reflectorComponent->m_cubeSpot;			
+			m_frameData->lightBuffer[index].CubeSpot = reflectorComponent->m_cubeSpot;
 			index++;
 		}
 	}

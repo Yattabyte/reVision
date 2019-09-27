@@ -17,7 +17,7 @@ public:
 	inline ~Options_Graphics() = default;
 	/** Construct a graphics panel.
 	@param	engine		the engine to use. */
-	inline Options_Graphics(Engine * engine)
+	inline Options_Graphics(Engine* engine)
 		: Options_Pane(engine) {
 		// Title
 		m_title->setText("Graphics Options");
@@ -84,14 +84,14 @@ public:
 		}
 		element_bounce_list->setIndex(index);
 		addOption(engine, element_bounce_list, 1.0f, "Light Bounce Quality:", "Adjusts the resolution of the real-time GI simulation.", SideList::on_index_changed, [&, element_bounce_list]() { setBounceQuality(element_bounce_list->getIndex()); });
-		
+
 		// Shadow Count Option
 		float maxShadowCasters = 6.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, maxShadowCasters);
 		auto maxShadow_slider = std::make_shared<Slider>(engine, maxShadowCasters, glm::vec2(1.0f, 100.0f));
 		addOption(engine, maxShadow_slider, 0.75f, "Max Concurrent Shadows:", "Set the maximum number of shadows updated per frame.", Slider::on_value_change, [&, maxShadow_slider, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, maxShadow_slider->getValue());
-		});
+			});
 
 		// Envmap Count Option
 		float maxReflectionCasters = 6.0f;
@@ -99,7 +99,7 @@ public:
 		auto maxReflection_slider = std::make_shared<Slider>(engine, maxReflectionCasters, glm::vec2(1.0f, 100.0f));
 		addOption(engine, maxReflection_slider, 0.75f, "Max Concurrent Reflections:", "Set the maximum number of reflections updated per frame.", Slider::on_value_change, [&, maxReflection_slider, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_ENVMAP_MAX_PER_FRAME, maxReflection_slider->getValue());
-		});
+			});
 
 		// Bloom Option
 		bool element_bloom_state = true;
@@ -131,42 +131,42 @@ protected:
 	// Protected Methods
 	/** Set the resolution.
 	@param	index	the resolution index to use. */
-	inline void setTextureResolution(const size_t & index) {
+	inline void setTextureResolution(const size_t& index) {
 		m_engine->getPreferenceState().setValue(PreferenceState::C_MATERIAL_SIZE, m_materialSizes[index]);
 	}
 	/** Set the shadow size.
 	@param	index	the shadow size index to use. */
-	inline void setShadowSize(const size_t & index) {
+	inline void setShadowSize(const size_t& index) {
 		m_engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE, m_shadowSizes[index]);
 	}
 	/** Set the reflection size.
 	@param	index	the reflection size index to use. */
-	inline void setReflectionSize(const size_t & index) {
+	inline void setReflectionSize(const size_t& index) {
 		m_engine->getPreferenceState().setValue(PreferenceState::C_ENVMAP_SIZE, m_reflectionSizes[index]);
 	}
 	/** Set the light bounce quality.
 	@param	index	the light bounce quality index to use. */
-	inline void setBounceQuality(const size_t & index) {
+	inline void setBounceQuality(const size_t& index) {
 		m_engine->getPreferenceState().setValue(PreferenceState::C_RH_BOUNCE_SIZE, m_bounceQuality[index]);
 	}
 	/** Turn the bloom on or off.
 	@param	b		whether to turn bloom on or off. */
-	inline void setBloom(const bool & b) {
+	inline void setBloom(const bool& b) {
 		m_engine->getPreferenceState().setValue(PreferenceState::C_BLOOM, b ? 1.0f : 0.0f);
 	}
 	/** Turn the SSAO on or off.
 	@param	b		whether to turn SSAO on or off. */
-	inline void setSSAO(const bool & b) {
+	inline void setSSAO(const bool& b) {
 		m_engine->getPreferenceState().setValue(PreferenceState::C_SSAO, b ? 1.0f : 0.0f);
 	}
 	/** Turn the SSR on or off.
 	@param	b		whether to turn SSR on or off. */
-	inline void setSSR(const bool & b) {
+	inline void setSSR(const bool& b) {
 		m_engine->getPreferenceState().setValue(PreferenceState::C_SSR, b ? 1.0f : 0.0f);
 	}
 	/** Turn the FXAA on or off.
 	@param	b		whether to turn FXAA on or off. */
-	inline void setFXAA(const bool & b) {
+	inline void setFXAA(const bool& b) {
 		m_engine->getPreferenceState().setValue(PreferenceState::C_FXAA, b ? 1.0f : 0.0f);
 	}
 

@@ -4,7 +4,7 @@
 
 constexpr char* DIRECTORY_MODEL = "\\Models\\";
 
-Shared_Model::Shared_Model(Engine * engine, const std::string & filename, const bool & threaded)
+Shared_Model::Shared_Model(Engine* engine, const std::string& filename, const bool& threaded)
 {
 	(*(std::shared_ptr<Model>*)(this)) = std::dynamic_pointer_cast<Model>(
 		engine->getManager_Assets().shareAsset(
@@ -15,7 +15,7 @@ Shared_Model::Shared_Model(Engine * engine, const std::string & filename, const 
 		));
 }
 
-Model::Model(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
+Model::Model(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Model::initialize()
 {
@@ -46,18 +46,18 @@ void Model::initialize()
 
 	// Calculate the mesh's min, max, center, and radius
 	calculateAABB(m_data.m_vertices, m_bboxMin, m_bboxMax, m_bboxScale, m_bboxCenter, m_radius);
-	
+
 	// Finalize
 	Asset::finalize();
 }
 
-void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3 & minOut, glm::vec3 & maxOut, glm::vec3& scaleOut, glm::vec3 & centerOut, float & radiusOut)
+void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minOut, glm::vec3& maxOut, glm::vec3& scaleOut, glm::vec3& centerOut, float& radiusOut)
 {
 	if (mesh.size() >= 1) {
-		const glm::vec3 & vector = mesh[0].vertex;
+		const glm::vec3& vector = mesh[0].vertex;
 		float minX = vector.x, maxX = vector.x, minY = vector.y, maxY = vector.y, minZ = vector.z, maxZ = vector.z;
 		for (size_t x = 1, total = mesh.size(); x < total; ++x) {
-			const glm::vec3 &vertex = mesh[x].vertex;
+			const glm::vec3& vertex = mesh[x].vertex;
 			if (vertex.x < minX)
 				minX = vertex.x;
 			else if (vertex.x > maxX)
@@ -80,7 +80,7 @@ void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3 & min
 	}
 }
 
-void Model::loadMaterial(const std::string & relativePath, Shared_Material & modelMaterial, const std::vector<Material_Strings>& materials)
+void Model::loadMaterial(const std::string& relativePath, Shared_Material& modelMaterial, const std::vector<Material_Strings>& materials)
 {
 	// Retrieve texture directories from the mesh file
 	const size_t slash1Index = relativePath.find_last_of('/'), slash2Index = relativePath.find_last_of('\\');

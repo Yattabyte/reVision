@@ -16,9 +16,9 @@ public:
 	// Public (de)Constructors
 	/** Destroy the video pane. */
 	inline ~Options_Video() = default;
-	/** Contsruct a video pane. 
+	/** Contsruct a video pane.
 	@param	engine		the engine to use. */
-	inline Options_Video(Engine * engine)
+	inline Options_Video(Engine* engine)
 		: Options_Pane(engine) {
 		// Title
 		m_title->setText("Video Options");
@@ -41,11 +41,11 @@ public:
 		element_res->setStrings(strings);
 		element_res->setIndex(index);
 		addOption(engine, element_res, 1.0f, "Resolution:", "Changes the resolution the game renders at.", SideList::on_index_changed, [&, element_res, engine]() {
-			const auto & index = element_res->getIndex();
+			const auto& index = element_res->getIndex();
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_WIDTH, m_resolutions[index].x);
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_HEIGHT, m_resolutions[index].y);
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_resolutions[index].z);
-		});
+			});
 
 		// Gamma Option
 		float gamma = 1.0f;
@@ -63,7 +63,7 @@ public:
 			out << std::fixed << gamma_slider->getValue();
 			engine->getPreferenceState().setValue(PreferenceState::C_GAMMA, round_value);
 			gamma_slider->setText(out.str());
-		});
+			});
 
 		// Draw Distance Option
 		float ddistance = 1000.0f;
@@ -71,7 +71,7 @@ public:
 		auto ddistance_slider = std::make_shared<Slider>(engine, ddistance, glm::vec2(0.0f, 1000.0f));
 		addOption(engine, ddistance_slider, 0.75f, "Draw Distance:", "Changes how far geometry can be seen from.", Slider::on_value_change, [&, ddistance_slider, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_DRAW_DISTANCE, ddistance_slider->getValue());
-		});
+			});
 
 		// FOV Option
 		float fov = 90.0f;
@@ -82,7 +82,7 @@ public:
 			const int round_value = (int)std::round(fov_slider->getValue());
 			// We store as a float, but we want to ensure round numbers
 			engine->getPreferenceState().setValue(PreferenceState::C_FOV, float((int)std::round(fov_slider->getValue())));
-		});
+			});
 
 		// VSync Option
 		bool element_sync_state = true;
@@ -90,7 +90,7 @@ public:
 		auto element_sync = std::make_shared<Toggle>(engine, element_sync_state);
 		addOption(engine, element_sync, 0.5f, "VSync:", "Lock the game's frame-rate to the monitor's refresh rate.", Toggle::on_toggle, [&, element_sync, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_VSYNC, element_sync->getToggled() ? 1.0f : 0.0f);
-		});
+			});
 
 		// Full Screen Option
 		bool element_fs_state = true;
@@ -98,7 +98,7 @@ public:
 		auto element_fs = std::make_shared<Toggle>(engine, element_fs_state);
 		addOption(engine, element_fs, 0.5f, "Full-screen:", "Render the game full-screen instead of as a window.", Toggle::on_toggle, [&, element_fs, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_FULLSCREEN, element_fs->getToggled() ? 1.0f : 0.0f);
-		});
+			});
 	}
 
 

@@ -45,7 +45,7 @@ public:
 	@param	mapName				the name of the map to save as. */
 	void saveWorld(const std::string& mapName);
 	/** Unload the current world. */
-	void unloadWorld();	
+	void unloadWorld();
 	/** Registers a notification function to be called when the world state changes.
 	@param	alive				a shared pointer indicating whether the caller is still alive or not.
 	@param	notifier			function to be called on state change. */
@@ -57,7 +57,7 @@ private:
 	/** Notify all world-listeners of a state change.
 	@param	state				the new state to notify listeners of. */
 	void notifyListeners(const WorldState& state);
-	
+
 
 	// Private Attributes
 	bool m_finishedLoading = false;

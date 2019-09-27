@@ -27,7 +27,7 @@ void SceneInspector::tick(const float& deltaTime)
 			size_t displayCount(0ull);
 			std::function<void(const ecsHandle&)> displayEntity = [&](const ecsHandle& entityHandle) {
 				bool entity_or_components_pass_filter = false;
-				if (auto * entity = ecsWorld.getEntity(entityHandle)) {
+				if (auto* entity = ecsWorld.getEntity(entityHandle)) {
 					auto& entityName = entity->m_name;
 					const auto& components = entity->m_components;
 					entity_or_components_pass_filter += filter.PassFilter(entityName.c_str());
@@ -91,7 +91,7 @@ void SceneInspector::tick(const float& deltaTime)
 								ImGui::EndDragDropSource();
 							}
 							if (ImGui::BeginDragDropTarget()) {
-								if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("Entity")) {
+								if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
 									IM_ASSERT(payload->DataSize == sizeof(ecsHandle*));
 									m_editor->setSelection({ entityHandle, (*(ecsHandle*)(payload->Data)) });
 									m_editor->mergeSelection();
@@ -191,7 +191,7 @@ void SceneInspector::tick(const float& deltaTime)
 
 			// Special case to allow dragging to end of scene list
 			if (ImGui::BeginDragDropTarget()) {
-				if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("Entity")) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
 					IM_ASSERT(payload->DataSize == sizeof(ecsHandle*));
 					m_editor->setSelection({ ecsHandle(), (*(ecsHandle*)(payload->Data)) });
 					m_editor->mergeSelection();
@@ -210,6 +210,6 @@ void SceneInspector::tick(const float& deltaTime)
 			}
 			ImGui::PopStyleVar();
 		}
-		ImGui::End();		
+		ImGui::End();
 	}
 }

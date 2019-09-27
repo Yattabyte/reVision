@@ -15,7 +15,7 @@
 #include "GLFW/glfw3.h"
 
 
-Editor_Interface::Editor_Interface(Engine * engine, LevelEditor_Module * editor)
+Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
 	m_uiCamController = std::make_shared<CameraController>(m_engine);
@@ -36,20 +36,20 @@ Editor_Interface::Editor_Interface(Engine * engine, LevelEditor_Module * editor)
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 		m_indirectQuad = IndirectDraw((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
-	});
+		});
 
 	auto& preferences = engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.x = (int)f;
-	});
+		});
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
-	});
+		});
 }
 
-void Editor_Interface::tick(const float & deltaTime)
+void Editor_Interface::tick(const float& deltaTime)
 {
 	// Container for left side of the screen
 	ImGui::SetNextWindowSize({ 300.0f, m_renderSize.y - 18.0f }, ImGuiCond_Appearing);

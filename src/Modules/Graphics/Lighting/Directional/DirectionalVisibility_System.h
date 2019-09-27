@@ -15,7 +15,7 @@ public:
 	inline ~DirectionalVisibility_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline DirectionalVisibility_System(const std::shared_ptr<DirectionalData> & frameData)
+	inline DirectionalVisibility_System(const std::shared_ptr<DirectionalData>& frameData)
 		: m_frameData(frameData) {
 		addComponentType(LightDirectional_Component::m_ID, FLAG_REQUIRED);
 		addComponentType(Shadow_Component::m_ID, FLAG_REQUIRED);
@@ -24,10 +24,10 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		// Compile results PER viewport
 		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
-			auto & viewInfo = m_frameData->viewInfo[x];
+			auto& viewInfo = m_frameData->viewInfo[x];
 
 			viewInfo.lightIndices.clear();
 			viewInfo.visShadowCount = 0;

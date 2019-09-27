@@ -44,12 +44,12 @@ public:
 	void newLevel();
 	/** Open a specific level with the file name specified.
 	@param	name			the level name to open. */
-	void openLevel(const std::string & name);
+	void openLevel(const std::string& name);
 	/** Display the 'open level' dialogue for choosing a level.	*/
 	void openLevelDialogue();
 	/** Save the level with a specific name.
 	@param	name			the level name to save. */
-	void saveLevel(const std::string & name);
+	void saveLevel(const std::string& name);
 	/** Save and overwrite the currently active level. */
 	void saveLevel();
 	/** Display the 'save level' dialogue for choosing a level to save. */
@@ -68,7 +68,7 @@ public:
 	void clearSelection();
 	/** Select all level entities. */
 	void selectAll();
-	/** Select a sepecific set of entities. 
+	/** Select a sepecific set of entities.
 	@param	handles			the new set of entity handles to make selected. */
 	void setSelection(const std::vector<ecsHandle>& handles);
 	/** Retrieve the set of selected entities.
@@ -106,23 +106,23 @@ public:
 	void bindFBO();
 	/** Bind the editor's screen texture to the currently active GL context.
 	@param	offset			specific eshader texture unit. */
-	void bindTexture(const GLuint & offset = 0);
+	void bindTexture(const GLuint& offset = 0);
 	/** Specify a new transform for the gizmos.
 	@param	transform		the specific transform to use. */
-	void setGizmoTransform(const Transform & transform);
+	void setGizmoTransform(const Transform& transform);
 	/** Retrieve the transform from the editor gizmos.
 	@return					the current transform from where the gizmo is. */
 	Transform getGizmoTransform() const;
 	/** Retrieve the spawn point transform from the mouse gizmo.
 	@return					the current transform from where the spawn point is. */
 	Transform getSpawnTransform() const;
-	/** Retrieve the editor's camera position. 
+	/** Retrieve the editor's camera position.
 	@return					the current camera's position. */
 	const glm::vec3& getCameraPosition() const;
-	/** Try to add an entity to the selection, removing it if it's already present. 
+	/** Try to add an entity to the selection, removing it if it's already present.
 	@param	entityHandle	the entity to attempt to (de)select. */
 	void toggleAddToSelection(const ecsHandle& entityHandle);
-	/** Retrieve if we have any data on the clipboard. 
+	/** Retrieve if we have any data on the clipboard.
 	@return					true if clipboard data present, false otherwise. */
 	bool hasCopy() const;
 	/** Make the scene inspector visible. */
@@ -131,7 +131,7 @@ public:
 	void openEntityInspector();
 	/** Make the prefabs window visible. */
 	void openPrefabs();
-	/** Perform an action following the Command design pattern, executing it and appending it to an undo list. 
+	/** Perform an action following the Command design pattern, executing it and appending it to an undo list.
 	@param	command			the command to execute and store. */
 	void doReversableAction(const std::shared_ptr<Editor_Command>& command);
 
@@ -160,7 +160,7 @@ struct Editor_Command {
 	virtual void execute() = 0;
 	/** Perform the reverse, undo the command. */
 	virtual void undo() = 0;
-	/** Join into this command the data found in another newer command. 
+	/** Join into this command the data found in another newer command.
 	@param	newerCommand	the newer of the two commands, to take data from.
 	@return					true if this command supports & successfully joined with a newer command, false otherwise. */
 	inline virtual bool join(Editor_Command* const newerCommand) { return false; }

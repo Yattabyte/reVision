@@ -22,7 +22,7 @@ struct Importer_Pool {
 
 	/** Borrow a single importer.
 	@return		returns a single importer*/
-	Assimp::Importer * rentImporter() {
+	Assimp::Importer* rentImporter() {
 		// Check if any of our importers are free to be used
 		std::unique_lock<std::mutex> readGuard(poolMutex);
 		if (available)
@@ -32,7 +32,7 @@ struct Importer_Pool {
 			return new Assimp::Importer();
 	}
 
-	void returnImporter(Assimp::Importer * returnedImporter) {
+	void returnImporter(Assimp::Importer* returnedImporter) {
 		// Check if we have enough importers, free extra
 		std::unique_lock<std::mutex> readGuard(poolMutex);
 		if (available >= 4)
@@ -47,7 +47,7 @@ static Importer_Pool importer_pool;
 /** Convert an aiMatrix to glm::mat4.
 @param	d	the aiMatrix to convert from
 @return		the glm::mat4 converted to */
-inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4 &d)
+inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d)
 {
 	return glm::mat4(d.a1, d.b1, d.c1, d.d1,
 		d.a2, d.b2, d.c2, d.d2,
@@ -55,9 +55,9 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4 &d)
 		d.a4, d.b4, d.c4, d.d4);
 }
 
-inline Node * copy_node(const aiNode * oldNode)
+inline Node* copy_node(const aiNode* oldNode)
 {
-	Node * newNode = new Node(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
+	Node* newNode = new Node(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
 	// Copy Children
 	newNode->children.resize(oldNode->mNumChildren);
 	for (unsigned int c = 0; c < oldNode->mNumChildren; ++c)
@@ -65,7 +65,7 @@ inline Node * copy_node(const aiNode * oldNode)
 	return newNode;
 }
 
-bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Mesh_Geometry & data_container)
+bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh_Geometry& data_container)
 {
 	// Check if the file exists
 	if (!Engine::File_Exists(relativePath)) {
@@ -74,7 +74,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 	}
 
 	// Get Importer Resource
-	Assimp::Importer * importer = importer_pool.rentImporter();
+	Assimp::Importer* importer = importer_pool.rentImporter();
 	const aiScene* scene = importer->ReadFile(
 		Engine::Get_Current_Dir() + relativePath,
 		aiProcess_LimitBoneWeights |
@@ -95,12 +95,12 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 
 	// Import geometry
 	for (unsigned int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
-		const aiMesh * mesh = scene->mMeshes[a];
+		const aiMesh* mesh = scene->mMeshes[a];
 		const GLuint meshMaterialOffset = std::max(0u, scene->mNumMaterials > 1 ? mesh->mMaterialIndex - 1u : 0u);
 		for (unsigned int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
-			const aiFace & face = mesh->mFaces[x];
+			const aiFace& face = mesh->mFaces[x];
 			for (unsigned int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
-				const auto & index = face.mIndices[b];
+				const auto& index = face.mIndices[b];
 				data_container.vertices.push_back(glm::vec3(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z));
 
 				const auto normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0f, 1.0f, 1.0f);
@@ -124,29 +124,29 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 	// Copy Animations
 	data_container.animations.resize(scene->mNumAnimations);
 	for (int a = 0, total = scene->mNumAnimations; a < total; ++a) {
-		auto * animation = scene->mAnimations[a];
+		auto* animation = scene->mAnimations[a];
 		data_container.animations[a] = Animation(animation->mNumChannels, animation->mTicksPerSecond, animation->mDuration);
 
 		// Copy Channels
 		data_container.animations[a].channels.resize(animation->mNumChannels);
 		for (unsigned int c = 0; c < scene->mAnimations[a]->mNumChannels; ++c) {
-			auto * channel = scene->mAnimations[a]->mChannels[c];
+			auto* channel = scene->mAnimations[a]->mChannels[c];
 			data_container.animations[a].channels[c] = new Node_Animation(std::string(channel->mNodeName.data));
 
 			// Copy Keys
 			data_container.animations[a].channels[c]->scalingKeys.resize(channel->mNumScalingKeys);
 			for (unsigned int n = 0; n < channel->mNumScalingKeys; ++n) {
-				auto & key = channel->mScalingKeys[n];
+				auto& key = channel->mScalingKeys[n];
 				data_container.animations[a].channels[c]->scalingKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 			}
 			data_container.animations[a].channels[c]->rotationKeys.resize(channel->mNumRotationKeys);
 			for (unsigned int n = 0; n < channel->mNumRotationKeys; ++n) {
-				auto & key = channel->mRotationKeys[n];
+				auto& key = channel->mRotationKeys[n];
 				data_container.animations[a].channels[c]->rotationKeys[n] = Animation_Time_Key<glm::quat>(key.mTime, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
 			}
 			data_container.animations[a].channels[c]->positionKeys.resize(channel->mNumPositionKeys);
 			for (unsigned int n = 0; n < channel->mNumPositionKeys; ++n) {
-				auto & key = channel->mPositionKeys[n];
+				auto& key = channel->mPositionKeys[n];
 				data_container.animations[a].channels[c]->positionKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 			}
 		}
@@ -157,7 +157,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 	data_container.bones.resize(data_container.vertices.size());
 	int vertexOffset = 0;
 	for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
-		const aiMesh * mesh = scene->mMeshes[a];
+		const aiMesh* mesh = scene->mMeshes[a];
 
 		for (int B = 0, numBones = mesh->mNumBones; B < numBones; B++) {
 			size_t BoneIndex = 0;
@@ -190,8 +190,8 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 	// Copy Texture Paths
 	if (scene->mNumMaterials > 1u)
 		for (unsigned int x = 1; x < scene->mNumMaterials; ++x) {
-			constexpr static auto getMaterial = [](const aiScene * scene, const unsigned int & materialIndex) -> Material_Strings {
-				constexpr static auto getTexture = [](const aiMaterial * sceneMaterial, const aiTextureType & textureType, std::string & texturePath) {
+			constexpr static auto getMaterial = [](const aiScene* scene, const unsigned int& materialIndex) -> Material_Strings {
+				constexpr static auto getTexture = [](const aiMaterial* sceneMaterial, const aiTextureType& textureType, std::string& texturePath) {
 					aiString path;
 					for (unsigned int x = 0; x < sceneMaterial->GetTextureCount(textureType); ++x) {
 						if (sceneMaterial->GetTexture(textureType, x, &path) == AI_SUCCESS) {
@@ -203,7 +203,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 				//std::string albedo = "albedo.png", normal = "normal.png", metalness = "metalness.png", roughness = "roughness.png", height = "height.png", ao = "ao.png";
 				std::string albedo, normal, metalness, roughness, height, ao;
 				if (materialIndex >= 0) {
-					const auto * sceneMaterial = scene->mMaterials[materialIndex];
+					const auto* sceneMaterial = scene->mMaterials[materialIndex];
 					getTexture(sceneMaterial, aiTextureType_DIFFUSE, albedo);
 					getTexture(sceneMaterial, aiTextureType_NORMALS, normal);
 					getTexture(sceneMaterial, aiTextureType_SPECULAR, metalness);
@@ -211,7 +211,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 					getTexture(sceneMaterial, aiTextureType_HEIGHT, height);
 					getTexture(sceneMaterial, aiTextureType_AMBIENT, ao);
 
-					constexpr static auto findStringIC = [](const std::string & strHaystack, const std::string & strNeedle) {
+					constexpr static auto findStringIC = [](const std::string& strHaystack, const std::string& strNeedle) {
 						auto it = std::search(
 							strHaystack.begin(), strHaystack.end(),
 							strNeedle.begin(), strNeedle.end(),
@@ -233,7 +233,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 		}
 	else
 		//data_container.materials.push_back(Material_Strings("albedo.png", "normal.png", "metalness.png", "roughness.png", "height.png", "ao.png"));
-		data_container.materials.push_back(Material_Strings("","","","","",""));
+		data_container.materials.push_back(Material_Strings("", "", "", "", "", ""));
 
 	// Free Importer Resource
 	importer_pool.returnImporter(importer);
@@ -250,7 +250,7 @@ VertexBoneData::VertexBoneData()
 	Reset();
 }
 
-VertexBoneData::VertexBoneData(const VertexBoneData & vbd)
+VertexBoneData::VertexBoneData(const VertexBoneData& vbd)
 {
 	Reset();
 	for (size_t i = 0; i < 4; ++i) {
@@ -265,7 +265,7 @@ inline void VertexBoneData::Reset()
 	memset(Weights, 0, sizeof(Weights));
 }
 
-inline void VertexBoneData::AddBoneData(const int & BoneID, const float & Weight)
+inline void VertexBoneData::AddBoneData(const int& BoneID, const float& Weight)
 {
 	for (size_t i = 0; i < 4; ++i)
 		if (Weights[i] == 0.0) {

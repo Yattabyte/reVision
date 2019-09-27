@@ -1,6 +1,6 @@
 #pragma once
 #ifndef SHADOW_MAP_H
-#define SHADOW_MAP_H 
+#define SHADOW_MAP_H
 
 #include "Utilities/GL/glad/glad.h"
 #include "glm/glm.hpp"
@@ -44,7 +44,7 @@ public:
 	/** Set the size of this framebuffer.
 	@param	newSize		the new size to use.
 	@param	depth		the new depth to use. */
-	inline void resize(const glm::ivec2 & newSize, const int & layerFaces) {
+	inline void resize(const glm::ivec2& newSize, const int& layerFaces) {
 		if (m_size != newSize || m_layerFaces != layerFaces) {
 			m_size = glm::max(glm::ivec2(1), newSize);
 			m_layerFaces = std::max<int>(1, layerFaces);
@@ -57,11 +57,11 @@ public:
 			glClearTexImage(m_textureIDS[1], 0, GL_RGB, GL_FLOAT, &clear);
 			glClearTexImage(m_textureIDS[2], 0, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
 		}
-	}	
+	}
 	/** Clear the data out of a specific layer in the framebuffer.
-	@param	zOffset		the layer to clear out of. 
+	@param	zOffset		the layer to clear out of.
 	@param	amount		the number of layers to clear. */
-	inline void clear(const GLint & zOffset, const GLsizei & amount) {
+	inline void clear(const GLint& zOffset, const GLsizei& amount) {
 		constexpr float clearDepth(1.0f);
 		constexpr glm::vec3 clear(0.0f);
 		glClearTexSubImage(m_textureIDS[0], 0, 0, 0, zOffset, m_size.x, m_size.y, amount, GL_RGB, GL_FLOAT, &clear);
@@ -75,9 +75,9 @@ public:
 
 
 	// Public Attributes
-	const GLuint & m_texNormal = m_textureIDS[0];
-	const GLuint & m_texColor = m_textureIDS[1];
-	const GLuint & m_texDepth = m_textureIDS[2];
+	const GLuint& m_texNormal = m_textureIDS[0];
+	const GLuint& m_texColor = m_textureIDS[1];
+	const GLuint& m_texDepth = m_textureIDS[2];
 
 
 private:

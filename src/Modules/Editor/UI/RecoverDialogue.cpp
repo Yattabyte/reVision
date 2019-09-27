@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-RecoverDialogue::RecoverDialogue(Engine* engine, LevelEditor_Module* editor) 
+RecoverDialogue::RecoverDialogue(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
 	m_open = false;
@@ -77,7 +77,7 @@ void RecoverDialogue::tickDeleteDialogue()
 		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0, 0.7f, 0.7f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
-		if (ImGui::Button("Delete", { 75, 20 })) {			
+		if (ImGui::Button("Delete", { 75, 20 })) {
 			std::error_code ec;
 			std::filesystem::remove_all(m_recoveredPath, ec);
 			ImGui::CloseCurrentPopup();

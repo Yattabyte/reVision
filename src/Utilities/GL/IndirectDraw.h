@@ -49,7 +49,7 @@ public:
 	}
 
 
-	// Public Methods	
+	// Public Methods
 	/** Bind this draw call to the OpenGL indirect buffer target. */
 	inline void bind() {
 		m_buffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);

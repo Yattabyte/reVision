@@ -20,7 +20,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void initialize(Engine * engine) override final;
+	virtual void initialize(Engine* engine) override final;
 	virtual void deinitialize() override final;
 
 

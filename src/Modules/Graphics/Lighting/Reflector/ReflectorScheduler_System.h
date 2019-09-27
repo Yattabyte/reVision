@@ -20,24 +20,24 @@ public:
 	/** Construct this system.
 	@param	engine		the engine to use.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline ReflectorScheduler_System(Engine * engine, const std::shared_ptr<ReflectorData> & frameData)
+	inline ReflectorScheduler_System(Engine* engine, const std::shared_ptr<ReflectorData>& frameData)
 		: m_engine(engine), m_frameData(frameData) {
 		addComponentType(Reflector_Component::m_ID, FLAG_REQUIRED);
 		addComponentType(CameraArray_Component::m_ID, FLAG_REQUIRED);
 
-		auto & preferences = engine->getPreferenceState();
+		auto& preferences = engine->getPreferenceState();
 		m_maxReflectionCasters = 1u;
 		preferences.getOrSetValue(PreferenceState::C_ENVMAP_MAX_PER_FRAME, m_maxReflectionCasters);
-		preferences.addCallback(PreferenceState::C_ENVMAP_MAX_PER_FRAME, m_aliveIndicator, [&](const float &f) { m_maxReflectionCasters = (unsigned int)f; });
+		preferences.addCallback(PreferenceState::C_ENVMAP_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) { m_maxReflectionCasters = (unsigned int)f; });
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		// Maintain list of reflectors, update with oldest within range
 		// Technique will clear list when ready
-		auto & reflectors = m_frameData->reflectorsToUpdate;
-		auto & maxReflectors = m_maxReflectionCasters;
+		auto& reflectors = m_frameData->reflectorsToUpdate;
+		auto& maxReflectors = m_maxReflectionCasters;
 		auto clientPosition = m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition;
 		auto clientFarPlane = m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane;
 		const auto clientTime = m_engine->getTime();
@@ -46,7 +46,7 @@ public:
 			for each (const auto & componentParam in components) {
 				auto* reflectorComponent = (Reflector_Component*)componentParam[0];
 				auto* cameraComponent = (CameraArray_Component*)componentParam[1];
-				
+
 				auto tryToAddReflector = [&reflectors, &maxReflectors, &clientPosition, &clientFarPlane, &clientTime](const int& reflectorSpot, Camera* cb, float* updateTime) {
 					const float linDist = glm::distance(clientPosition, cb->getFrustumCenter()) / clientFarPlane;
 					const float importance_distance = 1.0f - (linDist * linDist);
@@ -85,23 +85,23 @@ public:
 					cameraComponent->m_cameras[x].setEnabled(false);
 					tryToAddReflector(reflectorComponent->m_cubeSpot + x, &(cameraComponent->m_cameras[x]), &cameraComponent->m_updateTimes[x]);
 				}
-				cameraCount += (int)cameraComponent->m_cameras.size();				
+				cameraCount += (int)cameraComponent->m_cameras.size();
 			}
 
 			// Enable cameras in final set
-			for (auto &[importance, time, reflectorSpot, camera] : m_frameData->reflectorsToUpdate)
+			for (auto& [importance, time, reflectorSpot, camera] : m_frameData->reflectorsToUpdate)
 				camera->setEnabled(true);
 
 			// Resize reflectormap to fit number of entities this frame
 			m_frameData->envmapFBO.resize(m_frameData->envmapSize, (unsigned int)(cameraCount));
 			m_frameData->reflectorLayers = cameraCount;
-		}			
+		}
 	}
 
 
 private:
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	GLuint m_maxReflectionCasters = 1u;
 	std::shared_ptr<ReflectorData> m_frameData;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

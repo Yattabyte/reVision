@@ -24,7 +24,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Directional_Technique(Engine * engine, const std::shared_ptr<ShadowData> & shadowData, const std::shared_ptr<RH_Volume> & rhVolume, const std::shared_ptr<Camera> & clientCamera, const std::shared_ptr<std::vector<Camera*>> & cameras, ecsSystemList & auxilliarySystems)
+	inline Directional_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<RH_Volume>& rhVolume, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras, ecsSystemList& auxilliarySystems)
 		: m_engine(engine), m_rhVolume(rhVolume), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<DirectionalData>();
@@ -53,27 +53,27 @@ public:
 		glTextureParameteri(m_textureNoise32, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 		// Clear state on world-unloaded
-		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
+		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
 			if (state == World_Module::unloaded)
 				clear();
-		});
+			});
 
 		// Preferences
-		auto & preferences = engine->getPreferenceState();
+		auto& preferences = engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_bounceSize);
-		preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_bounceSize = (GLuint)f; });
+		preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) { m_bounceSize = (GLuint)f; });
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
+	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
 		m_frameData->lightBuffer.endWriting();
-		for (auto & drawBuffer : m_drawData) {
+		for (auto& drawBuffer : m_drawData) {
 			drawBuffer.bufferCamIndex.endWriting();
 			drawBuffer.visLights.endWriting();
 			drawBuffer.indirectShape.endWriting();
 		}
-		for (auto & bounceBuffer : m_drawBounceData) {
+		for (auto& bounceBuffer : m_drawBounceData) {
 			bounceBuffer.bufferCamIndex.endWriting();
 			bounceBuffer.visLights.endWriting();
 			bounceBuffer.indirectBounce.endWriting();
@@ -81,7 +81,7 @@ public:
 		m_drawIndex = 0;
 		m_bounceIndex = 0;
 	}
-	inline virtual void updateTechnique(const float & deltaTime) override final {
+	inline virtual void updateTechnique(const float& deltaTime) override final {
 		// Link together the dimensions of view info to that of the viewport vectors
 		m_frameData->viewInfo.resize(m_cameras->size());
 
@@ -101,9 +101,9 @@ public:
 				if (m_bounceIndex >= m_drawBounceData.size())
 					m_drawBounceData.resize(size_t(m_drawIndex) + 1ull);
 
-				auto & bounceBuffer = m_drawBounceData[m_bounceIndex];
-				auto &camBufferIndex = bounceBuffer.bufferCamIndex;
-				auto &lightBufferIndex = bounceBuffer.visLights;
+				auto& bounceBuffer = m_drawBounceData[m_bounceIndex];
+				auto& camBufferIndex = bounceBuffer.bufferCamIndex;
+				auto& lightBufferIndex = bounceBuffer.visLights;
 				camBufferIndex.beginWriting();
 				lightBufferIndex.beginWriting();
 				bounceBuffer.indirectBounce.beginWriting();
@@ -128,14 +128,14 @@ public:
 			}
 		}
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
 		// Exit Early
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeQuad->existsYet() && m_shader_Lighting->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
 				m_drawData.resize(size_t(m_drawIndex) + 1ull);
-			auto & drawBuffer = m_drawData[m_drawIndex];
-			auto &camBufferIndex = drawBuffer.bufferCamIndex;
-			auto &lightBufferIndex = drawBuffer.visLights;
+			auto& drawBuffer = m_drawData[m_drawIndex];
+			auto& camBufferIndex = drawBuffer.bufferCamIndex;
+			auto& lightBufferIndex = drawBuffer.visLights;
 			camBufferIndex.beginWriting();
 			lightBufferIndex.beginWriting();
 			drawBuffer.indirectShape.beginWriting();
@@ -143,7 +143,7 @@ public:
 			// Accumulate all visibility info for the cameras passed in
 			std::vector<glm::ivec2> camIndices;
 			std::vector<GLint> lightIndices;
-			for (auto &[camIndex, layer] : perspectives) {
+			for (auto& [camIndex, layer] : perspectives) {
 				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
 				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
 				lightIndices.insert(lightIndices.end(), m_frameData->viewInfo[camIndex].lightIndices.begin(), m_frameData->viewInfo[camIndex].lightIndices.end());
@@ -170,7 +170,7 @@ private:
 	/** Render all the lights.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline void renderLights(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
+	inline void renderLights(const float& deltaTime, const std::shared_ptr<Viewport>& viewport) {
 		// Prepare rendering state
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
@@ -192,7 +192,7 @@ private:
 	/** Render light bounces.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline void renderBounce(const float & deltaTime, const int & viewingIndex) {
+	inline void renderBounce(const float& deltaTime, const int& viewingIndex) {
 		// Prepare rendering state
 		glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
@@ -232,7 +232,7 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	Shared_Shader m_shader_Lighting, m_shader_Bounce;
 	Shared_Auto_Model m_shapeQuad;

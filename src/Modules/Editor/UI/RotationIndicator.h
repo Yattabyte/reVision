@@ -18,7 +18,7 @@ public:
 	// Public (de)Constructors
 	/** Destroy the rotation indicator. */
 	~RotationIndicator();
-	/** Construct a rotation indicator. 
+	/** Construct a rotation indicator.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
 	RotationIndicator(Engine* engine);

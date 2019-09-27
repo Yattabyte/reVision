@@ -27,7 +27,7 @@ public:
 
 
 	// Public Methods
-	/** Set the recovered file path. 
+	/** Set the recovered file path.
 	@param	path		the recovered file path*/
 	void setPath(const std::filesystem::path& path);
 

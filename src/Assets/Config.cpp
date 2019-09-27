@@ -3,13 +3,12 @@
 #include "Engine.h"
 #include <fstream>
 
-
 constexpr char* EXT_CONFIG = ".cfg";
 constexpr char* DIRECTORY_CONFIG = "\\Configs\\";
 
 /** Attempts to retrieve a std::string between quotation marks "<std::string>".
 @return	the std::string between quotation marks */
-inline std::string get_between_quotes(std::string & s)
+inline std::string get_between_quotes(std::string& s)
 {
 	std::string output = s;
 	size_t spot1 = s.find_first_of("\"");
@@ -29,7 +28,7 @@ inline std::string get_between_quotes(std::string & s)
 @param	s			the std::string to check for in the list
 @param	m_strings	the list of strings to check for an occurrence of our value within
 @return				the index of the value in the list if found, otherwise -1 */
-inline int find_CFG_Property(const std::string & s, const std::vector<std::string> & m_strings)
+inline int find_CFG_Property(const std::string& s, const std::vector<std::string>& m_strings)
 {
 	std::string upperCase(s);
 	for (size_t x = 0, size = upperCase.size(); x < size; ++x)
@@ -40,7 +39,7 @@ inline int find_CFG_Property(const std::string & s, const std::vector<std::strin
 	return -1;
 }
 
-Shared_Config::Shared_Config(Engine * engine, const std::string & filename, const std::vector<std::string> & strings, const bool & threaded)
+Shared_Config::Shared_Config(Engine* engine, const std::string& filename, const std::vector<std::string>& strings, const bool& threaded)
 {
 	(*(std::shared_ptr<Config>*)(this)) = std::dynamic_pointer_cast<Config>(
 		engine->getManager_Assets().shareAsset(
@@ -51,7 +50,7 @@ Shared_Config::Shared_Config(Engine * engine, const std::string & filename, cons
 		));
 }
 
-Config::Config(Engine * engine, const std::string & filename, const std::vector<std::string> & strings) : Asset(engine, filename), m_strings(strings) {}
+Config::Config(Engine* engine, const std::string& filename, const std::vector<std::string>& strings) : Asset(engine, filename), m_strings(strings) {}
 
 void Config::initialize()
 {
@@ -75,13 +74,13 @@ void Config::initialize()
 	Asset::finalize();
 }
 
-void Config::setValue(const unsigned int & cfg_key, const float & cfg_value)
+void Config::setValue(const unsigned int& cfg_key, const float& cfg_value)
 {
 	// If the key doesn't exist in the map, [ ] will create it
 	m_configuration[cfg_key] = cfg_value;
 }
 
-float Config::getValue(const unsigned int & cfg_key) const
+float Config::getValue(const unsigned int& cfg_key) const
 {
 	if (cfg_key >= 0 && m_configuration.find(cfg_key) != m_configuration.end())
 		return m_configuration.at(cfg_key);
@@ -91,7 +90,7 @@ float Config::getValue(const unsigned int & cfg_key) const
 void Config::saveConfig()
 {
 	std::string output;
-	for each (const auto &value in m_configuration) 
+	for each (const auto & value in m_configuration)
 		output += "\"" + m_strings[value.first] + "\" \"" + std::to_string(value.second) + "\"\n";
 	Text_IO::Export_Text(DIRECTORY_CONFIG + getFileName() + EXT_CONFIG, output);
 }

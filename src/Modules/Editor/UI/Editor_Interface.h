@@ -21,11 +21,11 @@ public:
 	/** Creates the level editor UI.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	Editor_Interface(Engine * engine, LevelEditor_Module * editor);
+	Editor_Interface(Engine* engine, LevelEditor_Module* editor);
 
 
 	// Public Interface Implementation
-	virtual void tick(const float & deltaTime) override final;
+	virtual void tick(const float& deltaTime) override final;
 
 
 	// Public Attributes
@@ -43,10 +43,10 @@ public:
 		m_uiUnsavedDialogue;
 
 
-private: 
+private:
 	// Private Attributes
-	Engine * m_engine = nullptr;
-	LevelEditor_Module * m_editor = nullptr;
+	Engine* m_engine = nullptr;
+	LevelEditor_Module* m_editor = nullptr;
 	Shared_Auto_Model m_shapeQuad;
 	Shared_Shader m_shader;
 	IndirectDraw m_indirectQuad;

@@ -21,7 +21,7 @@ public:
 		}
 	}
 	/** Default. */
-	inline DynamicBuffer(const GLsizeiptr& capacity = 256, const void* data = 0, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT)
+	inline DynamicBuffer(const GLsizeiptr& capacity = 256, const void* data = 0, const GLbitfield& mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT)
 		: m_maxCapacity(capacity), m_mapFlags(mapFlags) {
 		glCreateBuffers(3, m_bufferID);
 		for (int x = 0; x < 3; ++x) {

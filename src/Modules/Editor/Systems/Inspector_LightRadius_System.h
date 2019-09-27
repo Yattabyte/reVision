@@ -1,6 +1,6 @@
 #pragma once
 #ifndef INSPECTOR_LIGHTRADIUS_SYSTEM_H
-#define INSPECTOR_LIGHTRADIUS_SYSTEM_H 
+#define INSPECTOR_LIGHTRADIUS_SYSTEM_H
 
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/World/World_M.h"

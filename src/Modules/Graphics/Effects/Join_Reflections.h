@@ -21,7 +21,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Join_Reflections(Engine * engine)
+	inline Join_Reflections(Engine* engine)
 		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "Effects\\Join Reflections");
@@ -31,25 +31,25 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
-		for (auto &[camIndexBuffer, indirectQuad] : m_drawData) {
+	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+		for (auto& [camIndexBuffer, indirectQuad] : m_drawData) {
 			camIndexBuffer.endWriting();
 			indirectQuad.endWriting();
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet())
 			return;
 
 		// Prepare camera index
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);
-		auto &[camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
+		auto& [camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
 		camBufferIndex.beginWriting();
 		indirectQuad.beginWriting();
 		std::vector<glm::ivec2> camIndices;
-		for (auto &[camIndex, layer] : perspectives)
+		for (auto& [camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 		indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
@@ -73,7 +73,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	Shared_Shader m_shader;
 	Shared_Texture m_brdfMap;
 	Shared_Auto_Model m_shapeQuad;

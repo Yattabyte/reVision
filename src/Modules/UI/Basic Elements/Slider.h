@@ -19,11 +19,11 @@ public:
 	// Public (de)Constructors
 	/** Destroy the slider. */
 	inline ~Slider() = default;
-	/** Construct a slider with a given starting value. 
+	/** Construct a slider with a given starting value.
 	@param	engine		the engine to use.
-	@param	value		the starting value to use. 
+	@param	value		the starting value to use.
 	@param	range		the starting range to use. */
-	inline Slider(Engine * engine, const float & value = 0.0f, const glm::vec2 & range = {0.0f, 1.0f})
+	inline Slider(Engine* engine, const float& value = 0.0f, const glm::vec2& range = { 0.0f, 1.0f })
 		: UI_Element(engine), m_value(value), m_lowerRange(range.x), m_upperRange(range.y) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
@@ -51,8 +51,8 @@ public:
 	}
 
 
-	// Public Interface Implementation	
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	// Public Interface Implementation
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
 		// Update Colors
 		glm::vec4 color(0.75);
 		if (m_pressed)
@@ -64,7 +64,7 @@ public:
 		// Render Children
 		UI_Element::renderElement(deltaTime, position, scale);
 	}
-	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
+	inline virtual void mouseAction(const MouseEvent& mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			if (m_pressed && mouseEvent.m_action == MouseEvent::MOVE) {
@@ -73,7 +73,7 @@ public:
 			}
 		}
 	}
-	inline virtual void userAction(ActionState & actionState) override {
+	inline virtual void userAction(ActionState& actionState) override {
 		const float offsetAmount = std::min<float>((m_upperRange - m_lowerRange) / 100.0f, 1.0f);
 		if (actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
 			setValue(getValue() - offsetAmount);
@@ -85,7 +85,7 @@ public:
 	// Public Methods
 	/** Set the percentage for this slider.
 	@param	amount		the value to put this slider at. */
-	inline void setValue(const float & amount) {
+	inline void setValue(const float& amount) {
 		m_value = std::clamp<float>(amount, m_lowerRange, m_upperRange);
 		setText(std::to_string((int)std::round(m_value)));
 		updatePaddle();
@@ -99,17 +99,17 @@ public:
 	/** Set the lower and upper ranges for this slider.
 	@param	lowerRange	the lowest number this slider can use.
 	@param	upperRange	the highest number this slider can use. */
-	inline void setRanges(const float & lowerRange, const float & upperRange) {
+	inline void setRanges(const float& lowerRange, const float& upperRange) {
 		m_lowerRange = lowerRange;
 		m_upperRange = upperRange;
-		
+
 		// Set the value again, in case it falls outside of the new ranges
 		setValue(m_value);
 		updatePaddle();
 	}
 	/** Set this slider's text.
 	@param	text	the text to use. */
-	inline void setText(const std::string & text) {
+	inline void setText(const std::string& text) {
 		m_label->setText(text);
 	}
 	/** Retrieve this slider's text.
@@ -122,7 +122,7 @@ public:
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */
-	inline void updateGeometry() {	
+	inline void updateGeometry() {
 		// Shorten the back panel by 50 units, and it is offset to the right by 50 units
 		m_backPanel->setPosition({ 50, 0 });
 		m_backPanel->setScale(glm::vec2(getScale().x - m_backPanel->getPosition().x, getScale().y));
@@ -146,7 +146,7 @@ protected:
 	float m_value = 0.0f, m_lowerRange = 0.0f, m_upperRange = 1.0f;
 	std::shared_ptr<Label> m_label;
 	std::shared_ptr<Border> m_backPanel;
-	std::shared_ptr<Panel> m_paddle;	
+	std::shared_ptr<Panel> m_paddle;
 };
 
 #endif // UI_SLIDER_H

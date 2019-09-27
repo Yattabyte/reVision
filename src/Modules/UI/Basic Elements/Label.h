@@ -34,10 +34,10 @@ public:
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	/** Construct a label, giving it the desired text. 
+	/** Construct a label, giving it the desired text.
 	@param	engine		the engine.
 	@param	text		the label text. */
-	inline Label(Engine * engine, const std::string & text = "Label")
+	inline Label(Engine* engine, const std::string& text = "Label")
 		: UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Label");
@@ -69,7 +69,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet() || !m_textureFont->existsYet()) return;
 
@@ -94,9 +94,9 @@ public:
 
 
 	// Public Methods
-	/** Set this label element's text. 
+	/** Set this label element's text.
 	@param	text	the text to use. */
-	inline void setText(const std::string & text) {
+	inline void setText(const std::string& text) {
 		m_text = text;
 
 		// Write letters to a buffer
@@ -105,20 +105,20 @@ public:
 		data[0] = (int)count;
 		for (size_t x = 0; x < (size_t)count; ++x)
 			data[x + 1ull] = (int)(m_text[x]) - 32;
-		m_bufferString.write_immediate(0, sizeof(int)*(int(count + 1u)), data.data());
+		m_bufferString.write_immediate(0, sizeof(int) * (int(count + 1u)), data.data());
 		m_indirect.setPrimitiveCount(count);
 
 		// Notify text changed
 		enactCallback(on_textChanged);
 	}
-	/** Retrieve this label's text. 
+	/** Retrieve this label's text.
 	@return	the text this label uses. */
 	inline std::string getText() const {
 		return m_text;
 	}
 	/** Set this label element's text scaling factor.
 	@param	text	the new scaling factor to use. */
-	inline void setTextScale(const float & textScale) {
+	inline void setTextScale(const float& textScale) {
 		m_textScale = textScale;
 		m_maxScale.y = textScale;
 	}
@@ -129,7 +129,7 @@ public:
 	}
 	/** Set this label's color.
 	@param	text	the new color to render with. */
-	inline void setColor(const glm::vec3 & color) {
+	inline void setColor(const glm::vec3& color) {
 		m_color = color;
 	}
 	/** Retrieve this label's color.
@@ -139,7 +139,7 @@ public:
 	}
 	/** Set this label element's alignment.
 	@param	text	the alignment (left, center, right). */
-	inline void setAlignment(const Alignment & alignment) {
+	inline void setAlignment(const Alignment& alignment) {
 		m_textAlignment = alignment;
 	}
 	/** Retrieve this label's alignment.

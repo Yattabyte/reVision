@@ -15,7 +15,7 @@ public:
 	inline ~PointSync_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline PointSync_System(const std::shared_ptr<PointData> & frameData)
+	inline PointSync_System(const std::shared_ptr<PointData>& frameData)
 		: m_frameData(frameData) {
 		addComponentType(LightPoint_Component::m_ID, FLAG_REQUIRED);
 		addComponentType(LightColor_Component::m_ID, FLAG_OPTIONAL);
@@ -28,7 +28,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		// Resize light buffers to match number of entities this frame
 		m_frameData->lightBuffer.resize(components.size());
 		m_frameData->lightBuffer.beginWriting();
@@ -63,7 +63,7 @@ public:
 				m_frameData->lightBuffer[index].LightPosition = position;
 				const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
 				const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(radiusSquared * 1.1f));
-				m_frameData->lightBuffer[index].mMatrix = (trans)* scl;
+				m_frameData->lightBuffer[index].mMatrix = (trans)*scl;
 				const glm::mat4 pMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, radiusSquared);
 				const glm::mat4 pMatrixInverse = glm::inverse(pMatrix);
 				const glm::mat4 vMatrices[6] = {
@@ -98,7 +98,7 @@ public:
 			// Sync Buffer Attributes
 			m_frameData->lightBuffer[index].Shadow_Spot = shadowComponent ? shadowComponent->m_shadowSpot : -1;
 		}
-		index++;		
+		index++;
 	}
 
 

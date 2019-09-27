@@ -22,7 +22,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Spot_Technique(Engine * engine, const std::shared_ptr<ShadowData> & shadowData, const std::shared_ptr<std::vector<Camera*>> & cameras, ecsSystemList & auxilliarySystems)
+	inline Spot_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<std::vector<Camera*>>& cameras, ecsSystemList& auxilliarySystems)
 		: m_engine(engine), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<SpotData>();
@@ -36,35 +36,35 @@ public:
 		m_shapeCone = Shared_Auto_Model(engine, "cone");
 
 		// Clear state on world-unloaded
-		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
+		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
 			if (state == World_Module::unloaded)
 				clear();
-		});
+			});
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
+	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
 		m_frameData->lightBuffer.endWriting();
-		for (auto & drawBuffer : m_drawData) {
+		for (auto& drawBuffer : m_drawData) {
 			drawBuffer.bufferCamIndex.endWriting();
 			drawBuffer.visLights.endWriting();
 			drawBuffer.indirectShape.endWriting();
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void updateTechnique(const float & deltaTime) override final {
+	inline virtual void updateTechnique(const float& deltaTime) override final {
 		// Link together the dimensions of view info to that of the viewport vectors
 		m_frameData->viewInfo.resize(m_cameras->size());
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
-		// Render direct lights	
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+		// Render direct lights
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCone->existsYet() && m_shader_Lighting->existsYet() && m_shader_Stencil->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
 				m_drawData.resize(size_t(m_drawIndex) + 1ull);
-			auto & drawBuffer = m_drawData[m_drawIndex];
-			auto &camBufferIndex = drawBuffer.bufferCamIndex;
-			auto &lightBufferIndex = drawBuffer.visLights;
+			auto& drawBuffer = m_drawData[m_drawIndex];
+			auto& camBufferIndex = drawBuffer.bufferCamIndex;
+			auto& lightBufferIndex = drawBuffer.visLights;
 			camBufferIndex.beginWriting();
 			lightBufferIndex.beginWriting();
 			drawBuffer.indirectShape.beginWriting();
@@ -72,7 +72,7 @@ public:
 			// Accumulate all visibility info for the cameras passed in
 			std::vector<glm::ivec2> camIndices;
 			std::vector<GLint> lightIndices;
-			for (auto &[camIndex, layer] : perspectives) {
+			for (auto& [camIndex, layer] : perspectives) {
 				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
 				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
 				lightIndices.insert(lightIndices.end(), m_frameData->viewInfo[camIndex].lightIndices.begin(), m_frameData->viewInfo[camIndex].lightIndices.end());
@@ -99,7 +99,7 @@ private:
 	/** Render all the lights.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline void renderLights(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
+	inline void renderLights(const float& deltaTime, const std::shared_ptr<Viewport>& viewport) {
 		glEnable(GL_STENCIL_TEST);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
@@ -112,8 +112,8 @@ private:
 		m_shader_Stencil->bind();																		// Shader (spot)
 		viewport->m_gfxFBOS->bindForWriting("LIGHTING");												// Ensure writing to lighting FBO
 		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);												// Read from Geometry FBO
-		glBindTextureUnit(4, m_frameData->shadowData->shadowFBO.m_texDepth);							// Shadow map (depth texture)		
-		m_drawData[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	
+		glBindTextureUnit(4, m_frameData->shadowData->shadowFBO.m_texDepth);							// Shadow map (depth texture)
+		m_drawData[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_drawData[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible light indices
 		m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 		m_drawData[m_drawIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
@@ -150,7 +150,7 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	Shared_Shader m_shader_Lighting, m_shader_Stencil;
 	Shared_Auto_Model m_shapeCone;

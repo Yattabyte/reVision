@@ -17,23 +17,23 @@ public:
 	~InputBinding();
 	/** Construct a key-binding.
 	@param	engine		the engine */
-	InputBinding(Engine * engine);
+	InputBinding(Engine* engine);
 
 
 	// Public Methods
 	/** Loads a preference file from disk.
 	@param	filename	the relative path to the bindings file to load */
-	void loadFile(const std::string & filename);
+	void loadFile(const std::string& filename);
 	/** Saves the preference file to disk, using the same filename as when loaded. */
 	void save();
 	/** Retrieve the key-bindings.
 	@return	the configuration asset used */
-	const Shared_Config & getBindings() const;
-	
+	const Shared_Config& getBindings() const;
+
 
 private:
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	Shared_Config m_config;
 };
 

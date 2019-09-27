@@ -31,7 +31,7 @@ std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const char* data
 	dataRead += sizeof(size_t);
 
 	// Create new component of class matching the name
-	if (const auto & componentID = _nameRegistry.search(componentTypeName.c_str())) {
+	if (const auto& componentID = _nameRegistry.search(componentTypeName.c_str())) {
 		const auto& [createFn, freeFn, newFn, size] = _componentRegistry[*componentID];
 		const auto& clone = newFn();
 		clone->recover_data(&data[dataRead]);

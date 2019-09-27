@@ -23,7 +23,7 @@ public:
 	/** Default Constructor. */
 	inline StaticTripleBuffer() = default;
 	/** Explicit Instantion. */
-	inline StaticTripleBuffer(const GLsizeiptr& size, const void* data = 0, const GLbitfield & storageFlags = GL_DYNAMIC_STORAGE_BIT)
+	inline StaticTripleBuffer(const GLsizeiptr& size, const void* data = 0, const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT)
 		: m_size(size) {
 		glCreateBuffers(3, m_bufferID);
 		for (int x = 0; x < 3; ++x) {

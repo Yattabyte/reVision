@@ -12,53 +12,53 @@
 #include <typeinfo>
 
 
-void Graphics_Module::initialize(Engine * engine)
+void Graphics_Module::initialize(Engine* engine)
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: Graphics...");
 
 	// Asset Loading
 	m_shader = Shared_Shader(engine, "Effects\\Copy Texture");
-	m_shapeQuad = Shared_Auto_Model(engine, "quad");	
-	
+	m_shapeQuad = Shared_Auto_Model(engine, "quad");
+
 	// Asset-Finished Callbacks
-	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {		
+	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 		m_indirectQuad = IndirectDraw((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
-	});
+		});
 
 	// GL settings
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	// Preferences
-	auto & preferences = m_engine->getPreferenceState();
+	auto& preferences = m_engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-		m_renderSize = glm::ivec2(f, m_renderSize.y);		
+	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+		m_renderSize = glm::ivec2(f, m_renderSize.y);
 		m_viewport->resize(m_renderSize, 1);
 		(*m_clientCamera)->Dimensions = m_renderSize;
-	});
+		});
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
+	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize = glm::ivec2(m_renderSize.x, f);
 		m_viewport->resize(m_renderSize, 1);
 		(*m_clientCamera)->Dimensions = m_renderSize;
-	});
+		});
 	float farPlane = 1000.0f;
 	preferences.getOrSetValue(PreferenceState::C_DRAW_DISTANCE, farPlane);
-	preferences.addCallback(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) {
+	preferences.addCallback(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float& f) {
 		if ((*m_clientCamera)->FarPlane != f) {
 			(*m_clientCamera)->FarPlane = f;
 			genPerspectiveMatrix();
 		}
-	});
+		});
 	float fov = 90.0f;
 	preferences.getOrSetValue(PreferenceState::C_FOV, fov);
-	preferences.addCallback(PreferenceState::C_FOV, m_aliveIndicator, [&](const float &f) {
+	preferences.addCallback(PreferenceState::C_FOV, m_aliveIndicator, [&](const float& f) {
 		if ((*m_clientCamera)->FOV != f) {
 			(*m_clientCamera)->FOV = f;
 			genPerspectiveMatrix();
 		}
-	});
+		});
 
 	// Camera Setup
 	m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_renderSize);
@@ -82,7 +82,7 @@ void Graphics_Module::initialize(Engine * engine)
 	m_pipeline = std::make_unique<Graphics_Pipeline>(engine, m_clientCamera, m_sceneCameras, m_rhVolume, m_systems);
 
 	// Report invalid ecs systems
-	auto & msg = engine->getManager_Messages();
+	auto& msg = engine->getManager_Messages();
 	for each (const auto & system in m_systems)
 		if (!system->isValid())
 			msg.error("Invalid ECS System: " + std::string(typeid(*system).name()));
@@ -96,7 +96,7 @@ void Graphics_Module::deinitialize()
 	*m_aliveIndicator = false;
 }
 
-void Graphics_Module::frameTick(const float & deltaTime)
+void Graphics_Module::frameTick(const float& deltaTime)
 {
 	// Prepare rendering pipeline for a new frame, wait for buffers to free
 	m_clientCamera->updateFrustum();
@@ -136,7 +136,7 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_indirectQuad.endWriting();
 }
 
-void Graphics_Module::renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives,  const unsigned int & allowedCategories)
+void Graphics_Module::renderScene(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& allowedCategories)
 {
 	// Prepare viewport and camera for rendering
 	viewport->bind();
@@ -147,21 +147,21 @@ void Graphics_Module::renderScene(const float & deltaTime, const std::shared_ptr
 	m_pipeline->render(deltaTime, viewport, perspectives, allowedCategories);
 }
 
-void Graphics_Module::cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>>& perspectives)
+void Graphics_Module::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives)
 {
 	// Apply frustum culling or other techniques
 	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	m_pipeline->cullShadows(deltaTime, perspectives);
 }
 
-void Graphics_Module::renderShadows(const float & deltaTime)
+void Graphics_Module::renderShadows(const float& deltaTime)
 {
 	// Render remaining shadows
 	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	m_pipeline->renderShadows(deltaTime);
 }
 
-void Graphics_Module::genPerspectiveMatrix() 
+void Graphics_Module::genPerspectiveMatrix()
 {
 	// Update Perspective Matrix
 	const float ar = std::max(1.0f, (*m_clientCamera)->Dimensions.x) / std::max(1.0f, (*m_clientCamera)->Dimensions.y);

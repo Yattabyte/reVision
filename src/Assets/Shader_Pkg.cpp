@@ -10,7 +10,7 @@ constexpr char* DIRECTORY_SHADER_PKG = "\\Shaders\\";
 /** Parse the shader snippet, looking for any directives that require us to modify the document.
 @param	engine			the engine being used
 @param	userAsset		the asset we are loading from */
-inline static void parse(Engine * engine, Shader_Pkg & userAsset)
+inline static void parse(Engine* engine, Shader_Pkg& userAsset)
 {
 	std::string input;
 	input = userAsset.m_packageText;
@@ -30,11 +30,11 @@ inline static void parse(Engine * engine, Shader_Pkg & userAsset)
 		std::string right = input.substr(spot + 1 + qspot2);
 		input = left + package->getPackageText() + right;
 		spot = input.find("#package");
-	}	
+	}
 	userAsset.m_packageText = input;
 }
 
-Shared_Shader_Pkg::Shared_Shader_Pkg(Engine * engine, const std::string & filename, const bool & threaded)
+Shared_Shader_Pkg::Shared_Shader_Pkg(Engine* engine, const std::string& filename, const bool& threaded)
 {
 	(*(std::shared_ptr<Shader_Pkg>*)(this)) = std::dynamic_pointer_cast<Shader_Pkg>(
 		engine->getManager_Assets().shareAsset(
@@ -45,12 +45,12 @@ Shared_Shader_Pkg::Shared_Shader_Pkg(Engine * engine, const std::string & filena
 		));
 }
 
-Shader_Pkg::Shader_Pkg(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
+Shader_Pkg::Shader_Pkg(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Shader_Pkg::initialize()
 {
 	const bool found = Text_IO::Import_Text(m_engine, DIRECTORY_SHADER_PKG + getFileName() + EXT_PACKAGE, m_packageText);
-	
+
 	if (!found)
 		m_engine->getManager_Messages().error("Shader_Pkg \"" + m_filename + "\" file does not exist");
 

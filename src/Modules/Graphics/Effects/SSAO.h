@@ -22,7 +22,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline SSAO(Engine * engine)
+	inline SSAO(Engine* engine)
 		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "Effects\\SSAO");
@@ -31,17 +31,17 @@ public:
 		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preferences
-		auto & preferences = m_engine->getPreferenceState();
+		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_SSAO, m_enabled);
-		preferences.addCallback(PreferenceState::C_SSAO, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
+		preferences.addCallback(PreferenceState::C_SSAO, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
 		preferences.getOrSetValue(PreferenceState::C_SSAO_RADIUS, m_radius);
-		preferences.addCallback(PreferenceState::C_SSAO_RADIUS, m_aliveIndicator, [&](const float &f) { m_radius = f; if (m_shader->existsYet()) m_shader->setUniform(0, m_radius); });
+		preferences.addCallback(PreferenceState::C_SSAO_RADIUS, m_aliveIndicator, [&](const float& f) { m_radius = f; if (m_shader->existsYet()) m_shader->setUniform(0, m_radius); });
 		preferences.getOrSetValue(PreferenceState::C_SSAO_QUALITY, m_quality);
-		preferences.addCallback(PreferenceState::C_SSAO_QUALITY, m_aliveIndicator, [&](const float &f) { m_quality = (int)f; if (m_shader->existsYet()) m_shader->setUniform(1, m_quality); });
+		preferences.addCallback(PreferenceState::C_SSAO_QUALITY, m_aliveIndicator, [&](const float& f) { m_quality = (int)f; if (m_shader->existsYet()) m_shader->setUniform(1, m_quality); });
 		preferences.getOrSetValue(PreferenceState::C_SSAO_BLUR_STRENGTH, m_blurStrength);
-		preferences.addCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, m_aliveIndicator, [&](const float &f) { m_blurStrength = (int)f; });
-			
-		// Prepare the noise texture and kernal	
+		preferences.addCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, m_aliveIndicator, [&](const float& f) { m_blurStrength = (int)f; });
+
+		// Prepare the noise texture and kernal
 		std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 		std::default_random_engine generator;
 		glm::vec3 noiseArray[16];
@@ -69,42 +69,42 @@ public:
 				sample = glm::normalize(sample);
 				sample *= randomFloats(generator);
 				GLfloat scale = GLfloat(i) / (GLfloat)(MAX_KERNEL_SIZE);
-				scale = 0.1f + (scale*scale) * (1.0f - 0.1f);
+				scale = 0.1f + (scale * scale) * (1.0f - 0.1f);
 				sample *= scale;
 				new_kernel[t] = glm::vec4(sample, 1);
 			}
 			m_shader->setUniform(0, m_radius);
 			m_shader->setUniform(1, m_quality);
 			m_shader->setUniformArray(3, new_kernel, MAX_KERNEL_SIZE);
-		});
-		
+			});
+
 		// Error Reporting
-		auto & msgMgr = m_engine->getManager_Messages();
+		auto& msgMgr = m_engine->getManager_Messages();
 		if (!glIsTexture(m_noiseID))
 			msgMgr.error("SSAO Noise Texture is incomplete.");
 	}
 
 
 	// Public Interface Implementations.
-	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
-		for (auto &[camIndexBuffer, indirectQuad] : m_drawData) {
+	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+		for (auto& [camIndexBuffer, indirectQuad] : m_drawData) {
 			camIndexBuffer.endWriting();
 			indirectQuad.endWriting();
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_shaderCopyAO->existsYet() && m_shaderGB_A->existsYet())
 			return;
 
 		// Prepare camera index
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);
-		auto &[camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
+		auto& [camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
 		camBufferIndex.beginWriting();
 		indirectQuad.beginWriting();
 		std::vector<glm::ivec2> camIndices;
-		for (auto &[camIndex, layer] : perspectives)
+		for (auto& [camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 		indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
@@ -120,7 +120,7 @@ public:
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		indirectQuad.bind();
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
-			
+
 		// Gaussian blur the lines we got from the SSAO pass
 		size_t aoSpot = 0;
 		if (m_blurStrength > 0) {
@@ -145,7 +145,7 @@ public:
 				glDrawArraysIndirect(GL_TRIANGLES, 0);
 			}
 			aoSpot = horizontal ? 1ull : 0ull;
-		}		
+		}
 
 		// Overlay SSAO on top of AO channel of Geometry Buffer
 		glEnable(GL_BLEND);
@@ -164,7 +164,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	Shared_Shader m_shader, m_shaderCopyAO, m_shaderGB_A;
 	Shared_Auto_Model m_shapeQuad;
 	float m_radius = 1.0f;

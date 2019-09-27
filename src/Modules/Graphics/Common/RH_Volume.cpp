@@ -3,7 +3,7 @@
 #include <algorithm>
 
 
-RH_Volume::~RH_Volume() 
+RH_Volume::~RH_Volume()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -12,14 +12,14 @@ RH_Volume::~RH_Volume()
 	glDeleteTextures(RH_TEXTURE_COUNT, m_textureIDS[1]);
 }
 
-RH_Volume::RH_Volume(Engine * engine) 
+RH_Volume::RH_Volume(Engine* engine)
 	: m_engine(engine)
 {
 	// Preferences
-	auto & preferences = m_engine->getPreferenceState();
+	auto& preferences = m_engine->getPreferenceState();
 	m_resolution = 16;
 	preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_resolution);
-	preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { resize(f); });
+	preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) { resize(f); });
 
 	glCreateFramebuffers(2, m_fboIDS);
 	for (int bounce = 0; bounce < 2; ++bounce) {
@@ -43,10 +43,10 @@ RH_Volume::RH_Volume(Engine * engine)
 	}
 }
 
-void RH_Volume::updateVolume(const Camera * camera)
+void RH_Volume::updateVolume(const Camera* camera)
 {
 	const glm::mat4 InverseView = camera->get()->vMatrixInverse;
-	const auto & ViewDimensions = camera->get()->Dimensions;
+	const auto& ViewDimensions = camera->get()->Dimensions;
 	const float AspectRatio = ViewDimensions.x / ViewDimensions.y;
 	const float tanHalfHFOV = glm::radians(camera->get()->FOV) / 2.0f;
 	const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / AspectRatio);
@@ -71,7 +71,7 @@ void RH_Volume::updateVolume(const Camera * camera)
 	m_max = aabb + m_center;
 }
 
-void RH_Volume::resize(const float & resolution)
+void RH_Volume::resize(const float& resolution)
 {
 	m_resolution = resolution;
 	for (int bounce = 0; bounce < 2; ++bounce)
@@ -82,7 +82,7 @@ void RH_Volume::resize(const float & resolution)
 void RH_Volume::clear()
 {
 	GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	for (int bounce = 0; bounce < 2; ++bounce) 
+	for (int bounce = 0; bounce < 2; ++bounce)
 		for (GLint x = 0; x < RH_TEXTURE_COUNT; ++x)
 			glClearNamedFramebufferfv(m_fboIDS[bounce], GL_COLOR, x, clearColor);
 }
@@ -92,7 +92,7 @@ void RH_Volume::writePrimary()
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDS[0]);
 }
 
-void RH_Volume::readPrimary(const GLuint & binding) 
+void RH_Volume::readPrimary(const GLuint& binding)
 {
 	for (GLuint x = 0; x < RH_TEXTURE_COUNT; ++x)
 		glBindTextureUnit(binding + x, m_textureIDS[0][x]);
@@ -103,7 +103,7 @@ void RH_Volume::writeSecondary()
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDS[1]);
 }
 
-void RH_Volume::readSecondary(const GLuint & binding)
+void RH_Volume::readSecondary(const GLuint& binding)
 {
 	for (GLuint x = 0; x < RH_TEXTURE_COUNT; ++x)
 		glBindTextureUnit(binding + x, m_textureIDS[1][x]);

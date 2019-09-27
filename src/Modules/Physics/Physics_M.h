@@ -18,26 +18,26 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void initialize(Engine * engine) override final;
+	virtual void initialize(Engine* engine) override final;
 	virtual void deinitialize() override final;
-	virtual void frameTick(const float & deltaTime) override final;
+	virtual void frameTick(const float& deltaTime) override final;
 
 
 	// Public Methods
 	/** Returns a pointer to the physics-world.
 	@return				the physics world. */
-	inline btDiscreteDynamicsWorld * getWorld() { return m_world; }	
+	inline btDiscreteDynamicsWorld* getWorld() { return m_world; }
 
 
 private:
 	// Private Attributes
 	bool m_enabled = false;
-	btBroadphaseInterface * m_broadphase = nullptr;
-	btDefaultCollisionConfiguration * m_collisionConfiguration = nullptr;
-	btCollisionDispatcher * m_dispatcher = nullptr;
-	btSequentialImpulseConstraintSolver * m_solver = nullptr;
-	btDiscreteDynamicsWorld * m_world = nullptr;
-	ecsSystemList m_physicsSystems; 
+	btBroadphaseInterface* m_broadphase = nullptr;
+	btDefaultCollisionConfiguration* m_collisionConfiguration = nullptr;
+	btCollisionDispatcher* m_dispatcher = nullptr;
+	btSequentialImpulseConstraintSolver* m_solver = nullptr;
+	btDiscreteDynamicsWorld* m_world = nullptr;
+	ecsSystemList m_physicsSystems;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

@@ -20,7 +20,7 @@ public:
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Construct this system. */
-	inline PropUpload_System(Engine * engine, const std::shared_ptr<PropData> & frameData)
+	inline PropUpload_System(Engine* engine, const std::shared_ptr<PropData>& frameData)
 		: m_engine(engine), m_frameData(frameData) {
 		addComponentType(Prop_Component::m_ID, FLAG_REQUIRED);
 
@@ -45,7 +45,7 @@ public:
 		glVertexArrayAttribFormat(m_vaoID, 7, 4, GL_FLOAT, GL_FALSE, offsetof(SingleVertex, weights));
 		// Specify data from the one vertex buffer to binding point 0
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(SingleVertex));
-		
+
 		// Share VAO for rendering purposes
 		frameData->m_geometryVAOID = m_vaoID;
 
@@ -68,25 +68,25 @@ public:
 		frameData->m_materialArrayID = m_matID;
 
 		// Clear state on world-unloaded
-		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
+		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
 			if (state == World_Module::unloaded)
 				clear();
-		});
+			});
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<ecsBaseComponent*>> & components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		for each (const auto & componentParam in components) {
-			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
-			auto & offset = propComponent->m_offset;
-			auto & count = propComponent->m_count;
-			auto & materialID = propComponent->m_materialID;
-			auto & model = propComponent->m_model;
-			auto & data = model->m_data;
+			Prop_Component* propComponent = (Prop_Component*)componentParam[0];
+			auto& offset = propComponent->m_offset;
+			auto& count = propComponent->m_count;
+			auto& materialID = propComponent->m_materialID;
+			auto& model = propComponent->m_model;
+			auto& data = model->m_data;
 
 			// Try to upload model data
-			if (!model) 
+			if (!model)
 				model = Shared_Model(m_engine, propComponent->m_modelName);
 			if (!propComponent->m_uploadModel && model->existsYet()) {
 				tryInsertModel(model);
@@ -103,16 +103,16 @@ public:
 
 				// Prepare fence
 				propComponent->m_uploadMaterial = true;
-			}			
+			}
 		}
-	}	
+	}
 
 
 private:
 	// Private Methods
 	/** Attempt to insert the model supplied into the model map, failing only if it is already present.
 	@param	model		the model to insert only 1 copy of. */
-	inline void tryInsertModel(const Shared_Model & model) {
+	inline void tryInsertModel(const Shared_Model& model) {
 		if (m_modelMap.find(model) == m_modelMap.end()) {
 			// Prop hasn't been uploaded yet
 			const size_t arraySize = model->m_data.m_vertices.size() * sizeof(SingleVertex);
@@ -128,7 +128,7 @@ private:
 
 			// Prepare fence
 			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-			m_modelMap[model] = {offset, count};
+			m_modelMap[model] = { offset, count };
 		}
 	}
 	/** Wait on the prop fence if it still exists. */
@@ -142,9 +142,9 @@ private:
 			m_fence = nullptr;
 		}
 	}
-	/** Attempt to expand the props' vertex buffer if it isn't large enough. 
+	/** Attempt to expand the props' vertex buffer if it isn't large enough.
 	@param	arraySize	the new size to use. */
-	inline void tryToExpand(const size_t & arraySize) {
+	inline void tryToExpand(const size_t& arraySize) {
 		if (m_currentSize + arraySize > m_maxCapacity) {
 			// Create new set of VBO's large enough to fit old data + desired data
 			m_maxCapacity += arraySize * 2;
@@ -174,7 +174,7 @@ private:
 	}
 	/** Attempt to insert the material supplied into the material map, failing only if it is already present.
 	@param	material	the material to insert only 1 copy of. */
-	inline void tryInsertMaterial(const Shared_Material & material) {
+	inline void tryInsertMaterial(const Shared_Material& material) {
 		if (m_materialMap.find(material) == m_materialMap.end()) {
 			// Get spot in the material array
 			const auto imageCount = (GLsizei)((material->m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES);
@@ -192,7 +192,7 @@ private:
 				const GLsizei mipsize = (GLsizei)std::max(1.0f, (floor(m_materialSize / pow(2.0f, (float)x))));
 				glTexturePageCommitmentEXT(m_matID, x, 0, 0, materialID, mipsize, mipsize, imageCount, GL_TRUE);
 			}
-			glTextureSubImage3D(m_matID, 0, 0, 0, materialID, m_materialSize, m_materialSize, imageCount, GL_RGBA, GL_UNSIGNED_BYTE, (void *)0);
+			glTextureSubImage3D(m_matID, 0, 0, 0, materialID, m_materialSize, m_materialSize, imageCount, GL_RGBA, GL_UNSIGNED_BYTE, (void*)0);
 			glGenerateTextureMipmap(m_matID);
 			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 			glDeleteBuffers(1, &pboID);
@@ -222,7 +222,7 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	GLuint m_vaoID = 0, m_vboID = 0, m_matID;
 	size_t m_currentSize = 0ull, m_maxCapacity = 256ull, m_matCount = 0ull;
 	GLsizei m_materialSize = 512u;

@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 
-void StartScreen_Module::initialize(Engine * engine)
+void StartScreen_Module::initialize(Engine* engine)
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: Starting Screen...");
@@ -14,13 +14,13 @@ void StartScreen_Module::initialize(Engine * engine)
 	m_startMenu = startMenu;
 	startMenu->addCallback(StartMenu::on_start_game, [&]() {
 		m_engine->goToGame();
-	});
+		});
 	startMenu->addCallback(StartMenu::on_level_editor, [&]() {
 		m_engine->goToEditor();
-	});
+		});
 	startMenu->addCallback(StartMenu::on_quit, [&]() {
 		//
-	});
+		});
 }
 
 void StartScreen_Module::deinitialize()

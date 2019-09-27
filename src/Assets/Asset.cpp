@@ -3,19 +3,19 @@
 #include <algorithm>
 
 
-Asset::Asset(Engine * engine, const std::string & filename) : m_engine(engine), m_filename(filename) {}
+Asset::Asset(Engine* engine, const std::string& filename) : m_engine(engine), m_filename(filename) {}
 
 std::string Asset::getFileName() const
 {
 	return m_filename;
 }
 
-void Asset::setFileName(const std::string & fn)
+void Asset::setFileName(const std::string& fn)
 {
 	m_filename = fn;
 }
 
-void Asset::addCallback(const std::shared_ptr<bool> & alive, const AssetFinalizedCallback & callback)
+void Asset::addCallback(const std::shared_ptr<bool>& alive, const AssetFinalizedCallback& callback)
 {
 	if (!existsYet())
 		m_callbacks.emplace_back(std::move(std::make_pair(alive, callback)));
@@ -24,7 +24,7 @@ void Asset::addCallback(const std::shared_ptr<bool> & alive, const AssetFinalize
 }
 
 bool Asset::existsYet() const
-{ 
+{
 	// Exit early if this points to nothing
 	if (!this)
 		return false;
@@ -32,18 +32,18 @@ bool Asset::existsYet() const
 	// Check if we're finalized
 	if (!(m_finalized.load()))
 		return false;
-	
+
 	// Check if we have a fence
 	if (m_fence) {
 		// Check if the fence has passed
 		const GLenum state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
-		if (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED) 
-			return false;		
+		if (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED)
+			return false;
 		// Delete fence so we can skip these 2 branches next time
 		glDeleteSync(m_fence);
 		m_fence = nullptr;
 	}
-	return true;	
+	return true;
 }
 
 void Asset::finalize()
@@ -54,7 +54,7 @@ void Asset::finalize()
 	const auto copyCallbacks = m_callbacks;
 	m_callbacks.clear();
 
-	AssetManager & assetManager = m_engine->getManager_Assets();
+	AssetManager& assetManager = m_engine->getManager_Assets();
 	for each (const auto qwe in copyCallbacks)
 		assetManager.submitNotifyee(qwe);
 }

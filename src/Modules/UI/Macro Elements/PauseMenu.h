@@ -22,16 +22,16 @@ public:
 	// Public (de)Constructors
 	/** Destroy the start menu. */
 	inline ~PauseMenu() = default;
-	/** Construct a start menu. 
+	/** Construct a start menu.
 	@param	engine		the engine to use. */
-	inline PauseMenu(Engine * engine)
+	inline PauseMenu(Engine* engine)
 		: Menu(engine) {
 		// Title
 		m_title->setText("PAUSE MENU");
 
 		// Add 'Start Game' button
 		addButton(engine, "RESUME", [&]() { resume(); });
-			
+
 		// Add 'Options' button
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
 		addButton(engine, "  OPTIONS >", [&]() { goToOptions(); });
@@ -39,12 +39,12 @@ public:
 
 		// Add 'Quit' button
 		addButton(engine, "END GAME", [&]() { quit(); });
-		
+
 		// Callbacks
 		addCallback(UI_Element::on_resize, [&]() {
 			const auto scale = getScale();
 			m_optionsMenu->setScale(scale);
-		});
+			});
 
 		// Populate Focus Map
 		m_focusMap = std::make_shared<FocusMap>();
@@ -62,7 +62,7 @@ protected:
 	/** Choose 'options' from the main menu. */
 	inline void goToOptions() {
 		// Transfer appearance and control to options menu
-		auto & ui = m_engine->getModule_UI();
+		auto& ui = m_engine->getModule_UI();
 		ui.pushRootElement(m_optionsMenu);
 		ui.setFocusMap(m_optionsMenu->getFocusMap());
 		m_layout->setSelectionIndex(-1);

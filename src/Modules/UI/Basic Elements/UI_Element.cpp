@@ -6,7 +6,7 @@
 
 // Public (de)Constructors
 
-UI_Element::UI_Element(Engine * engine)
+UI_Element::UI_Element(Engine* engine)
 	: m_engine(engine)
 {
 }
@@ -14,7 +14,7 @@ UI_Element::UI_Element(Engine * engine)
 
 // Public Interface Declaration
 
-void UI_Element::renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) 
+void UI_Element::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Exit early if this element is invisible (all child elements will be invisible)
 	if (!getVisible()) return;
@@ -24,12 +24,12 @@ void UI_Element::renderElement(const float & deltaTime, const glm::vec2 & positi
 	const glm::vec2 newScale = glm::min(m_scale, scale);
 
 	// Render all visible children
-	for each (auto & child in m_children) 
+	for each (auto & child in m_children)
 		if (child->getVisible())
-			child->renderElement(deltaTime, newPosition, newScale);	
+			child->renderElement(deltaTime, newPosition, newScale);
 }
 
-void UI_Element::mouseAction(const MouseEvent & mouseEvent) 
+void UI_Element::mouseAction(const MouseEvent& mouseEvent)
 {
 	// If the element is visible, enabled, and the mouse is within, then process the mouse event
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -60,7 +60,7 @@ void UI_Element::mouseAction(const MouseEvent & mouseEvent)
 	}
 }
 
-void UI_Element::keyboardAction(const KeyboardEvent & keyboardEvent)
+void UI_Element::keyboardAction(const KeyboardEvent& keyboardEvent)
 {
 	// Base UI element has no specific keyboard actions
 	// Keyboard actions are specific like typing in a textbox, NOT navigating a main menu
@@ -69,7 +69,7 @@ void UI_Element::keyboardAction(const KeyboardEvent & keyboardEvent)
 		child->keyboardAction(keyboardEvent);
 }
 
-void UI_Element::userAction(ActionState & actionState) 
+void UI_Element::userAction(ActionState& actionState)
 {
 	// Base UI element has no specific user action support
 	// User actions are specific actions like navigating a menu, toggling a switch
@@ -79,40 +79,40 @@ void UI_Element::userAction(ActionState & actionState)
 
 // Public Methods
 
-void UI_Element::addElement(const std::shared_ptr<UI_Element> & child) 
+void UI_Element::addElement(const std::shared_ptr<UI_Element>& child)
 {
 	m_children.push_back(child);
 	enactCallback(on_childrenChange);
 }
 
-std::shared_ptr<UI_Element> UI_Element::getElement(const size_t & index) const
+std::shared_ptr<UI_Element> UI_Element::getElement(const size_t& index) const
 {
 	return m_children[index];
 }
 
-void UI_Element::clearElements() 
+void UI_Element::clearElements()
 {
 	m_children.clear();
 	enactCallback(on_childrenChange);
 }
 
-void UI_Element::addCallback(const int & interactionEventID, const std::function<void()>& func) 
+void UI_Element::addCallback(const int& interactionEventID, const std::function<void()>& func)
 {
 	m_callbacks[interactionEventID].push_back(func);
 }
 
-void UI_Element::setPosition(const glm::vec2 & position)
+void UI_Element::setPosition(const glm::vec2& position)
 {
 	m_position = position;
 	enactCallback(on_reposition);
 }
 
-glm::vec2 UI_Element::getPosition() const 
+glm::vec2 UI_Element::getPosition() const
 {
 	return m_position;
 }
 
-void UI_Element::setScale(const glm::vec2 & scale)
+void UI_Element::setScale(const glm::vec2& scale)
 {
 	m_scale = scale;
 
@@ -129,15 +129,15 @@ void UI_Element::setScale(const glm::vec2 & scale)
 	enactCallback(on_resize);
 }
 
-glm::vec2 UI_Element::getScale() const 
+glm::vec2 UI_Element::getScale() const
 {
 	return m_scale;
 }
 
-void UI_Element::setMaxScale(const glm::vec2 & scale) 
+void UI_Element::setMaxScale(const glm::vec2& scale)
 {
 	m_maxScale = scale;
-	
+
 	// Clamp upper range
 	if (!std::isnan(m_maxScale.x))
 		m_scale.x = std::min<float>(m_scale.x, m_maxScale.x);
@@ -147,27 +147,27 @@ void UI_Element::setMaxScale(const glm::vec2 & scale)
 	enactCallback(on_resize);
 }
 
-glm::vec2 UI_Element::getMaxScale() const 
+glm::vec2 UI_Element::getMaxScale() const
 {
 	return m_maxScale;
 }
 
-void UI_Element::setMaxWidth(const float & width)
+void UI_Element::setMaxWidth(const float& width)
 {
 	m_maxScale.x = width;
 	enactCallback(on_resize);
 }
 
-void UI_Element::setMaxHeight(const float & height)
+void UI_Element::setMaxHeight(const float& height)
 {
 	m_maxScale.y = height;
 	enactCallback(on_resize);
 }
 
-void UI_Element::setMinScale(const glm::vec2 & scale)
+void UI_Element::setMinScale(const glm::vec2& scale)
 {
 	m_minScale = scale;
-	
+
 	// Clamp lower range
 	if (!std::isnan(m_minScale.x))
 		m_scale.x = std::max<float>(m_scale.x, m_minScale.x);
@@ -182,41 +182,41 @@ glm::vec2 UI_Element::getMinScale() const
 	return m_minScale;
 }
 
-void UI_Element::setMinWidth(const float & width)
+void UI_Element::setMinWidth(const float& width)
 {
 	m_minScale.x = width;
 	enactCallback(on_resize);
 }
 
-void UI_Element::setMinHeight(const float & height)
+void UI_Element::setMinHeight(const float& height)
 {
 	m_minScale.y = height;
 	enactCallback(on_resize);
 }
 
-void UI_Element::setVisible(const bool & visible) 
+void UI_Element::setVisible(const bool& visible)
 {
 	m_visible = visible;
 }
 
-bool UI_Element::getVisible() const 
+bool UI_Element::getVisible() const
 {
 	return m_visible;
 }
 
-void UI_Element::setEnabled(const bool & enabled) 
+void UI_Element::setEnabled(const bool& enabled)
 {
 	m_enabled = enabled;
 	for each (auto & child in m_children)
 		child->setEnabled(enabled);
 }
 
-bool UI_Element::getEnabled() const 
+bool UI_Element::getEnabled() const
 {
 	return m_enabled;
 }
 
-void UI_Element::setHovered() 
+void UI_Element::setHovered()
 {
 	if (!m_hovered) {
 		m_hovered = true;
@@ -224,12 +224,12 @@ void UI_Element::setHovered()
 	}
 }
 
-bool UI_Element::getHovered() const 
+bool UI_Element::getHovered() const
 {
 	return m_hovered;
 }
 
-void UI_Element::setPressed() 
+void UI_Element::setPressed()
 {
 	if (!m_pressed) {
 		m_pressed = true;
@@ -237,12 +237,12 @@ void UI_Element::setPressed()
 	}
 }
 
-bool UI_Element::getPressed() const 
+bool UI_Element::getPressed() const
 {
 	return m_pressed;
 }
 
-void UI_Element::setReleased() 
+void UI_Element::setReleased()
 {
 	if (m_pressed)
 		setClicked();
@@ -250,12 +250,12 @@ void UI_Element::setReleased()
 	enactCallback(on_release);
 }
 
-bool UI_Element::getReleased() const 
+bool UI_Element::getReleased() const
 {
 	return !m_pressed;
 }
 
-void UI_Element::setClicked() 
+void UI_Element::setClicked()
 {
 	m_hovered = true;
 	m_clicked = true;
@@ -267,7 +267,7 @@ bool UI_Element::getClicked() const
 	return false;
 }
 
-void UI_Element::clearFocus() 
+void UI_Element::clearFocus()
 {
 	m_pressed = false;
 	m_clicked = false;
@@ -277,12 +277,12 @@ void UI_Element::clearFocus()
 	}
 }
 
-bool UI_Element::mouseWithin(const MouseEvent & mouseEvent) const 
+bool UI_Element::mouseWithin(const MouseEvent& mouseEvent) const
 {
 	return withinBBox(m_position - m_scale, m_position + m_scale, glm::vec2(mouseEvent.m_xPos, mouseEvent.m_yPos));
 }
 
-bool UI_Element::withinBBox(const glm::vec2 & box_p1, const glm::vec2 & box_p2, const glm::vec2 & point)
+bool UI_Element::withinBBox(const glm::vec2& box_p1, const glm::vec2& box_p2, const glm::vec2& point)
 {
 	return (point.x >= box_p1.x && point.x <= box_p2.x && point.y >= box_p1.y && point.y <= box_p2.y);
 }
@@ -290,7 +290,7 @@ bool UI_Element::withinBBox(const glm::vec2 & box_p1, const glm::vec2 & box_p2, 
 
 // Protected Methods
 
-void UI_Element::enactCallback(const int & interactionEventID) const 
+void UI_Element::enactCallback(const int& interactionEventID) const
 {
 	// Callbacks aren't actually called immediately, but are deferred to the UI module to be performed later
 	// This is a safety net in case the callback drastically alters the overall engine state, like deleting the calling UI element

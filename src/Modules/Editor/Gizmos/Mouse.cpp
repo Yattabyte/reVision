@@ -32,7 +32,7 @@ Mouse_Gizmo::Mouse_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	m_spawnShader = Shared_Shader(engine, "Editor\\spawnShader");
 	m_spawnModel->addCallback(m_aliveIndicator, [&]() mutable {
 		m_spawnIndirect = IndirectDraw((GLuint)m_spawnModel->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
-	});
+		});
 }
 
 void Mouse_Gizmo::frameTick(const float& deltaTime)
@@ -63,7 +63,7 @@ bool Mouse_Gizmo::checkInput(const float& deltaTime)
 			m_engine->getModule_ECS().updateSystem(m_pickerSystem.get(), deltaTime);
 			const auto& [entityHandle, selectionTransform, intersectionTransform] = (std::dynamic_pointer_cast<MousePicker_System>(m_pickerSystem))->getSelection();
 
-			// Set selection to all tools that need it	
+			// Set selection to all tools that need it
 			if (ImGui::GetIO().KeyCtrl)
 				m_editor->toggleAddToSelection(entityHandle);
 			else

@@ -21,14 +21,14 @@ public:
 	// Public (de)Constructors
 	/** Destroy this gizmo. */
 	~Rotation_Gizmo();
-	/** Construct this gizmo. 
+	/** Construct this gizmo.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
 	Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor);
 
 
 	// Public Methods
-	/** Check for mouse input. 
+	/** Check for mouse input.
 	@param	deltaTime	the amount of time since the last frame. */
 	bool checkMouseInput(const float& deltaTime);
 	/** Render this gizmo.
@@ -36,7 +36,7 @@ public:
 	void render(const float& deltaTime);
 	/** Apply a specific transform.
 	@param	transform	the new transform to use. */
-	void setTransform(const Transform & transform);
+	void setTransform(const Transform& transform);
 
 
 private:
@@ -55,10 +55,10 @@ private:
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	Transform m_transform;
 	enum SelectedAxes : unsigned int {
-		NONE	= 0b0000'0000,
-		X_AXIS	= 0b0000'0001,
-		Y_AXIS	= 0b0000'0010,
-		Z_AXIS	= 0b0000'0100,
+		NONE = 0b0000'0000,
+		X_AXIS = 0b0000'0001,
+		Y_AXIS = 0b0000'0010,
+		Z_AXIS = 0b0000'0100,
 	};
 	float m_renderScale = 0.02f, m_angleSnapping = 12.5f;
 	unsigned int m_selectedAxes = NONE, m_hoveredAxes = NONE;

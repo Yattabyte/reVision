@@ -23,7 +23,7 @@ public:
 	/** Construct a toggle switch with a given on/off state.
 	@param	engine		the engine to use.
 	@param	state		the on/off state to use. */
-	inline Toggle(Engine * engine, const bool & state = true)
+	inline Toggle(Engine* engine, const bool& state = true)
 		: UI_Element(engine) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
@@ -35,25 +35,25 @@ public:
 		m_paddle = std::make_shared<Panel>(engine);
 		m_paddle->setColor(glm::vec4(0.75f));
 		panel->addElement(m_paddle);
-		
+
 		// Add a label indicating the toggle state
 		m_label = std::make_shared<Label>(engine);
 		m_label->setAlignment(Label::align_right);
 		m_label->setTextScale(12.0f);
 		m_label->setColor(glm::vec3(0.75f));
 		addElement(m_label);
-		
+
 		// Callbacks
 		addCallback(on_clicked, [&]() { setToggled(!m_toggledOn); });
 		addCallback(on_resize, [&]() { updateGeometry(); });
-		
+
 		// Configure THIS element
 		setToggled(state);
 	}
 
 
 	// Public Interface Implementation
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
 		// Update Colors
 		glm::vec4 color(0.75);
 		if (m_pressed)
@@ -65,7 +65,7 @@ public:
 		// Render Children
 		UI_Element::renderElement(deltaTime, position, scale);
 	}
-	inline virtual void userAction(ActionState & actionState) override {
+	inline virtual void userAction(ActionState& actionState) override {
 		if (actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
 			setToggled(false);
 		else if (actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS)
@@ -78,8 +78,8 @@ public:
 	// Public Methods
 	/** Set this slider's text.
 	@param	text	the text to use. */
-	inline void setText(const std::string & text) {
-		m_label->setText(text);		
+	inline void setText(const std::string& text) {
+		m_label->setText(text);
 	}
 	/** Retrieve this slider's text.
 	@return			the text this label uses. */
@@ -88,13 +88,13 @@ public:
 	}
 	/** Set the toggle state of this button.
 	@param	state	the new state to use. */
-	inline void setToggled(const bool & state) {
+	inline void setToggled(const bool& state) {
 		m_toggledOn = state;
 		setText(m_toggledOn ? "ON" : "OFF");
 		updateGeometry();
 		enactCallback(on_toggle);
 	}
-	/** Return the toggle state of this button. 
+	/** Return the toggle state of this button.
 	@return			whether or not this toggle is on or off. */
 	inline bool getToggled() const {
 		return m_toggledOn;

@@ -28,7 +28,7 @@ public:
 	inline virtual ~Asset() = default;
 
 
-	// Public Methods	
+	// Public Methods
 	/** Gets the file name of this asset.
 	@return				the file name belonging to this asset. */
 	std::string getFileName() const;

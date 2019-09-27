@@ -13,7 +13,7 @@ struct Single_Primitive_Vertex {
 	glm::vec3 normal;
 };
 
-Shared_Auto_Model::Shared_Auto_Model(Engine * engine, const std::string & filename, const bool & threaded)
+Shared_Auto_Model::Shared_Auto_Model(Engine* engine, const std::string& filename, const bool& threaded)
 {
 	(*(std::shared_ptr<Auto_Model>*)(this)) = std::dynamic_pointer_cast<Auto_Model>(
 		engine->getManager_Assets().shareAsset(
@@ -22,7 +22,7 @@ Shared_Auto_Model::Shared_Auto_Model(Engine * engine, const std::string & filena
 			[engine, filename]() { return std::make_shared<Auto_Model>(engine, filename); },
 			threaded
 		)
-	);
+		);
 }
 
 Auto_Model::~Auto_Model()
@@ -31,7 +31,7 @@ Auto_Model::~Auto_Model()
 		glDeleteBuffers(1, &m_vboID);
 }
 
-Auto_Model::Auto_Model(Engine * engine, const std::string & filename) : Asset(engine, filename) 
+Auto_Model::Auto_Model(Engine* engine, const std::string& filename) : Asset(engine, filename)
 {
 	glCreateVertexArrays(1, &m_vaoID);
 	glEnableVertexArrayAttrib(m_vaoID, 0);

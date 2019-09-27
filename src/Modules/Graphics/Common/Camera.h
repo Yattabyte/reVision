@@ -28,7 +28,7 @@ public:
 
 	// Public (de)Constructors
 	/** Destroy the camera buffer. */
-	inline ~Camera() = default;	
+	inline ~Camera() = default;
 	/** Construct a camera buffer. */
 	inline Camera() = default;
 
@@ -36,17 +36,17 @@ public:
 	// Public Methods
 	/** Set the enabled state for this camera.
 	@param	enabled		whether this camera should be enabled or not. */
-	inline void setEnabled(const bool & enabled) {
+	inline void setEnabled(const bool& enabled) {
 		m_enabled = enabled;
 	}
 	/** Retrieve if this camera is enabled or not.
-	@return				true if enabled, false otherwise. */ 
+	@return				true if enabled, false otherwise. */
 	inline bool getEnabled() const {
 		return m_enabled;
 	}
 	/** Recalculate frustum data for this camera. */
 	inline void updateFrustum() {
-		constexpr static auto normalizePlane = [](glm::vec4 &plane) {
+		constexpr static auto normalizePlane = [](glm::vec4& plane) {
 			float magnitude = (float)sqrtf(plane[0] * plane[0] + plane[1] * plane[1] + plane[2] * plane[2]);
 			plane[0] /= magnitude;
 			plane[1] /= magnitude;
@@ -123,19 +123,19 @@ public:
 		return m_frustumCenter;
 	}
 	/** Retrieve a const pointer to the underlying data structure. */
-	inline const GPUData * operator-> () const {
+	inline const GPUData* operator-> () const {
 		return &m_localData;
 	}
 	/** Retrieve a pointer to the underlying data structure. */
-	inline GPUData * operator-> () {
+	inline GPUData* operator-> () {
 		return &m_localData;
 	}
 	/** Retrieve a const pointer to the underlying data structure. */
-	inline const GPUData * get() const {
+	inline const GPUData* get() const {
 		return &m_localData;
 	}
 	/** Retrieve a pointer to the underlying data structure. */
-	inline GPUData * get() {
+	inline GPUData* get() {
 		return &m_localData;
 	}
 

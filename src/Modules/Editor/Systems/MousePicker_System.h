@@ -1,6 +1,6 @@
 #pragma once
 #ifndef MOUSEPICKER_SYSTEM_H
-#define MOUSEPICKER_SYSTEM_H 
+#define MOUSEPICKER_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
@@ -21,7 +21,7 @@ public:
 	}
 	/** Construct this system.
 	@param	engine		the currently active engine. */
-	inline MousePicker_System(Engine * engine)
+	inline MousePicker_System(Engine* engine)
 		: m_engine(engine) {
 		// Declare component types used
 		addComponentType(Transform_Component::m_ID);
@@ -31,22 +31,22 @@ public:
 		addComponentType(Prop_Component::m_ID, FLAG_OPTIONAL);
 
 		// Preferences
-		auto & preferences = m_engine->getPreferenceState();
+		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
+		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 			m_renderSize.x = (int)f;
-		});
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
+			});
+		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 			m_renderSize.y = (int)f;
-		});
+			});
 	}
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override final {
-		const auto & actionState = m_engine->getActionState();
-		const auto & clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
+	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override final {
+		const auto& actionState = m_engine->getActionState();
+		const auto& clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
 		const auto ray_origin = clientCamera.EyePosition;
 		const auto ray_nds = glm::vec2(2.0f * actionState.at(ActionState::MOUSE_X) / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState.at(ActionState::MOUSE_Y)) / m_renderSize.y);
 		const auto ray_eye = glm::vec4(glm::vec2(clientCamera.pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
@@ -60,11 +60,11 @@ public:
 		int highestConfidence = 0;
 		bool found = false;
 		for each (const auto & componentParam in components) {
-			auto * transformComponent = (Transform_Component*)componentParam[0];
-			auto * bBox = (BoundingBox_Component*)componentParam[1];
-			auto * bSphere = (BoundingSphere_Component*)componentParam[2];
-			auto * collider = (Collider_Component*)componentParam[3];
-			auto * prop = (Prop_Component*)componentParam[4];
+			auto* transformComponent = (Transform_Component*)componentParam[0];
+			auto* bBox = (BoundingBox_Component*)componentParam[1];
+			auto* bSphere = (BoundingSphere_Component*)componentParam[2];
+			auto* collider = (Collider_Component*)componentParam[3];
+			auto* prop = (Prop_Component*)componentParam[4];
 			float distanceFromScreen = FLT_MAX;
 			int confidence = 0;
 			const bool hasBoundingShape = bSphere || bBox;
@@ -92,7 +92,7 @@ public:
 				closestDistance = distanceFromScreen;
 				highestConfidence = confidence;
 				m_selection = transformComponent->m_entity;
-				m_selectionTransform = transformComponent->m_worldTransform;			
+				m_selectionTransform = transformComponent->m_worldTransform;
 				found = true;
 			}
 		}
@@ -112,21 +112,21 @@ public:
 
 private:
 	// Private Methods
-	/** Perform a ray-prop intersection test. 
+	/** Perform a ray-prop intersection test.
 	@param	transformComponent		the transform component of interest.
 	@param	prop					the prop component of interest.
 	@param	ray_origin				the mouse ray's origin.
 	@param	ray_direction			the mouse ray's direction.
-	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen. 
-	@param	confidence				reference updated with the confidence level for this function. 
+	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
+	@param	confidence				reference updated with the confidence level for this function.
 	@return							true on successful intersection, false if disjoint. */
 	bool RayProp(Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) {
 		bool intersection = false;
-		if (prop->m_model && prop->m_model->existsYet()) {		
+		if (prop->m_model && prop->m_model->existsYet()) {
 			float distance = FLT_MAX;
 			for (size_t x = 0; x < prop->m_model->m_data.m_vertices.size(); x += 3) {
 				auto v0 = transformComponent->m_worldTransform.m_modelMatrix * glm::vec4(prop->m_model->m_data.m_vertices[x].vertex, 1);
-				auto v1 = transformComponent->m_worldTransform.m_modelMatrix * glm::vec4(prop->m_model->m_data.m_vertices[x +1 ].vertex, 1);
+				auto v1 = transformComponent->m_worldTransform.m_modelMatrix * glm::vec4(prop->m_model->m_data.m_vertices[x + 1].vertex, 1);
 				auto v2 = transformComponent->m_worldTransform.m_modelMatrix * glm::vec4(prop->m_model->m_data.m_vertices[x + 2].vertex, 1);
 				v0 /= v0.w;
 				v1 /= v1.w;
@@ -179,7 +179,7 @@ private:
 			distanceFromScreen = distance;
 			confidence = 2;
 			return true;
-		}		
+		}
 		return false;
 	}
 	/** Perform a ray-bounding-sphere intersection test.
@@ -197,7 +197,7 @@ private:
 			confidence = 2;
 			return true;
 		}
-		return false;		
+		return false;
 	}
 	/** Perform a ray-origin intersection test.
 	@param	transformComponent		the transform component of interest.
@@ -221,7 +221,7 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	ecsHandle m_selection;
 	Transform m_selectionTransform, m_intersectionTransform;
 	glm::ivec2 m_renderSize = glm::ivec2(1);

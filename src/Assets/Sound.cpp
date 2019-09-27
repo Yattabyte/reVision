@@ -5,7 +5,7 @@
 
 constexpr char* DIRECTORY_SOUNDS = "Sounds\\";
 
-Shared_Sound::Shared_Sound(Engine * engine, const std::string & filename, const bool & threaded)
+Shared_Sound::Shared_Sound(Engine* engine, const std::string& filename, const bool& threaded)
 {
 	(*(std::shared_ptr<Sound>*)(this)) = std::dynamic_pointer_cast<Sound>(
 		engine->getManager_Assets().shareAsset(
@@ -18,20 +18,20 @@ Shared_Sound::Shared_Sound(Engine * engine, const std::string & filename, const 
 
 Sound::~Sound()
 {
-	if (m_finalized) 
+	if (m_finalized)
 		delete (SoLoud::Wav*)m_soundObj;
 }
 
-Sound::Sound(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
+Sound::Sound(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Sound::initialize()
 {
 	// Forward asset creation
-	SoLoud::Wav * wave = new SoLoud::Wav();
-	auto & msgMgr = m_engine->getManager_Messages();
+	SoLoud::Wav* wave = new SoLoud::Wav();
+	auto& msgMgr = m_engine->getManager_Messages();
 	const auto path = DIRECTORY_SOUNDS + getFileName();
 	switch (wave->load(path.c_str())) {
-	case SoLoud::SO_NO_ERROR: 
+	case SoLoud::SO_NO_ERROR:
 		// No error
 		break;
 	case SoLoud::INVALID_PARAMETER:
@@ -47,7 +47,7 @@ void Sound::initialize()
 	default:
 		msgMgr.error("Sound \"" + m_filename + "\" has encountered an unknown error.");
 		break;
-	}; 
+	};
 	m_soundObj = (SoundObj*)wave;
 	Asset::finalize();
 }

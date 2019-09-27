@@ -25,26 +25,26 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void initialize(Engine * engine) override final;
+	virtual void initialize(Engine* engine) override final;
 	virtual void deinitialize() override final;
-	virtual void frameTick(const float & deltaTime) override final;
+	virtual void frameTick(const float& deltaTime) override final;
 
 
 	// Public Methods
 	/** Push a new UI element onto a stack to receive input and be rendered.
 	@param	rootElement			the main element of focus for this UI system. */
-	void setRootElement(const std::shared_ptr<ImGUI_Element> & rootElement) {
+	void setRootElement(const std::shared_ptr<ImGUI_Element>& rootElement) {
 		m_rootUIElement = rootElement;
 	}
-	/** Push a new UI element onto a stack to receive input and be rendered. 
+	/** Push a new UI element onto a stack to receive input and be rendered.
 	@param	rootElement			the main element of focus for this UI system. */
-	void pushRootElement(const std::shared_ptr<UI_Element> & rootElement);
+	void pushRootElement(const std::shared_ptr<UI_Element>& rootElement);
 	/** Pop the top UI element off the stack. */
 	void popRootElement();
-	/** Set a new focus map to be used for user action input. 
+	/** Set a new focus map to be used for user action input.
 	@param	focusMap			the new focus map to use. */
-	void setFocusMap(const std::shared_ptr<FocusMap> & focusMap);
-	/** Retrieve the active focus map, used for user input. 
+	void setFocusMap(const std::shared_ptr<FocusMap>& focusMap);
+	/** Retrieve the active focus map, used for user input.
 	@return						the active focus map. */
 	std::shared_ptr<FocusMap> getFocusMap() const;
 	/** Remove the root UI element from the UI system. */
@@ -52,28 +52,28 @@ public:
 	/** Propagates mouse movement input to all UI elements.
 	@param		xPos			the 'x' axis position of the mouse
 	@param		yPos			the 'y' axis position of the mouse. */
-	void applyCursorPos(const double & xPos, const double & yPos);
+	void applyCursorPos(const double& xPos, const double& yPos);
 	/** Propagates mouse button input to all UI elements.
 	@param		button			the mouse button used
 	@param		action			the mouse button action (pressed, released, etc)
 	@param		mods			any mouse modifiers used. */
-	void applyCursorButton(const int & button, const int & action, const int & mods);
+	void applyCursorButton(const int& button, const int& action, const int& mods);
 	/** Propagates keyboard character input to all UI elements.
 	@param		character		the character inputed. */
-	void applyChar(const unsigned int & character);
+	void applyChar(const unsigned int& character);
 	/** Propagates keyboard key input to all UI elements.
 	@param		key				The keyboard key that was pressed or released.
 	@param		scancode		The system-specific scancode of the key.
 	@param		action			Action::PRESS, RELEASE or REPEAT.
 	@param		mods			Bit field describing which modifier keys were held down. */
-	void applyKey(const int & key, const int & scancode, const int & action, const int & mods);
+	void applyKey(const int& key, const int& scancode, const int& action, const int& mods);
 	/** Apply an action state to the the current focused UI element.
 	@param		actionState		the action state to apply. */
-	void applyActionState(ActionState & actionState);
-	/** Add a new callback to be called as-soon-as-possible. 
+	void applyActionState(ActionState& actionState);
+	/** Add a new callback to be called as-soon-as-possible.
 	@param	callback		the callback to call later. */
-	void pushCallback(const std::function<void()> & callback);
-	
+	void pushCallback(const std::function<void()>& callback);
+
 
 private:
 	// Private Attributes

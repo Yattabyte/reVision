@@ -24,7 +24,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Radiance_Hints(Engine * engine, const std::shared_ptr<RH_Volume> & rhVolume)
+	inline Radiance_Hints(Engine* engine, const std::shared_ptr<RH_Volume>& rhVolume)
 		: m_engine(engine), m_rhVolume(rhVolume), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
 		m_shaderRecon = Shared_Shader(engine, "Effects\\RH Reconstruction");
@@ -32,17 +32,17 @@ public:
 		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preferences
-		auto & preferences = m_engine->getPreferenceState();
+		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_bounceSize);
-		preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { 
-			m_bounceSize = (GLuint)f; 
-		});
+		preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) {
+			m_bounceSize = (GLuint)f;
+			});
 	}
 
 
 	// Public Interface Implementations.
-	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
-		for (auto &[camBufferRebounce, camBufferRecon, indirectQuad, indirectQuadRecon] : m_drawData) {
+	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+		for (auto& [camBufferRebounce, camBufferRecon, indirectQuad, indirectQuadRecon] : m_drawData) {
 			camBufferRebounce.endWriting();
 			camBufferRecon.endWriting();
 			indirectQuad.endWriting();
@@ -50,20 +50,20 @@ public:
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderRecon->existsYet() || !m_shaderRebounce->existsYet())
 			return;
 
 		// Prepare camera index
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);
-		auto &[camBufferRebounce, camBufferRecon, indirectQuad, indirectQuadRecon] = m_drawData[m_drawIndex];
+		auto& [camBufferRebounce, camBufferRecon, indirectQuad, indirectQuadRecon] = m_drawData[m_drawIndex];
 		camBufferRebounce.beginWriting();
 		camBufferRecon.beginWriting();
 		indirectQuad.beginWriting();
 		indirectQuadRecon.beginWriting();
-		std::vector<glm::ivec2> camIndiciesRebounce, camIndiciesRecon;	
-		for (auto &[camIndex, layer] : perspectives) {
+		std::vector<glm::ivec2> camIndiciesRebounce, camIndiciesRecon;
+		for (auto& [camIndex, layer] : perspectives) {
 			const std::vector<glm::ivec2> tempIndices(m_bounceSize, { camIndex, layer });
 			camIndiciesRebounce.insert(camIndiciesRebounce.end(), tempIndices.begin(), tempIndices.end());
 			camIndiciesRecon.push_back({ camIndex, layer });
@@ -72,7 +72,7 @@ public:
 		camBufferRecon.write(0, sizeof(glm::ivec2) * camIndiciesRecon.size(), camIndiciesRecon.data());
 		indirectQuad.setPrimitiveCount(m_bounceSize);
 		indirectQuadRecon.setPrimitiveCount((GLuint)perspectives.size());
-		
+
 		// Bind common data
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
@@ -107,13 +107,13 @@ public:
 
 private:
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	std::shared_ptr<RH_Volume> m_rhVolume;
 	Shared_Shader m_shaderRecon, m_shaderRebounce;
 	Shared_Auto_Model m_shapeQuad;
 	GLuint m_bounceSize = 16;
 	struct DrawData {
-		DynamicBuffer camBufferRebounce, camBufferRecon;	
+		DynamicBuffer camBufferRebounce, camBufferRecon;
 		IndirectDraw indirectQuad = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT), indirectQuadRecon = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT);
 	};
 	std::vector<DrawData> m_drawData;

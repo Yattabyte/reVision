@@ -14,19 +14,19 @@ public:
 	/** Construct an engine module. */
 	inline Engine_Module() = default;
 
-	
+
 	// Public Interface Declarations
 	/** Initialize the module. */
-	inline virtual void initialize(Engine * engine) { m_engine = engine; };
+	inline virtual void initialize(Engine* engine) { m_engine = engine; };
 	/** Deinitialize the module. */
 	inline virtual void deinitialize() {}
 	/** Tick the ui by a frame.
 	@param	deltaTime	the amount of time passed since last frame. */
-	inline virtual void frameTick(const float &) {}
+	inline virtual void frameTick(const float&) {}
 
 
 protected:
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 };
 
 #endif // ENGINE_MODULE_H

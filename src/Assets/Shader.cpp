@@ -12,12 +12,12 @@ constexpr char* EXT_SHADER_BINARY = ".shader";
 constexpr char* DIRECTORY_SHADER = "\\Shaders\\";
 constexpr char* DIRECTORY_SHADER_CACHE = "\\cache\\shaders\\";
 
-struct ShaderHeader { 
-	GLenum format; 
-	GLsizei length; 
+struct ShaderHeader {
+	GLenum format;
+	GLsizei length;
 };
 
-Shared_Shader::Shared_Shader(Engine * engine, const std::string & filename, const bool & threaded)	
+Shared_Shader::Shared_Shader(Engine* engine, const std::string& filename, const bool& threaded)
 {
 	(*(std::shared_ptr<Shader>*)(this)) = std::dynamic_pointer_cast<Shader>(
 		engine->getManager_Assets().shareAsset(
@@ -30,11 +30,11 @@ Shared_Shader::Shared_Shader(Engine * engine, const std::string & filename, cons
 
 Shader::~Shader()
 {
-	if (existsYet()) 
+	if (existsYet())
 		glDeleteProgram(m_glProgramID);
 }
 
-Shader::Shader(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
+Shader::Shader(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Shader::initialize()
 {
@@ -59,7 +59,7 @@ void Shader::initialize()
 		if (!success) {
 			const std::vector<GLchar> infoLog = getErrorLog();
 			m_engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to initialize. Reason: " + std::string(infoLog.data(), infoLog.size()));
-			
+
 			// Create hard-coded alternative
 			const std::string filename = getFileName();
 
@@ -97,7 +97,7 @@ void Shader::Release()
 	glUseProgram(0);
 }
 
-const GLint Shader::getProgramiv(const GLenum & pname) const
+const GLint Shader::getProgramiv(const GLenum& pname) const
 {
 	GLint param;
 	glGetProgramiv(m_glProgramID, pname, &param);
@@ -113,14 +113,14 @@ const std::vector<GLchar> Shader::getErrorLog() const
 	return infoLog;
 }
 
-const bool Shader::loadCachedBinary(const std::string & relativePath)
+const bool Shader::loadCachedBinary(const std::string& relativePath)
 {
 	if (Engine::File_Exists(relativePath + EXT_SHADER_BINARY)) {
 		ShaderHeader header;
 		std::ifstream file((Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY).c_str(), std::ios::binary);
 		if (file.is_open()) {
 			file.read(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
-			std::vector<char> binary(header.length); 
+			std::vector<char> binary(header.length);
 			file.read(binary.data(), header.length);
 			file.close();
 
@@ -140,7 +140,7 @@ const bool Shader::loadCachedBinary(const std::string & relativePath)
 	return false;
 }
 
-const bool Shader::saveCachedBinary(const std::string & relativePath)
+const bool Shader::saveCachedBinary(const std::string& relativePath)
 {
 	glProgramParameteri(m_glProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 	ShaderHeader header = { 0,  getProgramiv(GL_PROGRAM_BINARY_LENGTH) };
@@ -160,14 +160,14 @@ const bool Shader::saveCachedBinary(const std::string & relativePath)
 	return false;
 }
 
-bool Shader::initShaders(const std::string & relativePath) 
+bool Shader::initShaders(const std::string& relativePath)
 {
 	const std::string filename = getFileName();
 
 	if (!m_vertexShader.loadDocument(m_engine, relativePath + EXT_SHADER_VERTEX) ||
 		!m_fragmentShader.loadDocument(m_engine, relativePath + EXT_SHADER_FRAGMENT))
 		return false;
-	
+
 
 	// Create Vertex Shader
 	m_vertexShader.createGLShader(m_engine, filename);
@@ -180,7 +180,7 @@ bool Shader::initShaders(const std::string & relativePath)
 	return true;
 }
 
-const bool Shader::validateProgram() 
+const bool Shader::validateProgram()
 {
 	// Check Validation
 	if (getProgramiv(GL_LINK_STATUS)) {
@@ -197,16 +197,16 @@ const bool Shader::validateProgram()
 
 ShaderObj::~ShaderObj() { glDeleteShader(m_shaderID); }
 
-ShaderObj::ShaderObj(const GLenum & type) : m_type(type) {}
+ShaderObj::ShaderObj(const GLenum& type) : m_type(type) {}
 
-GLint ShaderObj::getShaderiv(const GLenum & pname) const
+GLint ShaderObj::getShaderiv(const GLenum& pname) const
 {
 	GLint param;
 	glGetShaderiv(m_shaderID, pname, &param);
 	return param;
 }
 
-bool ShaderObj::loadDocument(Engine * engine, const std::string & filePath) 
+bool ShaderObj::loadDocument(Engine* engine, const std::string& filePath)
 {
 	// Exit early if document not found or no text is found in the document
 	if (!Text_IO::Import_Text(engine, filePath, m_shaderText) || m_shaderText == "")
@@ -233,10 +233,10 @@ bool ShaderObj::loadDocument(Engine * engine, const std::string & filePath)
 	return true;
 }
 
-bool ShaderObj::createGLShader(Engine * engine, const std::string & filename) 
+bool ShaderObj::createGLShader(Engine* engine, const std::string& filename)
 {
 	// Create shader object
-	const char * source = m_shaderText.c_str();
+	const char* source = m_shaderText.c_str();
 	const GLint length = (GLint)m_shaderText.length();
 	m_shaderID = glCreateShader(m_type);
 	glShaderSource(m_shaderID, 1, &source, &length);

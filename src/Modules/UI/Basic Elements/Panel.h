@@ -19,7 +19,7 @@ public:
 	}
 	/** Construct a panel.
 	@param	engine		the engine to use. */
-	inline Panel(Engine * engine)
+	inline Panel(Engine* engine)
 		: UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Panel");
@@ -39,13 +39,13 @@ public:
 		// Add Callbacks
 		addCallback(UI_Element::on_resize, [&]() { updateGeometry(); });
 	}
-	
+
 
 	// Public Interface Implementation
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet()) return;
-		
+
 		// Render
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
@@ -54,7 +54,7 @@ public:
 		m_shader->setUniform(1, m_color);
 		glBindVertexArray(m_vaoID);
 		m_indirect.drawCall();
-		
+
 		// Render Children
 		UI_Element::renderElement(deltaTime, position, scale);
 	}
@@ -63,7 +63,7 @@ public:
 	// Public Methods
 	/** Set this panel's color.
 	@param	text	the new color to render with. */
-	inline void setColor(const glm::vec4 & color) {
+	inline void setColor(const glm::vec4& color) {
 		m_color = color;
 	}
 	/** Retrieve this panel's color.

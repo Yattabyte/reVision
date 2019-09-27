@@ -17,7 +17,7 @@ public:
 	/** Default Constructor. */
 	inline StaticBuffer() = default;
 	/** Explicit Instantion. */
-	inline StaticBuffer(const GLsizeiptr& size, const void* data = 0, const GLbitfield & storageFlags = GL_DYNAMIC_STORAGE_BIT)
+	inline StaticBuffer(const GLsizeiptr& size, const void* data = 0, const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT)
 		: m_size(size), m_storageFlags(storageFlags) {
 		glCreateBuffers(1, &m_bufferID);
 		glNamedBufferStorage(m_bufferID, size, data, storageFlags);

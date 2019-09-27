@@ -18,9 +18,9 @@ class ecsWorld;
 using ComponentID = int;
 using ComponentDataSpace = std::vector<uint8_t>;
 using ComponentMap = std::map<ComponentID, ComponentDataSpace>;
-using ComponentCreateFunction = std::function<ComponentID(ComponentDataSpace& memory, const ecsHandle& componentHandle, const ecsHandle &entityHandle, const ecsBaseComponent* comp)>;
+using ComponentCreateFunction = std::function<ComponentID(ComponentDataSpace & memory, const ecsHandle & componentHandle, const ecsHandle & entityHandle, const ecsBaseComponent * comp)>;
 using ComponentNewFunction = std::function<std::shared_ptr<ecsBaseComponent>()>;
-using ComponentFreeFunction = std::function<void(ecsBaseComponent* comp)>;
+using ComponentFreeFunction = std::function<void(ecsBaseComponent * comp)>;
 
 
 /** A base class representing components in an ECS architecture. */
@@ -44,7 +44,7 @@ struct ecsBaseComponent {
 
 	// Public Attributes
 	/** Runtime generated ID per class. */
-	ComponentID m_ID; 
+	ComponentID m_ID;
 	/** Total component byte-size. */
 	size_t m_size;
 	/** Specific class name. */
@@ -57,12 +57,12 @@ struct ecsBaseComponent {
 
 protected:
 	// Protected Methods
-	/** Register a specific sub-class component into the component registry for creating and freeing them at runtime. 
+	/** Register a specific sub-class component into the component registry for creating and freeing them at runtime.
 	@param	createFn	function for creating a specific component type within an input memory block.
 	@param	freeFn		function for freeing a specific component type from its memory block.
 	@param	size		the total size of a single component.
 	@param	string		type-name of the component, for name-lookups between since component ID's can change.
-	@param	templateC	template component used for copying from. 
+	@param	templateC	template component used for copying from.
 	@return				runtime component ID. */
 	static ComponentID registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string);
 	/** Recover and load component data into this component from a char buffer.
@@ -115,7 +115,7 @@ struct ecsComponent : public ecsBaseComponent {
 		const auto& classDataSize = classData.size();
 		std::vector<char> classDataSizeData(sizeof(size_t));
 		std::memcpy(&classDataSizeData[0], &classDataSize, sizeof(size_t));
-		classData.insert(classData.begin(), classDataSizeData.cbegin(), classDataSizeData.cend()); 
+		classData.insert(classData.begin(), classDataSizeData.cbegin(), classDataSizeData.cend());
 
 		std::vector<char> output;
 		output.reserve(nameData.size() + classData.size());
@@ -153,7 +153,7 @@ protected:
 /** Constructs a new component of type <C> into the memory space provided.
 @param	memory			raw data vector representing all components of type <C>.
 @param	entityHandle	handle to the component's parent entity, the one who'll own this component.
-@param	comp			temporary pre-constructed component to copy data from, or nullptr. 
+@param	comp			temporary pre-constructed component to copy data from, or nullptr.
 @return					the index into the memory array where this component was created at. */
 template <typename C>
 inline constexpr static const int createFn(ComponentDataSpace& memory, const ecsHandle& componentHandle, const ecsHandle& entityHandle, const ecsBaseComponent* comp = nullptr) {
@@ -180,6 +180,6 @@ inline constexpr static const void freeFn(ecsBaseComponent* comp) {
 }
 
 template <typename C, const char* chars>
-const ComponentID ecsComponent<C, chars>::m_ID( registerType(createFn<C>, freeFn<C>, newFn<C>, sizeof(C), chars) );
+const ComponentID ecsComponent<C, chars>::m_ID(registerType(createFn<C>, freeFn<C>, newFn<C>, sizeof(C), chars));
 
 #endif // ECS_COMPONENT_H

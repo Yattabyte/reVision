@@ -1,6 +1,6 @@
 #pragma once
 #ifndef PLAYERFREELOOK_SYSTEM_H
-#define PLAYERFREELOOK_SYSTEM_H 
+#define PLAYERFREELOOK_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
@@ -10,12 +10,12 @@
 
 /** A system responsible for updating player components based on keyboard/mouse. */
 class PlayerFreeLook_System final : public ecsBaseSystem {
-public: 
+public:
 	// Public (de)Constructors
 	/** Destroy this free-look system. */
 	inline ~PlayerFreeLook_System() = default;
 	/** Construct a free-look system. */
-	inline PlayerFreeLook_System(Engine * engine) : m_engine(engine) {
+	inline PlayerFreeLook_System(Engine* engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(Transform_Component::m_ID);
 		addComponentType(Player3D_Component::m_ID);
@@ -27,15 +27,15 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<ecsBaseComponent*> > & components) override final {
-		auto & graphicsModule = m_engine->getModule_Graphics();
+	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override final {
+		auto& graphicsModule = m_engine->getModule_Graphics();
 		for each (const auto & componentParam in components) {
-			Transform_Component * transformComponent = (Transform_Component*)componentParam[0];
-			Player3D_Component * playerComponent = (Player3D_Component*)componentParam[1];
+			Transform_Component* transformComponent = (Transform_Component*)componentParam[0];
+			Player3D_Component* playerComponent = (Player3D_Component*)componentParam[1];
 
-			auto & actionState = m_engine->getActionState();
-			auto & rotation = playerComponent->m_rotation;
-			auto & transform = transformComponent->m_worldTransform;
+			auto& actionState = m_engine->getActionState();
+			auto& rotation = playerComponent->m_rotation;
+			auto& transform = transformComponent->m_worldTransform;
 			// Determine how much the camera should rotate
 			rotation += 25.0f * deltaTime * glm::vec3(actionState.at(ActionState::LOOK_X), actionState.at(ActionState::LOOK_Y), 0);
 			rotation.x = fmodf(rotation.x, 360.0f);
@@ -77,7 +77,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 };
 
 #endif // PLAYERFREELOOK_SYSTEM_H

@@ -8,7 +8,7 @@
 #include "Engine.h"
 
 
-void Game_Module::initialize(Engine * engine)
+void Game_Module::initialize(Engine* engine)
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: Game...");
@@ -20,18 +20,18 @@ void Game_Module::initialize(Engine * engine)
 	// Create Overlay Effects
 	m_loadingRing = std::make_shared<LoadingIndicator>(m_engine);
 	m_frameTime = std::make_shared<Frametime_Counter>(m_engine);
-	
+
 	// Create Pause Menu
 	auto pauseMenu = std::make_shared<PauseMenu>(m_engine);
 	m_pauseMenu = pauseMenu;
 	pauseMenu->addCallback(PauseMenu::on_resume_game, [&]() {
 		showPauseMenu(false);
 		pauseMenu->setVisible(true);
-	});
+		});
 	pauseMenu->addCallback(PauseMenu::on_end, [&]() {
 		showPauseMenu(false);
 		m_engine->goToMainMenu();
-	});
+		});
 }
 
 void Game_Module::deinitialize()
@@ -39,9 +39,9 @@ void Game_Module::deinitialize()
 	m_engine->getManager_Messages().statement("Unloading Module: Game...");
 }
 
-void Game_Module::frameTick(const float & deltaTime)
+void Game_Module::frameTick(const float& deltaTime)
 {
-	auto & actionState = m_engine->getActionState();
+	auto& actionState = m_engine->getActionState();
 	if (m_gameState == in_pauseMenu || m_gameState == in_game) {
 		// Check if we should show the overlay
 		if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
@@ -62,7 +62,7 @@ void Game_Module::frameTick(const float & deltaTime)
 	m_engine->getModule_ECS().updateSystems(m_Systems, deltaTime);
 }
 
-void Game_Module::renderOverlays(const float & deltaTime)
+void Game_Module::renderOverlays(const float& deltaTime)
 {
 	m_loadingRing->applyEffect(deltaTime);
 	m_frameTime->applyEffect(deltaTime);
@@ -75,7 +75,7 @@ void Game_Module::showGame()
 	m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
 }
 
-void Game_Module::showPauseMenu(const bool & show)
+void Game_Module::showPauseMenu(const bool& show)
 {
 	if (show) {
 		m_engine->setMouseInputMode(Engine::MouseInputMode::NORMAL);

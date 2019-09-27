@@ -11,7 +11,7 @@
 #include "Engine.h"
 
 
-/** A UI element serving as a menu. 
+/** A UI element serving as a menu.
 Made to be subclassed and expanded upon, provides a method for adding menu buttons. */
 class Menu : public UI_Element {
 public:
@@ -20,7 +20,7 @@ public:
 	inline ~Menu() = default;
 	/** Construct a menu.
 	@param	engine		the engine to use. */
-	inline Menu(Engine * engine)
+	inline Menu(Engine* engine)
 		: UI_Element(engine) {
 		// Make a background panel for cosemetic purposes
 		m_backPanel = std::make_shared<Panel>(engine);
@@ -29,12 +29,12 @@ public:
 
 		// Make a vertical layout to house list items
 		m_layout = std::make_shared<List>(engine);
-		m_layout->setSpacing(10.0f); 
+		m_layout->setSpacing(10.0f);
 		m_layout->addCallback(List::on_selection, [&]() {
 			const auto index = m_layout->getSelectionIndex();
 			if (index >= 0 && index < m_selectionCallbacks.size())
 				m_selectionCallbacks[index]();
-		});
+			});
 		m_backPanel->addElement(m_layout);
 
 		// Title
@@ -59,12 +59,12 @@ public:
 			m_title->setPosition({ 0, -300 });
 			m_separator->setScale({ 128, scale.y });
 			m_separator->setPosition({ 0, -325 });
-		});
+			});
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void userAction(ActionState & actionState) override {
+	inline virtual void userAction(ActionState& actionState) override {
 		// Start menu doesn't implement any custom controls, focus is on the list
 		m_layout->userAction(actionState);
 	}
@@ -84,7 +84,7 @@ protected:
 	@param	engine		the engine to use.
 	@param	buttonText	the text to label the button with.
 	@param	callback	the callback to use when the button is pressed. */
-	inline void addButton(Engine * engine, const char * buttonText, const std::function<void()> & callback) {
+	inline void addButton(Engine* engine, const char* buttonText, const std::function<void()>& callback) {
 		auto button = std::make_shared<Button>(engine, buttonText);
 		button->setScale({ 120, 20 });
 		button->addCallback(Button::on_clicked, callback);

@@ -28,7 +28,7 @@ public:
 	/** Construct a vertical scrollbar, decorating the supplied component.
 	@param	engine		the engine to use.
 	@param	component	the component to decorate. */
-	inline Scrollbar_V(Engine * engine, const std::shared_ptr<UI_Element> & component)
+	inline Scrollbar_V(Engine* engine, const std::shared_ptr<UI_Element>& component)
 		: UI_Decorator(engine, component) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\ScrollBar");
@@ -64,7 +64,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
+	inline virtual void mouseAction(const MouseEvent& mouseEvent) override {
 		UI_Decorator::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			MouseEvent subEvent = mouseEvent;
@@ -81,7 +81,7 @@ public:
 				enactCallback(on_release);
 		}
 	}
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
 		// Quit Early
 		if (!getVisible() || !m_shader->existsYet()) return;
 		const auto newPosition = position + m_position;
@@ -92,7 +92,7 @@ public:
 		m_shader->setUniform(0, newPosition);
 		glBindVertexArray(m_vaoID);
 		m_indirect.drawCall();
-		
+
 
 		// Render Children
 		UI_Decorator::renderElement(deltaTime, position, newScale);
@@ -102,7 +102,7 @@ public:
 	// Public Methods
 	/** Set the linear amount for the location of the scroll bar.
 	@param	linear		the linear amount to put the scroll bar. */
-	inline void setLinear(const float & linear) {
+	inline void setLinear(const float& linear) {
 		m_linear = std::clamp<float>(linear, -1.0f, 1.0f);
 		updateElementPosition();
 		enactCallback(on_scroll_change);

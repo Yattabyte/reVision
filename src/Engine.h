@@ -62,9 +62,9 @@ public:
 	// Public Methods
 	/** Ticks the engine's overall simulation by a frame from the main thread. */
 	void tick();
-	/** Ticks the engine's overall simulation by a frame from a secondary thread. 
+	/** Ticks the engine's overall simulation by a frame from a secondary thread.
 	@param	exitObject	object signaling when to close the thread */
-	void tickThreaded(std::future<void> exitObject, GLFWwindow * const window);
+	void tickThreaded(std::future<void> exitObject, GLFWwindow* const window);
 	/** Checks if the engine wants to shut down.
 	@return	true if engine should shut down. */
 	bool shouldClose();
@@ -72,7 +72,7 @@ public:
 	void shutDown();
 	/** Set the input mode for the mouse, useful for changing between 2D and 3D views.
 	@param	mode		the new mouse input mode to use. */
-	void setMouseInputMode(const MouseInputMode & mode);
+	void setMouseInputMode(const MouseInputMode& mode);
 	/** Switch the UI over to the main menu. */
 	void goToMainMenu();
 	/** Switch the UI over to the game. */
@@ -89,35 +89,35 @@ public:
 	/** Return a list of available resolutions. */
 	std::vector<glm::ivec3> getResolutions() const;
 	/** Returns this engine's action state. */
-	ActionState & getActionState() { return m_actionState; }
+	ActionState& getActionState() { return m_actionState; }
 	/** Returns this engine's preference state. */
-	PreferenceState & getPreferenceState() { return m_preferenceState; }
+	PreferenceState& getPreferenceState() { return m_preferenceState; }
 	/** Returns this engine's rendering context. */
-	GLFWwindow * getContext() const { return m_window; }
+	GLFWwindow* getContext() const { return m_window; }
 
 	// Manager Accessors
 	/** Returns this engine's asset manager. */
-	AssetManager & getManager_Assets() { return m_assetManager; }
+	AssetManager& getManager_Assets() { return m_assetManager; }
 	/** Returns this engine's message manager. */
-	MessageManager & getManager_Messages() { return m_messageManager; }
+	MessageManager& getManager_Messages() { return m_messageManager; }
 	/** Returns this engine's sound manager. */
-	SoundManager & getManager_Sounds() { return m_soundManager; }
+	SoundManager& getManager_Sounds() { return m_soundManager; }
 
 	// Module Accessors
 	/** Returns this engine's ECS module. */
-	ECS_Module & getModule_ECS() { return m_moduleECS; }
+	ECS_Module& getModule_ECS() { return m_moduleECS; }
 	/** Returns this engine's game module. */
-	Game_Module & getModule_Game() { return m_moduleGame; }
+	Game_Module& getModule_Game() { return m_moduleGame; }
 	/** Returns this engine's editor module. */
-	LevelEditor_Module & getModule_LevelEditor() { return m_moduleEditor; }
+	LevelEditor_Module& getModule_LevelEditor() { return m_moduleEditor; }
 	/** Returns this engine's graphics module. */
-	Graphics_Module & getModule_Graphics() { return m_moduleGraphics; }
+	Graphics_Module& getModule_Graphics() { return m_moduleGraphics; }
 	/** Returns this engine's user-interface module. */
-	UI_Module & getModule_UI() { return m_moduleUI; }
+	UI_Module& getModule_UI() { return m_moduleUI; }
 	/** Returns this engine's physics module. */
-	Physics_Module & getModule_Physics() { return m_modulePhysics; }
+	Physics_Module& getModule_Physics() { return m_modulePhysics; }
 	/** Returns this engine's world module. */
-	World_Module & getModule_World() { return m_moduleWorld; }
+	World_Module& getModule_World() { return m_moduleWorld; }
 
 
 	// Static Methods
@@ -127,9 +127,9 @@ public:
 	/** Check if a given file exists, relative to the application directory.
 	@param	name			the full file path
 	@return					true if the file exists, false otherwise */
-	static bool File_Exists(const std::string & name);
+	static bool File_Exists(const std::string& name);
 
-	
+
 private:
 	// Private Methods
 	/** Updates the window attributes. */
@@ -148,7 +148,7 @@ private:
 	float m_useFullscreen = 1.0f;
 	float m_vsync = 1.0f;
 	glm::ivec2 m_windowSize = glm::ivec2(1);
-	GLFWwindow * m_window = NULL;
+	GLFWwindow* m_window = NULL;
 	MouseInputMode m_mouseInputMode = MouseInputMode::NORMAL;
 	SoundManager m_soundManager;
 	AssetManager m_assetManager;
@@ -167,7 +167,7 @@ private:
 	LevelEditor_Module m_moduleEditor;
 	Graphics_Module m_moduleGraphics;
 	UI_Module m_moduleUI;
-	Physics_Module m_modulePhysics;	
+	Physics_Module m_modulePhysics;
 };
 
 #endif // ENGINE_H

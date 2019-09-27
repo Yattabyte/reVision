@@ -1,7 +1,7 @@
 #pragma once
 #ifndef TRANSFORMATION_H
 #define TRANSFORMATION_H
-#define GLM_ENABLE_EXPERIMENTAL 
+#define GLM_ENABLE_EXPERIMENTAL
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -55,7 +55,6 @@ struct Transform {
 		glm::vec4 perspective;
 		glm::decompose(n.m_modelMatrix, n.m_scale, n.m_orientation, n.m_position, skew, perspective);
 		return n;
-
 	}
 	inline bool operator==(const Transform& other) {
 		return (m_position == other.m_position && m_orientation == other.m_orientation && m_scale == other.m_scale);

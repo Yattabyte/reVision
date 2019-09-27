@@ -29,18 +29,18 @@ public:
 	// Public Interface Implementation
 	virtual void initialize(Engine* engine) override final;
 	virtual void deinitialize() override final;
-	virtual void frameTick(const float & deltaTime) override final;
+	virtual void frameTick(const float& deltaTime) override final;
 
 
 	// Public Methods
 	/** Render any and all of the game module's overlays to the screen.
 	@param	deltaTime	the amount of time passed since last frame. */
-	void renderOverlays(const float & deltaTime);
+	void renderOverlays(const float& deltaTime);
 	/** Show the game. */
 	void showGame();
 	/** Either show or hide the pause menu.
 	@param	show		whether to show or hide the pause menu. */
-	void showPauseMenu(const bool & show);
+	void showPauseMenu(const bool& show);
 
 
 private:

@@ -2,8 +2,7 @@
 #include "Utilities/IO/Mesh_IO.h"
 #include "Engine.h"
 
-
-Shared_Mesh::Shared_Mesh(Engine * engine, const std::string & filename, const bool & threaded)
+Shared_Mesh::Shared_Mesh(Engine* engine, const std::string& filename, const bool& threaded)
 {
 	(*(std::shared_ptr<Mesh>*)(this)) = std::dynamic_pointer_cast<Mesh>(
 		engine->getManager_Assets().shareAsset(
@@ -14,7 +13,7 @@ Shared_Mesh::Shared_Mesh(Engine * engine, const std::string & filename, const bo
 		));
 }
 
-Mesh::Mesh(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
+Mesh::Mesh(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Mesh::initialize()
 {

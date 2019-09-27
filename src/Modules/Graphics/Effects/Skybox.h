@@ -21,7 +21,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Skybox(Engine * engine)
+	inline Skybox(Engine* engine)
 		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Asset Loading
 		m_cubemapSky = Shared_Cubemap(engine, "sky\\");
@@ -59,42 +59,42 @@ public:
 				m_engine->getManager_Messages().error("Skybox Framebuffer has encountered an error.");
 			if (!glIsTexture(m_cubemapMipped))
 				m_engine->getManager_Messages().error("Skybox Texture is incomplete.");
-		});
+			});
 	}
 
 
 	// Public Interface Implementations.
-	inline virtual void prepareForNextFrame(const float & deltaTime) override final {
-		for (auto &[camIndexBuffer, indirectQuad, quad6IndirectBuffer] : m_drawData) {
+	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+		for (auto& [camIndexBuffer, indirectQuad, quad6IndirectBuffer] : m_drawData) {
 			camIndexBuffer.endWriting();
 			indirectQuad.endWriting();
 			quad6IndirectBuffer.endWriting();
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
 
 		// Prepare camera index
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);
-		
+
 		if (m_skyOutOfDate) {
 			convoluteSky(viewport);
 			m_skyOutOfDate = false;
 		}
 
-		auto &[camBufferIndex, indirectQuad, quad6IndirectBuffer] = m_drawData[m_drawIndex];
+		auto& [camBufferIndex, indirectQuad, quad6IndirectBuffer] = m_drawData[m_drawIndex];
 		camBufferIndex.beginWriting();
 		indirectQuad.beginWriting();
 		quad6IndirectBuffer.beginWriting();
 		std::vector<glm::ivec2> camIndices;
-		for (auto &[camIndex, layer] : perspectives)
+		for (auto& [camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 		indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
-		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		
+		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 
 		glDisable(GL_BLEND);
 		glDepthFunc(GL_LEQUAL);
@@ -123,7 +123,7 @@ private:
 	// Private Methods
 	/** Convolute the skybox cubemap, generating blurred mips (for rougher materials).
 	@param	viewport	the viewport to render from. */
-	inline void convoluteSky(const std::shared_ptr<Viewport> & viewport) {
+	inline void convoluteSky(const std::shared_ptr<Viewport>& viewport) {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		glDepthMask(GL_FALSE);
@@ -159,7 +159,7 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	GLuint m_cubeFBO = 0, m_cubemapMipped = 0;
 	Shared_Cubemap m_cubemapSky;
 	Shared_Shader m_shaderSky, m_shaderSkyReflect, m_shaderConvolute;
