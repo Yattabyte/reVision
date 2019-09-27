@@ -134,14 +134,14 @@ public:
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 			glStencilMask(0xFF);
 			glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, drawData.size(), 0);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, GLsizei(drawData.size()), 0);
 
 			// Render the shapes larger, cutting out previous region
 			m_shader->setUniform(0, 0.01f * m_renderScale);
 			m_shader->setUniform(3, glm::vec4(1, 0.8, 0.1, 1.0));
 			glStencilMask(0x00);
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, drawData.size(), 0);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, GLsizei(drawData.size()), 0);
 
 			glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 			glDisable(GL_BLEND);
@@ -171,7 +171,7 @@ private:
 			// Upload vertex data
 			std::vector<glm::vec3> mergedData;
 			mergedData.reserve(mesh->m_geometry.vertices.size() * 2);
-			for (int x = 0, size = std::min(mesh->m_geometry.vertices.size(), mesh->m_geometry.normals.size()); x < size; ++x) {
+			for (size_t x = 0, size = std::min(mesh->m_geometry.vertices.size(), mesh->m_geometry.normals.size()); x < size; ++x) {
 				mergedData.push_back(mesh->m_geometry.vertices[x]);
 				mergedData.push_back(mesh->m_geometry.normals[x]);
 			}

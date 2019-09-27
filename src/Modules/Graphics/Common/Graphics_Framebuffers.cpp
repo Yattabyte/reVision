@@ -60,13 +60,13 @@ void Graphics_Framebuffers::createFBO(const char* name, const std::vector<std::t
 			glTextureParameteri(texID, GL_TEXTURE_MAX_LEVEL, 5);
 			for (int x = 0; x < 6; ++x) {
 				const glm::ivec2 size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-				glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, x, internalFormat, size.x, size.y, m_layerFaces, 0, format, type, NULL);
+				glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, x, internalFormat, size.x, size.y, m_layerFaces, 0, format, type, nullptr);
 			}
 		}
 		else {
 			glTextureParameteri(texID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTextureParameteri(texID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_renderSize.x, m_renderSize.y, m_layerFaces, 0, format, type, NULL);
+			glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_renderSize.x, m_renderSize.y, m_layerFaces, 0, format, type, nullptr);
 		}
 		GLenum attachment;
 		if (format == GL_DEPTH_STENCIL)
@@ -138,11 +138,11 @@ void Graphics_Framebuffers::resize(const glm::ivec2& newSize, const int& layerFa
 			if (mipmapped) {
 				for (int x = 0; x < 6; ++x) {
 					const glm::ivec2 mippedSize(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-					glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, x, internalFormat, mippedSize.x, mippedSize.y, m_layerFaces, 0, format, type, NULL);
+					glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, x, internalFormat, mippedSize.x, mippedSize.y, m_layerFaces, 0, format, type, nullptr);
 				}
 			}
 			else
-				glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_renderSize.x, m_renderSize.y, m_layerFaces, 0, format, type, NULL);
+				glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_renderSize.x, m_renderSize.y, m_layerFaces, 0, format, type, nullptr);
 			glNamedFramebufferTexture(fboID, attachment, texID, 0);
 		}
 	}

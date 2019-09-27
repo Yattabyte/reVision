@@ -84,9 +84,9 @@ void Engine::initWindow()
 #ifdef DEBUG
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 #endif
-	m_window = glfwCreateWindow(1, 1, "", NULL, NULL);
+	m_window = glfwCreateWindow(1, 1, "", nullptr, nullptr);
 	glfwMakeContextCurrent(m_window);
-	glfwSetWindowIcon(m_window, 0, NULL);
+	glfwSetWindowIcon(m_window, 0, nullptr);
 	glfwSetCursorPos(m_window, 0, 0);
 
 	// Initialize GLAD
@@ -278,7 +278,7 @@ void Engine::initThreads()
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 		std::promise<void> exitSignal;
 		std::future<void> exitObject = exitSignal.get_future();
-		std::thread workerThread(&Engine::tickThreaded, this, std::move(exitObject), std::move(glfwCreateWindow(1, 1, "", NULL, m_window)));
+		std::thread workerThread(&Engine::tickThreaded, this, std::move(exitObject), std::move(glfwCreateWindow(1, 1, "", nullptr, m_window)));
 		workerThread.detach();
 		m_threads.push_back(std::move(std::make_pair(std::move(workerThread), std::move(exitSignal))));
 	}
@@ -453,7 +453,7 @@ void Engine::configureWindow()
 	glfwSetWindowPos(m_window, (maxWidth - m_windowSize.x) / 2, (maxHeight - m_windowSize.y) / 2);
 	glfwSetWindowMonitor(
 		m_window,
-		m_useFullscreen ? glfwGetPrimaryMonitor() : NULL,
+		m_useFullscreen ? glfwGetPrimaryMonitor() : nullptr,
 		0, 0,
 		m_windowSize.x, m_windowSize.y,
 		(int)m_refreshRate

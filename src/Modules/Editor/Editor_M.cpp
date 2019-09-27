@@ -151,7 +151,7 @@ void LevelEditor_Module::toggleAddToSelection(const ecsHandle& entityHandle)
 
 	// If the entity is already selected, deselect it
 	if (std::find(selectionCopy.cbegin(), selectionCopy.cend(), entityHandle) != selectionCopy.cend())
-		std::remove(selectionCopy.begin(), selectionCopy.end(), entityHandle);
+		selectionCopy.erase(std::remove(selectionCopy.begin(), selectionCopy.end(), entityHandle));
 	else
 		selectionCopy.push_back(entityHandle);
 
@@ -485,7 +485,7 @@ void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
 			if (auto newCommand = dynamic_cast<Set_Selection_Command*>(other)) {
 				// Join the 2 'new' sets together, make sure it's unique
 				m_uuids_new.insert(m_uuids_new.begin(), newCommand->m_uuids_new.cbegin(), newCommand->m_uuids_new.cend());
-				std::unique(m_uuids_new.begin(), m_uuids_new.end());
+				m_uuids_new.erase(std::unique(m_uuids_new.begin(), m_uuids_new.end()), m_uuids_new.end());;
 				return true;
 			}
 			return false;
@@ -537,7 +537,7 @@ void LevelEditor_Module::mergeSelection()
 				if (m_uuids[0] == newCommand->m_uuids[0]) {
 					// Join the 2 'new' sets together, make sure it's unique
 					m_uuids.insert(m_uuids.begin(), newCommand->m_uuids.cbegin(), newCommand->m_uuids.cend());
-					std::unique(m_uuids.begin(), m_uuids.end());
+					m_uuids.erase(std::unique(m_uuids.begin(), m_uuids.end()), m_uuids.end());
 				}
 				return true;
 			}

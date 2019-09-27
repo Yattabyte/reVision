@@ -105,7 +105,7 @@ public:
 		data[0] = (int)count;
 		for (size_t x = 0; x < (size_t)count; ++x)
 			data[x + 1ull] = (int)(m_text[x]) - 32;
-		m_bufferString.write_immediate(0, sizeof(int) * (int(count + 1u)), data.data());
+		m_bufferString.write_immediate(0, sizeof(int) * (size_t(count) + 1ull), data.data());
 		m_indirect.setPrimitiveCount(count);
 
 		// Notify text changed

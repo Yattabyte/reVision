@@ -303,7 +303,7 @@ void Rotation_Gizmo::updateDisk()
 {
 	int steps = (int)ceilf((abs(m_deltaAngle) / 360.0f) * DISK_VERTICES);
 	std::vector<glm::vec3> points(size_t(steps) * 6ull, glm::vec3(0.0f));
-	for (int n = 0, v = 0; n < steps; ++n, v += 6) {
+	for (size_t n = 0ull, v = 0ull; n < steps; ++n, v += 6ull) {
 		const auto startAngle = glm::radians(float(n) * (m_deltaAngle / float(steps))) + m_startingAngle;
 		const auto endAngle = glm::radians(float(n + 1) * (m_deltaAngle / float(steps))) + m_startingAngle;
 
@@ -323,12 +323,12 @@ void Rotation_Gizmo::updateDisk()
 			v1 = glm::vec3(x1, y1, 0);
 			v2 = glm::vec3(x2, y2, 0);
 		}
-		points[v + 0] = glm::vec3(0);
-		points[v + 1] = v1;
-		points[v + 2] = v2;
-		points[v + 3] = glm::vec3(0);
-		points[v + 4] = v2;
-		points[v + 5] = v1;
+		points[v + 0ull] = glm::vec3(0);
+		points[v + 1ull] = v1;
+		points[v + 2ull] = v2;
+		points[v + 3ull] = glm::vec3(0);
+		points[v + 4ull] = v2;
+		points[v + 5ull] = v1;
 	}
 	m_indirectDisk.setCount(GLuint(points.size()));
 	glNamedBufferSubData(m_diskVBO, 0, sizeof(glm::vec3) * points.size(), points.data());

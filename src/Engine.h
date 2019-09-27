@@ -26,7 +26,7 @@
 // Other
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "4.13.6";
+constexpr char ENGINE_VERSION[] = "4.13.8";
 struct GLFWwindow;
 
 
@@ -148,7 +148,7 @@ private:
 	float m_useFullscreen = 1.0f;
 	float m_vsync = 1.0f;
 	glm::ivec2 m_windowSize = glm::ivec2(1);
-	GLFWwindow* m_window = NULL;
+	GLFWwindow* m_window = nullptr;
 	MouseInputMode m_mouseInputMode = MouseInputMode::NORMAL;
 	SoundManager m_soundManager;
 	AssetManager m_assetManager;

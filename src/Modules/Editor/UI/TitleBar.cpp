@@ -39,7 +39,7 @@ TitleBar::TitleBar(Engine* engine, LevelEditor_Module* editor)
 void TitleBar::tick(const float& deltaTime)
 {
 	if (m_open) {
-		constexpr static auto BeginMenuWIcon = [](const char* string, const Shared_Texture& iconTexture, const char* shortcut = NULL, bool* selected = NULL, const bool& enabled = true) -> bool {
+		constexpr static auto BeginMenuWIcon = [](const char* string, const Shared_Texture& iconTexture, const char* shortcut = nullptr, bool* selected = nullptr, const bool& enabled = true) -> bool {
 			GLuint icon = iconTexture->existsYet() ? iconTexture->m_glTexID : 0;
 			if (icon != 0u) {
 				ImGui::Image((ImTextureID)static_cast<uintptr_t>(icon), ImVec2(15, 15), { 0.0f, 1.0f }, { 1.0f, 0.0f });

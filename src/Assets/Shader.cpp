@@ -109,7 +109,7 @@ const std::vector<GLchar> Shader::getErrorLog() const
 	const auto size = getProgramiv(GL_INFO_LOG_LENGTH);
 	std::vector<GLchar> infoLog(size);
 	if (size)
-		glGetProgramInfoLog(m_glProgramID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
+		glGetProgramInfoLog(m_glProgramID, (GLsizei)infoLog.size(), nullptr, &infoLog[0]);
 	return infoLog;
 }
 
@@ -145,7 +145,7 @@ const bool Shader::saveCachedBinary(const std::string& relativePath)
 	glProgramParameteri(m_glProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 	ShaderHeader header = { 0,  getProgramiv(GL_PROGRAM_BINARY_LENGTH) };
 	std::vector<char> binary(header.length);
-	glGetProgramBinary(m_glProgramID, header.length, NULL, &header.format, binary.data());
+	glGetProgramBinary(m_glProgramID, header.length, nullptr, &header.format, binary.data());
 
 	const auto fullPath = Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY;
 	std::filesystem::create_directories(std::filesystem::path(fullPath).parent_path());
@@ -248,7 +248,7 @@ bool ShaderObj::createGLShader(Engine* engine, const std::string& filename)
 
 	// Report any errors
 	std::vector<GLchar> infoLog(getShaderiv(GL_INFO_LOG_LENGTH));
-	glGetShaderInfoLog(m_shaderID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
+	glGetShaderInfoLog(m_shaderID, (GLsizei)infoLog.size(), nullptr, &infoLog[0]);
 	engine->getManager_Messages().error("ShaderObj \"" + filename + "\" failed to compile. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
 	return false;
 }
