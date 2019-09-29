@@ -1,5 +1,5 @@
 #include "Modules\UI\Basic Elements\UI_Element.h"
-#include "Utilities/GL/glad/glad.h"
+#include <glad/glad.h>
 #include "Engine.h"
 #include <algorithm>
 

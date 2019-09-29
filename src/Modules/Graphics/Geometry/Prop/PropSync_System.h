@@ -5,7 +5,7 @@
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
 #include "Modules/Graphics/Geometry/Prop/PropData.h"
-#include "Utilities/GL/glad/glad.h"
+#include <glad/glad.h>
 #include "glm/gtx/component_wise.hpp"
 
 

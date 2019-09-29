@@ -1,6 +1,6 @@
 #include "Modules/Editor/Gizmos/Scaling.h"
 #include "Modules/ECS/component_types.h"
-#include "Modules/UI/dear imgui/imgui.h"
+#include "imgui.h"
 #include "Utilities/Intersection.h"
 #include "Engine.h"
 

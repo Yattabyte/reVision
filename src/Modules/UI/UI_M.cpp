@@ -1,7 +1,7 @@
 #include "Modules/UI/UI_M.h"
-#include "Modules/UI/dear imgui/imgui.h"
-#include "Modules/UI/dear imgui/imgui_impl_glfw.h"
-#include "Modules/UI/dear imgui/imgui_impl_opengl3.h"
+#include "imgui.h"
+#include "examples/imgui_impl_glfw.h"
+#include "examples/imgui_impl_opengl3.h"
 #include "Modules/UI/Macro Elements/StartMenu.h"
 #include "Engine.h"
 

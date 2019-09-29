@@ -5,7 +5,7 @@
 #define MAX_DIGITAL_IMAGES 3
 
 #include "Assets/Image.h"
-#include "Utilities/GL/glad/glad.h"
+#include <glad/glad.h>
 #include "glm/glm.hpp"
 #include <vector>
 

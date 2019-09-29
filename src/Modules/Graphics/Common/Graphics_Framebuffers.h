@@ -3,7 +3,7 @@
 #define GRAPHICS_FRAMEBUFFERS_H
 
 #include "Utilities/MappedChar.h"
-#include "Utilities/GL/glad/glad.h"
+#include <glad/glad.h>
 #include "glm/glm.hpp"
 #include <functional>
 #include <memory>

@@ -7,7 +7,7 @@
 #include "Modules/Editor/Systems/ClearSelection_System.h"
 #include "Modules/Editor/Systems/Outline_System.h"
 #include "Modules/ECS/component_types.h"
-#include "Modules/UI/dear imgui/imgui.h"
+#include "imgui.h"
 #include "Engine.h"
 #include <filesystem>
 

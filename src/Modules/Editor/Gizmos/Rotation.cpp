@@ -1,6 +1,6 @@
 #include "Modules/Editor/Gizmos/Rotation.h"
 #include "Modules/ECS/component_types.h"
-#include "Modules/UI/dear imgui/imgui.h"
+#include "imgui.h"
 #include "Utilities/Intersection.h"
 #include "Engine.h"
 #include "glm/gtx/vector_angle.hpp"

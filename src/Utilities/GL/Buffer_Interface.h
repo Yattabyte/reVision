@@ -2,7 +2,7 @@
 #ifndef BUFFER_INTERFACE_H
 #define BUFFER_INTERFACE_H
 
-#include "Utilities/GL/glad/glad.h"
+#include <glad/glad.h>
 
 
 /** An interface for opengl buffers. */

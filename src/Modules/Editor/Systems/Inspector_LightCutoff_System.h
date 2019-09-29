@@ -6,7 +6,7 @@
 #include "Modules/World/World_M.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
-#include "Modules/UI/dear imgui/imgui.h"
+#include "imgui.h"
 #include "glm/gtc/type_ptr.hpp"
 #include "Engine.h"
 

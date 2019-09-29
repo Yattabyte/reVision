@@ -2,7 +2,7 @@
 #ifndef SHADOW_MAP_H
 #define SHADOW_MAP_H
 
-#include "Utilities/GL/glad/glad.h"
+#include <glad/glad.h>
 #include "glm/glm.hpp"
 
 

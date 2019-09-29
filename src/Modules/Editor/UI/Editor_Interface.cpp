@@ -10,7 +10,7 @@
 #include "Modules/Editor/UI/SaveDialogue.h"
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
 #include "Modules/Editor/UI/Settings.h"
-#include "Modules/UI/dear imgui/imgui.h"
+#include "imgui.h"
 #include "Engine.h"
 #include "GLFW/glfw3.h"
 

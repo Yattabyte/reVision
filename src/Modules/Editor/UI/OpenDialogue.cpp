@@ -1,7 +1,7 @@
 #include "Modules/Editor/UI/OpenDialogue.h"
 #include "Modules/Editor/Editor_M.h"
-#include "Modules/UI/dear imgui/imgui.h"
-#include "Modules/UI/dear imgui/imgui_internal.h"
+#include "imgui.h"
+#include "imgui_internal.h"
 #include "Engine.h"
 #include <chrono>
 #include <filesystem>

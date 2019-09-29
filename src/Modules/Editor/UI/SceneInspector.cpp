@@ -1,7 +1,7 @@
 #include "Modules/Editor/UI/SceneInspector.h"
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/ECS/component_types.h"
-#include "Modules/UI/dear imgui/imgui.h"
+#include "imgui.h"
 #include "Engine.h"
 
 
