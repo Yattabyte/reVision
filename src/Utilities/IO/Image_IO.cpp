@@ -1,6 +1,6 @@
 #include "Utilities/IO/Image_IO.h"
 #include "Engine.h"
-#include "FreeImage.h"
+#include "FreeImagePlus.h"
 
 
 GLubyte* RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size)

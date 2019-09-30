@@ -2,31 +2,28 @@
 ### reVision ###
 ################
 cmake_minimum_required(VERSION 3.10)
+cmake_policy(SET CMP0079 NEW)
 include(ExternalProject)
-project(reVision VERSION 4.13.9 DESCRIPTION "Video game engine project.")
+project(reVision VERSION 4.13.10 DESCRIPTION "Video game engine project.")
+
 
 # Get dependency directory locations from the user
-set(CUSTOM_FREEIMAGE "" CACHE PATH "FreeImage root directory")
-set(CUSTOM_SOLOUD "" CACHE PATH "SoLoud Audio Engine root directory")
-set(CORE_DIR "${PROJECT_SOURCE_DIR}/src")
 set(PROJECT_BIN ${CMAKE_SOURCE_DIR})
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /Oi /Ot /GF /Qpar /std:c++latest /GL")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Od /Gy /JMC")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /Ob2 /GL")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Od /Gy /JMC /MDd")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /Ob2 /GL /MD")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LTCG:incremental")
 set_property(GLOBAL PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$(SolutionDir)app")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER Other)
-include_directories(SYSTEM ${CORE_DIR} ${CUSTOM_FREEIMAGE}/Source/ ${CUSTOM_SOLOUD}/include/)
-link_libraries(		
-	debug		${CUSTOM_FREEIMAGE}/Dist/x64/FreeImaged.lib
-	optimized	${CUSTOM_FREEIMAGE}/Dist/x64/FreeImage.lib					
-	debug		${CUSTOM_SOLOUD}/lib/soloud_static_x64_d.lib
-	optimized	${CUSTOM_SOLOUD}/lib/soloud_static_x64.lib
-	"OpenGL32.lib"
-)
+
+
+# Add our own source files
+add_subdirectory( src )
+target_include_directories(reVision SYSTEM PUBLIC ${PROJECT_SOURCE_DIR}/src)
+link_libraries(reVision "OpenGL32.lib")
 
 
 ######################
@@ -61,10 +58,11 @@ if (CUSTOM_ASSIMP STREQUAL "")
 		INSTALL_COMMAND ""
 	)
 	ExternalProject_Get_Property(ASSIMP SOURCE_DIR)
-	set (CUSTOM_ASSIMP ${SOURCE_DIR})	
+	set (CUSTOM_ASSIMP ${SOURCE_DIR})
+	add_dependencies(reVision ASSIMP)
 endif (CUSTOM_ASSIMP STREQUAL "")	
-include_directories(SYSTEM ${CUSTOM_ASSIMP}/include/)
-link_libraries(	
+target_include_directories(reVision SYSTEM PUBLIC ${CUSTOM_ASSIMP}/include/)
+target_link_libraries(reVision
 	debug		${CUSTOM_ASSIMP}/lib/Debug/assimp-vc142-mtd.lib
 	optimized	${CUSTOM_ASSIMP}/lib/Release/assimp-vc142-mt.lib
 	debug		${CUSTOM_ASSIMP}/lib/Debug/IrrXMLd.lib
@@ -116,9 +114,10 @@ if (CUSTOM_BULLET STREQUAL "")
 	)
 	ExternalProject_Get_Property(BULLET SOURCE_DIR)
 	set (CUSTOM_BULLET ${SOURCE_DIR})	
+	add_dependencies(reVision BULLET)
 endif (CUSTOM_BULLET STREQUAL  "")	
-include_directories(SYSTEM ${CUSTOM_BULLET}/src/)
-link_libraries(	
+target_include_directories(reVision SYSTEM PUBLIC ${CUSTOM_BULLET}/src/)
+target_link_libraries(reVision
 	debug		${CUSTOM_BULLET}/lib/Debug/Bullet2FileLoader_Debug.lib
 	optimized	${CUSTOM_BULLET}/lib/Release/Bullet2FileLoader.lib
 	debug		${CUSTOM_BULLET}/lib/Debug/Bullet3Collision_Debug.lib
@@ -143,6 +142,40 @@ link_libraries(
 	optimized	${CUSTOM_BULLET}/lib/Release/LinearMath.lib
 )
 
+
+#########################
+### INCLUDE FREEIMAGE ###
+#########################
+set(CUSTOM_FREEIMAGE "" CACHE PATH "FreeImage root directory")
+if (CUSTOM_FREEIMAGE STREQUAL "")
+	ExternalProject_Add(
+		FREEIMAGE
+		PREFIX ${CMAKE_CURRENT_BINARY_DIR}/external/			
+		STAMP_DIR ${CMAKE_CURRENT_BINARY_DIR}/external/stamps/
+		BUILD_IN_SOURCE ON		
+		URL http://downloads.sourceforge.net/freeimage/FreeImage3180Win32Win64.zip			
+		CONFIGURE_COMMAND ""
+		UPDATE_COMMAND ""
+		BUILD_COMMAND ""
+		INSTALL_COMMAND 
+			${CMAKE_COMMAND} -E copy_if_different
+			${CMAKE_CURRENT_BINARY_DIR}/external/src/FREEIMAGE/Dist/x64/FreeImage.dll 
+			${PROJECT_SOURCE_DIR}/app/FreeImage.dll
+	)
+	ExternalProject_Get_Property(FREEIMAGE SOURCE_DIR)
+	set (CUSTOM_FREEIMAGE ${SOURCE_DIR})	
+	add_dependencies(reVision FREEIMAGE)
+endif (CUSTOM_FREEIMAGE STREQUAL "")	
+target_include_directories(reVision SYSTEM 
+	PUBLIC ${CUSTOM_FREEIMAGE}/dist/x64/ 
+	PUBLIC ${CUSTOM_FREEIMAGE}/Wrapper/FreeImagePlus/dist/x64/ 
+)
+target_link_libraries(reVision
+	${CUSTOM_FREEIMAGE}/dist/x64/FreeImage.lib	
+	${CUSTOM_FREEIMAGE}/Wrapper/FreeImagePlus/dist/x64/FreeImagePlus.lib
+)
+
+
 ####################
 ### INCLUDE GLAD ###
 ####################
@@ -158,7 +191,8 @@ ExternalProject_Add(
 	INSTALL_COMMAND ""
 )
 ExternalProject_Get_Property(GLAD SOURCE_DIR)
-include_directories(SYSTEM ${SOURCE_DIR})
+target_include_directories(reVision SYSTEM PUBLIC ${SOURCE_DIR})
+add_dependencies(reVision GLAD)
 
 
 ####################
@@ -195,9 +229,10 @@ if (CUSTOM_GLFW STREQUAL "")
 	)
 	ExternalProject_Get_Property(GLFW SOURCE_DIR)
 	set (CUSTOM_GLFW ${SOURCE_DIR})	
+	add_dependencies(reVision GLFW)
 endif (CUSTOM_GLFW STREQUAL "")	
-include_directories(SYSTEM ${CUSTOM_GLFW}/include/)
-link_libraries(	
+target_include_directories(reVision SYSTEM PUBLIC ${CUSTOM_GLFW}/include/)
+target_link_libraries(reVision
 	debug		${CUSTOM_GLFW}/src/Debug/glfw3.lib
 	optimized	${CUSTOM_GLFW}/src/Release/glfw3.lib		
 )
@@ -230,9 +265,14 @@ if (CUSTOM_GLM STREQUAL "")
 		INSTALL_COMMAND ""
 	)
 	ExternalProject_Get_Property(GLM SOURCE_DIR)
-	set (CUSTOM_GLM ${SOURCE_DIR})	
+	set (CUSTOM_GLM ${SOURCE_DIR})
+	add_dependencies(reVision GLM)
 endif (CUSTOM_GLM STREQUAL "")	
-include_directories(SYSTEM ${CUSTOM_GLM}/)
+target_include_directories(reVision SYSTEM PUBLIC ${CUSTOM_GLM}/)
+target_link_libraries(reVision
+	debug		${CUSTOM_GLM}/glm/Debug/glm_static.lib
+	optimized	${CUSTOM_GLM}/glm/Release/glm_static.lib
+)
 
 
 #########################
@@ -254,9 +294,58 @@ if (CUSTOM_IMGUI STREQUAL "")
 	)
 	ExternalProject_Get_Property(IMGUI SOURCE_DIR)
 	set (CUSTOM_IMGUI ${SOURCE_DIR})	
+	add_dependencies(reVision IMGUI)
 endif (CUSTOM_IMGUI STREQUAL "")	
-include_directories(SYSTEM ${CUSTOM_IMGUI})
+target_include_directories(reVision SYSTEM PUBLIC ${CUSTOM_IMGUI})
 
+
+######################
+### INCLUDE SOLOUD ###
+######################
+set(CUSTOM_SOLOUD "" CACHE PATH "SoLoud Audio Engine root directory")
+if (CUSTOM_SOLOUD STREQUAL "")
+	ExternalProject_Add(
+		SOLOUD
+		PREFIX ${CMAKE_CURRENT_BINARY_DIR}/external/			
+		STAMP_DIR ${CMAKE_CURRENT_BINARY_DIR}/external/stamps/
+		SOURCE_SUBDIR contrib
+		BUILD_IN_SOURCE ON
+		GIT_REPOSITORY https://github.com/jarikomppa/soloud
+		GIT_TAG master
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>			
+			-DBUILD_SHARED_LIBS:BOOL=OFF
+			-DBUILD_STATIC_LIBS:BOOL=ON
+			-DINSTALL_LIBS:BOOL=OFF
+			-DSOLOUD_BACKEND_COREAUDIO:BOOL=OFF
+			-DSOLOUD_BACKEND_NULL:BOOL=ON
+			-DSOLOUD_BACKEND_OPENSLES:BOOL=OFF
+			-DSOLOUD_BACKEND_SDL2:BOOL=OFF
+			-DSOLOUD_BACKEND_WASAPI:BOOL=ON
+			-DSOLOUD_BACKEND_WINMM:BOOL=ON
+			-DSOLOUD_BACKEND_XAUDIO2:BOOL=ON
+			-DSOLOUD_BUILD_DEMOS:BOOL=OFF
+			-DSOLOUD_DYNAMIC:BOOL=OFF
+			-DSOLOUD_STATIC:BOOL=ON
+			-DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
+			-DCMAKE_CXX_STANDARD_REQUIRED=${CMAKE_CXX_STANDARD_REQUIRED}
+			-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+			-DCMAKE_CXX_FLAGS_DEBUG=${CMAKE_CXX_FLAGS_DEBUG}
+			-DCMAKE_CXX_FLAGS_RELEASE=${CMAKE_CXX_FLAGS_RELEASE}
+			-DCMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS}
+		UPDATE_COMMAND ""
+		INSTALL_COMMAND ""
+	)
+	ExternalProject_Get_Property(SOLOUD SOURCE_DIR)
+	set (CUSTOM_SOLOUD ${SOURCE_DIR})
+	add_dependencies(reVision SOLOUD)
+endif (CUSTOM_SOLOUD STREQUAL "")	
+target_include_directories(reVision SYSTEM PUBLIC ${CUSTOM_SOLOUD}/include/)
+target_link_libraries(reVision
+	debug		${CUSTOM_SOLOUD}/contrib/Debug/soloud.lib
+	optimized	${CUSTOM_SOLOUD}/contrib/rELEASE/soloud.lib
+)
+ 
 
 #####################
 ### DOXYGEN CHECK ###
@@ -273,10 +362,6 @@ if (DOXYGEN_FOUND)
 		doxygen_add_docs(Documentation ${PROJECT_SOURCE_DIR} COMMENT "Generate docs")
 	endif (GENERATE_DOCS)
 endif (DOXYGEN_FOUND)
-
-
-# Add our own source files
-add_subdirectory( src )
 
  
 # Visual studio specific setting: make the engine the startup project

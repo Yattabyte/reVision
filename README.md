@@ -23,6 +23,7 @@ This project requires the following (free) libraries:
 * [GLEW - OpenGL](http://glew.sourceforge.net/)
 * [GLFW - Windowing](http://www.glfw.org/)
 * [GLM - Mathematics](https://glm.g-truc.net/0.9.9/index.html)
+* [SoLoud - Sound](https://github.com/jarikomppa/soloud)
 
 ## Versioning
 

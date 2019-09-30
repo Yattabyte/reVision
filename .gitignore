@@ -38,13 +38,8 @@ x32/
 Documentation/
 .vs/
 src/reVision.dir/
-external/tmp/
-external/stamps/
-external/src/ASSIMP/
-external/src/BULLET/
-external/src/GLFW/
-external/src/GLM/
-external/src/IMGUI/
+external/
+!external/src/glad/
 
 # Other
 CMakeCache.txt
