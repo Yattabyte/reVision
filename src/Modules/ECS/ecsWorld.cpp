@@ -36,6 +36,20 @@ ecsWorld::ecsWorld(const std::vector<char>& data)
 	}
 }
 
+ecsWorld::ecsWorld(ecsWorld&& other)
+	: m_components(std::move(other.m_components)), m_entities(std::move(other.m_entities))
+{
+}
+
+ecsWorld& ecsWorld::operator=(ecsWorld&& other)
+{
+	if (this != &other) {
+		m_components = std::move(other.m_components);
+		m_entities = std::move(other.m_entities);
+	}
+	return *this;
+}
+
 ecsHandle ecsWorld::generateUUID()
 {
 	std::stringstream ss;
@@ -135,7 +149,8 @@ bool ecsWorld::removeComponent(const ecsHandle& entityHandle, const ComponentID&
 	return false;
 }
 
-ecsBaseComponent* ecsWorld::getComponent(std::vector<std::pair<ComponentID, int>>& entityComponents, ComponentDataSpace& mem_array, const ComponentID& componentID) {
+ecsBaseComponent* ecsWorld::getComponent(const std::vector<std::pair<ComponentID, int>>& entityComponents, const ComponentDataSpace& mem_array, const ComponentID& componentID)
+{
 	for (size_t i = 0ull; i < entityComponents.size(); ++i)
 		if (componentID == entityComponents[i].first)
 			return (ecsBaseComponent*)&mem_array[entityComponents[i].second];
@@ -358,7 +373,7 @@ std::pair<ecsHandle, ecsEntity*> ecsWorld::deserializeEntity(const char* data, c
 	// Read entity component data count
 	std::memcpy(&componentDataCount, &data[dataIndex], sizeof(size_t));
 	dataIndex += sizeof(size_t);
-	// Read enitity child count
+	// Read entity child count
 	std::memcpy(&entityChildCount, &data[dataIndex], sizeof(unsigned int));
 	dataIndex += sizeof(unsigned int);
 	// Find all components between the beginning and end of this entity
@@ -448,21 +463,26 @@ std::vector<std::vector<ecsBaseComponent*>> ecsWorld::getRelevantComponents(cons
 			components.reserve(mem_array.size() / typeSize); // reserve, not resize, as the component at [i] may be invalid
 			for (size_t i = 0; i < mem_array.size(); i += typeSize) {
 				componentParam[minSizeIndex] = (ecsBaseComponent*)&mem_array[i];
-				auto& entityComponents = getEntity(componentParam[minSizeIndex]->m_entity)->m_components;
+				if (const auto* entity = getEntity(componentParam[minSizeIndex]->m_entity)) {
+					const auto& entityComponents = entity->m_components;
 
-				bool isValid = true;
-				for (size_t j = 0; j < componentTypes.size(); ++j) {
-					const auto& [componentID, componentFlag] = componentTypes[j];
-					if (j == minSizeIndex)
-						continue;
-					componentParam[j] = getComponent(entityComponents, *componentArrays[j], componentID);
-					if ((componentParam[j] == nullptr) && (componentFlag & ecsBaseSystem::FLAG_OPTIONAL) == 0) {
-						isValid = false;
-						break;
+					bool isValid = true;
+					for (size_t j = 0; j < componentTypes.size(); ++j) {
+						const auto& [componentID, componentFlag] = componentTypes[j];
+						if (j == minSizeIndex)
+							continue;
+						componentParam[j] = getComponent(entityComponents, *componentArrays[j], componentID);
+						if ((componentParam[j] == nullptr) && (componentFlag & ecsBaseSystem::FLAG_OPTIONAL) == 0) {
+							isValid = false;
+							break;
+						}
 					}
+					if (isValid)
+						components.push_back(componentParam);
 				}
-				if (isValid)
-					components.push_back(componentParam);
+				else {
+					bool qwe = true;
+				}
 			}
 		}
 	}

@@ -43,7 +43,7 @@ void World_Module::loadWorld(const std::string& mapName)
 {
 	unloadWorld();
 
-	// Signal that a new map is begining to load
+	// Signal that a new map is beginning to load
 	notifyListeners(startLoading);
 
 	// Read ecsData from disk
@@ -64,7 +64,7 @@ void World_Module::saveWorld(const std::string& mapName)
 	auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 	const auto data = ecsWorld.serializeEntities(ecsWorld.getEntityHandles());
 
-	// Write ecs data to disk
+	// Write ECS data to disk
 	std::fstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\" + mapName, std::ios::binary | std::ios::out);
 	if (!mapFile.is_open())
 		m_engine->getManager_Messages().error("Cannot write the binary map file to disk!");

@@ -3,7 +3,6 @@
 #define	PRIMITIVE_H
 
 #include "Assets/Mesh.h"
-#include <glad/glad.h>
 #include "glm/glm.hpp"
 #include <vector>
 

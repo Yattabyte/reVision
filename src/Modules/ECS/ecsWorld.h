@@ -7,7 +7,7 @@
 #include "Modules/ECS/ecsSystem.h"
 
 
-/** A set of ecs entities and components forming a single level. */
+/** A set of ECS entities and components forming a single level. */
 class ecsWorld {
 public:
 	// Public (de)Constructors
@@ -17,9 +17,12 @@ public:
 	inline ecsWorld() = default;
 	/** Construct an ECS world from a serial data buffer. */
 	ecsWorld(const std::vector<char>& data);
+	/** Move an ECS world. */
+	ecsWorld(ecsWorld&& other);
 
 
 	// Public Methods
+	ecsWorld& operator=(ecsWorld&& other);
 	/** Generate a universally unique identifier for entities or components.
 	@return						a new ID. */
 	static ecsHandle generateUUID();
@@ -79,10 +82,10 @@ public:
 	@param	array				the array of component data.
 	@param	componentID			the class ID of the component.
 	@return						the component pointer matching the ID specified. */
-	ecsBaseComponent* getComponent(std::vector<std::pair<ComponentID, int>>& entityComponents, ComponentDataSpace& array, const ComponentID& componentID);
+	ecsBaseComponent* getComponent(const std::vector<std::pair<ComponentID, int>>& entityComponents, const ComponentDataSpace& array, const ComponentID& componentID);
 	/** Try to find a list of entities matching the UUID's provided.
 	@param	UUIDs				list of target entity UUID's
-	@return						list of pointers to the found entities. Dimensions may not match input list (nullptrs omitted) */
+	@return						list of pointers to the found entities. Dimensions may not match input list (nullptr's omitted) */
 	std::vector<ecsEntity*> getEntities(const std::vector<ecsHandle>& uuids);
 	/** Try to find an entity matching the UUID provided.
 	@param	UUID				the target entity's UUID.

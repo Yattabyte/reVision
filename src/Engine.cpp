@@ -3,12 +3,13 @@
 #include <direct.h>
 
 // OpenGL Dependent Systems //
-#include <glad/glad.h>
 #include "GLFW/glfw3.h"
+#include <glad/glad.h>
 
 // Importers Used //
 #include "Utilities/IO/Image_IO.h"
 #include "Utilities/IO/Mesh_IO.h"
+
 
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;

@@ -9,13 +9,15 @@
 #include "Modules/ECS/component_types.h"
 #include "imgui.h"
 #include "Engine.h"
+#include <algorithm>
 #include <filesystem>
+#include <fstream>
 
 
 void LevelEditor_Module::initialize(Engine* engine)
 {
 	Engine_Module::initialize(engine);
-	m_engine->getManager_Messages().statement("Loading Module: Level Edtior...");
+	m_engine->getManager_Messages().statement("Loading Module: Level Editor...");
 
 	// Update indicator
 	*m_aliveIndicator = true;
@@ -76,7 +78,7 @@ void LevelEditor_Module::initialize(Engine* engine)
 
 void LevelEditor_Module::deinitialize()
 {
-	m_engine->getManager_Messages().statement("Unloading Module: Level Edtior...");
+	m_engine->getManager_Messages().statement("Unloading Module: Level Editor...");
 
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -149,7 +151,7 @@ void LevelEditor_Module::toggleAddToSelection(const ecsHandle& entityHandle)
 {
 	auto selectionCopy = m_mouseGizmo->getSelection();
 
-	// If the entity is already selected, deselect it
+	// If the entity is already selected, de-select it
 	if (std::find(selectionCopy.cbegin(), selectionCopy.cend(), entityHandle) != selectionCopy.cend())
 		selectionCopy.erase(std::remove(selectionCopy.begin(), selectionCopy.end(), entityHandle));
 	else
@@ -194,6 +196,7 @@ void LevelEditor_Module::showEditor()
 			break;
 		}
 	}
+	populateRecentList();
 }
 
 void LevelEditor_Module::exit()
@@ -218,6 +221,11 @@ std::string LevelEditor_Module::getMapName() const
 	return m_currentLevelName;
 }
 
+std::deque<std::string> LevelEditor_Module::getRecentLevels() const
+{
+	return m_recentLevels;
+}
+
 void LevelEditor_Module::newLevel()
 {
 	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() {
@@ -235,6 +243,7 @@ void LevelEditor_Module::openLevel(const std::string& name)
 {
 	m_engine->getModule_World().loadWorld(name);
 	m_currentLevelName = name;
+	addToRecentList(name);
 
 	// Starting new level, changes will be discarded
 	m_unsavedChanges = false;
@@ -260,6 +269,7 @@ void LevelEditor_Module::saveLevel(const std::string& name)
 		currentPath.replace_extension(".bmap");
 		m_currentLevelName = currentPath.string();
 		m_engine->getModule_World().saveWorld(m_currentLevelName);
+		addToRecentList(m_currentLevelName);
 
 		// Delete Autosaves
 		currentPath.replace_extension(".autosave");
@@ -267,7 +277,7 @@ void LevelEditor_Module::saveLevel(const std::string& name)
 		if (std::filesystem::exists(currentPath) && !std::filesystem::is_directory(currentPath))
 			std::filesystem::remove(currentPath);
 
-		// Self Explanitory
+		// Self Explanatory
 		m_unsavedChanges = false;
 	}
 }
@@ -300,7 +310,7 @@ bool LevelEditor_Module::canRedo() const
 void LevelEditor_Module::undo()
 {
 	if (m_undoStack.size()) {
-		// Undo the the last action
+		// Undo the last action
 		m_undoStack.front()->undo();
 
 		// Move the action onto the redo stack
@@ -344,6 +354,37 @@ void LevelEditor_Module::doReversableAction(const std::shared_ptr<Editor_Command
 	while (m_undoStack.size() > m_maxUndo)
 		m_undoStack.pop_back();
 	m_unsavedChanges = true;
+}
+
+void LevelEditor_Module::addToRecentList(const std::string& name)
+{
+	if (std::find(m_recentLevels.cbegin(), m_recentLevels.cend(), name) != m_recentLevels.cend())
+		m_recentLevels.erase(std::remove(m_recentLevels.begin(), m_recentLevels.end(), name));
+	m_recentLevels.push_front(name);
+
+	// Dump recent-list data to disk
+	std::ofstream file(Engine::Get_Current_Dir() + "\\Maps\\recent.editor", std::ios::out | std::ios::beg);
+	if (!file.is_open())
+		m_engine->getManager_Messages().error("Cannot write the recent level list to disk!");
+	else
+		for each (const auto & level in m_recentLevels)
+			file << level << "\n";
+	file.close();
+}
+
+void LevelEditor_Module::populateRecentList()
+{
+	// Fetch recent-list data from disk
+	m_recentLevels.clear();
+	std::ifstream file(Engine::Get_Current_Dir() + "\\Maps\\recent.editor", std::ios::in | std::ios::beg);
+	if (!file.is_open())
+		m_engine->getManager_Messages().error("Cannot read the recent level list from disk!");
+	else {
+		std::string level;
+		while (file >> level)
+			m_recentLevels.push_back(level);
+	}
+	file.close();
 }
 
 void LevelEditor_Module::clearSelection()
@@ -525,7 +566,7 @@ void LevelEditor_Module::mergeSelection()
 			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			// Find the root element
 			if (auto* root = ecsWorld.getEntity(m_uuids[0])) {
-				// Unparent remaining entities from the root
+				// Un-parent remaining entities from the root
 				for (size_t x = 1ull, selSize = m_uuids.size(); x < selSize; ++x)
 					if (const auto& entityHandle = m_uuids[x])
 						ecsWorld.unparentEntity(entityHandle);

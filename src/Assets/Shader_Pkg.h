@@ -3,7 +3,6 @@
 #define	SHADER_PKG_H
 
 #include "Assets/Asset.h"
-#include <glad/glad.h>
 #include "glm/glm.hpp"
 #include <string>
 

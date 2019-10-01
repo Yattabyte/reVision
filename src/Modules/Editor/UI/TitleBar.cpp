@@ -52,8 +52,19 @@ void TitleBar::tick(const float& deltaTime)
 				if (BeginMenuWIcon("New Level", m_iconNew, "CTRL+N")) { m_editor->newLevel(); }
 				ImGui::Separator();
 				if (BeginMenuWIcon("Open Level", m_iconOpen, "CTRL+O")) { m_editor->openLevelDialogue(); }
-				if (BeginMenuWIcon("Open Recent", m_iconRecent, 0, false)) {
-					ImGui::EndMenu();
+				{
+					ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_iconRecent->existsYet() ? m_iconRecent->m_glTexID : 0), ImVec2(15, 15), { 0.0f, 1.0f }, { 1.0f, 0.0f });
+					ImGui::SameLine();
+					const auto recentLevels = m_editor->getRecentLevels();
+					if (ImGui::BeginMenu("Open Recent", recentLevels.size())) {
+						for each (const auto & levelName in recentLevels) {
+							ImGui::PushID(&levelName);
+							if (ImGui::MenuItem(levelName.c_str()))
+								m_editor->openLevel(levelName);
+							ImGui::PopID();
+						}
+						ImGui::EndMenu();
+					}
 				}
 				ImGui::Separator();
 				if (BeginMenuWIcon("Save Level", m_iconSave, "CTRL+S")) { m_editor->saveLevel(); }

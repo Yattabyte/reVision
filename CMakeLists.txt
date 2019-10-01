@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0079 NEW)
 include(ExternalProject)
-project(reVision VERSION 4.13.11 DESCRIPTION "Video game engine project.")
+project(reVision VERSION 4.13.12 DESCRIPTION "Video game engine project.")
 
 
 # Get dependency directory locations from the user
@@ -162,11 +162,11 @@ if (CUSTOM_FREEIMAGE STREQUAL "")
 		CONFIGURE_COMMAND ""
 		UPDATE_COMMAND ""
 		BUILD_COMMAND ""
+		UPDATE_DISCONNECTED ${REACQUIRE_DEPENDENCIES}
 		INSTALL_COMMAND 
 			${CMAKE_COMMAND} -E copy_if_different
 			${CMAKE_CURRENT_BINARY_DIR}/external/src/FREEIMAGE/Dist/x64/FreeImage.dll 
 			${PROJECT_SOURCE_DIR}/app/FreeImage.dll
-		UPDATE_DISCONNECTED ${REACQUIRE_DEPENDENCIES}
 	)
 	ExternalProject_Get_Property(FREEIMAGE SOURCE_DIR)
 	set (CUSTOM_FREEIMAGE ${SOURCE_DIR})	

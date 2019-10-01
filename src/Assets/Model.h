@@ -4,7 +4,6 @@
 
 #include "Assets/Mesh.h"
 #include "Assets/Material.h"
-#include <glad/glad.h>
 #include "glm/glm.hpp"
 #include "glm/geometric.hpp"
 #include <map>

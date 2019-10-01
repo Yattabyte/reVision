@@ -11,9 +11,9 @@
 class ECS_Module final : public Engine_Module {
 public:
 	// Public (de)Constructors
-	/** Destroy this ecs module. */
+	/** Destroy this ECS module. */
 	inline ~ECS_Module() = default;
-	/** Construct a ecs module. */
+	/** Construct a ECS module. */
 	inline ECS_Module() = default;
 
 
@@ -24,15 +24,15 @@ public:
 
 
 	// Public Methods
-	/** Retrieve the currently active ecs-world.
-	@return			the current ecs-world.*/
+	/** Retrieve the currently active ECS-world.
+	@return			the current ECS-world.*/
 	inline ecsWorld& getWorld() {
 		return m_world;
 	}
-	/** Overwrite the currently active ecs-world.
-	@param			the new ecs-world to use. */
-	inline void setWorld(const ecsWorld& newWorld) {
-		m_world = newWorld;
+	/** Overwrite the currently active ECS-world.
+	@param			the new ECS-world to use. */
+	inline void setWorld(ecsWorld&& newWorld) {
+		m_world = std::move(newWorld);
 	}
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.

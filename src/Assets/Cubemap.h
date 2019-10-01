@@ -3,7 +3,6 @@
 #define	CUBEMAP_H
 
 #include "Assets/Image.h"
-#include <glad/glad.h>
 #include "glm/glm.hpp"
 
 

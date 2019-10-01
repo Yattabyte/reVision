@@ -2,7 +2,6 @@
 #ifndef	ASSET_H
 #define	ASSET_H
 
-#include <glad/glad.h>
 #include <atomic>
 #include <functional>
 #include <map>
@@ -10,6 +9,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <glad/glad.h>
 
 
 class Asset;

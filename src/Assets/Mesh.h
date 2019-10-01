@@ -3,7 +3,6 @@
 #define	MESH_H
 
 #include "Assets/Asset.h"
-#include <glad/glad.h>
 #include "Utilities/IO/Mesh_IO.h"
 #include "glm/glm.hpp"
 #include "glm/geometric.hpp"

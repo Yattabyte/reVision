@@ -36,10 +36,15 @@ public:
 	void showEditor();
 	/** Close the level editor, returning to the main menu. */
 	void exit();
-	/** Check if the editor has any unsaved changes. */
+	/** Check if the editor has any unsaved changes.
+	@return					true if the level has unsaved changes, false otherwise. */
 	bool hasUnsavedChanges() const;
-	/** Retrieve the currently active map's file name. */
+	/** Retrieve the currently active map's file name.
+	@return					current map's file name. */
 	std::string getMapName() const;
+	/** Retrieve a list of recently opened levels.
+	@return					list of recently opened levels. */
+	std::deque<std::string> getRecentLevels() const;
 	/** Close the current level, starting a new one. */
 	void newLevel();
 	/** Open a specific level with the file name specified.
@@ -64,11 +69,11 @@ public:
 	void undo();
 	/** Redo the previously undone action in the redo stack. */
 	void redo();
-	/** Deselect all level entities. */
+	/** De-select all level entities. */
 	void clearSelection();
 	/** Select all level entities. */
 	void selectAll();
-	/** Select a sepecific set of entities.
+	/** Select a specific set of entities.
 	@param	handles			the new set of entity handles to make selected. */
 	void setSelection(const std::vector<ecsHandle>& handles);
 	/** Retrieve the set of selected entities.
@@ -78,7 +83,7 @@ public:
 	void mergeSelection();
 	/** Create a new entity and parent all selected entities into it. */
 	void groupSelection();
-	/** Unparent all selected entities from their common parent. */
+	/** Un-parent all selected entities from their common parent. */
 	void ungroupSelection();
 	/** Save the current set of selected entities into a prefab. */
 	void makePrefab();
@@ -91,11 +96,11 @@ public:
 	/** Delete the currently selected entities from the level. */
 	void deleteSelection();
 	/** Add a new blank component to an entity given its handle and component name alone.
-	@param	entityhandle	handle to the entity the component will be added to.
+	@param	entityHandle	handle to the entity the component will be added to.
 	@param	name			the component class name. */
 	void addComponent(const ecsHandle& entityHandle, const char* name);
 	/** Delete the component given its entity and component ID.
-	@param	entityhandle	handle to the entity the component belongs to.
+	@param	entityHandle	handle to the entity the component belongs to.
 	@param	componentID		the runtime ID for this component. */
 	void deleteComponent(const ecsHandle& entityHandle, const int& componentID);
 	/** Spawn a serialized entity into the level.
@@ -105,7 +110,7 @@ public:
 	/** Bind the editor's FBO to the currently active GL context, for rendering. */
 	void bindFBO();
 	/** Bind the editor's screen texture to the currently active GL context.
-	@param	offset			specific eshader texture unit. */
+	@param	offset			specific shader texture unit. */
 	void bindTexture(const GLuint& offset = 0);
 	/** Specify a new transform for the gizmos.
 	@param	transform		the specific transform to use. */
@@ -137,6 +142,14 @@ public:
 
 
 private:
+	// Private Methods
+	/***/
+	void addToRecentList(const std::string& name);
+	/***/
+	void populateRecentList();
+
+
+
 	// Private Attributes
 	bool m_active = false, m_unsavedChanges = false;
 	float m_autoSaveCounter = 0.0f, m_autosaveInterval = 60.0f;
@@ -149,11 +162,12 @@ private:
 	std::vector<char> m_copiedData;
 	std::deque<std::shared_ptr<Editor_Command>> m_undoStack, m_redoStack;
 	int m_maxUndo = 500;
+	std::deque<std::string> m_recentLevels;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 /** A command used by the level editor. Follows the Command Design Pattern.
-To be subclassed where needed, typically within the scope of a specialized function. */
+To be sub-classed where needed, typically within the scope of a specialized function. */
 struct Editor_Command {
 	// Public Interface
 	/** Perform the command. */
