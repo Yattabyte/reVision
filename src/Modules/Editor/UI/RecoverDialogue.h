@@ -16,7 +16,7 @@ public:
 	// Public (de)Constructors
 	/** Destroy this level dialogue. */
 	inline ~RecoverDialogue() = default;
-	/** Construct a level diaglogue.
+	/** Construct a level dialogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
 	RecoverDialogue(Engine* engine, LevelEditor_Module* editor);

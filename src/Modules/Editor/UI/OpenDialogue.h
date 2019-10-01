@@ -18,7 +18,7 @@ public:
 	// Public (de)Constructors
 	/** Destroy this level opening dialogue. */
 	inline ~OpenDialogue() = default;
-	/** Construct a level opening diaglogue.
+	/** Construct a level opening dialogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
 	OpenDialogue(Engine* engine, LevelEditor_Module* editor);

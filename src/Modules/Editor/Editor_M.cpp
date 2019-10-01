@@ -3,6 +3,7 @@
 #include "Modules/Editor/UI/Prefabs.h"
 #include "Modules/Editor/UI/RecoverDialogue.h"
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
+#include "Modules/Editor/UI/MissingFileDialogue.h"
 #include "Modules/Editor/Gizmos/Mouse.h"
 #include "Modules/Editor/Systems/ClearSelection_System.h"
 #include "Modules/Editor/Systems/Outline_System.h"
@@ -241,14 +242,21 @@ void LevelEditor_Module::newLevel()
 
 void LevelEditor_Module::openLevel(const std::string& name)
 {
-	m_engine->getModule_World().loadWorld(name);
-	m_currentLevelName = name;
-	addToRecentList(name);
+	if (!std::filesystem::exists(Engine::Get_Current_Dir() + "\\Maps\\" + name)) {
+		std::dynamic_pointer_cast<MissingFileDialogue>(m_editorInterface->m_uiMissingDialogue)->notifyMissing(name);
+		if (std::find(m_recentLevels.cbegin(), m_recentLevels.cend(), name) != m_recentLevels.cend())
+			m_recentLevels.erase(std::remove(m_recentLevels.begin(), m_recentLevels.end(), name));
+	}
+	else {
+		m_engine->getModule_World().loadWorld(name);
+		m_currentLevelName = name;
+		addToRecentList(name);
 
-	// Starting new level, changes will be discarded
-	m_unsavedChanges = false;
-	m_undoStack = {};
-	m_redoStack = {};
+		// Starting new level, changes will be discarded
+		m_unsavedChanges = false;
+		m_undoStack = {};
+		m_redoStack = {};
+	}
 }
 
 void LevelEditor_Module::openLevelDialogue()
@@ -361,6 +369,8 @@ void LevelEditor_Module::addToRecentList(const std::string& name)
 	if (std::find(m_recentLevels.cbegin(), m_recentLevels.cend(), name) != m_recentLevels.cend())
 		m_recentLevels.erase(std::remove(m_recentLevels.begin(), m_recentLevels.end(), name));
 	m_recentLevels.push_front(name);
+	if (m_recentLevels.size() > 15)
+		m_recentLevels.resize(15);
 
 	// Dump recent-list data to disk
 	std::ofstream file(Engine::Get_Current_Dir() + "\\Maps\\recent.editor", std::ios::out | std::ios::beg);

@@ -40,7 +40,8 @@ public:
 		m_uiRecoverDialogue,
 		m_uiOpenDialogue,
 		m_uiSaveDialogue,
-		m_uiUnsavedDialogue;
+		m_uiUnsavedDialogue,
+		m_uiMissingDialogue;
 
 
 private:

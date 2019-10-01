@@ -15,7 +15,7 @@ public:
 	// Public (de)Constructors
 	/** Destroy this settings dialogue. */
 	inline ~Settings() = default;
-	/** Construct a settings diaglogue.
+	/** Construct a settings dialogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
 	Settings(Engine* engine, LevelEditor_Module* editor);

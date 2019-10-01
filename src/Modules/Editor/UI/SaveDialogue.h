@@ -18,7 +18,7 @@ public:
 	// Public (de)Constructors
 	/** Destroy this level save dialogue. */
 	inline ~SaveDialogue() = default;
-	/** Construct a level save diaglogue.
+	/** Construct a level save dialogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
 	SaveDialogue(Engine* engine, LevelEditor_Module* editor);
@@ -31,7 +31,7 @@ public:
 private:
 	// Private Methods
 	/** Populate the level dialogue with an optional sub-directory.
-	@param	directory	if non-blank, a subfolder within the maps folder. */
+	@param	directory	if non-blank, a sub-folder within the maps folder. */
 	void populateLevels(const std::string& directory = "");
 	/** Tick the main dialogue, rendering it and performing all logic. */
 	void tickMainDialogue();
@@ -41,6 +41,9 @@ private:
 	void tickRenameDialogue();
 	/** Tick the delete dialogue, rendering it and performing all logic. */
 	void tickDeleteDialogue();
+	/** Attempt to save the current level with the supplied name.
+	@param	chosenName	the unformatted level name to use. */
+	void tryToSave(const std::string& chosenName);
 
 
 	// Private Attributes

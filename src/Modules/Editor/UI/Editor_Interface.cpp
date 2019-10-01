@@ -9,6 +9,7 @@
 #include "Modules/Editor/UI/OpenDialogue.h"
 #include "Modules/Editor/UI/SaveDialogue.h"
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
+#include "Modules/Editor/UI/MissingFileDialogue.h"
 #include "Modules/Editor/UI/Settings.h"
 #include "imgui.h"
 #include "Engine.h"
@@ -18,8 +19,8 @@
 Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
-	m_uiCamController = std::make_shared<CameraController>(m_engine);
-	m_uiRotIndicator = std::make_shared<RotationIndicator>(m_engine);
+	m_uiCamController = std::make_shared<CameraController>(engine);
+	m_uiRotIndicator = std::make_shared<RotationIndicator>(engine);
 	m_uiTitlebar = std::make_shared<TitleBar>(engine, editor);
 	m_uiPrefabs = std::make_shared<Prefabs>(engine, editor);
 	m_uiSceneInspector = std::make_shared<SceneInspector>(engine, editor);
@@ -29,6 +30,7 @@ Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor)
 	m_uiOpenDialogue = std::make_shared<OpenDialogue>(engine, editor);
 	m_uiSaveDialogue = std::make_shared<SaveDialogue>(engine, editor);
 	m_uiUnsavedDialogue = std::make_shared<UnsavedChangesDialogue>(engine, editor);
+	m_uiMissingDialogue = std::make_shared<MissingFileDialogue>(engine, editor);
 
 	m_shader = Shared_Shader(engine, "Editor\\editorCopy");
 	m_shapeQuad = Shared_Auto_Model(engine, "quad");
@@ -67,7 +69,7 @@ void Editor_Interface::tick(const float& deltaTime)
 
 	// Process all UI elements
 	const auto elements = {
-		m_uiCamController,m_uiRotIndicator,m_uiTitlebar,m_uiPrefabs,m_uiSceneInspector,m_uiEntityInspector,m_uiSettings,m_uiRecoverDialogue,m_uiOpenDialogue,m_uiSaveDialogue,m_uiUnsavedDialogue,
+		m_uiCamController,m_uiRotIndicator,m_uiTitlebar,m_uiPrefabs,m_uiSceneInspector,m_uiEntityInspector,m_uiSettings,m_uiRecoverDialogue,m_uiOpenDialogue,m_uiSaveDialogue,m_uiUnsavedDialogue,m_uiMissingDialogue,
 	};
 	for each (auto & element in elements)
 		element->tick(deltaTime);

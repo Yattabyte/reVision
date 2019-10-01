@@ -189,11 +189,6 @@ void SaveDialogue::tickMainDialogue()
 			}
 			ImGui::SetItemDefaultFocus();
 
-			constexpr const auto compareNCase = [](const std::string& str1, const std::string& str2) {
-				return ((str1.size() == str2.size()) && std::equal(str1.begin(), str1.end(), str2.begin(), [](const char& c1, const char& c2) {
-					return (c1 == c2 || std::toupper(c1) == std::toupper(c2));
-					}));
-			};
 			if (option == itemClicked) {
 				const auto& selectedLevel = m_levels[m_selected];
 				if (selectedLevel.type == LevelEntry::back || selectedLevel.type == LevelEntry::folder) {
@@ -201,37 +196,11 @@ void SaveDialogue::tickMainDialogue()
 					populateLevels(nameCopy);
 					m_selected = -1;
 				}
-				else {
-					bool alreadyExists = false;
-					m_chosen = std::string(nameInput);
-					for each (const auto & level in m_levels)
-						if (compareNCase(level.name, m_chosen) && !compareNCase(level.name + ".bmap", m_editor->getMapName())) {
-							alreadyExists = true;
-							break;
-						}
-					if (alreadyExists)
-						ImGui::OpenPopup("Overwrite Level");
-					else {
-						m_editor->saveLevel(m_chosen + ".bmap");
-						m_open = false;
-					}
-				}
+				else
+					tryToSave(nameInput);
 			}
-			else if (option == save) {
-				bool alreadyExists = false;
-				m_chosen = std::string(nameInput);
-				for each (const auto & level in m_levels)
-					if (compareNCase(level.name, m_chosen) && !compareNCase(level.name + ".bmap", m_editor->getMapName())) {
-						alreadyExists = true;
-						break;
-					}
-				if (alreadyExists)
-					ImGui::OpenPopup("Overwrite Level");
-				else {
-					m_editor->saveLevel(m_chosen + ".bmap");
-					m_open = false;
-				}
-			}
+			else if (option == save)
+				tryToSave(nameInput);
 			tickOverwriteDialogue();
 
 			if (option == clone) {
@@ -264,6 +233,32 @@ void SaveDialogue::tickMainDialogue()
 	}
 }
 
+void SaveDialogue::tryToSave(const std::string& chosenName)
+{
+	constexpr const auto compareNCase = [](const std::string& str1, const std::string& str2) {
+		return ((str1.size() == str2.size()) && std::equal(str1.cbegin(), str1.cend(), str2.cbegin(), [](const char& c1, const char& c2) {
+			return std::toupper(c1) == std::toupper(c2);
+			}));
+	};
+
+	// Replace any supplied extension with ".bmap"
+	std::filesystem::path filePath(chosenName);
+	filePath.replace_extension(".bmap");
+	m_chosen = filePath.string();
+
+	// Check if the map already exists, prompt for overwrite
+	for each (const auto & level in m_levels)
+		if (compareNCase(level.path, m_chosen) && !compareNCase(level.path, m_editor->getMapName())) {
+			ImGui::OpenPopup("Overwrite Level");
+			return;
+		}
+
+	// Otherwise we're safe, save the level
+	m_editor->saveLevel(m_chosen);
+	populateLevels();
+	m_open = false;
+}
+
 void SaveDialogue::tickOverwriteDialogue()
 {
 	bool openOverwrite = true;
@@ -276,6 +271,7 @@ void SaveDialogue::tickOverwriteDialogue()
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f));
 		if (ImGui::Button("Overwrite", { 75, 20 })) {
 			m_editor->saveLevel(m_chosen + ".bmap");
+			populateLevels();
 			ImGui::CloseCurrentPopup();
 			m_open = false;
 		}
