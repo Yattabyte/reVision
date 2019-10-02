@@ -4,6 +4,11 @@ This is a work-in-progress game engine, with the bulk of its focus on asset load
 The engine runs using an OpenGL 4.5 + GLSL 460 deferred renderer equipped for a PBR material workflow.  
 The engine also uses an ECS architecture.
 
+Latest Media
+![editor UI](https://i.imgur.com/NBzqoQB.png)
+![file browser](https://i.imgur.com/72YECGP.gif)
+![menu](https://i.imgur.com/tIWcFf7.gif)
+
 ## Getting Started
 
 The branch labeled "active" is updated frequently and contains the most recent builds, but may be unstable.  
