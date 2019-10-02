@@ -1,34 +1,41 @@
 # reVision
 
-This is a work-in-progress game engine, with the bulk of its focus on asset loading and real-time 3D rendering.  
-The engine runs using an OpenGL 4.5 + GLSL 460 deferred renderer equipped for a PBR material workflow.  
-The engine also uses an ECS architecture.
+This project is a work-in-progress game engine. It features real-time multi-threaded asset loading, and physically based 3D graphics.  The engine uses a custom built OpenGL 4.5 deferred renderer equipped with shader support for PBR materials.  
+In addition, most of the engine logic is built upon an entity-component-systems (ECS) framework.  
 
-Latest Media
-![editor UI](https://i.imgur.com/NBzqoQB.png)
-![file browser](https://i.imgur.com/72YECGP.gif)
-![menu](https://i.imgur.com/tIWcFf7.gif)
+The active area of development is the in-engine Level Editor, and improvements to the ECS module.
 
 ## Getting Started
 
-The branch labeled "active" is updated frequently and contains the most recent builds, but may be unstable.  
-The most stable versions can be found under the branch labeled "master".  
-Binaries can be found under the "Releases" section, and is updated every time I complete a major version.  
+The branch labeled "active" is updated almost every day, but may be left unstable.
+The most stable versions can be found under the branch labeled "master".
+Binaries will be found under the "Releases" section, starting at version 5.0.0.
 
-The project has been designed with CMake in mind, as it depends on several external libraries to compile.
+### Requirements
+ * CMake + Git
+ * Compiler supporting C++ 17
+ * GPU supporting OpenGL 4.5 + GLSL 460
+ * Windows 10 (haven't tried any other operating systems yet)
+ 
+## Usage
 
-Note: the engine requires a graphics card capable of supporting OpenGL 4.5 and GLSL 460 to run.
+Step 1: Pull a copy of this repository [Revision](https://github.com/Yattabyte/reVision.git)
 
-### Required Libraries
+Step 2: Download [CMake](https://cmake.org/), I recommend using the GUI application
 
-This project requires the following (free) libraries:
-* [ASSIMP - Model Importing](http://www.assimp.org/)
-* [Bullet - Physics Back-end](http://bulletphysics.org/wordpress/)
-* [FreeImage - Image Importing](http://freeimage.sourceforge.net/)
-* [GLEW - OpenGL](http://glew.sourceforge.net/)
-* [GLFW - Windowing](http://www.glfw.org/)
-* [GLM - Mathematics](https://glm.g-truc.net/0.9.9/index.html)
-* [SoLoud - Sound](https://github.com/jarikomppa/soloud)
+Step 3: Run CMake  
+Fill out the fields indicating where the engine's root directory is located.  
+**Note:** This engine depends on several third party open-source or otherwise free libraries.   
+***However,*** I've configured this cmake project to download and configure them automatically. If you wish, you may supply specific directories to your own versions of these libraries, otherwise leave them blank.
+![CMake Configuration](https://i.imgur.com/fKUdpKz.png)  
+Once those fields are filled out as desired, hit the configure, generate, and open project buttons.
+
+Step 4: Building the Dependencies
+If you've chosen to let CMake handle the external dependencies for you, build all the external projects first like so:
+![VS2017 Build Example](https://i.imgur.com/HJQAXra.png)  
+After, return to CMake and hit configure + generate one last time, adding a few more files that were just generated to the reVision project.
+
+Step 5: Build the rest of the solution.
 
 ## Versioning
 
@@ -51,27 +58,17 @@ Thanks to everyone who has helped me over the years!
 
 Special thanks to all the helpful members of the former [Facepunch programming subforum](https://forum.facepunch.com/f/) as well as those who moved on to [Knockout](https://knockout.chat/), the helpful community on the Stack Exchange, [OGLDev](http://ogldev.atspace.co.uk/index.html), [Learn OpenGL](https://learnopengl.com), and the many other people who run their own tutorial series and programming blogs.
 
-
-## Installation
-
-Step 1: Download [CMake](https://cmake.org/)
-
-```
-Download CMake from the link above and install it
-```
-
-Step 2: Running CMake
-
-```
-Here, we want to configure it for our project.
-First, fill in the "Where is the source code" field to the main project directory, and the second "build" field to where you want to build the project.
-Second, fill in the main directories for all the required external libraries, like assimp, bullet, etc.
-Third, hit the configure button and choose the compiler you want to generate the solution for. Then hit the generate button after.
-```
-
-Step 3: Building the project
-
-```
-The project comes as a single solution for the engine, and a separate solution for generating the optional Doxygen documentation.
-To avoid duplicating the engine assets for multiple builds (debug, release, x32/x64, etc) they are kept within the 'app' folder. If the executable doesn't have it set already, change it to start in the app folder.
-```
+## Libraries Used
+I make use of several (free) libraries in this engine:
+ * [ASSIMP - Model Importing](http://www.assimp.org/)
+ * [Bullet - Physics Back-end](http://bulletphysics.org/wordpress/)
+ * [FreeImage - Image Importing](http://freeimage.sourceforge.net/)
+ * [GLEW - OpenGL](http://glew.sourceforge.net/)
+ * [GLFW - Windowing](http://www.glfw.org/)
+ * [GLM - Mathematics](https://glm.g-truc.net/0.9.9/index.html)
+ * [SoLoud - Sound](https://github.com/jarikomppa/soloud)
+ 
+## Recent Media
+![editor UI](https://i.imgur.com/NBzqoQB.png)
+![file browser](https://i.imgur.com/72YECGP.gif)
+![menu](https://i.imgur.com/tIWcFf7.gif)
