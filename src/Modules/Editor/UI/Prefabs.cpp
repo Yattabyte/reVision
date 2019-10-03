@@ -164,7 +164,7 @@ void Prefabs::tick(const float& deltaTime)
 	}
 }
 
-void Prefabs::makePrefab(const std::vector<ecsHandle>& entityHandles)
+void Prefabs::makePrefab(const std::vector<EntityHandle>& entityHandles)
 {
 	std::vector<char> prefabData = m_engine->getModule_ECS().getWorld().serializeEntities(entityHandles);
 	m_prefabs.push_back({ "New Entity", m_prefabSubDirectory + "\\New Entity", Prefab::file, prefabData });

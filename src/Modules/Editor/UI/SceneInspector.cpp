@@ -25,14 +25,14 @@ void SceneInspector::tick(const float& deltaTime)
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
 			size_t displayCount(0ull);
-			std::function<void(const ecsHandle&)> displayEntity = [&](const ecsHandle& entityHandle) {
+			std::function<void(const EntityHandle&)> displayEntity = [&](const EntityHandle& entityHandle) {
 				bool entity_or_components_pass_filter = false;
 				if (auto* entity = ecsWorld.getEntity(entityHandle)) {
 					auto& entityName = entity->m_name;
 					const auto& components = entity->m_components;
 					entity_or_components_pass_filter += filter.PassFilter(entityName.c_str());
-					for each (const auto & component in components)
-						entity_or_components_pass_filter += filter.PassFilter(ecsWorld.getComponent(entityHandle, component.first)->m_name);
+					for (const auto& [compID, fn, compHandle] : components)
+						entity_or_components_pass_filter += filter.PassFilter(ecsWorld.getComponent(entityHandle, compID)->m_name);
 
 					// Check if the entity or its components matched search criteria
 					if (entity_or_components_pass_filter) {
@@ -85,15 +85,15 @@ void SceneInspector::tick(const float& deltaTime)
 						};
 						auto tryDragElement = [&]() {
 							if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
-								ImGui::SetDragDropPayload("Entity", &entityHandle, sizeof(ecsHandle*));        // Set payload to carry the index of our item (could be anything)
+								ImGui::SetDragDropPayload("Entity", &entityHandle, sizeof(EntityHandle*));        // Set payload to carry the index of our item (could be anything)
 								const auto text = "Move \"" + entityName + "\" into...";
 								ImGui::Text(text.c_str());
 								ImGui::EndDragDropSource();
 							}
 							if (ImGui::BeginDragDropTarget()) {
 								if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
-									IM_ASSERT(payload->DataSize == sizeof(ecsHandle*));
-									m_editor->setSelection({ entityHandle, (*(ecsHandle*)(payload->Data)) });
+									IM_ASSERT(payload->DataSize == sizeof(EntityHandle*));
+									m_editor->setSelection({ entityHandle, (*(EntityHandle*)(payload->Data)) });
 									m_editor->mergeSelection();
 									m_editor->setSelection({ entityHandle });
 								}
@@ -110,6 +110,7 @@ void SceneInspector::tick(const float& deltaTime)
 								displayEntity(subEntityHandle);
 							for (int x = 0; x < components.size(); ++x) {
 								const auto& component = components[x];
+								const auto& componentID = std::get<0>(component);
 								ImGui::PushID(&component);
 								ImGui::AlignTextToFramePadding();
 								ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
@@ -118,10 +119,10 @@ void SceneInspector::tick(const float& deltaTime)
 								const auto buttonPressed = ImGui::Button("-");
 								ImGui::PopStyleColor(3);
 								ImGui::SameLine();
-								ImGui::Text(ecsWorld.getComponent(entityHandle, component.first)->m_name);
+								ImGui::Text(ecsWorld.getComponent(entityHandle, componentID)->m_name);
 								ImGui::PopID();
 								if (buttonPressed)
-									m_editor->deleteComponent(entityHandle, component.first);
+									m_editor->deleteComponent(entityHandle, componentID);
 							}
 							ImGui::AlignTextToFramePadding();
 							ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f));
@@ -165,7 +166,7 @@ void SceneInspector::tick(const float& deltaTime)
 								if (ImGui::Button("Cancel"))
 									ImGui::CloseCurrentPopup();
 								if (isOk) {
-									m_editor->addComponent(entityHandle, items[item_current]);
+									m_editor->makeComponent(entityHandle, items[item_current]);
 									ImGui::CloseCurrentPopup();
 								}
 								ImGui::EndPopup();
@@ -192,8 +193,8 @@ void SceneInspector::tick(const float& deltaTime)
 			// Special case to allow dragging to end of scene list
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
-					IM_ASSERT(payload->DataSize == sizeof(ecsHandle*));
-					m_editor->setSelection({ ecsHandle(), (*(ecsHandle*)(payload->Data)) });
+					IM_ASSERT(payload->DataSize == sizeof(EntityHandle*));
+					m_editor->setSelection({ EntityHandle(), (*(EntityHandle*)(payload->Data)) });
 					m_editor->mergeSelection();
 					m_editor->clearSelection();
 				}

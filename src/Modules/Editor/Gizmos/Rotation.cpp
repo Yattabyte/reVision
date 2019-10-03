@@ -248,7 +248,7 @@ bool Rotation_Gizmo::checkMousePress()
 			LevelEditor_Module* const m_editor = nullptr;
 			glm::quat m_oldRotation, m_newRotation;
 			const unsigned int m_axis = NONE;
-			const std::vector<ecsHandle> m_uuids;
+			const std::vector<EntityHandle> m_uuids;
 			Rotate_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::quat& oldRotation, const glm::quat& newRotation, const unsigned int& axis)
 				: m_engine(engine), m_editor(editor), m_oldRotation(oldRotation), m_newRotation(newRotation), m_axis(axis), m_uuids(m_editor->getSelection()) {}
 			void rotate(const glm::quat& rotation) {

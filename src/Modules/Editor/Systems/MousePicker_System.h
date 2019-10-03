@@ -105,7 +105,7 @@ public:
 
 	// Public Methods
 	/** Retrieve this system's last selection result. */
-	std::tuple<ecsHandle, Transform, Transform> getSelection() {
+	std::tuple<EntityHandle, Transform, Transform> getSelection() {
 		return { m_selection, m_selectionTransform, m_intersectionTransform };
 	}
 
@@ -222,7 +222,7 @@ private:
 
 	// Private Attributes
 	Engine* m_engine = nullptr;
-	ecsHandle m_selection;
+	EntityHandle m_selection;
 	Transform m_selectionTransform, m_intersectionTransform;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

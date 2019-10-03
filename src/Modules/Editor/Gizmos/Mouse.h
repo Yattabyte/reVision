@@ -54,10 +54,10 @@ public:
 	Transform getSpawnTransform() const;
 	/** Set a specific set of entities as the selection, moving the gizmo to their center.
 	@param	entityHandles	the new set of selected entity handles to use. */
-	void setSelection(const std::vector<ecsHandle>& entities);
+	void setSelection(const std::vector<EntityHandle>& entities);
 	/** Retrieve the current set of selected entities.
 	@return					the active set of selected entity handles. */
-	std::vector<ecsHandle>& getSelection();
+	std::vector<EntityHandle>& getSelection();
 
 
 private:
@@ -65,7 +65,7 @@ private:
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
 	Transform m_selectionTransform, m_spawnTransform;
-	std::vector<ecsHandle> m_selection;
+	std::vector<EntityHandle> m_selection;
 	std::shared_ptr<ecsBaseSystem> m_pickerSystem;
 	unsigned int m_inputMode = 0;
 	std::shared_ptr<Translation_Gizmo> m_translationGizmo;

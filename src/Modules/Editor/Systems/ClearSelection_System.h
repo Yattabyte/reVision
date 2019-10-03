@@ -26,7 +26,7 @@ public:
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 		for each (const auto & componentParam in components)
-			ecsWorld.removeComponent<Selected_Component>(((Selected_Component*)(componentParam[0]))->m_entity);
+			ecsWorld.removeEntityComponent(((Selected_Component*)(componentParam[0]))->m_entity, Selected_Component::m_ID);
 	}
 
 

@@ -18,7 +18,7 @@ class ecsWorld;
 using ComponentID = int;
 using ComponentDataSpace = std::vector<uint8_t>;
 using ComponentMap = std::map<ComponentID, ComponentDataSpace>;
-using ComponentCreateFunction = std::function<ComponentID(ComponentDataSpace & memory, const ecsHandle & componentHandle, const ecsHandle & entityHandle, const ecsBaseComponent * comp)>;
+using ComponentCreateFunction = std::function<ComponentID(ComponentDataSpace & memory, const ComponentHandle & componentHandle, const EntityHandle & entityHandle, const ecsBaseComponent * comp)>;
 using ComponentNewFunction = std::function<std::shared_ptr<ecsBaseComponent>()>;
 using ComponentFreeFunction = std::function<void(ecsBaseComponent * comp)>;
 
@@ -38,7 +38,7 @@ struct ecsBaseComponent {
 	/** Recover and generate a component from a char buffer.
 	@param	data		serialized version of component.
 	@param	dataRead	reference updated with the number of bytes read.
-	@return				if successfull a shared pointer to a new component, nullptr otherwise. */
+	@return				if successful a shared pointer to a new component, nullptr otherwise. */
 	static std::shared_ptr<ecsBaseComponent> from_buffer(const char* data, size_t& dataRead);
 
 
@@ -50,9 +50,9 @@ struct ecsBaseComponent {
 	/** Specific class name. */
 	const char* m_name;
 	/** This component's UUID. */
-	ecsHandle m_handle;
+	ComponentHandle m_handle;
 	/** This component's parent-entity's UUID. */
-	ecsHandle m_entity;
+	EntityHandle m_entity;
 
 
 protected:
@@ -144,8 +144,9 @@ protected:
 		ecsBaseComponent::m_size = sizeof(C);
 		ecsBaseComponent::m_name = chars;
 
-		// Always clear the entity handle
-		ecsBaseComponent::m_entity = ecsHandle();
+		// Always clear the handles
+		ecsBaseComponent::m_handle = ComponentHandle();
+		ecsBaseComponent::m_entity = EntityHandle();
 	}
 };
 
@@ -156,7 +157,7 @@ protected:
 @param	comp			temporary pre-constructed component to copy data from, or nullptr.
 @return					the index into the memory array where this component was created at. */
 template <typename C>
-inline constexpr static const int createFn(ComponentDataSpace& memory, const ecsHandle& componentHandle, const ecsHandle& entityHandle, const ecsBaseComponent* comp = nullptr) {
+inline constexpr static const int createFn(ComponentDataSpace& memory, const ComponentHandle& componentHandle, const EntityHandle& entityHandle, const ecsBaseComponent* comp = nullptr) {
 	const size_t index = memory.size();
 	memory.resize(index + sizeof(C));
 	C* component = comp ? new(&memory[index])C(*(C*)comp) : new(&memory[index])C();
@@ -179,6 +180,7 @@ inline constexpr static const void freeFn(ecsBaseComponent* comp) {
 	((C*)comp)->~C();
 }
 
+/** Generate a static ID at run time for each type of component class used. */
 template <typename C, const char* chars>
 const ComponentID ecsComponent<C, chars>::m_ID(registerType(createFn<C>, freeFn<C>, newFn<C>, sizeof(C), chars));
 

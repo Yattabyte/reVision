@@ -306,7 +306,7 @@ bool Scaling_Gizmo::checkMousePress()
 			LevelEditor_Module* const m_editor = nullptr;
 			glm::vec3 m_oldScale, m_newScale;
 			const unsigned int m_axis = NONE;
-			const std::vector<ecsHandle> m_uuids;
+			const std::vector<EntityHandle> m_uuids;
 			Scale_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::vec3& newRotation, const unsigned int& axis)
 				: m_engine(engine), m_editor(editor), m_oldScale(m_editor->getGizmoTransform().m_scale), m_newScale(newRotation), m_axis(axis), m_uuids(m_editor->getSelection()) {}
 			void scale(const glm::vec3& scale) {

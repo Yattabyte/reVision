@@ -41,6 +41,182 @@ ecsWorld::ecsWorld(ecsWorld&& other)
 {
 }
 
+
+/////////////////////////////
+/// PUBLIC MAKE FUNCTIONS ///
+/////////////////////////////
+
+EntityHandle ecsWorld::makeEntity(ecsBaseComponent** entityComponents, const size_t& numComponents, const std::string& name, const EntityHandle& UUID, const EntityHandle& parent)
+{
+	const auto finalHandle = UUID == EntityHandle() ? (EntityHandle)(generateUUID()) : UUID;
+	auto* newEntity = new ecsEntity();
+	auto* root = parent.isValid() ? &(getEntity(parent)->m_children) : &m_entities;
+	newEntity->m_name = name;
+	newEntity->m_entityIndex = (int)root->size();
+	newEntity->m_parent = parent;
+	root->insert_or_assign(finalHandle, newEntity);
+
+	for (size_t i = 0; i < numComponents; ++i)
+		makeComponent(finalHandle, entityComponents[i]);
+
+	return finalHandle;
+}
+
+ComponentHandle ecsWorld::makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* component, const ComponentHandle& UUID)
+{
+	return makeComponent(entityHandle, component->m_ID, component, UUID);
+}
+
+ComponentHandle ecsWorld::makeComponent(const EntityHandle& entityHandle, const ComponentID& componentID, const ecsBaseComponent* component, const ComponentHandle& UUID)
+{
+	auto finalHandle = ComponentHandle();
+	// Check if entity is valid
+	if (auto* entity = getEntity(entityHandle)) {
+		// Check if component ID is valid
+		if (isComponentIDValid(componentID)) {
+			// Prevent adding duplicate component types to the same entity
+			for (const auto& [ID, fn, compHandle] : entity->m_components)
+				if (ID == componentID)
+					return finalHandle;
+
+			finalHandle = UUID == ComponentHandle() ? (ComponentHandle)(generateUUID()) : UUID;
+			const auto& createfn = std::get<0>(ecsBaseComponent::_componentRegistry[componentID]);
+			entity->m_components.push_back(std::make_tuple(componentID, createfn(m_components[componentID], finalHandle, entityHandle, component), finalHandle));
+		}
+	}
+	return finalHandle;
+}
+
+
+///////////////////////////////
+/// PUBLIC REMOVE FUNCTIONS ///
+///////////////////////////////
+
+bool ecsWorld::removeEntity(const EntityHandle& entityHandle)
+{
+	// Delete this entity's components
+	if (auto* entity = getEntity(entityHandle)) {
+		for (auto& [id, createFn, componentHandle] : entity->m_components)
+			deleteComponent(id, createFn);
+
+		// Delete children entities
+		for (const auto& childHandle : getEntityHandles(entityHandle))
+			removeEntity(childHandle);
+
+		// Delete this entity
+		auto* root = entity->m_parent.isValid() ? &(getEntity(entity->m_parent)->m_children) : &m_entities;
+		root->erase(entityHandle);
+		delete entity;
+		return true;
+	}
+	return false;
+}
+
+bool ecsWorld::removeComponent(const ComponentHandle& componentHandle)
+{
+	// TO DO
+	if (auto* component = getComponent(componentHandle)) {
+		return true;
+	}
+	return false;
+}
+
+bool ecsWorld::removeEntityComponent(const EntityHandle& entityHandle, const ComponentID& componentID)
+{
+	// Check if entity is valid
+	if (auto* entity = getEntity(entityHandle)) {
+		auto& entityComponents = entity->m_components;
+		for (size_t i = 0ull; i < entityComponents.size(); ++i) {
+			const auto& [compId, fn, compHandle] = entityComponents[i];
+			if (componentID == compId) {
+				deleteComponent(compId, fn);
+				const auto srcIndex = entityComponents.size() - 1ull;
+				const auto destIndex = i;
+				entityComponents[destIndex] = entityComponents[srcIndex];
+				entityComponents.pop_back();
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+
+////////////////////////////
+/// PUBLIC GET FUNCTIONS ///
+////////////////////////////
+
+ecsEntity* ecsWorld::getEntity(const EntityHandle& UUID)
+{
+	std::function<ecsEntity * (const EntityHandle&, const std::map<EntityHandle, ecsEntity*>&)> find_entity = [&](const EntityHandle& UUID, const std::map<EntityHandle, ecsEntity*>& entities) -> ecsEntity* {
+		// First try to find in main map using built-in algorithm
+		const auto pos = entities.find(UUID);
+		if (pos != entities.end())
+			return pos->second;
+		// Next start searching children
+		else
+			for (auto& [handle, entity] : entities)
+				if (auto* childEntity = find_entity(UUID, entity->m_children))
+					return childEntity;
+		return nullptr;
+	};
+	return find_entity(UUID, m_entities);
+}
+
+std::vector<ecsEntity*> ecsWorld::getEntities(const std::vector<EntityHandle>& uuids)
+{
+	std::vector<ecsEntity*> entities;
+	entities.reserve(uuids.size());
+	for each (const auto & uuid in uuids)
+		if (auto* entity = getEntity(uuid))
+			entities.push_back(entity);
+	return entities;
+}
+
+std::vector<EntityHandle> ecsWorld::getEntityHandles(const EntityHandle& rootHandle)
+{
+	std::vector<EntityHandle> entityHandles;
+	auto* root = rootHandle != EntityHandle() ? &getEntity(rootHandle)->m_children : &m_entities;
+	entityHandles.reserve(root->size());
+	for (const auto& [handle, entity] : *root)
+		entityHandles.push_back(handle);
+	return entityHandles;
+}
+
+ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle)
+{
+	std::function<ecsBaseComponent * (const EntityMap&, const ComponentHandle&)> find_component = [&](const EntityMap& entities, const ComponentHandle& componentHandle) -> ecsBaseComponent* {
+		// Search all entities in the list supplied
+		for (const auto& [entityHandle, entity] : entities) {
+			// Check if this entity contains the component handle
+			for (const auto& [compID, fn, compHandle] : entity->m_components)
+				if (compHandle == componentHandle)
+					return (ecsBaseComponent*) & (m_components[compID][fn]);
+			// Check if this entity's children contain the component handle
+			if (auto* component = find_component(entity->m_children, componentHandle))
+				return component;
+		}
+		return nullptr;
+	};
+
+	return find_component(m_entities, componentHandle);
+}
+
+ecsBaseComponent* ecsWorld::getComponent(const std::vector<std::tuple<ComponentID, int, ComponentHandle>>& entityComponents, const ComponentDataSpace& mem_array, const ComponentID& componentID)
+{
+	for (size_t i = 0ull; i < entityComponents.size(); ++i) {
+		const auto& [compId, fn, compHandle] = entityComponents[i];
+		if (componentID == compId)
+			return (ecsBaseComponent*)&mem_array[fn];
+	}
+	return nullptr;
+}
+
+
+////////////////////////
+/// PUBLIC FUNCTIONS ///
+////////////////////////
+
 ecsWorld& ecsWorld::operator=(ecsWorld&& other)
 {
 	if (this != &other) {
@@ -69,133 +245,7 @@ ecsHandle ecsWorld::generateUUID()
 	return handle;
 }
 
-ecsHandle ecsWorld::makeEntity(ecsBaseComponent** entityComponents, const size_t& numComponents, const std::string& name, const ecsHandle& UUID, const ecsHandle& parent)
-{
-	const auto finalHandle = UUID == ecsHandle() ? generateUUID() : UUID;
-	auto* newEntity = new ecsEntity();
-	auto* root = parent.isValid() ? &(getEntity(parent)->m_children) : &m_entities;
-	newEntity->m_name = name;
-	newEntity->m_entityIndex = (int)root->size();
-	newEntity->m_parent = parent;
-	root->insert_or_assign(finalHandle, newEntity);
-
-	for (size_t i = 0; i < numComponents; ++i)
-		addComponent(finalHandle, entityComponents[i]);
-
-	return finalHandle;
-}
-
-void ecsWorld::removeEntity(const ecsHandle& entityHandle)
-{
-	// Delete this entity's components
-	auto* entity = getEntity(entityHandle);
-	for (auto& [id, createFn] : entity->m_components)
-		deleteComponent(id, createFn);
-
-	// Delete children entities
-	for (const auto& childHandle : getEntityHandles(entityHandle))
-		removeEntity(childHandle);
-
-	// Delete this entity
-	auto* root = entity->m_parent.isValid() ? &(getEntity(entity->m_parent)->m_children) : &m_entities;
-	root->erase(entityHandle);
-	delete entity;
-}
-
-bool ecsWorld::addComponent(const ecsHandle& entityHandle, const ecsBaseComponent* component)
-{
-	return addComponent(entityHandle, component->m_ID, component);
-}
-
-bool ecsWorld::addComponent(const ecsHandle& entityHandle, const ComponentID& componentID, const ecsBaseComponent* component)
-{
-	// Check if entity is valid
-	if (auto* entity = getEntity(entityHandle)) {
-		// Check if component ID is valid
-		if (isComponentIDValid(componentID)) {
-			// Prevent adding duplicate component types to the same entity
-			for (const auto& [ID, fn] : entity->m_components)
-				if (ID == componentID)
-					return false;
-
-			const auto componentHandle = generateUUID();
-			const auto& createfn = std::get<0>(ecsBaseComponent::_componentRegistry[componentID]);
-			std::pair<ComponentID, int> newPair;
-			newPair.first = componentID;
-			newPair.second = createfn(m_components[componentID], componentHandle, entityHandle, component);
-			entity->m_components.push_back(newPair);
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ecsWorld::removeComponent(const ecsHandle& entityHandle, const ComponentID& componentID)
-{
-	// Check if entity is valid
-	if (auto* entity = getEntity(entityHandle)) {
-		auto& entityComponents = entity->m_components;
-		for (size_t i = 0ull; i < entityComponents.size(); ++i) {
-			if (componentID == entityComponents[i].first) {
-				deleteComponent(entityComponents[i].first, entityComponents[i].second);
-				const auto srcIndex = entityComponents.size() - 1ull;
-				const auto destIndex = i;
-				entityComponents[destIndex] = entityComponents[srcIndex];
-				entityComponents.pop_back();
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-ecsBaseComponent* ecsWorld::getComponent(const std::vector<std::pair<ComponentID, int>>& entityComponents, const ComponentDataSpace& mem_array, const ComponentID& componentID)
-{
-	for (size_t i = 0ull; i < entityComponents.size(); ++i)
-		if (componentID == entityComponents[i].first)
-			return (ecsBaseComponent*)&mem_array[entityComponents[i].second];
-	return nullptr;
-}
-
-std::vector<ecsEntity*> ecsWorld::getEntities(const std::vector<ecsHandle>& uuids)
-{
-	std::vector<ecsEntity*> entities;
-	entities.reserve(uuids.size());
-	for each (const auto & uuid in uuids)
-		if (auto* entity = getEntity(uuid))
-			entities.push_back(entity);
-	return entities;
-}
-
-ecsEntity* ecsWorld::getEntity(const ecsHandle& UUID)
-{
-	std::function<ecsEntity * (const ecsHandle&, const std::map<ecsHandle, ecsEntity*>&)> find_entity = [&](const ecsHandle& UUID, const std::map<ecsHandle, ecsEntity*>& entities) -> ecsEntity* {
-		// First try to find in main map using built-in algorithm
-		const auto pos = entities.find(UUID);
-		if (pos != entities.end())
-			return pos->second;
-		// Next start searching children
-		else
-			for (auto& [handle, entity] : entities)
-				if (auto* childEntity = find_entity(UUID, entity->m_children))
-					return childEntity;
-		return nullptr;
-	};
-	return find_entity(UUID, m_entities);
-}
-
-std::vector<ecsHandle> ecsWorld::getEntityHandles(const ecsHandle& rootHandle)
-{
-	std::vector<ecsHandle> entityHandles;
-	auto* root = rootHandle != ecsHandle() ? &getEntity(rootHandle)->m_children : &m_entities;
-	entityHandles.reserve(root->size());
-	for (const auto& [handle, entity] : *root)
-		entityHandles.push_back(handle);
-	return entityHandles;
-}
-
-
-void ecsWorld::parentEntity(const ecsHandle& parentHandle, const ecsHandle& childHandle)
+void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle& childHandle)
 {
 	// Validate input parameters
 	if (!childHandle.isValid() || parentHandle == childHandle)
@@ -246,14 +296,14 @@ void ecsWorld::parentEntity(const ecsHandle& parentHandle, const ecsHandle& chil
 	}
 }
 
-void ecsWorld::unparentEntity(const ecsHandle& entityHandle)
+void ecsWorld::unparentEntity(const EntityHandle& entityHandle)
 {
 	// Move entity up tree, making it a child of its old parent's parent
 	if (entityHandle.isValid())
 		if (auto* entity = getEntity(entityHandle))
 			if (entity->m_parent.isValid())
 				if (auto* parent = getEntity(entity->m_parent))
-					parentEntity(parent->m_parent.isValid() ? parent->m_parent : ecsHandle(), entityHandle);
+					parentEntity(parent->m_parent.isValid() ? parent->m_parent : EntityHandle(), entityHandle);
 }
 
 bool ecsWorld::isComponentIDValid(const ComponentID& componentID)
@@ -281,8 +331,9 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 		// Update references
 		auto& srcComponents = getEntity(srcComponent->m_entity)->m_components;
 		for (size_t i = 0; i < srcComponents.size(); ++i) {
-			if (componentID == srcComponents[i].first && (ComponentID)srcIndex == srcComponents[i].second) {
-				srcComponents[i].second = index;
+			auto& [compID, fn, compHandle] = srcComponents[i];
+			if (componentID == compID && (ComponentID)srcIndex == fn) {
+				fn = index;
 				break;
 			}
 		}
@@ -290,7 +341,7 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 	}
 }
 
-std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsHandle>& entityHandles)
+std::vector<char> ecsWorld::serializeEntities(const std::vector<EntityHandle>& entityHandles)
 {
 	std::vector<char> data;
 	for each (const auto & entityHandle in entityHandles) {
@@ -300,7 +351,7 @@ std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsHandle>& enti
 	return data;
 }
 
-std::vector<char> ecsWorld::serializeEntity(const ecsHandle& entityHandle)
+std::vector<char> ecsWorld::serializeEntity(const EntityHandle& entityHandle)
 {
 	/* ENTITY DATA STRUCTURE {
 			name char count
@@ -331,7 +382,7 @@ std::vector<char> ecsWorld::serializeEntity(const ecsHandle& entityHandle)
 	std::memcpy(&data[dataIndex], &entityChildCount, sizeof(unsigned int));
 	dataIndex += sizeof(unsigned int);
 	// Accumulate entity component data count
-	for (const auto& [componentID, createFunc] : entity->m_components) {
+	for (const auto& [componentID, createFunc, componentHandle] : entity->m_components) {
 		if (const auto& component = getComponent(entityHandle, componentID)) {
 			const auto componentData = component->to_buffer();
 			data.insert(data.end(), componentData.begin(), componentData.end());
@@ -350,7 +401,7 @@ std::vector<char> ecsWorld::serializeEntity(const ecsHandle& entityHandle)
 	return data;
 }
 
-std::pair<ecsHandle, ecsEntity*> ecsWorld::deserializeEntity(const char* data, const size_t& dataSize, size_t& dataIndex, const ecsHandle& parentHandle, const ecsHandle& desiredHandle)
+std::pair<EntityHandle, ecsEntity*> ecsWorld::deserializeEntity(const char* data, const size_t& dataSize, size_t& dataIndex, const EntityHandle& parentHandle, const EntityHandle& desiredHandle)
 {
 	/* ENTITY DATA STRUCTURE {
 		name char count

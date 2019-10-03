@@ -32,10 +32,10 @@ public:
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
 			const auto getUUIDS = [&]() {
-				std::vector<ecsHandle> uuids;
+				std::vector<ComponentHandle> uuids;
 				uuids.reserve(components.size());
 				for each (const auto & componentParam in components)
-					uuids.push_back(componentParam[0]->m_entity);
+					uuids.push_back(componentParam[1]->m_handle);
 				return uuids;
 			};
 
@@ -46,28 +46,30 @@ public:
 			if (ImGui::InputText("Model Name", nameInput, IM_ARRAYSIZE(nameInput))) {
 				struct Name_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
-					const std::vector<ecsHandle> m_uuids;
+					const std::vector<ComponentHandle> m_uuids;
 					std::vector<std::string> m_oldData, m_newData;
-					Name_Command(ecsWorld& world, const std::vector<ecsHandle>& uuids, const std::string& data)
+					Name_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const std::string& data)
 						: m_ecsWorld(world), m_uuids(uuids) {
-						for each (const auto & entityHandle in m_uuids) {
-							const auto* component = m_ecsWorld.getComponent<Prop_Component>(entityHandle);
-							m_oldData.push_back(component->m_modelName);
-							m_newData.push_back(data);
+						for each (const auto & componentHandle in m_uuids) {
+							if (const auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle)) {
+								m_oldData.push_back(component->m_modelName);
+								m_newData.push_back(data);
+							}
 						}
 					}
 					void setData(const std::vector<std::string>& data) {
 						if (data.size()) {
 							size_t index(0ull);
-							for each (const auto & entityHandle in m_uuids) {
-								auto* component = m_ecsWorld.getComponent<Prop_Component>(entityHandle);
-								component->m_modelName = data[index++];
-								component->m_model.reset();
-								component->m_uploadModel = false;
-								component->m_uploadMaterial = false;
-								component->m_offset = 0ull;
-								component->m_count = 0ull;
-								component->m_materialID = 0u;
+							for each (const auto & componentHandle in m_uuids) {
+								if (auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle)) {
+									component->m_modelName = data[index++];
+									component->m_model.reset();
+									component->m_uploadModel = false;
+									component->m_uploadMaterial = false;
+									component->m_offset = 0ull;
+									component->m_count = 0ull;
+									component->m_materialID = 0u;
+								}
 							}
 						}
 					}
@@ -94,22 +96,23 @@ public:
 			if (ImGui::DragInt("Skin", &skinInput)) {
 				struct Skin_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
-					const std::vector<ecsHandle> m_uuids;
+					const std::vector<ComponentHandle> m_uuids;
 					std::vector<unsigned int> m_oldData, m_newData;
-					Skin_Command(ecsWorld& world, const std::vector<ecsHandle>& uuids, const unsigned int& data)
+					Skin_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const unsigned int& data)
 						: m_ecsWorld(world), m_uuids(uuids) {
-						for each (const auto & entityHandle in m_uuids) {
-							const auto* component = m_ecsWorld.getComponent<Prop_Component>(entityHandle);
-							m_oldData.push_back(component->m_skin);
-							m_newData.push_back(data);
+						for each (const auto & componentHandle in m_uuids) {
+							if (const auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle)) {
+								m_oldData.push_back(component->m_skin);
+								m_newData.push_back(data);
+							}
 						}
 					}
 					void setData(const std::vector<unsigned int>& data) {
 						if (data.size()) {
 							size_t index(0ull);
-							for each (const auto & entityHandle in m_uuids) {
-								auto* component = m_ecsWorld.getComponent<Prop_Component>(entityHandle);
-								component->m_skin = data[index++];
+							for each (const auto & componentHandle in m_uuids) {
+								if (auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle))
+									component->m_skin = data[index++];
 							}
 						}
 					}

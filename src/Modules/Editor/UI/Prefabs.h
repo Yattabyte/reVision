@@ -30,7 +30,7 @@ public:
 	// Public Methods
 	/** Construct a prefab from a specified entity set.
 	@param	entityHandles	the entities constituting a new prefab. */
-	void makePrefab(const std::vector<ecsHandle>& entityHandles);
+	void makePrefab(const std::vector<EntityHandle>& entityHandles);
 
 
 private:

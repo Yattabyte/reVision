@@ -75,10 +75,10 @@ public:
 	void selectAll();
 	/** Select a specific set of entities.
 	@param	handles			the new set of entity handles to make selected. */
-	void setSelection(const std::vector<ecsHandle>& handles);
+	void setSelection(const std::vector<EntityHandle>& handles);
 	/** Retrieve the set of selected entities.
 	@return					all selected entity handles. */
-	const std::vector<ecsHandle>& getSelection() const;
+	const std::vector<EntityHandle>& getSelection() const;
 	/** Parent all selected entities into the first one in the set. */
 	void mergeSelection();
 	/** Create a new entity and parent all selected entities into it. */
@@ -98,24 +98,24 @@ public:
 	/** Add a new blank component to an entity given its handle and component name alone.
 	@param	entityHandle	handle to the entity the component will be added to.
 	@param	name			the component class name. */
-	void addComponent(const ecsHandle& entityHandle, const char* name);
+	void makeComponent(const EntityHandle& entityHandle, const char* name);
 	/** Delete the component given its entity and component ID.
 	@param	entityHandle	handle to the entity the component belongs to.
 	@param	componentID		the runtime ID for this component. */
-	void deleteComponent(const ecsHandle& entityHandle, const int& componentID);
+	void deleteComponent(const EntityHandle& entityHandle, const int& componentID);
 	/** Spawn a serialized entity into the level.
 	@param	entityData		the serialized entity data.
 	@param	parent			optional parent's handle. */
-	void addEntity(const std::vector<char>& entityData, const ecsHandle& parentUUID = ecsHandle());
+	void addEntity(const std::vector<char>& entityData, const EntityHandle& parentUUID = EntityHandle());
 	/** Bind the editor's FBO to the currently active GL context, for rendering. */
 	void bindFBO();
 	/** Bind the editor's screen texture to the currently active GL context.
 	@param	offset			specific shader texture unit. */
 	void bindTexture(const GLuint& offset = 0);
-	/** Specify a new transform for the gizmos.
+	/** Specify a new transform for the gizmo's.
 	@param	transform		the specific transform to use. */
 	void setGizmoTransform(const Transform& transform);
-	/** Retrieve the transform from the editor gizmos.
+	/** Retrieve the transform from the editor gizmo's.
 	@return					the current transform from where the gizmo is. */
 	Transform getGizmoTransform() const;
 	/** Retrieve the spawn point transform from the mouse gizmo.
@@ -126,7 +126,7 @@ public:
 	const glm::vec3& getCameraPosition() const;
 	/** Try to add an entity to the selection, removing it if it's already present.
 	@param	entityHandle	the entity to attempt to (de)select. */
-	void toggleAddToSelection(const ecsHandle& entityHandle);
+	void toggleAddToSelection(const EntityHandle& entityHandle);
 	/** Retrieve if we have any data on the clipboard.
 	@return					true if clipboard data present, false otherwise. */
 	bool hasCopy() const;

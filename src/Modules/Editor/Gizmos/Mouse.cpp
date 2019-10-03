@@ -128,12 +128,12 @@ Transform Mouse_Gizmo::getSpawnTransform() const
 	return m_spawnTransform;
 }
 
-void Mouse_Gizmo::setSelection(const std::vector<ecsHandle>& entityHandles)
+void Mouse_Gizmo::setSelection(const std::vector<EntityHandle>& entityHandles)
 {
 	m_selection = entityHandles;
 }
 
-std::vector<ecsHandle>& Mouse_Gizmo::getSelection()
+std::vector<EntityHandle>& Mouse_Gizmo::getSelection()
 {
 	return m_selection;
 }

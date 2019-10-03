@@ -12,7 +12,7 @@ struct ecsHandle {
 	char uuid[32] = { '\0' };
 	/** Default Constructor. */
 	inline ecsHandle() = default;
-	/** E/xplicit Constructor. */
+	/** Explicit Constructor. */
 	inline explicit ecsHandle(const char id[32]) {
 		std::memcpy(uuid, id, size_t(sizeof(char) * 32));
 	}
@@ -47,6 +47,15 @@ struct ecsHandle {
 		constexpr const ecsHandle empty;
 		return !bool((*this) == empty);
 	}
+};
+
+struct EntityHandle final : ecsHandle {
+	inline EntityHandle() = default;
+	inline explicit EntityHandle(const ecsHandle& handle) : ecsHandle(handle) {}
+};
+struct ComponentHandle final : ecsHandle {
+	inline ComponentHandle() = default;
+	explicit ComponentHandle(const ecsHandle& handle) : ecsHandle(handle) {}
 };
 
 #endif // ECS_HANDLE_H

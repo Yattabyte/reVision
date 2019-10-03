@@ -33,7 +33,7 @@ public:
 
 		// Compound the transforms of all parent-child entities
 		auto& ecsWorld = m_engine->getModule_ECS().getWorld();
-		const std::function<void(const ecsHandle&)> transformHierarchy = [&](const ecsHandle& entityHandle) {
+		const std::function<void(const EntityHandle&)> transformHierarchy = [&](const EntityHandle& entityHandle) {
 			if (auto* entityTransform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 				for each (const auto & childHandle in ecsWorld.getEntityHandles(entityHandle)) {
 					if (auto* childTransform = ecsWorld.getComponent<Transform_Component>(childHandle)) {

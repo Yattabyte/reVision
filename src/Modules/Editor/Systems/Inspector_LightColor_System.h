@@ -32,10 +32,10 @@ public:
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
 			const auto getUUIDS = [&]() {
-				std::vector<ecsHandle> uuids;
+				std::vector<ComponentHandle> uuids;
 				uuids.reserve(components.size());
 				for each (const auto & componentParam in components)
-					uuids.push_back(componentParam[0]->m_entity);
+					uuids.push_back(componentParam[1]->m_handle);
 				return uuids;
 			};
 
@@ -43,23 +43,23 @@ public:
 			if (ImGui::ColorEdit3("Color", glm::value_ptr(colorInput))) {
 				struct Color_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
-					const std::vector<ecsHandle> m_uuids;
+					const std::vector<ComponentHandle> m_uuids;
 					std::vector<glm::vec3> m_oldData, m_newData;
-					Color_Command(ecsWorld& world, const std::vector<ecsHandle>& uuids, const glm::vec3& data)
+					Color_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::vec3& data)
 						: m_ecsWorld(world), m_uuids(uuids) {
-						for each (const auto & entityHandle in m_uuids) {
-							const auto* component = m_ecsWorld.getComponent<LightColor_Component>(entityHandle);
-							m_oldData.push_back(component->m_color);
-							m_newData.push_back(data);
+						for each (const auto & componentHandle in m_uuids) {
+							if (const auto* component = m_ecsWorld.getComponent<LightColor_Component>(componentHandle)) {
+								m_oldData.push_back(component->m_color);
+								m_newData.push_back(data);
+							}
 						}
 					}
 					void setData(const std::vector<glm::vec3>& data) {
 						if (data.size()) {
 							size_t index(0ull);
-							for each (const auto & entityHandle in m_uuids) {
-								auto* component = m_ecsWorld.getComponent<LightColor_Component>(entityHandle);
-								component->m_color = data[index++];
-							}
+							for each (const auto & componentHandle in m_uuids)
+								if (auto* component = m_ecsWorld.getComponent<LightColor_Component>(componentHandle))
+									component->m_color = data[index++];
 						}
 					}
 					virtual void execute() override final {
@@ -85,22 +85,23 @@ public:
 			if (ImGui::DragFloat("Intensity", &intensityInput)) {
 				struct Intensity_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
-					const std::vector<ecsHandle> m_uuids;
+					const std::vector<ComponentHandle> m_uuids;
 					std::vector<float> m_oldData, m_newData;
-					Intensity_Command(ecsWorld& world, const std::vector<ecsHandle>& uuids, const float& data)
+					Intensity_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const float& data)
 						: m_ecsWorld(world), m_uuids(uuids) {
-						for each (const auto & entityHandle in m_uuids) {
-							const auto* component = m_ecsWorld.getComponent<LightColor_Component>(entityHandle);
-							m_oldData.push_back(component->m_intensity);
-							m_newData.push_back(data);
+						for each (const auto & componentHandle in m_uuids) {
+							if (const auto* component = m_ecsWorld.getComponent<LightColor_Component>(componentHandle)) {
+								m_oldData.push_back(component->m_intensity);
+								m_newData.push_back(data);
+							}
 						}
 					}
 					void setData(const std::vector<float>& data) {
 						if (data.size()) {
 							size_t index(0ull);
-							for each (const auto & entityHandle in m_uuids) {
-								auto* component = m_ecsWorld.getComponent<LightColor_Component>(entityHandle);
-								component->m_intensity = data[index++];
+							for each (const auto & componentHandle in m_uuids) {
+								if (auto* component = m_ecsWorld.getComponent<LightColor_Component>(componentHandle))
+									component->m_intensity = data[index++];
 							}
 						}
 					}

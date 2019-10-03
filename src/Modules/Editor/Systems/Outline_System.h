@@ -82,7 +82,7 @@ public:
 				auto* point = (LightPoint_Component*)componentParam[3];
 				auto* spot = (LightSpot_Component*)componentParam[4];
 
-				const auto tryRegisterComponentModel = [&](const ecsHandle& componentHandle, const Shared_Mesh& mesh) {
+				const auto tryRegisterComponentModel = [&](const ComponentHandle& componentHandle, const Shared_Mesh& mesh) {
 					if (m_geometryParams.find(componentHandle) == m_geometryParams.end()) {
 						// Upload data once
 						tryInsertModel(mesh);
@@ -236,7 +236,7 @@ private:
 	GLuint m_vaoID = 0, m_vboID = 0;
 	size_t m_currentSize = 0ull, m_maxCapacity = 256ull;
 	GLsync m_fence = nullptr;
-	std::map<ecsHandle, std::pair<GLuint, GLuint>> m_geometryParams;
+	std::map<ComponentHandle, std::pair<GLuint, GLuint>> m_geometryParams;
 	std::map<Shared_Mesh, std::pair<GLuint, GLuint>> m_meshMap;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
