@@ -121,7 +121,7 @@ public:
 
 private:
 	// Private Methods
-	/** Convolute the skybox cubemap, generating blurred mips (for rougher materials).
+	/** Convolute the skybox cubemap, generating blurred MIPs (for rougher materials).
 	@param	viewport	the viewport to render from. */
 	inline void convoluteSky(const std::shared_ptr<Viewport>& viewport) {
 		glDisable(GL_DEPTH_TEST);

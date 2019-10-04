@@ -17,6 +17,7 @@ Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2& size)
 {
 	m_renderSize = size;
 	createFBO("GEOMETRY", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGBA16F, GL_RGBA, GL_FLOAT }, { GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } });
+	createFBO("DEPTH-ONLY", { { GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } });
 	createFBO("LIGHTING", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	createFBO("BOUNCE", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
@@ -82,7 +83,8 @@ void Graphics_Framebuffers::createFBO(const char* name, const std::vector<std::t
 		glNamedFramebufferTexture(fboID, attachment, texID, 0);
 		textures.push_back({ texID, internalFormat, format, type, attachment });
 	}
-	glNamedFramebufferDrawBuffers(fboID, (GLsizei)drawBuffers.size(), &drawBuffers[0]);
+	if (drawBuffers.size())
+		glNamedFramebufferDrawBuffers(fboID, (GLsizei)drawBuffers.size(), &drawBuffers[0]);
 	m_fbos[name] = { fboID, mipmapped, textures };
 }
 
@@ -100,30 +102,24 @@ void Graphics_Framebuffers::bindForReading(const char* name, const GLuint& bindi
 
 void Graphics_Framebuffers::clear()
 {
+	glDepthMask(GL_TRUE);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glStencilMask(0xFF);
 	constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	for (auto& [name, fboData] : m_fbos) {
-		auto& [fboID, mipmapped, texdata] = fboData;
-		int counter(0);
-		for (const auto [texID, internalFormat, format, type, attachment] : texdata) {
-			if (attachment != GL_DEPTH_STENCIL_ATTACHMENT && attachment != GL_DEPTH_ATTACHMENT && attachment != GL_STENCIL_ATTACHMENT)
-				glClearNamedFramebufferfv(fboID, GL_COLOR, counter++, clearColor);
-		}
-	}
-}
-
-void Graphics_Framebuffers::clearDepthStencil()
-{
 	constexpr GLfloat clearDepth = 1.0f;
 	constexpr GLint clearStencil = 0;
 	for (auto& [name, fboData] : m_fbos) {
 		auto& [fboID, mipmapped, texdata] = fboData;
-		for (auto& [texID, internalFormat, format, type, attachment] : texdata) {
+		int counter(0);
+		for (const auto [texID, internalFormat, format, type, attachment] : texdata) {
 			if (attachment == GL_DEPTH_STENCIL_ATTACHMENT)
 				glClearNamedFramebufferfi(fboID, GL_DEPTH_STENCIL, 0, clearDepth, clearStencil);
 			else if (attachment == GL_DEPTH_ATTACHMENT)
 				glClearNamedFramebufferfv(fboID, GL_DEPTH, 0, &clearDepth);
 			else if (attachment == GL_STENCIL_ATTACHMENT)
 				glClearNamedFramebufferiv(fboID, GL_STENCIL, 0, &clearStencil);
+			else
+				glClearNamedFramebufferfv(fboID, GL_COLOR, counter++, clearColor);
 		}
 	}
 }

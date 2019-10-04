@@ -18,14 +18,11 @@ class Prop_Technique final : public Geometry_Technique {
 public:
 	// Public (de)Constructors
 	/** Destructor. */
-	inline ~Prop_Technique() {
-		// Update indicator
-		*m_aliveIndicator = false;
-	}
+	inline ~Prop_Technique() = default;
 	/** Constructor. */
 	inline Prop_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& viewports, ecsSystemList& auxilliarySystems)
 		: m_engine(engine), m_cameras(viewports) {
-		// Auxilliary Systems
+		// Auxiliary Systems
 		m_frameData = std::make_shared<PropData>();
 		auxilliarySystems.makeSystem<PropUpload_System>(engine, m_frameData);
 		auxilliarySystems.makeSystem<PropVisibility_System>(m_frameData, viewports);
@@ -37,12 +34,6 @@ public:
 		m_shaderShadowCull = Shared_Shader(engine, "Core\\Props\\shadow culling");
 		m_shaderShadowGeometry = Shared_Shader(engine, "Core\\Props\\shadow");
 		m_shapeCube = Shared_Auto_Model(engine, "cube");
-
-		// Clear state on world-unloaded
-		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
-			if (state == World_Module::unloaded)
-				clear();
-			});
 	}
 
 
@@ -58,6 +49,7 @@ public:
 			drawBuffer.bufferSkeletonIndex.endWriting();
 		}
 		m_drawIndex = 0;
+		clear();
 	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
 		// Exit Early
@@ -70,11 +62,6 @@ public:
 			auto& propCullingBuffer = drawBuffer.bufferCulling;
 			auto& propRenderBuffer = drawBuffer.bufferRender;
 			auto& propSkeletonBuffer = drawBuffer.bufferSkeletonIndex;
-			camBufferIndex.beginWriting();
-			propIndexBuffer.beginWriting();
-			propCullingBuffer.beginWriting();
-			propRenderBuffer.beginWriting();
-			propSkeletonBuffer.beginWriting();
 
 			// Accumulate all visibility info for the cameras passed in
 			std::vector<glm::ivec2> camIndices;
@@ -91,6 +78,13 @@ public:
 			}
 
 			if (visibleIndices.size()) {
+				// Prepare for writing
+				camBufferIndex.beginWriting();
+				propIndexBuffer.beginWriting();
+				propCullingBuffer.beginWriting();
+				propRenderBuffer.beginWriting();
+				propSkeletonBuffer.beginWriting();
+
 				// Write accumulated data
 				camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 				propIndexBuffer.write(0, sizeof(GLuint) * visibleIndices.size(), visibleIndices.data());
@@ -113,7 +107,7 @@ public:
 				glDepthMask(GL_FALSE);
 				glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 				m_shaderCull->bind();
-				viewport->m_gfxFBOS->bindForWriting("GEOMETRY");
+				viewport->m_gfxFBOS->bindForWriting("DEPTH-ONLY"); // use previous frame's depth
 				glBindVertexArray(m_shapeCube->m_vaoID);
 				propCullingBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				propRenderBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
@@ -126,19 +120,21 @@ public:
 				glDepthMask(GL_TRUE);
 				glEnable(GL_CULL_FACE);
 				glCullFace(GL_BACK);
-				viewport->m_gfxFBOS->clearDepthStencil();
+				viewport->m_gfxFBOS->bindForWriting("GEOMETRY"); // fill current frame's depth
 				m_shaderGeometry->bind();
 				glBindVertexArray(m_frameData->m_geometryVAOID);
 				glBindTextureUnit(0, m_frameData->m_materialArrayID);
 				propRenderBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, (GLsizei)visibleIndices.size(), 0);
+
+				// Copy depth for next frame
+				viewport->m_gfxFBOS->bindForWriting("DEPTH-ONLY");
+				const auto& [sourceID, destinationID] = std::make_pair(viewport->m_gfxFBOS->getFboID("GEOMETRY"), viewport->m_gfxFBOS->getFboID("DEPTH-ONLY"));
+				const auto& size = viewport->m_dimensions;
+				glBlitNamedFramebuffer(sourceID, destinationID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 				m_drawIndex++;
 			}
-			else
-				viewport->m_gfxFBOS->clearDepthStencil();
 		}
-		else
-			viewport->m_gfxFBOS->clearDepthStencil();
 	}
 	inline virtual void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) override final {
 		// Exit Early
@@ -237,7 +233,6 @@ private:
 	Engine* m_engine = nullptr;
 	Shared_Shader m_shaderCull, m_shaderGeometry, m_shaderShadowCull, m_shaderShadowGeometry;
 	Shared_Auto_Model m_shapeCube;
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	struct DrawData {
 		DynamicBuffer bufferCamIndex, bufferPropIndex, bufferCulling, bufferRender, bufferSkeletonIndex;
 	};

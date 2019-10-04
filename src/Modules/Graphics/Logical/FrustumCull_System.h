@@ -8,7 +8,7 @@
 #include <memory>
 
 
-/** An ECS system responsible for frustum culling all renderable components with a bounding sphere and a position. */
+/** An ECS system responsible for frustum culling all render-able components with a bounding sphere and a position. */
 class FrustumCull_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors

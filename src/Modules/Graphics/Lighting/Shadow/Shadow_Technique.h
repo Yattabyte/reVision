@@ -34,16 +34,12 @@ public:
 			});
 		m_frameData->shadowSize = std::max(1.0f, m_frameData->shadowSize);
 		m_frameData->shadowSizeRCP = 1.0f / m_frameData->shadowSize;
-
-		// Clear state on world-unloaded
-		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
-			if (state == World_Module::unloaded)
-				clear();
-			});
 	}
 
-
 	// Public Interface Implementations
+	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+		clear();
+	}
 	inline virtual void updateTechnique(const float& deltaTime) override final {
 		// Render important shadows
 		if (m_enabled)

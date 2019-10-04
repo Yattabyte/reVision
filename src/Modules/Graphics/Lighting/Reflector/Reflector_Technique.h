@@ -58,12 +58,6 @@ public:
 			m_indirectQuad = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
 			m_indirectQuadConvolute = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
 			});
-
-		// Clear state on world-unloaded
-		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
-			if (state == World_Module::unloaded)
-				clear();
-			});
 	}
 
 
@@ -78,6 +72,7 @@ public:
 		m_indirectQuad.endWriting();
 		m_indirectQuadConvolute.endWriting();
 		m_drawIndex = 0;
+		clear();
 	}
 	inline virtual void updateTechnique(const float& deltaTime) override final {
 		// Link together the dimensions of view info to that of the viewport vectors
@@ -161,7 +156,7 @@ private:
 			// Update all reflectors at once
 			m_engine->getModule_Graphics().renderScene(deltaTime, m_viewport, perspectives, Graphics_Technique::GEOMETRY | Graphics_Technique::PRIMARY_LIGHTING | Graphics_Technique::SECONDARY_LIGHTING);
 
-			// Copy all lighting results into cube faces, generating cubemaps
+			// Copy all lighting results into cube faces, generating cubemap's
 			m_viewport->m_gfxFBOS->bindForReading("LIGHTING", 0);
 			m_frameData->envmapFBO.bindForWriting(0);
 			m_shaderCopy->bind();
@@ -172,7 +167,7 @@ private:
 			glBindVertexArray(m_shapeQuad->m_vaoID);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-			// Convolute all completed cubemaps, not just what was done this frame
+			// Convolute all completed cubemap's, not just what was done this frame
 			m_shaderConvolute->bind();
 			m_indirectQuadConvolute.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			m_frameData->envmapFBO.bindForReading(0);

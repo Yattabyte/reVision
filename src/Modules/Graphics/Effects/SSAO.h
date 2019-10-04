@@ -41,7 +41,7 @@ public:
 		preferences.getOrSetValue(PreferenceState::C_SSAO_BLUR_STRENGTH, m_blurStrength);
 		preferences.addCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, m_aliveIndicator, [&](const float& f) { m_blurStrength = (int)f; });
 
-		// Prepare the noise texture and kernal
+		// Prepare the noise texture and kernel
 		std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 		std::default_random_engine generator;
 		glm::vec3 noiseArray[16];

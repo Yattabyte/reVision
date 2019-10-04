@@ -117,18 +117,12 @@ void Graphics_Module::frameTick(const float& deltaTime)
 	m_pipeline->update(deltaTime);
 
 	// Render the scene from the user's perspective to the screen
-	size_t visibilityIndex = 0;
-	bool found = false;
 	for (size_t x = 0; x < m_sceneCameras->size(); ++x)
 		if (m_sceneCameras->at(x) == m_clientCamera.get()) {
-			visibilityIndex = x;
-			found = true;
+			renderScene(deltaTime, m_viewport, { {(int)x, 0} });
+			copyToScreen();
 			break;
 		}
-	if (found) {
-		renderScene(deltaTime, m_viewport, { {(int)visibilityIndex, 0} });
-		copyToScreen();
-	}
 
 	// Consolidate and prepare for the next frame, swap to next set of buffers
 	m_pipeline->prepareForNextFrame(deltaTime);

@@ -52,12 +52,6 @@ public:
 		glTextureParameteri(m_textureNoise32, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTextureParameteri(m_textureNoise32, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-		// Clear state on world-unloaded
-		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
-			if (state == World_Module::unloaded)
-				clear();
-			});
-
 		// Preferences
 		auto& preferences = engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_bounceSize);
@@ -80,6 +74,7 @@ public:
 		}
 		m_drawIndex = 0;
 		m_bounceIndex = 0;
+		clear();
 	}
 	inline virtual void updateTechnique(const float& deltaTime) override final {
 		// Link together the dimensions of view info to that of the viewport vectors

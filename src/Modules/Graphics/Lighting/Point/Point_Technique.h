@@ -17,14 +17,11 @@ class Point_Technique final : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Destructor. */
-	inline ~Point_Technique() {
-		// Update indicator
-		*m_aliveIndicator = false;
-	}
+	inline ~Point_Technique() = default;
 	/** Constructor. */
 	inline Point_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<std::vector<Camera*>>& cameras, ecsSystemList& auxilliarySystems)
 		: m_engine(engine), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
-		// Auxilliary Systems
+		// Auxiliary Systems
 		m_frameData = std::make_shared<PointData>();
 		m_frameData->shadowData = shadowData;
 		auxilliarySystems.makeSystem<PointVisibility_System>(m_frameData);
@@ -34,12 +31,6 @@ public:
 		m_shader_Lighting = Shared_Shader(engine, "Core\\Point\\Light");
 		m_shader_Stencil = Shared_Shader(engine, "Core\\Point\\Stencil");
 		m_shapeSphere = Shared_Auto_Model(engine, "sphere");
-
-		// Clear state on world-unloaded
-		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
-			if (state == World_Module::unloaded)
-				clear();
-			});
 	}
 
 
@@ -52,6 +43,7 @@ public:
 			drawBuffer.indirectShape.endWriting();
 		}
 		m_drawIndex = 0;
+		clear();
 	}
 	inline virtual void updateTechnique(const float& deltaTime) override final {
 		// Link together the dimensions of view info to that of the viewport vectors
@@ -150,7 +142,6 @@ private:
 
 	// Private Attributes
 	Engine* m_engine = nullptr;
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	Shared_Shader m_shader_Lighting, m_shader_Stencil;
 	Shared_Auto_Model m_shapeSphere;
 	struct DrawData {
