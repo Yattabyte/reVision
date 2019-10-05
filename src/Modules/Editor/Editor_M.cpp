@@ -690,7 +690,7 @@ void LevelEditor_Module::ungroupSelection()
 
 void LevelEditor_Module::makePrefab()
 {
-	std::dynamic_pointer_cast<Prefabs>(m_editorInterface->m_uiPrefabs)->makePrefab(getSelection());
+	std::dynamic_pointer_cast<Prefabs>(m_editorInterface->m_uiPrefabs)->addPrefab(m_engine->getModule_ECS().getWorld().serializeEntities(getSelection()));
 }
 
 void LevelEditor_Module::cutSelection()

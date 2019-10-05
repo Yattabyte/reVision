@@ -59,11 +59,11 @@ void Prefabs::tick(const float& deltaTime)
 				if (filter.PassFilter(prefab.name.c_str())) {
 					ImGui::PushID(&prefab);
 					GLuint textureID = 0;
-					if (prefab.type == Prefab::back && m_texBack->existsYet())
+					if (prefab.type == Entry::back && m_texBack->existsYet())
 						textureID = m_texBack->m_glTexID;
-					else if (prefab.type == Prefab::folder && m_texFolder->existsYet())
+					else if (prefab.type == Entry::folder && m_texFolder->existsYet())
 						textureID = m_texFolder->m_glTexID;
-					else if ((prefab.type == Prefab::file || prefab.type == Prefab::def) && m_texMissingThumb->existsYet())
+					else if ((prefab.type == Entry::file) && m_texMissingThumb->existsYet())
 						textureID = m_texMissingThumb->m_glTexID;
 
 					ImGui::BeginGroup();
@@ -164,10 +164,11 @@ void Prefabs::tick(const float& deltaTime)
 	}
 }
 
-void Prefabs::makePrefab(const std::vector<EntityHandle>& entityHandles)
+void Prefabs::addPrefab(const std::vector<char>& entityData)
 {
-	std::vector<char> prefabData = m_engine->getModule_ECS().getWorld().serializeEntities(entityHandles);
-	m_prefabs.push_back({ "New Entity", m_prefabSubDirectory + "\\New Entity", Prefab::file, prefabData });
+	size_t dataRead(0ull);
+	const auto& [entityHandle, entity] = m_worldPreview.deserializeEntity(&entityData[0], entityData.size(), dataRead);
+	m_prefabs.push_back({ "New Entity", m_prefabSubDirectory + "\\New Entity", Entry::file, entityHandle });
 	m_selectedIndex = (int)(m_prefabs.size()) - 1;
 
 	// Save Prefab to disk
@@ -175,60 +176,28 @@ void Prefabs::makePrefab(const std::vector<EntityHandle>& entityHandles)
 	if (!mapFile.is_open())
 		m_engine->getManager_Messages().error("Cannot write the binary map file to disk!");
 	else
-		mapFile.write(prefabData.data(), (std::streamsize)prefabData.size());
+		mapFile.write(entityData.data(), (std::streamsize)entityData.size());
 	mapFile.close();
 }
 
 void Prefabs::populatePrefabs(const std::string& directory)
 {
-	m_prefabs.clear();
+	// Reset prefab data
 	m_prefabSubDirectory = directory;
+	m_prefabs.clear();
+	m_worldPreview.clear();
 
 	const auto rootPath = Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\";
 	const auto path = std::filesystem::path(rootPath + directory);
-	if (directory != "" && directory != "." && directory != "..")
-		m_prefabs.push_back(Prefab{ "back", std::filesystem::relative(path.parent_path(), rootPath).string(), Prefab::back, {} });
-	if (directory == "" || directory == ".") {
-		m_prefabs.push_back(Prefab{ "Default", "Default", Prefab::folder, {} });
-	}
-	if (directory == "Default") {
-		m_prefabs.push_back({ "Hydrant", "Hydrant", Prefab::def });
-		m_prefabs.push_back({ "Chest", "Chest", Prefab::def });
-		m_prefabs.push_back({ "Gun", "Gun", Prefab::def });
-	}
-	else {
-		for (auto& entry : std::filesystem::directory_iterator(path)) {
-			Prefab prefabEntry{
-				entry.path().filename().string(),
-				std::filesystem::relative(entry, rootPath).string()
-			};
-			if (entry.is_regular_file()) {
-				prefabEntry.type = Prefab::file;
-				std::ifstream prefabFile(entry, std::ios::binary | std::ios::beg);
-				if (prefabFile.is_open()) {
-					const auto size = std::filesystem::file_size(entry);
-					prefabEntry.serialData.resize(size);
-					prefabFile.read(&prefabEntry.serialData[0], (std::streamsize)size);
-				}
-				prefabFile.close();
-			}
-			else if (entry.is_directory())
-				prefabEntry.type = Prefab::folder;
-			m_prefabs.push_back(prefabEntry);
-		}
-	}
-}
 
-void Prefabs::openPrefabEntry()
-{
-	const auto& selectedPrefab = m_prefabs[m_selectedIndex];
-	if (selectedPrefab.type == Prefab::back || selectedPrefab.type == Prefab::folder) {
-		const std::string nameCopy(selectedPrefab.path);
-		populatePrefabs(nameCopy);
-		m_selectedIndex = -1;
-	}
-	else if (selectedPrefab.type == Prefab::def) {
-		if (selectedPrefab.name == "Hydrant") {
+	// Add an entry to go back a folder
+	if (directory != "" && directory != "." && directory != "..")
+		m_prefabs.push_back(Entry{ "back", std::filesystem::relative(path.parent_path(), rootPath).string(), Entry::back, {} });
+
+	// If in the root folder, add hard-coded prefab entries
+	if (directory == "" || directory == ".") {
+		//Basic Model Prefab
+		{
 			Transform_Component a;
 			BoundingBox_Component b;
 			Prop_Component c;
@@ -236,29 +205,41 @@ void Prefabs::openPrefabEntry()
 			a.m_localTransform.update();
 			c.m_modelName = "FireHydrant\\FireHydrantMesh.obj";
 			ecsBaseComponent* entityComponents[] = { &a, &b, &c };
-			m_engine->getModule_ECS().getWorld().makeEntity(entityComponents, 3ull, selectedPrefab.name);
-		}
-		if (selectedPrefab.name == "Chest") {
-			Transform_Component a;
-			BoundingBox_Component b;
-			Prop_Component c;
-			a.m_localTransform.m_scale = glm::vec3(20.0F);
-			a.m_localTransform.update();
-			c.m_modelName = "Chest\\chest.obj";
-			ecsBaseComponent* entityComponents[] = { &a, &b, &c };
-			m_engine->getModule_ECS().getWorld().makeEntity(entityComponents, 3ull, selectedPrefab.name);
-		}
-		if (selectedPrefab.name == "Gun") {
-			Transform_Component a;
-			BoundingBox_Component b;
-			Prop_Component c;
-			a.m_localTransform.m_scale = glm::vec3(25.0F);
-			a.m_localTransform.update();
-			c.m_modelName = "Cerberus\\Cerberus_LP.obj";
-			ecsBaseComponent* entityComponents[] = { &a, &b, &c };
-			m_engine->getModule_ECS().getWorld().makeEntity(entityComponents, 3ull, selectedPrefab.name);
+			m_prefabs.push_back({ "Basic Model", "", Entry::file, m_worldPreview.makeEntity(entityComponents, 3ull, "Basic Model") });
 		}
 	}
+
+	// Cycle through each entry on disk
+	for (auto& entry : std::filesystem::directory_iterator(path)) {
+		Entry prefabEntry{ entry.path().filename().string(), std::filesystem::relative(entry, rootPath).string() };
+		if (entry.is_regular_file()) {
+			prefabEntry.type = Entry::file;
+			std::ifstream prefabFile(entry, std::ios::binary | std::ios::beg);
+			if (prefabFile.is_open()) {
+				// To Do: Remove serial data from entry class
+				const auto size = std::filesystem::file_size(entry);
+				std::vector<char> data(size);
+				prefabFile.read(&data[0], (std::streamsize)size);
+				size_t dataRead(0ull);
+				const auto& [entityHandle, entity] = m_worldPreview.deserializeEntity(&data[0], size, dataRead);
+				prefabEntry.entityHandle = entityHandle;
+			}
+			prefabFile.close();
+		}
+		else if (entry.is_directory())
+			prefabEntry.type = Entry::folder;
+		m_prefabs.push_back(prefabEntry);
+	}
+}
+
+void Prefabs::openPrefabEntry()
+{
+	const auto& selectedPrefab = m_prefabs[m_selectedIndex];
+	if (selectedPrefab.type == Entry::back || selectedPrefab.type == Entry::folder) {
+		const std::string nameCopy(selectedPrefab.path);
+		populatePrefabs(nameCopy);
+		m_selectedIndex = -1;
+	}
 	else
-		m_editor->addEntity(selectedPrefab.serialData);
+		m_editor->addEntity(m_worldPreview.serializeEntity(selectedPrefab.entityHandle));
 }

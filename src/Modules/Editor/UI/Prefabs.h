@@ -3,7 +3,7 @@
 #define PREFABS_H
 
 #include "Modules/UI/UI_M.h"
-#include "Modules/ECS/ecsEntity.h"
+#include "Modules/ECS/ecsWorld.h"
 #include "Assets/Texture.h"
 
 
@@ -28,9 +28,9 @@ public:
 
 
 	// Public Methods
-	/** Construct a prefab from a specified entity set.
-	@param	entityHandles	the entities constituting a new prefab. */
-	void makePrefab(const std::vector<EntityHandle>& entityHandles);
+	/** Construct a prefab from serialized entity data.
+	@param	entityData		serialized entity data. */
+	void addPrefab(const std::vector<char>& entityData);
 
 
 private:
@@ -48,18 +48,18 @@ private:
 	Shared_Texture m_texBack, m_texFolder, m_texMissingThumb, m_texIconRefresh;
 	std::string m_prefabSubDirectory = "";
 	int m_selectedIndex = -1;
-	struct Prefab {
+	struct Entry {
 		std::string name = "", path = "";
 		enum type {
 			none,
 			file,
-			def,
 			folder,
 			back
 		} type = none;
-		std::vector<char> serialData;
+		EntityHandle entityHandle;
 	};
-	std::vector<Prefab> m_prefabs;
+	std::vector<Entry> m_prefabs;
+	ecsWorld m_worldPreview;
 };
 
 #endif // PREFABS_H

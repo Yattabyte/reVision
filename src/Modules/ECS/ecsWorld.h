@@ -125,6 +125,8 @@ public:
 	////////////////////////
 	/***/
 	ecsWorld& operator=(ecsWorld&& other);
+	/***/
+	void clear();
 	/** Generate a universally unique identifier for entities or components.
 	@return						a new ID. */
 	static ecsHandle generateUUID();
@@ -139,10 +141,18 @@ public:
 	@param	entityHandles		the set of entities identified by their handles to serialize.
 	@return						char vector containing serialized entity data. */
 	std::vector<char> serializeEntities(const std::vector<EntityHandle>& entityHandles);
+	/** Serialize a specific set of entities to a char vector.
+	@param	entities			the set of specific entities to serialize.
+	@return						char vector containing serialized entity data. */
+	std::vector<char> serializeEntities(const std::vector<ecsEntity*>& entities);
 	/** Serialize a specific entity to a char vector.
-	@param	entityHandle		the entity to serialize.
+	@param	entityHandle		handle to the entity to serialize.
 	@return						char vector containing serialized entity data. */
 	std::vector<char> serializeEntity(const EntityHandle& entityHandle);
+	/** Serialize a specific entity to a char vector.
+	@param	entity				the specific entity to serialize.
+	@return						char vector containing serialized entity data. */
+	std::vector<char> serializeEntity(const ecsEntity& entity);
 	/** De-serialize an entity from a char array.
 	@param	data				previously serialized entity data.
 	@param	dataSize			the size of the data in bytes (sizeof(char) * elements).

@@ -9,22 +9,7 @@
 
 ecsWorld::~ecsWorld()
 {
-	for (auto it = m_components.begin(); it != m_components.end(); ++it) {
-		const auto& [createFn, freeFn, newFn, typeSize] = ecsBaseComponent::_componentRegistry[it->first];
-		for (size_t i = 0; i < it->second.size(); i += typeSize)
-			freeFn((ecsBaseComponent*)&it->second[i]);
-		it->second.clear();
-	}
-	m_components.clear();
-
-	std::function<void(ecsEntity*)> deleteEntity = [&](ecsEntity* entity) {
-		for (auto& [handle, child] : entity->m_children)
-			deleteEntity(child);
-		delete entity;
-	};
-	for (const auto& [handle, entity] : m_entities)
-		deleteEntity(entity);
-	m_entities.clear();
+	clear();
 }
 
 ecsWorld::ecsWorld(const std::vector<char>& data)
@@ -226,6 +211,28 @@ ecsWorld& ecsWorld::operator=(ecsWorld&& other)
 	return *this;
 }
 
+void ecsWorld::clear()
+{
+	// Remove all components
+	for (auto it = m_components.begin(); it != m_components.end(); ++it) {
+		const auto& [createFn, freeFn, newFn, typeSize] = ecsBaseComponent::_componentRegistry[it->first];
+		for (size_t i = 0; i < it->second.size(); i += typeSize)
+			freeFn((ecsBaseComponent*)&it->second[i]);
+		it->second.clear();
+	}
+	m_components.clear();
+
+	// Remove all entities
+	std::function<void(ecsEntity*)> deleteEntity = [&](ecsEntity* entity) {
+		for (auto& [handle, child] : entity->m_children)
+			deleteEntity(child);
+		delete entity;
+	};
+	for (const auto& [handle, entity] : m_entities)
+		deleteEntity(entity);
+	m_entities.clear();
+}
+
 ecsHandle ecsWorld::generateUUID()
 {
 	std::stringstream ss;
@@ -343,27 +350,40 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 
 std::vector<char> ecsWorld::serializeEntities(const std::vector<EntityHandle>& entityHandles)
 {
+	return serializeEntities(getEntities(entityHandles));
+}
+
+std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsEntity*>& entities)
+{
 	std::vector<char> data;
-	for each (const auto & entityHandle in entityHandles) {
-		const auto entData = serializeEntity(entityHandle);
-		data.insert(data.end(), entData.begin(), entData.end());
+	for each (const auto & entity in entities) {
+		if (entity) {
+			const auto entData = serializeEntity(*entity);
+			data.insert(data.end(), entData.begin(), entData.end());
+		}
 	}
 	return data;
 }
 
 std::vector<char> ecsWorld::serializeEntity(const EntityHandle& entityHandle)
 {
+	if (const auto& entity = getEntity(entityHandle))
+		return serializeEntity(*entity);
+	return {};
+}
+
+std::vector<char> ecsWorld::serializeEntity(const ecsEntity& entity)
+{
 	/* ENTITY DATA STRUCTURE {
-			name char count
-			name chars
-			component data count
-			entity child count
-			component data
-			--nested entity children--
-	} */
-	const auto& entity = getEntity(entityHandle);
+		name char count
+		name chars
+		component data count
+		entity child count
+		component data
+		--nested entity children--
+	}*/
 	size_t dataIndex(0ull);
-	const auto& entityName = entity->m_name;
+	const auto& entityName = entity.m_name;
 	const auto nameSize = (unsigned int)(entityName.size());
 	const auto ENTITY_HEADER_SIZE = (sizeof(unsigned int) + (entityName.size() * sizeof(char))) + sizeof(size_t) + sizeof(unsigned int);
 	std::vector<char> data(ENTITY_HEADER_SIZE);
@@ -378,12 +398,12 @@ std::vector<char> ecsWorld::serializeEntity(const EntityHandle& entityHandle)
 	size_t entityDataCount(0ull), entityDataCountIndex(dataIndex);
 	dataIndex += sizeof(size_t);
 	// Write entity child count
-	const auto entityChildCount = (unsigned int)entity->m_children.size();
+	const auto entityChildCount = (unsigned int)entity.m_children.size();
 	std::memcpy(&data[dataIndex], &entityChildCount, sizeof(unsigned int));
 	dataIndex += sizeof(unsigned int);
 	// Accumulate entity component data count
-	for (const auto& [componentID, createFunc, componentHandle] : entity->m_components) {
-		if (const auto& component = getComponent(entityHandle, componentID)) {
+	for (const auto& [componentID, createFunc, componentHandle] : entity.m_components) {
+		if (const auto& component = getComponent(entity.m_components, m_components[componentID], componentID)) {
 			const auto componentData = component->to_buffer();
 			data.insert(data.end(), componentData.begin(), componentData.end());
 			entityDataCount += componentData.size();
@@ -393,7 +413,7 @@ std::vector<char> ecsWorld::serializeEntity(const EntityHandle& entityHandle)
 	std::memcpy(&data[entityDataCountIndex], &entityDataCount, sizeof(size_t));
 
 	// Write child entities
-	for (auto& [childHandle, child] : entity->m_children) {
+	for (auto& [childHandle, child] : entity.m_children) {
 		const auto childData = serializeEntity(childHandle);
 		data.insert(data.end(), childData.begin(), childData.end());
 	}
