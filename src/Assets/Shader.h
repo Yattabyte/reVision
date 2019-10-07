@@ -10,6 +10,7 @@
 class Engine;
 class Shader;
 
+
 /** Shared version of a Shader asset.
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Shader final : public std::shared_ptr<Shader> {
@@ -33,6 +34,7 @@ struct ShaderObj {
 	/** Construct a shader object. */
 	ShaderObj(const GLenum& type);
 
+
 	// Functions
 	/** Retrieve a shader parameter by the name specified.
 	@param		pname			the program parameter name.
@@ -48,6 +50,7 @@ struct ShaderObj {
 	@param		filename		the shader file name (for reporting purposes).
 	@return						true on success, false otherwise. */
 	bool createGLShader(Engine* engine, const std::string& filename);
+
 
 	// Attributes
 	GLuint m_shaderID = 0;
@@ -70,12 +73,14 @@ public:
 	@param	filename			the asset file name (relative to engine directory). */
 	Shader(Engine* engine, const std::string& filename);
 
+
 public:
 	// Public Methods
 	/** Make this shader program active */
 	void bind();
 	/** Inactivate any currently bound shader program. */
 	static void Release();
+
 
 	/**********************************************************************
 	----Convenient DSA functions for changing program uniform variables----
@@ -125,10 +130,12 @@ public:
 	inline void setUniformArray(const GLuint& i, const glm::mat4* o, const int& count) { glProgramUniformMatrix4fv(m_glProgramID, i, count, GL_FALSE, glm::value_ptr(*o)); }
 	inline void setUniformMatrixArray(const GLuint& i, const float* o, const int& count, const GLboolean& transpose) { glProgramUniformMatrix4fv(m_glProgramID, i, count, transpose, o); }
 
+
 	// Public Attributes
 	GLuint m_glProgramID = 0;
 	ShaderObj m_vertexShader = ShaderObj(GL_VERTEX_SHADER);
 	ShaderObj m_fragmentShader = ShaderObj(GL_FRAGMENT_SHADER);
+
 
 protected:
 	// Protected Methods
@@ -138,7 +145,7 @@ protected:
 	const GLint getProgramiv(const GLenum& pname) const;
 	/** Retrieve an error log corresponding to this shader program.
 	@return						an error log for this shader program. */
-	const std::vector<GLchar> getErrorLog() const;
+	[[nodiscard]] const std::vector<GLchar> getErrorLog() const;
 	/** Attempt to load a shader program from a cached binary file.
 	@param		relativePath	the relative path of the binary file.
 	@return						true on success, false otherwise. */
@@ -155,9 +162,11 @@ protected:
 	@return						true on success, false otherwise. */
 	const bool validateProgram();
 
+
 private:
 	// Private Interface Implementation
 	virtual void initialize() override;
+
 
 	// Private Attributes
 	friend class Shared_Shader;

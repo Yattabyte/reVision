@@ -3,7 +3,6 @@
 #define INSPECTOR_TRANSFORM_SYSTEM_H
 
 #include "Modules/Editor/Editor_M.h"
-#include "Modules/World/World_M.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
 #include "imgui.h"
@@ -88,7 +87,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Move_Command>(m_engine->getModule_ECS().getWorld(), *m_editor, getUUIDS(), posInput));
+				m_editor->doReversableAction(std::make_shared<Move_Command>(m_editor->getActiveWorld(), *m_editor, getUUIDS(), posInput));
 			}
 
 			// Rotation
@@ -132,7 +131,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Rotate_Command>(m_engine->getModule_ECS().getWorld(), getUUIDS(), glm::quat(glm::radians(rotInput))));
+				m_editor->doReversableAction(std::make_shared<Rotate_Command>(m_editor->getActiveWorld(), getUUIDS(), glm::quat(glm::radians(rotInput))));
 			}
 
 			// Scaling
@@ -178,7 +177,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Scale_Command>(m_engine->getModule_ECS().getWorld(), getUUIDS(), sclInput));
+				m_editor->doReversableAction(std::make_shared<Scale_Command>(m_editor->getActiveWorld(), getUUIDS(), sclInput));
 			}
 		}
 	}
@@ -189,4 +188,5 @@ private:
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
 };
+
 #endif // INSPECTOR_TRANSFORM_SYSTEM_H

@@ -16,18 +16,18 @@ public:
 	}
 	/** Default Constructor. */
 	inline StaticBuffer() = default;
-	/** Explicit Instantion. */
+	/** Explicit Instantiation. */
 	inline StaticBuffer(const GLsizeiptr& size, const void* data = 0, const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT)
 		: m_size(size), m_storageFlags(storageFlags) {
 		glCreateBuffers(1, &m_bufferID);
 		glNamedBufferStorage(m_bufferID, size, data, storageFlags);
 	}
-	/** Explicit Instantion. */
+	/** Explicit Instantiation. */
 	inline StaticBuffer(const StaticBuffer& other)
 		: StaticBuffer(other.m_size, 0, other.m_storageFlags) {
 		glCopyNamedBufferSubData(other.m_bufferID, m_bufferID, 0, 0, other.m_size);
 	}
-	/** Explicit Instantion. */
+	/** Explicit Instantiation. */
 	inline StaticBuffer(StaticBuffer&& other) noexcept : m_bufferID(0) {
 		*this = std::move(other);
 	}
@@ -41,7 +41,7 @@ public:
 	}
 
 
-	// Public Inteface Implementations
+	// Public Interface Implementations
 	inline virtual void bindBuffer(const GLenum& target) const override final {
 		glBindBuffer(target, m_bufferID);
 	}

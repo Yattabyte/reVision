@@ -17,14 +17,6 @@ void Physics_Module::initialize(Engine* engine)
 
 	// Physics Systems
 	m_physicsSystems.makeSystem<TransformSync_Phys_System>(engine, m_world);
-
-	// World-Changed Callback
-	m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
-		if (state == World_Module::unloaded)
-			m_enabled = false;
-		else if (state == World_Module::finishLoading || state == World_Module::updated)
-			m_enabled = true;
-		});
 }
 
 void Physics_Module::deinitialize()
@@ -41,11 +33,9 @@ void Physics_Module::deinitialize()
 	delete m_world;
 }
 
-void Physics_Module::frameTick(const float& deltaTime)
+void Physics_Module::frameTick(ecsWorld& world, const float& deltaTime)
 {
-	if (m_enabled) {
-		// Only update simulation if engine is READY
-		m_world->stepSimulation(deltaTime);
-		m_engine->getModule_ECS().updateSystems(m_physicsSystems, deltaTime);
-	}
+	// To Do: disable physics per object if object isn't fully initialized
+	m_world->stepSimulation(deltaTime);
+	world.updateSystems(m_physicsSystems, deltaTime);
 }

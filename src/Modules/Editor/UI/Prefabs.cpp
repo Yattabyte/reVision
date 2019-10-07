@@ -1,7 +1,6 @@
 #include "Modules/Editor/UI/Prefabs.h"
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/ECS/component_types.h"
-#include "Modules/World/World_M.h"
 #include "imgui.h"
 #include "Engine.h"
 #include <fstream>
@@ -26,6 +25,10 @@ Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor)
 void Prefabs::tick(const float& deltaTime)
 {
 	if (m_open) {
+		// Update Thumbnails
+		/*m_worldPreview.updateSystem(&m_thumbnailSystem, 0.0f);
+		m_thumbnailSystem.tickThumbnails();*/
+
 		ImGui::SetNextWindowDockID(ImGui::GetID("LeftDock"), ImGuiCond_FirstUseEver);
 		enum PrefabOptions {
 			none,
@@ -50,7 +53,6 @@ void Prefabs::tick(const float& deltaTime)
 			ImGui::Text(directory.c_str());
 			ImGui::Spacing();
 			ImGuiStyle& style = ImGui::GetStyle();
-
 			auto columnCount = int(float(ImGui::GetWindowContentRegionMax().x) / float((ImGui::GetStyle().ItemSpacing.x * 2) + 50));
 			columnCount < 1 ? 1 : columnCount;
 			ImGui::Columns(columnCount, nullptr, false);

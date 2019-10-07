@@ -14,7 +14,7 @@ void Game_Module::initialize(Engine* engine)
 	m_engine->getManager_Messages().statement("Loading Module: Game...");
 
 	// Initialize ECS Systems
-	m_Systems.makeSystem<PlayerSpawn_System>(m_engine);
+	m_Systems.makeSystem<PlayerSpawn_System>(m_engine, this);
 	m_Systems.makeSystem<PlayerFreeLook_System>(m_engine);
 
 	// Create Overlay Effects
@@ -59,7 +59,15 @@ void Game_Module::frameTick(const float& deltaTime)
 	}
 
 	// Update our own ECS systems
-	m_engine->getModule_ECS().updateSystems(m_Systems, deltaTime);
+	m_world.updateSystems(m_Systems, deltaTime);
+	m_engine->getModule_Physics().frameTick(m_world, deltaTime);
+	m_engine->getModule_Graphics().frameTick(m_world, deltaTime);
+	renderOverlays(deltaTime);
+}
+
+ecsWorld& Game_Module::getWorld()
+{
+	return m_world;
 }
 
 void Game_Module::renderOverlays(const float& deltaTime)
@@ -71,7 +79,7 @@ void Game_Module::renderOverlays(const float& deltaTime)
 void Game_Module::showGame()
 {
 	m_gameState = in_game;
-	m_engine->getModule_World().loadWorld("a.bmap");
+	//m_engine->getModule_World().loadWorld("a.bmap");
 	m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
 }
 

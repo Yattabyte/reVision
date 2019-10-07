@@ -31,7 +31,7 @@ void EntityInspector::tick(const float& deltaTime)
 			// Render the selected component attributes that we have widgets for
 			const auto text = std::string("Entities Selected: (" + std::to_string(selectedEntities.size()) + ")");
 			ImGui::Text(text.c_str());
-			m_engine->getModule_ECS().updateSystems(m_inspectorSystems, deltaTime);
+			m_editor->getActiveWorld().updateSystems(m_inspectorSystems, deltaTime);
 		}
 		ImGui::End();
 	}

@@ -3,7 +3,7 @@
 #define GAME_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsWorld.h"
 #include "Modules/Game/Overlays/Overlay.h"
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include <memory>
@@ -29,10 +29,13 @@ public:
 	// Public Interface Implementation
 	virtual void initialize(Engine* engine) override final;
 	virtual void deinitialize() override final;
-	virtual void frameTick(const float& deltaTime) override final;
 
 
 	// Public Methods
+	/***/
+	void frameTick(const float& deltaTime);
+	/***/
+	ecsWorld& getWorld();
 	/** Render any and all of the game module's overlays to the screen.
 	@param	deltaTime	the amount of time passed since last frame. */
 	void renderOverlays(const float& deltaTime);
@@ -47,6 +50,7 @@ private:
 	// Private Attributes
 	Game_State m_gameState = in_game;
 	ecsSystemList m_Systems;
+	ecsWorld m_world;
 	std::shared_ptr<UI_Element> m_pauseMenu;
 	std::shared_ptr<Overlay> m_loadingRing, m_frameTime;
 };

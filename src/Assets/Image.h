@@ -39,7 +39,7 @@ public:
 };
 
 /** Contains image data and related attributes.
-Resonsible for fetching and processing an image from disk and optionally resizing it. */
+Responsible for fetching and processing an image from disk and optionally resizing it. */
 class Image final : public Asset {
 public:
 	// Public (de)Constructors

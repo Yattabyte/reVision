@@ -26,7 +26,7 @@ void Asset::addCallback(const std::shared_ptr<bool>& alive, const AssetFinalized
 bool Asset::existsYet() const
 {
 	// Exit early if this points to nothing
-	if (!this)
+	if (!this) [[unlikely]]
 		return false;
 
 	// Check if we're finalized

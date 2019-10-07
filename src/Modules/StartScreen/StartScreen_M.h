@@ -3,7 +3,7 @@
 #define STARTSCREEN_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsWorld.h"
 #include "Modules/Game/Overlays/Overlay.h"
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include <memory>
@@ -25,12 +25,15 @@ public:
 
 
 	// Public Methods
+	/***/
+	void frameTick(const float& deltaTime);
 	/** Display the start menu. */
 	void showStartMenu();
 
 
 private:
 	// Private Attributes
+	ecsWorld m_world;
 	std::shared_ptr<UI_Element> m_startMenu;
 };
 

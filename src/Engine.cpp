@@ -19,7 +19,6 @@ Engine::~Engine()
 	// Update indicator
 	*m_aliveIndicator = false;
 	m_moduleECS.deinitialize();
-	m_moduleWorld.deinitialize();
 	m_moduleGraphics.deinitialize();
 	m_moduleUI.deinitialize();
 	m_modulePhysics.deinitialize();
@@ -44,7 +43,6 @@ Engine::Engine() :
 
 	printBoilerPlate();
 	m_moduleECS.initialize(this);
-	m_moduleWorld.initialize(this);
 	m_moduleGraphics.initialize(this);
 	m_moduleUI.initialize(this);
 	m_modulePhysics.initialize(this);
@@ -165,27 +163,21 @@ void Engine::initWindow()
 				case GL_DEBUG_SOURCE_API:
 					_source = "API";
 					break;
-
 				case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
 					_source = "WINDOW SYSTEM";
 					break;
-
 				case GL_DEBUG_SOURCE_SHADER_COMPILER:
 					_source = "SHADER COMPILER";
 					break;
-
 				case GL_DEBUG_SOURCE_THIRD_PARTY:
 					_source = "THIRD PARTY";
 					break;
-
 				case GL_DEBUG_SOURCE_APPLICATION:
 					_source = "APPLICATION";
 					break;
-
 				case GL_DEBUG_SOURCE_OTHER:
 					_source = "UNKNOWN";
 					break;
-
 				default:
 					_source = "UNKNOWN";
 					break;
@@ -195,31 +187,24 @@ void Engine::initWindow()
 				case GL_DEBUG_TYPE_ERROR:
 					_type = "ERROR";
 					break;
-
 				case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
 					_type = "DEPRECATED BEHAVIOR";
 					break;
-
 				case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
 					_type = "UDEFINED BEHAVIOR";
 					break;
-
 				case GL_DEBUG_TYPE_PORTABILITY:
 					_type = "PORTABILITY";
 					break;
-
 				case GL_DEBUG_TYPE_PERFORMANCE:
 					_type = "PERFORMANCE";
 					break;
-
 				case GL_DEBUG_TYPE_OTHER:
 					_type = "OTHER";
 					break;
-
 				case GL_DEBUG_TYPE_MARKER:
 					_type = "MARKER";
 					break;
-
 				default:
 					_type = "UNKNOWN";
 					break;
@@ -229,19 +214,15 @@ void Engine::initWindow()
 				case GL_DEBUG_SEVERITY_HIGH:
 					_severity = "HIGH";
 					break;
-
 				case GL_DEBUG_SEVERITY_MEDIUM:
 					_severity = "MEDIUM";
 					break;
-
 				case GL_DEBUG_SEVERITY_LOW:
 					_severity = "LOW";
 					break;
-
 				case GL_DEBUG_SEVERITY_NOTIFICATION:
 					_severity = "NOTIFICATION";
 					break;
-
 				default:
 					_severity = "UNKNOWN";
 					break;
@@ -294,7 +275,7 @@ void Engine::printBoilerPlate()
 #else
 	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + " (DEBUG)\t*");
 #endif // DEBUG
-	m_messageManager.statement("*  - Build Date   October 5th, 2019\t*");
+	m_messageManager.statement("*  - Build Date   October 7th, 2019\t*");
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > Library Info:\t\t\t*");
 	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t\t*");
@@ -341,20 +322,13 @@ void Engine::tick()
 	m_moduleUI.applyActionState(m_actionState);
 
 	// Tick relevant systems
-	m_moduleECS.frameTick(deltaTime);
-	m_modulePhysics.frameTick(deltaTime);
-	m_moduleWorld.frameTick(deltaTime);
 	if (m_engineState == in_startMenu)
 		m_moduleStartScreen.frameTick(deltaTime);
 	else if (m_engineState == in_game)
 		m_moduleGame.frameTick(deltaTime);
-	m_moduleGraphics.frameTick(deltaTime);
-	if (m_engineState == in_editor)
+	else if (m_engineState == in_editor)
 		m_moduleEditor.frameTick(deltaTime);
 	m_moduleUI.frameTick(deltaTime);
-
-	// This is done last so they can appear over-top
-	m_moduleGame.renderOverlays(deltaTime);
 
 	// Swap buffers and end
 	glfwSwapBuffers(m_window);

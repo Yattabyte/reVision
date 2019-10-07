@@ -10,7 +10,7 @@
 @param	<T_elmt>	the element to store type
 @param	<T_compare>	the comparator type, defaults to less (an ascending list) */
 template <typename T_key, typename T_elmt, typename T_compare = std::less<T_key>>
-class PriorityList {
+class [[deprecated]] PriorityList{
 private:
 	// Private Attributes
 	/** Nested element struct */
@@ -49,7 +49,7 @@ public:
 	/** Insert a new element into the lsit into a correct relative position.
 	@param	key		the key used to sort this element
 	@param	value	the value paired with the key to be inserted */
-	inline void insert(const T_key& key, const T_elmt& value) {
+	inline void insert(const T_key & key, const T_elmt & value) {
 		for (auto walk = m_list.begin(); walk != m_list.end(); ++walk) {
 			if (m_comparator(key, (*walk).m_key)) {
 				m_list.insert(walk, Element(key, value));

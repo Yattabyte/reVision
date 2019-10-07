@@ -3,7 +3,6 @@
 #define INSPECTOR_PROP_SYSTEM_H
 
 #include "Modules/Editor/Editor_M.h"
-#include "Modules/World/World_M.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
 #include "imgui.h"
@@ -89,7 +88,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Name_Command>(m_engine->getModule_ECS().getWorld(), getUUIDS(), std::string(nameInput)));
+				m_editor->doReversableAction(std::make_shared<Name_Command>(m_editor->getActiveWorld(), getUUIDS(), std::string(nameInput)));
 			}
 
 			auto skinInput = (int)((Prop_Component*)components[0][1])->m_skin;
@@ -132,7 +131,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Skin_Command>(m_engine->getModule_ECS().getWorld(), getUUIDS(), skinInput));
+				m_editor->doReversableAction(std::make_shared<Skin_Command>(m_editor->getActiveWorld(), getUUIDS(), skinInput));
 			}
 			for each (auto & componentParam in components)
 				((Prop_Component*)componentParam[1])->m_skin = (unsigned int)skinInput;
@@ -145,4 +144,5 @@ private:
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
 };
+
 #endif // INSPECTOR_PROP_SYSTEM_H

@@ -72,12 +72,12 @@ public:
 	@param	<T>		the system class type.
 	@param	...Args	variadic arguments to forward to the system constructor. */
 	template <typename T, class...Args>
-	inline const bool makeSystem(Args ...args) {
+	inline std::shared_ptr<T> makeSystem(Args ...args) {
 		const auto& system = std::make_shared<T>(args...);
 		if (!system->isValid())
-			return false;
+			return {};
 		m_systems.push_back(system);
-		return true;
+		return system;
 	}
 	/** Adds a system to the list.
 	@param	system	the system to add. */
@@ -125,7 +125,7 @@ public:
 	/** Retrieve a const iterator to the end of this system list.
 	@return			a const iterator to the end of this system list. */
 	inline auto end() const {
-		return  m_systems.cend();
+		return m_systems.cend();
 	}
 
 

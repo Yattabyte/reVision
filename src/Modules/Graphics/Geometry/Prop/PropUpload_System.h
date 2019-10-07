@@ -66,12 +66,6 @@ public:
 
 		// Share material array for rendering purposes
 		frameData->m_materialArrayID = m_matID;
-
-		// Clear state on world-unloaded
-		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
-			if (state == World_Module::unloaded)
-				clear();
-			});
 	}
 
 

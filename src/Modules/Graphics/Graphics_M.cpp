@@ -5,7 +5,6 @@
 #include "Modules/Graphics/Logical/CameraArrayPerspective_System.h"
 #include "Modules/Graphics/Logical/FrustumCull_System.h"
 #include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
-#include "Modules/World/World_M.h"
 #include "Engine.h"
 #include <memory>
 #include <random>
@@ -74,7 +73,7 @@ void Graphics_Module::initialize(Engine* engine)
 	m_sceneCameras = std::make_shared<std::vector<Camera*>>();
 	m_cameraBuffer = std::make_shared<GL_ArrayBuffer<Camera::GPUData>>();
 	auto sharedCameraCounter = std::make_shared<int>(0);
-	m_systems.makeSystem<Transform_System>(m_engine);
+	m_transHierachy = m_systems.makeSystem<Transform_System>(m_engine);
 	m_systems.makeSystem<CameraPerspective_System>(m_sceneCameras);
 	m_systems.makeSystem<CameraArrayPerspective_System>(m_sceneCameras);
 	m_systems.makeSystem<FrustumCull_System>(m_sceneCameras);
@@ -96,7 +95,7 @@ void Graphics_Module::deinitialize()
 	*m_aliveIndicator = false;
 }
 
-void Graphics_Module::frameTick(const float& deltaTime)
+void Graphics_Module::frameTick(ecsWorld& world, const float& deltaTime)
 {
 	// Prepare rendering pipeline for a new frame, wait for buffers to free
 	m_clientCamera->updateFrustum();
@@ -108,7 +107,8 @@ void Graphics_Module::frameTick(const float& deltaTime)
 	m_rhVolume->updateVolume(m_clientCamera.get());
 
 	// All ECS Systems updated once per frame, updating components pertaining to all viewing perspectives
-	m_engine->getModule_ECS().updateSystems(m_systems, deltaTime);
+	std::dynamic_pointer_cast<Transform_System>(m_transHierachy)->m_world = &world;
+	world.updateSystems(m_systems, deltaTime);
 	m_cameraBuffer->resize(m_sceneCameras->size());
 	for (size_t x = 0ull; x < m_sceneCameras->size(); ++x)
 		(*m_cameraBuffer)[x] = *(*m_sceneCameras)[x]->get();

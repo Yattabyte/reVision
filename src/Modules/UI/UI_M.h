@@ -27,10 +27,11 @@ public:
 	// Public Interface Implementations
 	virtual void initialize(Engine* engine) override final;
 	virtual void deinitialize() override final;
-	virtual void frameTick(const float& deltaTime) override final;
 
 
 	// Public Methods
+	/***/
+	void frameTick(const float& deltaTime);
 	/** Push a new UI element onto a stack to receive input and be rendered.
 	@param	rootElement			the main element of focus for this UI system. */
 	void setRootElement(const std::shared_ptr<ImGUI_Element>& rootElement) {

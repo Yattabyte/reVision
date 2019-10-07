@@ -3,7 +3,6 @@
 #define INSPECTOR_LIGHTRADIUS_SYSTEM_H
 
 #include "Modules/Editor/Editor_M.h"
-#include "Modules/World/World_M.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
 #include "imgui.h"
@@ -79,7 +78,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Radius_Command>(m_engine->getModule_ECS().getWorld(), getUUIDS(), radiusInput));
+				m_editor->doReversableAction(std::make_shared<Radius_Command>(m_editor->getActiveWorld(), getUUIDS(), radiusInput));
 			}
 		}
 	}
@@ -90,4 +89,5 @@ private:
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
 };
+
 #endif // INSPECTOR_LIGHTRADIUS_SYSTEM_H

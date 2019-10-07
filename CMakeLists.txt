@@ -4,14 +4,14 @@
 cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0079 NEW)
 include(ExternalProject)
-project(reVision VERSION 4.13.16 DESCRIPTION "Video game engine project.")
+project(reVision VERSION 4.14.0 DESCRIPTION "Video game engine project.")
 
 
 # Get dependency directory locations from the user
 option(REACQUIRE_DEPENDENCIES "Allow updating dependencies" true)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /Oi /Ot /GF /Qpar /std:c++latest /GL")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /Oi /Ot /GF /Qpar /std:c++latest")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Od /Gy /MDd")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /Ob2 /GL /MD")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LTCG:incremental")

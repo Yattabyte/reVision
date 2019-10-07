@@ -10,7 +10,7 @@ Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& 
 			asset_read_guard.unlock();
 			asset_read_guard.release();
 			// Check if we need to wait for initialization
-			if (!threaded)
+			if (!threaded) [[unlikely]]
 				// Stay here until asset finalizes
 				while (!asset->existsYet())
 					std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -27,7 +27,7 @@ Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& 
 	asset_write_guard.release();
 
 	// Initialize now or later, depending if we are threading this order or not
-	if (threaded) {
+	if (threaded) [[likely]] {
 		std::unique_lock<std::shared_mutex> worker_write_guard(m_Mutex_Workorders);
 		m_Workorders.push_back(std::move(std::bind(&Asset::initialize, asset)));
 	}

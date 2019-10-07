@@ -31,20 +31,20 @@ public:
 	@param	UUID				optional entity UUID, if empty will auto-generate.
 	@param	parentUUID			optional parent entity UUID, if not at the level root.
 	@return						handle to the entity on success, empty on failure. */
-	EntityHandle makeEntity(ecsBaseComponent** components, const size_t& numComponents, const std::string& name = "Entity", const EntityHandle& UUID = EntityHandle(), const EntityHandle& parentUUID = EntityHandle());
+	[[maybe_unused]] EntityHandle makeEntity(ecsBaseComponent** components, const size_t& numComponents, const std::string& name = "Entity", const EntityHandle& UUID = EntityHandle(), const EntityHandle& parentUUID = EntityHandle());
 	/** Adds a component to an entity.
 	@param	entityHandle		handle to the entity to add the component to.
 	@param	component			the component being added.
 	@param	UUID				optional component UUID, if empty will auto-generate.
 	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
-	ComponentHandle makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* component, const ComponentHandle& UUID = ComponentHandle());
+	[[maybe_unused]] ComponentHandle makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* component, const ComponentHandle& UUID = ComponentHandle());
 	/** Adds a component to an entity.
 	@param	entityHandle		handle to the entity to add the component to.
 	@param	componentID			the runtime component class.
 	@param	component			the component being added.
 	@param	UUID				optional component UUID, if empty will auto-generate.
 	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
-	ComponentHandle makeComponent(const EntityHandle& entityHandle, const ComponentID& componentID, const ecsBaseComponent* component = nullptr, const ComponentHandle& UUID = ComponentHandle());
+	[[maybe_unused]] ComponentHandle makeComponent(const EntityHandle& entityHandle, const ComponentID& componentID, const ecsBaseComponent* component = nullptr, const ComponentHandle& UUID = ComponentHandle());
 
 
 	///////////////////////////////
@@ -140,19 +140,19 @@ public:
 	/** Serialize a specific set of entities to a char vector.
 	@param	entityHandles		the set of entities identified by their handles to serialize.
 	@return						char vector containing serialized entity data. */
-	std::vector<char> serializeEntities(const std::vector<EntityHandle>& entityHandles);
+	[[nodiscard]] std::vector<char> serializeEntities(const std::vector<EntityHandle>& entityHandles);
 	/** Serialize a specific set of entities to a char vector.
 	@param	entities			the set of specific entities to serialize.
 	@return						char vector containing serialized entity data. */
-	std::vector<char> serializeEntities(const std::vector<ecsEntity*>& entities);
+	[[nodiscard]] std::vector<char> serializeEntities(const std::vector<ecsEntity*>& entities);
 	/** Serialize a specific entity to a char vector.
 	@param	entityHandle		handle to the entity to serialize.
 	@return						char vector containing serialized entity data. */
-	std::vector<char> serializeEntity(const EntityHandle& entityHandle);
+	[[nodiscard]] std::vector<char> serializeEntity(const EntityHandle& entityHandle);
 	/** Serialize a specific entity to a char vector.
 	@param	entity				the specific entity to serialize.
 	@return						char vector containing serialized entity data. */
-	std::vector<char> serializeEntity(const ecsEntity& entity);
+	[[nodiscard]] std::vector<char> serializeEntity(const ecsEntity& entity);
 	/** De-serialize an entity from a char array.
 	@param	data				previously serialized entity data.
 	@param	dataSize			the size of the data in bytes (sizeof(char) * elements).
@@ -160,7 +160,7 @@ public:
 	@param	parentHandle		optional handle to parent entity, designed to be called recursively if entity has children.
 	@param	desiredHandle		optional specific handle to use, if empty will use handle held in data stream.
 	@return						a handle and a pointer pair to the entity created. */
-	std::pair<EntityHandle, ecsEntity*> deserializeEntity(const char* data, const size_t& dataSize, size_t& dataRead, const EntityHandle& parentHandle = EntityHandle(), const EntityHandle& desiredHandle = EntityHandle());
+	[[maybe_unused]] std::pair<EntityHandle, ecsEntity*> deserializeEntity(const char* data, const size_t& dataSize, size_t& dataRead, const EntityHandle& parentHandle = EntityHandle(), const EntityHandle& desiredHandle = EntityHandle());
 	/** Try to find a component ID based on the component ID.
 	@param	name				the component class name to search for.
 	@return						optional component ID on success, nullptr on failure. */
@@ -168,7 +168,7 @@ public:
 	/** Search for a component template with a matching class name.
 	@param	name				the component class name to search for.
 	@return						shared pointer to the a new component with a matching class name if successful, nullptr otherwise. */
-	std::shared_ptr<ecsBaseComponent> makeComponentType(const char* name);
+	[[nodiscard]] std::shared_ptr<ecsBaseComponent> makeComponentType(const char* name);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */
@@ -200,7 +200,7 @@ private:
 	void deleteComponent(const ComponentID& componentID, const ComponentID& index);
 	/** Retrieve the components relevant to an ECS system.
 	@param	componentTypes		list of component types to retrieve. */
-	std::vector<std::vector<ecsBaseComponent*>> getRelevantComponents(const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes);
+	[[nodiscard]] std::vector<std::vector<ecsBaseComponent*>> getRelevantComponents(const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes);
 	/** Find the least common component.
 	@param	componentTypes		the component types. */
 	size_t findLeastCommonComponent(const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes);

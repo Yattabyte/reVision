@@ -9,26 +9,22 @@ void ECS_Module::deinitialize()
 {
 }
 
-void ECS_Module::frameTick(const float& deltaTime)
+void ECS_Module::updateSystems(ecsSystemList& systems, ecsWorld& world, const float& deltaTime)
 {
+	world.updateSystems(systems, deltaTime);
 }
 
-void ECS_Module::updateSystems(ecsSystemList& systems, const float& deltaTime)
+void ECS_Module::updateSystem(ecsBaseSystem* system, ecsWorld& world, const float& deltaTime)
 {
-	m_world.updateSystems(systems, deltaTime);
+	world.updateSystem(system, deltaTime);
 }
 
-void ECS_Module::updateSystem(ecsBaseSystem* system, const float& deltaTime)
+void ECS_Module::updateSystem(const std::shared_ptr<ecsBaseSystem>& system, ecsWorld& world, const float& deltaTime)
 {
-	m_world.updateSystem(system, deltaTime);
+	world.updateSystem(system, deltaTime);
 }
 
-void ECS_Module::updateSystem(const std::shared_ptr<ecsBaseSystem>& system, const float& deltaTime)
+void ECS_Module::updateSystem(const float& deltaTime, ecsWorld& world, const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func)
 {
-	m_world.updateSystem(system, deltaTime);
-}
-
-void ECS_Module::updateSystem(const float& deltaTime, const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func)
-{
-	m_world.updateSystem(deltaTime, componentTypes, func);
+	world.updateSystem(deltaTime, componentTypes, func);
 }

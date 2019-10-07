@@ -15,7 +15,6 @@
 #include "Modules/Graphics/Graphics_M.h"
 #include "Modules/Physics/Physics_M.h"
 #include "Modules/UI/UI_M.h"
-#include "Modules/World/World_M.h"
 
 // Utilities
 #include "Utilities/ActionState.h"
@@ -26,7 +25,7 @@
 // Other
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "4.13.16";
+constexpr char ENGINE_VERSION[] = "4.14.0";
 struct GLFWwindow;
 
 
@@ -116,8 +115,6 @@ public:
 	UI_Module& getModule_UI() { return m_moduleUI; }
 	/** Returns this engine's physics module. */
 	Physics_Module& getModule_Physics() { return m_modulePhysics; }
-	/** Returns this engine's world module. */
-	World_Module& getModule_World() { return m_moduleWorld; }
 
 
 	// Static Methods
@@ -159,9 +156,9 @@ private:
 	std::vector<std::pair<std::thread, std::promise<void>>> m_threads;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 
+
 	// Private Modules
 	ECS_Module m_moduleECS;
-	World_Module m_moduleWorld;
 	StartScreen_Module m_moduleStartScreen;
 	Game_Module m_moduleGame;
 	LevelEditor_Module m_moduleEditor;

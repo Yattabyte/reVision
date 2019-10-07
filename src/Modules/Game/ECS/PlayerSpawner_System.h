@@ -5,6 +5,7 @@
 
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
+#include "Modules/Game/Game_M.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
 
@@ -19,7 +20,8 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Construct a free-look system. */
-	inline PlayerSpawn_System(Engine* engine) : m_engine(engine) {
+	inline PlayerSpawn_System(Engine* engine, Game_Module* game)
+		: m_engine(engine), m_game(game) {
 		// Declare component types used
 		addComponentType(PlayerSpawn_Component::m_ID, FLAG_REQUIRED);
 		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
@@ -27,47 +29,35 @@ public:
 		// Error Reporting
 		if (!isValid())
 			engine->getManager_Messages().error("Invalid ECS System: PlayerSpawn_System");
-
-		// Clear state on world-unloaded
-		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
-			if (state == World_Module::unloaded)
-				clear();
-			});
 	}
 
 
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override final {
 		auto& graphicsModule = m_engine->getModule_Graphics();
+		size_t playerCount(0ull);
 		for each (const auto & componentParam in components) {
 			PlayerSpawn_Component* spawnComponent = (PlayerSpawn_Component*)componentParam[0];
 			Transform_Component* transformComponent = (Transform_Component*)componentParam[1];
 
 			auto& transform = transformComponent->m_worldTransform;
-			if (m_playerCount == 0ull) {
+			if (playerCount == 0ull) {
 				Player3D_Component player;
 				Transform_Component trans;
 
 				trans.m_localTransform = transform;
 
 				ecsBaseComponent* entityComponents[] = { &player, &trans };
-				m_engine->getModule_ECS().getWorld().makeEntity(entityComponents, 2ull, "Player");
-				m_playerCount++;
+				m_game->getWorld().makeEntity(entityComponents, 2ull, "Player");
 			}
 		}
 	};
 
 
 private:
-	// Private Methods
-	/** Clear out the players in this level. */
-	inline void clear() {
-		m_playerCount = 0ull;
-	}
-
-
 	// Private Attributes
 	Engine* m_engine = nullptr;
+	Game_Module* m_game = nullptr;
 	size_t m_playerCount = 0ull;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

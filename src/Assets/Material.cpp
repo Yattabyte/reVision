@@ -28,7 +28,7 @@ Material::Material(Engine* engine, const std::string& filename, const std::vecto
 	: Asset(engine, filename), m_textures(tx)
 {
 	// We need to reserve a region of gpu memory for all the textures
-	// So we need to pre-emptively figure out the maximum number of textures we may need (can't delay until later)
+	// So we need to preemptively figure out the maximum number of textures we may need (can't delay until later)
 	// Thus, we will process any extra files ahead of time, like ".mat"
 
 	// Check if we're loading extra material data from a .mat file
@@ -101,7 +101,7 @@ void Material::initialize()
 
 /** Attempts to retrieve a std::string between quotation marks "<std::string>"
 @return	the std::string between quotation marks */
-std::string const get_between_quotes(std::string& s)
+[[nodiscard]] std::string const get_between_quotes(std::string& s)
 {
 	std::string output = s;
 	size_t spot1 = s.find_first_of("\"");
@@ -116,12 +116,14 @@ std::string const get_between_quotes(std::string& s)
 	}
 	return output;
 }
-/** Parse a given line between parantheses and convert it to a string.
+
+/** Parse a given line between parentheses and convert it to a string.
 @param	in	the string to convert
 @return		a string */
-std::string const getType_String(std::string& in) {
+[[nodiscard]] std::string const getType_String(std::string& in) {
 	return get_between_quotes(in);
 }
+
 /** Search a given string and return whether or not it contains the desired string.
 @param		s1	the string to search within
 @param		s2	the target string to find
@@ -129,6 +131,8 @@ std::string const getType_String(std::string& in) {
 bool const find(const std::string& s1, const std::string& s2) {
 	return (s1.find(s2) != std::string::npos);
 }
+
+/***/
 std::vector<std::string> parse_pbr(std::ifstream& file_stream)
 {
 	std::vector<std::string> textures(MAX_PHYSICAL_IMAGES);
@@ -163,6 +167,7 @@ std::vector<std::string> parse_pbr(std::ifstream& file_stream)
 	}
 	return textures;
 }
+
 std::vector<std::string> Material::Get_Material_Textures(const std::string& relativePath)
 {
 	std::vector<std::string> textures;

@@ -28,6 +28,12 @@ void StartScreen_Module::deinitialize()
 	m_engine->getManager_Messages().statement("Unloading Module: Starting Screen...");
 }
 
+void StartScreen_Module::frameTick(const float& deltaTime)
+{
+	m_engine->getModule_Physics().frameTick(m_world, deltaTime);
+	m_engine->getModule_Graphics().frameTick(m_world, deltaTime);
+}
+
 void StartScreen_Module::showStartMenu()
 {
 	m_engine->setMouseInputMode(Engine::MouseInputMode::NORMAL);

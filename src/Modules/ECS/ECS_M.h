@@ -20,42 +20,26 @@ public:
 	// Public Interface Implementations
 	virtual void initialize(Engine* engine) override final;
 	virtual void deinitialize() override final;
-	virtual void frameTick(const float& deltaTime) override final;
 
 
 	// Public Methods
-	/** Retrieve the currently active ECS-world.
-	@return			the current ECS-world.*/
-	inline ecsWorld& getWorld() {
-		return m_world;
-	}
-	/** Overwrite the currently active ECS-world.
-	@param			the new ECS-world to use. */
-	inline void setWorld(ecsWorld&& newWorld) {
-		m_world = std::move(newWorld);
-	}
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */
-	void updateSystems(ecsSystemList& systems, const float& deltaTime);
+	[[maybe_unused]] static void updateSystems(ecsSystemList& systems, ecsWorld& world, const float& deltaTime = 0.0f);
 	/** Update the components of a single system.
 	@param	system				the system to update.
 	@param	deltaTime			the delta time. */
-	void updateSystem(ecsBaseSystem* system, const float& deltaTime);
+	[[maybe_unused]] static void updateSystem(ecsBaseSystem* system, ecsWorld& world, const float& deltaTime = 0.0f);
 	/** Update the components of a single system.
 	@param	system				the system to update.
 	@param	deltaTime			the delta time. */
-	void updateSystem(const std::shared_ptr<ecsBaseSystem>& system, const float& deltaTime);
+	[[maybe_unused]] static void updateSystem(const std::shared_ptr<ecsBaseSystem>& system, ecsWorld& world, const float& deltaTime = 0.0f);
 	/** Update the components of a single system.
 	@param	deltaTime			the delta time.
 	@param	componentTypes		list of component types to retrieve.
 	@param	func				lambda function serving as a system. */
-	void updateSystem(const float& deltaTime, const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func);
-
-
-private:
-	// Private Attributes
-	ecsWorld m_world;
+	[[maybe_unused]] static void updateSystem(const float& deltaTime, ecsWorld& world, const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func);
 };
 
 #endif // ECS_MODULE_H

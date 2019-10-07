@@ -30,10 +30,11 @@ public:
 	// Public Interface Implementation
 	virtual void initialize(Engine* engine) override final;
 	virtual void deinitialize() override final;
-	virtual void frameTick(const float& deltaTime) override final;
 
 
 	// Public Methods
+	/***/
+	void frameTick(ecsWorld& world, const float& deltaTime);
 	/** Render using our graphics pipeline, from the camera buffer specified into the framebuffers and volume specified.
 	@param	deltaTime		the amount of time since last frame.
 	@param	viewport		the view port to render into.
@@ -71,9 +72,10 @@ private:
 	Shared_Shader									m_shader;
 	Shared_Auto_Model								m_shapeQuad;
 	IndirectDraw									m_indirectQuad;
-	std::shared_ptr<bool>							m_aliveIndicator = std::make_shared<bool>(true);
+	std::shared_ptr<ecsBaseSystem>					m_transHierachy;
 	std::shared_ptr<std::vector<Camera*>>			m_sceneCameras;
 	std::shared_ptr<GL_ArrayBuffer<Camera::GPUData>> m_cameraBuffer;
+	std::shared_ptr<bool>							m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // GRAPHICS_MODULE_H

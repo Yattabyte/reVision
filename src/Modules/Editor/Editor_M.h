@@ -3,8 +3,7 @@
 #define EDITOR_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/ECS/ecsEntity.h"
-#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsWorld.h"
 #include "Modules/UI/UI_M.h"
 #include "Utilities/Transform.h"
 #include <deque>
@@ -28,10 +27,11 @@ public:
 	// Public Interface Implementation
 	virtual void initialize(Engine* engine) override final;
 	virtual void deinitialize() override final;
-	virtual void frameTick(const float& deltaTime) override final;
 
 
 	// Public Methods
+	/***/
+	void frameTick(const float& deltaTime);
 	/** Display the level editor. */
 	void showEditor();
 	/** Close the level editor, returning to the main menu. */
@@ -39,6 +39,8 @@ public:
 	/** Check if the editor has any unsaved changes.
 	@return					true if the level has unsaved changes, false otherwise. */
 	bool hasUnsavedChanges() const;
+	/***/
+	ecsWorld& getActiveWorld();
 	/** Retrieve the currently active map's file name.
 	@return					current map's file name. */
 	std::string getMapName() const;
@@ -153,6 +155,7 @@ private:
 	// Private Attributes
 	bool m_active = false, m_unsavedChanges = false;
 	float m_autoSaveCounter = 0.0f, m_autosaveInterval = 60.0f;
+	ecsWorld m_world;
 	std::string m_currentLevelName = "My Map.bmap";
 	std::shared_ptr<Editor_Interface> m_editorInterface;
 	std::shared_ptr<Mouse_Gizmo> m_mouseGizmo;

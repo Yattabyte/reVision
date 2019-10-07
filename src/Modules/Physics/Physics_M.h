@@ -20,10 +20,11 @@ public:
 	// Public Interface Implementations
 	virtual void initialize(Engine* engine) override final;
 	virtual void deinitialize() override final;
-	virtual void frameTick(const float& deltaTime) override final;
 
 
 	// Public Methods
+	/***/
+	void frameTick(ecsWorld& world, const float& deltaTime);
 	/** Returns a pointer to the physics-world.
 	@return				the physics world. */
 	inline btDiscreteDynamicsWorld* getWorld() { return m_world; }
@@ -31,7 +32,6 @@ public:
 
 private:
 	// Private Attributes
-	bool m_enabled = false;
 	btBroadphaseInterface* m_broadphase = nullptr;
 	btDefaultCollisionConfiguration* m_collisionConfiguration = nullptr;
 	btCollisionDispatcher* m_dispatcher = nullptr;

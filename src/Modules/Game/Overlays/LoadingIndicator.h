@@ -41,14 +41,14 @@ public:
 			});
 
 		// World-Changed Callback
-		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
+		/*m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
 			if (state == World_Module::unloaded || state == World_Module::finishLoading)
 				m_show = false;
 			else if (state == World_Module::startLoading)
 				m_show = true;
 			else if (state == World_Module::updated)
 				m_blendAmt = 1.0f;
-			});
+			});*/
 	}
 
 

@@ -14,7 +14,7 @@ SceneInspector::SceneInspector(Engine* engine, LevelEditor_Module* editor)
 void SceneInspector::tick(const float& deltaTime)
 {
 	if (m_open) {
-		auto& ecsWorld = m_engine->getModule_ECS().getWorld();
+		auto& ecsWorld = m_editor->getActiveWorld();
 		const auto& selectedEntities = m_editor->getSelection();
 		ImGui::SetNextWindowDockID(ImGui::GetID("RightDock"), ImGuiCond_FirstUseEver);
 		if (ImGui::Begin("Scene Inspector", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {

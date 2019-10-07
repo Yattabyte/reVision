@@ -27,7 +27,7 @@ Sound::Sound(Engine* engine, const std::string& filename) : Asset(engine, filena
 void Sound::initialize()
 {
 	// Forward asset creation
-	SoLoud::Wav* wave = new SoLoud::Wav();
+	auto* wave = new SoLoud::Wav();
 	auto& msgMgr = m_engine->getManager_Messages();
 	const auto path = DIRECTORY_SOUNDS + getFileName();
 	switch (wave->load(path.c_str())) {
@@ -44,6 +44,7 @@ void Sound::initialize()
 		msgMgr.error("Sound \"" + m_filename + "\" file exists, but could not be loaded.");
 		break;
 	case SoLoud::UNKNOWN_ERROR:
+		[[fallthrough]];
 	default:
 		msgMgr.error("Sound \"" + m_filename + "\" has encountered an unknown error.");
 		break;

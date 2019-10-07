@@ -20,9 +20,6 @@ public:
 	inline virtual void initialize(Engine* engine) { m_engine = engine; };
 	/** Deinitialize the module. */
 	inline virtual void deinitialize() {}
-	/** Tick the ui by a frame.
-	@param	deltaTime	the amount of time passed since last frame. */
-	inline virtual void frameTick(const float&) {}
 
 
 protected:

@@ -32,25 +32,24 @@ public:
 		}
 
 		// Compound the transforms of all parent-child entities
-		auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 		const std::function<void(const EntityHandle&)> transformHierarchy = [&](const EntityHandle& entityHandle) {
-			if (auto* entityTransform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
-				for each (const auto & childHandle in ecsWorld.getEntityHandles(entityHandle)) {
-					if (auto* childTransform = ecsWorld.getComponent<Transform_Component>(childHandle)) {
+			if (auto* entityTransform = m_world->getComponent<Transform_Component>(entityHandle)) {
+				for each (const auto & childHandle in m_world->getEntityHandles(entityHandle)) {
+					if (auto* childTransform = m_world->getComponent<Transform_Component>(childHandle)) {
 						childTransform->m_worldTransform = entityTransform->m_worldTransform * childTransform->m_worldTransform;
 						transformHierarchy(childHandle);
 					}
 				}
 			}
 		};
-		for each (const auto & entity in ecsWorld.getEntityHandles())
+		for each (const auto & entity in m_world->getEntityHandles())
 			transformHierarchy(entity);
 	}
 
 
-private:
-	// Private Attributes
+	// Public Attributes
 	Engine* m_engine = nullptr;
+	ecsWorld* m_world = nullptr;
 };
 
 #endif // TRANSFORM_SYSTEM_H

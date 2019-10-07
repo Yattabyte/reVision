@@ -3,7 +3,6 @@
 #define INSPECTOR_LIGHTCOLOR_SYSTEM_H
 
 #include "Modules/Editor/Editor_M.h"
-#include "Modules/World/World_M.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
 #include "imgui.h"
@@ -78,7 +77,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Color_Command>(m_engine->getModule_ECS().getWorld(), getUUIDS(), colorInput));
+				m_editor->doReversableAction(std::make_shared<Color_Command>(m_editor->getActiveWorld(), getUUIDS(), colorInput));
 			}
 
 			auto intensityInput = ((LightColor_Component*)(components[0][1]))->m_intensity;
@@ -121,7 +120,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Intensity_Command>(m_engine->getModule_ECS().getWorld(), getUUIDS(), intensityInput));
+				m_editor->doReversableAction(std::make_shared<Intensity_Command>(m_editor->getActiveWorld(), getUUIDS(), intensityInput));
 			}
 		}
 	}
@@ -132,4 +131,5 @@ private:
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
 };
+
 #endif // INSPECTOR_LIGHTCOLOR_SYSTEM_H

@@ -22,7 +22,7 @@ struct Importer_Pool {
 
 	/** Borrow a single importer.
 	@return		returns a single importer*/
-	Assimp::Importer* rentImporter() {
+	[[nodiscard]] Assimp::Importer* rentImporter() {
 		// Check if any of our importers are free to be used
 		std::unique_lock<std::mutex> readGuard(poolMutex);
 		if (available)
@@ -55,7 +55,7 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d)
 		d.a4, d.b4, d.c4, d.d4);
 }
 
-inline Node* copy_node(const aiNode* oldNode)
+[[nodiscard]] inline Node* copy_node(const aiNode* oldNode)
 {
 	Node* newNode = new Node(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
 	// Copy Children
