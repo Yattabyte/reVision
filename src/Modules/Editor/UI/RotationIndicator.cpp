@@ -74,6 +74,8 @@ void RotationIndicator::tick(const float& deltaTime)
 		constexpr GLfloat clearDepth = 1.0f;
 		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
 		glClearNamedFramebufferfv(m_fboID, GL_DEPTH, 0, &clearDepth);
+		GLint previousFBO(0);
+		glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFBO);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 
 		// Generate matrices
@@ -92,7 +94,7 @@ void RotationIndicator::tick(const float& deltaTime)
 		glDepthMask(false);
 		glDisable(GL_DEPTH_TEST);
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
 
 		ImGui::SetNextWindowDockID(ImGui::GetID("LeftDock"), ImGuiCond_FirstUseEver);
 		if (ImGui::Begin("Rotation Indicator", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_AlwaysAutoResize))

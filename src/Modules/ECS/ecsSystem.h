@@ -72,7 +72,7 @@ public:
 	@param	<T>		the system class type.
 	@param	...Args	variadic arguments to forward to the system constructor. */
 	template <typename T, class...Args>
-	inline std::shared_ptr<T> makeSystem(Args ...args) {
+	[[maybe_unused]] inline std::shared_ptr<T> makeSystem(Args ...args) {
 		const auto& system = std::make_shared<T>(args...);
 		if (!system->isValid())
 			return {};

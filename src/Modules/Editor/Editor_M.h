@@ -13,6 +13,7 @@
 class Editor_Interface;
 class Mouse_Gizmo;
 struct Editor_Command;
+class Graphics_Pipeline;
 
 /** A level editor module. */
 class LevelEditor_Module final : public Engine_Module {
@@ -32,6 +33,8 @@ public:
 	// Public Methods
 	/***/
 	void frameTick(const float& deltaTime);
+	/***/
+	glm::ivec2 getScreenSize() const;
 	/** Display the level editor. */
 	void showEditor();
 	/** Close the level editor, returning to the main menu. */
@@ -155,17 +158,17 @@ private:
 	// Private Attributes
 	bool m_active = false, m_unsavedChanges = false;
 	float m_autoSaveCounter = 0.0f, m_autosaveInterval = 60.0f;
-	ecsWorld m_world;
 	std::string m_currentLevelName = "My Map.bmap";
-	std::shared_ptr<Editor_Interface> m_editorInterface;
-	std::shared_ptr<Mouse_Gizmo> m_mouseGizmo;
-	std::shared_ptr<ecsBaseSystem> m_systemSelClearer, m_systemOutline;
+	ecsWorld m_world;
 	GLuint m_fboID = 0, m_texID = 0, m_depthID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::vector<char> m_copiedData;
 	std::deque<std::shared_ptr<Editor_Command>> m_undoStack, m_redoStack;
 	int m_maxUndo = 500;
 	std::deque<std::string> m_recentLevels;
+	std::shared_ptr<Editor_Interface> m_editorInterface;
+	std::shared_ptr<Mouse_Gizmo> m_mouseGizmo;
+	std::shared_ptr<ecsBaseSystem> m_systemSelClearer, m_systemOutline;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

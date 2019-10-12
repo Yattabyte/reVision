@@ -3,18 +3,18 @@
 #define GRAPHICS_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/ECS/ecsSystem.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
-#include "Modules/Graphics/Common/RH_Volume.h"
-#include "Modules/Graphics/Common/Viewport.h"
-#include "Utilities/GL/StaticBuffer.h"
-#include "Utilities/MappedChar.h"
+#include "Modules/ECS/ecsWorld.h"
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
-#include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/IndirectDraw.h"
-#include "Utilities/GL/GL_ArrayBuffer.h"
 
+
+// Forward Declarations
+class Camera;
+class RH_Volume;
+struct Viewport;
 
 /** A module responsible for rendering.
 @note	performs physically based rendering techniques using deferred rendering. */
@@ -34,19 +34,13 @@ public:
 
 	// Public Methods
 	/***/
-	void frameTick(ecsWorld& world, const float& deltaTime);
-	/** Render using our graphics pipeline, from the camera buffer specified into the framebuffers and volume specified.
-	@param	deltaTime		the amount of time since last frame.
-	@param	viewport		the view port to render into.
-	@param	categories		the technique categories to allow for rendering, defaults to ALL. */
-	void renderScene(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& allowedCategories = Graphics_Technique::ALL);
-	/** Use geometry techniques to cull shadows.
-	@param	deltaTime		the amount of time passed since last frame.
-	@param	perspectives	the camera and layer indicies to render. */
-	void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives);
-	/** Use geometry techniques to render shadows.
-	@param	deltaTime		the amount of time passed since last frame. */
-	void renderShadows(const float& deltaTime);
+	inline auto getPipeline() {
+		return m_pipeline;
+	}
+	/***/
+	void renderWorld(ecsWorld& world, const float& deltaTime);
+	/***/
+	void renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::shared_ptr<Camera>>& cameras);
 	/** Generates a perspective matrix for the client camera. */
 	void genPerspectiveMatrix();
 	/** Returns a shared pointer to the primary camera.
@@ -64,17 +58,13 @@ private:
 
 	// Private Attributes
 	glm::ivec2										m_renderSize = glm::ivec2(1);
-	ecsSystemList									m_systems;
-	std::unique_ptr<Graphics_Pipeline>				m_pipeline;
+	std::shared_ptr<Graphics_Pipeline>				m_pipeline;
 	std::shared_ptr<Viewport>						m_viewport;
 	std::shared_ptr<Camera>							m_clientCamera;
 	std::shared_ptr<RH_Volume>						m_rhVolume;
 	Shared_Shader									m_shader;
 	Shared_Auto_Model								m_shapeQuad;
 	IndirectDraw									m_indirectQuad;
-	std::shared_ptr<ecsBaseSystem>					m_transHierachy;
-	std::shared_ptr<std::vector<Camera*>>			m_sceneCameras;
-	std::shared_ptr<GL_ArrayBuffer<Camera::GPUData>> m_cameraBuffer;
 	std::shared_ptr<bool>							m_aliveIndicator = std::make_shared<bool>(true);
 };
 

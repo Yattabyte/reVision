@@ -71,20 +71,20 @@ public:
 	/** Try to find an entity matching the UUID provided.
 	@param	UUID				the target entity's UUID.
 	@return						pointer to the found entity on success, nullptr on failure. */
-	ecsEntity* getEntity(const EntityHandle& uuid);
+	ecsEntity* getEntity(const EntityHandle& uuid) const;
 	/** Try to find a list of entities matching the UUID's provided.
 	@param	UUIDs				list of target entity UUID's
 	@return						list of pointers to the found entities. Dimensions may not match input list (nullptr's omitted) */
-	std::vector<ecsEntity*> getEntities(const std::vector<EntityHandle>& uuids);
+	std::vector<ecsEntity*> getEntities(const std::vector<EntityHandle>& uuids) const;
 	/** Retrieve the top-level root of the map.
 	@return						a vector of all level entities. */
-	std::vector<EntityHandle> getEntityHandles(const EntityHandle& root = EntityHandle());
+	std::vector<EntityHandle> getEntityHandles(const EntityHandle& root = EntityHandle()) const;
 	/** Try to retrieve a component of a specific type from an entity matching the handle supplied.
 	@param	entityHandle		handle to the entity to retrieve from.
 	@param	<T>					the category of component being retrieved.
 	@return						the specific component of the type requested on success, nullptr otherwise. */
 	template <typename T>
-	inline T* getComponent(const EntityHandle& entityHandle) {
+	inline T* getComponent(const EntityHandle& entityHandle) const {
 		if (auto* component = getComponent(entityHandle, T::m_ID))
 			return (T*)component;
 		return nullptr;
@@ -93,9 +93,9 @@ public:
 	@param	entityHandle		handle to the entity to retrieve from.
 	@param	componentID			the runtime ID identifying the component class.
 	@return						the specific component on success, nullptr otherwise. */
-	inline ecsBaseComponent* getComponent(const EntityHandle& entityHandle, const ComponentID& componentID) {
+	inline ecsBaseComponent* getComponent(const EntityHandle& entityHandle, const ComponentID& componentID) const {
 		if (auto* entity = getEntity(entityHandle))
-			return getComponent(entity->m_components, m_components[componentID], componentID);
+			return getComponent(entity->m_components, m_components.at(componentID), componentID);
 		return nullptr;
 	}
 	/** Try to retrieve a component of a specific type matching the UUID provided.
@@ -103,7 +103,7 @@ public:
 	@param	<T>					the category of component being retrieved.
 	@return						the specific component of the type requested on success, nullptr otherwise. */
 	template <typename T>
-	inline T* getComponent(const ComponentHandle& componentHandle) {
+	inline T* getComponent(const ComponentHandle& componentHandle) const {
 		if (auto* component = getComponent(componentHandle))
 			return (T*)component;
 		return nullptr;
@@ -111,13 +111,13 @@ public:
 	/** Try to find a component matching the UUID provided.
 	@param	UUID				the target component's UUID.
 	@return						pointer to the found component on success, nullptr on failure. */
-	ecsBaseComponent* getComponent(const ComponentHandle& componentHandle);
+	ecsBaseComponent* getComponent(const ComponentHandle& componentHandle) const;
 	/** Retrieve the component from an entity matching the class specified.
 	@param	entityComponents	the array of entity component IDS.
 	@param	array				the array of component data.
 	@param	componentID			the class ID of the component.
 	@return						the component pointer matching the ID specified. */
-	ecsBaseComponent* getComponent(const std::vector<std::tuple<ComponentID, int, ComponentHandle>>& entityComponents, const ComponentDataSpace& array, const ComponentID& componentID);
+	ecsBaseComponent* getComponent(const std::vector<std::tuple<ComponentID, int, ComponentHandle>>& entityComponents, const ComponentDataSpace& array, const ComponentID& componentID) const;
 
 
 	////////////////////////
@@ -140,19 +140,19 @@ public:
 	/** Serialize a specific set of entities to a char vector.
 	@param	entityHandles		the set of entities identified by their handles to serialize.
 	@return						char vector containing serialized entity data. */
-	[[nodiscard]] std::vector<char> serializeEntities(const std::vector<EntityHandle>& entityHandles);
+	[[nodiscard]] std::vector<char> serializeEntities(const std::vector<EntityHandle>& entityHandles) const;
 	/** Serialize a specific set of entities to a char vector.
 	@param	entities			the set of specific entities to serialize.
 	@return						char vector containing serialized entity data. */
-	[[nodiscard]] std::vector<char> serializeEntities(const std::vector<ecsEntity*>& entities);
+	[[nodiscard]] std::vector<char> serializeEntities(const std::vector<ecsEntity*>& entities) const;
 	/** Serialize a specific entity to a char vector.
 	@param	entityHandle		handle to the entity to serialize.
 	@return						char vector containing serialized entity data. */
-	[[nodiscard]] std::vector<char> serializeEntity(const EntityHandle& entityHandle);
+	[[nodiscard]] std::vector<char> serializeEntity(const EntityHandle& entityHandle) const;
 	/** Serialize a specific entity to a char vector.
 	@param	entity				the specific entity to serialize.
 	@return						char vector containing serialized entity data. */
-	[[nodiscard]] std::vector<char> serializeEntity(const ecsEntity& entity);
+	[[nodiscard]] std::vector<char> serializeEntity(const ecsEntity& entity) const;
 	/** De-serialize an entity from a char array.
 	@param	data				previously serialized entity data.
 	@param	dataSize			the size of the data in bytes (sizeof(char) * elements).

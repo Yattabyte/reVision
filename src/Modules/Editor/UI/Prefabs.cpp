@@ -1,5 +1,9 @@
 #include "Modules/Editor/UI/Prefabs.h"
 #include "Modules/Editor/Editor_M.h"
+#include "Modules/Graphics/Common/Camera.h"
+#include "Modules/Graphics/Common/Viewport.h"
+#include "Modules/Graphics/Common/RH_Volume.h"
+#include "Modules/Graphics/Graphics_M.h"
 #include "Modules/ECS/component_types.h"
 #include "imgui.h"
 #include "Engine.h"
@@ -7,10 +11,18 @@
 #include <filesystem>
 
 
+Prefabs::~Prefabs()
+{
+	// Update indicator
+	*m_aliveIndicator = false;
+}
+
 Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
 	m_open = true;
+	m_viewport = std::make_shared<Viewport>(glm::vec2(0.0f), glm::vec2(m_thumbSize));
+	m_rhVolume = std::make_shared<RH_Volume>(engine);
 
 	// Load Assets
 	m_texBack = Shared_Texture(engine, "Editor//folderBack.png");
@@ -25,152 +37,67 @@ Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor)
 void Prefabs::tick(const float& deltaTime)
 {
 	if (m_open) {
-		// Update Thumbnails
-		/*m_worldPreview.updateSystem(&m_thumbnailSystem, 0.0f);
-		m_thumbnailSystem.tickThumbnails();*/
-
-		ImGui::SetNextWindowDockID(ImGui::GetID("LeftDock"), ImGuiCond_FirstUseEver);
-		enum PrefabOptions {
-			none,
-			open,
-			del,
-			rename
-		} prefabOption = none;
-		// Draw Prefabs window
-		if (ImGui::Begin("Prefabs", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
-			static ImGuiTextFilter filter;
-			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
-			filter.Draw("Search");
-			auto alignOffset = ImGui::GetWindowContentRegionMax().x - 19.0f;
-			alignOffset = alignOffset < 0.0f ? 0.0f : alignOffset;
-			ImGui::SameLine(alignOffset);
-			if (ImGui::ImageButton((ImTextureID)static_cast<uintptr_t>(m_texIconRefresh->existsYet() ? m_texIconRefresh->m_glTexID : 0), { 15, 15 }, { 0.0f, 1.0f }, { 1.0f, 0.0f }))
-				populatePrefabs(m_prefabSubDirectory);
-			ImGui::PopStyleVar();
-			ImGui::Separator();
-			ImGui::Spacing();
-			const auto directory = "\\Prefabs\\" + m_prefabSubDirectory;
-			ImGui::Text(directory.c_str());
-			ImGui::Spacing();
-			ImGuiStyle& style = ImGui::GetStyle();
-			auto columnCount = int(float(ImGui::GetWindowContentRegionMax().x) / float((ImGui::GetStyle().ItemSpacing.x * 2) + 50));
-			columnCount < 1 ? 1 : columnCount;
-			ImGui::Columns(columnCount, nullptr, false);
-			int count(0);
-			for each (const auto & prefab in m_prefabs) {
-				if (filter.PassFilter(prefab.name.c_str())) {
-					ImGui::PushID(&prefab);
-					GLuint textureID = 0;
-					if (prefab.type == Entry::back && m_texBack->existsYet())
-						textureID = m_texBack->m_glTexID;
-					else if (prefab.type == Entry::folder && m_texFolder->existsYet())
-						textureID = m_texFolder->m_glTexID;
-					else if ((prefab.type == Entry::file) && m_texMissingThumb->existsYet())
-						textureID = m_texMissingThumb->m_glTexID;
-
-					ImGui::BeginGroup();
-					ImVec4 color = count == m_selectedIndex ? ImVec4(1, 1, 1, 0.75) : ImVec4(0, 0, 0, 0);
-					ImGui::ImageButton(
-						(ImTextureID)static_cast<uintptr_t>(textureID),
-						{ 50, 50 },
-						{ 0.0f, 1.0f }, { 1.0f, 0.0f },
-						-1,
-						color
-					);
-					ImGui::TextWrapped(prefab.name.c_str());
-					ImGui::EndGroup();
-					if (ImGui::IsItemClicked()) {
-						m_selectedIndex = count;
-						if (ImGui::IsMouseDoubleClicked(0))
-							prefabOption = open;
-					}
-					else if (ImGui::BeginPopupContextItem("Edit Prefab")) {
-						m_selectedIndex = count;
-						if (ImGui::MenuItem("Open")) { prefabOption = open; }
-						ImGui::Separator();
-						if (ImGui::MenuItem("Delete")) { prefabOption = del; }
-						ImGui::Separator();
-						if (ImGui::MenuItem("Rename")) { prefabOption = rename; }
-						ImGui::EndPopup();
-					}
-					ImGui::PopID();
-					ImGui::NextColumn();
-				}
-				count++;
-			}
-		}
-		ImGui::End();
-
-		// Do something with the option chosen
-		bool openDelete = true, openRename = true;
-		switch (prefabOption) {
-		case open:
-			openPrefabEntry();
-			break;
-		case del:
-			ImGui::OpenPopup("Delete Prefab");
-			break;
-		case rename:
-			ImGui::OpenPopup("Rename Prefab");
-			break;
-		}
-
-		// Draw 'Delete Prefab' confirmation
-		ImGui::SetNextWindowSize({ 350, 90 }, ImGuiCond_Appearing);
-		if (ImGui::BeginPopupModal("Delete Prefab", &openDelete, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
-			ImGui::TextWrapped(
-				"Are you sure you want to delete this prefab?\n"
-				"This won't remove the prefab from any levels."
-			);
-			ImGui::Spacing();
-			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0, 0.7f, 0.7f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
-			if (ImGui::Button("Delete", { 50, 20 })) {
-				const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path);
-				std::filesystem::remove(fullPath);
-				m_selectedIndex = -1;
-				populatePrefabs(m_prefabSubDirectory);
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::SetItemDefaultFocus();
-			ImGui::SameLine();
-			ImGui::Spacing();
-			ImGui::SameLine();
-			ImGui::PopStyleColor(3);
-			if (ImGui::Button("Cancel", { 75, 20 }))
-				ImGui::CloseCurrentPopup();
-			ImGui::EndPopup();
-		}
-
-		// Draw 'Rename Prefab' dialogue
-		if (ImGui::BeginPopupModal("Rename Prefab", &openRename, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
-			ImGui::Text("Enter a new name for this prefab...");
-			ImGui::Spacing();
-
-			char nameInput[256];
-			for (size_t x = 0; x < m_prefabs[m_selectedIndex].name.length() && x < IM_ARRAYSIZE(nameInput); ++x)
-				nameInput[x] = m_prefabs[m_selectedIndex].name[x];
-			nameInput[std::min(256ull, m_prefabs[m_selectedIndex].name.length())] = '\0';
-			if (ImGui::IsRootWindowOrAnyChildFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
-				ImGui::SetKeyboardFocusHere(0);
-			if (ImGui::InputText("", nameInput, IM_ARRAYSIZE(nameInput), ImGuiInputTextFlags_EnterReturnsTrue)) {
-				m_prefabs[m_selectedIndex].name = nameInput;
-				const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path);
-				std::filesystem::rename(fullPath, std::filesystem::path(fullPath.parent_path().string() + "\\" + std::string(nameInput)));
-				m_prefabs[m_selectedIndex].path = std::filesystem::path(fullPath.parent_path().string() + "\\" + std::string(nameInput)).string();
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
-		}
+		tickThumbnails(deltaTime);
+		tickWindow(deltaTime);
+		tickPopupDialogues(deltaTime);
 	}
 }
 
 void Prefabs::addPrefab(const std::vector<char>& entityData)
 {
+	const auto addPrefab = [&](Prefabs::Entry& prefab) {
+		size_t dataRead(0ull), handleCount(0ull);
+		glm::vec3 center(0.0f);
+		std::vector<Transform_Component*> transformComponents;
+		for each (const auto & entityHandle in prefab.entityHandles) {
+			if (auto* transform = m_previewWorld.getComponent<Transform_Component>(entityHandle)) {
+				transformComponents.push_back(transform);
+				center += transform->m_localTransform.m_position;
+			}
+		}
+
+		// Move the entities in this prefab by 100 units on each axis
+		const auto cursorPos = glm::vec3(m_prefabs.size() * 100.0f);
+		if (transformComponents.size()) {
+			center /= transformComponents.size();
+			for each (auto * transform in transformComponents) {
+				transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + cursorPos;
+				transform->m_localTransform.update();
+			}
+		}
+		prefab.spawnPoint = cursorPos;
+
+		// Create the camera and move it to where the entity is located
+		auto camera = std::make_shared<Camera>();
+		(*camera)->Dimensions = glm::vec2(m_thumbSize);
+		(*camera)->FarPlane = 1000.0f;
+		(*camera)->FOV = 90.0F;
+		(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), cursorPos);
+		(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
+		(*camera)->EyePosition = glm::vec3(0, 0, -25.0f);
+		const float verticalRad = 2.0f * atanf(tanf(glm::radians(90.0f) / 2.0f) / 1.0F);
+		(*camera)->pMatrix = glm::perspective(verticalRad, 1.0f, Camera::ConstNearPlane, (*camera)->FarPlane);
+		(*camera)->pMatrixInverse = glm::inverse((*camera)->pMatrix);
+		(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
+		m_prefabCameras.push_back(camera);
+
+		// Create the thumbnail texture
+		glCreateTextures(GL_TEXTURE_2D, 1, &prefab.texID);
+		glTextureStorage2D(prefab.texID, 1, GL_RGB16F, m_thumbSize, m_thumbSize);
+		glTextureParameteri(prefab.texID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(prefab.texID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		m_prefabs.emplace_back(prefab);
+	};
+
+	Prefabs::Entry newPrefab = { "New Entity", m_prefabSubDirectory + "\\New Entity", Entry::file };
+
 	size_t dataRead(0ull);
-	const auto& [entityHandle, entity] = m_worldPreview.deserializeEntity(&entityData[0], entityData.size(), dataRead);
-	m_prefabs.push_back({ "New Entity", m_prefabSubDirectory + "\\New Entity", Entry::file, entityHandle });
+	while (dataRead < entityData.size())
+		newPrefab.entityHandles.push_back(
+			std::get<0>(m_previewWorld.deserializeEntity(&entityData[0], entityData.size(), dataRead))
+		);
+	addPrefab(newPrefab);
 	m_selectedIndex = (int)(m_prefabs.size()) - 1;
 
 	// Save Prefab to disk
@@ -184,21 +111,71 @@ void Prefabs::addPrefab(const std::vector<char>& entityData)
 
 void Prefabs::populatePrefabs(const std::string& directory)
 {
+	// Delete the textures
+	for each (auto & entry in m_prefabs)
+		glDeleteTextures(1, &entry.texID);
+
 	// Reset prefab data
 	m_prefabSubDirectory = directory;
 	m_prefabs.clear();
-	m_worldPreview.clear();
+	m_prefabCameras.clear();
+	m_previewWorld.clear();
 
 	const auto rootPath = Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\";
 	const auto path = std::filesystem::path(rootPath + directory);
 
 	// Add an entry to go back a folder
 	if (directory != "" && directory != "." && directory != "..")
-		m_prefabs.push_back(Entry{ "back", std::filesystem::relative(path.parent_path(), rootPath).string(), Entry::back, {} });
+		m_prefabs.emplace_back(Entry{ "back", std::filesystem::relative(path.parent_path(), rootPath).string(), Entry::back, {} });
+
+	const auto addPrefab = [&](Prefabs::Entry& prefab) {
+		size_t dataRead(0ull), handleCount(0ull);
+		glm::vec3 center(0.0f);
+		std::vector<Transform_Component*> transformComponents;
+		for each (const auto & entityHandle in prefab.entityHandles) {
+			if (auto* transform = m_previewWorld.getComponent<Transform_Component>(entityHandle)) {
+				transformComponents.push_back(transform);
+				center += transform->m_localTransform.m_position;
+			}
+		}
+
+		// Move the entities in this prefab by 100 units on each axis
+		const auto cursorPos = glm::vec3(m_prefabs.size() * 100.0f);
+		if (transformComponents.size()) {
+			center /= transformComponents.size();
+			for each (auto * transform in transformComponents) {
+				transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + cursorPos;
+				transform->m_localTransform.update();
+			}
+		}
+		prefab.spawnPoint = cursorPos;
+
+		// Create the camera and move it to where the entity is located
+		auto camera = std::make_shared<Camera>();
+		(*camera)->Dimensions = glm::vec2(m_thumbSize);
+		(*camera)->FarPlane = 1000.0f;
+		(*camera)->FOV = 90.0F;
+		(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), cursorPos);
+		(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
+		(*camera)->EyePosition = glm::vec3(0, 0, -25.0f);
+		const float verticalRad = 2.0f * atanf(tanf(glm::radians(90.0f) / 2.0f) / 1.0F);
+		(*camera)->pMatrix = glm::perspective(verticalRad, 1.0f, Camera::ConstNearPlane, (*camera)->FarPlane);
+		(*camera)->pMatrixInverse = glm::inverse((*camera)->pMatrix);
+		(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
+		m_prefabCameras.push_back(camera);
+
+		// Create the thumbnail texture
+		glCreateTextures(GL_TEXTURE_2D, 1, &prefab.texID);
+		glTextureStorage2D(prefab.texID, 1, GL_RGB16F, m_thumbSize, m_thumbSize);
+		glTextureParameteri(prefab.texID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(prefab.texID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		m_prefabs.emplace_back(prefab);
+	};
 
 	// If in the root folder, add hard-coded prefab entries
 	if (directory == "" || directory == ".") {
-		//Basic Model Prefab
+		// Basic Model Prefab
 		{
 			Transform_Component a;
 			BoundingBox_Component b;
@@ -207,15 +184,47 @@ void Prefabs::populatePrefabs(const std::string& directory)
 			a.m_localTransform.update();
 			c.m_modelName = "FireHydrant\\FireHydrantMesh.obj";
 			ecsBaseComponent* entityComponents[] = { &a, &b, &c };
-			m_prefabs.push_back({ "Basic Model", "", Entry::file, m_worldPreview.makeEntity(entityComponents, 3ull, "Basic Model") });
+			addPrefab(Prefabs::Entry{ "Basic Model", "", Entry::file, {m_previewWorld.makeEntity(entityComponents, 3ull, "Basic Model")} });
+		}
+		/*// Basic Sun Prefab
+		{
+			Transform_Component a;
+			LightDirectional_Component b;
+			Shadow_Component c;
+			CameraArray_Component d;
+			LightColor_Component e;
+			a.m_localTransform.m_orientation = glm::quat(0.707, 0, 0, -0.707);
+			a.m_localTransform.update();
+			e.m_color = glm::vec3(1.0f);
+			e.m_intensity = 15.0f;
+			ecsBaseComponent* entityComponents[] = { &a, &b, &c, &d, &e };
+			addPrefab(Prefabs::Entry{ "Basic Sun", "", Entry::file, m_previewWorld.makeEntity(entityComponents, 5ull, "Basic Sun") });
+		}*/
+		// Basic Light
+		{
+			Transform_Component a;
+			LightPoint_Component b;
+			LightColor_Component c;
+			LightRadius_Component d;
+			Shadow_Component e;
+			CameraArray_Component f;
+			BoundingSphere_Component g;
+			a.m_localTransform.m_position = glm::vec3(0, 0, 10);
+			a.m_localTransform.m_scale = glm::vec3(15);
+			a.m_localTransform.update();
+			c.m_color = glm::vec3(1.0f);
+			c.m_intensity = 15.0f;
+			d.m_radius = 10.0f;
+			ecsBaseComponent* entityComponents[] = { &a, &b, &c, &d, &e, &f, &g };
+			addPrefab(Prefabs::Entry{ "Basic Light", "", Entry::file, {m_previewWorld.makeEntity(entityComponents, 7ull, "Basic Light")} });
 		}
 	}
 
-	// Cycle through each entry on disk
+	// Cycle through each entry on disk, making prefab entries
 	for (auto& entry : std::filesystem::directory_iterator(path)) {
-		Entry prefabEntry{ entry.path().filename().string(), std::filesystem::relative(entry, rootPath).string() };
+		Prefabs::Entry newPrefab{ entry.path().filename().string(), std::filesystem::relative(entry, rootPath).string() };
 		if (entry.is_regular_file()) {
-			prefabEntry.type = Entry::file;
+			newPrefab.type = Entry::file;
 			std::ifstream prefabFile(entry, std::ios::binary | std::ios::beg);
 			if (prefabFile.is_open()) {
 				// To Do: Remove serial data from entry class
@@ -223,14 +232,31 @@ void Prefabs::populatePrefabs(const std::string& directory)
 				std::vector<char> data(size);
 				prefabFile.read(&data[0], (std::streamsize)size);
 				size_t dataRead(0ull);
-				const auto& [entityHandle, entity] = m_worldPreview.deserializeEntity(&data[0], size, dataRead);
-				prefabEntry.entityHandle = entityHandle;
+				while (dataRead < data.size())
+					newPrefab.entityHandles.push_back(
+						std::get<0>(m_previewWorld.deserializeEntity(&data[0], size, dataRead))
+					);
 			}
 			prefabFile.close();
 		}
 		else if (entry.is_directory())
-			prefabEntry.type = Entry::folder;
-		m_prefabs.push_back(prefabEntry);
+			newPrefab.type = Entry::folder;
+		addPrefab(std::move(newPrefab));
+	}
+
+	// Add sun tilted 45 deg to preview world to show off prefabs
+	{
+		Transform_Component a;
+		LightDirectional_Component b;
+		Shadow_Component c;
+		CameraArray_Component d;
+		LightColor_Component e;
+		a.m_localTransform.m_orientation = glm::quat(0.653, -0.271, 0.653, -0.271);
+		a.m_localTransform.update();
+		e.m_color = glm::vec3(1.0f);
+		e.m_intensity = 15.0f;
+		ecsBaseComponent* entityComponents[] = { &a, &b, &c, &d, &e };
+		m_previewWorld.makeEntity(entityComponents, 5ull, "Preview Sun");
 	}
 }
 
@@ -243,5 +269,206 @@ void Prefabs::openPrefabEntry()
 		m_selectedIndex = -1;
 	}
 	else
-		m_editor->addEntity(m_worldPreview.serializeEntity(selectedPrefab.entityHandle));
+		for each (const auto & handle in selectedPrefab.entityHandles)
+			m_editor->addEntity(m_previewWorld.serializeEntity(handle));
+}
+
+void Prefabs::tickThumbnails(const float& deltaTime)
+{
+	int count(0);
+	for each (auto & prefab in m_prefabs) {
+		glm::vec3 minExtents(FLT_MAX), maxExtents(FLT_MIN);
+		for each (const auto & entityHandle in prefab.entityHandles) {
+			glm::vec3 scale(1.0f);
+			if (auto* trans = m_previewWorld.getComponent<Transform_Component>(entityHandle))
+				scale = trans->m_worldTransform.m_scale;
+			if (auto* prop = m_previewWorld.getComponent<Prop_Component>(entityHandle))
+				if (const auto& model = prop->m_model; model->existsYet()) {
+					minExtents = glm::min(minExtents, model->m_bboxMin * scale);
+					maxExtents = glm::max(maxExtents, model->m_bboxMax * scale);
+				}
+		}
+		glm::vec3 extents = (maxExtents - minExtents) / 2.0f,
+			center = ((maxExtents - minExtents) / 2.0f) + minExtents;
+
+		auto& camera = m_prefabCameras[count];
+		float cameraDistance = 2.0f; // Constant factor
+		float objectSize = glm::compMax(extents);
+		float cameraView = 2.0f * tanf(0.5f * glm::radians(90.0f)); // Visible height 1 meter in front
+		float distance = cameraDistance * objectSize / cameraView; // Combined wanted distance from the object
+		distance += 0.5f * objectSize; // Estimated offset from the center to the outside of the object
+		glm::vec3 newPosition = (center - glm::vec3(0, 0, -distance)) + prefab.spawnPoint;
+		(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), -newPosition);
+		(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
+		(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
+
+		count++;
+	}
+
+
+	GLint previousFBO(0);
+	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFBO);
+	m_viewport->resize(glm::vec2(m_thumbSize), m_prefabs.size());
+	m_engine->getModule_Graphics().renderWorld(m_previewWorld, deltaTime, m_viewport, m_rhVolume, m_prefabCameras);
+	const auto screenSize = m_editor->getScreenSize();
+	glViewport(0, 0, screenSize.x, screenSize.y);
+	glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
+}
+
+void Prefabs::tickWindow(const float& deltaTime)
+{
+	ImGui::SetNextWindowDockID(ImGui::GetID("LeftDock"), ImGuiCond_FirstUseEver);
+	enum PrefabOptions {
+		none,
+		open,
+		del,
+		rename
+	} prefabOption = none;
+
+	// Draw Prefabs window
+	if (ImGui::Begin("Prefabs", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
+		// Draw a search box with a refresh button
+		static ImGuiTextFilter filter;
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
+		filter.Draw("Search");
+		auto alignOffset = ImGui::GetWindowContentRegionMax().x - 19.0f;
+		alignOffset = alignOffset < 0.0f ? 0.0f : alignOffset;
+		ImGui::SameLine(alignOffset);
+		if (ImGui::ImageButton((ImTextureID)static_cast<uintptr_t>(m_texIconRefresh->existsYet() ? m_texIconRefresh->m_glTexID : 0), { 15, 15 }, { 0.0f, 1.0f }, { 1.0f, 0.0f }))
+			populatePrefabs(m_prefabSubDirectory);
+		ImGui::PopStyleVar();
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		// Display list of prefabs
+		const auto directory = "\\Prefabs\\" + m_prefabSubDirectory;
+		ImGui::Text(directory.c_str());
+		ImGui::Spacing();
+		ImGuiStyle& style = ImGui::GetStyle();
+		auto columnCount = int(float(ImGui::GetWindowContentRegionMax().x) / float((ImGui::GetStyle().ItemSpacing.x * 2) + 50));
+		columnCount < 1 ? 1 : columnCount;
+		ImGui::Columns(columnCount, nullptr, false);
+		int count(0);
+		for each (const auto & prefab in m_prefabs) {
+			const auto& srcThumbnailTexture = m_viewport->m_gfxFBOS->getTexID("LIGHTING", 0);
+			glCopyImageSubData(srcThumbnailTexture, GL_TEXTURE_2D_ARRAY, 0, 0, 0, count, prefab.texID, GL_TEXTURE_2D, 0, 0, 0, 0, m_thumbSize, m_thumbSize, 1);
+			if (filter.PassFilter(prefab.name.c_str())) {
+				ImGui::PushID(&prefab);
+				GLuint textureID = prefab.texID;
+				if (prefab.type == Entry::back && m_texBack->existsYet())
+					textureID = m_texBack->m_glTexID;
+				else if (prefab.type == Entry::folder && m_texFolder->existsYet())
+					textureID = m_texFolder->m_glTexID;
+				/*else if ((prefab.type == Entry::file) && m_texMissingThumb->existsYet())
+					textureID = m_texMissingThumb->m_glTexID;*/
+
+				ImGui::BeginGroup();
+				ImVec4 color = count == m_selectedIndex ? ImVec4(1, 1, 1, 0.75) : ImVec4(0, 0, 0, 0);
+				ImGui::ImageButton(
+					(ImTextureID)static_cast<uintptr_t>(textureID),
+					ImVec2(50, 50),
+					{ 0.0f, 1.0f }, { 1.0f, 0.0f },
+					-1,
+					color
+				);
+				ImGui::TextWrapped(prefab.name.c_str());
+				ImGui::EndGroup();
+				if (ImGui::IsItemClicked()) {
+					m_selectedIndex = count;
+					if (ImGui::IsMouseDoubleClicked(0))
+						prefabOption = open;
+				}
+				else if (ImGui::BeginPopupContextItem("Edit Prefab")) {
+					m_selectedIndex = count;
+					if (ImGui::MenuItem("Open")) { prefabOption = open; }
+					ImGui::Separator();
+					if (ImGui::MenuItem("Delete")) { prefabOption = del; }
+					ImGui::Separator();
+					if (ImGui::MenuItem("Rename")) { prefabOption = rename; }
+					ImGui::EndPopup();
+				}
+				else if (ImGui::IsItemHovered()) {
+					ImGui::BeginTooltip();
+					ImGui::ImageButton(
+						(ImTextureID)static_cast<uintptr_t>(textureID),
+						ImVec2(m_thumbSize, m_thumbSize),
+						{ 0.0f, 1.0f }, { 1.0f, 0.0f },
+						0,
+						color
+					);
+					ImGui::EndTooltip();
+				}
+				ImGui::PopID();
+				ImGui::NextColumn();
+			}
+			count++;
+		}
+	}
+	ImGui::End();
+
+	// Do something with the option chosen
+	bool openDelete = true, openRename = true;
+	switch (prefabOption) {
+	case open:
+		openPrefabEntry();
+		break;
+	case del:
+		ImGui::OpenPopup("Delete Prefab");
+		break;
+	case rename:
+		ImGui::OpenPopup("Rename Prefab");
+		break;
+	}
+}
+
+void Prefabs::tickPopupDialogues(const float& deltaTime)
+{
+	// Draw 'Delete Prefab' confirmation
+	ImGui::SetNextWindowSize({ 350, 90 }, ImGuiCond_Appearing);
+	if (ImGui::BeginPopupModal("Delete Prefab", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
+		ImGui::TextWrapped(
+			"Are you sure you want to delete this prefab?\n"
+			"This won't remove the prefab from any levels."
+		);
+		ImGui::Spacing();
+		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0, 0.7f, 0.7f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
+		if (ImGui::Button("Delete", { 50, 20 })) {
+			const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path);
+			std::filesystem::remove(fullPath);
+			m_selectedIndex = -1;
+			populatePrefabs(m_prefabSubDirectory);
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		ImGui::Spacing();
+		ImGui::SameLine();
+		ImGui::PopStyleColor(3);
+		if (ImGui::Button("Cancel", { 75, 20 }))
+			ImGui::CloseCurrentPopup();
+		ImGui::EndPopup();
+	}
+
+	// Draw 'Rename Prefab' dialogue
+	if (ImGui::BeginPopupModal("Rename Prefab", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
+		ImGui::Text("Enter a new name for this prefab...");
+		ImGui::Spacing();
+
+		char nameInput[256];
+		for (size_t x = 0; x < m_prefabs[m_selectedIndex].name.length() && x < IM_ARRAYSIZE(nameInput); ++x)
+			nameInput[x] = m_prefabs[m_selectedIndex].name[x];
+		nameInput[std::min(256ull, m_prefabs[m_selectedIndex].name.length())] = '\0';
+		if (ImGui::IsRootWindowOrAnyChildFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
+			ImGui::SetKeyboardFocusHere(0);
+		if (ImGui::InputText("", nameInput, IM_ARRAYSIZE(nameInput), ImGuiInputTextFlags_EnterReturnsTrue)) {
+			m_prefabs[m_selectedIndex].name = nameInput;
+			const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path);
+			std::filesystem::rename(fullPath, std::filesystem::path(fullPath.parent_path().string() + "\\" + std::string(nameInput)));
+			m_prefabs[m_selectedIndex].path = std::filesystem::path(fullPath.parent_path().string() + "\\" + std::string(nameInput)).string();
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
 }

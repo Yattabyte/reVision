@@ -105,7 +105,7 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 		glDisable(GL_STENCIL_TEST);
 
 		// Tick all tools this frame
-		m_engine->getModule_Graphics().frameTick(m_world, deltaTime);
+		m_engine->getModule_Graphics().renderWorld(m_world, deltaTime);
 		m_world.updateSystem(m_systemOutline, deltaTime);
 		m_mouseGizmo->frameTick(deltaTime);
 
@@ -127,6 +127,11 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 		else
 			m_autoSaveCounter = 0.0f;
 	}
+}
+
+glm::ivec2 LevelEditor_Module::getScreenSize() const
+{
+	return m_renderSize;
 }
 
 void LevelEditor_Module::setGizmoTransform(const Transform& transform)

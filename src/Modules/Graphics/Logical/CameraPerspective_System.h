@@ -16,8 +16,8 @@ public:
 	inline ~CameraPerspective_System() = default;
 	/** Construct this system.
 	@param	cameras		shared list of scene cameras. */
-	inline CameraPerspective_System(const std::shared_ptr<std::vector<Camera*>>& cameras)
-		: m_cameras(cameras) {
+	inline CameraPerspective_System(const std::shared_ptr<std::vector<Camera*>>& sceneCameras)
+		: m_sceneCameras(sceneCameras) {
 		addComponentType(Camera_Component::m_ID, FLAG_REQUIRED);
 	}
 
@@ -26,14 +26,14 @@ public:
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		for each (const auto & componentParam in components) {
 			Camera_Component* cameraComponent = (Camera_Component*)componentParam[0];
-			m_cameras->push_back(&(cameraComponent->m_camera));
+			m_sceneCameras->push_back(&(cameraComponent->m_camera));
 		}
 	}
 
 
 private:
 	// Private Attributes
-	std::shared_ptr<std::vector<Camera*>> m_cameras;
+	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
 };
 
 #endif // CAMERAPERSPECTIVE_SYSTEM_H

@@ -43,13 +43,12 @@ public:
 			drawBuffer.indirectShape.endWriting();
 		}
 		m_drawIndex = 0;
-		clear();
 	}
 	inline virtual void updateTechnique(const float& deltaTime) override final {
 		// Link together the dimensions of view info to that of the viewport vectors
 		m_frameData->viewInfo.resize(m_cameras->size());
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
 		// Render direct lights
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeSphere->existsYet() && m_shader_Lighting->existsYet() && m_shader_Stencil->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())

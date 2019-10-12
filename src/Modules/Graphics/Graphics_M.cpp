@@ -1,10 +1,8 @@
 #include "Modules/Graphics/Graphics_M.h"
+#include "Modules/Graphics/Common/Camera.h"
+#include "Modules/Graphics/Common/Graphics_Pipeline.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
-#include "Modules/Graphics/Logical/Transform_System.h"
-#include "Modules/Graphics/Logical/CameraPerspective_System.h"
-#include "Modules/Graphics/Logical/CameraArrayPerspective_System.h"
-#include "Modules/Graphics/Logical/FrustumCull_System.h"
-#include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
+#include "Modules/Graphics/Common/Viewport.h"
 #include "Engine.h"
 #include <memory>
 #include <random>
@@ -70,21 +68,7 @@ void Graphics_Module::initialize(Engine* engine)
 	m_rhVolume = std::make_shared<RH_Volume>(engine);
 
 	// Rendering Effects & systems
-	m_sceneCameras = std::make_shared<std::vector<Camera*>>();
-	m_cameraBuffer = std::make_shared<GL_ArrayBuffer<Camera::GPUData>>();
-	auto sharedCameraCounter = std::make_shared<int>(0);
-	m_transHierachy = m_systems.makeSystem<Transform_System>(m_engine);
-	m_systems.makeSystem<CameraPerspective_System>(m_sceneCameras);
-	m_systems.makeSystem<CameraArrayPerspective_System>(m_sceneCameras);
-	m_systems.makeSystem<FrustumCull_System>(m_sceneCameras);
-	m_systems.makeSystem<Skeletal_Animation_System>(m_engine);
-	m_pipeline = std::make_unique<Graphics_Pipeline>(engine, m_clientCamera, m_sceneCameras, m_rhVolume, m_systems);
-
-	// Report invalid ecs systems
-	auto& msg = engine->getManager_Messages();
-	for each (const auto & system in m_systems)
-		if (!system->isValid())
-			msg.error("Invalid ECS System: " + std::string(typeid(*system).name()));
+	m_pipeline = std::make_unique<Graphics_Pipeline>(engine, m_clientCamera);
 }
 
 void Graphics_Module::deinitialize()
@@ -95,64 +79,28 @@ void Graphics_Module::deinitialize()
 	*m_aliveIndicator = false;
 }
 
-void Graphics_Module::frameTick(ecsWorld& world, const float& deltaTime)
+void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime)
 {
-	// Prepare rendering pipeline for a new frame, wait for buffers to free
-	m_clientCamera->updateFrustum();
 	m_indirectQuad.beginWriting();
-	m_cameraBuffer->beginWriting();
-	m_sceneCameras->clear();
-	m_sceneCameras->push_back(m_clientCamera.get());
-	m_rhVolume->clear();
-	m_rhVolume->updateVolume(m_clientCamera.get());
-
-	// All ECS Systems updated once per frame, updating components pertaining to all viewing perspectives
-	std::dynamic_pointer_cast<Transform_System>(m_transHierachy)->m_world = &world;
-	world.updateSystems(m_systems, deltaTime);
-	m_cameraBuffer->resize(m_sceneCameras->size());
-	for (size_t x = 0ull; x < m_sceneCameras->size(); ++x)
-		(*m_cameraBuffer)[x] = *(*m_sceneCameras)[x]->get();
-
-	// Update pipeline techniques ONCE per frame, not per render call!
-	m_pipeline->update(deltaTime);
-
-	// Render the scene from the user's perspective to the screen
-	for (size_t x = 0; x < m_sceneCameras->size(); ++x)
-		if (m_sceneCameras->at(x) == m_clientCamera.get()) {
-			renderScene(deltaTime, m_viewport, { {(int)x, 0} });
-			copyToScreen();
-			break;
-		}
-
-	// Consolidate and prepare for the next frame, swap to next set of buffers
-	m_pipeline->prepareForNextFrame(deltaTime);
-	m_cameraBuffer->endWriting();
+	renderWorld(world, deltaTime, m_viewport, m_rhVolume, { m_clientCamera });
+	copyToScreen();
 	m_indirectQuad.endWriting();
 }
 
-void Graphics_Module::renderScene(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& allowedCategories)
+void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::shared_ptr<Camera>>& cameras)
 {
-	// Prepare viewport and camera for rendering
-	viewport->bind();
-	viewport->clear();
-	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	if (cameras.size()) {
+		// Prepare rendering pipeline for a new frame, wait for buffers to free
+		viewport->clear();
+		rhVolume->clear();
+		rhVolume->updateVolume(cameras[0].get());
 
-	// Render
-	m_pipeline->render(deltaTime, viewport, perspectives, allowedCategories);
-}
-
-void Graphics_Module::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives)
-{
-	// Apply frustum culling or other techniques
-	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
-	m_pipeline->cullShadows(deltaTime, perspectives);
-}
-
-void Graphics_Module::renderShadows(const float& deltaTime)
-{
-	// Render remaining shadows
-	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
-	m_pipeline->renderShadows(deltaTime);
+		m_pipeline->begin();
+		const auto perspectives = m_pipeline->update(deltaTime, world, cameras);
+		viewport->bind();
+		m_pipeline->render(deltaTime, viewport, rhVolume, perspectives);
+		m_pipeline->end(deltaTime);
+	}
 }
 
 void Graphics_Module::genPerspectiveMatrix()

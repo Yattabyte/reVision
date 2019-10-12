@@ -24,8 +24,8 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Radiance_Hints(Engine* engine, const std::shared_ptr<RH_Volume>& rhVolume)
-		: m_engine(engine), m_rhVolume(rhVolume), Graphics_Technique(SECONDARY_LIGHTING) {
+	inline Radiance_Hints(Engine* engine)
+		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
 		m_shaderRecon = Shared_Shader(engine, "Effects\\RH Reconstruction");
 		m_shaderRebounce = Shared_Shader(engine, "Effects\\RH Rebounce");
@@ -50,7 +50,7 @@ public:
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderRecon->existsYet() || !m_shaderRebounce->existsYet())
 			return;
 
@@ -76,20 +76,20 @@ public:
 		// Bind common data
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-		m_shaderRebounce->setUniform(1, m_rhVolume->m_max);
-		m_shaderRebounce->setUniform(2, m_rhVolume->m_min);
-		m_shaderRebounce->setUniform(4, m_rhVolume->m_resolution);
-		m_shaderRebounce->setUniform(5, m_rhVolume->m_unitSize);
-		m_shaderRecon->setUniform(1, m_rhVolume->m_max);
-		m_shaderRecon->setUniform(2, m_rhVolume->m_min);
-		m_shaderRecon->setUniform(3, m_rhVolume->m_resolution);
+		m_shaderRebounce->setUniform(1, rhVolume->m_max);
+		m_shaderRebounce->setUniform(2, rhVolume->m_min);
+		m_shaderRebounce->setUniform(4, rhVolume->m_resolution);
+		m_shaderRebounce->setUniform(5, rhVolume->m_unitSize);
+		m_shaderRecon->setUniform(1, rhVolume->m_max);
+		m_shaderRecon->setUniform(2, rhVolume->m_min);
+		m_shaderRecon->setUniform(3, rhVolume->m_resolution);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 
 		// Bounce light a second time
 		m_shaderRebounce->bind();
-		m_rhVolume->readPrimary(0);
-		m_rhVolume->writeSecondary();
-		glViewport(0, 0, (GLsizei)m_rhVolume->m_resolution, (GLsizei)m_rhVolume->m_resolution);
+		rhVolume->readPrimary(0);
+		rhVolume->writeSecondary();
+		glViewport(0, 0, (GLsizei)rhVolume->m_resolution, (GLsizei)rhVolume->m_resolution);
 		camBufferRebounce.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		indirectQuad.drawCall();
 
@@ -97,7 +97,7 @@ public:
 		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 		m_shaderRecon->bind();
 		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
-		m_rhVolume->readSecondary(4);
+		rhVolume->readSecondary(4);
 		viewport->m_gfxFBOS->bindForWriting("BOUNCE");
 		camBufferRecon.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		indirectQuadRecon.drawCall();
@@ -108,7 +108,6 @@ public:
 private:
 	// Private Attributes
 	Engine* m_engine = nullptr;
-	std::shared_ptr<RH_Volume> m_rhVolume;
 	Shared_Shader m_shaderRecon, m_shaderRebounce;
 	Shared_Auto_Model m_shapeQuad;
 	GLuint m_bounceSize = 16;

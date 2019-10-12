@@ -84,12 +84,13 @@ private:
 			}
 
 			// Perform shadow culling
-			m_engine->getModule_Graphics().cullShadows(deltaTime, perspectives);
+			auto& pipeline = m_engine->getModule_Graphics().getPipeline();
+			pipeline->cullShadows(deltaTime, perspectives);
 			for (auto& [importance, time, shadowSpot, camera] : m_frameData->shadowsToUpdate)
 				m_frameData->shadowFBO.clear(shadowSpot, 1);
 
 			// Render remaining shadows with populated buffers
-			m_engine->getModule_Graphics().renderShadows(deltaTime);
+			pipeline->renderShadows(deltaTime);
 			m_frameData->shadowsToUpdate.clear();
 		}
 	}

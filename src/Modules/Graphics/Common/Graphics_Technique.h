@@ -2,10 +2,12 @@
 #ifndef GRAPHICS_TECHNIQUE_H
 #define GRAPHICS_TECHNIQUE_H
 
-#include "Modules/Graphics/Common/Viewport.h"
-#include "Modules/Graphics/Common/Camera.h"
 #include <memory>
+#include <vector>
 
+
+struct Viewport;
+class RH_Volume;
 
 /** An interface for core graphics effect techniques. */
 class Graphics_Technique {
@@ -49,7 +51,7 @@ public:
 	/** Apply this lighting technique.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) {}
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) {}
 
 
 protected:

@@ -72,7 +72,7 @@ public:
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
 
@@ -130,6 +130,8 @@ private:
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_shaderConvolute->bind();
 		m_shaderConvolute->setUniform(0, 0);
+		GLint previousFBO(0);
+		glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFBO);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_cubeFBO);
 		glBindTextureUnit(0, m_cubemapMipped);
 		m_drawData[m_drawIndex].quad6IndirectBuffer.bind();
@@ -154,7 +156,7 @@ private:
 		glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, 0);
 		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 		Shader::Release();
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, previousFBO);
 	}
 
 

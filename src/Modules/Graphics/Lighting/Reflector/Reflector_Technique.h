@@ -50,6 +50,7 @@ public:
 		// Environment Map
 		m_frameData->envmapSize = glm::ivec2(std::max(1u, (unsigned int)m_frameData->envmapSize.x));
 		m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_frameData->envmapSize);
+		m_rhVolume = std::make_shared<RH_Volume>(engine);
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
@@ -82,7 +83,7 @@ public:
 		if (m_enabled && m_shapeQuad->existsYet() && m_shaderCopy->existsYet() && m_shaderConvolute->existsYet())
 			updateReflectors(deltaTime);
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
 		// Exit Early
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderLighting->existsYet() && m_shaderStencil->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
@@ -128,6 +129,8 @@ private:
 		auto clientTime = m_engine->getTime();
 		if (m_frameData->reflectorsToUpdate.size()) {
 			m_viewport->resize(m_frameData->envmapSize, (int)m_frameData->reflectorLayers);
+			m_viewport->bind();
+			m_viewport->clear();
 			m_indirectQuad.beginWriting();
 			m_indirectQuadConvolute.beginWriting();
 
@@ -154,7 +157,7 @@ private:
 			m_indirectQuadConvolute.write(sizeof(GLuint), sizeof(GLuint), &convoluteCount);
 
 			// Update all reflectors at once
-			m_engine->getModule_Graphics().renderScene(deltaTime, m_viewport, perspectives, Graphics_Technique::GEOMETRY | Graphics_Technique::PRIMARY_LIGHTING | Graphics_Technique::SECONDARY_LIGHTING);
+			m_engine->getModule_Graphics().getPipeline()->render(deltaTime, m_viewport, m_rhVolume, perspectives, Graphics_Technique::GEOMETRY | Graphics_Technique::PRIMARY_LIGHTING | Graphics_Technique::SECONDARY_LIGHTING);
 
 			// Copy all lighting results into cube faces, generating cubemap's
 			m_viewport->m_gfxFBOS->bindForReading("LIGHTING", 0);
@@ -249,6 +252,7 @@ private:
 	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
 	StaticTripleBuffer m_indirectQuad = StaticTripleBuffer(sizeof(GLuint) * 4), m_indirectQuadConvolute = StaticTripleBuffer(sizeof(GLuint) * 4);
 	std::shared_ptr<Viewport> m_viewport;
+	std::shared_ptr<RH_Volume> m_rhVolume;
 	struct DrawData {
 		DynamicBuffer bufferCamIndex;
 		DynamicBuffer visLights;

@@ -69,6 +69,9 @@ void UI_Module::deinitialize()
 
 void UI_Module::frameTick(const float& deltaTime)
 {
+	glViewport(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	// Copy the list of callbacks, execute a copy of them
 	// We use a copy because any callback may alter the list,
 	auto copySelection = m_callbacks;
@@ -81,7 +84,6 @@ void UI_Module::frameTick(const float& deltaTime)
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDisable(GL_DEPTH_TEST);
-		glViewport(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
 
 		m_projectionBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 		m_rootElement.back()->renderElement(deltaTime, glm::vec2(0.0f), m_renderSize);

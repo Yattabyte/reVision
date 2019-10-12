@@ -10,13 +10,16 @@
 // Forward declarations
 class Engine;
 class LevelEditor_Module;
+struct Viewport;
+class RH_Volume;
+class Camera;
 
 /** A level editor UI element allowing the user to spawn previously made prefab object sets. */
 class Prefabs final : public ImGUI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy this prefab UI element. */
-	inline ~Prefabs() = default;
+	~Prefabs();
 	/** Construct a prefab UI element.
 	@param	engine			the currently active engine.
 	@param	editor			the level editor. */
@@ -40,6 +43,12 @@ private:
 	void populatePrefabs(const std::string& directory = "");
 	/** Open the selected prefab entry, spawning if its an object, if a folder populates with the folder contents.*/
 	void openPrefabEntry();
+	/***/
+	void tickThumbnails(const float& deltaTime);
+	/***/
+	void tickWindow(const float& deltaTime);
+	/***/
+	void tickPopupDialogues(const float& deltaTime);
 
 
 	// Private Attributes
@@ -47,6 +56,7 @@ private:
 	LevelEditor_Module* m_editor = nullptr;
 	Shared_Texture m_texBack, m_texFolder, m_texMissingThumb, m_texIconRefresh;
 	std::string m_prefabSubDirectory = "";
+	int m_thumbSize = 256;
 	int m_selectedIndex = -1;
 	struct Entry {
 		std::string name = "", path = "";
@@ -56,10 +66,16 @@ private:
 			folder,
 			back
 		} type = none;
-		EntityHandle entityHandle;
+		std::vector<EntityHandle> entityHandles;
+		glm::vec3 spawnPoint;
+		GLuint texID = 0;
 	};
 	std::vector<Entry> m_prefabs;
-	ecsWorld m_worldPreview;
+	std::vector<std::shared_ptr<Camera>> m_prefabCameras;
+	ecsWorld m_previewWorld;
+	std::shared_ptr<Viewport> m_viewport;
+	std::shared_ptr<RH_Volume> m_rhVolume;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // PREFABS_H

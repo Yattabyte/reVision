@@ -24,8 +24,8 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Directional_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<RH_Volume>& rhVolume, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras, ecsSystemList& auxilliarySystems)
-		: m_engine(engine), m_rhVolume(rhVolume), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
+	inline Directional_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras, ecsSystemList& auxilliarySystems)
+		: m_engine(engine), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<DirectionalData>();
 		m_frameData->clientCamera = clientCamera;
@@ -74,87 +74,89 @@ public:
 		}
 		m_drawIndex = 0;
 		m_bounceIndex = 0;
-		clear();
+		//clear();
 	}
 	inline virtual void updateTechnique(const float& deltaTime) override final {
 		// Link together the dimensions of view info to that of the viewport vectors
 		m_frameData->viewInfo.resize(m_cameras->size());
+	}
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
+		// Exit Early
+		if (m_enabled && m_frameData->viewInfo.size() && m_shapeQuad->existsYet() && m_shader_Lighting->existsYet() && m_shader_Bounce->existsYet()) {
+			/*// Light Bounce
+			{
+				// Find client camera
+				size_t visibilityIndex = 0;
+				bool found = false;
+				for (size_t x = 0; x < m_cameras->size(); ++x)
+					if (m_cameras->at(x) == m_frameData->clientCamera.get()) {
+						visibilityIndex = x;
+						found = true;
+						break;
+					}
+				if (found && visibilityIndex < m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visShadowCount) {
+					// Light bounce using client camera
+					if (m_bounceIndex >= m_drawBounceData.size())
+						m_drawBounceData.resize(size_t(m_drawIndex) + 1ull);
 
-		// Render important shadows
-		if (m_enabled && m_frameData->viewInfo.size() && m_shader_Bounce->existsYet()) {
-			// Find client camera
-			size_t visibilityIndex = 0;
-			bool found = false;
-			for (size_t x = 0; x < m_cameras->size(); ++x)
-				if (m_cameras->at(x) == m_frameData->clientCamera.get()) {
-					visibilityIndex = x;
-					found = true;
-					break;
+					auto& bounceBuffer = m_drawBounceData[m_bounceIndex];
+					auto& camBufferIndex = bounceBuffer.bufferCamIndex;
+					auto& lightBufferIndex = bounceBuffer.visLights;
+					camBufferIndex.beginWriting();
+					lightBufferIndex.beginWriting();
+					bounceBuffer.indirectBounce.beginWriting();
+
+					// Accumulate all visibility info for the cameras passed in
+					std::vector<glm::ivec2> camIndices(m_frameData->viewInfo[visibilityIndex].lightIndices.size(), { visibilityIndex, 0 });
+					std::vector<GLint> lightIndices(m_frameData->viewInfo[visibilityIndex].lightIndices.begin(), m_frameData->viewInfo[visibilityIndex].lightIndices.end());
+					const auto shadowCount = m_frameData->viewInfo[visibilityIndex].visShadowCount;
+
+					if (lightIndices.size()) {
+						// Write accumulated data
+						camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
+						lightBufferIndex.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
+						const GLuint dataBounce[] = { (GLuint)m_shapeQuad->getSize(), (GLuint)(shadowCount * m_bounceSize),0,0 };
+						bounceBuffer.indirectBounce.write(0, sizeof(GLuint) * 4, &dataBounce);
+
+						// Update light bounce
+						renderBounce(deltaTime, (int)visibilityIndex, rhVolume);
+
+						m_bounceIndex++;
+					}
 				}
-			if (found && visibilityIndex < m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visShadowCount) {
-				// Light bounce using client camera
-				if (m_bounceIndex >= m_drawBounceData.size())
-					m_drawBounceData.resize(size_t(m_drawIndex) + 1ull);
-
-				auto& bounceBuffer = m_drawBounceData[m_bounceIndex];
-				auto& camBufferIndex = bounceBuffer.bufferCamIndex;
-				auto& lightBufferIndex = bounceBuffer.visLights;
+			}*/
+			// Render Light
+			{
+				if (m_drawIndex >= m_drawData.size())
+					m_drawData.resize(size_t(m_drawIndex) + 1ull);
+				auto& drawBuffer = m_drawData[m_drawIndex];
+				auto& camBufferIndex = drawBuffer.bufferCamIndex;
+				auto& lightBufferIndex = drawBuffer.visLights;
 				camBufferIndex.beginWriting();
 				lightBufferIndex.beginWriting();
-				bounceBuffer.indirectBounce.beginWriting();
+				drawBuffer.indirectShape.beginWriting();
 
 				// Accumulate all visibility info for the cameras passed in
-				std::vector<glm::ivec2> camIndices(m_frameData->viewInfo[visibilityIndex].lightIndices.size(), { visibilityIndex, 0 });
-				std::vector<GLint> lightIndices(m_frameData->viewInfo[visibilityIndex].lightIndices.begin(), m_frameData->viewInfo[visibilityIndex].lightIndices.end());
-				const auto shadowCount = m_frameData->viewInfo[visibilityIndex].visShadowCount;
+				std::vector<glm::ivec2> camIndices;
+				std::vector<GLint> lightIndices;
+				for (auto& [camIndex, layer] : perspectives) {
+					const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
+					camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
+					lightIndices.insert(lightIndices.end(), m_frameData->viewInfo[camIndex].lightIndices.begin(), m_frameData->viewInfo[camIndex].lightIndices.end());
+				}
 
 				if (lightIndices.size()) {
 					// Write accumulated data
 					camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 					lightBufferIndex.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
-					const GLuint dataBounce[] = { (GLuint)m_shapeQuad->getSize(), (GLuint)(shadowCount * m_bounceSize),0,0 };
-					bounceBuffer.indirectBounce.write(0, sizeof(GLuint) * 4, &dataBounce);
+					const GLuint dataShape[] = { (GLuint)m_shapeQuad->getSize(), (GLuint)lightIndices.size(), 0,0 };
+					drawBuffer.indirectShape.write(0, sizeof(GLuint) * 4, &dataShape);
 
-					// Update light bounce
-					renderBounce(deltaTime, (int)visibilityIndex);
+					// Render lights
+					renderLights(deltaTime, viewport);
 
-					m_bounceIndex++;
+					m_drawIndex++;
 				}
-			}
-		}
-	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
-		// Exit Early
-		if (m_enabled && m_frameData->viewInfo.size() && m_shapeQuad->existsYet() && m_shader_Lighting->existsYet()) {
-			if (m_drawIndex >= m_drawData.size())
-				m_drawData.resize(size_t(m_drawIndex) + 1ull);
-			auto& drawBuffer = m_drawData[m_drawIndex];
-			auto& camBufferIndex = drawBuffer.bufferCamIndex;
-			auto& lightBufferIndex = drawBuffer.visLights;
-			camBufferIndex.beginWriting();
-			lightBufferIndex.beginWriting();
-			drawBuffer.indirectShape.beginWriting();
-
-			// Accumulate all visibility info for the cameras passed in
-			std::vector<glm::ivec2> camIndices;
-			std::vector<GLint> lightIndices;
-			for (auto& [camIndex, layer] : perspectives) {
-				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
-				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
-				lightIndices.insert(lightIndices.end(), m_frameData->viewInfo[camIndex].lightIndices.begin(), m_frameData->viewInfo[camIndex].lightIndices.end());
-			}
-
-			if (lightIndices.size()) {
-				// Write accumulated data
-				camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
-				lightBufferIndex.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
-				const GLuint dataShape[] = { (GLuint)m_shapeQuad->getSize(), (GLuint)lightIndices.size(), 0,0 };
-				drawBuffer.indirectShape.write(0, sizeof(GLuint) * 4, &dataShape);
-
-				// Render lights
-				renderLights(deltaTime, viewport);
-
-				m_drawIndex++;
 			}
 		}
 	}
@@ -187,19 +189,19 @@ private:
 	/** Render light bounces.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline void renderBounce(const float& deltaTime, const int& viewingIndex) {
+	inline void renderBounce(const float& deltaTime, const int& viewingIndex, const std::shared_ptr<RH_Volume>& rhVolume) {
 		// Prepare rendering state
 		glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_shader_Bounce->setUniform(0, (GLint)(m_frameData->viewInfo.at(viewingIndex).visShadowCount));
-		m_shader_Bounce->setUniform(1, m_rhVolume->m_max);
-		m_shader_Bounce->setUniform(2, m_rhVolume->m_min);
-		m_shader_Bounce->setUniform(4, m_rhVolume->m_resolution);
-		m_shader_Bounce->setUniform(6, m_rhVolume->m_unitSize);
+		m_shader_Bounce->setUniform(1, rhVolume->m_max);
+		m_shader_Bounce->setUniform(2, rhVolume->m_min);
+		m_shader_Bounce->setUniform(4, rhVolume->m_resolution);
+		m_shader_Bounce->setUniform(6, rhVolume->m_unitSize);
 
-		glViewport(0, 0, (GLsizei)m_rhVolume->m_resolution, (GLsizei)m_rhVolume->m_resolution);
+		glViewport(0, 0, (GLsizei)rhVolume->m_resolution, (GLsizei)rhVolume->m_resolution);
 		m_shader_Bounce->bind();
-		m_rhVolume->writePrimary();
+		rhVolume->writePrimary();
 		glBindTextureUnit(0, m_frameData->shadowData->shadowFBO.m_texNormal);
 		glBindTextureUnit(1, m_frameData->shadowData->shadowFBO.m_texColor);
 		glBindTextureUnit(2, m_frameData->shadowData->shadowFBO.m_texDepth);
@@ -250,7 +252,6 @@ private:
 
 	// Shared Attributes
 	std::shared_ptr<DirectionalData> m_frameData;
-	std::shared_ptr<RH_Volume> m_rhVolume;
 	std::shared_ptr<std::vector<Camera*>> m_cameras;
 };
 

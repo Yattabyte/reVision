@@ -7,6 +7,8 @@
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Common/Viewport.h"
 #include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsWorld.h"
+#include "Utilities/GL/GL_ArrayBuffer.h"
 #include <vector>
 
 
@@ -20,24 +22,25 @@ public:
 	inline ~Graphics_Pipeline() = default;
 	/** Construct a PBR rendering pipeline.
 	@param	engine			the engine to use.
+	@param	clientCamera	the main camera.
 	@param	cameras			all the cameras active in the scene.
 	@param	auxSystems		container to add extra render-related ecs systems to. */
-	Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras, const std::shared_ptr<RH_Volume>& rhVolume, ecsSystemList& auxSystems);
+	Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camera>& clientCamera);
 
 
 	// Public Methods
-	/** Prepare rendering techniques for the next frame, swapping buffers and resetting data.
-	@param	deltaTime		the amount of time passed since last frame. */
-	void prepareForNextFrame(const float& deltaTime);
-	/** Update rendering techniques, performing any necessary pre-passes.
-	@param	deltaTime		the amount of time passed since last frame. */
-	void update(const float& deltaTime);
+	/***/
+	void begin();
+	/***/
+	void end(const float& deltaTime);
+	/***/
+	std::vector<std::pair<int, int>> update(const float& deltaTime, ecsWorld& world, const std::vector<std::shared_ptr<Camera>>& cameras = {});
 	/** Apply this lighting technique.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	viewport		the viewport to render into.
 	@param	camera			the camera to render with.
 	@param	categories		the allowed technique categories to render. */
-	void render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories = Graphics_Technique::ALL);
+	void render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories = Graphics_Technique::ALL);
 	/** Use geometry techniques to cull shadows.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	perspectives	the camera and layer indicies to render. */
@@ -50,6 +53,10 @@ public:
 protected:
 	// Protected Attributes
 	Engine* m_engine = nullptr;
+	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
+	std::shared_ptr<GL_ArrayBuffer<Camera::GPUData>> m_cameraBuffer;
+	ecsSystemList m_worldSystems, m_cameraSystems;
+	std::shared_ptr<ecsBaseSystem> m_transHierachy;
 	std::vector<Geometry_Technique*> m_geometryTechniques;
 	std::vector<Graphics_Technique*> m_lightingTechniques, m_effectTechniques, m_allTechniques;
 };

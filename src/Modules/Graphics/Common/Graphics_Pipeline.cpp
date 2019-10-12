@@ -16,18 +16,41 @@
 #include "Modules/Graphics/Effects/Bloom.h"
 #include "Modules/Graphics/Effects/HDR.h"
 #include "Modules/Graphics/Effects/FXAA.h"
+#include "Modules/Graphics/Logical/Transform_System.h"
+#include "Modules/Graphics/Logical/CameraPerspective_System.h"
+#include "Modules/Graphics/Logical/CameraArrayPerspective_System.h"
+#include "Modules/Graphics/Logical/FrustumCull_System.h"
+#include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
 
 
-Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras, const std::shared_ptr<RH_Volume>& rhVolume, ecsSystemList& auxilliarySystems)
+Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camera>& clientCamera)
 	: m_engine(engine)
 {
-	auto propView = new Prop_Technique(engine, cameras, auxilliarySystems);
-	auto shadowing = new Shadow_Technique(engine, cameras, auxilliarySystems);
-	auto directionalLighting = new Directional_Technique(engine, shadowing->getShadowData(), rhVolume, clientCamera, cameras, auxilliarySystems);
-	auto pointLighting = new Point_Technique(engine, shadowing->getShadowData(), cameras, auxilliarySystems);
-	auto spotLighting = new Spot_Technique(engine, shadowing->getShadowData(), cameras, auxilliarySystems);
-	auto reflectorLighting = new Reflector_Technique(engine, cameras, auxilliarySystems);
-	auto radianceHints = new Radiance_Hints(engine, rhVolume);
+	// Camera
+	m_sceneCameras = std::make_shared<std::vector<Camera*>>();
+	m_cameraBuffer = std::make_shared<GL_ArrayBuffer<Camera::GPUData>>();
+
+	// Create Systems
+	m_transHierachy = m_worldSystems.makeSystem<Transform_System>(m_engine);
+	m_worldSystems.makeSystem<FrustumCull_System>(m_sceneCameras);
+	m_worldSystems.makeSystem<Skeletal_Animation_System>(m_engine);
+	m_cameraSystems.makeSystem<CameraPerspective_System>(m_sceneCameras);
+	m_cameraSystems.makeSystem<CameraArrayPerspective_System>(m_sceneCameras);
+
+	// Report invalid ecs systems
+	auto& msg = engine->getManager_Messages();
+	for each (const auto & system in m_worldSystems)
+		if (!system->isValid())
+			msg.error("Invalid ECS System: " + std::string(typeid(*system).name()));
+
+	// Create Rendering Techniques
+	auto propView = new Prop_Technique(engine, m_sceneCameras, m_worldSystems);
+	auto shadowing = new Shadow_Technique(engine, m_sceneCameras, m_worldSystems);
+	auto directionalLighting = new Directional_Technique(engine, shadowing->getShadowData(), clientCamera, m_sceneCameras, m_worldSystems);
+	auto pointLighting = new Point_Technique(engine, shadowing->getShadowData(), m_sceneCameras, m_worldSystems);
+	auto spotLighting = new Spot_Technique(engine, shadowing->getShadowData(), m_sceneCameras, m_worldSystems);
+	auto reflectorLighting = new Reflector_Technique(engine, m_sceneCameras, m_worldSystems);
+	auto radianceHints = new Radiance_Hints(engine);
 	auto skybox = new Skybox(m_engine);
 	auto ssao = new SSAO(m_engine);
 	auto ssr = new SSR(m_engine);
@@ -36,6 +59,7 @@ Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camer
 	auto hdr = new HDR(m_engine);
 	auto fxaa = new FXAA(m_engine);
 
+	// Filter Techniques
 	m_geometryTechniques = {
 		propView
 	};
@@ -46,7 +70,7 @@ Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camer
 		radianceHints, ssao, ssr, joinReflections, bloom, hdr, fxaa
 	};
 
-	// Join All
+	// Join All Techniques
 	m_allTechniques.reserve(m_geometryTechniques.size() + m_lightingTechniques.size() + m_effectTechniques.size());
 	for each (const auto & tech in m_geometryTechniques)
 		m_allTechniques.push_back(tech);
@@ -56,23 +80,57 @@ Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camer
 		m_allTechniques.push_back(tech);
 }
 
-void Graphics_Pipeline::prepareForNextFrame(const float& deltaTime)
+void Graphics_Pipeline::begin()
 {
+	m_cameraBuffer->beginWriting();
+}
+
+void Graphics_Pipeline::end(const float& deltaTime)
+{
+	m_cameraBuffer->endWriting();
 	for each (auto * tech in m_allTechniques)
 		tech->prepareForNextFrame(deltaTime);
 }
 
-void Graphics_Pipeline::update(const float& deltaTime)
+std::vector<std::pair<int, int>> Graphics_Pipeline::update(const float& deltaTime, ecsWorld& world, const std::vector<std::shared_ptr<Camera>>& cameras)
 {
+	// Push cameras to the beginning of the camera list
+	m_sceneCameras->clear();
+	m_sceneCameras->reserve(cameras.size());
+	std::vector<std::pair<int, int>> perspectives;
+	int count(0);
+	for each (auto & camera in cameras) {
+		camera->updateFrustum();
+		m_sceneCameras->push_back(camera.get());
+		perspectives.push_back({ count, count });
+		count++;
+	}
+
+	// Find remaining cameras in the world, add them to the list
+	world.updateSystems(m_worldSystems, deltaTime);
+
+	// Aggregate camera data into camera buffer
+	m_cameraBuffer->resize(m_sceneCameras->size());
+	for (size_t x = 0ull; x < m_sceneCameras->size(); ++x)
+		(*m_cameraBuffer)[x] = *(*m_sceneCameras)[x]->get();
+
+	// Update world systems
+	std::dynamic_pointer_cast<Transform_System>(m_transHierachy)->m_world = &world;
+	world.updateSystems(m_worldSystems, deltaTime);
+
+	// Update rendering techniques
 	for each (auto * tech in m_allTechniques)
 		tech->updateTechnique(deltaTime);
+
+	return perspectives;
 }
 
-void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& allowedCategories)
+void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& allowedCategories)
 {
+	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for each (auto * tech in m_allTechniques)
 		if (allowedCategories & tech->getCategory())
-			tech->renderTechnique(deltaTime, viewport, perspectives);
+			tech->renderTechnique(deltaTime, viewport, rhVolume, perspectives);
 }
 
 void Graphics_Pipeline::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives)

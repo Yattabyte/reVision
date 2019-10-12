@@ -39,7 +39,7 @@ public:
 			auto* transformComponent = (Transform_Component*)componentParam[4];
 
 			// Synchronize the component if it is visible
-				// Sync Camera Attributes
+			// Sync Camera Attributes
 			if (cameraComponent) {
 				cameraComponent->m_cameras.resize(NUM_CASCADES);
 				cameraComponent->m_updateTimes.resize(NUM_CASCADES);

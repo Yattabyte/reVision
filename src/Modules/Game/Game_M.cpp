@@ -61,7 +61,7 @@ void Game_Module::frameTick(const float& deltaTime)
 	// Update our own ECS systems
 	m_world.updateSystems(m_Systems, deltaTime);
 	m_engine->getModule_Physics().frameTick(m_world, deltaTime);
-	m_engine->getModule_Graphics().frameTick(m_world, deltaTime);
+	m_engine->getModule_Graphics().renderWorld(m_world, deltaTime);
 	renderOverlays(deltaTime);
 }
 

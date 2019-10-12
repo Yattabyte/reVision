@@ -131,7 +131,7 @@ bool ecsWorld::removeEntityComponent(const EntityHandle& entityHandle, const Com
 /// PUBLIC GET FUNCTIONS ///
 ////////////////////////////
 
-ecsEntity* ecsWorld::getEntity(const EntityHandle& UUID)
+ecsEntity* ecsWorld::getEntity(const EntityHandle& UUID) const
 {
 	std::function<ecsEntity * (const EntityHandle&, const std::map<EntityHandle, ecsEntity*>&)> find_entity = [&](const EntityHandle& UUID, const std::map<EntityHandle, ecsEntity*>& entities) -> ecsEntity* {
 		// First try to find in main map using built-in algorithm
@@ -148,7 +148,7 @@ ecsEntity* ecsWorld::getEntity(const EntityHandle& UUID)
 	return find_entity(UUID, m_entities);
 }
 
-std::vector<ecsEntity*> ecsWorld::getEntities(const std::vector<EntityHandle>& uuids)
+std::vector<ecsEntity*> ecsWorld::getEntities(const std::vector<EntityHandle>& uuids) const
 {
 	std::vector<ecsEntity*> entities;
 	entities.reserve(uuids.size());
@@ -158,7 +158,7 @@ std::vector<ecsEntity*> ecsWorld::getEntities(const std::vector<EntityHandle>& u
 	return entities;
 }
 
-std::vector<EntityHandle> ecsWorld::getEntityHandles(const EntityHandle& rootHandle)
+std::vector<EntityHandle> ecsWorld::getEntityHandles(const EntityHandle& rootHandle) const
 {
 	std::vector<EntityHandle> entityHandles;
 	auto* root = rootHandle != EntityHandle() ? &getEntity(rootHandle)->m_children : &m_entities;
@@ -168,7 +168,7 @@ std::vector<EntityHandle> ecsWorld::getEntityHandles(const EntityHandle& rootHan
 	return entityHandles;
 }
 
-ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle)
+ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle) const
 {
 	std::function<ecsBaseComponent * (const EntityMap&, const ComponentHandle&)> find_component = [&](const EntityMap& entities, const ComponentHandle& componentHandle) -> ecsBaseComponent* {
 		// Search all entities in the list supplied
@@ -176,7 +176,7 @@ ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle)
 			// Check if this entity contains the component handle
 			for (const auto& [compID, fn, compHandle] : entity->m_components)
 				if (compHandle == componentHandle)
-					return (ecsBaseComponent*) & (m_components[compID][fn]);
+					return (ecsBaseComponent*) & (m_components.at(compID)[fn]);
 			// Check if this entity's children contain the component handle
 			if (auto* component = find_component(entity->m_children, componentHandle))
 				return component;
@@ -187,7 +187,7 @@ ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle)
 	return find_component(m_entities, componentHandle);
 }
 
-ecsBaseComponent* ecsWorld::getComponent(const std::vector<std::tuple<ComponentID, int, ComponentHandle>>& entityComponents, const ComponentDataSpace& mem_array, const ComponentID& componentID)
+ecsBaseComponent* ecsWorld::getComponent(const std::vector<std::tuple<ComponentID, int, ComponentHandle>>& entityComponents, const ComponentDataSpace& mem_array, const ComponentID& componentID) const
 {
 	for (size_t i = 0ull; i < entityComponents.size(); ++i) {
 		const auto& [compId, fn, compHandle] = entityComponents[i];
@@ -348,12 +348,12 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 	}
 }
 
-std::vector<char> ecsWorld::serializeEntities(const std::vector<EntityHandle>& entityHandles)
+std::vector<char> ecsWorld::serializeEntities(const std::vector<EntityHandle>& entityHandles) const
 {
 	return serializeEntities(getEntities(entityHandles));
 }
 
-std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsEntity*>& entities)
+std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsEntity*>& entities) const
 {
 	std::vector<char> data;
 	for each (const auto & entity in entities) {
@@ -365,14 +365,14 @@ std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsEntity*>& ent
 	return data;
 }
 
-std::vector<char> ecsWorld::serializeEntity(const EntityHandle& entityHandle)
+std::vector<char> ecsWorld::serializeEntity(const EntityHandle& entityHandle) const
 {
 	if (const auto& entity = getEntity(entityHandle))
 		return serializeEntity(*entity);
 	return {};
 }
 
-std::vector<char> ecsWorld::serializeEntity(const ecsEntity& entity)
+std::vector<char> ecsWorld::serializeEntity(const ecsEntity& entity) const
 {
 	/* ENTITY DATA STRUCTURE {
 		name char count
@@ -403,7 +403,7 @@ std::vector<char> ecsWorld::serializeEntity(const ecsEntity& entity)
 	dataIndex += sizeof(unsigned int);
 	// Accumulate entity component data count
 	for (const auto& [componentID, createFunc, componentHandle] : entity.m_components) {
-		if (const auto& component = getComponent(entity.m_components, m_components[componentID], componentID)) {
+		if (const auto& component = getComponent(entity.m_components, m_components.at(componentID), componentID)) {
 			const auto componentData = component->to_buffer();
 			data.insert(data.end(), componentData.begin(), componentData.end());
 			entityDataCount += componentData.size();
