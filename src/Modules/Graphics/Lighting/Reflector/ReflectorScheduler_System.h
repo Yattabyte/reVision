@@ -83,7 +83,7 @@ public:
 				cameraComponent->m_updateTimes.resize(cameraComponent->m_cameras.size());
 				for (int x = 0; x < cameraComponent->m_cameras.size(); ++x) {
 					cameraComponent->m_cameras[x].setEnabled(false);
-					tryToAddReflector(reflectorComponent->m_cubeSpot + x, &(cameraComponent->m_cameras[x]), &cameraComponent->m_updateTimes[x]);
+					tryToAddReflector(reflectorComponent->m_cubeSpot + x, &cameraComponent->m_cameras[x], &cameraComponent->m_updateTimes[x]);
 				}
 				cameraCount += (int)cameraComponent->m_cameras.size();
 			}

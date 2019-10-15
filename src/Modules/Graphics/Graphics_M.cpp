@@ -91,14 +91,14 @@ void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const
 {
 	if (cameras.size()) {
 		// Prepare rendering pipeline for a new frame, wait for buffers to free
+		const auto perspectives = m_pipeline->begin(deltaTime, world, cameras);
+		viewport->bind();
 		viewport->clear();
 		rhVolume->clear();
 		rhVolume->updateVolume(cameras[0].get());
 
-		m_pipeline->begin();
-		const auto perspectives = m_pipeline->update(deltaTime, world, cameras);
-		viewport->bind();
 		m_pipeline->render(deltaTime, viewport, rhVolume, perspectives);
+
 		m_pipeline->end(deltaTime);
 	}
 }
@@ -121,5 +121,6 @@ void Graphics_Module::copyToScreen()
 		m_shader->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_indirectQuad.drawCall();
+		Shader::Release();
 	}
 }

@@ -57,8 +57,7 @@ public:
 			cameraComponent->m_cameras.resize(6);
 			cameraComponent->m_updateTimes.resize(6);
 			for (int x = 0; x < 6; ++x) {
-				auto& cam = cameraComponent->m_cameras[x];
-				auto& camData = *cam.get();
+				auto& camData = *cameraComponent->m_cameras[x].get();
 				camData.Dimensions = m_frameData->envmapSize;
 				camData.FOV = 90.0f;
 				camData.FarPlane = largest;
@@ -68,7 +67,7 @@ public:
 				camData.vMatrix = vMatrices[x];
 				camData.vMatrixInverse = glm::inverse(vMatrices[x]);
 				camData.pvMatrix = pMatrix * vMatrices[x];
-				cam.updateFrustum();
+				cameraComponent->m_cameras[x].updateFrustum();
 			}
 
 			// Sync Buffer Attributes

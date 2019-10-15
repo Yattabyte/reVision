@@ -72,8 +72,8 @@ public:
 			m_shader->setUniform(2, glm::translate(glm::mat4(1.0f), glm::vec3(x * 24, 24, 0)) * scale);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 		}
-		m_shader->Release();
 		glDisable(GL_BLEND);
+		Shader::Release();
 	}
 
 

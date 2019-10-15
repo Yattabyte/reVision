@@ -20,13 +20,13 @@ public:
 	/** Destructor. */
 	inline ~Prop_Technique() = default;
 	/** Constructor. */
-	inline Prop_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& viewports, ecsSystemList& auxilliarySystems)
+	inline Prop_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& viewports)
 		: m_engine(engine), m_cameras(viewports) {
 		// Auxiliary Systems
 		m_frameData = std::make_shared<PropData>();
-		auxilliarySystems.makeSystem<PropUpload_System>(engine, m_frameData);
-		auxilliarySystems.makeSystem<PropVisibility_System>(m_frameData, viewports);
-		auxilliarySystems.makeSystem<PropSync_System>(m_frameData);
+		m_auxilliarySystems.makeSystem<PropUpload_System>(engine, m_frameData);
+		m_auxilliarySystems.makeSystem<PropVisibility_System>(m_frameData, viewports);
+		m_auxilliarySystems.makeSystem<PropSync_System>(m_frameData);
 
 		// Asset Loading
 		m_shaderCull = Shared_Shader(engine, "Core\\Props\\culling");
@@ -50,6 +50,11 @@ public:
 		}
 		m_drawIndex = 0;
 		clear();
+	}
+	inline virtual void updateTechnique(const float& deltaTime, ecsWorld& world) override final {
+		// Link together the dimensions of view info to that of the viewport vectors
+		m_frameData->viewInfo.resize(m_cameras->size());
+		world.updateSystems(m_auxilliarySystems, deltaTime);
 	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
 		// Exit Early
@@ -132,6 +137,7 @@ public:
 				const auto& [sourceID, destinationID] = std::make_pair(viewport->m_gfxFBOS->getFboID("GEOMETRY"), viewport->m_gfxFBOS->getFboID("DEPTH-ONLY"));
 				const auto& size = viewport->m_dimensions;
 				glBlitNamedFramebuffer(sourceID, destinationID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+				Shader::Release();
 				m_drawIndex++;
 			}
 		}
@@ -195,6 +201,7 @@ public:
 				glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 8, 0);
 				m_count = visibleIndices.size();
+				Shader::Release();
 			}
 		}
 	}
@@ -215,6 +222,7 @@ public:
 				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, (GLsizei)m_count, 0);
 				glFrontFace(GL_CCW);
 				glCullFace(GL_BACK);
+				Shader::Release();
 				m_drawIndex++;
 			}
 		}
@@ -239,6 +247,7 @@ private:
 	int m_drawIndex = 0;
 	size_t m_count = 0ull;
 	std::vector<DrawData> m_drawData;
+	ecsSystemList m_auxilliarySystems;
 
 
 	// Shared Attributes

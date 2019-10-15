@@ -77,6 +77,7 @@ public:
 			m_shader->setUniform(2, glm::vec4(0.8, 0.6, 0.1, 1));
 			glDrawArrays(GL_TRIANGLES, 24, 24);
 		}
+		Shader::Release();
 
 		// Render Children
 		UI_Element::renderElement(deltaTime, position, scale);

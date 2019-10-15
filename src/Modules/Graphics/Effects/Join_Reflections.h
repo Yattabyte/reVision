@@ -67,6 +67,7 @@ public:
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		indirectQuad.drawCall();
 		glDisable(GL_BLEND);
+		Shader::Release();
 		m_drawIndex++;
 	}
 

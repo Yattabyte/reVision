@@ -53,7 +53,7 @@ public:
 		m_shader->setUniform(1, m_borderColor);
 		glBindVertexArray(m_vaoID);
 		m_indirect.drawCall();
-
+		Shader::Release();
 
 		// Render Children
 		UI_Decorator::renderElement(deltaTime, position, newScale);

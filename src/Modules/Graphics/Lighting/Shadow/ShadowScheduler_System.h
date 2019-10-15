@@ -23,8 +23,7 @@ public:
 	inline ShadowScheduler_System(Engine* engine, const std::shared_ptr<ShadowData>& frameData)
 		: m_engine(engine), m_frameData(frameData) {
 		addComponentType(Shadow_Component::m_ID, FLAG_REQUIRED);
-		addComponentType(Camera_Component::m_ID, FLAG_OPTIONAL);
-		addComponentType(CameraArray_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(Light_Component::m_ID, FLAG_REQUIRED);
 
 		auto& preferences = engine->getPreferenceState();
 		m_maxShadowsCasters = 1u;
@@ -45,9 +44,8 @@ public:
 		if (int availableRoom = (int)m_maxShadowsCasters - (int)m_frameData->shadowsToUpdate.size()) {
 			int cameraCount = 0;
 			for each (const auto & componentParam in components) {
-				auto* shadowComponent = (Shadow_Component*)componentParam[0];
-				auto* camSingle = (Camera_Component*)componentParam[1];
-				auto* camArrays = (CameraArray_Component*)componentParam[2];
+				auto* shadow = (Shadow_Component*)componentParam[0];
+				auto* light = (Light_Component*)componentParam[1];
 
 				auto tryToAddShadow = [&shadows, &maxShadows, &clientPosition, &clientFarPlane, &clientTime](const int& shadowSpot, Camera* cb, float* updateTime) {
 					const float linDist = glm::distance(clientPosition, cb->getFrustumCenter()) / clientFarPlane;
@@ -81,21 +79,13 @@ public:
 						shadows.resize(maxShadows);
 				};
 				// Set appropriate shadow spot
-				shadowComponent->m_shadowSpot = cameraCount;
-
-				if (camSingle) {
-					camSingle->m_camera.setEnabled(false);
-					tryToAddShadow(shadowComponent->m_shadowSpot, &(camSingle->m_camera), &camSingle->m_updateTime);
-					cameraCount++;
+				shadow->m_shadowSpot = cameraCount;
+				shadow->m_updateTimes.resize(shadow->m_cameras.size());
+				for (int x = 0; x < shadow->m_cameras.size(); ++x) {
+					shadow->m_cameras[x].setEnabled(false);
+					tryToAddShadow(shadow->m_shadowSpot + x, &shadow->m_cameras[x], &shadow->m_updateTimes[x]);
 				}
-				else if (camArrays) {
-					camArrays->m_updateTimes.resize(camArrays->m_cameras.size());
-					for (int x = 0; x < camArrays->m_cameras.size(); ++x) {
-						camArrays->m_cameras[x].setEnabled(false);
-						tryToAddShadow(shadowComponent->m_shadowSpot + x, &(camArrays->m_cameras[x]), &camArrays->m_updateTimes[x]);
-					}
-					cameraCount += (int)camArrays->m_cameras.size();
-				}
+				cameraCount += (int)shadow->m_cameras.size();
 			}
 
 			// Enable cameras in final set

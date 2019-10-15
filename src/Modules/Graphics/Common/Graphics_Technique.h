@@ -2,6 +2,7 @@
 #ifndef GRAPHICS_TECHNIQUE_H
 #define GRAPHICS_TECHNIQUE_H
 
+#include "Modules/ECS/ecsWorld.h"
 #include <memory>
 #include <vector>
 
@@ -47,7 +48,7 @@ public:
 	inline virtual void prepareForNextFrame(const float& deltaTime) {}
 	/** Perform any pre-passes and or update any data needed before rendering this frame.
 	@param	deltaTime	the amount of time passed since last frame. */
-	inline virtual void updateTechnique(const float& deltaTime) {}
+	inline virtual void updateTechnique(const float& deltaTime, ecsWorld& world) {}
 	/** Apply this lighting technique.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */

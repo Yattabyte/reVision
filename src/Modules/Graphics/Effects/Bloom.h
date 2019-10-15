@@ -103,6 +103,7 @@ public:
 		m_shaderCopy->bind();
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glDisable(GL_BLEND);
+		Shader::Release();
 		m_drawIndex++;
 	}
 

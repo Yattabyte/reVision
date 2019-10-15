@@ -101,6 +101,7 @@ public:
 		viewport->m_gfxFBOS->bindForWriting("BOUNCE");
 		camBufferRecon.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		indirectQuadRecon.drawCall();
+		Shader::Release();
 		m_drawIndex++;
 	}
 

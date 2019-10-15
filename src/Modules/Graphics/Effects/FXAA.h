@@ -67,6 +67,7 @@ public:
 
 		// Bind for reading by next effect
 		glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("FXAA", 0));
+		Shader::Release();
 		m_drawIndex++;
 	}
 

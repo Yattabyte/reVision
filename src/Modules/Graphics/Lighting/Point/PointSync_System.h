@@ -7,7 +7,7 @@
 #include "Modules/Graphics/Lighting/Point/PointData.h"
 
 
-/** An ECS system responsible for syncronizing point lighting components and sending data to the GPU. */
+/** An ECS system responsible for synchronizing point lighting components and sending data to the GPU. */
 class PointSync_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors

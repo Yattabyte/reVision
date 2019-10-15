@@ -67,6 +67,7 @@ public:
 		// Use the currently bound framebuffer from the prior effect
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		indirectQuad.drawCall();
+		Shader::Release();
 		m_drawIndex++;
 	}
 

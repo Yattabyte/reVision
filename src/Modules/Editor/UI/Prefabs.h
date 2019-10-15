@@ -56,6 +56,7 @@ private:
 	LevelEditor_Module* m_editor = nullptr;
 	Shared_Texture m_texBack, m_texFolder, m_texMissingThumb, m_texIconRefresh;
 	std::string m_prefabSubDirectory = "";
+	float m_updateTime = 0.0f;
 	int m_thumbSize = 256;
 	int m_selectedIndex = -1;
 	struct Entry {

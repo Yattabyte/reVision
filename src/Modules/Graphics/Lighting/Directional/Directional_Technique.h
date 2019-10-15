@@ -15,7 +15,7 @@
 
 
 /** A core lighting technique responsible for all directional lights. */
-class Directional_Technique final : public Graphics_Technique {
+class [[deprecated]] Directional_Technique final : public Graphics_Technique{
 public:
 	// Public (de)Constructors
 	/** Destructor. */
@@ -24,14 +24,14 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Directional_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras, ecsSystemList& auxilliarySystems)
+	inline Directional_Technique(Engine * engine, const std::shared_ptr<ShadowData> & shadowData, const std::shared_ptr<Camera> & clientCamera, const std::shared_ptr<std::vector<Camera*>> & cameras)
 		: m_engine(engine), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<DirectionalData>();
 		m_frameData->clientCamera = clientCamera;
 		m_frameData->shadowData = shadowData;
-		auxilliarySystems.makeSystem<DirectionalVisibility_System>(m_frameData);
-		auxilliarySystems.makeSystem<DirectionalSync_System>(m_frameData);
+		m_auxilliarySystems.makeSystem<DirectionalVisibility_System>(m_frameData);
+		m_auxilliarySystems.makeSystem<DirectionalSync_System>(m_frameData);
 
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(engine, "Core\\Directional\\Light");
@@ -74,13 +74,14 @@ public:
 		}
 		m_drawIndex = 0;
 		m_bounceIndex = 0;
-		//clear();
+		clear();
 	}
-	inline virtual void updateTechnique(const float& deltaTime) override final {
+	inline virtual void updateTechnique(const float& deltaTime, ecsWorld & world) override final {
 		// Link together the dimensions of view info to that of the viewport vectors
 		m_frameData->viewInfo.resize(m_cameras->size());
+		world.updateSystems(m_auxilliarySystems, deltaTime);
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<RH_Volume> & rhVolume, const std::vector<std::pair<int, int>> & perspectives) override final {
 		// Exit Early
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeQuad->existsYet() && m_shader_Lighting->existsYet() && m_shader_Bounce->existsYet()) {
 			/*// Light Bounce
@@ -167,7 +168,7 @@ private:
 	/** Render all the lights.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline void renderLights(const float& deltaTime, const std::shared_ptr<Viewport>& viewport) {
+	inline void renderLights(const float& deltaTime, const std::shared_ptr<Viewport> & viewport) {
 		// Prepare rendering state
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
@@ -185,11 +186,12 @@ private:
 		m_drawData[m_drawIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
 		glBindVertexArray(m_shapeQuad->m_vaoID);					// Quad VAO
 		glDrawArraysIndirect(GL_TRIANGLES, 0);						// Now draw
+		Shader::Release();
 	}
 	/** Render light bounces.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline void renderBounce(const float& deltaTime, const int& viewingIndex, const std::shared_ptr<RH_Volume>& rhVolume) {
+	inline void renderBounce(const float& deltaTime, const int& viewingIndex, const std::shared_ptr<RH_Volume> & rhVolume) {
 		// Prepare rendering state
 		glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
@@ -217,6 +219,7 @@ private:
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ZERO);
 		glDisable(GL_BLEND);
+		Shader::Release();
 	}
 	/** Clear out the lights and shadows queued up for rendering. */
 	inline void clear() {
@@ -229,7 +232,7 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine * m_engine = nullptr;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	Shared_Shader m_shader_Lighting, m_shader_Bounce;
 	Shared_Auto_Model m_shapeQuad;
@@ -249,6 +252,7 @@ private:
 	};
 	int m_bounceIndex = 0;
 	std::vector<DrawBounceData> m_drawBounceData;
+	ecsSystemList m_auxilliarySystems;
 
 	// Shared Attributes
 	std::shared_ptr<DirectionalData> m_frameData;

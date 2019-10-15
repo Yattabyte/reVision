@@ -6,6 +6,7 @@
 // Component Inspectors
 #include "Modules/Editor/Systems/Inspector_Transform_System.h"
 #include "Modules/Editor/Systems/Inspector_Prop_System.h"
+#include "Modules/Editor/Systems/Inspector_Light_System.h"
 #include "Modules/Editor/Systems/Inspector_LightColor_System.h"
 #include "Modules/Editor/Systems/Inspector_LightRadius_System.h"
 #include "Modules/Editor/Systems/Inspector_LightCutoff_System.h"
@@ -17,6 +18,7 @@ EntityInspector::EntityInspector(Engine* engine, LevelEditor_Module* editor)
 	m_open = true;
 	m_inspectorSystems.makeSystem<Inspector_Transform_System>(engine, editor);
 	m_inspectorSystems.makeSystem<Inspector_Prop_System>(engine, editor);
+	m_inspectorSystems.makeSystem<Inspector_Light_System>(engine, editor);
 	m_inspectorSystems.makeSystem<Inspector_LightColor_System>(engine, editor);
 	m_inspectorSystems.makeSystem<Inspector_LightRadius_System>(engine, editor);
 	m_inspectorSystems.makeSystem<Inspector_LightCutoff_System>(engine, editor);

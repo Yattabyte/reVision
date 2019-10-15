@@ -30,11 +30,10 @@ public:
 
 	// Public Methods
 	/***/
-	void begin();
+	std::vector<std::pair<int, int>> begin(const float& deltaTime, ecsWorld& world, const std::vector<std::shared_ptr<Camera>>& cameras = {});
 	/***/
 	void end(const float& deltaTime);
 	/***/
-	std::vector<std::pair<int, int>> update(const float& deltaTime, ecsWorld& world, const std::vector<std::shared_ptr<Camera>>& cameras = {});
 	/** Apply this lighting technique.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	viewport		the viewport to render into.

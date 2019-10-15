@@ -13,19 +13,19 @@
 
 
 /** A core lighting technique responsible for all spot lights. */
-class Spot_Technique final : public Graphics_Technique {
+class [[deprecated]] Spot_Technique final : public Graphics_Technique{
 public:
 	// Public (de)Constructors
 	/** Destructor. */
 	inline ~Spot_Technique() = default;
 	/** Constructor. */
-	inline Spot_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<std::vector<Camera*>>& cameras, ecsSystemList& auxilliarySystems)
+	inline Spot_Technique(Engine * engine, const std::shared_ptr<ShadowData> & shadowData, const std::shared_ptr<std::vector<Camera*>> & cameras)
 		: m_engine(engine), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxiliary Systems
 		m_frameData = std::make_shared<SpotData>();
 		m_frameData->shadowData = shadowData;
-		auxilliarySystems.makeSystem<SpotVisibility_System>(m_frameData);
-		auxilliarySystems.makeSystem<SpotSync_System>(m_frameData);
+		m_auxilliarySystems.makeSystem<SpotVisibility_System>(m_frameData);
+		m_auxilliarySystems.makeSystem<SpotSync_System>(m_frameData);
 
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(engine, "Core\\Spot\\Light");
@@ -43,13 +43,15 @@ public:
 			drawBuffer.indirectShape.endWriting();
 		}
 		m_drawIndex = 0;
-		clear();
+		m_frameData->viewInfo.clear();
+		m_drawData.clear();
 	}
-	inline virtual void updateTechnique(const float& deltaTime) override final {
+	inline virtual void updateTechnique(const float& deltaTime, ecsWorld & world) override final {
 		// Link together the dimensions of view info to that of the viewport vectors
 		m_frameData->viewInfo.resize(m_cameras->size());
+		world.updateSystems(m_auxilliarySystems, deltaTime);
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<RH_Volume> & rhVolume, const std::vector<std::pair<int, int>> & perspectives) override final {
 		// Render direct lights
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCone->existsYet() && m_shader_Lighting->existsYet() && m_shader_Stencil->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
@@ -91,7 +93,7 @@ private:
 	/** Render all the lights.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline void renderLights(const float& deltaTime, const std::shared_ptr<Viewport>& viewport) {
+	inline void renderLights(const float& deltaTime, const std::shared_ptr<Viewport> & viewport) {
 		glEnable(GL_STENCIL_TEST);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
@@ -132,12 +134,7 @@ private:
 		glBlendFunc(GL_ONE, GL_ZERO);
 		glDisable(GL_BLEND);
 		glDisable(GL_STENCIL_TEST);
-	}
-	/** Clear out the lights and shadows queued up for rendering. */
-	inline void clear() {
-		m_frameData->viewInfo.clear();
-		m_drawData.clear();
-		m_drawIndex = 0;
+		Shader::Release();
 	}
 
 
@@ -152,11 +149,12 @@ private:
 	};
 	int m_drawIndex = 0;
 	std::vector<DrawData> m_drawData;
+	ecsSystemList m_auxilliarySystems;
 
 
 	// Shared Attributes
 	std::shared_ptr<SpotData> m_frameData;
-	std::shared_ptr<std::vector<Camera*>> m_cameras;
+	std::shared_ptr<std::vector<Camera*>>& m_cameras;
 };
 
 #endif // SPOT_TECHNIQUE_H

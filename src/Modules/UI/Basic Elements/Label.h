@@ -87,6 +87,7 @@ public:
 		m_bufferString.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 		glBindVertexArray(m_vaoID);
 		m_indirect.drawCall();
+		Shader::Release();
 
 		// Render Children
 		UI_Element::renderElement(deltaTime, position, scale);

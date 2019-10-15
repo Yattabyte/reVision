@@ -148,7 +148,7 @@ void Rotation_Gizmo::render(const float& deltaTime)
 		}
 
 		// Revert State
-		m_gizmoShader->Release();
+		Shader::Release();
 	}
 }
 

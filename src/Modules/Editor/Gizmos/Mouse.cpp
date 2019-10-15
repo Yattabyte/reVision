@@ -107,6 +107,7 @@ void Mouse_Gizmo::render(const float& deltaTime)
 		m_spawnShader->setUniform(0, pMatrix * vMatrix * trans * mScale);
 		m_spawnShader->setUniform(4, glm::vec3(0.2, 1, 0.2));
 		m_spawnIndirect.drawCall();
+		Shader::Release();
 	}
 }
 

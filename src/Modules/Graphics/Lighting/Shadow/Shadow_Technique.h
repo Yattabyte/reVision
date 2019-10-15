@@ -20,10 +20,10 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Shadow_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras, ecsSystemList& auxilliarySystems)
+	inline Shadow_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras)
 		: m_engine(engine), m_sceneCameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		m_frameData = std::make_shared<ShadowData>();
-		auxilliarySystems.makeSystem<ShadowScheduler_System>(engine, m_frameData);
+		m_auxilliarySystems.makeSystem<ShadowScheduler_System>(engine, m_frameData);
 
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
@@ -38,9 +38,10 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
-		clear();
+		m_frameData->shadowsToUpdate.clear();
 	}
-	inline virtual void updateTechnique(const float& deltaTime) override final {
+	inline virtual void updateTechnique(const float& deltaTime, ecsWorld& world) override final {
+		world.updateSystems(m_auxilliarySystems, deltaTime);
 		// Render important shadows
 		if (m_enabled)
 			updateShadows(deltaTime);
@@ -94,16 +95,13 @@ private:
 			m_frameData->shadowsToUpdate.clear();
 		}
 	}
-	/** Clear out the lights and shadows queued up for rendering. */
-	inline void clear() {
-		m_frameData->shadowsToUpdate.clear();
-	}
 
 
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	std::shared_ptr<ShadowData> m_frameData;
 	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
+	ecsSystemList m_auxilliarySystems;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

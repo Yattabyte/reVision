@@ -127,6 +127,7 @@ public:
 		m_shader->setUniform(3, m_blinkTime += deltaTime);
 		glBindVertexArray(m_vaoID);
 		m_indirect.drawCall();
+		Shader::Release();
 
 		// Render Children (text)
 		UI_Element::renderElement(deltaTime, position, scale);

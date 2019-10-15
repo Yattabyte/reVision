@@ -158,6 +158,7 @@ public:
 		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 		glDrawBuffers(3, drawBuffers);
 		glDisable(GL_BLEND);
+		Shader::Release();
 		m_drawIndex++;
 	}
 

@@ -24,7 +24,7 @@ public:
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		for each (const auto & componentParam in components) {
-			Skeleton_Component* skeletonComponent = (Skeleton_Component*)componentParam[0];
+			auto* skeletonComponent = (Skeleton_Component*)componentParam[0];
 
 			// Ensure skeleton has a mesh
 			if (!skeletonComponent->m_mesh)

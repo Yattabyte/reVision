@@ -145,6 +145,7 @@ void SceneInspector::tick(const float& deltaTime)
 									Prop_Component::m_name,
 									Skeleton_Component::m_name,
 									Shadow_Component::m_name,
+									Light_Component::m_name,
 									LightColor_Component::m_name,
 									LightRadius_Component::m_name,
 									LightCutoff_Component::m_name,

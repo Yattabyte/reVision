@@ -36,7 +36,7 @@ struct Player3D_Component final : public ecsComponent<Player3D_Component, player
 };
 
 constexpr static const char cameraName[] = "Camera_Component";
-struct Camera_Component final : public ecsComponent<Camera_Component, cameraName> {
+struct [[deprecated]] Camera_Component final : public ecsComponent<Camera_Component, cameraName>{
 	Camera m_camera;
 	float m_updateTime = 0.0f;
 
@@ -51,7 +51,7 @@ struct Camera_Component final : public ecsComponent<Camera_Component, cameraName
 };
 
 constexpr static const char cameraArrayName[] = "CameraArray_Component";
-struct CameraArray_Component final : public ecsComponent<CameraArray_Component, cameraArrayName> {
+struct [[deprecated]] CameraArray_Component final : public ecsComponent<CameraArray_Component, cameraArrayName>{
 	std::vector<Camera> m_cameras;
 	std::vector<float> m_updateTimes;
 
@@ -66,7 +66,7 @@ struct CameraArray_Component final : public ecsComponent<CameraArray_Component, 
 };
 
 constexpr static const char boundingSphereName[] = "BoundingSphere_Component";
-struct BoundingSphere_Component final : public ecsComponent<BoundingSphere_Component, boundingSphereName> {
+struct [[deprecated]] BoundingSphere_Component final : public ecsComponent<BoundingSphere_Component, boundingSphereName>{
 	// Default Serialization
 	glm::vec3 m_positionOffset = glm::vec3(0.0f);
 	float m_radius = 1.0f;
@@ -76,7 +76,7 @@ struct BoundingSphere_Component final : public ecsComponent<BoundingSphere_Compo
 };
 
 constexpr static const char boundingBoxName[] = "BoundingBox_Component";
-struct BoundingBox_Component final : public ecsComponent<BoundingBox_Component, boundingBoxName> {
+struct [[deprecated]] BoundingBox_Component final : public ecsComponent<BoundingBox_Component, boundingBoxName>{
 	// Default Serialization
 	glm::vec3 m_positionOffset = glm::vec3(0.0f), m_extent = glm::vec3(0), m_min = glm::vec3(0.0f), m_max = glm::vec3(0.0f);
 	enum CameraCollision {
@@ -197,6 +197,8 @@ struct Skeleton_Component final : public ecsComponent<Skeleton_Component, skelet
 constexpr static const char shadowName[] = "Shadow_Component";
 struct Shadow_Component final : public ecsComponent<Shadow_Component, shadowName> {
 	int m_shadowSpot = -1;
+	std::vector<Camera> m_cameras;
+	std::vector<float> m_updateTimes;
 
 	inline std::vector<char> serialize() {
 		return {};
@@ -205,27 +207,39 @@ struct Shadow_Component final : public ecsComponent<Shadow_Component, shadowName
 	}
 };
 
+constexpr static const char lightName[] = "Light_Component";
+struct Light_Component final : public ecsComponent<Light_Component, lightName> {
+	// Default Serialization
+	enum class Light_Type : int {
+		DIRECTIONAL, POINT, SPOT
+	} m_type = Light_Type::DIRECTIONAL;
+	glm::vec3 m_color = glm::vec3(1.0f);
+	float m_intensity = 1.0f;
+	float m_radius = 1.0f;
+	float m_cutoff = 45.0f;
+};
+
 constexpr static const char lightColorName[] = "LightColor_Component";
-struct LightColor_Component final : public ecsComponent<LightColor_Component, lightColorName> {
+struct [[deprecated]] LightColor_Component final : public ecsComponent<LightColor_Component, lightColorName>{
 	// Default Serialization
 	glm::vec3 m_color = glm::vec3(1.0f);
 	float m_intensity = 1.0f;
 };
 
 constexpr static const char lightRadiusName[] = "LightRadius_Component";
-struct LightRadius_Component final : public ecsComponent<LightRadius_Component, lightRadiusName> {
+struct [[deprecated]] LightRadius_Component final : public ecsComponent<LightRadius_Component, lightRadiusName>{
 	// Default Serialization
 	float m_radius = 1.0f;
 };
 
 constexpr static const char lightCutoffName[] = "LightCutoff_Component";
-struct LightCutoff_Component final : public ecsComponent<LightCutoff_Component, lightCutoffName> {
+struct [[deprecated]] LightCutoff_Component final : public ecsComponent<LightCutoff_Component, lightCutoffName>{
 	// Default Serialization
 	float m_cutoff = 45.0f;
 };
 
 constexpr static const char lightDirectionalName[] = "LightDirectional_Component";
-struct LightDirectional_Component final : public ecsComponent<LightDirectional_Component, lightDirectionalName> {
+struct [[deprecated]] LightDirectional_Component final : public ecsComponent<LightDirectional_Component, lightDirectionalName>{
 #define NUM_CASCADES 4
 	// Default Serialization
 	glm::mat4 m_pvMatrices[NUM_CASCADES] = { glm::mat4(1.0f),glm::mat4(1.0f), glm::mat4(1.0f), glm::mat4(1.0f) };
@@ -233,12 +247,12 @@ struct LightDirectional_Component final : public ecsComponent<LightDirectional_C
 };
 
 constexpr static const char lightPointName[] = "LightPoint_Component";
-struct LightPoint_Component final : public ecsComponent<LightPoint_Component, lightPointName> {
+struct [[deprecated]] LightPoint_Component final : public ecsComponent<LightPoint_Component, lightPointName>{
 	// Default Serialization
 };
 
 constexpr static const char lightSpotName[] = "LightSpot_Component";
-struct LightSpot_Component final : public ecsComponent<LightSpot_Component, lightSpotName> {
+struct [[deprecated]] LightSpot_Component final : public ecsComponent<LightSpot_Component, lightSpotName>{
 	// Default Serialization
 };
 

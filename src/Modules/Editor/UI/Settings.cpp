@@ -29,7 +29,7 @@ void Settings::tickMainDialogue()
 				static float autoSaveInterval = 60.0f;
 				m_engine->getPreferenceState().getOrSetValue(PreferenceState::E_AUTOSAVE_INTERVAL, autoSaveInterval);
 				autoSaveInterval /= 60.0f;
-				if (ImGui::DragFloat("Autosave Interval", &autoSaveInterval, 0.5f, 0.0f, 0.0f, "%.0f Minutes")) {
+				if (ImGui::DragFloat("Autosave Time", &autoSaveInterval, 0.5f, 0.0f, 0.0f, "%.0f Minutes")) {
 					autoSaveInterval = std::max(1.0f, autoSaveInterval);
 					m_engine->getPreferenceState().setValue(PreferenceState::E_AUTOSAVE_INTERVAL, float(autoSaveInterval * 60.0f));
 				}

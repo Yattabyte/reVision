@@ -77,8 +77,8 @@ public:
 			m_shader->setUniform(3, m_time);
 			m_shader->setUniform(4, m_blendAmt);
 			m_indirectQuad.drawCall();
-			m_shader->Release();
 			glDisable(GL_BLEND);
+			Shader::Release();
 		}
 	}
 

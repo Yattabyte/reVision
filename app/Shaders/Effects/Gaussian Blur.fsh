@@ -17,15 +17,15 @@ void main()
 	if (horizontal) {
 		BlurColor = texelFetch(TextureMap0, uvs, 0).rgb * weights[0];	
 		for (int i = 1; i < 5; ++i) {
-			BlurColor += texelFetch(TextureMap0, uvs + ivec3(i, 0, gl_Layer), 0).rgb * weights[i];	
-			BlurColor += texelFetch(TextureMap0, uvs - ivec3(i, 0, gl_Layer), 0).rgb * weights[i];	
+			BlurColor += texelFetch(TextureMap0, uvs + ivec3(i, 0, 0), 0).rgb * weights[i];	
+			BlurColor += texelFetch(TextureMap0, uvs - ivec3(i, 0, 0), 0).rgb * weights[i];	
 		}
 	}
 	else  {
 		BlurColor = texelFetch(TextureMap1, uvs, 0).rgb * weights[0];	
 		for (int i = 1; i < 5; ++i) {
-			BlurColor += texelFetch(TextureMap1, uvs + ivec3(0, i, gl_Layer), 0).rgb * weights[i];	
-			BlurColor += texelFetch(TextureMap1, uvs - ivec3(0, i, gl_Layer), 0).rgb * weights[i];	
+			BlurColor += texelFetch(TextureMap1, uvs + ivec3(0, i, 0), 0).rgb * weights[i];	
+			BlurColor += texelFetch(TextureMap1, uvs - ivec3(0, i, 0), 0).rgb * weights[i];	
 		}
 	}
 }

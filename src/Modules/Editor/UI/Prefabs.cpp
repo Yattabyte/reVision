@@ -201,23 +201,20 @@ void Prefabs::populatePrefabs(const std::string& directory)
 			addPrefab(Prefabs::Entry{ "Basic Sun", "", Entry::file, m_previewWorld.makeEntity(entityComponents, 5ull, "Basic Sun") });
 		}*/
 		// Basic Light
-		{
+		/*{
 			Transform_Component a;
-			LightPoint_Component b;
-			LightColor_Component c;
-			LightRadius_Component d;
-			Shadow_Component e;
-			CameraArray_Component f;
-			BoundingSphere_Component g;
-			a.m_localTransform.m_position = glm::vec3(0, 0, 10);
-			a.m_localTransform.m_scale = glm::vec3(15);
+			Light_Component b;
+			Shadow_Component c;
+			a.m_localTransform.m_orientation = glm::quat(0.653, -0.271, 0.653, -0.271);
 			a.m_localTransform.update();
-			c.m_color = glm::vec3(1.0f);
-			c.m_intensity = 15.0f;
-			d.m_radius = 10.0f;
-			ecsBaseComponent* entityComponents[] = { &a, &b, &c, &d, &e, &f, &g };
-			addPrefab(Prefabs::Entry{ "Basic Light", "", Entry::file, {m_previewWorld.makeEntity(entityComponents, 7ull, "Basic Light")} });
-		}
+			b.m_type = Light_Component::Light_Type::DIRECTIONAL;
+			b.m_color = glm::vec3(1.0f);
+			b.m_intensity = 15.0f;
+			b.m_radius = 1.0F;
+			b.m_cutoff = 180.0f;
+			ecsBaseComponent* entityComponents[] = { &a, &b, &c };
+			addPrefab(Prefabs::Entry{ "Basic Sun", "", Entry::file, {m_previewWorld.makeEntity(entityComponents, 3ull, "Basic Sun")} });
+		}*/
 	}
 
 	// Cycle through each entry on disk, making prefab entries
@@ -247,16 +244,16 @@ void Prefabs::populatePrefabs(const std::string& directory)
 	// Add sun tilted 45 deg to preview world to show off prefabs
 	{
 		Transform_Component a;
-		LightDirectional_Component b;
-		Shadow_Component c;
-		CameraArray_Component d;
-		LightColor_Component e;
-		a.m_localTransform.m_orientation = glm::quat(0.653, -0.271, 0.653, -0.271);
+		Light_Component b;
+		//a.m_localTransform.m_orientation = glm::quat(0.653, -0.271, 0.653, -0.271);
 		a.m_localTransform.update();
-		e.m_color = glm::vec3(1.0f);
-		e.m_intensity = 15.0f;
-		ecsBaseComponent* entityComponents[] = { &a, &b, &c, &d, &e };
-		m_previewWorld.makeEntity(entityComponents, 5ull, "Preview Sun");
+		b.m_type = Light_Component::Light_Type::DIRECTIONAL;
+		b.m_color = glm::vec3(1.0f);
+		b.m_intensity = 15.0f;
+		b.m_radius = 15.0F;
+		b.m_cutoff = 180.0f;
+		ecsBaseComponent* entityComponents[] = { &a, &b };
+		m_previewWorld.makeEntity(entityComponents, 2ull, "Preview Sun");
 	}
 }
 
@@ -275,44 +272,48 @@ void Prefabs::openPrefabEntry()
 
 void Prefabs::tickThumbnails(const float& deltaTime)
 {
-	int count(0);
-	for each (auto & prefab in m_prefabs) {
-		glm::vec3 minExtents(FLT_MAX), maxExtents(FLT_MIN);
-		for each (const auto & entityHandle in prefab.entityHandles) {
-			glm::vec3 scale(1.0f);
-			if (auto* trans = m_previewWorld.getComponent<Transform_Component>(entityHandle))
-				scale = trans->m_worldTransform.m_scale;
-			if (auto* prop = m_previewWorld.getComponent<Prop_Component>(entityHandle))
-				if (const auto& model = prop->m_model; model->existsYet()) {
-					minExtents = glm::min(minExtents, model->m_bboxMin * scale);
-					maxExtents = glm::max(maxExtents, model->m_bboxMax * scale);
-				}
+	m_updateTime += deltaTime;
+	//if (m_updateTime > 5.0f)
+	{
+		m_updateTime -= 5.0f;
+		int count(0);
+		for each (auto & prefab in m_prefabs) {
+			glm::vec3 minExtents(FLT_MAX), maxExtents(FLT_MIN);
+			for each (const auto & entityHandle in prefab.entityHandles) {
+				glm::vec3 scale(1.0f);
+				if (auto* trans = m_previewWorld.getComponent<Transform_Component>(entityHandle))
+					scale = trans->m_worldTransform.m_scale;
+				if (auto* prop = m_previewWorld.getComponent<Prop_Component>(entityHandle))
+					if (const auto& model = prop->m_model; model->existsYet()) {
+						minExtents = glm::min(minExtents, model->m_bboxMin * scale);
+						maxExtents = glm::max(maxExtents, model->m_bboxMax * scale);
+					}
+			}
+			glm::vec3 extents = (maxExtents - minExtents) / 2.0f,
+				center = ((maxExtents - minExtents) / 2.0f) + minExtents;
+
+			auto& camera = m_prefabCameras[count];
+			float cameraDistance = 2.0f; // Constant factor
+			float objectSize = glm::compMax(extents);
+			float cameraView = 2.0f * tanf(0.5f * glm::radians(90.0f)); // Visible height 1 meter in front
+			float distance = cameraDistance * objectSize / cameraView; // Combined wanted distance from the object
+			distance += 0.5f * objectSize; // Estimated offset from the center to the outside of the object
+			glm::vec3 newPosition = (center - glm::vec3(0, 0, -distance)) + prefab.spawnPoint;
+			(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), -newPosition);
+			(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
+			(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
+
+			count++;
 		}
-		glm::vec3 extents = (maxExtents - minExtents) / 2.0f,
-			center = ((maxExtents - minExtents) / 2.0f) + minExtents;
 
-		auto& camera = m_prefabCameras[count];
-		float cameraDistance = 2.0f; // Constant factor
-		float objectSize = glm::compMax(extents);
-		float cameraView = 2.0f * tanf(0.5f * glm::radians(90.0f)); // Visible height 1 meter in front
-		float distance = cameraDistance * objectSize / cameraView; // Combined wanted distance from the object
-		distance += 0.5f * objectSize; // Estimated offset from the center to the outside of the object
-		glm::vec3 newPosition = (center - glm::vec3(0, 0, -distance)) + prefab.spawnPoint;
-		(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), -newPosition);
-		(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
-		(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
-
-		count++;
+		GLint previousFBO(0);
+		glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFBO);
+		m_viewport->resize(glm::vec2(m_thumbSize), m_prefabs.size());
+		m_engine->getModule_Graphics().renderWorld(m_previewWorld, deltaTime, m_viewport, m_rhVolume, m_prefabCameras);
+		const auto screenSize = m_editor->getScreenSize();
+		glViewport(0, 0, screenSize.x, screenSize.y);
+		glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
 	}
-
-
-	GLint previousFBO(0);
-	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFBO);
-	m_viewport->resize(glm::vec2(m_thumbSize), m_prefabs.size());
-	m_engine->getModule_Graphics().renderWorld(m_previewWorld, deltaTime, m_viewport, m_rhVolume, m_prefabCameras);
-	const auto screenSize = m_editor->getScreenSize();
-	glViewport(0, 0, screenSize.x, screenSize.y);
-	glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
 }
 
 void Prefabs::tickWindow(const float& deltaTime)

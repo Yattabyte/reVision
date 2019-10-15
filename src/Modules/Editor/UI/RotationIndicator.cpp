@@ -90,7 +90,7 @@ void RotationIndicator::tick(const float& deltaTime)
 
 		m_indirectIndicator.drawCall();
 
-		m_shader->Release();
+		Shader::Release();
 		glDepthMask(false);
 		glDisable(GL_DEPTH_TEST);
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);

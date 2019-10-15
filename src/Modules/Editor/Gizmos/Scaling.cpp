@@ -122,7 +122,7 @@ void Scaling_Gizmo::render(const float& deltaTime)
 		}
 
 		// Revert State
-		m_gizmoShader->Release();
+		Shader::Release();
 	}
 }
 

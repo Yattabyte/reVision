@@ -24,13 +24,13 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Reflector_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras, ecsSystemList& auxilliarySystems)
+	inline Reflector_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras)
 		: m_engine(engine), m_sceneCameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<ReflectorData>();
-		auxilliarySystems.makeSystem<ReflectorScheduler_System>(engine, m_frameData);
-		auxilliarySystems.makeSystem<ReflectorVisibility_System>(m_frameData);
-		auxilliarySystems.makeSystem<ReflectorSync_System>(m_frameData);
+		m_auxilliarySystems.makeSystem<ReflectorScheduler_System>(engine, m_frameData);
+		m_auxilliarySystems.makeSystem<ReflectorVisibility_System>(m_frameData);
+		m_auxilliarySystems.makeSystem<ReflectorSync_System>(m_frameData);
 
 		// Asset Loading
 		m_shaderLighting = Shared_Shader(engine, "Core\\Reflector\\IBL_Parallax");
@@ -73,11 +73,14 @@ public:
 		m_indirectQuad.endWriting();
 		m_indirectQuadConvolute.endWriting();
 		m_drawIndex = 0;
-		clear();
+		m_frameData->viewInfo.clear();
+		m_frameData->reflectorsToUpdate.clear();
+		m_drawData.clear();
 	}
-	inline virtual void updateTechnique(const float& deltaTime) override final {
+	inline virtual void updateTechnique(const float& deltaTime, ecsWorld& world) override final {
 		// Link together the dimensions of view info to that of the viewport vectors
 		m_frameData->viewInfo.resize(m_sceneCameras->size());
+		world.updateSystems(m_auxilliarySystems, deltaTime);
 
 		// Exit Early
 		if (m_enabled && m_shapeQuad->existsYet() && m_shaderCopy->existsYet() && m_shaderConvolute->existsYet())
@@ -185,6 +188,7 @@ private:
 				glDrawArraysIndirect(GL_TRIANGLES, 0);
 			}
 
+			Shader::Release();
 			m_frameData->reflectorsToUpdate.clear();
 		}
 	}
@@ -235,13 +239,7 @@ private:
 		glCullFace(GL_BACK);
 		glBlendFunc(GL_ONE, GL_ZERO);
 		glDisable(GL_STENCIL_TEST);
-	}
-	/** Clear out the reflectors queued up for rendering. */
-	inline void clear() {
-		m_frameData->viewInfo.clear();
-		m_frameData->reflectorsToUpdate.clear();
-		m_drawData.clear();
-		m_drawIndex = 0;
+		Shader::Release();
 	}
 
 
@@ -260,6 +258,7 @@ private:
 	};
 	int m_drawIndex = 0;
 	std::vector<DrawData> m_drawData;
+	ecsSystemList m_auxilliarySystems;
 
 
 	// Shared Attributes

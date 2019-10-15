@@ -35,8 +35,7 @@ public:
 		addComponentType(Selected_Component::m_ID);
 		addComponentType(Transform_Component::m_ID);
 		addComponentType(Prop_Component::m_ID, FLAG_OPTIONAL);
-		addComponentType(LightPoint_Component::m_ID, FLAG_OPTIONAL);
-		addComponentType(LightSpot_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(Light_Component::m_ID, FLAG_OPTIONAL);
 
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
@@ -61,6 +60,7 @@ public:
 
 		// Assets
 		m_shader = Shared_Shader(engine, "Editor//outline");
+		m_cube = Shared_Mesh(engine, "//Models//cube.obj");
 		m_sphere = Shared_Mesh(engine, "//Models//sphere.obj");
 		m_cone = Shared_Mesh(engine, "//Models//cone.obj");
 	}
@@ -79,15 +79,11 @@ public:
 				//auto* selectedComponent = (Selected_Component*)componentParam[0];
 				auto* trans = (Transform_Component*)componentParam[1];
 				auto* prop = (Prop_Component*)componentParam[2];
-				auto* point = (LightPoint_Component*)componentParam[3];
-				auto* spot = (LightSpot_Component*)componentParam[4];
+				auto* light = (Light_Component*)componentParam[3];
 
 				const auto tryRegisterComponentModel = [&](const ComponentHandle& componentHandle, const Shared_Mesh& mesh) {
-					if (m_geometryParams.find(componentHandle) == m_geometryParams.end()) {
-						// Upload data once
-						tryInsertModel(mesh);
-						m_geometryParams.insert_or_assign(componentHandle, m_meshMap[mesh]);
-					}
+					tryInsertModel(mesh);
+					m_geometryParams.insert_or_assign(componentHandle, m_meshMap[mesh]);
 				};
 				if (prop && prop->m_model && prop->m_model->existsYet()) {
 					tryRegisterComponentModel(prop->m_handle, prop->m_model->m_mesh);
@@ -95,15 +91,14 @@ public:
 					drawData.push_back({ count, 1, offset, 1 });
 					baseTransforms.push_back(pMatrix * vMatrix * trans->m_worldTransform.m_modelMatrix);
 				}
-				if (point && m_sphere && m_sphere->existsYet()) {
-					tryRegisterComponentModel(point->m_handle, m_sphere);
-					const auto& [offset, count] = m_geometryParams[point->m_handle];
-					drawData.push_back({ count, 1, offset, 1 });
-					baseTransforms.push_back(pMatrix * vMatrix * trans->m_worldTransform.m_modelMatrix);
-				}
-				if (spot && m_cone && m_cone->existsYet()) {
-					tryRegisterComponentModel(spot->m_handle, m_cone);
-					const auto& [offset, count] = m_geometryParams[spot->m_handle];
+				if (light) {
+					if (light->m_type == Light_Component::Light_Type::DIRECTIONAL)
+						tryRegisterComponentModel(light->m_handle, m_cube);
+					else if (light->m_type == Light_Component::Light_Type::POINT)
+						tryRegisterComponentModel(light->m_handle, m_sphere);
+					else if (light->m_type == Light_Component::Light_Type::SPOT)
+						tryRegisterComponentModel(light->m_handle, m_cone);
+					const auto& [offset, count] = m_geometryParams[light->m_handle];
 					drawData.push_back({ count, 1, offset, 1 });
 					baseTransforms.push_back(pMatrix * vMatrix * trans->m_worldTransform.m_modelMatrix);
 				}
@@ -148,8 +143,8 @@ public:
 			glEnable(GL_DEPTH_TEST);
 			glDisable(GL_STENCIL_TEST);
 			glEnable(GL_CULL_FACE);
-			m_shader->Release();
 			m_ssboTransforms.endWriting();
+			Shader::Release();
 		}
 	}
 
@@ -230,7 +225,7 @@ private:
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
 	float m_renderScale = 0.02f;
-	Shared_Mesh m_sphere, m_cone;
+	Shared_Mesh m_cube, m_sphere, m_cone;
 	Shared_Shader m_shader;
 	DynamicBuffer m_indirectGeometry, m_ssboTransforms;
 	GLuint m_vaoID = 0, m_vboID = 0;

@@ -72,6 +72,8 @@ public:
 		}
 		m_drawIndex = 0;
 	}
+	inline virtual void updateTechnique(const float& deltaTime, ecsWorld& world) override final {
+	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
@@ -106,6 +108,7 @@ public:
 
 		// Render skybox to reflection buffer
 		m_shaderSkyReflect->bind();
+		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
 		viewport->m_gfxFBOS->bindForWriting("REFLECTION");
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
@@ -115,6 +118,7 @@ public:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		glDisable(GL_DEPTH_TEST);
+		Shader::Release();
 		m_drawIndex++;
 	}
 
@@ -155,8 +159,8 @@ private:
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_MAX_LEVEL, 5);
 		glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, 0);
 		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
-		Shader::Release();
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, previousFBO);
+		Shader::Release();
 	}
 
 

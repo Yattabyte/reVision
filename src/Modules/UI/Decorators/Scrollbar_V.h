@@ -92,7 +92,7 @@ public:
 		m_shader->setUniform(0, newPosition);
 		glBindVertexArray(m_vaoID);
 		m_indirect.drawCall();
-
+		Shader::Release();
 
 		// Render Children
 		UI_Decorator::renderElement(deltaTime, position, newScale);

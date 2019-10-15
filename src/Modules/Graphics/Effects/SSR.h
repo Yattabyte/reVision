@@ -102,6 +102,7 @@ public:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glBlendFunc(GL_ONE, GL_ONE);
 		glDisable(GL_BLEND);
+		Shader::Release();
 		m_drawIndex++;
 	}
 
@@ -156,6 +157,7 @@ private:
 		glTextureParameteri(mipTexID, GL_TEXTURE_MAX_LEVEL, 5);
 		glNamedFramebufferTexture(mipFboID, GL_COLOR_ATTACHMENT0, mipTexID, 0);
 		glViewport(0, 0, (GLsizei)dimensions.x, (GLsizei)dimensions.y);
+		Shader::Release();
 	}
 
 

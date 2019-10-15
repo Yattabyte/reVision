@@ -60,6 +60,7 @@ public:
 		m_shader->setUniform(2, m_color);
 		glBindVertexArray(m_vaoID);
 		m_indirect.drawCall();
+		Shader::Release();
 
 		// Render Children
 		UI_Element::renderElement(deltaTime, position, scale);
