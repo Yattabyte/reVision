@@ -6,7 +6,7 @@
 #include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
-#include "Utilities/GL/GL_ArrayBuffer.h"
+#include "Utilities/GL/GL_Vector.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include <memory>
@@ -30,7 +30,7 @@ struct PointData {
 		std::vector<GLint> lightIndices;
 	};
 
-	GL_ArrayBuffer<Point_Buffer> lightBuffer;
+	GL_Vector<Point_Buffer> lightBuffer;
 	std::vector<ViewInfo> viewInfo;
 	std::shared_ptr<ShadowData> shadowData;
 };

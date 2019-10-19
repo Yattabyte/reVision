@@ -2,7 +2,7 @@
 #ifndef OPENDIALOGUE_H
 #define OPENDIALOGUE_H
 
-#include "Modules/UI/UI_M.h"
+#include "Modules/Editor/UI/Editor_Interface.h"
 #include "Assets/Texture.h"
 #include <string>
 #include <vector>

@@ -64,7 +64,7 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
-		m_frameData->lightBuffer.endWriting();
+		m_frameData->lightBuffer.endReading();
 		for (auto& drawBuffer : m_drawData) {
 			drawBuffer.bufferCamIndex.endWriting();
 			drawBuffer.visLights.endWriting();
@@ -81,7 +81,8 @@ public:
 		// Link together the dimensions of view info to that of the viewport vectors
 		m_frameData->viewInfo.resize(m_sceneCameras->size());
 		world.updateSystems(m_auxilliarySystems, deltaTime);
-
+	}
+	inline virtual void updatePass(const float& deltaTime) override final {
 		// Exit Early
 		if (m_enabled && m_shapeQuad->existsYet() && m_shaderCopy->existsYet() && m_shaderConvolute->existsYet())
 			updateReflectors(deltaTime);

@@ -39,8 +39,8 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
-		m_frameData->modelBuffer.endWriting();
-		m_frameData->skeletonBuffer.endWriting();
+		m_frameData->modelBuffer.endReading();
+		m_frameData->skeletonBuffer.endReading();
 		for (auto& drawBuffer : m_drawData) {
 			drawBuffer.bufferCamIndex.endWriting();
 			drawBuffer.bufferPropIndex.endWriting();
@@ -82,6 +82,7 @@ public:
 				skeletonData.insert(skeletonData.end(), m_frameData->viewInfo[camIndex].skeletonData.begin(), m_frameData->viewInfo[camIndex].skeletonData.end());
 			}
 
+			// Write all visibility info to a set of buffers
 			if (visibleIndices.size()) {
 				// Prepare for writing
 				camBufferIndex.beginWriting();
@@ -153,16 +154,12 @@ public:
 			auto& propCullingBuffer = drawBuffer.bufferCulling;
 			auto& propRenderBuffer = drawBuffer.bufferRender;
 			auto& propSkeletonBuffer = drawBuffer.bufferSkeletonIndex;
-			camBufferIndex.beginWriting();
-			propIndexBuffer.beginWriting();
-			propCullingBuffer.beginWriting();
-			propRenderBuffer.beginWriting();
-			propSkeletonBuffer.beginWriting();
+
+			// Accumulate all visibility info for the cameras passed in
 			std::vector<glm::ivec2> camIndices;
 			std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
 			std::vector<GLuint> visibleIndices;
 			std::vector<int> skeletonData;
-			// Accumulate all visibility info for the cameras passed in
 			for (auto& [camIndex, layer] : perspectives) {
 				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].visibleIndices.size(), { camIndex, layer });
 				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
@@ -171,8 +168,17 @@ public:
 				renderingDrawData.insert(renderingDrawData.end(), m_frameData->viewInfo[camIndex].renderingDrawData.begin(), m_frameData->viewInfo[camIndex].renderingDrawData.end());
 				skeletonData.insert(skeletonData.end(), m_frameData->viewInfo[camIndex].skeletonData.begin(), m_frameData->viewInfo[camIndex].skeletonData.end());
 			}
+
 			// Write all visibility info to a set of buffers
 			if (visibleIndices.size()) {
+				// Prepare for writing
+				camBufferIndex.beginWriting();
+				propIndexBuffer.beginWriting();
+				propCullingBuffer.beginWriting();
+				propRenderBuffer.beginWriting();
+				propSkeletonBuffer.beginWriting();
+
+				// Write accumulated data
 				camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 				propIndexBuffer.write(0, sizeof(GLuint) * visibleIndices.size(), visibleIndices.data());
 				propCullingBuffer.write(0, sizeof(glm::ivec4) * cullingDrawData.size(), cullingDrawData.data());

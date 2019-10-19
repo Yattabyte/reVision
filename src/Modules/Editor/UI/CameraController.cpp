@@ -53,14 +53,18 @@ void CameraController::tick(const float& deltaTime)
 		// Integrate rotation and translation into a new set of matrices
 		auto cam = m_engine->getModule_Graphics().getClientCamera();
 		auto& eyePosition = cam->get()->EyePosition;
+		auto& vMatrix = cam->get()->vMatrix;
+		auto& vMatrixInverse = cam->get()->vMatrixInverse;
+		const auto& pMatrix = cam->get()->pMatrix;
+		auto& pvMatrix = cam->get()->pvMatrix;
 		const auto rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation.y), glm::vec3(1.0f, 0, 0)) * glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation.x), glm::vec3(0, 1.0f, 0));
 		const auto orientation = glm::quat_cast(rotationMatrix);
 		// Make the translation amount be relative to the camera's orientation
-		glm::vec4 rotatedPosition = glm::inverse(rotationMatrix) * glm::vec4(deltaPosition, 1.0f);
+		const auto rotatedPosition = glm::inverse(rotationMatrix) * glm::vec4(deltaPosition, 1.0f);
 		eyePosition += glm::vec3(rotatedPosition / rotatedPosition.w);
-		cam->get()->vMatrix = glm::mat4_cast(orientation) * glm::translate(glm::mat4(1.0f), -eyePosition);
-		cam->get()->vMatrixInverse = glm::inverse(cam->get()->vMatrix);
-		cam->get()->pvMatrix = cam->get()->pMatrix * cam->get()->vMatrix;
+		vMatrix = glm::mat4_cast(orientation) * glm::translate(glm::mat4(1.0f), -eyePosition);
+		vMatrixInverse = glm::inverse(vMatrix);
+		pvMatrix = pMatrix * vMatrix;
 	}
 	// Save last rotation state
 	else {

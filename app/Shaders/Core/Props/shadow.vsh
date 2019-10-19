@@ -57,13 +57,12 @@ void main()
 	}
 	const mat4 matTrans4 		= propBuffer[PropIndex].mMatrix * BoneTransform;
 	const mat3 matTrans3 		= mat3(matTrans4);
-	const vec4 WorldVertex		= matTrans4 * vec4(vertex,1.0);
 	const vec3 WorldNormal 		= normalize(matTrans3 * normalize(normal));
 	const vec3 WorldTangent		= normalize(matTrans3 * normalize(tangent));		
 	const vec3 WorldBitangent 	= normalize(matTrans3 * normalize(bitangent));
 	WorldTBN					= mat3(WorldTangent, WorldBitangent, WorldNormal);
 	TexCoord0             		= textureCoordinate;	
 	MaterialOffset				= matID + propBuffer[PropIndex].materialID + (propBuffer[PropIndex].skinID * TEXTURES_PER_MATERIAL);
-	gl_Position           		= camBuffer[CamIndex].pvMatrix * WorldVertex;
+	gl_Position           		= camBuffer[CamIndex].pvMatrix * matTrans4 * vec4(vertex,1.0);
 	gl_Layer 					= camIndexes[gl_DrawID].y;
 }

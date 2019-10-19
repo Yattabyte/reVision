@@ -102,6 +102,7 @@ public:
 			m_frameData->lightBuffer[index].Shadow_Spot = shadowComponent ? shadowComponent->m_shadowSpot : -1;
 			index++;
 		}
+		m_frameData->lightBuffer.endWriting();
 	}
 
 

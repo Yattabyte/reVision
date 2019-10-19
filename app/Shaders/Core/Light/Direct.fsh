@@ -30,7 +30,6 @@ layout (std430, binding = 8) readonly buffer Light_Buffer {
 	Light_Struct lightBuffers[];
 };
 
-
 layout (binding = 0) uniform sampler2DArray ColorMap;
 layout (binding = 1) uniform sampler2DArray ViewNormalMap;
 layout (binding = 2) uniform sampler2DArray SpecularMap;
@@ -57,42 +56,38 @@ const vec2 sampleOffsetDirections[9] = vec2[] (
 	vec2(0,  -1), vec2(0,  0), vec2(0,  1),
 	vec2(1,  -1), vec2(1,  0), vec2(1,  1)
 );
-#define FactorAmt 1.0 / 9
-float CalcShadowFactor(in int Index, in vec4 LightSpacePos, in float bias)                                                  
+#define FactorAmt 1.0f / 9.0f
+float CalcShadowFactor(in int Index, in vec4 WorldSpacePos, in float bias)                                                  
 {     
-	if (lightBuffers[lightIndex].Shadow_Spot >= 0) {	
-		// Bring fragment coordinates from world space into light space, then into texture spaces
-		const vec3 ProjCoords 				= LightSpacePos.xyz / LightSpacePos.w;                                  
-		const vec2 UVCoords 				= 0.5f * ProjCoords.xy + 0.5f;                                    
-		const float FragmentDepth 			= (0.5f * ProjCoords.z + 0.5f) - EPSILON - bias; 	  
+	// Bring fragment coordinates from world space into light space, then into texture spaces
+	const vec4 LightSpacePos				= lightBuffers[lightIndex].LightVP[Index] * WorldSpacePos;
+	const vec3 ProjCoords 					= LightSpacePos.xyz / LightSpacePos.w;                                  
+	const vec2 UVCoords 					= (0.5f * ProjCoords.xy + 0.5f);                                    
+	const float FragmentDepth 				= (0.5f * ProjCoords.z + 0.5f) - EPSILON - bias; 	  
 		
-		float Factor = 0.0f, depth;
-		vec3 FinalCoord;
-		for (uint x = 0; x < 9; ++x) { 
-			FinalCoord 						= vec3( UVCoords + sampleOffsetDirections[x] * ShadowSize_Recip, lightBuffers[lightIndex].Shadow_Spot + Index );
-			depth 							= texture( ShadowMap, FinalCoord ).r;
-			Factor 			   		  		+= (depth >= FragmentDepth) ? FactorAmt : 0.0;	
-		}
-		return 								Factor;
+	float Factor = 0.0f, depth = 0.0f;
+	vec3 FinalCoord;
+	for (uint x = 0; x < 9; ++x) { 
+		FinalCoord 							= vec3( UVCoords + sampleOffsetDirections[x] * ShadowSize_Recip, lightBuffers[lightIndex].Shadow_Spot + Index );
+		depth 								= texture( ShadowMap, FinalCoord ).r;
+		Factor 			   		  			+= (depth >= FragmentDepth) ? FactorAmt : 0.0f;	
 	}
-	return 									1.0f;
+	return 									Factor;
 } 
 	
 vec2 CalcTexCoord()
 {
-    return			 				gl_FragCoord.xy / CameraDimensions;
+    return			 						gl_FragCoord.xy / CameraDimensions;
 }
 
 void main()
 {			
 	// Initialize first variables
 	ViewData data;
-	GetFragmentData(CalcTexCoord(), data);
-	
+	GetFragmentData(CalcTexCoord(), data);	
 	vec3 LightDirection 					= lightBuffers[lightIndex].LightDirection.xyz;	
 	if (lightType == 1)
 		LightDirection						= lightBuffers[lightIndex].LightPosition.xyz - data.World_Pos.xyz;
-
 	const vec3 ViewDirection				= normalize(EyePosition - data.World_Pos.xyz);
 	const float NdotV 						= dot(data.World_Normal, ViewDirection);
 	const float NdotL 		 				= dot(normalize(LightDirection.xyz), data.World_Normal);
@@ -110,11 +105,11 @@ void main()
 		const float cosAngle				= saturate(1.0f - NdotL);
 		const float bias 					= clamp(0.005f * tan(acos(NdotL)), 0.0f, 0.005f);
 		const vec4 scaledNormalOffset		= vec4(data.World_Normal * (cosAngle * ShadowSize_Recip), 0);
-		int index 							= 0;
-		for (; index < 4; ++index) 
-			if (-data.View_Pos.z <= lightBuffers[lightIndex].CascadeEndClipSpace[index]) 
+		for (int index = 0; index < 4; ++index) 
+			if (-data.View_Pos.z <= lightBuffers[lightIndex].CascadeEndClipSpace[index]) {
+				ShadowFactor 				= CalcShadowFactor(index, (data.World_Pos + scaledNormalOffset), bias);
 				break;			
-		//ShadowFactor 						= CalcShadowFactor(index, lightBuffers[lightIndex].LightVP[index] * (data.World_Pos + scaledNormalOffset), bias);
+			}		
 	}
 	
 	// Direct Light	
@@ -123,5 +118,5 @@ void main()
 	const vec3 D_Diffuse					= CalculateDiffuse( data.Albedo );
 	const vec3 D_Specular					= BRDF_Specular( data.Roughness, data.Albedo, data.Metalness, data.World_Normal, LightDirection.xyz, NdotL_Clamped, NdotV_Clamped, ViewDirection, Fs);
 	const vec3 D_Ratio						= (vec3(1.0f) - Fs) * (1.0f - data.Metalness);
-	LightingColor		 					= (D_Ratio * D_Diffuse + D_Specular) * Radiance * NdotL_Clamped;
+	LightingColor		 					= vec3(ShadowFactor);//(D_Ratio * D_Diffuse + D_Specular) * Radiance * NdotL_Clamped;
 }

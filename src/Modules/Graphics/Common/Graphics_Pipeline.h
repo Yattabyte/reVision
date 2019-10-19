@@ -8,7 +8,7 @@
 #include "Modules/Graphics/Common/Viewport.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/ecsWorld.h"
-#include "Utilities/GL/GL_ArrayBuffer.h"
+#include "Utilities/GL/GL_Vector.h"
 #include <vector>
 
 
@@ -53,7 +53,7 @@ protected:
 	// Protected Attributes
 	Engine* m_engine = nullptr;
 	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
-	std::shared_ptr<GL_ArrayBuffer<Camera::GPUData>> m_cameraBuffer;
+	GL_Vector<Camera::GPUData> m_cameraBuffer;
 	ecsSystemList m_worldSystems, m_cameraSystems;
 	std::shared_ptr<ecsBaseSystem> m_transHierachy;
 	std::vector<Geometry_Technique*> m_geometryTechniques;

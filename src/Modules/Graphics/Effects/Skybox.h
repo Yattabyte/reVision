@@ -72,8 +72,6 @@ public:
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void updateTechnique(const float& deltaTime, ecsWorld& world) override final {
-	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;

@@ -36,7 +36,7 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
-		m_frameData->lightBuffer.endWriting();
+		m_frameData->lightBuffer.endReading();
 		for (auto& drawBuffer : m_drawData) {
 			drawBuffer.bufferCamIndex.endWriting();
 			drawBuffer.visLights.endWriting();

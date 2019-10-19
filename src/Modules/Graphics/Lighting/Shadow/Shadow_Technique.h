@@ -42,6 +42,8 @@ public:
 	}
 	inline virtual void updateTechnique(const float& deltaTime, ecsWorld& world) override final {
 		world.updateSystems(m_auxilliarySystems, deltaTime);
+	}
+	inline virtual void updatePass(const float& deltaTime) override final {
 		// Render important shadows
 		if (m_enabled)
 			updateShadows(deltaTime);
@@ -69,19 +71,12 @@ private:
 			std::vector<std::pair<int, int>> perspectives;
 			perspectives.reserve(m_frameData->shadowsToUpdate.size());
 			for (auto& [importance, time, shadowSpot, camera] : m_frameData->shadowsToUpdate) {
-				int visibilityIndex = 0;
-				bool found = false;
 				for (int y = 0; y < m_sceneCameras->size(); ++y)
 					if (m_sceneCameras->at(y) == camera) {
-						visibilityIndex = y;
-						found = true;
+						perspectives.push_back({ y, shadowSpot });
 						break;
 					}
-				if (found)
-					perspectives.push_back({ visibilityIndex, shadowSpot });
-
 				*time = clientTime;
-				camera->setEnabled(false);
 			}
 
 			// Perform shadow culling

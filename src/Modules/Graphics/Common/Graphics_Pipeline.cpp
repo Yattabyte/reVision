@@ -27,7 +27,6 @@ Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camer
 {
 	// Camera
 	m_sceneCameras = std::make_shared<std::vector<Camera*>>();
-	m_cameraBuffer = std::make_shared<GL_ArrayBuffer<Camera::GPUData>>();
 
 	// Create Systems
 	m_transHierachy = m_worldSystems.makeSystem<Transform_System>(m_engine);
@@ -56,25 +55,21 @@ Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camer
 		propView
 	};
 	m_lightingTechniques = {
-		shadowing, directLighting, skybox, reflectorLighting
+		shadowing, directLighting, skybox, reflectorLighting,
 	};
 	m_effectTechniques = {
-		radianceHints, ssao, ssr, joinReflections, bloom, hdr, fxaa
+		radianceHints, ssao, ssr, joinReflections, bloom, hdr, fxaa,
 	};
-
-	// Join All Techniques
-	m_allTechniques.reserve(m_geometryTechniques.size() + m_lightingTechniques.size() + m_effectTechniques.size());
-	for each (const auto & tech in m_geometryTechniques)
-		m_allTechniques.push_back(tech);
-	for each (const auto & tech in m_lightingTechniques)
-		m_allTechniques.push_back(tech);
-	for each (const auto & tech in m_effectTechniques)
-		m_allTechniques.push_back(tech);
+	m_allTechniques = {
+		propView,
+		shadowing, directLighting, skybox, reflectorLighting,
+		radianceHints, ssao, ssr, joinReflections, bloom, hdr, fxaa,
+	};
 }
 
 std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime, ecsWorld& world, const std::vector<std::shared_ptr<Camera>>& cameras)
 {
-	// Step 1: Add input cameras to shared list
+	// Add input cameras to shared list
 	m_sceneCameras->clear();
 	m_sceneCameras->reserve(cameras.size());
 	std::vector<std::pair<int, int>> perspectives;
@@ -86,14 +81,8 @@ std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime
 		count++;
 	}
 
-	// Step 2: Add cameras from world to shared list
+	// Add cameras from world to shared list
 	world.updateSystems(m_cameraSystems, deltaTime);
-
-	// Step 3: Write camera data to camera GPU buffer
-	m_cameraBuffer->beginWriting();
-	m_cameraBuffer->resize(m_sceneCameras->size());
-	for (size_t x = 0ull; x < m_sceneCameras->size(); ++x)
-		(*m_cameraBuffer)[x] = *(*m_sceneCameras)[x]->get();
 
 	// Update world systems
 	std::dynamic_pointer_cast<Transform_System>(m_transHierachy)->m_world = &world;
@@ -103,19 +92,31 @@ std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime
 	for each (auto * tech in m_allTechniques)
 		tech->updateTechnique(deltaTime, world);
 
+	// Write camera data to camera GPU buffer
+	m_cameraBuffer.beginWriting();
+	m_cameraBuffer.resize(m_sceneCameras->size());
+	for (size_t x = 0ull; x < m_sceneCameras->size(); ++x)
+		m_cameraBuffer[x] = *(*m_sceneCameras)[x]->get();
+	m_cameraBuffer.endWriting();
+
+	// Apply pre-rendering passes
+	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	for each (auto * tech in m_allTechniques)
+		tech->updatePass(deltaTime);
+
 	return perspectives;
 }
 
 void Graphics_Pipeline::end(const float& deltaTime)
 {
-	m_cameraBuffer->endWriting();
+	m_cameraBuffer.endReading();
 	for each (auto * tech in m_allTechniques)
 		tech->prepareForNextFrame(deltaTime);
 }
 
 void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& allowedCategories)
 {
-	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for each (auto * tech in m_allTechniques)
 		if (allowedCategories & tech->getCategory())
 			tech->renderTechnique(deltaTime, viewport, rhVolume, perspectives);
@@ -123,12 +124,14 @@ void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Vie
 
 void Graphics_Pipeline::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives)
 {
+	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for each (auto * tech in m_geometryTechniques)
 		tech->cullShadows(deltaTime, perspectives);
 }
 
 void Graphics_Pipeline::renderShadows(const float& deltaTime)
 {
+	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for each (auto * tech in m_geometryTechniques)
 		tech->renderShadows(deltaTime);
 }

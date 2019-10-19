@@ -5,7 +5,7 @@
 #include "Modules/Graphics/Common/Camera.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
-#include "Utilities/GL/GL_ArrayBuffer.h"
+#include "Utilities/GL/GL_Vector.h"
 #include "Utilities/IO/Mesh_IO.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -35,8 +35,8 @@ struct PropData {
 		std::vector<int> skeletonData;
 	};
 
-	GL_ArrayBuffer<Model_Buffer> modelBuffer;
-	GL_ArrayBuffer<Skeleton_Buffer> skeletonBuffer;
+	GL_Vector<Model_Buffer> modelBuffer;
+	GL_Vector<Skeleton_Buffer> skeletonBuffer;
 	std::vector<ViewInfo> viewInfo;
 	GLuint m_geometryVAOID = 0u, m_materialArrayID = 0u;
 };

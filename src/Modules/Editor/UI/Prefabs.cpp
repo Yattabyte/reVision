@@ -21,7 +21,7 @@ Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
 	m_open = true;
-	m_viewport = std::make_shared<Viewport>(glm::vec2(0.0f), glm::vec2(m_thumbSize));
+	m_viewport = std::make_shared<Viewport>(glm::vec2(0.0f), glm::vec2((float)m_thumbSize));
 	m_rhVolume = std::make_shared<RH_Volume>(engine);
 
 	// Load Assets
@@ -69,7 +69,7 @@ void Prefabs::addPrefab(const std::vector<char>& entityData)
 
 		// Create the camera and move it to where the entity is located
 		auto camera = std::make_shared<Camera>();
-		(*camera)->Dimensions = glm::vec2(m_thumbSize);
+		(*camera)->Dimensions = glm::vec2((float)m_thumbSize);
 		(*camera)->FarPlane = 1000.0f;
 		(*camera)->FOV = 90.0F;
 		(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), cursorPos);
@@ -152,7 +152,7 @@ void Prefabs::populatePrefabs(const std::string& directory)
 
 		// Create the camera and move it to where the entity is located
 		auto camera = std::make_shared<Camera>();
-		(*camera)->Dimensions = glm::vec2(m_thumbSize);
+		(*camera)->Dimensions = glm::vec2((float)m_thumbSize);
 		(*camera)->FarPlane = 1000.0f;
 		(*camera)->FOV = 90.0F;
 		(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), cursorPos);
@@ -308,8 +308,8 @@ void Prefabs::tickThumbnails(const float& deltaTime)
 
 		GLint previousFBO(0);
 		glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFBO);
-		m_viewport->resize(glm::vec2(m_thumbSize), m_prefabs.size());
-		m_engine->getModule_Graphics().renderWorld(m_previewWorld, deltaTime, m_viewport, m_rhVolume, m_prefabCameras);
+		m_viewport->resize(glm::vec2((float)m_thumbSize), (int)m_prefabs.size());
+		//m_engine->getModule_Graphics().renderWorld(m_previewWorld, deltaTime, m_viewport, m_rhVolume, m_prefabCameras);
 		const auto screenSize = m_editor->getScreenSize();
 		glViewport(0, 0, screenSize.x, screenSize.y);
 		glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
@@ -392,7 +392,7 @@ void Prefabs::tickWindow(const float& deltaTime)
 					ImGui::BeginTooltip();
 					ImGui::ImageButton(
 						(ImTextureID)static_cast<uintptr_t>(textureID),
-						ImVec2(m_thumbSize, m_thumbSize),
+						ImVec2((float)m_thumbSize, (float)m_thumbSize),
 						{ 0.0f, 1.0f }, { 1.0f, 0.0f },
 						0,
 						color

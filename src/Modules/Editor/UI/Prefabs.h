@@ -2,7 +2,7 @@
 #ifndef PREFABS_H
 #define PREFABS_H
 
-#include "Modules/UI/UI_M.h"
+#include "Modules/Editor/UI/Editor_Interface.h"
 #include "Modules/ECS/ecsWorld.h"
 #include "Assets/Texture.h"
 

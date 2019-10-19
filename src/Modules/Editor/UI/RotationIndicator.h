@@ -2,7 +2,7 @@
 #ifndef ROTATIONINDICATOR_H
 #define ROTATIONINDICATOR_H
 
-#include "Modules/UI/UI_M.h"
+#include "Modules/Editor/UI/Editor_Interface.h"
 #include "Assets/Auto_Model.h"
 #include "Assets/Texture.h"
 #include "Assets/Shader.h"

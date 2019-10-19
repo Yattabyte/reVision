@@ -133,8 +133,9 @@ public:
 
 			// Sync Buffer Attributes
 			m_frameData->lightBuffer[index].Shadow_Spot = shadowComponent->m_shadowSpot;
+			index++;
 		}
-		index++;
+		m_frameData->lightBuffer.endWriting();
 	}
 
 

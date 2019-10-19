@@ -2,7 +2,8 @@
 #ifndef UNSAVEDCHANGESDIALOGUE_H
 #define UNSAVEDCHANGESDIALOGUE_H
 
-#include "Modules/UI/UI_M.h"
+#include "Modules/Editor/UI/Editor_Interface.h"
+#include <functional>
 #include <string>
 #include <vector>
 

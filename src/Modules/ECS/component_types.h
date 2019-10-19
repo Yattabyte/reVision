@@ -9,7 +9,7 @@
 #include "Modules/Graphics/Common/Viewport.h"
 #include "Modules/Graphics/Common/Camera.h"
 #include "Utilities/Transform.h"
-#include "Utilities/GL/GL_ArrayBuffer.h"
+#include "Utilities/GL/GL_Vector.h"
 #include "glm/glm.hpp"
 #include <memory>
 

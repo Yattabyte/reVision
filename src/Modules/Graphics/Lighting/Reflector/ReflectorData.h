@@ -6,7 +6,7 @@
 #include "Modules/Graphics/Lighting/Reflector/FBO_Env_Reflector.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
-#include "Utilities/GL/GL_ArrayBuffer.h"
+#include "Utilities/GL/GL_Vector.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include <memory>
@@ -28,7 +28,7 @@ struct ReflectorData {
 		std::vector<GLint> lightIndices;
 	};
 
-	GL_ArrayBuffer<Reflector_Buffer> lightBuffer;
+	GL_Vector<Reflector_Buffer> lightBuffer;
 	std::vector<ViewInfo> viewInfo;
 	FBO_Env_Reflector envmapFBO;
 	std::vector<std::tuple<float, float*, int, Camera*>> reflectorsToUpdate;

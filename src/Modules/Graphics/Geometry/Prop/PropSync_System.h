@@ -83,6 +83,8 @@ public:
 			}
 			index++;
 		}
+		m_frameData->modelBuffer.endWriting();
+		m_frameData->skeletonBuffer.endWriting();
 	}
 
 

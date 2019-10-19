@@ -33,6 +33,13 @@ void LevelEditor_Module::initialize(Engine* engine)
 	m_systemOutline = std::make_shared<Outline_System>(engine, this);
 	m_systemSelClearer = std::make_shared<ClearSelection_System>(engine, this);
 
+	// Assets
+	m_shader = Shared_Shader(engine, "Editor\\editorCopy");
+	m_shapeQuad = Shared_Auto_Model(engine, "quad");
+	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
+		m_indirectQuad = IndirectDraw((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
+		});
+
 	// Preferences
 	auto& preferences = engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
@@ -104,10 +111,28 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 		glStencilMask(0x00);
 		glDisable(GL_STENCIL_TEST);
 
-		// Tick all tools this frame
-		m_engine->getModule_Graphics().renderWorld(m_world, deltaTime);
+		// Render editor interface into separate FBO
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 		m_world.updateSystem(m_systemOutline, deltaTime);
 		m_mouseGizmo->frameTick(deltaTime);
+		m_editorInterface->tick(deltaTime);
+
+		// Render world into default FBO
+		m_engine->getModule_Graphics().renderWorld(m_world, deltaTime);
+
+		// Overlay editor interface over default FBO
+		if (m_shapeQuad->existsYet() && m_shader->existsYet()) {
+			// Set up state
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+			bindTexture();
+			m_shader->bind();
+			m_shapeQuad->bind();
+			glEnable(GL_BLEND);
+			glBlendEquation(GL_FUNC_ADD);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			m_indirectQuad.drawCall();
+			Shader::Release();
+		}
 
 		glDepthMask(false);
 		glDisable(GL_DEPTH_TEST);
@@ -191,8 +216,6 @@ void LevelEditor_Module::openPrefabs()
 void LevelEditor_Module::showEditor()
 {
 	m_active = true;
-	m_engine->getModule_UI().clear();
-	m_engine->getModule_UI().setRootElement(m_editorInterface);
 	newLevel();
 
 	for (const auto& item : std::filesystem::recursive_directory_iterator(Engine::Get_Current_Dir() + "\\Maps\\")) {

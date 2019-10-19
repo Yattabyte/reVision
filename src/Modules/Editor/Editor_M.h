@@ -2,10 +2,13 @@
 #ifndef EDITOR_MODULE_H
 #define EDITOR_MODULE_H
 
+#include "Modules/UI/UI_M.h"
+#include "Assets/Auto_Model.h"
+#include "Assets/Shader.h"
 #include "Modules/Engine_Module.h"
 #include "Modules/ECS/ecsWorld.h"
-#include "Modules/UI/UI_M.h"
 #include "Utilities/Transform.h"
+#include "Utilities/GL/IndirectDraw.h"
 #include <deque>
 
 
@@ -158,6 +161,9 @@ private:
 	// Private Attributes
 	bool m_active = false, m_unsavedChanges = false;
 	float m_autoSaveCounter = 0.0f, m_autosaveInterval = 60.0f;
+	Shared_Auto_Model m_shapeQuad;
+	Shared_Shader m_shader;
+	IndirectDraw m_indirectQuad;
 	std::string m_currentLevelName = "My Map.bmap";
 	ecsWorld m_world;
 	GLuint m_fboID = 0, m_texID = 0, m_depthID = 0;

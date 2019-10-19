@@ -55,15 +55,13 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
-		m_frameData->lightBuffer.endWriting();
+		m_frameData->lightBuffer.endReading();
 		for (auto& drawBuffer : m_drawData) {
 			drawBuffer.bufferCamIndex.endWriting();
 			drawBuffer.visLights.endWriting();
 			drawBuffer.indirectShape.endWriting();
 		}
 		m_drawIndex = 0;
-		m_drawData.clear();
-		m_frameData->viewInfo.clear();
 	}
 	inline virtual void updateTechnique(const float& deltaTime, ecsWorld& world) override final {
 		// Link together the dimensions of view info to that of the viewport vectors
@@ -75,11 +73,6 @@ public:
 		if (m_enabled && m_geometryReady && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shader_Lighting->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
 				m_drawData.resize(size_t(m_drawIndex) + 1ull);
-			auto& drawBuffer = m_drawData[m_drawIndex];
-			drawBuffer.bufferCamIndex.beginWriting();
-			drawBuffer.visLights.beginWriting();
-			drawBuffer.indirectShape.beginWriting();
-
 			// Accumulate all visibility info for the cameras passed in
 			std::vector<glm::ivec2> camIndices;
 			std::vector<GLint> lightIndices;
@@ -101,6 +94,10 @@ public:
 			// Render lights
 			if (lightIndices.size()) {
 				// Write accumulated data
+				auto& drawBuffer = m_drawData[m_drawIndex];
+				drawBuffer.bufferCamIndex.beginWriting();
+				drawBuffer.visLights.beginWriting();
+				drawBuffer.indirectShape.beginWriting();
 				drawBuffer.bufferCamIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 				drawBuffer.visLights.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
 				drawBuffer.indirectShape.write(0, sizeof(glm::ivec4) * drawData.size(), drawData.data());

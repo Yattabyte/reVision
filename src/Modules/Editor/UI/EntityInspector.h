@@ -2,7 +2,7 @@
 #ifndef ENTITYINSPECTOR_H
 #define ENTITYINSPECTOR_H
 
-#include "Modules/UI/UI_M.h"
+#include "Modules/Editor/UI/Editor_Interface.h"
 #include "Modules/ECS/ecsSystem.h"
 #include <map>
 

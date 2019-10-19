@@ -33,7 +33,7 @@ public:
 
 			// Update the visibility status for each camera this entity is visible in
 			for (int x = 0; x < m_sceneCameras->size(); ++x) {
-				auto& camera = m_sceneCameras->at(x);
+				const auto& camera = m_sceneCameras->at(x);
 
 				// Err on the side of caution and say its visible by default
 				// Our visibility tests will try to EXCLUDE, not INCLUDE

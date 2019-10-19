@@ -77,13 +77,17 @@ void Graphics_Module::deinitialize()
 
 	// Update indicator
 	*m_aliveIndicator = false;
+	m_pipeline.reset();
+	m_viewport.reset();
+	m_clientCamera.reset();
+	m_rhVolume.reset();
 }
 
-void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime)
+void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID)
 {
 	m_indirectQuad.beginWriting();
 	renderWorld(world, deltaTime, m_viewport, m_rhVolume, { m_clientCamera });
-	copyToScreen();
+	copyToScreen(fboID);
 	m_indirectQuad.endWriting();
 }
 
@@ -114,10 +118,10 @@ void Graphics_Module::genPerspectiveMatrix()
 	(*m_clientCamera)->pvMatrix = (*m_clientCamera)->pMatrix * (*m_clientCamera)->vMatrix;
 }
 
-void Graphics_Module::copyToScreen()
+void Graphics_Module::copyToScreen(const GLuint& fboID)
 {
 	if (m_shapeQuad->existsYet() && m_shader->existsYet()) {
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID);
 		m_shader->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_indirectQuad.drawCall();

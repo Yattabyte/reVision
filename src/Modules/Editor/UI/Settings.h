@@ -2,7 +2,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include "Modules/UI/UI_M.h"
+#include "Modules/Editor/UI/Editor_Interface.h"
 
 
 // Forward declarations

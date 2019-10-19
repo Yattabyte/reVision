@@ -2,30 +2,29 @@
 #ifndef EDITOR_INTERFACE_H
 #define EDITOR_INTERFACE_H
 
-#include "Modules/UI/UI_M.h"
-#include "Assets/Auto_Model.h"
-#include "Assets/Shader.h"
-#include "Utilities/GL/IndirectDraw.h"
+#include "glm/glm.hpp"
+#include <memory>
 
 
 // Forward Declarations
 class Engine;
 class LevelEditor_Module;
+struct ImGUI_Element;
 
 /** A top-level UI element representing the entire level editor's GUI. */
-class Editor_Interface final : public ImGUI_Element {
+class Editor_Interface {
 public:
 	// Public (de)Constructors
 	/** Destroy the level editor UI. */
-	inline ~Editor_Interface() = default;
+	~Editor_Interface();
 	/** Creates the level editor UI.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
 	Editor_Interface(Engine* engine, LevelEditor_Module* editor);
 
 
-	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override final;
+	// Public Methods
+	void tick(const float& deltaTime);
 
 
 	// Public Attributes
@@ -48,11 +47,19 @@ private:
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
-	Shared_Auto_Model m_shapeQuad;
-	Shared_Shader m_shader;
-	IndirectDraw m_indirectQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
+};
+
+
+/** UI element representing an ImGUI element. */
+struct ImGUI_Element {
+	inline virtual ~ImGUI_Element() = default;
+	inline ImGUI_Element() = default;
+	bool m_open = true;
+	inline void open() { m_open = true; }
+	inline void close() { m_open = false; }
+	inline virtual void tick(const float& deltaTime) {};
 };
 
 #endif // EDITOR_INTERFACE_H

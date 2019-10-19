@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 
 
-/** An interface for opengl buffers. */
+/** An interface for OpenGL buffers. */
 class Buffer_Interface {
 public:
 	// Public (de)Constructors

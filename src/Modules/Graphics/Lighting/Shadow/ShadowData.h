@@ -7,7 +7,7 @@
 #include "Modules/ECS/ecsComponent.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
-#include "Utilities/GL/GL_ArrayBuffer.h"
+#include "Utilities/GL/GL_Vector.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include <memory>

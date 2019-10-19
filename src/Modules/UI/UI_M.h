@@ -12,7 +12,6 @@
 #include <vector>
 
 
-struct ImGUI_Element;
 
 /** A module responsible for the overall user interface. */
 class UI_Module final : public Engine_Module {
@@ -32,11 +31,6 @@ public:
 	// Public Methods
 	/***/
 	void frameTick(const float& deltaTime);
-	/** Push a new UI element onto a stack to receive input and be rendered.
-	@param	rootElement			the main element of focus for this UI system. */
-	void setRootElement(const std::shared_ptr<ImGUI_Element>& rootElement) {
-		m_rootUIElement = rootElement;
-	}
 	/** Push a new UI element onto a stack to receive input and be rendered.
 	@param	rootElement			the main element of focus for this UI system. */
 	void pushRootElement(const std::shared_ptr<UI_Element>& rootElement);
@@ -78,10 +72,6 @@ public:
 
 private:
 	// Private Attributes
-	std::shared_ptr<ImGUI_Element> m_rootUIElement;
-
-
-	// Private Attributes
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	StaticBuffer m_projectionBuffer;
@@ -90,16 +80,6 @@ private:
 	std::shared_ptr<FocusMap> m_focusMap;
 	MouseEvent m_mouseEvent;
 	KeyboardEvent m_keyboardEvent;
-};
-
-/** UI element representing an ImGUI element. */
-struct ImGUI_Element {
-	inline virtual ~ImGUI_Element() = default;
-	inline ImGUI_Element() = default;
-	bool m_open = true;
-	inline void open() { m_open = true; }
-	inline void close() { m_open = false; }
-	inline virtual void tick(const float& deltaTime) {};
 };
 
 #endif // UI_MODULE_H

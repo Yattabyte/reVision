@@ -43,26 +43,40 @@ public:
 			const auto sclM = glm::scale(glm::mat4(1.0f), glm::vec3(radiusSquared * 1.1f));
 			trans->m_localTransform.m_scale = glm::vec3(radiusSquared * 1.1f);
 			trans->m_localTransform.update();
+			m_frameData->lightBuffer[index].mMatrix = transM * rotM * sclM;
 			m_frameData->lightBuffer[index].LightColor = light->m_color;
+			m_frameData->lightBuffer[index].LightPosition = trans->m_worldTransform.m_position;
+			m_frameData->lightBuffer[index].LightDirection = glm::normalize(rotM * glm::vec4(1.0f, 0.0f, 1.0f, 0.0f));
 			m_frameData->lightBuffer[index].LightIntensity = light->m_intensity;
 			m_frameData->lightBuffer[index].LightRadius = light->m_radius;
 			m_frameData->lightBuffer[index].LightCutoff = cosf(glm::radians(light->m_cutoff));
-			m_frameData->lightBuffer[index].LightDirection = glm::vec3(glm::normalize(rotM * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
-			m_frameData->lightBuffer[index].mMatrix = transM * rotM * sclM;
-			m_frameData->lightBuffer[index].LightPosition = trans->m_worldTransform.m_position;
 			m_frameData->lightBuffer[index].Shadow_Spot = shadow ? shadow->m_shadowSpot : -1;
 			m_frameData->lightBuffer[index].Light_Type = static_cast<int>(light->m_type);
 
 			// Sync Shadow Attributes
 			if (shadow) {
+				const auto updateCamera = [&](Camera& camera, const glm::mat4& pMatrix, const glm::mat4& vMatrix, const glm::vec3& position, const float& nearPlane = -Camera::ConstNearPlane, const float& farPlane = 1.0f, const float& fov = 90.0f) {
+					auto& camData = *camera.get();
+					camData.pMatrix = pMatrix;
+					camData.pMatrixInverse = glm::inverse(pMatrix);
+					camData.vMatrix = vMatrix;
+					camData.vMatrixInverse = glm::inverse(vMatrix);
+					camData.pvMatrix = pMatrix * vMatrix;
+					camData.EyePosition = position;
+					camData.Dimensions = glm::ivec2((int)m_frameData->shadowData->shadowSize);
+					camData.NearPlane = nearPlane;
+					camData.FarPlane = farPlane;
+					camData.FOV = fov;
+					camera.updateFrustum();
+				};
 				if (light->m_type == Light_Component::Light_Type::DIRECTIONAL) {
 					shadow->m_cameras.resize(4);
-					const auto size = glm::vec2(m_frameData->clientCamera.get()->get()->Dimensions);
+					const auto size = m_frameData->clientCamera->get()->Dimensions;
 					const auto ar = size.x / size.y;
-					const auto tanHalfHFOV = glm::radians(m_frameData->clientCamera.get()->get()->FOV) / 2.0f;
+					const auto tanHalfHFOV = glm::radians(m_frameData->clientCamera->get()->FOV) / 2.0f;
 					const auto tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
 					const auto near_plane = -Camera::ConstNearPlane;
-					const auto far_plane = -m_frameData->clientCamera.get()->get()->FarPlane;
+					const auto far_plane = -m_frameData->clientCamera->get()->FarPlane;
 					float cascadeEnd[NUM_CASCADES + 1];
 					glm::vec3 middle[NUM_CASCADES], aabb[NUM_CASCADES];
 					constexpr float lambda = 0.75f;
@@ -90,12 +104,10 @@ public:
 						// Use to make a bounding sphere, but then convert into a bounding box
 						aabb[i] = glm::vec3(glm::distance(glm::vec3(maxCoord), middle[i]));
 					}
-					const auto CamInv = m_frameData->clientCamera.get()->get()->vMatrixInverse;
-					const auto CamP = m_frameData->clientCamera.get()->get()->pMatrix;
-					const auto sunModelMatrix = glm::inverse(glm::mat4_cast(trans->m_worldTransform.m_orientation) * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
-					const auto sunInverse = glm::inverse(sunModelMatrix);
+					const auto CamInv = m_frameData->clientCamera->get()->vMatrixInverse;
+					const auto CamP = m_frameData->clientCamera->get()->pMatrix;
+					const auto sunModelMatrix = glm::inverse(glm::mat4_cast(trans->m_worldTransform.m_orientation) * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(180.0f), glm::vec3(0, 1.0f, 0))));
 					for (int x = 0; x < NUM_CASCADES; ++x) {
-						auto& camData = *shadow->m_cameras[x].get();
 						const glm::vec3 volumeUnitSize = (aabb[x] - -aabb[x]) / m_frameData->shadowData->shadowSize;
 						const glm::vec3 frustumpos = glm::vec3(sunModelMatrix * CamInv * glm::vec4(middle[x], 1.0f));
 						const glm::vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
@@ -103,30 +115,21 @@ public:
 						const glm::vec3 newMax = aabb[x] + clampedPos;
 						const float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
 						const glm::mat4 pMatrix = glm::ortho(l, r, b, t, n, f);
-						const glm::mat4 pvMatrix = pMatrix * sunModelMatrix;
 						const glm::vec4 v_near = CamP * glm::vec4(0, 0, cascadeEnd[x], 1.0f);
 						const glm::vec4 v_far = CamP * glm::vec4(0, 0, cascadeEnd[x + 1], 1.0f);
-						camData.Dimensions = glm::ivec2((int)m_frameData->shadowData->shadowSize);
-						camData.FOV = 90.0f;
-						camData.NearPlane = v_near.z;
-						camData.FarPlane = v_far.z;
 						auto pos = CamInv * glm::vec4(0, 0, -v_far.z / 2.0f, 1.0f);
 						pos /= pos.w;
-						camData.EyePosition = glm::vec3(pos);
-						camData.pMatrix = pMatrix;
-						camData.pMatrixInverse = glm::inverse(pMatrix);
-						camData.vMatrix = sunModelMatrix;
-						camData.vMatrixInverse = sunInverse;
-						camData.pvMatrix = pMatrix * sunModelMatrix;
-						shadow->m_cameras[x].updateFrustum();
-						m_frameData->lightBuffer[index].lightVP[x] = pvMatrix;
-						m_frameData->lightBuffer[index].CascadeEndClipSpace[x] = v_far.z;
+
+						updateCamera(shadow->m_cameras[x], pMatrix, sunModelMatrix, glm::vec3(pos), v_near.z, v_far.z, 180.0f);
+						if (shadow->m_cameras[x].getEnabled()) {
+							m_frameData->lightBuffer[index].lightVP[x] = shadow->m_cameras[x].get()->pvMatrix;
+							m_frameData->lightBuffer[index].CascadeEndClipSpace[x] = v_far.z;
+						}
 					}
 				}
 				else if (light->m_type == Light_Component::Light_Type::POINT) {
 					shadow->m_cameras.resize(6);
 					const auto pMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, radiusSquared);
-					const auto pMatrixInverse = glm::inverse(pMatrix);
 					const glm::mat4 vMatrices[6] = {
 						glm::lookAt(position, position + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)),
 						glm::lookAt(position, position + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)),
@@ -136,41 +139,22 @@ public:
 						glm::lookAt(position, position + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0))
 					};
 					for (int x = 0; x < 6; ++x) {
-						auto& camData = *shadow->m_cameras[x].get();
-						camData.Dimensions = glm::ivec2((int)m_frameData->shadowData->shadowSize);
-						camData.FOV = 90.0f;
-						camData.FarPlane = radiusSquared;
-						camData.EyePosition = position;
-						camData.pMatrix = pMatrix;
-						camData.pMatrixInverse = pMatrixInverse;
-						camData.vMatrix = vMatrices[x];
-						camData.vMatrixInverse = glm::inverse(vMatrices[x]);
-						camData.pvMatrix = pMatrix * vMatrices[x];
-						shadow->m_cameras[x].updateFrustum();
-						m_frameData->lightBuffer[index].lightVP[x] = pMatrix * vMatrices[x];
+						updateCamera(shadow->m_cameras[x], pMatrix, vMatrices[x], position);
+						m_frameData->lightBuffer[index].lightVP[x] = shadow->m_cameras[x].get()->pvMatrix;
 					}
 				}
 				else if (light->m_type == Light_Component::Light_Type::SPOT) {
 					shadow->m_cameras.resize(1);
 					const auto pMatrix = glm::perspective(glm::radians(light->m_cutoff * 2.0f), 1.0f, 0.01f, radiusSquared);
-					const auto pMatrixInverse = glm::inverse(pMatrix);
-					auto& camData = *shadow->m_cameras[0].get();
-					camData.Dimensions = glm::ivec2((int)m_frameData->shadowData->shadowSize);
-					camData.FarPlane = radiusSquared;
-					camData.EyePosition = position;
-					camData.FOV = light->m_cutoff * 2.0f;
-					camData.pMatrix = pMatrix;
-					camData.pMatrixInverse = pMatrixInverse;
-					camData.vMatrix = glm::inverse(transM * rotM);
-					camData.vMatrixInverse = (transM * rotM); // yes, this is correct
-					camData.pvMatrix = pMatrix * camData.vMatrix;
-					shadow->m_cameras[0].updateFrustum();
-					m_frameData->lightBuffer[index].lightVP[0] = pMatrix * glm::inverse(transM * rotM);
+					const auto vMatrix = glm::inverse(transM * rotM);
+					updateCamera(shadow->m_cameras[0], pMatrix, vMatrix, position, -Camera::ConstNearPlane, radiusSquared, light->m_cutoff * 2.0f);
+					m_frameData->lightBuffer[index].lightVP[0] = shadow->m_cameras[0].get()->pvMatrix;
 				}
 				shadow->m_updateTimes.resize(shadow->m_cameras.size());
 			}
 			index++;
 		}
+		m_frameData->lightBuffer.endWriting();
 	}
 
 

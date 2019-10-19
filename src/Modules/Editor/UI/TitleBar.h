@@ -2,7 +2,7 @@
 #ifndef TITLEBAR_H
 #define TITLEBAR_H
 
-#include "Modules/UI/UI_M.h"
+#include "Modules/Editor/UI/Editor_Interface.h"
 #include "Assets/Texture.h"
 
 

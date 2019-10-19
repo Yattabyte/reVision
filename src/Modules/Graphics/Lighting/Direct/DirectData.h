@@ -7,13 +7,11 @@
 #include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
-#include "Utilities/GL/GL_ArrayBuffer.h"
+#include "Utilities/GL/GL_Vector.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include <memory>
 #include <vector>
-
-
 
 
 /** Structure to contain data that changes frame-to-frame, for direct light rendering. */
@@ -39,7 +37,7 @@ struct Direct_Light_Data {
 		std::vector<Light_Component::Light_Type> lightTypes;
 	};
 
-	GL_ArrayBuffer<Direct_Light_Buffer> lightBuffer;
+	GL_Vector<Direct_Light_Buffer> lightBuffer;
 	std::vector<Direct_Light_ViewInfo> viewInfo;
 	std::shared_ptr<Camera> clientCamera;
 	std::shared_ptr<ShadowData> shadowData;

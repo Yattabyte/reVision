@@ -38,7 +38,7 @@ public:
 		return m_pipeline;
 	}
 	/***/
-	void renderWorld(ecsWorld& world, const float& deltaTime);
+	void renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID = 0);
 	/***/
 	void renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::shared_ptr<Camera>>& cameras);
 	/** Generates a perspective matrix for the client camera. */
@@ -53,7 +53,7 @@ public:
 private:
 	// Private Methods
 	/** Copy the client camera's final color buffer to the screen. */
-	void copyToScreen();
+	void copyToScreen(const GLuint& fboID);
 
 
 	// Private Attributes

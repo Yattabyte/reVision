@@ -74,6 +74,7 @@ public:
 			m_frameData->lightBuffer[index].CubeSpot = reflectorComponent->m_cubeSpot;
 			index++;
 		}
+		m_frameData->lightBuffer.endWriting();
 	}
 
 
