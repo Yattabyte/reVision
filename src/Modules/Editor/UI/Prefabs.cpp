@@ -251,7 +251,7 @@ void Prefabs::populatePrefabs(const std::string& directory)
 		b.m_color = glm::vec3(1.0f);
 		b.m_intensity = 15.0f;
 		b.m_radius = 15.0F;
-		b.m_cutoff = 180.0f;
+		b.m_cutoff = 360.0f;
 		ecsBaseComponent* entityComponents[] = { &a, &b };
 		m_previewWorld.makeEntity(entityComponents, 2ull, "Preview Sun");
 	}

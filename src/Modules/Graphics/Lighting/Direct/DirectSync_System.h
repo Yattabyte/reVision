@@ -46,10 +46,10 @@ public:
 			m_frameData->lightBuffer[index].mMatrix = transM * rotM * sclM;
 			m_frameData->lightBuffer[index].LightColor = light->m_color;
 			m_frameData->lightBuffer[index].LightPosition = trans->m_worldTransform.m_position;
-			m_frameData->lightBuffer[index].LightDirection = glm::normalize(rotM * glm::vec4(1.0f, 0.0f, 1.0f, 0.0f));
+			m_frameData->lightBuffer[index].LightDirection = glm::normalize(rotM * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
 			m_frameData->lightBuffer[index].LightIntensity = light->m_intensity;
 			m_frameData->lightBuffer[index].LightRadius = light->m_radius;
-			m_frameData->lightBuffer[index].LightCutoff = cosf(glm::radians(light->m_cutoff));
+			m_frameData->lightBuffer[index].LightCutoff = cosf(glm::radians(light->m_cutoff / 2.0f));
 			m_frameData->lightBuffer[index].Shadow_Spot = shadow ? shadow->m_shadowSpot : -1;
 			m_frameData->lightBuffer[index].Light_Type = static_cast<int>(light->m_type);
 
@@ -139,15 +139,15 @@ public:
 						glm::lookAt(position, position + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0))
 					};
 					for (int x = 0; x < 6; ++x) {
-						updateCamera(shadow->m_cameras[x], pMatrix, vMatrices[x], position);
+						updateCamera(shadow->m_cameras[x], pMatrix, vMatrices[x], position, -Camera::ConstNearPlane, radiusSquared, 90.0f);
 						m_frameData->lightBuffer[index].lightVP[x] = shadow->m_cameras[x].get()->pvMatrix;
 					}
 				}
 				else if (light->m_type == Light_Component::Light_Type::SPOT) {
 					shadow->m_cameras.resize(1);
-					const auto pMatrix = glm::perspective(glm::radians(light->m_cutoff * 2.0f), 1.0f, 0.01f, radiusSquared);
-					const auto vMatrix = glm::inverse(transM * rotM);
-					updateCamera(shadow->m_cameras[0], pMatrix, vMatrix, position, -Camera::ConstNearPlane, radiusSquared, light->m_cutoff * 2.0f);
+					const auto pMatrix = glm::perspective(glm::radians(light->m_cutoff), 1.0f, 0.01f, radiusSquared);
+					const auto vMatrix = (transM * rotM);
+					updateCamera(shadow->m_cameras[0], pMatrix, vMatrix, position, -Camera::ConstNearPlane, radiusSquared, light->m_cutoff);
 					m_frameData->lightBuffer[index].lightVP[0] = shadow->m_cameras[0].get()->pvMatrix;
 				}
 				shadow->m_updateTimes.resize(shadow->m_cameras.size());
