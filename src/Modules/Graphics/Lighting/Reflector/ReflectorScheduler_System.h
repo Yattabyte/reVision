@@ -23,7 +23,6 @@ public:
 	inline ReflectorScheduler_System(Engine* engine, const std::shared_ptr<ReflectorData>& frameData)
 		: m_engine(engine), m_frameData(frameData) {
 		addComponentType(Reflector_Component::m_ID, FLAG_REQUIRED);
-		addComponentType(CameraArray_Component::m_ID, FLAG_REQUIRED);
 
 		auto& preferences = engine->getPreferenceState();
 		m_maxReflectionCasters = 1u;
@@ -45,7 +44,6 @@ public:
 			int cameraCount = 0;
 			for each (const auto & componentParam in components) {
 				auto* reflectorComponent = (Reflector_Component*)componentParam[0];
-				auto* cameraComponent = (CameraArray_Component*)componentParam[1];
 
 				auto tryToAddReflector = [&reflectors, &maxReflectors, &clientPosition, &clientFarPlane, &clientTime](const int& reflectorSpot, Camera* cb, float* updateTime) {
 					const float linDist = glm::distance(clientPosition, cb->getFrustumCenter()) / clientFarPlane;
@@ -80,12 +78,12 @@ public:
 				};
 				// Set appropriate reflector spot
 				reflectorComponent->m_cubeSpot = cameraCount;
-				cameraComponent->m_updateTimes.resize(cameraComponent->m_cameras.size());
-				for (int x = 0; x < cameraComponent->m_cameras.size(); ++x) {
-					cameraComponent->m_cameras[x].setEnabled(false);
-					tryToAddReflector(reflectorComponent->m_cubeSpot + x, &cameraComponent->m_cameras[x], &cameraComponent->m_updateTimes[x]);
+				reflectorComponent->m_updateTimes.resize(reflectorComponent->m_cameras.size());
+				for (int x = 0; x < reflectorComponent->m_cameras.size(); ++x) {
+					reflectorComponent->m_cameras[x].setEnabled(false);
+					tryToAddReflector(reflectorComponent->m_cubeSpot + x, &reflectorComponent->m_cameras[x], &reflectorComponent->m_updateTimes[x]);
 				}
-				cameraCount += (int)cameraComponent->m_cameras.size();
+				cameraCount += (int)reflectorComponent->m_cameras.size();
 			}
 
 			// Enable cameras in final set

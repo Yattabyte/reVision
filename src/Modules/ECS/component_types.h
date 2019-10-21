@@ -20,23 +20,20 @@ struct Selected_Component final : public ecsComponent<Selected_Component, select
 
 constexpr static const char transformName[] = "Transform_Component";
 struct Transform_Component final : public ecsComponent<Transform_Component, transformName> {
-	// Default Serialization
 	Transform m_localTransform, m_worldTransform;
 };
 
 constexpr static const char playerSpawnName[] = "PlayerSpawn_Component";
 struct PlayerSpawn_Component final : public ecsComponent<PlayerSpawn_Component, playerSpawnName> {
-	// Default Serialization
 };
 
 constexpr static const char player3DName[] = "Player3D_Component";
 struct Player3D_Component final : public ecsComponent<Player3D_Component, player3DName> {
-	// Default Serialization
 	glm::vec3 m_rotation = glm::vec3(0.0f);
 };
 
 constexpr static const char cameraName[] = "Camera_Component";
-struct [[deprecated]] Camera_Component final : public ecsComponent<Camera_Component, cameraName>{
+struct Camera_Component final : public ecsComponent<Camera_Component, cameraName> {
 	Camera m_camera;
 	float m_updateTime = 0.0f;
 
@@ -50,24 +47,8 @@ struct [[deprecated]] Camera_Component final : public ecsComponent<Camera_Compon
 	}
 };
 
-constexpr static const char cameraArrayName[] = "CameraArray_Component";
-struct [[deprecated]] CameraArray_Component final : public ecsComponent<CameraArray_Component, cameraArrayName>{
-	std::vector<Camera> m_cameras;
-	std::vector<float> m_updateTimes;
-
-	inline std::vector<char> serialize() {
-		/**@todo copy out cameras*/
-		return {};
-	}
-	inline void deserialize(const char* data) {
-		m_cameras = std::vector<Camera>();
-		/**@todo copy in cameras*/
-	}
-};
-
 constexpr static const char boundingSphereName[] = "BoundingSphere_Component";
 struct [[deprecated]] BoundingSphere_Component final : public ecsComponent<BoundingSphere_Component, boundingSphereName>{
-	// Default Serialization
 	glm::vec3 m_positionOffset = glm::vec3(0.0f);
 	float m_radius = 1.0f;
 	enum CameraCollision {
@@ -77,7 +58,6 @@ struct [[deprecated]] BoundingSphere_Component final : public ecsComponent<Bound
 
 constexpr static const char boundingBoxName[] = "BoundingBox_Component";
 struct [[deprecated]] BoundingBox_Component final : public ecsComponent<BoundingBox_Component, boundingBoxName>{
-	// Default Serialization
 	glm::vec3 m_positionOffset = glm::vec3(0.0f), m_extent = glm::vec3(0), m_min = glm::vec3(0.0f), m_max = glm::vec3(0.0f);
 	enum CameraCollision {
 		OUTSIDE, INSIDE
@@ -204,12 +184,12 @@ struct Shadow_Component final : public ecsComponent<Shadow_Component, shadowName
 		return {};
 	}
 	inline void deserialize(const char* data) {
+		m_cameras = {};
 	}
 };
 
 constexpr static const char lightName[] = "Light_Component";
 struct Light_Component final : public ecsComponent<Light_Component, lightName> {
-	// Default Serialization
 	enum class Light_Type : int {
 		DIRECTIONAL, POINT, SPOT
 	} m_type = Light_Type::DIRECTIONAL;
@@ -219,45 +199,10 @@ struct Light_Component final : public ecsComponent<Light_Component, lightName> {
 	float m_cutoff = 45.0f;
 };
 
-constexpr static const char lightColorName[] = "LightColor_Component";
-struct [[deprecated]] LightColor_Component final : public ecsComponent<LightColor_Component, lightColorName>{
-	// Default Serialization
-	glm::vec3 m_color = glm::vec3(1.0f);
-	float m_intensity = 1.0f;
-};
-
-constexpr static const char lightRadiusName[] = "LightRadius_Component";
-struct [[deprecated]] LightRadius_Component final : public ecsComponent<LightRadius_Component, lightRadiusName>{
-	// Default Serialization
-	float m_radius = 1.0f;
-};
-
-constexpr static const char lightCutoffName[] = "LightCutoff_Component";
-struct [[deprecated]] LightCutoff_Component final : public ecsComponent<LightCutoff_Component, lightCutoffName>{
-	// Default Serialization
-	float m_cutoff = 45.0f;
-};
-
-constexpr static const char lightDirectionalName[] = "LightDirectional_Component";
-struct [[deprecated]] LightDirectional_Component final : public ecsComponent<LightDirectional_Component, lightDirectionalName>{
-#define NUM_CASCADES 4
-	// Default Serialization
-	glm::mat4 m_pvMatrices[NUM_CASCADES] = { glm::mat4(1.0f),glm::mat4(1.0f), glm::mat4(1.0f), glm::mat4(1.0f) };
-	float m_cascadeEnds[NUM_CASCADES] = { 1.0f, 1.0f, 1.0f, 1.0f };
-};
-
-constexpr static const char lightPointName[] = "LightPoint_Component";
-struct [[deprecated]] LightPoint_Component final : public ecsComponent<LightPoint_Component, lightPointName>{
-	// Default Serialization
-};
-
-constexpr static const char lightSpotName[] = "LightSpot_Component";
-struct [[deprecated]] LightSpot_Component final : public ecsComponent<LightSpot_Component, lightSpotName>{
-	// Default Serialization
-};
-
 constexpr static const char reflectorName[] = "Reflector_Component";
 struct Reflector_Component final : public ecsComponent<Reflector_Component, reflectorName> {
+	std::vector<Camera> m_cameras;
+	std::vector<float> m_updateTimes;
 	float m_updateTime = 0.0f;
 	int m_cubeSpot = -1;
 
@@ -265,6 +210,7 @@ struct Reflector_Component final : public ecsComponent<Reflector_Component, refl
 		return {};
 	}
 	inline void deserialize(const char* data) {
+		m_cameras = {};
 	}
 };
 

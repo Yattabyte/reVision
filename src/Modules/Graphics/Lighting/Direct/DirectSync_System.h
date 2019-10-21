@@ -70,6 +70,7 @@ public:
 					camera.updateFrustum();
 				};
 				if (light->m_type == Light_Component::Light_Type::DIRECTIONAL) {
+					constexpr auto NUM_CASCADES = 4;
 					shadow->m_cameras.resize(4);
 					const auto size = m_frameData->clientCamera->get()->Dimensions;
 					const auto ar = size.x / size.y;

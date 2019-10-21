@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CAMERAARRAYPERSPECTIVE_SYSTEM_H
-#define CAMERAARRAYPERSPECTIVE_SYSTEM_H
+#ifndef REFLECTORPERSPECTIVE_SYSTEM_H
+#define REFLECTORPERSPECTIVE_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
@@ -8,24 +8,24 @@
 #include <memory>
 
 
-/** An ECS system responsible for updating a shared pointer with a list of all active cameras in the scene. */
-class CameraArrayPerspective_System final : public ecsBaseSystem {
+/** An ECS system responsible for updating a shared pointer with a list of all active cameras from reflectors in the scene. */
+class ReflectorPerspective_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
-	inline ~CameraArrayPerspective_System() = default;
+	inline ~ReflectorPerspective_System() = default;
 	/** Construct this system.
 	@param	cameras		shared list of scene cameras. */
-	inline CameraArrayPerspective_System(const std::shared_ptr<std::vector<Camera*>>& sceneCameras)
+	inline ReflectorPerspective_System(const std::shared_ptr<std::vector<Camera*>>& sceneCameras)
 		: m_sceneCameras(sceneCameras) {
-		addComponentType(CameraArray_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(Reflector_Component::m_ID, FLAG_REQUIRED);
 	}
 
 
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		for each (const auto & componentParam in components) {
-			auto* cameraComponent = (CameraArray_Component*)componentParam[0];
+			auto* cameraComponent = (Reflector_Component*)componentParam[0];
 			for (auto& camera : cameraComponent->m_cameras)
 				m_sceneCameras->push_back(&camera);
 		}
@@ -37,4 +37,4 @@ private:
 	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
 };
 
-#endif // CAMERAARRAYPERSPECTIVE_SYSTEM_H
+#endif // REFLECTORPERSPECTIVE_SYSTEM_H

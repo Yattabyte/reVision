@@ -16,7 +16,7 @@
 #include "Modules/Graphics/Effects/FXAA.h"
 #include "Modules/Graphics/Logical/Transform_System.h"
 #include "Modules/Graphics/Logical/CameraPerspective_System.h"
-#include "Modules/Graphics/Logical/CameraArrayPerspective_System.h"
+#include "Modules/Graphics/Logical/ReflectorPerspective_System.h"
 #include "Modules/Graphics/Logical/ShadowPerspective_System.h"
 #include "Modules/Graphics/Logical/FrustumCull_System.h"
 #include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
@@ -33,8 +33,8 @@ Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camer
 	m_worldSystems.makeSystem<FrustumCull_System>(m_sceneCameras);
 	m_worldSystems.makeSystem<Skeletal_Animation_System>(m_engine);
 	m_cameraSystems.makeSystem<CameraPerspective_System>(m_sceneCameras);
-	m_cameraSystems.makeSystem<CameraArrayPerspective_System>(m_sceneCameras);
 	m_cameraSystems.makeSystem<ShadowPerspective_System>(m_sceneCameras);
+	m_cameraSystems.makeSystem<ReflectorPerspective_System>(m_sceneCameras);
 
 	// Create Rendering Techniques
 	auto propView = new Prop_Technique(engine, m_sceneCameras);

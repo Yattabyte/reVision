@@ -19,7 +19,6 @@ public:
 		: m_frameData(frameData) {
 		addComponentType(Reflector_Component::m_ID, FLAG_REQUIRED);
 		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
-		addComponentType(CameraArray_Component::m_ID, FLAG_REQUIRED);
 	}
 
 
@@ -32,7 +31,6 @@ public:
 		for each (const auto & componentParam in components) {
 			auto* reflectorComponent = (Reflector_Component*)componentParam[0];
 			auto* transformComponent = (Transform_Component*)componentParam[1];
-			auto* cameraComponent = (CameraArray_Component*)componentParam[2];
 
 			const auto& position = transformComponent->m_worldTransform.m_position;
 			const auto& orientation = transformComponent->m_worldTransform.m_orientation;
@@ -54,10 +52,10 @@ public:
 				glm::lookAt(position, position + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0)),
 				glm::lookAt(position, position + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0))
 			};
-			cameraComponent->m_cameras.resize(6);
-			cameraComponent->m_updateTimes.resize(6);
+			reflectorComponent->m_cameras.resize(6);
+			reflectorComponent->m_updateTimes.resize(6);
 			for (int x = 0; x < 6; ++x) {
-				auto& camData = *cameraComponent->m_cameras[x].get();
+				auto& camData = *reflectorComponent->m_cameras[x].get();
 				camData.Dimensions = m_frameData->envmapSize;
 				camData.FOV = 90.0f;
 				camData.FarPlane = largest;
@@ -67,7 +65,7 @@ public:
 				camData.vMatrix = vMatrices[x];
 				camData.vMatrixInverse = glm::inverse(vMatrices[x]);
 				camData.pvMatrix = pMatrix * vMatrices[x];
-				cameraComponent->m_cameras[x].updateFrustum();
+				reflectorComponent->m_cameras[x].updateFrustum();
 			}
 
 			// Sync Buffer Attributes

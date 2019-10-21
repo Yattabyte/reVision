@@ -19,7 +19,6 @@ public:
 		: m_frameData(visibility) {
 		addComponentType(Reflector_Component::m_ID, FLAG_REQUIRED);
 		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
-		addComponentType(CameraArray_Component::m_ID, FLAG_REQUIRED);
 	}
 
 
@@ -34,7 +33,6 @@ public:
 			for each (const auto & componentParam in components) {
 				auto* reflectorComponent = (Reflector_Component*)componentParam[0];
 				auto* transformComponent = (Transform_Component*)componentParam[1];
-				auto* cameraComponent = (CameraArray_Component*)componentParam[2];
 
 				// Synchronize the component if it is visible
 				viewInfo.lightIndices.push_back((GLuint)index);
