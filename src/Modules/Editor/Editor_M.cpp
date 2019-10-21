@@ -445,7 +445,7 @@ void LevelEditor_Module::populateRecentList()
 		m_engine->getManager_Messages().error("Cannot read the recent level list from disk!");
 	else {
 		std::string level;
-		while (file >> level)
+		while (std::getline(file, level))
 			m_recentLevels.push_back(level);
 	}
 	file.close();

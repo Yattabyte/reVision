@@ -87,7 +87,7 @@ public:
 					else if (type == Light_Component::Light_Type::POINT)
 						drawData.push_back({ m_sphereParams.second, 1, m_sphereParams.first, 0 });
 					else if (type == Light_Component::Light_Type::SPOT)
-						drawData.push_back({ m_coneParams.second, 1, m_coneParams.first, 0 });
+						drawData.push_back({ m_sphereParams.second, 1, m_sphereParams.first, 0 });
 				}
 			}
 

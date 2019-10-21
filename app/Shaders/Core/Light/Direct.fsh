@@ -147,14 +147,14 @@ float CalcSpotShadow(vec4 World_Pos, vec3 World_Normal, float ViewDistance, floa
 		vec2(1,  -1), vec2(1,  0), vec2(1,  1)
 	);
 	const float cosAngle					= saturate(1.0f - NdotL);
-	const float bias 						= clamp(0.05f * tan(acos(NdotL)), 0.0f, 0.05f);
+	const float bias 						= clamp(0.005f * tan(acos(NdotL)), 0.0f, 0.005f);
 	const vec4 scaledNormalOffset			= vec4(World_Normal * (cosAngle * ShadowSize_Recip), 0);
 	
 	// Bring fragment coordinates from world space into light space, then into texture spaces
 	const vec4 LightSpacePos				= lightBuffers[lightIndex].LightVP[0] * (World_Pos + scaledNormalOffset);
 	const vec3 ProjCoords 					= LightSpacePos.xyz / LightSpacePos.w;                                  
 	const vec2 UVCoords 					= (0.5f * ProjCoords.xy + 0.5f);                                    
-	const float FragmentDepth 				= (0.5f * ProjCoords.z + 0.5f) - EPSILON - bias; 		
+	const float FragmentDepth 				= (0.5f * ProjCoords.z + 0.5f) - EPSILON; 		
 	const float diskRadius 					= (1.0f + (ViewDistance / LightRadius2)) * (ShadowSize_Recip * 2.0f);
 	const float FactorAmt					= 1.0f / 9.0f;
 	float Factor = 0.0f, depth = 0.0f;

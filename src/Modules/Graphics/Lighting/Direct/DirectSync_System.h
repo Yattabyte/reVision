@@ -146,7 +146,7 @@ public:
 				else if (light->m_type == Light_Component::Light_Type::SPOT) {
 					shadow->m_cameras.resize(1);
 					const auto pMatrix = glm::perspective(glm::radians(light->m_cutoff), 1.0f, 0.01f, radiusSquared);
-					const auto vMatrix = (transM * rotM);
+					const auto vMatrix = glm::inverse(transM * rotM);
 					updateCamera(shadow->m_cameras[0], pMatrix, vMatrix, position, -Camera::ConstNearPlane, radiusSquared, light->m_cutoff);
 					m_frameData->lightBuffer[index].lightVP[0] = shadow->m_cameras[0].get()->pvMatrix;
 				}
