@@ -15,7 +15,7 @@ public:
 	inline ~ShadowPerspective_System() = default;
 	/** Construct this system.
 	@param	cameras		shared list of scene cameras. */
-	inline ShadowPerspective_System(const std::shared_ptr<std::vector<Camera*>>& sceneCameras)
+	inline explicit ShadowPerspective_System(const std::shared_ptr<std::vector<Camera*>>& sceneCameras)
 		: m_sceneCameras(sceneCameras) {
 		addComponentType(Shadow_Component::m_ID, FLAG_REQUIRED);
 	}
@@ -24,7 +24,7 @@ public:
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		for each (const auto & componentParam in components) {
-			auto* shadow = (Shadow_Component*)componentParam[0];
+			auto* shadow = static_cast<Shadow_Component*>(componentParam[0]);
 			for (auto& camera : shadow->m_cameras)
 				m_sceneCameras->push_back(&camera);
 		}

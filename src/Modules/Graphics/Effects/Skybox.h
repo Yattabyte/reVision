@@ -21,7 +21,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Skybox(Engine* engine)
+	inline explicit Skybox(Engine* engine)
 		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Asset Loading
 		m_cubemapSky = Shared_Cubemap(engine, "sky\\");

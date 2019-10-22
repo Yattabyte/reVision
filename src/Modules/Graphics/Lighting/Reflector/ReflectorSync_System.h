@@ -15,7 +15,7 @@ public:
 	inline ~ReflectorSync_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline ReflectorSync_System(const std::shared_ptr<ReflectorData>& frameData)
+	inline explicit ReflectorSync_System(const std::shared_ptr<ReflectorData>& frameData)
 		: m_frameData(frameData) {
 		addComponentType(Reflector_Component::m_ID, FLAG_REQUIRED);
 		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);

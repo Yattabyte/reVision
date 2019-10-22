@@ -38,6 +38,8 @@ void UI_Module::deinitialize()
 
 	// Update indicator
 	*m_aliveIndicator = false;
+
+	m_rootElement.clear();
 }
 
 void UI_Module::frameTick(const float& deltaTime)

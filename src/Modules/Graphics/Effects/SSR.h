@@ -24,7 +24,7 @@ public:
 		glDeleteTextures(1, &m_bayerID);
 	}
 	/** Constructor. */
-	inline SSR(Engine* engine)
+	inline explicit SSR(Engine* engine)
 		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
 		m_shaderSSR1 = Shared_Shader(engine, "Effects\\SSR part 1");

@@ -24,7 +24,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Radiance_Hints(Engine* engine)
+	inline explicit Radiance_Hints(Engine* engine)
 		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
 		m_shaderRecon = Shared_Shader(engine, "Effects\\RH Reconstruction");

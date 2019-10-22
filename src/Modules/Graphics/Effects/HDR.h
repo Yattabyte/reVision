@@ -20,7 +20,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline HDR(Engine* engine)
+	inline explicit HDR(Engine* engine)
 		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
 		// Asset Loading
 		m_shaderHDR = Shared_Shader(engine, "Effects\\HDR");

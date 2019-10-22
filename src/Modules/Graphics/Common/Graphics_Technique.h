@@ -27,7 +27,7 @@ public:
 	/** Virtual Destructor. */
 	inline virtual ~Graphics_Technique() = default;
 	/** Constructor. */
-	inline Graphics_Technique(const Technique_Category& category) : m_category(category) {}
+	inline explicit Graphics_Technique(const Technique_Category& category) : m_category(category) {}
 
 
 	// Public Methods

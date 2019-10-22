@@ -23,7 +23,7 @@ public:
 	~Graphics_Framebuffers();
 	/** Construct a collection of pbr framebuffers at a specific size.
 	@param	size			the size to use. */
-	Graphics_Framebuffers(const glm::ivec2& size);
+	explicit Graphics_Framebuffers(const glm::ivec2& size);
 
 
 	// Public Methods

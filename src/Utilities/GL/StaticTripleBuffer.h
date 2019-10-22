@@ -33,7 +33,7 @@ public:
 		}
 	}
 	/***/
-	inline StaticTripleBuffer(const GLsizeiptr& size, const void* data = 0, const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT)
+	inline explicit StaticTripleBuffer(const GLsizeiptr& size, const void* data = 0, const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT)
 		: m_size(size) {
 		// Zero-initialize our starting variables
 		for (int x = 0; x < BufferCount; ++x) {

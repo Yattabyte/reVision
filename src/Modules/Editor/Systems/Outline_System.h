@@ -71,8 +71,8 @@ public:
 		if (m_shader->existsYet()) {
 			// Collate all component data to generate a draw call
 			const auto& camera = m_engine->getModule_Graphics().getClientCamera()->get();
-			const auto pMatrix = camera->pMatrix;
-			const auto vMatrix = camera->vMatrix;
+			const auto& pMatrix = camera->pMatrix;
+			const auto& vMatrix = camera->vMatrix;
 			std::vector<glm::mat4> baseTransforms;
 			std::vector<glm::ivec4> drawData;
 			for each (const auto & componentParam in components) {

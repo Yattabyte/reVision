@@ -30,8 +30,8 @@ public:
 	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override final {
 		auto& graphicsModule = m_engine->getModule_Graphics();
 		for each (const auto & componentParam in components) {
-			Transform_Component* transformComponent = (Transform_Component*)componentParam[0];
-			Player3D_Component* playerComponent = (Player3D_Component*)componentParam[1];
+			auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
+			auto* playerComponent = static_cast<Player3D_Component*>(componentParam[1]);
 
 			auto& actionState = m_engine->getActionState();
 			auto& rotation = playerComponent->m_rotation;
@@ -67,10 +67,11 @@ public:
 
 			// Update the client's camera
 			auto cam = graphicsModule.getClientCamera();
+			const auto vMatrix = glm::toMat4(transform.m_orientation) * glm::translate(glm::mat4(1.0f), -transform.m_position);
 			cam->get()->EyePosition = transform.m_position;
-			cam->get()->vMatrix = glm::toMat4(transform.m_orientation) * glm::translate(glm::mat4(1.0f), -transform.m_position);
-			cam->get()->vMatrixInverse = glm::inverse(cam->get()->vMatrix);
-			cam->get()->pvMatrix = cam->get()->pMatrix * cam->get()->vMatrix;
+			cam->get()->vMatrix = vMatrix;
+			cam->get()->vMatrixInverse = glm::inverse(vMatrix);
+			cam->get()->pvMatrix = cam->get()->pMatrix * vMatrix;
 		}
 	};
 

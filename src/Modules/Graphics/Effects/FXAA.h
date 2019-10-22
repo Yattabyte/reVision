@@ -20,7 +20,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline FXAA(Engine* engine)
+	inline explicit FXAA(Engine* engine)
 		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
 		// Asset Loading
 		m_shaderFXAA = Shared_Shader(engine, "Effects\\FXAA");

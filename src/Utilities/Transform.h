@@ -23,19 +23,14 @@ struct Transform {
 	@param position			the desired position
 	@param orientation		the desired orientation
 	@param scale			the desired scale */
-	inline Transform(const glm::vec3& position, const glm::quat& orientation, const glm::vec3& scale) {
-		m_position = position;
-		m_orientation = orientation;
-		m_scale = scale;
+	inline Transform(const glm::vec3& position, const glm::quat& orientation, const glm::vec3& scale)
+		: m_position(position), m_orientation(orientation), m_scale(scale) {
 		update();
 	}
 	/** Constructs a transformation object with only orientation.
 	* @param orientation	the desired orientation	*/
-	inline Transform(const glm::quat& orientation) {
-		m_position = glm::vec3(0.0f);
-		m_orientation = orientation;
-		m_scale = glm::vec3(1.0f);
-		update();
+	inline explicit Transform(const glm::quat& orientation)
+		: Transform(glm::vec3(0.0f), orientation, glm::vec3(1.0f)) {
 	}
 
 

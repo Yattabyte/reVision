@@ -16,7 +16,7 @@ public:
 	~RH_Volume();
 	/** Construct a radiance hint volume.
 	@param	engine			the engine to use. */
-	RH_Volume(Engine* engine);
+	explicit RH_Volume(Engine* engine);
 
 
 	// Public Methods

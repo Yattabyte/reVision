@@ -21,7 +21,7 @@ ecsWorld::ecsWorld(const std::vector<char>& data)
 	}
 }
 
-ecsWorld::ecsWorld(ecsWorld&& other)
+ecsWorld::ecsWorld(ecsWorld&& other) noexcept
 	: m_components(std::move(other.m_components)), m_entities(std::move(other.m_entities))
 {
 }
@@ -202,7 +202,7 @@ ecsBaseComponent* ecsWorld::getComponent(const std::vector<std::tuple<ComponentI
 /// PUBLIC FUNCTIONS ///
 ////////////////////////
 
-ecsWorld& ecsWorld::operator=(ecsWorld&& other)
+ecsWorld& ecsWorld::operator=(ecsWorld&& other) noexcept
 {
 	if (this != &other) {
 		m_components = std::move(other.m_components);

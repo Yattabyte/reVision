@@ -14,7 +14,7 @@ public:
 	/** Destroy the skeletal animation system. */
 	inline ~Skeletal_Animation_System() = default;
 	/** Construct a skeletal animation system. */
-	inline Skeletal_Animation_System(Engine* engine)
+	inline explicit Skeletal_Animation_System(Engine* engine)
 		: m_engine(engine) {
 		// Declare component types used
 		addComponentType(Skeleton_Component::m_ID, FLAG_REQUIRED);

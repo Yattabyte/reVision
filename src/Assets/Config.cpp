@@ -82,7 +82,7 @@ void Config::setValue(const unsigned int& cfg_key, const float& cfg_value)
 
 float Config::getValue(const unsigned int& cfg_key) const
 {
-	if (cfg_key >= 0 && m_configuration.find(cfg_key) != m_configuration.end())
+	if (m_configuration.find(cfg_key) != m_configuration.end())
 		return m_configuration.at(cfg_key);
 	return std::nanf("");
 }

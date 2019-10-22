@@ -22,7 +22,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Bloom(Engine* engine)
+	inline explicit Bloom(Engine* engine)
 		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
 		// Asset Loading
 		m_shaderBloomExtract = Shared_Shader(engine, "Effects\\Bloom Extraction");

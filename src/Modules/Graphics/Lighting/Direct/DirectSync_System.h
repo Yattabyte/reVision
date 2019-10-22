@@ -16,7 +16,7 @@ public:
 	inline ~DirectSync_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline DirectSync_System(const std::shared_ptr<Direct_Light_Data>& frameData)
+	inline explicit DirectSync_System(const std::shared_ptr<Direct_Light_Data>& frameData)
 		: m_frameData(frameData) {
 		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
 		addComponentType(Light_Component::m_ID, FLAG_REQUIRED);
@@ -141,7 +141,8 @@ public:
 					};
 					for (int x = 0; x < 6; ++x) {
 						updateCamera(shadow->m_cameras[x], pMatrix, vMatrices[x], position, -Camera::ConstNearPlane, radiusSquared, 90.0f);
-						m_frameData->lightBuffer[index].lightVP[x] = shadow->m_cameras[x].get()->pvMatrix;
+						if (shadow->m_cameras[x].getEnabled())
+							m_frameData->lightBuffer[index].lightVP[x] = shadow->m_cameras[x].get()->pvMatrix;
 					}
 				}
 				else if (light->m_type == Light_Component::Light_Type::SPOT) {
@@ -149,7 +150,8 @@ public:
 					const auto pMatrix = glm::perspective(glm::radians(light->m_cutoff), 1.0f, 0.01f, radiusSquared);
 					const auto vMatrix = glm::inverse(transM * rotM);
 					updateCamera(shadow->m_cameras[0], pMatrix, vMatrix, position, -Camera::ConstNearPlane, radiusSquared, light->m_cutoff);
-					m_frameData->lightBuffer[index].lightVP[0] = shadow->m_cameras[0].get()->pvMatrix;
+					if (shadow->m_cameras[0].getEnabled())
+						m_frameData->lightBuffer[index].lightVP[0] = shadow->m_cameras[0].get()->pvMatrix;
 				}
 				shadow->m_updateTimes.resize(shadow->m_cameras.size());
 			}

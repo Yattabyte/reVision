@@ -17,7 +17,7 @@ public:
 	inline ~Transform_System() = default;
 	/** Construct this system.
 	@param	engine		the currently active engine. */
-	inline Transform_System(Engine* engine)
+	inline explicit Transform_System(Engine* engine)
 		: m_engine(engine) {
 		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
 	}
@@ -27,7 +27,7 @@ public:
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		// Reset the world transform to be the local transform of all components
 		for each (const auto & componentParam in components) {
-			auto* transformComponent = (Transform_Component*)componentParam[0];
+			auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
 			transformComponent->m_worldTransform = transformComponent->m_localTransform;
 		}
 

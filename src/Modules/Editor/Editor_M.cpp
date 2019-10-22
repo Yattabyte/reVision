@@ -90,6 +90,10 @@ void LevelEditor_Module::deinitialize()
 
 	// Update indicator
 	*m_aliveIndicator = false;
+	m_editorInterface.reset();
+	m_mouseGizmo.reset();
+	m_systemSelClearer.reset();
+	m_systemOutline.reset();
 
 	glDeleteFramebuffers(1, &m_fboID);
 	glDeleteTextures(1, &m_texID);

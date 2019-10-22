@@ -26,6 +26,8 @@ void StartScreen_Module::initialize(Engine* engine)
 void StartScreen_Module::deinitialize()
 {
 	m_engine->getManager_Messages().statement("Unloading Module: Starting Screen...");
+
+	m_startMenu.reset();
 }
 
 void StartScreen_Module::frameTick(const float& deltaTime)

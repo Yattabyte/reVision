@@ -16,9 +16,9 @@ public:
 	/** Construct an empty ECS World. */
 	inline ecsWorld() = default;
 	/** Construct an ECS world from a serial data buffer. */
-	ecsWorld(const std::vector<char>& data);
+	explicit ecsWorld(const std::vector<char>& data);
 	/** Move an ECS world. */
-	ecsWorld(ecsWorld&& other);
+	ecsWorld(ecsWorld&& other) noexcept;
 
 
 	/////////////////////////////
@@ -124,7 +124,7 @@ public:
 	/// PUBLIC FUNCTIONS ///
 	////////////////////////
 	/***/
-	ecsWorld& operator=(ecsWorld&& other);
+	ecsWorld& operator=(ecsWorld&& other) noexcept;
 	/***/
 	void clear();
 	/** Generate a universally unique identifier for entities or components.

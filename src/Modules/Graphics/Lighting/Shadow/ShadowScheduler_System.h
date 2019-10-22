@@ -44,8 +44,8 @@ public:
 		if (int availableRoom = (int)m_maxShadowsCasters - (int)m_frameData->shadowsToUpdate.size()) {
 			int cameraCount = 0;
 			for each (const auto & componentParam in components) {
-				auto* shadow = (Shadow_Component*)componentParam[0];
-				auto* light = (Light_Component*)componentParam[1];
+				auto* shadow = static_cast<Shadow_Component*>(componentParam[0]);
+				auto* light = static_cast<Light_Component*>(componentParam[1]);
 
 				auto tryToAddShadow = [&shadows, &maxShadows, &clientPosition, &clientFarPlane, &clientTime](const int& shadowSpot, Camera* cb, float* updateTime) {
 					const float linDist = glm::distance(clientPosition, cb->getFrustumCenter()) / clientFarPlane;
