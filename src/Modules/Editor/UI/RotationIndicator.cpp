@@ -37,7 +37,7 @@ RotationIndicator::RotationIndicator(Engine* engine)
 
 	// Asset-Finished Callbacks
 	m_3dIndicator->addCallback(m_aliveIndicator, [&]() mutable {
-		m_indirectIndicator = IndirectDraw((GLuint)m_3dIndicator->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirectIndicator = IndirectDraw<1>((GLuint)m_3dIndicator->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 
 	// GL structures

@@ -35,10 +35,6 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
-		for (auto& [camIndexBuffer, indirectQuad] : m_drawData) {
-			camIndexBuffer.endWriting();
-			indirectQuad.endWriting();
-		}
 		m_drawIndex = 0;
 	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
@@ -56,17 +52,23 @@ public:
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 		indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
-		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		camBufferIndex.endWriting();
+		indirectQuad.endWriting();
 
 		// Write HDR effect to own framebuffer
+		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		viewport->m_gfxFBOS->bindForWriting("HDR");
 		viewport->m_gfxFBOS->bindForReading("LIGHTING", 0);
 		m_shaderHDR->bind();
 		m_shaderHDR->setUniform(0, 1.0f);
 		m_shaderHDR->setUniform(1, m_gamma);
+
 		// Use the currently bound framebuffer from the prior effect
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		indirectQuad.drawCall();
+
+		camBufferIndex.endReading();
+		indirectQuad.endReading();
 		Shader::Release();
 		m_drawIndex++;
 	}
@@ -79,8 +81,8 @@ private:
 	Shared_Shader m_shaderHDR;
 	Shared_Auto_Model m_shapeQuad;
 	struct DrawData {
-		DynamicBuffer camBufferIndex;
-		IndirectDraw indirectQuad = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT);
+		DynamicBuffer<> camBufferIndex;
+		IndirectDraw<> indirectQuad = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT);
 	};
 	std::vector<DrawData> m_drawData;
 	int	m_drawIndex = 0;

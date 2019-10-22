@@ -106,8 +106,11 @@ public:
 
 			// Write data
 			m_ssboTransforms.beginWriting();
+			m_indirectGeometry.beginWriting();
 			m_ssboTransforms.write(0, sizeof(glm::mat4) * baseTransforms.size(), baseTransforms.data());
 			m_indirectGeometry.write(0, sizeof(glm::ivec4) * drawData.size(), drawData.data());
+			m_ssboTransforms.endWriting();
+			m_indirectGeometry.endWriting();
 
 			// Stencil-out the shapes themselves
 			m_editor->bindFBO();
@@ -143,7 +146,8 @@ public:
 			glEnable(GL_DEPTH_TEST);
 			glDisable(GL_STENCIL_TEST);
 			glEnable(GL_CULL_FACE);
-			m_ssboTransforms.endWriting();
+			m_ssboTransforms.endReading();
+			m_indirectGeometry.endReading();
 			Shader::Release();
 		}
 	}
@@ -227,7 +231,7 @@ private:
 	float m_renderScale = 0.02f;
 	Shared_Mesh m_cube, m_sphere, m_cone;
 	Shared_Shader m_shader;
-	DynamicBuffer m_indirectGeometry, m_ssboTransforms;
+	DynamicBuffer<> m_indirectGeometry, m_ssboTransforms;
 	GLuint m_vaoID = 0, m_vboID = 0;
 	size_t m_currentSize = 0ull, m_maxCapacity = 256ull;
 	GLsync m_fence = nullptr;

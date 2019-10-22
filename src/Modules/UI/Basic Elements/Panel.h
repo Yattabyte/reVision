@@ -34,7 +34,7 @@ public:
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
 		constexpr auto num_data = 2 * 3;
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
-		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 
 		// Add Callbacks
 		addCallback(UI_Element::on_resize, [&]() { updateGeometry(); });
@@ -98,7 +98,7 @@ protected:
 	glm::vec4 m_color = glm::vec4(0.2f);
 	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
-	IndirectDraw m_indirect;
+	IndirectDraw<1> m_indirect;
 };
 
 #endif // UI_PANEL_H

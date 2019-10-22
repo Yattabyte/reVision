@@ -10,6 +10,7 @@
 #include "Assets/Shader.h"
 #include "Assets/Mesh.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
+#include "Utilities/GL/DynamicBuffer.h"
 #include "Engine.h"
 #include <random>
 
@@ -56,11 +57,6 @@ public:
 	// Public Interface Implementations
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
 		m_frameData->lightBuffer.endReading();
-		for (auto& drawBuffer : m_drawData) {
-			drawBuffer.bufferCamIndex.endWriting();
-			drawBuffer.visLights.endWriting();
-			drawBuffer.indirectShape.endWriting();
-		}
 		m_drawIndex = 0;
 	}
 	inline virtual void updateTechnique(const float& deltaTime, ecsWorld& world) override final {
@@ -101,6 +97,9 @@ public:
 				drawBuffer.bufferCamIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 				drawBuffer.visLights.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
 				drawBuffer.indirectShape.write(0, sizeof(glm::ivec4) * drawData.size(), drawData.data());
+				drawBuffer.bufferCamIndex.endWriting();
+				drawBuffer.visLights.endWriting();
+				drawBuffer.indirectShape.endWriting();
 
 				// Prepare rendering state
 				glEnable(GL_STENCIL_TEST);
@@ -144,6 +143,9 @@ public:
 				glBlendFunc(GL_ONE, GL_ZERO);
 				glDisable(GL_BLEND);
 				glDisable(GL_STENCIL_TEST);
+				drawBuffer.bufferCamIndex.endReading();
+				drawBuffer.visLights.endReading();
+				drawBuffer.indirectShape.endReading();
 				Shader::Release();
 
 				m_drawIndex++;
@@ -192,7 +194,7 @@ private:
 	bool m_geometryReady = false;
 	GLuint m_vaoID = 0, m_vboID = 0;
 	struct DrawData {
-		DynamicBuffer bufferCamIndex, visLights, indirectShape;
+		DynamicBuffer<> bufferCamIndex, visLights, indirectShape;
 	};
 	int m_drawIndex = 0;
 	std::vector<DrawData> m_drawData;

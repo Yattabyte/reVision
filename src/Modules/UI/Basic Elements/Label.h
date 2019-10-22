@@ -60,7 +60,7 @@ public:
 		data[4] = { -1,  1, 0 };
 		data[5] = { -1, -1, 0 };
 		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &data[0]);
-		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, GL_DYNAMIC_STORAGE_BIT);
+		m_indirect = IndirectDraw<>((GLuint)num_data, 1, 0, GL_DYNAMIC_STORAGE_BIT);
 
 		// Configure THIS element
 		setText(text);
@@ -72,6 +72,11 @@ public:
 	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet() || !m_textureFont->existsYet()) return;
+
+		// Update indirect draw call
+		m_indirect.beginWriting();
+		m_indirect.setPrimitiveCount(m_charCount);
+		m_indirect.endWriting();
 
 		// Render
 		const glm::vec2 newPosition = position + m_position;
@@ -87,6 +92,7 @@ public:
 		m_bufferString.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 		glBindVertexArray(m_vaoID);
 		m_indirect.drawCall();
+		m_indirect.endReading();
 		Shader::Release();
 
 		// Render Children
@@ -107,7 +113,7 @@ public:
 		for (size_t x = 0; x < (size_t)count; ++x)
 			data[x + 1ull] = (int)(m_text[x]) - 32;
 		m_bufferString.write_immediate(0, sizeof(int) * (size_t(count) + 1ull), data.data());
-		m_indirect.setPrimitiveCount(count);
+		m_charCount = count;
 
 		// Notify text changed
 		enactCallback(on_textChanged);
@@ -156,11 +162,11 @@ protected:
 	float m_textScale = 10.0f;
 	glm::vec3 m_color = glm::vec3(1.0f);
 	Alignment m_textAlignment = align_left;
-	GLuint m_vaoID = 0, m_vboID = 0;
+	GLuint m_vaoID = 0, m_vboID = 0, m_charCount = 0;
 	Shared_Shader m_shader;
 	Shared_Texture m_textureFont;
-	IndirectDraw m_indirect;
-	DynamicBuffer m_bufferString;
+	IndirectDraw<> m_indirect;
+	DynamicBuffer<1> m_bufferString;
 };
 
 #endif // UI_LABEL_H

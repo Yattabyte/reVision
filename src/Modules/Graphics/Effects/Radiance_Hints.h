@@ -42,12 +42,6 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
-		for (auto& [camBufferRebounce, camBufferRecon, indirectQuad, indirectQuadRecon] : m_drawData) {
-			camBufferRebounce.endWriting();
-			camBufferRecon.endWriting();
-			indirectQuad.endWriting();
-			indirectQuadRecon.endWriting();
-		}
 		m_drawIndex = 0;
 	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
@@ -72,6 +66,10 @@ public:
 		camBufferRecon.write(0, sizeof(glm::ivec2) * camIndiciesRecon.size(), camIndiciesRecon.data());
 		indirectQuad.setPrimitiveCount(m_bounceSize);
 		indirectQuadRecon.setPrimitiveCount((GLuint)perspectives.size());
+		camBufferRebounce.endWriting();
+		camBufferRecon.endWriting();
+		indirectQuad.endWriting();
+		indirectQuadRecon.endWriting();
 
 		// Bind common data
 		glDisable(GL_DEPTH_TEST);
@@ -92,6 +90,8 @@ public:
 		glViewport(0, 0, (GLsizei)rhVolume->m_resolution, (GLsizei)rhVolume->m_resolution);
 		camBufferRebounce.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		indirectQuad.drawCall();
+		indirectQuad.endReading();
+		camBufferRebounce.endReading();
 
 		// Reconstruct indirect radiance
 		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
@@ -101,6 +101,9 @@ public:
 		viewport->m_gfxFBOS->bindForWriting("BOUNCE");
 		camBufferRecon.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		indirectQuadRecon.drawCall();
+		indirectQuadRecon.endReading();
+		camBufferRecon.endReading();
+
 		Shader::Release();
 		m_drawIndex++;
 	}
@@ -113,8 +116,8 @@ private:
 	Shared_Auto_Model m_shapeQuad;
 	GLuint m_bounceSize = 16;
 	struct DrawData {
-		DynamicBuffer camBufferRebounce, camBufferRecon;
-		IndirectDraw indirectQuad = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT), indirectQuadRecon = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT);
+		DynamicBuffer<> camBufferRebounce, camBufferRecon;
+		IndirectDraw<> indirectQuad = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT), indirectQuadRecon = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT);
 	};
 	std::vector<DrawData> m_drawData;
 	int	m_drawIndex = 0;

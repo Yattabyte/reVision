@@ -37,7 +37,7 @@ void LevelEditor_Module::initialize(Engine* engine)
 	m_shader = Shared_Shader(engine, "Editor\\editorCopy");
 	m_shapeQuad = Shared_Auto_Model(engine, "quad");
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-		m_indirectQuad = IndirectDraw((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirectQuad = IndirectDraw<1>((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 
 	// Preferences

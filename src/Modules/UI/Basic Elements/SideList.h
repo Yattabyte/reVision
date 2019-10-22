@@ -47,7 +47,7 @@ public:
 		constexpr auto num_data = 2 * 3;
 		glNamedBufferStorage(m_vboID[0], num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
 		glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), 0, GL_DYNAMIC_STORAGE_BIT);
-		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
@@ -215,7 +215,7 @@ protected:
 		m_vaoID = 0,
 		m_vboID[2] = { 0, 0 };
 	Shared_Shader m_shader;
-	IndirectDraw m_indirect;
+	IndirectDraw<1> m_indirect;
 	std::shared_ptr<Label> m_label;
 	std::shared_ptr<Border> m_backPanel;
 };

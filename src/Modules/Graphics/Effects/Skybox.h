@@ -65,11 +65,6 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
-		for (auto& [camIndexBuffer, indirectQuad, quad6IndirectBuffer] : m_drawData) {
-			camIndexBuffer.endWriting();
-			indirectQuad.endWriting();
-			quad6IndirectBuffer.endWriting();
-		}
 		m_drawIndex = 0;
 	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
@@ -88,14 +83,16 @@ public:
 		auto& [camBufferIndex, indirectQuad, quad6IndirectBuffer] = m_drawData[m_drawIndex];
 		camBufferIndex.beginWriting();
 		indirectQuad.beginWriting();
-		quad6IndirectBuffer.beginWriting();
 		std::vector<glm::ivec2> camIndices;
 		for (auto& [camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 		indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
-		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		camBufferIndex.endWriting();
+		indirectQuad.endWriting();
 
+		// Bind common data
+		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		glDisable(GL_BLEND);
 		glDepthFunc(GL_LEQUAL);
 		glEnable(GL_DEPTH_TEST);
@@ -116,6 +113,8 @@ public:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		glDisable(GL_DEPTH_TEST);
+		camBufferIndex.endReading();
+		indirectQuad.endReading();
 		Shader::Release();
 		m_drawIndex++;
 	}
@@ -136,7 +135,11 @@ private:
 		glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFBO);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_cubeFBO);
 		glBindTextureUnit(0, m_cubemapMipped);
-		m_drawData[m_drawIndex].quad6IndirectBuffer.bind();
+		auto& quad6IndirectBuffer = m_drawData[m_drawIndex].quad6IndirectBuffer;
+		quad6IndirectBuffer.beginWriting();
+		quad6IndirectBuffer.endWriting();
+		quad6IndirectBuffer.bind();
+
 		for (unsigned int r = 1; r < 6; ++r) {
 			// Ensure we are writing to MIP level r
 			const unsigned int write_size = (unsigned int)std::max(1.0f, (floor((float)m_skySize.x / pow(2.0f, (float)r))));
@@ -153,6 +156,7 @@ private:
 		}
 
 		// Reset
+		quad6IndirectBuffer.endReading();
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_BASE_LEVEL, 0);
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_MAX_LEVEL, 5);
 		glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, 0);
@@ -171,8 +175,8 @@ private:
 	bool m_skyOutOfDate = false;
 	glm::ivec2 m_skySize = glm::ivec2(1);
 	struct DrawData {
-		DynamicBuffer camBufferIndex;
-		IndirectDraw indirectQuad = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT), quad6IndirectBuffer = IndirectDraw((GLuint)6, 6, 0, GL_CLIENT_STORAGE_BIT);
+		DynamicBuffer<> camBufferIndex;
+		IndirectDraw<> indirectQuad = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT), quad6IndirectBuffer = IndirectDraw((GLuint)6, 6, 0, GL_CLIENT_STORAGE_BIT);
 	};
 	std::vector<DrawData> m_drawData;
 	int	m_drawIndex = 0;

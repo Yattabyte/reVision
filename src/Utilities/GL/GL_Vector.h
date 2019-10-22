@@ -9,7 +9,7 @@
 
 /** A multi-buffered STL vector like class, storing its data on the GPU using persistently mapped coherent buffers.
 @param	<T>				the type of element to construct an array of. */
-template <typename T>
+template <typename T, int BufferCount = 3>
 class GL_Vector final : public Buffer_Interface {
 public:
 	// Public (de)Constructors
@@ -46,8 +46,8 @@ public:
 	}
 	/** Assignment constructor.
 	@param	other			another buffer to move the data from, to here. */
-	inline GL_Vector(GL_Vector&& other) {
-		(*this) = other;
+	inline GL_Vector(GL_Vector&& other) noexcept {
+		(*this) = std::move(other);
 	}
 
 
@@ -76,6 +76,7 @@ public:
 			m_writeFence[m_writeIndex] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		m_writeIndex = (m_writeIndex + 1) % BufferCount;
 	}
+	/***/
 	inline void endReading() {
 		if (!m_readFence[m_readIndex])
 			m_readFence[m_readIndex] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
@@ -173,7 +174,6 @@ private:
 
 	// Private Attributes
 	constexpr const static GLbitfield BufferFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
-	constexpr const static int BufferCount = 3;
 	mutable GLsync m_writeFence[BufferCount], m_readFence[BufferCount];
 	GLuint m_bufferID[BufferCount];
 	T* m_bufferPtr[BufferCount];

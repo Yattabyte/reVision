@@ -41,10 +41,6 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
-		for (auto& [camIndexBuffer, indirectQuad] : m_drawData) {
-			camIndexBuffer.endWriting();
-			indirectQuad.endWriting();
-		}
 		m_drawIndex = 0;
 	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
@@ -62,9 +58,11 @@ public:
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 		indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
-		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		camBufferIndex.endWriting();
+		indirectQuad.endWriting();
 
 		// Extract bright regions from lighting buffer
+		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_shaderBloomExtract->bind();
 		viewport->m_gfxFBOS->bindForWriting("BLOOM");
 		viewport->m_gfxFBOS->bindForReading("LIGHTING", 0);
@@ -103,6 +101,8 @@ public:
 		m_shaderCopy->bind();
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glDisable(GL_BLEND);
+		camBufferIndex.endReading();
+		indirectQuad.endReading();
 		Shader::Release();
 		m_drawIndex++;
 	}
@@ -123,8 +123,8 @@ private:
 	Shared_Auto_Model m_shapeQuad;
 	int m_bloomStrength = 5;
 	struct DrawData {
-		DynamicBuffer camBufferIndex;
-		IndirectDraw indirectQuad = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT);
+		DynamicBuffer<> camBufferIndex;
+		IndirectDraw<> indirectQuad = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT);
 	};
 	std::vector<DrawData> m_drawData;
 	int	m_drawIndex = 0;

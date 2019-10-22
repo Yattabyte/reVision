@@ -64,7 +64,7 @@ private:
 	std::shared_ptr<RH_Volume>						m_rhVolume;
 	Shared_Shader									m_shader;
 	Shared_Auto_Model								m_shapeQuad;
-	IndirectDraw									m_indirectQuad;
+	IndirectDraw<1>									m_indirectQuad;
 	std::shared_ptr<bool>							m_aliveIndicator = std::make_shared<bool>(true);
 };
 

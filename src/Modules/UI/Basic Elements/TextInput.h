@@ -59,7 +59,7 @@ public:
 		constexpr auto num_data = 4 * 3;
 		glNamedBufferStorage(m_vboID[0], num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
 		glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), 0, GL_DYNAMIC_STORAGE_BIT);
-		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 	}
 
 
@@ -194,7 +194,7 @@ protected:
 		m_vboID[2] = { 0, 0 };
 	float m_blinkTime = 0.0f;
 	Shared_Shader m_shader;
-	IndirectDraw m_indirect;
+	IndirectDraw<1> m_indirect;
 };
 
 #endif // UI_TEXTINPUT_H

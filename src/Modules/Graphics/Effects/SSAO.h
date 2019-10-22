@@ -87,10 +87,6 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
-		for (auto& [camIndexBuffer, indirectQuad] : m_drawData) {
-			camIndexBuffer.endWriting();
-			indirectQuad.endWriting();
-		}
 		m_drawIndex = 0;
 	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
@@ -108,8 +104,11 @@ public:
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 		indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
-		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		camBufferIndex.endWriting();
+		indirectQuad.endWriting();
 
+		// Bind common data
+		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		m_shader->bind();
@@ -155,9 +154,12 @@ public:
 		glDrawBuffer(GL_COLOR_ATTACHMENT2);
 		glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("SSAO", aoSpot));
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
+
 		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 		glDrawBuffers(3, drawBuffers);
 		glDisable(GL_BLEND);
+		camBufferIndex.endReading();
+		indirectQuad.endReading();
 		Shader::Release();
 		m_drawIndex++;
 	}
@@ -172,8 +174,8 @@ private:
 	int m_quality = 1, m_blurStrength = 5;
 	GLuint m_noiseID = 0;
 	struct DrawData {
-		DynamicBuffer camBufferIndex;
-		IndirectDraw indirectQuad = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT);
+		DynamicBuffer<> camBufferIndex;
+		IndirectDraw<> indirectQuad = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT);
 	};
 	std::vector<DrawData> m_drawData;
 	int	m_drawIndex = 0;

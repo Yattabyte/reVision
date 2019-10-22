@@ -73,7 +73,7 @@ private:
 	std::shared_ptr<Rotation_Gizmo> m_rotationGizmo;
 	Shared_Auto_Model m_spawnModel;
 	Shared_Shader m_spawnShader;
-	IndirectDraw m_spawnIndirect;
+	IndirectDraw<1> m_spawnIndirect;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

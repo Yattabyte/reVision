@@ -31,7 +31,7 @@ Mouse_Gizmo::Mouse_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	m_spawnModel = Shared_Auto_Model(engine, "Editor\\spawn");
 	m_spawnShader = Shared_Shader(engine, "Editor\\spawnShader");
 	m_spawnModel->addCallback(m_aliveIndicator, [&]() mutable {
-		m_spawnIndirect = IndirectDraw((GLuint)m_spawnModel->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_spawnIndirect = IndirectDraw<1>((GLuint)m_spawnModel->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 }
 

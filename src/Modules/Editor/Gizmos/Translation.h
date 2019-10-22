@@ -63,7 +63,7 @@ private:
 	glm::vec3 m_startingOffset = glm::vec3(0.0f), m_axisDelta = glm::vec3(0.0f), m_hoveredEnds[3], m_direction = glm::vec3(1.0f);
 	Shared_Auto_Model m_model;
 	Shared_Shader m_gizmoShader, m_axisShader;
-	IndirectDraw m_indirectIndicator;
+	IndirectDraw<1> m_indirectIndicator;
 	GLuint m_axisVAO = 0, m_axisVBO = 0;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

@@ -3,7 +3,6 @@
 #define PROPDATA_H
 
 #include "Modules/Graphics/Common/Camera.h"
-#include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/GL_Vector.h"
 #include "Utilities/IO/Mesh_IO.h"

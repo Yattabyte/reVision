@@ -6,6 +6,7 @@
 
 
 /** A helper class encapsulating the data needed to perform an indirect draw call in OpenGL. */
+template <int BufferCount = 3>
 class IndirectDraw {
 public:
 	// Public (de)Constructors
@@ -22,7 +23,7 @@ public:
 	) : m_count(count), m_primitiveCount(primitiveCount), m_first(first) {
 		// Populate Buffer
 		const GLuint data[4] = { count, primitiveCount, first, 0 };
-		m_buffer = StaticTripleBuffer(sizeof(GLuint) * 4, data, storageFlags);
+		m_buffer = StaticTripleBuffer<BufferCount>(sizeof(GLuint) * 4, data, storageFlags);
 	}
 	/** Copy an Indirect Draw Object. */
 	inline IndirectDraw(const IndirectDraw& other)
@@ -67,6 +68,10 @@ public:
 	inline void endWriting() {
 		m_buffer.endWriting();
 	}
+	/***/
+	inline void endReading() {
+		m_buffer.endReading();
+	}
 	/** Specify how many vertices will be rendered.
 	@param	count			the vertex count. */
 	inline void setCount(const GLuint& count) {
@@ -94,7 +99,7 @@ private:
 		m_primitiveCount = 0,
 		m_first = 0;
 	GLbitfield m_storageFlags = GL_DYNAMIC_STORAGE_BIT;
-	StaticTripleBuffer m_buffer;
+	StaticTripleBuffer<BufferCount> m_buffer;
 };
 
 #endif // INDIRECTDRAW_H

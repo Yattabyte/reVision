@@ -35,7 +35,7 @@ private:
 	Shared_Texture m_colorPalette;
 	Shared_Auto_Model m_3dIndicator;
 	Shared_Shader m_shader;
-	IndirectDraw m_indirectIndicator;
+	IndirectDraw<1> m_indirectIndicator;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

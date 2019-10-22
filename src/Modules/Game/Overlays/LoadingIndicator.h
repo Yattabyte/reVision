@@ -37,7 +37,7 @@ public:
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-			m_indirectQuad = IndirectDraw((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
+			m_indirectQuad = IndirectDraw<1>((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 			});
 
 		// World-Changed Callback
@@ -96,7 +96,7 @@ private:
 	Shared_Shader m_shader;
 	Shared_Texture m_texture;
 	Shared_Auto_Model m_shapeQuad;
-	IndirectDraw m_indirectQuad;
+	IndirectDraw<1> m_indirectQuad;
 	bool m_show = false;
 	float m_time = 0.0f, m_blendAmt = 1.0f;
 	glm::ivec2 m_renderSize = glm::ivec2(1);

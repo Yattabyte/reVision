@@ -40,7 +40,7 @@ public:
 		m_data[4] = { -1,  1, 0 };
 		m_data[5] = { -1, -1, 0 };
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), &m_data[0], GL_CLIENT_STORAGE_BIT);
-		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 		setMaxHeight(2.0f);
 		setMinHeight(2.0f);
 	}
@@ -85,7 +85,7 @@ protected:
 	glm::vec4 m_color = glm::vec4(1.0f);
 	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
-	IndirectDraw m_indirect;
+	IndirectDraw<1> m_indirect;
 };
 
 #endif // UI_SEPARATOR_H

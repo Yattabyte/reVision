@@ -20,7 +20,7 @@ void Graphics_Module::initialize(Engine* engine)
 
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-		m_indirectQuad = IndirectDraw((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirectQuad = IndirectDraw<1>((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 
 	// GL settings
@@ -85,10 +85,8 @@ void Graphics_Module::deinitialize()
 
 void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID)
 {
-	m_indirectQuad.beginWriting();
 	renderWorld(world, deltaTime, m_viewport, m_rhVolume, { m_clientCamera });
 	copyToScreen(fboID);
-	m_indirectQuad.endWriting();
 }
 
 void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::shared_ptr<Camera>>& cameras)

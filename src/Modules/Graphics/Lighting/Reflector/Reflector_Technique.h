@@ -11,6 +11,7 @@
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
+#include "Utilities/GL/DynamicBuffer.h"
 #include "Engine.h"
 
 
@@ -65,13 +66,6 @@ public:
 	// Public Interface Implementations
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
 		m_frameData->lightBuffer.endReading();
-		for (auto& drawBuffer : m_drawData) {
-			drawBuffer.bufferCamIndex.endWriting();
-			drawBuffer.visLights.endWriting();
-			drawBuffer.indirectShape.endWriting();
-		}
-		m_indirectQuad.endWriting();
-		m_indirectQuadConvolute.endWriting();
 		m_drawIndex = 0;
 		m_frameData->viewInfo.clear();
 		m_frameData->reflectorsToUpdate.clear();
@@ -95,9 +89,6 @@ public:
 			auto& drawBuffer = m_drawData[m_drawIndex];
 			auto& camBufferIndex = drawBuffer.bufferCamIndex;
 			auto& lightBufferIndex = drawBuffer.visLights;
-			camBufferIndex.beginWriting();
-			lightBufferIndex.beginWriting();
-			drawBuffer.indirectShape.beginWriting();
 
 			// Accumulate all visibility info for the cameras passed in
 			std::vector<glm::ivec2> camIndices;
@@ -110,13 +101,22 @@ public:
 
 			if (lightIndices.size()) {
 				// Write accumulated data
+				camBufferIndex.beginWriting();
+				lightBufferIndex.beginWriting();
+				drawBuffer.indirectShape.beginWriting();
 				camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 				lightBufferIndex.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
 				const GLuint dataShape[] = { (GLuint)m_shapeCube->getSize(), (GLuint)lightIndices.size(), 0,0 };
 				drawBuffer.indirectShape.write(0, sizeof(GLuint) * 4, &dataShape);
+				camBufferIndex.endWriting();
+				lightBufferIndex.endWriting();
+				drawBuffer.indirectShape.endWriting();
 
 				// Render lights
 				renderReflectors(deltaTime, viewport);
+				camBufferIndex.endReading();
+				lightBufferIndex.endReading();
+				drawBuffer.indirectShape.endReading();
 
 				m_drawIndex++;
 			}
@@ -135,8 +135,6 @@ private:
 			m_viewport->resize(m_frameData->envmapSize, (int)m_frameData->reflectorLayers);
 			m_viewport->bind();
 			m_viewport->clear();
-			m_indirectQuad.beginWriting();
-			m_indirectQuadConvolute.beginWriting();
 
 			// Accumulate Perspective Data
 			std::vector<std::pair<int, int>> perspectives;
@@ -156,9 +154,13 @@ private:
 				*time = clientTime;
 				camera->setEnabled(false);
 			}
+			m_indirectQuad.beginWriting();
+			m_indirectQuadConvolute.beginWriting();
 			const auto instanceCount = (GLuint)perspectives.size(), convoluteCount = (GLuint)m_frameData->reflectorLayers;
 			m_indirectQuad.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
 			m_indirectQuadConvolute.write(sizeof(GLuint), sizeof(GLuint), &convoluteCount);
+			m_indirectQuad.endWriting();
+			m_indirectQuadConvolute.endWriting();
 
 			// Update all reflectors at once
 			m_engine->getModule_Graphics().getPipeline()->render(deltaTime, m_viewport, m_rhVolume, perspectives, Graphics_Technique::GEOMETRY | Graphics_Technique::PRIMARY_LIGHTING | Graphics_Technique::SECONDARY_LIGHTING);
@@ -173,6 +175,7 @@ private:
 			glDisable(GL_STENCIL_TEST);
 			glBindVertexArray(m_shapeQuad->m_vaoID);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
+			m_indirectQuad.endReading();
 
 			// Convolute all completed cubemap's, not just what was done this frame
 			m_shaderConvolute->bind();
@@ -189,6 +192,7 @@ private:
 				glDrawArraysIndirect(GL_TRIANGLES, 0);
 			}
 
+			m_indirectQuadConvolute.endReading();
 			Shader::Release();
 			m_frameData->reflectorsToUpdate.clear();
 		}
@@ -249,13 +253,13 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	Shared_Auto_Model m_shapeCube, m_shapeQuad;
 	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
-	StaticTripleBuffer m_indirectQuad = StaticTripleBuffer(sizeof(GLuint) * 4), m_indirectQuadConvolute = StaticTripleBuffer(sizeof(GLuint) * 4);
+	StaticTripleBuffer<> m_indirectQuad = StaticTripleBuffer(sizeof(GLuint) * 4), m_indirectQuadConvolute = StaticTripleBuffer(sizeof(GLuint) * 4);
 	std::shared_ptr<Viewport> m_viewport;
 	std::shared_ptr<RH_Volume> m_rhVolume;
 	struct DrawData {
-		DynamicBuffer bufferCamIndex;
-		DynamicBuffer visLights;
-		StaticTripleBuffer indirectShape = StaticTripleBuffer(sizeof(GLuint) * 4);
+		DynamicBuffer<> bufferCamIndex;
+		DynamicBuffer<> visLights;
+		StaticTripleBuffer<> indirectShape = StaticTripleBuffer(sizeof(GLuint) * 4);
 	};
 	int m_drawIndex = 0;
 	std::vector<DrawData> m_drawData;

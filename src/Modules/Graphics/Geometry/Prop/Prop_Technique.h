@@ -8,6 +8,7 @@
 #include "Modules/Graphics/Geometry/Prop/PropVisibility_System.h"
 #include "Modules/Graphics/Geometry/Prop/PropSync_System.h"
 #include "Modules/ECS/ecsSystem.h"
+#include "Utilities/GL/DynamicBuffer.h"
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
 #include "Engine.h"
@@ -41,13 +42,6 @@ public:
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
 		m_frameData->modelBuffer.endReading();
 		m_frameData->skeletonBuffer.endReading();
-		for (auto& drawBuffer : m_drawData) {
-			drawBuffer.bufferCamIndex.endWriting();
-			drawBuffer.bufferPropIndex.endWriting();
-			drawBuffer.bufferCulling.endWriting();
-			drawBuffer.bufferRender.endWriting();
-			drawBuffer.bufferSkeletonIndex.endWriting();
-		}
 		m_drawIndex = 0;
 		clear();
 	}
@@ -98,6 +92,13 @@ public:
 				propRenderBuffer.write(0, sizeof(glm::ivec4) * renderingDrawData.size(), renderingDrawData.data());
 				propSkeletonBuffer.write(0, sizeof(int) * skeletonData.size(), skeletonData.data());
 
+				// End writing
+				camBufferIndex.endWriting();
+				propIndexBuffer.endWriting();
+				propCullingBuffer.endWriting();
+				propRenderBuffer.endWriting();
+				propSkeletonBuffer.endWriting();
+
 				// Apply occlusion culling and render props
 				camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 				m_frameData->modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
@@ -138,6 +139,12 @@ public:
 				const auto& [sourceID, destinationID] = std::make_pair(viewport->m_gfxFBOS->getFboID("GEOMETRY"), viewport->m_gfxFBOS->getFboID("DEPTH-ONLY"));
 				const auto& size = viewport->m_dimensions;
 				glBlitNamedFramebuffer(sourceID, destinationID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+				camBufferIndex.endReading();
+				propIndexBuffer.endReading();
+				propCullingBuffer.endReading();
+				propRenderBuffer.endReading();
+				propSkeletonBuffer.endReading();
 				Shader::Release();
 				m_drawIndex++;
 			}
@@ -185,6 +192,13 @@ public:
 				propRenderBuffer.write(0, sizeof(glm::ivec4) * renderingDrawData.size(), renderingDrawData.data());
 				propSkeletonBuffer.write(0, sizeof(int) * skeletonData.size(), skeletonData.data());
 
+				// End writing
+				camBufferIndex.endWriting();
+				propIndexBuffer.endWriting();
+				propCullingBuffer.endWriting();
+				propRenderBuffer.endWriting();
+				propSkeletonBuffer.endWriting();
+
 				// Apply occlusion culling and render props
 				camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 				m_frameData->modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
@@ -207,6 +221,7 @@ public:
 				glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 8, 0);
 				m_count = visibleIndices.size();
+
 				Shader::Release();
 			}
 		}
@@ -228,6 +243,12 @@ public:
 				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, (GLsizei)m_count, 0);
 				glFrontFace(GL_CCW);
 				glCullFace(GL_BACK);
+				auto& drawBuffer = m_drawData[m_drawIndex];
+				drawBuffer.bufferCamIndex.endReading();
+				drawBuffer.bufferPropIndex.endReading();
+				drawBuffer.bufferCulling.endReading();
+				drawBuffer.bufferRender.endReading();
+				drawBuffer.bufferSkeletonIndex.endReading();
 				Shader::Release();
 				m_drawIndex++;
 			}
@@ -248,7 +269,7 @@ private:
 	Shared_Shader m_shaderCull, m_shaderGeometry, m_shaderShadowCull, m_shaderShadowGeometry;
 	Shared_Auto_Model m_shapeCube;
 	struct DrawData {
-		DynamicBuffer bufferCamIndex, bufferPropIndex, bufferCulling, bufferRender, bufferSkeletonIndex;
+		DynamicBuffer<> bufferCamIndex, bufferPropIndex, bufferCulling, bufferRender, bufferSkeletonIndex;
 	};
 	int m_drawIndex = 0;
 	size_t m_count = 0ull;

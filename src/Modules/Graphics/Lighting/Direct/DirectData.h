@@ -5,7 +5,6 @@
 #include "Modules/ECS/component_types.h"
 #include "Modules/Graphics/Common/Camera.h"
 #include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
-#include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/GL_Vector.h"
 #include "glm/glm.hpp"

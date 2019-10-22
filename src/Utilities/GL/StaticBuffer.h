@@ -29,7 +29,7 @@ public:
 	}
 	/** Explicit Instantiation. */
 	inline StaticBuffer(StaticBuffer&& other) noexcept : m_bufferID(0) {
-		*this = std::move(other);
+		(*this) = std::move(other);
 	}
 	/** Move gl object from 1 instance to another. */
 	inline StaticBuffer& operator=(StaticBuffer&& other) noexcept {
