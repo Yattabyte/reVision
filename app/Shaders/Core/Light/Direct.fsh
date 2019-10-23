@@ -189,7 +189,7 @@ void main()
 	const float ViewDistance 				= length(DeltaView);
 	const vec3 ViewDirection				= normalize(DeltaView);
 	const float NdotV 						= dot(data.World_Normal, ViewDirection);
-	const float NdotL 		 				= dot(LightDirection.xyz, data.World_Normal);
+	const float NdotL 		 				= dot(LightDirection, data.World_Normal);
 	const float NdotL_Clamped				= max(NdotL, 0.0f);
 	const float NdotV_Clamped				= max(NdotV, 0.0f);
 	

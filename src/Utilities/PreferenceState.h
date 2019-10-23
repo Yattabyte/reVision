@@ -141,7 +141,7 @@ public:
 
 			// Only modify if the value exists
 			if (!std::isnan(value))
-				container = (T)value;
+				container = static_cast<T>(value);
 			else
 				m_preferences->setValue(targetKey, (float)container);
 		}

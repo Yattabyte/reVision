@@ -339,7 +339,7 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 		auto& srcComponents = getEntity(srcComponent->m_entity)->m_components;
 		for (size_t i = 0; i < srcComponents.size(); ++i) {
 			auto& [compID, fn, compHandle] = srcComponents[i];
-			if (componentID == compID && (ComponentID)srcIndex == fn) {
+			if (componentID == compID && static_cast<ComponentID>(srcIndex) == fn) {
 				fn = index;
 				break;
 			}

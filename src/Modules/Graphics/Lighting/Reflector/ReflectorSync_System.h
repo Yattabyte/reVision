@@ -29,8 +29,8 @@ public:
 		m_frameData->lightBuffer.beginWriting();
 		int index = 0;
 		for each (const auto & componentParam in components) {
-			auto* reflectorComponent = (Reflector_Component*)componentParam[0];
-			auto* transformComponent = (Transform_Component*)componentParam[1];
+			auto* reflectorComponent = static_cast<Reflector_Component*>(componentParam[0]);
+			auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);
 
 			const auto& position = transformComponent->m_worldTransform.m_position;
 			const auto& orientation = transformComponent->m_worldTransform.m_orientation;

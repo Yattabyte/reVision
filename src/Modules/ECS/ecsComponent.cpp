@@ -7,7 +7,7 @@ MappedChar<ComponentID> ecsBaseComponent::_nameRegistry = MappedChar<ComponentID
 
 ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string)
 {
-	const auto componentID = (ComponentID)_componentRegistry.size();
+	const auto componentID = static_cast<ComponentID>(_componentRegistry.size());
 	_componentRegistry.push_back({ createFn, freeFn, newFn, size });
 	_nameRegistry.insertOrAssign(string, componentID);
 

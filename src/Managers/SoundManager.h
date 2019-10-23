@@ -41,7 +41,7 @@ public:
 
 
 private:
-	SoundEngineObj* soundEngine = nullptr;
+	SoundEngineObj* m_soundEngine = nullptr;
 };
 
 #endif // SOUNDMANAGER_H

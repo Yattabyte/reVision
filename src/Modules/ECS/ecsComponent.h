@@ -177,7 +177,7 @@ inline constexpr static const auto newFn() {
 @param	comp			the component to destruct. */
 template <typename C>
 inline constexpr static const void freeFn(ecsBaseComponent* comp) {
-	((C*)comp)->~C();
+	(static_cast<C*>(comp))->~C();
 }
 
 /** Generate a static ID at run time for each type of component class used. */

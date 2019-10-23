@@ -19,7 +19,7 @@ Shared_Sound::Shared_Sound(Engine* engine, const std::string& filename, const bo
 Sound::~Sound()
 {
 	if (m_finalized)
-		delete (SoLoud::Wav*)m_soundObj;
+		delete reinterpret_cast<SoLoud::Wav*>(m_soundObj);
 }
 
 Sound::Sound(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
@@ -49,6 +49,6 @@ void Sound::initialize()
 		msgMgr.error("Sound \"" + m_filename + "\" has encountered an unknown error.");
 		break;
 	};
-	m_soundObj = (SoundObj*)wave;
+	m_soundObj = reinterpret_cast<SoundObj*>(wave);
 	Asset::finalize();
 }

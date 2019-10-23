@@ -45,12 +45,12 @@ public:
 		m_shader_Stencil = Shared_Shader(engine, "Core\\Light\\Stencil");
 		m_shapeCube = Shared_Mesh(engine, "//Models//cube.obj");
 		m_shapeSphere = Shared_Mesh(engine, "//Models//sphere.obj");
-		m_shapeCone = Shared_Mesh(engine, "//Models//cone.obj");
+		m_shapeHemisphere = Shared_Mesh(engine, "//Models//hemisphere.obj");
 
 		// Asset-finished callbacks
 		m_shapeCube->addCallback(m_aliveIndicator, [&]() { registerLightShapes(); });
 		m_shapeSphere->addCallback(m_aliveIndicator, [&]() { registerLightShapes(); });
-		m_shapeCone->addCallback(m_aliveIndicator, [&]() { registerLightShapes(); });
+		m_shapeHemisphere->addCallback(m_aliveIndicator, [&]() { registerLightShapes(); });
 	}
 
 
@@ -83,7 +83,7 @@ public:
 					else if (type == Light_Component::Light_Type::POINT)
 						drawData.push_back({ m_sphereParams.second, 1, m_sphereParams.first, 0 });
 					else if (type == Light_Component::Light_Type::SPOT)
-						drawData.push_back({ m_sphereParams.second, 1, m_sphereParams.first, 0 });
+						drawData.push_back({ m_hemisphereParams.second, 1, m_hemisphereParams.first, 0 });
 				}
 			}
 
@@ -158,18 +158,18 @@ private:
 	// Private Methods
 	/***/
 	inline void registerLightShapes() {
-		if (m_shapeCube && m_shapeCube->existsYet() && m_shapeSphere && m_shapeSphere->existsYet() && m_shapeCone && m_shapeCone->existsYet()) {
+		if (m_shapeCube && m_shapeCube->existsYet() && m_shapeSphere && m_shapeSphere->existsYet() && m_shapeHemisphere && m_shapeHemisphere->existsYet()) {
 			// Create a container to store all vertices
 			std::vector<glm::vec3> combinedData;
-			combinedData.reserve(m_shapeCube->m_geometry.vertices.size() + m_shapeSphere->m_geometry.vertices.size() + m_shapeCone->m_geometry.vertices.size());
+			combinedData.reserve(m_shapeCube->m_geometry.vertices.size() + m_shapeSphere->m_geometry.vertices.size() + m_shapeHemisphere->m_geometry.vertices.size());
 
 			// Join all vertex sets together, note the offset and count of each
 			m_cubeParams = { combinedData.size(),  m_shapeCube->m_geometry.vertices.size() };
 			combinedData.insert(combinedData.end(), m_shapeCube->m_geometry.vertices.cbegin(), m_shapeCube->m_geometry.vertices.cend());
 			m_sphereParams = { combinedData.size(),  m_shapeSphere->m_geometry.vertices.size() };
 			combinedData.insert(combinedData.end(), m_shapeSphere->m_geometry.vertices.cbegin(), m_shapeSphere->m_geometry.vertices.cend());
-			m_coneParams = { combinedData.size(),  m_shapeCone->m_geometry.vertices.size() };
-			combinedData.insert(combinedData.end(), m_shapeCone->m_geometry.vertices.cbegin(), m_shapeCone->m_geometry.vertices.cend());
+			m_hemisphereParams = { combinedData.size(),  m_shapeHemisphere->m_geometry.vertices.size() };
+			combinedData.insert(combinedData.end(), m_shapeHemisphere->m_geometry.vertices.cbegin(), m_shapeHemisphere->m_geometry.vertices.cend());
 
 			// Create VBO's
 			glCreateBuffers(1, &m_vboID);
@@ -189,8 +189,8 @@ private:
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	Shared_Shader m_shader_Lighting, m_shader_Stencil;
-	Shared_Mesh m_shapeCube, m_shapeSphere, m_shapeCone;
-	std::pair<GLuint, GLuint> m_cubeParams, m_sphereParams, m_coneParams;
+	Shared_Mesh m_shapeCube, m_shapeSphere, m_shapeHemisphere;
+	std::pair<GLuint, GLuint> m_cubeParams, m_sphereParams, m_hemisphereParams;
 	bool m_geometryReady = false;
 	GLuint m_vaoID = 0, m_vboID = 0;
 	struct DrawData {

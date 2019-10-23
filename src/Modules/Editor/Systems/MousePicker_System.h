@@ -60,11 +60,11 @@ public:
 		int highestConfidence = 0;
 		bool found = false;
 		for each (const auto & componentParam in components) {
-			auto* transformComponent = (Transform_Component*)componentParam[0];
-			auto* bBox = (BoundingBox_Component*)componentParam[1];
-			auto* bSphere = (BoundingSphere_Component*)componentParam[2];
-			auto* collider = (Collider_Component*)componentParam[3];
-			auto* prop = (Prop_Component*)componentParam[4];
+			auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
+			auto* bBox = static_cast<BoundingBox_Component*>(componentParam[1]);
+			auto* bSphere = static_cast<BoundingSphere_Component*>(componentParam[2]);
+			auto* collider = static_cast<Collider_Component*>(componentParam[3]);
+			auto* prop = static_cast<Prop_Component*>(componentParam[4]);
 			float distanceFromScreen = FLT_MAX;
 			int confidence = 0;
 			const bool hasBoundingShape = bSphere || bBox;

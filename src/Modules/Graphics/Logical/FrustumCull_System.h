@@ -27,9 +27,9 @@ public:
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		for each (const auto & componentParam in components) {
-			auto* transformComponent = (Transform_Component*)componentParam[0];
-			auto* bboxComponent = (BoundingBox_Component*)componentParam[1];
-			auto* bsphereComponent = (BoundingSphere_Component*)componentParam[2];
+			auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
+			auto* bboxComponent = static_cast<BoundingBox_Component*>(componentParam[1]);
+			auto* bsphereComponent = static_cast<BoundingSphere_Component*>(componentParam[2]);
 
 			// Update the visibility status for each camera this entity is visible in
 			for (int x = 0; x < m_sceneCameras->size(); ++x) {

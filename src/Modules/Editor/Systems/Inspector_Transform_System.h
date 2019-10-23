@@ -38,9 +38,10 @@ public:
 					uuids.push_back(componentParam[1]->m_handle);
 				return uuids;
 			};
+			auto* transComponent = static_cast<Transform_Component*>(components[0][1]);
 
 			// Position
-			auto posInput = ((Transform_Component*)components[0][1])->m_localTransform.m_position;
+			auto& posInput = transComponent->m_localTransform.m_position;
 			if (ImGui::DragFloat3("Position", glm::value_ptr(posInput))) {
 				struct Move_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
@@ -91,7 +92,7 @@ public:
 			}
 
 			// Rotation
-			auto rotInput = glm::degrees(glm::eulerAngles(((Transform_Component*)components[0][1])->m_localTransform.m_orientation));
+			auto& rotInput = glm::degrees(glm::eulerAngles(transComponent->m_localTransform.m_orientation));
 			if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotInput))) {
 				struct Rotate_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
@@ -135,7 +136,7 @@ public:
 			}
 
 			// Scaling
-			auto sclInput = ((Transform_Component*)components[0][1])->m_localTransform.m_scale;
+			auto& sclInput = transComponent->m_localTransform.m_scale;
 			if (ImGui::DragFloat3("Scale", glm::value_ptr(sclInput))) {
 				struct Scale_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;

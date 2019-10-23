@@ -41,7 +41,7 @@ public:
 		glCreateBuffers(BufferCount, m_bufferID);
 		for (int x = 0; x < BufferCount; ++x) {
 			glNamedBufferStorage(m_bufferID[x], bufferSize, 0, GL_DYNAMIC_STORAGE_BIT | BufferFlags);
-			m_bufferPtr[x] = (T*)glMapNamedBufferRange(m_bufferID[x], 0, bufferSize, BufferFlags);
+			m_bufferPtr[x] = static_cast<T*>(glMapNamedBufferRange(m_bufferID[x], 0, bufferSize, BufferFlags));
 		}
 	}
 	/** Assignment constructor.

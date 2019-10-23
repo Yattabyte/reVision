@@ -32,7 +32,7 @@ public:
 			int index = 0;
 			for each (const auto & componentParam in components) {
 				// Render lights and shadows for all directional lights
-				const auto& lightComponent = (Light_Component*)componentParam[0];
+				const auto& lightComponent = static_cast<Light_Component*>(componentParam[0]);
 				viewInfo.lightIndices.push_back((GLuint)index++);
 				viewInfo.lightTypes.push_back(lightComponent->m_type);
 			}

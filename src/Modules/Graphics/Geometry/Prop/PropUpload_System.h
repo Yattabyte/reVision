@@ -72,7 +72,7 @@ public:
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		for each (const auto & componentParam in components) {
-			Prop_Component* propComponent = (Prop_Component*)componentParam[0];
+			auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
 			auto& offset = propComponent->m_offset;
 			auto& count = propComponent->m_count;
 			auto& materialID = propComponent->m_materialID;

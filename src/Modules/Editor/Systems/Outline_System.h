@@ -62,7 +62,7 @@ public:
 		m_shader = Shared_Shader(engine, "Editor//outline");
 		m_cube = Shared_Mesh(engine, "//Models//cube.obj");
 		m_sphere = Shared_Mesh(engine, "//Models//sphere.obj");
-		m_cone = Shared_Mesh(engine, "//Models//cone.obj");
+		m_hemisphere = Shared_Mesh(engine, "//Models//hemisphere.obj");
 	}
 
 
@@ -76,10 +76,10 @@ public:
 			std::vector<glm::mat4> baseTransforms;
 			std::vector<glm::ivec4> drawData;
 			for each (const auto & componentParam in components) {
-				//auto* selectedComponent = (Selected_Component*)componentParam[0];
-				auto* trans = (Transform_Component*)componentParam[1];
-				auto* prop = (Prop_Component*)componentParam[2];
-				auto* light = (Light_Component*)componentParam[3];
+				//auto* selectedComponent = static_cast<Selected_Component*>(componentParam[0]);
+				auto* trans = static_cast<Transform_Component*>(componentParam[1]);
+				auto* prop = static_cast<Prop_Component*>(componentParam[2]);
+				auto* light = static_cast<Light_Component*>(componentParam[3]);
 
 				const auto tryRegisterComponentModel = [&](const ComponentHandle& componentHandle, const Shared_Mesh& mesh) {
 					tryInsertModel(mesh);
@@ -97,7 +97,7 @@ public:
 					else if (light->m_type == Light_Component::Light_Type::POINT)
 						tryRegisterComponentModel(light->m_handle, m_sphere);
 					else if (light->m_type == Light_Component::Light_Type::SPOT)
-						tryRegisterComponentModel(light->m_handle, m_cone);
+						tryRegisterComponentModel(light->m_handle, m_hemisphere);
 					const auto& [offset, count] = m_geometryParams[light->m_handle];
 					drawData.push_back({ count, 1, offset, 1 });
 					baseTransforms.push_back(pMatrix * vMatrix * trans->m_worldTransform.m_modelMatrix);
@@ -229,7 +229,7 @@ private:
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
 	float m_renderScale = 0.02f;
-	Shared_Mesh m_cube, m_sphere, m_cone;
+	Shared_Mesh m_cube, m_sphere, m_hemisphere;
 	Shared_Shader m_shader;
 	DynamicBuffer<> m_indirectGeometry, m_ssboTransforms;
 	GLuint m_vaoID = 0, m_vboID = 0;

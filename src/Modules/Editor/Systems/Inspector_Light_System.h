@@ -37,9 +37,10 @@ public:
 					uuids.push_back(componentParam[1]->m_handle);
 				return uuids;
 			};
+			auto* lightComponent = static_cast<Light_Component*>(components[0][1]);
 
 
-			auto typeInput = ((Light_Component*)components[0][1])->m_type;
+			auto typeInput = lightComponent->m_type;
 			constexpr const char* inputTypes[3] = {
 				"Directional Light", "Point Light", "Spot Light"
 			};
@@ -85,7 +86,7 @@ public:
 				m_editor->doReversableAction(std::make_shared<Type_Command>(m_editor->getActiveWorld(), getUUIDS(), static_cast<Light_Component::Light_Type>(item_current)));
 			}
 
-			auto colorInput = ((Light_Component*)components[0][1])->m_color;
+			auto colorInput = lightComponent->m_color;
 			if (ImGui::ColorEdit3("Color", glm::value_ptr(colorInput))) {
 				struct Color_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
@@ -127,7 +128,7 @@ public:
 				m_editor->doReversableAction(std::make_shared<Color_Command>(m_editor->getActiveWorld(), getUUIDS(), colorInput));
 			}
 
-			auto intensityInput = ((Light_Component*)(components[0][1]))->m_intensity;
+			auto intensityInput = lightComponent->m_intensity;
 			if (ImGui::DragFloat("Intensity", &intensityInput)) {
 				struct Intensity_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
@@ -170,7 +171,7 @@ public:
 				m_editor->doReversableAction(std::make_shared<Intensity_Command>(m_editor->getActiveWorld(), getUUIDS(), intensityInput));
 			}
 
-			auto radiusInput = ((Light_Component*)components[0][1])->m_radius;
+			auto radiusInput = lightComponent->m_radius;
 			if (ImGui::DragFloat("Radius", &radiusInput)) {
 				struct Radius_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
@@ -213,7 +214,7 @@ public:
 				m_editor->doReversableAction(std::make_shared<Radius_Command>(m_editor->getActiveWorld(), getUUIDS(), radiusInput));
 			}
 
-			auto cutoffInput = ((Light_Component*)components[0][1])->m_cutoff;
+			auto cutoffInput = lightComponent->m_cutoff;
 			if (ImGui::DragFloat("Cutoff", &cutoffInput)) {
 				struct Cutoff_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;

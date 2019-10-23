@@ -131,21 +131,21 @@ void Engine::initWindow()
 	glfwSetInputMode(m_window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
 	glfwSetWindowUserPointer(m_window, this);
 	glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
-		auto& preferences = ((Engine*)glfwGetWindowUserPointer(window))->getPreferenceState();
+		auto& preferences = static_cast<Engine*>(glfwGetWindowUserPointer(window))->getPreferenceState();
 		preferences.setValue(PreferenceState::C_WINDOW_WIDTH, width);
 		preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, height);
 		});
 	glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xPos, double yPos) {
-		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyCursorPos(xPos, yPos);
+		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyCursorPos(xPos, yPos);
 		});
 	glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) {
-		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyCursorButton(button, action, mods);
+		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyCursorButton(button, action, mods);
 		});
 	glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int character) {
-		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyChar(character);
+		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyChar(character);
 		});
 	glfwSetKeyCallback(m_window, [](GLFWwindow* window, int a, int b, int c, int d) {
-		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyKey(a, b, c, d);
+		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyKey(a, b, c, d);
 		});
 #ifdef DEBUG
 	if (GLAD_GL_KHR_debug) {
@@ -275,7 +275,7 @@ void Engine::printBoilerPlate()
 #else
 	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + " (DEBUG)\t*");
 #endif // DEBUG
-	m_messageManager.statement("*  - Build Date   October 22nd, 2019\t*");
+	m_messageManager.statement("*  - Build Date   October 23rd, 2019\t*");
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > Library Info:\t\t\t*");
 	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t\t*");

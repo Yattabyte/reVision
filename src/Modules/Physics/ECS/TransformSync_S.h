@@ -32,8 +32,8 @@ public:
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override final {
 		for each (const auto & componentParam in components) {
-			auto* transformComponent = (Transform_Component*)componentParam[0];
-			auto* colliderComponent = (Collider_Component*)componentParam[1];
+			auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
+			auto* colliderComponent = static_cast<Collider_Component*>(componentParam[1]);
 
 			const auto& position = transformComponent->m_worldTransform.m_position;
 			const auto& orientation = transformComponent->m_worldTransform.m_orientation;
@@ -58,7 +58,7 @@ public:
 						if (colliderComponent->m_worldTransform.m_scale != transformComponent->m_worldTransform.m_scale || !colliderComponent->m_shape) {
 							if (!colliderComponent->m_shape)
 								delete colliderComponent->m_shape;
-							colliderComponent->m_shape = new btConvexHullShape(*(btConvexHullShape*)colliderComponent->m_collider->m_shape);
+							colliderComponent->m_shape = new btConvexHullShape(*static_cast<btConvexHullShape*>(colliderComponent->m_collider->m_shape));
 							colliderComponent->m_shape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 						}
 

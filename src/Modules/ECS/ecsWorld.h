@@ -86,7 +86,7 @@ public:
 	template <typename T>
 	inline T* getComponent(const EntityHandle& entityHandle) const {
 		if (auto* component = getComponent(entityHandle, T::m_ID))
-			return (T*)component;
+			return static_cast<T*>(component);
 		return nullptr;
 	}
 	/** Retrieve a component.
@@ -105,7 +105,7 @@ public:
 	template <typename T>
 	inline T* getComponent(const ComponentHandle& componentHandle) const {
 		if (auto* component = getComponent(componentHandle))
-			return (T*)component;
+			return static_cast<T*>(component);
 		return nullptr;
 	}
 	/** Try to find a component matching the UUID provided.

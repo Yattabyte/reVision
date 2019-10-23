@@ -35,10 +35,10 @@ public:
 		m_frameData->skeletonBuffer.beginWriting();
 		int index = 0;
 		for each (const auto & componentParam in components) {
-			auto* propComponent = (Prop_Component*)componentParam[0];
-			auto* skeletonComponent = (Skeleton_Component*)componentParam[1];
-			auto* transformComponent = (Transform_Component*)componentParam[2];
-			auto* bboxComponent = (BoundingBox_Component*)componentParam[3];
+			auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
+			auto* skeletonComponent = static_cast<Skeleton_Component*>(componentParam[1]);
+			auto* transformComponent = static_cast<Transform_Component*>(componentParam[2]);
+			auto* bboxComponent = static_cast<BoundingBox_Component*>(componentParam[3]);
 
 			// Synchronize the component if it is visible
 			if (propComponent->m_model->existsYet()) {

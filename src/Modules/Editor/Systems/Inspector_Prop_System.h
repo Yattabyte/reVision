@@ -37,11 +37,12 @@ public:
 					uuids.push_back(componentParam[1]->m_handle);
 				return uuids;
 			};
+			auto* propComponent = static_cast<Prop_Component*>(components[0][1]);
 
 			char nameInput[256];
-			for (size_t x = 0; x < ((Prop_Component*)components[0][1])->m_modelName.length() && x < IM_ARRAYSIZE(nameInput); ++x)
-				nameInput[x] = ((Prop_Component*)components[0][1])->m_modelName[x];
-			nameInput[std::min(256ull, ((Prop_Component*)components[0][1])->m_modelName.length())] = '\0';
+			for (size_t x = 0; x < (propComponent)->m_modelName.length() && x < IM_ARRAYSIZE(nameInput); ++x)
+				nameInput[x] = (propComponent)->m_modelName[x];
+			nameInput[std::min(256ull, propComponent->m_modelName.length())] = '\0';
 			if (ImGui::InputText("Model Name", nameInput, IM_ARRAYSIZE(nameInput))) {
 				struct Name_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
@@ -91,7 +92,7 @@ public:
 				m_editor->doReversableAction(std::make_shared<Name_Command>(m_editor->getActiveWorld(), getUUIDS(), std::string(nameInput)));
 			}
 
-			auto skinInput = (int)((Prop_Component*)components[0][1])->m_skin;
+			auto skinInput = (int)(propComponent->m_skin);
 			if (ImGui::DragInt("Skin", &skinInput)) {
 				struct Skin_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
@@ -134,7 +135,7 @@ public:
 				m_editor->doReversableAction(std::make_shared<Skin_Command>(m_editor->getActiveWorld(), getUUIDS(), skinInput));
 			}
 			for each (auto & componentParam in components)
-				((Prop_Component*)componentParam[1])->m_skin = (unsigned int)skinInput;
+				static_cast<Prop_Component*>(componentParam[1])->m_skin = (unsigned int)skinInput;
 		}
 	}
 

@@ -31,8 +31,8 @@ public:
 			viewInfo.lightIndices.clear();
 			int index = 0;
 			for each (const auto & componentParam in components) {
-				auto* reflectorComponent = (Reflector_Component*)componentParam[0];
-				auto* transformComponent = (Transform_Component*)componentParam[1];
+				auto* reflectorComponent = static_cast<Reflector_Component*>(componentParam[0]);
+				auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);
 
 				// Synchronize the component if it is visible
 				viewInfo.lightIndices.push_back((GLuint)index);

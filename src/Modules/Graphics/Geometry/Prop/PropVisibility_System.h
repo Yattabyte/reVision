@@ -34,9 +34,9 @@ public:
 			viewInfo.skeletonData.clear();
 			int index = 0;
 			for each (const auto & componentParam in components) {
-				auto* propComponent = (Prop_Component*)componentParam[0];
-				auto* skeletonComponent = (Skeleton_Component*)componentParam[1];
-				auto* bboxComponent = (BoundingBox_Component*)componentParam[2];
+				auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
+				auto* skeletonComponent = static_cast<Skeleton_Component*>(componentParam[1]);
+				auto* bboxComponent = static_cast<BoundingBox_Component*>(componentParam[2]);
 				const auto& offset = propComponent->m_offset;
 				const auto& count = propComponent->m_count;
 
