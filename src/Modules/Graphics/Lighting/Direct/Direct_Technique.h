@@ -9,7 +9,7 @@
 #include "Modules/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Mesh.h"
-#include "Utilities/GL/StaticTripleBuffer.h"
+#include "Utilities/GL/StaticMultiBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Engine.h"
 #include <random>

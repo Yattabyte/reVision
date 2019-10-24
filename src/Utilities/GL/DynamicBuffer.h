@@ -54,13 +54,13 @@ public:
 	// Public Interface Implementations
 	inline virtual void bindBuffer(const GLenum& target) const override final {
 		// Ensure writing has finished before reading
-		WaitForFence(m_writeFence[m_readIndex]);
-		glBindBuffer(target, m_bufferID[m_readIndex]);
+		//WaitForFence(m_writeFence[m_index]);
+		glBindBuffer(target, m_bufferID[m_index]);
 	}
 	inline virtual void bindBufferBase(const GLenum& target, const GLuint& index) const override final {
 		// Ensure writing has finished before reading
-		WaitForFence(m_writeFence[m_readIndex]);
-		glBindBufferBase(target, index, m_bufferID[m_readIndex]);
+		//WaitForFence(m_writeFence[m_index]);
+		glBindBufferBase(target, index, m_bufferID[m_index]);
 	}
 
 
@@ -76,7 +76,7 @@ public:
 	@param	data		the data to write. */
 	inline void write(const GLsizeiptr& offset, const GLsizeiptr& size, const void* data) {
 		expandToFit(offset, size);
-		std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr[m_writeIndex]) + offset, data, size);
+		std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr[m_index]) + offset, data, size);
 	}
 	/** Write the supplied data to GPU memory.
 	@param	offset		byte offset from the beginning.
@@ -122,22 +122,22 @@ public:
 			}
 		}
 	}
-	/** Wait for the current fence to pass, for the current frame index. */
+	/** Prepare this buffer for writing, waiting on any unfinished reads. */
 	inline void beginWriting() {
-		// Ensure reading has finished before writing
-		WaitForFence(m_readFence[m_writeIndex]);
+		// Ensure all reads and writes at this index have finished.
+		WaitForFence(m_writeFence[m_index]);
+		WaitForFence(m_readFence[m_index]);
 	}
-	/** Create a fence for the current point in time. */
+	/** Signal that this multi-buffer is finished being written to. */
 	inline void endWriting() {
-		if (!m_writeFence[m_writeIndex])
-			m_writeFence[m_writeIndex] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-		m_writeIndex = (m_writeIndex + 1) % BufferCount;
+		if (!m_writeFence[m_index])
+			m_writeFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	}
 	/***/
 	inline void endReading() {
-		if (!m_readFence[m_readIndex])
-			m_readFence[m_readIndex] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-		m_readIndex = (m_readIndex + 1) % BufferCount;
+		if (!m_readFence[m_index])
+			m_readFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+		m_index = (m_index + 1) % BufferCount;
 	}
 	/** Assignment operator, for moving another buffer into this one.
 	@param	other			another buffer to move the data from, to here. */
@@ -155,12 +155,10 @@ public:
 
 		m_mapFlags = (std::move(other.m_mapFlags));
 		m_maxCapacity = (std::move(other.m_maxCapacity));
-		m_writeIndex = std::move(other.m_writeIndex);
-		m_readIndex = std::move(other.m_readIndex);
+		m_index = std::move(other.m_index);
 		other.m_mapFlags = 0;
 		other.m_maxCapacity = 0;
-		other.m_writeIndex = 0;
-		other.m_readIndex = 0;
+		other.m_index = 0;
 		return *this;
 	}
 
@@ -188,7 +186,7 @@ private:
 	mutable GLsync m_writeFence[BufferCount], m_readFence[BufferCount];
 	GLuint m_bufferID[BufferCount];
 	void* m_bufferPtr[BufferCount];
-	int m_writeIndex = 1, m_readIndex = 0;
+	int m_index = 0;
 	GLsizeiptr m_maxCapacity = 256;
 };
 

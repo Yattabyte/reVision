@@ -2,7 +2,7 @@
 #ifndef INDIRECTDRAW_H
 #define INDIRECTDRAW_H
 
-#include "Utilities/GL/StaticTripleBuffer.h"
+#include "Utilities/GL/StaticMultiBuffer.h"
 
 
 /** A helper class encapsulating the data needed to perform an indirect draw call in OpenGL. */
@@ -23,7 +23,7 @@ public:
 	) : m_count(count), m_primitiveCount(primitiveCount), m_first(first) {
 		// Populate Buffer
 		const GLuint data[4] = { count, primitiveCount, first, 0 };
-		m_buffer = StaticTripleBuffer<BufferCount>(sizeof(GLuint) * 4, data, storageFlags);
+		m_buffer = StaticMultiBuffer<BufferCount>(sizeof(GLuint) * 4, data, storageFlags);
 	}
 	/** Copy an Indirect Draw Object. */
 	inline IndirectDraw(const IndirectDraw& other)
@@ -99,7 +99,7 @@ private:
 		m_primitiveCount = 0,
 		m_first = 0;
 	GLbitfield m_storageFlags = GL_DYNAMIC_STORAGE_BIT;
-	StaticTripleBuffer<BufferCount> m_buffer;
+	StaticMultiBuffer<BufferCount> m_buffer;
 };
 
 #endif // INDIRECTDRAW_H

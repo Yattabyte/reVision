@@ -10,7 +10,7 @@
 #include "Modules/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
-#include "Utilities/GL/StaticTripleBuffer.h"
+#include "Utilities/GL/StaticMultiBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Engine.h"
 
@@ -57,8 +57,8 @@ public:
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			// count, primCount, first, reserved
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 };
-			m_indirectQuad = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
-			m_indirectQuadConvolute = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
+			m_indirectQuad = StaticMultiBuffer(sizeof(GLuint) * 4, quadData);
+			m_indirectQuadConvolute = StaticMultiBuffer(sizeof(GLuint) * 4, quadData);
 			});
 	}
 
@@ -253,13 +253,13 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	Shared_Auto_Model m_shapeCube, m_shapeQuad;
 	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
-	StaticTripleBuffer<> m_indirectQuad = StaticTripleBuffer(sizeof(GLuint) * 4), m_indirectQuadConvolute = StaticTripleBuffer(sizeof(GLuint) * 4);
+	StaticMultiBuffer<> m_indirectQuad = StaticMultiBuffer(sizeof(GLuint) * 4), m_indirectQuadConvolute = StaticMultiBuffer(sizeof(GLuint) * 4);
 	std::shared_ptr<Viewport> m_viewport;
 	std::shared_ptr<RH_Volume> m_rhVolume;
 	struct DrawData {
 		DynamicBuffer<> bufferCamIndex;
 		DynamicBuffer<> visLights;
-		StaticTripleBuffer<> indirectShape = StaticTripleBuffer(sizeof(GLuint) * 4);
+		StaticMultiBuffer<> indirectShape = StaticMultiBuffer(sizeof(GLuint) * 4);
 	};
 	int m_drawIndex = 0;
 	std::vector<DrawData> m_drawData;
