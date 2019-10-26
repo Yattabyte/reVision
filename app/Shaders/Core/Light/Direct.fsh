@@ -23,9 +23,6 @@ struct Light_Struct {
 	int Shadow_Spot;
 	int Light_Type;
 };
-layout (std430, binding = 4) readonly buffer Light_Index_Buffer {
-	int lightIndexes[];
-};
 layout (std430, binding = 8) readonly buffer Light_Buffer {
 	Light_Struct lightBuffers[];
 };

@@ -4,8 +4,6 @@
 #extension GL_ARB_shader_viewport_layer_array : enable
 #package "CameraBuffer"
 
-layout (location = 0) in vec3 vertex;
-
 struct Light_Struct {
 	mat4 LightVP[MAX_PERSPECTIVE_ARRAY];
 	mat4 mMatrix;
@@ -26,6 +24,8 @@ layout (std430, binding = 8) readonly buffer Light_Buffer {
 	Light_Struct lightBuffers[];
 };
 
+layout (location = 0) in vec3 vertex;
+
 layout (location = 0) flat out mat4 pMatrixInverse;
 layout (location = 4) flat out mat4 vMatrixInverse;
 layout (location = 8) flat out vec3 EyePosition;
@@ -42,7 +42,7 @@ void main()
 	EyePosition = camBuffer[CamIndex].EyePosition;
 	CameraDimensions = camBuffer[CamIndex].CameraDimensions;
 	lightIndex = lightIndexes[gl_InstanceID];	
-	lightType =lightBuffers[lightIndex].Light_Type;
+	lightType = lightBuffers[lightIndex].Light_Type;
 	gl_Position = camBuffer[CamIndex].pvMatrix * lightBuffers[lightIndex].mMatrix * vec4(vertex, 1.0); 
 	gl_Layer = camIndexes[gl_InstanceID].y;
 }

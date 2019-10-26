@@ -1,7 +1,24 @@
-/* Directional light - (indirect) light bounce shader. */
+/* Bounce lighting. */
 #version 460
 #pragma optionNV(unroll all)
-#define NUM_CASCADES 4
+#define MAX_PERSPECTIVE_ARRAY 6
+
+struct Light_Struct {
+	mat4 LightVP[MAX_PERSPECTIVE_ARRAY];
+	mat4 mMatrix;
+	vec4 LightColor;
+	vec4 LightPosition;
+	vec4 LightDirection;
+	float CascadeEndClipSpace[MAX_PERSPECTIVE_ARRAY];
+	float LightIntensity;
+	float LightRadius;
+	float LightCutoff;
+	int Shadow_Spot;
+	int Light_Type;
+};
+layout (std430, binding = 8) readonly buffer Light_Buffer {
+	Light_Struct lightBuffers[];
+};
 
 layout (location = 1) uniform vec3 BBox_Max = vec3(1);
 layout (location = 2) uniform vec3 BBox_Min = vec3(-1);
@@ -12,10 +29,9 @@ layout (location = 6) uniform float R_wcs = 0.0f;
 
 layout (location = 0) flat in mat4 vMatrix;
 layout (location = 4) flat in mat4 CamPVMatrix;
-layout (location = 8) flat in mat4 LightVP[NUM_CASCADES];
-layout (location = 24) flat in vec4 CascadeEndClipSpace;
-layout (location = 25) flat in int Shadow_Spot;
-layout (location = 26) flat in vec3 ColorModifier;
+layout (location = 8) flat in int Shadow_Spot;
+layout (location = 9) flat in vec3 ColorModifier;
+layout (location = 10) flat in int lightIndex;
 
 layout (location = 0) out vec4 GI_Out1; 
 layout (location = 1) out vec4 GI_Out2; 
@@ -158,7 +174,7 @@ void BounceFromShadow(in vec3 extents, in vec3 RHCellSize, in vec3 RHCenter, in 
 
 void main()
 {	
-	if (Shadow_Spot >= 0) {
+	if (lightBuffers[lightIndex].Light_Type == 0) {
 		// Get current RH's world pos
 		vec3 bbox_max 				= BBox_Max.xyz;
 		vec3 bbox_min 				= BBox_Min.xyz;
@@ -170,13 +186,13 @@ void main()
 		
 		// RH -> light space, get sampling disk center
 		int index 					= 0;
-		for (; index < NUM_CASCADES; ++index) 
-			if (-ViewPos.z <= CascadeEndClipSpace[index]) 
-				break;		
-		vec2 RHUV					= ShadowProjection(LightVP[index] * vec4(RHCenter, 1)); 
+		for (; index < 4; ++index)
+			if (-ViewPos.z <= lightBuffers[lightIndex].CascadeEndClipSpace[index])
+				break;	
+		vec2 RHUV					= ShadowProjection(lightBuffers[lightIndex].LightVP[index] * vec4(RHCenter, 1)); 
 		
 		// Perform light bounce operation
-		BounceFromShadow(extents, RHCellSize, RHCenter, RHUV, inverse(LightVP[index]), Shadow_Spot + index, ShadowPos, ShadowNormal, ShadowFlux);
+		BounceFromShadow(extents, RHCellSize, RHCenter, RHUV, inverse(lightBuffers[lightIndex].LightVP[index]), Shadow_Spot + index, ShadowPos, ShadowNormal, ShadowFlux);
 	}
 	else
 		discard;

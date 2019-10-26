@@ -33,10 +33,11 @@ public:
 	/** Constructor. */
 	inline Direct_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras)
 		: m_engine(engine), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
-		// Auxiliary Systems
 		m_frameData = std::make_shared<Direct_Light_Data>();
 		m_frameData->clientCamera = clientCamera;
 		m_frameData->shadowData = shadowData;
+
+		// Auxiliary Systems
 		m_auxilliarySystems.makeSystem<DirectVisibility_System>(m_frameData);
 		m_auxilliarySystems.makeSystem<DirectSync_System>(m_frameData);
 

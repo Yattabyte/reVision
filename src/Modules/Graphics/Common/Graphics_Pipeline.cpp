@@ -5,9 +5,9 @@
 #include "Modules/Graphics/Geometry/Prop/Prop_Technique.h"
 #include "Modules/Graphics/Lighting/Shadow/Shadow_Technique.h"
 #include "Modules/Graphics/Lighting/Direct/Direct_Technique.h"
+#include "Modules/Graphics/Lighting/Indirect/Indirect_Technique.h"
 #include "Modules/Graphics/Lighting/Reflector/Reflector_Technique.h"
 #include "Modules/Graphics/Effects/Skybox.h"
-#include "Modules/Graphics/Effects/Radiance_Hints.h"
 #include "Modules/Graphics/Effects/SSAO.h"
 #include "Modules/Graphics/Effects/SSR.h"
 #include "Modules/Graphics/Effects/Join_Reflections.h"
@@ -40,8 +40,8 @@ Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camer
 	auto propView = new Prop_Technique(engine, m_sceneCameras);
 	auto shadowing = new Shadow_Technique(engine, m_sceneCameras);
 	auto directLighting = new Direct_Technique(engine, shadowing->getShadowData(), clientCamera, m_sceneCameras);
+	auto indirectLighting = new Indirect_Technique(engine, shadowing->getShadowData(), clientCamera, m_sceneCameras);
 	auto reflectorLighting = new Reflector_Technique(engine, m_sceneCameras);
-	auto radianceHints = new Radiance_Hints(engine);
 	auto skybox = new Skybox(m_engine);
 	auto ssao = new SSAO(m_engine);
 	auto ssr = new SSR(m_engine);
@@ -55,15 +55,15 @@ Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camer
 		propView
 	};
 	m_lightingTechniques = {
-		shadowing, directLighting, skybox, reflectorLighting,
+		shadowing, directLighting, indirectLighting, skybox, reflectorLighting,
 	};
 	m_effectTechniques = {
-		radianceHints, ssao, ssr, joinReflections, bloom, hdr, fxaa,
+		ssao, ssr, joinReflections, bloom, hdr, fxaa,
 	};
 	m_allTechniques = {
 		propView,
-		shadowing, directLighting, skybox, reflectorLighting,
-		radianceHints, ssao, ssr, joinReflections, bloom, hdr, fxaa,
+		shadowing, directLighting, indirectLighting, skybox, reflectorLighting,
+		ssao, ssr, joinReflections, bloom, hdr, fxaa,
 	};
 }
 
