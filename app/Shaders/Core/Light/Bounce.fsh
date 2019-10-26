@@ -69,12 +69,50 @@ vec3 PointWCS2CSS(in vec3 p)
     return p_css.xyz/p_css.w; 
 } 
 
-vec2 ShadowProjection(in vec4 LightSpacePos ) 
-{ 
-	vec3 ProjCoords 			= LightSpacePos.xyz / LightSpacePos.w;                                  
-    vec2 UVCoords 				= 0.5 * ProjCoords.xy + 0.5;
-    return 						clamp(UVCoords, vec2(0.0f), vec2(1.0f));
+void CalcDirectionalShadow(in vec3 RHCenter, in float View_Depth, out vec2 RHUV, out mat4 lightVP, out int finalShadowSpot) 
+{
+	int index 					= 0;
+	for (; index < 4; ++index)
+		if (View_Depth <= lightBuffers[lightIndex].CascadeEndClipSpace[index])
+			break;
+	const vec4 LightSpacePos 	= lightBuffers[lightIndex].LightVP[index] * vec4(RHCenter, 1);
+	const vec3 ProjCoords 		= LightSpacePos.xyz / LightSpacePos.w;                                  
+    const vec2 UVCoords 		= 0.5 * ProjCoords.xy + 0.5;
+    RHUV 						= clamp(UVCoords, vec2(0.0f), vec2(1.0f));
+	lightVP 					= lightBuffers[lightIndex].LightVP[index];
+	finalShadowSpot				= Shadow_Spot + index;
 } 
+
+void CalcPointShadow(in vec3 RHCenter, out vec2 RHUV, out mat4 lightVP, out int finalShadowSpot) 
+{
+	const vec3 v 				= normalize(lightBuffers[lightIndex].LightPosition.xyz - RHCenter); 	
+	vec3 vAbs 					= abs(v.xyz);
+	float faceIndex;
+	if(vAbs.z >= vAbs.x && vAbs.z >= vAbs.y) 
+		faceIndex 				= v.z < 0.0 ? 5.0 : 4.0;	
+	else if(vAbs.y >= vAbs.x) 
+		faceIndex 				= v.y < 0.0 ? 3.0 : 2.0;	
+	else 
+		faceIndex 				= v.x < 0.0 ? 1.0 : 0.0;
+	const int face 				= int(faceIndex);
+	const vec4 LightSpacePos 	= lightBuffers[lightIndex].LightVP[face] * vec4(RHCenter, 1);
+	const vec3 ProjCoords 		= LightSpacePos.xyz / LightSpacePos.w;                                  
+    const vec2 UVCoords 		= 0.5 * ProjCoords.xy + 0.5;
+    RHUV 						= clamp(UVCoords, vec2(0.0f), vec2(1.0f));
+	lightVP						= lightBuffers[lightIndex].LightVP[face];
+	finalShadowSpot				= Shadow_Spot + face;
+}
+
+void CalcSpotShadow(in vec3 RHCenter, out vec2 RHUV, out mat4 lightVP, out int finalShadowSpot) 
+{
+	const vec4 LightSpacePos	= lightBuffers[lightIndex].LightVP[0] * vec4(RHCenter, 1);
+	const vec3 ProjCoords 		= LightSpacePos.xyz / LightSpacePos.w;                                  
+	const vec2 UVCoords 		= (0.5f * ProjCoords.xy + 0.5f);  
+    RHUV 						= clamp(UVCoords, vec2(0.0f), vec2(1.0f));
+	lightVP						= lightBuffers[lightIndex].LightVP[0];
+	finalShadowSpot				= Shadow_Spot;
+}
+ 
 
 vec3 CalcShadowPos(in vec2 TexCoord, in int ShadowSpot, in mat4 InverseVP) 
 {
@@ -173,27 +211,26 @@ void BounceFromShadow(in vec3 extents, in vec3 RHCellSize, in vec3 RHCenter, in 
 }
 
 void main()
-{	
-	if (lightBuffers[lightIndex].Light_Type == 0) {
-		// Get current RH's world pos
-		vec3 bbox_max 				= BBox_Max.xyz;
-		vec3 bbox_min 				= BBox_Min.xyz;
-		vec3 pos					= vec3(gl_FragCoord.x, gl_FragCoord.y, gl_Layer);
-		vec3 extents 				= (bbox_max - bbox_min).xyz; 
-		vec3 RHCellSize				= extents / (resolution);
-		vec3 RHCenter 				= bbox_min + pos * RHCellSize; 	
-		vec4 ViewPos 				= vMatrix * vec4(RHCenter, 1);
+{		
+	// Get current RH's world pos
+	const vec3 bbox_max 			= BBox_Max.xyz;
+	const vec3 bbox_min 			= BBox_Min.xyz;
+	const vec3 pos					= vec3(gl_FragCoord.x, gl_FragCoord.y, gl_Layer);
+	const vec3 extents 				= (bbox_max - bbox_min).xyz; 
+	const vec3 RHCellSize			= extents / (resolution);
+	const vec3 RHCenter 			= bbox_min + pos * RHCellSize; 	
+	vec2 RHUV;
+	mat4 lightVP;
+	int finalShadowSpot;
 		
-		// RH -> light space, get sampling disk center
-		int index 					= 0;
-		for (; index < 4; ++index)
-			if (-ViewPos.z <= lightBuffers[lightIndex].CascadeEndClipSpace[index])
-				break;	
-		vec2 RHUV					= ShadowProjection(lightBuffers[lightIndex].LightVP[index] * vec4(RHCenter, 1)); 
+	// RH -> light space, get sampling disk center	
+	if (lightBuffers[lightIndex].Light_Type == 0)
+		CalcDirectionalShadow(RHCenter, -(vMatrix * vec4(RHCenter, 1)).z, RHUV, lightVP, finalShadowSpot);
+	else if (lightBuffers[lightIndex].Light_Type == 1)
+		CalcPointShadow(RHCenter, RHUV, lightVP, finalShadowSpot);
+	else if (lightBuffers[lightIndex].Light_Type == 2)
+		CalcSpotShadow(RHCenter, RHUV, lightVP, finalShadowSpot);
 		
-		// Perform light bounce operation
-		BounceFromShadow(extents, RHCellSize, RHCenter, RHUV, inverse(lightBuffers[lightIndex].LightVP[index]), Shadow_Spot + index, ShadowPos, ShadowNormal, ShadowFlux);
-	}
-	else
-		discard;
+	// Perform light bounce operation
+	BounceFromShadow(extents, RHCellSize, RHCenter, RHUV, inverse(lightVP), finalShadowSpot, ShadowPos, ShadowNormal, ShadowFlux);	
 }
