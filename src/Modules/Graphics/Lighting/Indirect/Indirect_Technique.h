@@ -71,7 +71,7 @@ public:
 		m_frameData->viewInfo.resize(m_cameras->size());
 		world.updateSystems(m_auxilliarySystems, deltaTime);
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
 		// Update light-bounce volume
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeQuad->existsYet() && m_shader_Bounce->existsYet() && m_shader_Recon->existsYet() && m_shader_Rebounce->existsYet()) {
 			// Light bounce using client camera
@@ -94,9 +94,9 @@ public:
 
 			if (lightIndices.size()) {
 				updateDrawParams(camBufferIndex, camBufferRebounce, camBufferRecon, visLights, indirectBounce, indirectQuad, indirectQuadRecon, camIndicesGen, camIndiciesRebounce, camIndiciesRecon, lightIndices, shadowCount, perspectives);
-				fillBounceVolume(shadowCount, rhVolume);
-				rebounceVolume(rhVolume, camBufferRebounce, indirectQuad);
-				reconstructVolume(viewport, rhVolume, camBufferRecon, indirectQuadRecon);
+				fillBounceVolume(shadowCount, viewport->m_gfxFBOS->m_rhVolume);
+				rebounceVolume(viewport->m_gfxFBOS->m_rhVolume, camBufferRebounce, indirectQuad);
+				reconstructVolume(viewport, camBufferRecon, indirectQuadRecon);
 				camBufferIndex.endReading();
 				camBufferRebounce.endReading();
 				camBufferRecon.endReading();
@@ -141,19 +141,19 @@ private:
 		indirectQuadRecon.endWriting();
 	}
 	/***/
-	inline void fillBounceVolume(const size_t& shadowCount, const std::shared_ptr<RH_Volume>& rhVolume) {
+	inline void fillBounceVolume(const size_t& shadowCount, RH_Volume& rhVolume) {
 		// Prepare rendering state
 		glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_shader_Bounce->setUniform(0, (GLint)(shadowCount));
-		m_shader_Bounce->setUniform(1, rhVolume->m_max);
-		m_shader_Bounce->setUniform(2, rhVolume->m_min);
-		m_shader_Bounce->setUniform(4, rhVolume->m_resolution);
-		m_shader_Bounce->setUniform(6, rhVolume->m_unitSize);
+		m_shader_Bounce->setUniform(1, rhVolume.m_max);
+		m_shader_Bounce->setUniform(2, rhVolume.m_min);
+		m_shader_Bounce->setUniform(4, rhVolume.m_resolution);
+		m_shader_Bounce->setUniform(6, rhVolume.m_unitSize);
 
-		glViewport(0, 0, (GLsizei)rhVolume->m_resolution, (GLsizei)rhVolume->m_resolution);
+		glViewport(0, 0, (GLsizei)rhVolume.m_resolution, (GLsizei)rhVolume.m_resolution);
 		m_shader_Bounce->bind();
-		rhVolume->writePrimary();
+		rhVolume.writePrimary();
 		glBindTextureUnit(0, m_frameData->shadowData->shadowFBO.m_texNormal);
 		glBindTextureUnit(1, m_frameData->shadowData->shadowFBO.m_texColor);
 		glBindTextureUnit(2, m_frameData->shadowData->shadowFBO.m_texDepth);
@@ -165,37 +165,37 @@ private:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 	/***/
-	inline void rebounceVolume(const std::shared_ptr<RH_Volume>& rhVolume, DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) {
+	inline void rebounceVolume(RH_Volume& rhVolume, DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) {
 		// Bind common data
 		glDepthMask(GL_TRUE);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ZERO);
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-		m_shader_Rebounce->setUniform(1, rhVolume->m_max);
-		m_shader_Rebounce->setUniform(2, rhVolume->m_min);
-		m_shader_Rebounce->setUniform(4, rhVolume->m_resolution);
-		m_shader_Rebounce->setUniform(5, rhVolume->m_unitSize);
-		m_shader_Recon->setUniform(1, rhVolume->m_max);
-		m_shader_Recon->setUniform(2, rhVolume->m_min);
-		m_shader_Recon->setUniform(3, rhVolume->m_resolution);
+		m_shader_Rebounce->setUniform(1, rhVolume.m_max);
+		m_shader_Rebounce->setUniform(2, rhVolume.m_min);
+		m_shader_Rebounce->setUniform(4, rhVolume.m_resolution);
+		m_shader_Rebounce->setUniform(5, rhVolume.m_unitSize);
+		m_shader_Recon->setUniform(1, rhVolume.m_max);
+		m_shader_Recon->setUniform(2, rhVolume.m_min);
+		m_shader_Recon->setUniform(3, rhVolume.m_resolution);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 
 		// Bounce light a second time
 		m_shader_Rebounce->bind();
-		rhVolume->readPrimary(0);
-		rhVolume->writeSecondary();
-		glViewport(0, 0, (GLsizei)rhVolume->m_resolution, (GLsizei)rhVolume->m_resolution);
+		rhVolume.readPrimary(0);
+		rhVolume.writeSecondary();
+		glViewport(0, 0, (GLsizei)rhVolume.m_resolution, (GLsizei)rhVolume.m_resolution);
 		camBufferRebounce.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		indirectQuad.drawCall();
 	}
 	/***/
-	inline void reconstructVolume(const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) {
+	inline void reconstructVolume(const std::shared_ptr<Viewport>& viewport, DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) {
 		// Reconstruct indirect radiance
 		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 		m_shader_Recon->bind();
 		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
-		rhVolume->readSecondary(4);
+		viewport->m_gfxFBOS->m_rhVolume.readSecondary(4);
 		viewport->m_gfxFBOS->bindForWriting("BOUNCE");
 		camBufferRecon.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		indirectQuadRecon.drawCall();

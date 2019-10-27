@@ -13,7 +13,6 @@
 
 // Forward Declarations
 class Camera;
-class RH_Volume;
 struct Viewport;
 
 /** A module responsible for rendering.
@@ -40,7 +39,7 @@ public:
 	/***/
 	void renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID = 0);
 	/***/
-	void renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::shared_ptr<Camera>>& cameras);
+	void renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::shared_ptr<Camera>>& cameras);
 	/** Generates a perspective matrix for the client camera. */
 	void genPerspectiveMatrix();
 	/** Returns a shared pointer to the primary camera.
@@ -61,7 +60,6 @@ private:
 	std::shared_ptr<Graphics_Pipeline>				m_pipeline;
 	std::shared_ptr<Viewport>						m_viewport;
 	std::shared_ptr<Camera>							m_clientCamera;
-	std::shared_ptr<RH_Volume>						m_rhVolume;
 	Shared_Shader									m_shader;
 	Shared_Auto_Model								m_shapeQuad;
 	IndirectDraw<1>									m_indirectQuad;

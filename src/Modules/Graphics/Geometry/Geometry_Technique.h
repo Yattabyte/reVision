@@ -16,7 +16,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override {
 		// Forward to geometry rendering
 		renderGeometry(deltaTime, viewport, perspectives);
 	}

@@ -2,6 +2,7 @@
 #ifndef GRAPHICS_FRAMEBUFFERS_H
 #define GRAPHICS_FRAMEBUFFERS_H
 
+#include "Modules/Graphics/Common/RH_Volume.h"
 #include "Utilities/MappedChar.h"
 #include <glad/glad.h>
 #include "glm/glm.hpp"
@@ -22,8 +23,9 @@ public:
 	/** Destroy this collection of framebuffers. */
 	~Graphics_Framebuffers();
 	/** Construct a collection of pbr framebuffers at a specific size.
-	@param	size			the size to use. */
-	explicit Graphics_Framebuffers(const glm::ivec2& size);
+	@param	size			the size to use.
+	@param	engine			the active engine. */
+	Graphics_Framebuffers(const glm::ivec2& size, Engine* engine);
 
 
 	// Public Methods
@@ -64,10 +66,10 @@ public:
 		GLenum,			// Format
 		GLenum,			// Type
 		GLenum			// Attachment
-		>>
-		>>						m_fbos;
+		>>>>				m_fbos;
 	glm::ivec2				m_renderSize = glm::ivec2(1);
 	int						m_layerFaces = 1;
+	RH_Volume				m_rhVolume;
 	std::shared_ptr<bool>	m_aliveIndicator = std::make_shared<bool>(true);
 };
 

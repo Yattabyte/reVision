@@ -4,7 +4,6 @@
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Geometry/Geometry_Technique.h"
-#include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Common/Viewport.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/ecsWorld.h"
@@ -39,7 +38,7 @@ public:
 	@param	viewport		the viewport to render into.
 	@param	camera			the camera to render with.
 	@param	categories		the allowed technique categories to render. */
-	void render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories = Graphics_Technique::ALL);
+	void render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories = Graphics_Technique::ALL);
 	/** Use geometry techniques to cull shadows.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	perspectives	the camera and layer indicies to render. */

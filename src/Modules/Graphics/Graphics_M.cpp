@@ -1,7 +1,6 @@
 #include "Modules/Graphics/Graphics_M.h"
 #include "Modules/Graphics/Common/Camera.h"
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
-#include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Common/Viewport.h"
 #include "Engine.h"
 #include <memory>
@@ -58,14 +57,13 @@ void Graphics_Module::initialize(Engine* engine)
 		});
 
 	// Camera Setup
-	m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_renderSize);
+	m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_renderSize, engine);
 	m_clientCamera = std::make_shared<Camera>();
 	m_clientCamera->setEnabled(true);
 	m_clientCamera->get()->Dimensions = glm::vec2(m_renderSize);
 	m_clientCamera->get()->FarPlane = farPlane;
 	m_clientCamera->get()->FOV = fov;
 	genPerspectiveMatrix();
-	m_rhVolume = std::make_shared<RH_Volume>(engine);
 
 	// Rendering Effects & systems
 	m_pipeline = std::make_unique<Graphics_Pipeline>(engine, m_clientCamera);
@@ -80,26 +78,24 @@ void Graphics_Module::deinitialize()
 	m_pipeline.reset();
 	m_viewport.reset();
 	m_clientCamera.reset();
-	m_rhVolume.reset();
 }
 
 void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID)
 {
-	renderWorld(world, deltaTime, m_viewport, m_rhVolume, { m_clientCamera });
+	renderWorld(world, deltaTime, m_viewport, { m_clientCamera });
 	copyToScreen(fboID);
 }
 
-void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::shared_ptr<Camera>>& cameras)
+void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::shared_ptr<Camera>>& cameras)
 {
 	if (cameras.size()) {
 		// Prepare rendering pipeline for a new frame, wait for buffers to free
 		const auto perspectives = m_pipeline->begin(deltaTime, world, cameras);
 		viewport->bind();
 		viewport->clear();
-		rhVolume->clear();
-		rhVolume->updateVolume(cameras[0].get());
+		viewport->m_gfxFBOS->m_rhVolume.updateVolume(cameras[0].get());
 
-		m_pipeline->render(deltaTime, viewport, rhVolume, perspectives);
+		m_pipeline->render(deltaTime, viewport, perspectives);
 
 		m_pipeline->end(deltaTime);
 	}

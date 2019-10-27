@@ -2,7 +2,6 @@
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/Graphics/Common/Camera.h"
 #include "Modules/Graphics/Common/Viewport.h"
-#include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Graphics_M.h"
 #include "Modules/ECS/component_types.h"
 #include "imgui.h"
@@ -21,8 +20,7 @@ Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
 	m_open = true;
-	m_viewport = std::make_shared<Viewport>(glm::vec2(0.0f), glm::vec2((float)m_thumbSize));
-	m_rhVolume = std::make_shared<RH_Volume>(engine);
+	m_viewport = std::make_shared<Viewport>(glm::vec2(0.0f), glm::vec2((float)m_thumbSize), engine);
 
 	// Load Assets
 	m_texBack = Shared_Texture(engine, "Editor//folderBack.png");

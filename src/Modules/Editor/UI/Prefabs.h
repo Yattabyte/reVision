@@ -11,7 +11,6 @@
 class Engine;
 class LevelEditor_Module;
 struct Viewport;
-class RH_Volume;
 class Camera;
 
 /** A level editor UI element allowing the user to spawn previously made prefab object sets. */
@@ -75,7 +74,6 @@ private:
 	std::vector<std::shared_ptr<Camera>> m_prefabCameras;
 	ecsWorld m_previewWorld;
 	std::shared_ptr<Viewport> m_viewport;
-	std::shared_ptr<RH_Volume> m_rhVolume;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

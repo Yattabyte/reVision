@@ -43,13 +43,9 @@ public:
 			const auto sclM = glm::scale(glm::mat4(1.0f), glm::vec3(radiusSquared * 1.1f));
 			trans->m_localTransform.m_scale = glm::vec3(radiusSquared * 1.1f);
 			trans->m_localTransform.update();
-			m_frameData->lightBuffer[index].mMatrix = transM * rotM * sclM;
 			m_frameData->lightBuffer[index].LightColor = light->m_color;
 			m_frameData->lightBuffer[index].LightPosition = trans->m_worldTransform.m_position;
-			m_frameData->lightBuffer[index].LightDirection = glm::normalize(rotM * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
 			m_frameData->lightBuffer[index].LightIntensity = light->m_intensity;
-			m_frameData->lightBuffer[index].LightRadius = light->m_radius;
-			m_frameData->lightBuffer[index].LightCutoff = cosf(glm::radians(light->m_cutoff / 2.0f));
 			m_frameData->lightBuffer[index].Shadow_Spot = shadow->m_shadowSpot;
 			m_frameData->lightBuffer[index].Light_Type = static_cast<int>(light->m_type);
 

@@ -6,14 +6,10 @@
 
 struct Light_Struct {
 	mat4 LightVP[MAX_PERSPECTIVE_ARRAY];
-	mat4 mMatrix;
 	vec4 LightColor;
 	vec4 LightPosition;
-	vec4 LightDirection;
 	float CascadeEndClipSpace[MAX_PERSPECTIVE_ARRAY];
 	float LightIntensity;
-	float LightRadius;
-	float LightCutoff;
 	int Shadow_Spot;
 	int Light_Type;
 };
@@ -33,6 +29,7 @@ layout (location = 4) flat out mat4 CamPVMatrix;
 layout (location = 8) flat out int Shadow_Spot;
 layout (location = 9) flat out vec3 ColorModifier;
 layout (location = 10) flat out int lightIndex;
+layout (location = 11) flat out int lightType;
 
 
 void main()
@@ -46,4 +43,5 @@ void main()
 	CamPVMatrix = camBuffer[CamIndex].pvMatrix;
 	Shadow_Spot = lightBuffers[lightIndex].Shadow_Spot;
 	ColorModifier = lightBuffers[lightIndex].LightColor.xyz * lightBuffers[lightIndex].LightIntensity;
+	lightType = lightBuffers[lightIndex].Light_Type;
 }

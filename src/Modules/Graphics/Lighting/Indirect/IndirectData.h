@@ -18,16 +18,12 @@ struct Indirect_Light_Data {
 	constexpr const static int MAX_PERSPECTIVE_ARRAY = 6;
 	struct Indirect_Light_Buffer {
 		glm::mat4 lightVP[MAX_PERSPECTIVE_ARRAY];
-		glm::mat4 mMatrix = glm::mat4(1.0f);
 		glm::vec3 LightColor = glm::vec3(1.0f); float padding1;
 		glm::vec3 LightPosition = glm::vec3(0.0f); float padding2;
-		glm::vec3 LightDirection = glm::vec3(0, -1, 0); float padding3;
 		float CascadeEndClipSpace[MAX_PERSPECTIVE_ARRAY];
 		float LightIntensity = 1.0f;
-		float LightRadius = 1.0f;
-		float LightCutoff = 1.0f;
 		int Shadow_Spot = -1;
-		int Light_Type = 0;  int padding4;
+		int Light_Type = 0; glm::vec3 padding3;
 	};
 	/** Struct collating per-perspective data. */
 	struct Indirect_Light_ViewInfo {

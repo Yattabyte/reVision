@@ -114,12 +114,12 @@ void Graphics_Pipeline::end(const float& deltaTime)
 		tech->prepareForNextFrame(deltaTime);
 }
 
-void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& allowedCategories)
+void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& allowedCategories)
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for each (auto * tech in m_allTechniques)
 		if (allowedCategories & tech->getCategory())
-			tech->renderTechnique(deltaTime, viewport, rhVolume, perspectives);
+			tech->renderTechnique(deltaTime, viewport, perspectives);
 }
 
 void Graphics_Pipeline::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives)

@@ -14,15 +14,15 @@ void Game_Module::initialize(Engine* engine)
 	m_engine->getManager_Messages().statement("Loading Module: Game...");
 
 	// Initialize ECS Systems
-	m_Systems.makeSystem<PlayerSpawn_System>(m_engine, this);
-	m_Systems.makeSystem<PlayerFreeLook_System>(m_engine);
+	m_Systems.makeSystem<PlayerSpawn_System>(engine, this);
+	m_Systems.makeSystem<PlayerFreeLook_System>(engine);
 
 	// Create Overlay Effects
-	m_loadingRing = std::make_shared<LoadingIndicator>(m_engine);
-	m_frameTime = std::make_shared<Frametime_Counter>(m_engine);
+	m_loadingRing = std::make_shared<LoadingIndicator>(engine);
+	m_frameTime = std::make_shared<Frametime_Counter>(engine);
 
 	// Create Pause Menu
-	auto pauseMenu = std::make_shared<PauseMenu>(m_engine);
+	auto pauseMenu = std::make_shared<PauseMenu>(engine);
 	m_pauseMenu = pauseMenu;
 	pauseMenu->addCallback(PauseMenu::on_resume_game, [&]() {
 		showPauseMenu(false);

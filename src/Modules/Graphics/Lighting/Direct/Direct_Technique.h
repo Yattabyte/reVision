@@ -65,7 +65,7 @@ public:
 		m_frameData->viewInfo.resize(m_cameras->size());
 		world.updateSystems(m_auxilliarySystems, deltaTime);
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::shared_ptr<RH_Volume>& rhVolume, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
 		// Exit Early
 		if (m_enabled && m_geometryReady && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shader_Lighting->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())

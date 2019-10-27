@@ -7,6 +7,8 @@
 #include <memory>
 
 
+class Engine;
+
 /** Representation of the data backing a unique viewing perspective. Not a camera, but the buffers one would render into and with. */
 struct Viewport {
 public:
@@ -15,8 +17,9 @@ public:
 	inline ~Viewport() = default;
 	/** Construct a viewport, given an offset and size.
 	@param	screenPosition	the offset relative to the bottom left of the screen.
-	@param	dimensions		the size of the viewport. */
-	Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions);
+	@param	dimensions		the size of the viewport.
+	@param	engine			the active engine. */
+	Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions, Engine* engine);
 
 
 	// Public Methods

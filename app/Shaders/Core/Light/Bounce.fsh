@@ -5,14 +5,10 @@
 
 struct Light_Struct {
 	mat4 LightVP[MAX_PERSPECTIVE_ARRAY];
-	mat4 mMatrix;
 	vec4 LightColor;
 	vec4 LightPosition;
-	vec4 LightDirection;
 	float CascadeEndClipSpace[MAX_PERSPECTIVE_ARRAY];
 	float LightIntensity;
-	float LightRadius;
-	float LightCutoff;
 	int Shadow_Spot;
 	int Light_Type;
 };
@@ -32,6 +28,7 @@ layout (location = 4) flat in mat4 CamPVMatrix;
 layout (location = 8) flat in int Shadow_Spot;
 layout (location = 9) flat in vec3 ColorModifier;
 layout (location = 10) flat in int lightIndex;
+layout (location = 11) flat in int lightType;
 
 layout (location = 0) out vec4 GI_Out1; 
 layout (location = 1) out vec4 GI_Out2; 
@@ -112,7 +109,6 @@ void CalcSpotShadow(in vec3 RHCenter, out vec2 RHUV, out mat4 lightVP, out int f
 	lightVP						= lightBuffers[lightIndex].LightVP[0];
 	finalShadowSpot				= Shadow_Spot;
 }
- 
 
 vec3 CalcShadowPos(in vec2 TexCoord, in int ShadowSpot, in mat4 InverseVP) 
 {
@@ -213,22 +209,24 @@ void BounceFromShadow(in vec3 extents, in vec3 RHCellSize, in vec3 RHCenter, in 
 void main()
 {		
 	// Get current RH's world pos
-	const vec3 bbox_max 			= BBox_Max.xyz;
-	const vec3 bbox_min 			= BBox_Min.xyz;
-	const vec3 pos					= vec3(gl_FragCoord.x, gl_FragCoord.y, gl_Layer);
-	const vec3 extents 				= (bbox_max - bbox_min).xyz; 
-	const vec3 RHCellSize			= extents / (resolution);
-	const vec3 RHCenter 			= bbox_min + pos * RHCellSize; 	
+	const vec3 bbox_max 		= BBox_Max.xyz;
+	const vec3 bbox_min 		= BBox_Min.xyz;
+	const vec3 pos				= vec3(gl_FragCoord.x, gl_FragCoord.y, gl_Layer);
+	const vec3 extents 			= (bbox_max - bbox_min).xyz; 
+	const vec3 RHCellSize		= extents / (resolution);
+	const vec3 RHCenter 		= bbox_min + pos * RHCellSize; 	
+	vec4 View_Pos				= vMatrix * vec4(RHCenter, 1);
+	View_Pos.xyz				/= View_Pos.w;
 	vec2 RHUV;
 	mat4 lightVP;
 	int finalShadowSpot;
 		
 	// RH -> light space, get sampling disk center	
-	if (lightBuffers[lightIndex].Light_Type == 0)
-		CalcDirectionalShadow(RHCenter, -(vMatrix * vec4(RHCenter, 1)).z, RHUV, lightVP, finalShadowSpot);
-	else if (lightBuffers[lightIndex].Light_Type == 1)
+	if (lightType == 0)
+		CalcDirectionalShadow(RHCenter, -View_Pos.z, RHUV, lightVP, finalShadowSpot);
+	else if (lightType == 1)
 		CalcPointShadow(RHCenter, RHUV, lightVP, finalShadowSpot);
-	else if (lightBuffers[lightIndex].Light_Type == 2)
+	else if (lightType == 2)
 		CalcSpotShadow(RHCenter, RHUV, lightVP, finalShadowSpot);
 		
 	// Perform light bounce operation
