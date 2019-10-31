@@ -70,7 +70,7 @@ public:
 		m_frameData->reflectorsToUpdate.clear();
 		m_drawData.clear();
 	}
-	inline virtual void updateTechnique(const float& deltaTime, ecsWorld& world) override final {
+	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) override final {
 		// Link together the dimensions of view info to that of the viewport vectors
 		m_frameData->viewInfo.resize(m_sceneCameras->size());
 		world.updateSystems(m_auxilliarySystems, deltaTime);

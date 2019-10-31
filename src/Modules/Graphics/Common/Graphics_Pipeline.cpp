@@ -90,7 +90,7 @@ std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime
 
 	// Update rendering techniques
 	for each (auto * tech in m_allTechniques)
-		tech->updateTechnique(deltaTime, world);
+		tech->updateCache(deltaTime, world);
 
 	// Write camera data to camera GPU buffer
 	m_cameraBuffer.beginWriting();

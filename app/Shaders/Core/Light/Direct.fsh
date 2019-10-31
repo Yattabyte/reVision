@@ -83,24 +83,25 @@ float CalcDirectionalShadow(vec4 WorldSpacePos, vec3 World_Normal, float View_De
 	const float bias 						= clamp(0.005f * tan(acos(NdotL)), 0.0f, 0.005f);
 	const vec4 scaledNormalOffset			= vec4(World_Normal * (cosAngle * ShadowSize_Recip), 0);
 	int index = 0;
-	for (; index < 4; ++index)
-		if (View_Depth <= lightBuffers[lightIndex].CascadeEndClipSpace[index])
-			break;	
-
-	// Bring fragment coordinates from world space into light space, then into texture spaces
-	const vec4 LightSpacePos				= lightBuffers[lightIndex].LightVP[index] * (WorldSpacePos + scaledNormalOffset);
-	const vec3 ProjCoords 					= LightSpacePos.xyz / LightSpacePos.w;                                  
-	const vec2 UVCoords 					= (0.5f * ProjCoords.xy + 0.5f);                                    
-	const float FragmentDepth 				= (0.5f * ProjCoords.z + 0.5f) - EPSILON - bias; 		
-	const float FactorAmt					= 1.0f / 9.0f;
-	float Factor = 0.0f, depth = 0.0f;
-	vec3 FinalCoord;
-	for (uint x = 0; x < 9; ++x) { 
-		FinalCoord 							= vec3( UVCoords + sampleOffsetDirections[x] * ShadowSize_Recip, lightBuffers[lightIndex].Shadow_Spot + index );
-		depth 								= texture( ShadowMap, FinalCoord ).r;
-		Factor 			   		  			+= (depth >= FragmentDepth) ? FactorAmt : 0.0f;	
+	for (; index < 4; ++index) {
+		if (View_Depth <= lightBuffers[lightIndex].CascadeEndClipSpace[index]) {		
+			// Bring fragment coordinates from world space into light space, then into texture spaces
+			const vec4 LightSpacePos		= lightBuffers[lightIndex].LightVP[index] * (WorldSpacePos + scaledNormalOffset);
+			const vec3 ProjCoords 			= LightSpacePos.xyz / LightSpacePos.w;                                  
+			const vec2 UVCoords 			= (0.5f * ProjCoords.xy + 0.5f);                                    
+			const float FragmentDepth 		= (0.5f * ProjCoords.z + 0.5f) - EPSILON - bias; 		
+			const float FactorAmt			= 1.0f / 9.0f;
+			float Factor = 0.0f, depth = 0.0f;
+			vec3 FinalCoord;
+			for (uint x = 0; x < 9; ++x) { 
+				FinalCoord 					= vec3( UVCoords + sampleOffsetDirections[x] * ShadowSize_Recip, lightBuffers[lightIndex].Shadow_Spot + index );
+				depth 						= texture( ShadowMap, FinalCoord ).r;
+				Factor 			   		  	+= (depth >= FragmentDepth) ? FactorAmt : 0.0f;	
+			}
+			return 							Factor;	
+		}
 	}
-	return 									Factor;
+	return 1.0f;
 } 
 
 float CalcPointShadow(vec4 World_Pos, vec3 World_Normal, vec3 LightDirection, float ViewDistance, float NdotL, float LightRadius2)                                                  
@@ -179,7 +180,7 @@ void main()
 	LightDirection							= normalize(LightDirection);
 	float SpotFactor						= clamp(1.0f - (1.0f - dot(LightDirection, lightBuffers[lightIndex].LightDirection.xyz)) * 1.0f / (1.0f - lightBuffers[lightIndex].LightCutoff), 0.0f, 1.0f);
 	if (lightType == 0) {
-		LightDirection						= lightBuffers[lightIndex].LightDirection.xyz;	
+		LightDirection						= lightBuffers[lightIndex].LightDirection.xyz;
 		SpotFactor							= 1.0f;
 	}
 	const vec3 DeltaView 					= EyePosition - data.World_Pos.xyz;  
@@ -189,21 +190,24 @@ void main()
 	const float NdotL 		 				= dot(LightDirection, data.World_Normal);
 	const float NdotL_Clamped				= max(NdotL, 0.0f);
 	const float NdotV_Clamped				= max(NdotV, 0.0f);
+	const float LightRadius2				= lightBuffers[lightIndex].LightRadius * lightBuffers[lightIndex].LightRadius;
 	
-	// Shadow
+	// Light-Specific Calculations
 	float ShadowFactor						= 1.0f;
+	float Attenuation						= 1.0f;
 	if (lightBuffers[lightIndex].Shadow_Spot >= 0) {
 		if (lightType == 0)				
 			ShadowFactor 					= CalcDirectionalShadow(data.World_Pos, data.World_Normal, -data.View_Pos.z, NdotL);		
-		else if (lightType == 1) 
-			ShadowFactor 					= CalcPointShadow(data.World_Pos, data.World_Normal.xyz, -LightDirection, ViewDistance, NdotL, lightBuffers[lightIndex].LightRadius * lightBuffers[lightIndex].LightRadius);		
-		else if (lightType == 2)
-			ShadowFactor 					= CalcSpotShadow(data.World_Pos, data.World_Normal.xyz, ViewDistance, NdotL, lightBuffers[lightIndex].LightRadius * lightBuffers[lightIndex].LightRadius);				
+		else {
+			if (lightType == 1) 
+				ShadowFactor 				= CalcPointShadow(data.World_Pos, data.World_Normal.xyz, -LightDirection, ViewDistance, NdotL, LightRadius2);		
+			else if (lightType == 2)
+				ShadowFactor 				= CalcSpotShadow(data.World_Pos, data.World_Normal.xyz, ViewDistance, NdotL, LightRadius2);				
+			
+			const float range 				= 1.0f / LightRadius2;
+			Attenuation 					= clamp(1.0f - (LightLength * LightLength) * (range * range), 0.0f, 1.0f);	
+		}
 	}	
-	
-	// Attenuation	
-	const float range 						= 1.0f / (lightBuffers[lightIndex].LightRadius * lightBuffers[lightIndex].LightRadius);
-	const float Attenuation 				= clamp(1.0f - (LightLength * LightLength) * (range * range), 0.0f, 1.0f);	
 	
 	// Direct Light	
 	vec3 Fs;

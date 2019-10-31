@@ -24,6 +24,7 @@ void Graphics_Module::initialize(Engine* engine)
 
 	// GL settings
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	glEnable(GL_DEPTH_CLAMP);
 
 	// Preferences
 	auto& preferences = m_engine->getPreferenceState();

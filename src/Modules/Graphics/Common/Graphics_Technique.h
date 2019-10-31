@@ -47,7 +47,7 @@ public:
 	inline virtual void prepareForNextFrame(const float& deltaTime) {}
 	/** Update any data needed before rendering this frame.
 	@param	deltaTime	the amount of time passed since last frame. */
-	inline virtual void updateTechnique(const float& deltaTime, ecsWorld& world) {}
+	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) {}
 	/** Perform any pre-requisite rendering passes.
 	@param	deltaTime	the amount of time passed since last frame. */
 	inline virtual void updatePass(const float& deltaTime) {}

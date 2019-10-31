@@ -81,7 +81,7 @@ public:
 					const auto tanHalfHFOV = glm::radians(ClientCamera.FOV) / 2.0f;
 					const auto tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
 					const auto near_plane = -Camera::ConstNearPlane;
-					const auto far_plane = -ClientCamera.FarPlane;
+					const auto far_plane = -std::min(light->m_radius * light->m_radius, ClientCamera.FarPlane);
 					float cascadeEnd[NUM_CASCADES + 1];
 					constexpr float lambda = 0.75f;
 					cascadeEnd[0] = near_plane;

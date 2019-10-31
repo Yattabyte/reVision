@@ -40,7 +40,7 @@ public:
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
 		m_frameData->shadowsToUpdate.clear();
 	}
-	inline virtual void updateTechnique(const float& deltaTime, ecsWorld& world) override final {
+	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) override final {
 		world.updateSystems(m_auxilliarySystems, deltaTime);
 	}
 	inline virtual void updatePass(const float& deltaTime) override final {

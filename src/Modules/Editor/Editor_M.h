@@ -155,6 +155,9 @@ private:
 	void addToRecentList(const std::string& name);
 	/***/
 	void populateRecentList();
+	/** Save the level with a specific name.
+	@param	name			the level name to save. */
+	void saveLevel_Internal(const std::string& name);
 
 
 

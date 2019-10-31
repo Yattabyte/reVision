@@ -150,7 +150,7 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 				m_engine->getManager_Messages().statement("Autosaving Map...");
 				std::filesystem::path currentPath(m_currentLevelName);
 				currentPath.replace_extension(".autosave");
-				saveLevel(currentPath.string());
+				saveLevel_Internal(currentPath.string());
 			}
 		}
 		else
@@ -322,30 +322,34 @@ void LevelEditor_Module::saveLevel(const std::string& name)
 	if (name == "")
 		saveLevelDialogue();
 	else {
-		std::filesystem::path currentPath(m_currentLevelName);
-		currentPath.replace_extension(".bmap");
-		m_currentLevelName = currentPath.string();
-		auto& ecsWorld = getActiveWorld();
-		const auto data = ecsWorld.serializeEntities(ecsWorld.getEntityHandles());
-
-		// Write ECS data to disk
-		std::fstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\" + m_currentLevelName, std::ios::binary | std::ios::out);
-		if (!mapFile.is_open())
-			m_engine->getManager_Messages().error("Cannot write the binary map file to disk!");
-		else
-			mapFile.write(data.data(), (std::streamsize)data.size());
-		mapFile.close();
+		saveLevel_Internal(m_currentLevelName);
 		addToRecentList(m_currentLevelName);
 
 		// Delete Autosaves
-		currentPath.replace_extension(".autosave");
-		currentPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\" + currentPath.string());
-		if (std::filesystem::exists(currentPath) && !std::filesystem::is_directory(currentPath))
-			std::filesystem::remove(currentPath);
+		std::filesystem::path currentPath(m_currentLevelName);
+		if (currentPath.has_extension() && currentPath.extension() != ".autosave") {
+			currentPath.replace_extension(".autosave");
+			currentPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\" + currentPath.string());
+			if (std::filesystem::exists(currentPath) && !std::filesystem::is_directory(currentPath))
+				std::filesystem::remove(currentPath);
+		}
 
-		// Self Explanatory
 		m_unsavedChanges = false;
 	}
+}
+
+void LevelEditor_Module::saveLevel_Internal(const std::string& name)
+{
+	auto& ecsWorld = getActiveWorld();
+	const auto data = ecsWorld.serializeEntities(ecsWorld.getEntityHandles());
+
+	// Write ECS data to disk
+	std::fstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\" + name, std::ios::binary | std::ios::out);
+	if (!mapFile.is_open())
+		m_engine->getManager_Messages().error("Cannot write the binary map file to disk!");
+	else
+		mapFile.write(data.data(), (std::streamsize)data.size());
+	mapFile.close();
 }
 
 void LevelEditor_Module::saveLevel()
