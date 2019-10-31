@@ -29,6 +29,7 @@ public:
 
 	// Public Attributes
 	std::shared_ptr<ImGUI_Element>
+		m_uiHotkeys,
 		m_uiCamController,
 		m_uiRotIndicator,
 		m_uiTitlebar,

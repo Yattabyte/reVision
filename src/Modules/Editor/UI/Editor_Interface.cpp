@@ -1,4 +1,5 @@
 #include "Modules/Editor/UI/Editor_Interface.h"
+#include "Modules/Editor/UI/Hotkeys.h"
 #include "Modules/Editor/UI/CameraController.h"
 #include "Modules/Editor/UI/RotationIndicator.h"
 #include "Modules/Editor/UI/TitleBar.h"
@@ -29,6 +30,7 @@ Editor_Interface::~Editor_Interface()
 Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
+	m_uiHotkeys = std::make_shared<Hotkeys>(engine, editor);
 	m_uiCamController = std::make_shared<CameraController>(engine);
 	m_uiRotIndicator = std::make_shared<RotationIndicator>(engine);
 	m_uiTitlebar = std::make_shared<TitleBar>(engine, editor);
@@ -58,9 +60,9 @@ Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;	// Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		// Enable Gamepad Controls
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 	io.ConfigDockingWithShift = true;
 	ImGuiStyle& style = ImGui::GetStyle();
@@ -100,7 +102,7 @@ void Editor_Interface::tick(const float& deltaTime)
 
 	// Process all UI elements
 	const auto elements = {
-		m_uiCamController,m_uiRotIndicator,m_uiTitlebar,m_uiPrefabs,m_uiSceneInspector,m_uiEntityInspector,m_uiSettings,m_uiRecoverDialogue,m_uiOpenDialogue,m_uiSaveDialogue,m_uiUnsavedDialogue,m_uiMissingDialogue,
+		m_uiHotkeys,m_uiCamController,m_uiRotIndicator,m_uiTitlebar,m_uiPrefabs,m_uiSceneInspector,m_uiEntityInspector,m_uiSettings,m_uiRecoverDialogue,m_uiOpenDialogue,m_uiSaveDialogue,m_uiUnsavedDialogue,m_uiMissingDialogue,
 	};
 	for each (auto & element in elements)
 		element->tick(deltaTime);
