@@ -18,7 +18,6 @@ void Settings::tick(const float& deltaTime)
 void Settings::tickMainDialogue()
 {
 	if (m_open) {
-		ImGui::SetNextWindowSize({ 400, 600 }, ImGuiCond_Appearing);
 		if (ImGui::Begin("Preferences", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
 			// Header
 			ImGui::Text("Configurable level editor settings:");

@@ -13,6 +13,7 @@
 #include "Modules/Editor/UI/MissingFileDialogue.h"
 #include "Modules/Editor/UI/Settings.h"
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "examples/imgui_impl_glfw.h"
 #include "examples/imgui_impl_opengl3.h"
 #include "Engine.h"
@@ -86,19 +87,58 @@ void Editor_Interface::tick(const float& deltaTime)
 	bool show_demo_window = true;
 	ImGui::ShowDemoWindow(&show_demo_window);
 
-	// Container for left side of the screen
-	ImGui::SetNextWindowSize({ 350.0f, m_renderSize.y - 18.0f }, ImGuiCond_Appearing);
-	ImGui::SetNextWindowPos({ 0, 18.0f }, ImGuiCond_Appearing);
-	ImGui::Begin("Left Panel", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus);
-	ImGui::DockSpace(ImGui::GetID("LeftDock"), ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+	// Prepare the docking regions
+	const auto dockspace_size = ImVec2(m_renderSize.x / 5.0F, m_renderSize.y);
+	const auto window_flags = ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_MenuBar |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoBringToFrontOnFocus |
+		ImGuiWindowFlags_NoNavFocus |
+		ImGuiWindowFlags_NoDocking |
+		ImGuiWindowFlags_NoBackground;
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImGui::SetNextWindowBgAlpha(0.0f);
+	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Appearing);
+	ImGui::SetNextWindowSize(dockspace_size, ImGuiCond_Appearing);
+	ImGui::Begin("Docking Area A", NULL, window_flags);
+	auto dockspace_id_a = ImGui::GetID("Docking Space A");
+	if (ImGui::DockBuilderGetNode(dockspace_id_a) == NULL) {
+		ImGui::DockBuilderRemoveNode(dockspace_id_a); // Clear out existing layout
+		ImGui::DockBuilderAddNode(dockspace_id_a, ImGuiDockNodeFlags_DockSpace); // Add empty node
+		ImGui::DockBuilderSetNodeSize(dockspace_id_a, dockspace_size);
+
+		auto dock_id_top = dockspace_id_a;
+		auto dock_id_bottom = ImGui::DockBuilderSplitNode(dock_id_top, ImGuiDir_Down, 0.50f, NULL, &dock_id_top);
+
+		ImGui::DockBuilderDockWindow("Prefabs", dock_id_top);
+		ImGui::DockBuilderDockWindow("Preferences", dock_id_bottom);
+		ImGui::DockBuilderFinish(dockspace_id_a);
+	}
+	ImGui::DockSpace(dockspace_id_a, ImVec2(0, 0), ImGuiDockNodeFlags_PassthruCentralNode);
 	ImGui::End();
 
-	// Container for right side of the screen
-	ImGui::SetNextWindowSize({ 350.0f, m_renderSize.y - 18.0f }, ImGuiCond_Appearing);
-	ImGui::SetNextWindowPos({ m_renderSize.x - 350.0f, 18.0f }, ImGuiCond_Appearing);
-	ImGui::Begin("Right Panel", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus);
-	ImGui::DockSpace(ImGui::GetID("RightDock"), ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+	ImGui::SetNextWindowPos(ImVec2(m_renderSize.x - (m_renderSize.x / 5.0F), 0), ImGuiCond_Appearing);
+	ImGui::SetNextWindowSize(dockspace_size, ImGuiCond_Appearing);
+	ImGui::Begin("Docking Area B", NULL, window_flags);
+	auto dockspace_id_b = ImGui::GetID("Docking Space B");
+	if (ImGui::DockBuilderGetNode(dockspace_id_b) == NULL) {
+		ImGui::DockBuilderRemoveNode(dockspace_id_b); // Clear out existing layout
+		ImGui::DockBuilderAddNode(dockspace_id_b, ImGuiDockNodeFlags_DockSpace); // Add empty node
+		ImGui::DockBuilderSetNodeSize(dockspace_id_b, dockspace_size);
+
+		auto dock_id_top = dockspace_id_b;
+		auto dock_id_bottom = ImGui::DockBuilderSplitNode(dock_id_top, ImGuiDir_Down, 0.50f, NULL, &dock_id_top);
+
+		ImGui::DockBuilderDockWindow("Scene Inspector", dock_id_top);
+		ImGui::DockBuilderDockWindow("Entity Inspector", dock_id_bottom);
+		ImGui::DockBuilderFinish(dockspace_id_b);
+	}
+	ImGui::DockSpace(dockspace_id_b, ImVec2(0, 0), ImGuiDockNodeFlags_PassthruCentralNode);
 	ImGui::End();
+	ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
 
 	// Process all UI elements
 	const auto elements = {

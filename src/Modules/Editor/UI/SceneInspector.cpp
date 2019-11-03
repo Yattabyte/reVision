@@ -16,7 +16,6 @@ void SceneInspector::tick(const float& deltaTime)
 	if (m_open) {
 		auto& ecsWorld = m_editor->getActiveWorld();
 		const auto& selectedEntities = m_editor->getSelection();
-		ImGui::SetNextWindowDockID(ImGui::GetID("RightDock"), ImGuiCond_FirstUseEver);
 		if (ImGui::Begin("Scene Inspector", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
 			static ImGuiTextFilter filter;
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);

@@ -316,7 +316,6 @@ void Prefabs::tickThumbnails(const float& deltaTime)
 
 void Prefabs::tickWindow(const float& deltaTime)
 {
-	ImGui::SetNextWindowDockID(ImGui::GetID("LeftDock"), ImGuiCond_FirstUseEver);
 	enum PrefabOptions {
 		none,
 		open,
@@ -345,7 +344,7 @@ void Prefabs::tickWindow(const float& deltaTime)
 		ImGui::Spacing();
 		ImGuiStyle& style = ImGui::GetStyle();
 		auto columnCount = int(float(ImGui::GetWindowContentRegionMax().x) / float((ImGui::GetStyle().ItemSpacing.x * 2) + 50));
-		columnCount < 1 ? 1 : columnCount;
+		columnCount = columnCount < 1 ? 1 : columnCount;
 		ImGui::Columns(columnCount, nullptr, false);
 		int count(0);
 		for each (const auto & prefab in m_prefabs) {
