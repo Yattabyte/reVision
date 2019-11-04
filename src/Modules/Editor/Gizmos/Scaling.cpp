@@ -61,7 +61,7 @@ Scaling_Gizmo::Scaling_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	glVertexArrayVertexBuffer(m_axisVAO, 0, m_axisVBO, 0, sizeof(glm::vec3));
 }
 
-bool Scaling_Gizmo::checkMouseInput(const float& deltaTime)
+bool Scaling_Gizmo::checkMouseInput(const float&)
 {
 	// See if the mouse intersects any entities.
 	checkMouseHover();
@@ -76,7 +76,7 @@ bool Scaling_Gizmo::checkMouseInput(const float& deltaTime)
 	return false;
 }
 
-void Scaling_Gizmo::render(const float& deltaTime)
+void Scaling_Gizmo::render(const float&)
 {
 	// Safety check first
 	if (m_model->existsYet() && m_gizmoShader->existsYet() && m_editor->getSelection().size()) {
@@ -85,7 +85,6 @@ void Scaling_Gizmo::render(const float& deltaTime)
 
 		// Get camera matrices
 		const auto& position = m_transform.m_position;
-		const auto& camPos = m_editor->getCameraPosition();
 		const auto& pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
 		const auto& vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
 		const auto trans = glm::translate(glm::mat4(1.0f), position);
@@ -349,6 +348,4 @@ bool Scaling_Gizmo::checkMousePress()
 		m_editor->doReversableAction(std::make_shared<Scale_Selection_Command>(m_engine, m_editor, gridSnappedScale, m_selectedAxes));
 		return true;
 	}
-
-	return false;
 }

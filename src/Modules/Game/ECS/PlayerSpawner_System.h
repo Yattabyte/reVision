@@ -34,10 +34,9 @@ public:
 
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override final {
-		auto& graphicsModule = m_engine->getModule_Graphics();
 		size_t playerCount(0ull);
 		for each (const auto & componentParam in components) {
-			auto* spawnComponent = static_cast<PlayerSpawn_Component*>(componentParam[0]);
+			//auto* spawnComponent = static_cast<PlayerSpawn_Component*>(componentParam[0]);
 			auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);
 
 			auto& transform = transformComponent->m_worldTransform;

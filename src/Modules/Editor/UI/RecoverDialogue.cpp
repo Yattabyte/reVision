@@ -9,7 +9,7 @@ RecoverDialogue::RecoverDialogue(Engine* engine, LevelEditor_Module* editor)
 	m_open = false;
 }
 
-void RecoverDialogue::tick(const float& deltaTime)
+void RecoverDialogue::tick(const float&)
 {
 	tickMainDialogue();
 }

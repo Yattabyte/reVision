@@ -19,7 +19,7 @@ OpenDialogue::OpenDialogue(Engine* engine, LevelEditor_Module* editor)
 	m_iconRefresh = Shared_Texture(engine, "Editor//iconRefresh.png");
 }
 
-void OpenDialogue::tick(const float& deltaTime)
+void OpenDialogue::tick(const float&)
 {
 	tickMainDialogue();
 }

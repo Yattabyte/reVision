@@ -59,7 +59,7 @@ RotationIndicator::RotationIndicator(Engine* engine)
 	glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 }
 
-void RotationIndicator::tick(const float& deltaTime)
+void RotationIndicator::tick(const float&)
 {
 	if (m_open && m_3dIndicator->existsYet() && m_colorPalette->existsYet() && m_shader->existsYet()) {
 		// Set up state
@@ -98,7 +98,7 @@ void RotationIndicator::tick(const float& deltaTime)
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::SetNextWindowPos(ImVec2((m_renderSize.x / 5), 18), ImGuiCond_Appearing);
+		ImGui::SetNextWindowPos(ImVec2(((float)m_renderSize.x / 5.0F), 18.0F), ImGuiCond_Appearing);
 		if (ImGui::Begin("Rotation Indicator", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground))
 			ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_texID), { 128.0f, 128.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 		ImGui::End();

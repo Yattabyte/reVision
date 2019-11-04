@@ -10,7 +10,7 @@ MissingFileDialogue::MissingFileDialogue(Engine* engine, LevelEditor_Module* edi
 	m_open = false;
 }
 
-void MissingFileDialogue::tick(const float& deltaTime)
+void MissingFileDialogue::tick(const float&)
 {
 	// Draw 'Missing File' notification
 	if (m_open && !m_fileName.empty()) {

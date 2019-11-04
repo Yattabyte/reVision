@@ -183,7 +183,7 @@ struct Shadow_Component final : public ecsComponent<Shadow_Component, shadowName
 	inline std::vector<char> serialize() {
 		return {};
 	}
-	inline void deserialize(const char* data) {
+	inline void deserialize(const char*) {
 		m_cameras = {};
 	}
 };
@@ -209,7 +209,7 @@ struct Reflector_Component final : public ecsComponent<Reflector_Component, refl
 	inline std::vector<char> serialize() {
 		return {};
 	}
-	inline void deserialize(const char* data) {
+	inline void deserialize(const char*) {
 		m_cameras = {};
 	}
 };
@@ -229,7 +229,7 @@ struct Collider_Component final : public ecsComponent<Collider_Component, collid
 		/**@todo*/
 		return {};
 	}
-	inline void deserialize(const char* data) {
+	inline void deserialize(const char*) {
 		/**@todo*/
 	}
 };

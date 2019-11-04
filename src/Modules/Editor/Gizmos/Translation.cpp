@@ -61,7 +61,7 @@ Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	glVertexArrayVertexBuffer(m_axisVAO, 0, m_axisVBO, 0, sizeof(glm::vec3));
 }
 
-bool Translation_Gizmo::checkMouseInput(const float& deltaTime)
+bool Translation_Gizmo::checkMouseInput(const float&)
 {
 	// See if the mouse intersects any entities.
 	checkMouseHover();
@@ -76,7 +76,7 @@ bool Translation_Gizmo::checkMouseInput(const float& deltaTime)
 	return false;
 }
 
-void Translation_Gizmo::render(const float& deltaTime)
+void Translation_Gizmo::render(const float&)
 {
 	// Safety check first
 	if (m_model->existsYet() && m_gizmoShader->existsYet() && m_editor->getSelection().size()) {
@@ -85,7 +85,6 @@ void Translation_Gizmo::render(const float& deltaTime)
 
 		// Get camera matrices
 		const auto& position = m_transform.m_position;
-		const auto& camPos = m_editor->getCameraPosition();
 		const auto& pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
 		const auto& vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
 		const auto trans = glm::translate(glm::mat4(1.0f), position);
@@ -210,12 +209,12 @@ void Translation_Gizmo::checkMouseHover()
 
 bool Translation_Gizmo::checkMousePress()
 {
-	const auto& position = m_transform.m_position;
 	const auto& clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
 	const auto ray_origin = clientCamera.EyePosition;
 
 	// Check if the user selected an axis
 	if (m_selectedAxes == NONE && !ImGui::IsMouseDragging(0)) {
+		const auto& position = m_transform.m_position;
 		m_selectedAxes = m_hoveredAxes;
 		m_startingOffset = position;
 		// Set the appropriate selected axis

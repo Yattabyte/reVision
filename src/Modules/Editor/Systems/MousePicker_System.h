@@ -131,9 +131,10 @@ private:
 				v0 /= v0.w;
 				v1 /= v1.w;
 				v2 /= v2.w;
+				glm::vec2 unused;
 				if (RayTriangleIntersection(
 					ray_origin, ray_direction,
-					glm::vec3(v0), glm::vec3(v1), glm::vec3(v2), glm::vec2(),
+					glm::vec3(v0), glm::vec3(v1), glm::vec3(v2), unused,
 					distance
 				)) {
 					distanceFromScreen = distance;
@@ -166,7 +167,6 @@ private:
 	@return							true on successful intersection, false if disjoint. */
 	bool RayBBox(Transform_Component* transformComponent, BoundingBox_Component* bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) {
 		float distance;
-		const auto& position = transformComponent->m_worldTransform.m_position;
 		const auto& scale = transformComponent->m_worldTransform.m_scale;
 		Transform newTransform = transformComponent->m_worldTransform;
 		newTransform.m_position += bBox->m_positionOffset;

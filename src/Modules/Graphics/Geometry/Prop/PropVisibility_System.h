@@ -45,7 +45,7 @@ public:
 
 					viewInfo.skeletonData.push_back(skeletonComponent ? index : -1); // get skeleton ID if this entity has one
 					// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
-					if ((count >= 100) && bboxComponent && bboxComponent->m_cameraCollision == BoundingSphere_Component::OUTSIDE) {
+					if ((count >= 100) && bboxComponent && bboxComponent->m_cameraCollision == BoundingBox_Component::OUTSIDE) {
 						// Allow occlusion culling
 						viewInfo.cullingDrawData.push_back(glm::ivec4(36, 1, 0, 1));
 						viewInfo.renderingDrawData.push_back(glm::ivec4(count, 0, offset, 1));

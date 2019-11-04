@@ -11,7 +11,7 @@ SceneInspector::SceneInspector(Engine* engine, LevelEditor_Module* editor)
 	m_open = true;
 }
 
-void SceneInspector::tick(const float& deltaTime)
+void SceneInspector::tick(const float&)
 {
 	if (m_open) {
 		auto& ecsWorld = m_editor->getActiveWorld();
@@ -25,13 +25,15 @@ void SceneInspector::tick(const float& deltaTime)
 
 			size_t displayCount(0ull);
 			std::function<void(const EntityHandle&)> displayEntity = [&](const EntityHandle& entityHandle) {
-				bool entity_or_components_pass_filter = false;
 				if (auto* entity = ecsWorld.getEntity(entityHandle)) {
+					bool entity_or_components_pass_filter = false;
 					auto& entityName = entity->m_name;
 					const auto& components = entity->m_components;
-					entity_or_components_pass_filter += filter.PassFilter(entityName.c_str());
+					if (filter.PassFilter(entityName.c_str()))
+						entity_or_components_pass_filter = true;
 					for (const auto& [compID, fn, compHandle] : components)
-						entity_or_components_pass_filter += filter.PassFilter(ecsWorld.getComponent(entityHandle, compID)->m_name);
+						if (filter.PassFilter(ecsWorld.getComponent(entityHandle, compID)->m_name))
+							entity_or_components_pass_filter = true;
 
 					// Check if the entity or its components matched search criteria
 					if (entity_or_components_pass_filter) {

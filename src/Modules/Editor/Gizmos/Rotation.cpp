@@ -75,7 +75,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	glVertexArrayVertexBuffer(m_diskVAO, 0, m_diskVBO, 0, sizeof(glm::vec3));
 }
 
-bool Rotation_Gizmo::checkMouseInput(const float& deltaTime)
+bool Rotation_Gizmo::checkMouseInput(const float&)
 {
 	// See if the mouse intersects any entities
 	checkMouseHover();
@@ -90,7 +90,7 @@ bool Rotation_Gizmo::checkMouseInput(const float& deltaTime)
 	return false;
 }
 
-void Rotation_Gizmo::render(const float& deltaTime)
+void Rotation_Gizmo::render(const float&)
 {
 	// Safety check first
 	if (m_model->existsYet() && m_gizmoShader->existsYet() && m_editor->getSelection().size()) {
@@ -99,7 +99,6 @@ void Rotation_Gizmo::render(const float& deltaTime)
 
 		// Get camera matrices
 		const auto& position = m_transform.m_position;
-		const auto& camPos = m_editor->getCameraPosition();
 		const auto& pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
 		const auto& vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
 		const auto trans = glm::translate(glm::mat4(1.0f), position);
@@ -162,7 +161,6 @@ void Rotation_Gizmo::checkMouseHover()
 {
 	const auto& actionState = m_engine->getActionState();
 	const auto& position = m_transform.m_position;
-	const auto& rotation = m_transform.m_orientation;
 	const auto& clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
 	const auto ray_origin = clientCamera.EyePosition;
 	const auto ray_nds = glm::vec2(2.0f * actionState.at(ActionState::MOUSE_X) / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState.at(ActionState::MOUSE_Y)) / m_renderSize.y);

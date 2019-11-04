@@ -80,7 +80,7 @@ private:
 			}
 
 			// Perform shadow culling
-			auto& pipeline = m_engine->getModule_Graphics().getPipeline();
+			auto pipeline = m_engine->getModule_Graphics().getPipeline();
 			pipeline->cullShadows(deltaTime, perspectives);
 			for (auto& [importance, time, shadowSpot, camera] : m_frameData->shadowsToUpdate)
 				m_frameData->shadowFBO.clear(shadowSpot, 1);

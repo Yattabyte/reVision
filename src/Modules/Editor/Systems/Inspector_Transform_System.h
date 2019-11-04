@@ -92,7 +92,7 @@ public:
 			}
 
 			// Rotation
-			auto& rotInput = glm::degrees(glm::eulerAngles(transComponent->m_localTransform.m_orientation));
+			auto rotInput = glm::degrees(glm::eulerAngles(transComponent->m_localTransform.m_orientation));
 			if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotInput))) {
 				struct Rotate_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;

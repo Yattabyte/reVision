@@ -10,7 +10,7 @@ Settings::Settings(Engine* engine, LevelEditor_Module* editor)
 	m_open = true;
 }
 
-void Settings::tick(const float& deltaTime)
+void Settings::tick(const float&)
 {
 	tickMainDialogue();
 }

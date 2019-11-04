@@ -10,7 +10,7 @@ UnsavedChangesDialogue::UnsavedChangesDialogue(Engine* engine, LevelEditor_Modul
 	m_open = false;
 }
 
-void UnsavedChangesDialogue::tick(const float& deltaTime)
+void UnsavedChangesDialogue::tick(const float&)
 {
 	// Draw 'Delete Level' confirmation
 	if (m_open) {

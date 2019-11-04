@@ -458,7 +458,7 @@ std::pair<EntityHandle, ecsEntity*> ecsWorld::deserializeEntity(const char* data
 	}
 
 	// Make the entity
-	auto& thisEntityHandle = makeEntity(components.data(), components.size(), std::string(entityNameChars, nameSize), desiredHandle, parentHandle);
+	auto thisEntityHandle = makeEntity(components.data(), components.size(), std::string(entityNameChars, nameSize), desiredHandle, parentHandle);
 	auto* thisEntity = getEntity(thisEntityHandle);
 
 	// Make all child entities
@@ -550,9 +550,6 @@ std::vector<std::vector<ecsBaseComponent*>> ecsWorld::getRelevantComponents(cons
 					}
 					if (isValid)
 						components.push_back(componentParam);
-				}
-				else {
-					bool qwe = true;
 				}
 			}
 		}

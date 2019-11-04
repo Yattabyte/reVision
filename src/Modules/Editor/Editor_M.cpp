@@ -290,7 +290,7 @@ void LevelEditor_Module::openLevel(const std::string& name)
 		m_world = ecsWorld();
 		const auto path = Engine::Get_Current_Dir() + "\\Maps\\" + name;
 		std::vector<char> ecsData(std::filesystem::file_size(path));
-		std::ifstream mapFile(path, std::ios::binary | std::ios::beg);
+		std::ifstream mapFile(path, std::ios::beg);
 		if (!mapFile.is_open())
 			m_engine->getManager_Messages().error("Cannot read the binary map file from disk!");
 		else
@@ -435,7 +435,7 @@ void LevelEditor_Module::addToRecentList(const std::string& name)
 		m_recentLevels.resize(15);
 
 	// Dump recent-list data to disk
-	std::ofstream file(Engine::Get_Current_Dir() + "\\Maps\\recent.editor", std::ios::out | std::ios::beg);
+	std::ofstream file(Engine::Get_Current_Dir() + "\\Maps\\recent.editor", std::ios::beg);
 	if (!file.is_open())
 		m_engine->getManager_Messages().error("Cannot write the recent level list to disk!");
 	else
@@ -448,7 +448,7 @@ void LevelEditor_Module::populateRecentList()
 {
 	// Fetch recent-list data from disk
 	m_recentLevels.clear();
-	std::ifstream file(Engine::Get_Current_Dir() + "\\Maps\\recent.editor", std::ios::in | std::ios::beg);
+	std::ifstream file(Engine::Get_Current_Dir() + "\\Maps\\recent.editor", std::ios::beg);
 	if (!file.is_open())
 		m_engine->getManager_Messages().error("Cannot read the recent level list from disk!");
 	else {
@@ -650,7 +650,6 @@ void LevelEditor_Module::mergeSelection()
 		}
 	};
 
-	auto& selection = m_mouseGizmo->getSelection();
 	if (m_mouseGizmo->getSelection().size())
 		doReversableAction(std::make_shared<Merge_Selection_Command>(m_engine, this));
 }
@@ -698,7 +697,7 @@ void LevelEditor_Module::groupSelection()
 				ecsWorld.removeEntity(m_rootUUID);
 			}
 		}
-		virtual bool join(Editor_Command* const other) override final {
+		virtual bool join(Editor_Command* const) override final {
 			// Disallow Joining
 			return false;
 		}
@@ -738,7 +737,7 @@ void LevelEditor_Module::ungroupSelection()
 				for each (const auto & childUUID in m_children[childIndex++])
 					ecsWorld.parentEntity(enityUUID, childUUID);
 		}
-		virtual bool join(Editor_Command* const other) override final {
+		virtual bool join(Editor_Command* const) override final {
 			// Disallow Joining
 			return false;
 		}
@@ -795,7 +794,7 @@ void LevelEditor_Module::deleteSelection()
 			while (dataRead < m_data.size() && uuidIndex < m_uuids.size())
 				ecsWorld.deserializeEntity(m_data.data(), m_data.size(), dataRead, EntityHandle(), m_uuids[uuidIndex]);
 		}
-		virtual bool join(Editor_Command* const other) override final {
+		virtual bool join(Editor_Command* const) override final {
 			// Disallow Joining
 			return false;
 		}
@@ -833,7 +832,7 @@ void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const c
 				}
 			}
 		}
-		virtual bool join(Editor_Command* const other) override final {
+		virtual bool join(Editor_Command* const) override final {
 			// Disallow Joining
 			return false;
 		}
@@ -867,7 +866,7 @@ void LevelEditor_Module::deleteComponent(const EntityHandle& entityHandle, const
 				m_editor->getActiveWorld().makeComponent(m_entityHandle, copy.get(), m_componentHandle);
 			}
 		}
-		virtual bool join(Editor_Command* const other) override final {
+		virtual bool join(Editor_Command* const) override final {
 			// Disallow Joining
 			return false;
 		}
@@ -920,7 +919,7 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const En
 			for each (const auto & entityHandle in m_uuids)
 				ecsWorld.removeEntity(entityHandle);
 		}
-		virtual bool join(Editor_Command* const other) override final {
+		virtual bool join(Editor_Command* const) override final {
 			// Disallow Joining
 			return false;
 		}

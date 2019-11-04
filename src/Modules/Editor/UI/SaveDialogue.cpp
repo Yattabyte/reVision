@@ -19,7 +19,7 @@ SaveDialogue::SaveDialogue(Engine* engine, LevelEditor_Module* editor)
 	m_iconRefresh = Shared_Texture(engine, "Editor//iconRefresh.png");
 }
 
-void SaveDialogue::tick(const float& deltaTime)
+void SaveDialogue::tick(const float&)
 {
 	tickMainDialogue();
 }

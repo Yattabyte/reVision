@@ -44,7 +44,6 @@ void Prefabs::tick(const float& deltaTime)
 void Prefabs::addPrefab(const std::vector<char>& entityData)
 {
 	const auto addPrefab = [&](Prefabs::Entry& prefab) {
-		size_t dataRead(0ull), handleCount(0ull);
 		glm::vec3 center(0.0f);
 		std::vector<Transform_Component*> transformComponents;
 		for each (const auto & entityHandle in prefab.entityHandles) {
@@ -127,7 +126,6 @@ void Prefabs::populatePrefabs(const std::string& directory)
 		m_prefabs.emplace_back(Entry{ "back", std::filesystem::relative(path.parent_path(), rootPath).string(), Entry::back, {} });
 
 	const auto addPrefab = [&](Prefabs::Entry& prefab) {
-		size_t dataRead(0ull), handleCount(0ull);
 		glm::vec3 center(0.0f);
 		std::vector<Transform_Component*> transformComponents;
 		for each (const auto & entityHandle in prefab.entityHandles) {
@@ -182,7 +180,8 @@ void Prefabs::populatePrefabs(const std::string& directory)
 			a.m_localTransform.update();
 			c.m_modelName = "FireHydrant\\FireHydrantMesh.obj";
 			ecsBaseComponent* entityComponents[] = { &a, &b, &c };
-			addPrefab(Prefabs::Entry{ "Basic Model", "", Entry::file, {m_previewWorld.makeEntity(entityComponents, 3ull, "Basic Model")} });
+			Prefabs::Entry entry{ "Basic Model", "", Entry::file, {m_previewWorld.makeEntity(entityComponents, 3ull, "Basic Model")} };
+			addPrefab(entry);
 		}
 		/*// Basic Sun Prefab
 		{
@@ -220,7 +219,7 @@ void Prefabs::populatePrefabs(const std::string& directory)
 		Prefabs::Entry newPrefab{ entry.path().filename().string(), std::filesystem::relative(entry, rootPath).string() };
 		if (entry.is_regular_file()) {
 			newPrefab.type = Entry::file;
-			std::ifstream prefabFile(entry, std::ios::binary | std::ios::beg);
+			std::ifstream prefabFile(entry, std::ios::beg);
 			if (prefabFile.is_open()) {
 				// To Do: Remove serial data from entry class
 				const auto size = std::filesystem::file_size(entry);
@@ -236,7 +235,7 @@ void Prefabs::populatePrefabs(const std::string& directory)
 		}
 		else if (entry.is_directory())
 			newPrefab.type = Entry::folder;
-		addPrefab(std::move(newPrefab));
+		addPrefab(newPrefab);
 	}
 
 	// Add sun tilted 45 deg to preview world to show off prefabs
@@ -314,7 +313,7 @@ void Prefabs::tickThumbnails(const float& deltaTime)
 	}
 }
 
-void Prefabs::tickWindow(const float& deltaTime)
+void Prefabs::tickWindow(const float&)
 {
 	enum PrefabOptions {
 		none,
@@ -342,7 +341,6 @@ void Prefabs::tickWindow(const float& deltaTime)
 		const auto directory = "\\Prefabs\\" + m_prefabSubDirectory;
 		ImGui::Text(directory.c_str());
 		ImGui::Spacing();
-		ImGuiStyle& style = ImGui::GetStyle();
 		auto columnCount = int(float(ImGui::GetWindowContentRegionMax().x) / float((ImGui::GetStyle().ItemSpacing.x * 2) + 50));
 		columnCount = columnCount < 1 ? 1 : columnCount;
 		ImGui::Columns(columnCount, nullptr, false);
@@ -405,7 +403,6 @@ void Prefabs::tickWindow(const float& deltaTime)
 	ImGui::End();
 
 	// Do something with the option chosen
-	bool openDelete = true, openRename = true;
 	switch (prefabOption) {
 	case open:
 		openPrefabEntry();
@@ -419,7 +416,7 @@ void Prefabs::tickWindow(const float& deltaTime)
 	}
 }
 
-void Prefabs::tickPopupDialogues(const float& deltaTime)
+void Prefabs::tickPopupDialogues(const float&)
 {
 	// Draw 'Delete Prefab' confirmation
 	ImGui::SetNextWindowSize({ 350, 90 }, ImGuiCond_Appearing);

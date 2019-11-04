@@ -88,7 +88,7 @@ void Editor_Interface::tick(const float& deltaTime)
 	ImGui::ShowDemoWindow(&show_demo_window);
 
 	// Prepare the docking regions
-	const auto dockspace_size = ImVec2(m_renderSize.x / 5.0F, m_renderSize.y);
+	const auto dockspace_size = ImVec2((float)m_renderSize.x / 5.0F, (float)m_renderSize.y);
 	const auto window_flags = ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_MenuBar |
 		ImGuiWindowFlags_NoMove |
