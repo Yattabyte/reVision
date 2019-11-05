@@ -57,7 +57,7 @@ private:
 	std::string m_prefabSubDirectory = "";
 	float m_updateTime = 0.0f;
 	int m_thumbSize = 256;
-	int m_selectedIndex = -1;
+	int m_selectedIndex = -1, m_hoverIndex = -1;
 	struct Entry {
 		std::string name = "", path = "";
 		enum type {
@@ -75,6 +75,12 @@ private:
 	ecsWorld m_previewWorld;
 	std::shared_ptr<Viewport> m_viewport;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
+	EntityHandle m_sunHandle;
+
+
+	// Private Methods
+	/***/
+	void addPrefab(Prefabs::Entry& prefab);
 };
 
 #endif // PREFABS_H

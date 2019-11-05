@@ -281,11 +281,11 @@ void Engine::printBoilerPlate()
 	m_messageManager.statement("* > Library Info:\t\t\t*");
 	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t\t*");
 	m_messageManager.statement("*  - Bullet       " + std::to_string(BT_BULLET_VERSION) + "\t\t\t*");
+	m_messageManager.statement("*  - Dear ImGui   " + std::string(ImGui::GetVersion()) + "\t\t*");
 	m_messageManager.statement("*  - Free Image   " + Image_IO::Get_Version() + "\t\t*");
 	m_messageManager.statement("*  - GLAD         " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor) + "\t\t\t*");
 	m_messageManager.statement("*  - GLFW         " + std::string(glfwGetVersionString(), 5) + "\t\t\t*");
 	m_messageManager.statement("*  - GLM          " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION) + "\t\t*");;
-	m_messageManager.statement("*  - Dear ImGui   " + std::string(ImGui::GetVersion()) + "\t\t*");
 	m_messageManager.statement("*  - SoLoud       " + std::to_string(m_soundManager.GetVersion()) + "\t\t*");
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > Graphics Info:\t\t\t*");

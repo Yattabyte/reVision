@@ -41,52 +41,53 @@ void Prefabs::tick(const float& deltaTime)
 	}
 }
 
+void Prefabs::addPrefab(Prefabs::Entry& prefab)
+{
+	glm::vec3 center(0.0f);
+	std::vector<Transform_Component*> transformComponents;
+	for each (const auto & entityHandle in prefab.entityHandles) {
+		if (auto* transform = m_previewWorld.getComponent<Transform_Component>(entityHandle)) {
+			transformComponents.push_back(transform);
+			center += transform->m_localTransform.m_position;
+		}
+	}
+
+	// Move the entities in this prefab by 500 units on each axis
+	const auto cursorPos = glm::vec3(m_prefabs.size() * 1000.0f * glm::vec3(0, -1, 0));
+	if (transformComponents.size()) {
+		center /= transformComponents.size();
+		for each (auto * transform in transformComponents) {
+			transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + cursorPos;
+			transform->m_localTransform.update();
+		}
+	}
+	prefab.spawnPoint = cursorPos;
+
+	// Create the camera and move it to where the entity is located
+	auto camera = std::make_shared<Camera>();
+	(*camera)->Dimensions = glm::vec2((float)m_thumbSize);
+	(*camera)->FarPlane = 1000.0f;
+	(*camera)->FOV = 90.0F;
+	(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), cursorPos);
+	(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
+	(*camera)->EyePosition = glm::vec3(0, 0, -25.0f);
+	const float verticalRad = 2.0f * atanf(tanf(glm::radians(90.0f) / 2.0f) / 1.0F);
+	(*camera)->pMatrix = glm::perspective(verticalRad, 1.0f, Camera::ConstNearPlane, (*camera)->FarPlane);
+	(*camera)->pMatrixInverse = glm::inverse((*camera)->pMatrix);
+	(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
+	m_prefabCameras.push_back(camera);
+
+	// Create the thumbnail texture
+	glCreateTextures(GL_TEXTURE_2D, 1, &prefab.texID);
+	glTextureStorage2D(prefab.texID, 1, GL_RGB16F, m_thumbSize, m_thumbSize);
+	glTextureParameteri(prefab.texID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTextureParameteri(prefab.texID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	m_prefabs.emplace_back(prefab);
+};
+
 void Prefabs::addPrefab(const std::vector<char>& entityData)
 {
-	const auto addPrefab = [&](Prefabs::Entry& prefab) {
-		glm::vec3 center(0.0f);
-		std::vector<Transform_Component*> transformComponents;
-		for each (const auto & entityHandle in prefab.entityHandles) {
-			if (auto* transform = m_previewWorld.getComponent<Transform_Component>(entityHandle)) {
-				transformComponents.push_back(transform);
-				center += transform->m_localTransform.m_position;
-			}
-		}
-
-		// Move the entities in this prefab by 100 units on each axis
-		const auto cursorPos = glm::vec3(m_prefabs.size() * 100.0f);
-		if (transformComponents.size()) {
-			center /= transformComponents.size();
-			for each (auto * transform in transformComponents) {
-				transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + cursorPos;
-				transform->m_localTransform.update();
-			}
-		}
-		prefab.spawnPoint = cursorPos;
-
-		// Create the camera and move it to where the entity is located
-		auto camera = std::make_shared<Camera>();
-		(*camera)->Dimensions = glm::vec2((float)m_thumbSize);
-		(*camera)->FarPlane = 1000.0f;
-		(*camera)->FOV = 90.0F;
-		(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), cursorPos);
-		(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
-		(*camera)->EyePosition = glm::vec3(0, 0, -25.0f);
-		const float verticalRad = 2.0f * atanf(tanf(glm::radians(90.0f) / 2.0f) / 1.0F);
-		(*camera)->pMatrix = glm::perspective(verticalRad, 1.0f, Camera::ConstNearPlane, (*camera)->FarPlane);
-		(*camera)->pMatrixInverse = glm::inverse((*camera)->pMatrix);
-		(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
-		m_prefabCameras.push_back(camera);
-
-		// Create the thumbnail texture
-		glCreateTextures(GL_TEXTURE_2D, 1, &prefab.texID);
-		glTextureStorage2D(prefab.texID, 1, GL_RGB16F, m_thumbSize, m_thumbSize);
-		glTextureParameteri(prefab.texID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTextureParameteri(prefab.texID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-		m_prefabs.emplace_back(prefab);
-	};
-
 	Prefabs::Entry newPrefab = { "New Entity", m_prefabSubDirectory + "\\New Entity", Entry::file };
 
 	size_t dataRead(0ull);
@@ -125,49 +126,6 @@ void Prefabs::populatePrefabs(const std::string& directory)
 	if (directory != "" && directory != "." && directory != "..")
 		m_prefabs.emplace_back(Entry{ "back", std::filesystem::relative(path.parent_path(), rootPath).string(), Entry::back, {} });
 
-	const auto addPrefab = [&](Prefabs::Entry& prefab) {
-		glm::vec3 center(0.0f);
-		std::vector<Transform_Component*> transformComponents;
-		for each (const auto & entityHandle in prefab.entityHandles) {
-			if (auto* transform = m_previewWorld.getComponent<Transform_Component>(entityHandle)) {
-				transformComponents.push_back(transform);
-				center += transform->m_localTransform.m_position;
-			}
-		}
-
-		// Move the entities in this prefab by 100 units on each axis
-		const auto cursorPos = glm::vec3(m_prefabs.size() * 100.0f);
-		if (transformComponents.size()) {
-			center /= transformComponents.size();
-			for each (auto * transform in transformComponents) {
-				transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + cursorPos;
-				transform->m_localTransform.update();
-			}
-		}
-		prefab.spawnPoint = cursorPos;
-
-		// Create the camera and move it to where the entity is located
-		auto camera = std::make_shared<Camera>();
-		(*camera)->Dimensions = glm::vec2((float)m_thumbSize);
-		(*camera)->FarPlane = 1000.0f;
-		(*camera)->FOV = 90.0F;
-		(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), cursorPos);
-		(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
-		(*camera)->EyePosition = glm::vec3(0, 0, -25.0f);
-		const float verticalRad = 2.0f * atanf(tanf(glm::radians(90.0f) / 2.0f) / 1.0F);
-		(*camera)->pMatrix = glm::perspective(verticalRad, 1.0f, Camera::ConstNearPlane, (*camera)->FarPlane);
-		(*camera)->pMatrixInverse = glm::inverse((*camera)->pMatrix);
-		(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
-		m_prefabCameras.push_back(camera);
-
-		// Create the thumbnail texture
-		glCreateTextures(GL_TEXTURE_2D, 1, &prefab.texID);
-		glTextureStorage2D(prefab.texID, 1, GL_RGB16F, m_thumbSize, m_thumbSize);
-		glTextureParameteri(prefab.texID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTextureParameteri(prefab.texID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-		m_prefabs.emplace_back(prefab);
-	};
 
 	// If in the root folder, add hard-coded prefab entries
 	if (directory == "" || directory == ".") {
@@ -242,15 +200,13 @@ void Prefabs::populatePrefabs(const std::string& directory)
 	{
 		Transform_Component a;
 		Light_Component b;
-		//a.m_localTransform.m_orientation = glm::quat(0.653, -0.271, 0.653, -0.271);
-		a.m_localTransform.update();
 		b.m_type = Light_Component::Light_Type::DIRECTIONAL;
-		b.m_color = glm::vec3(1.0f);
-		b.m_intensity = 15.0f;
-		b.m_radius = 15.0F;
-		b.m_cutoff = 360.0f;
+		b.m_color = glm::vec3(1.0, 0.9, 0.8);
+		b.m_intensity = 10.0f;
+		b.m_radius = 1000.0f;
+		b.m_cutoff = 180.0f;
 		ecsBaseComponent* entityComponents[] = { &a, &b };
-		m_previewWorld.makeEntity(entityComponents, 2ull, "Preview Sun");
+		m_sunHandle = m_previewWorld.makeEntity(entityComponents, 2ull, "Preview Sun");
 	}
 }
 
@@ -270,47 +226,53 @@ void Prefabs::openPrefabEntry()
 void Prefabs::tickThumbnails(const float& deltaTime)
 {
 	m_updateTime += deltaTime;
-	//if (m_updateTime > 5.0f)
-	{
-		m_updateTime -= 5.0f;
-		int count(0);
-		for each (auto & prefab in m_prefabs) {
-			glm::vec3 minExtents(FLT_MAX), maxExtents(FLT_MIN);
-			for each (const auto & entityHandle in prefab.entityHandles) {
-				glm::vec3 scale(1.0f);
-				if (auto* trans = m_previewWorld.getComponent<Transform_Component>(entityHandle))
-					scale = trans->m_worldTransform.m_scale;
-				if (auto* prop = m_previewWorld.getComponent<Prop_Component>(entityHandle))
-					if (const auto& model = prop->m_model; model->existsYet()) {
-						minExtents = glm::min(minExtents, model->m_bboxMin * scale);
-						maxExtents = glm::max(maxExtents, model->m_bboxMax * scale);
-					}
-			}
-			glm::vec3 extents = (maxExtents - minExtents) / 2.0f,
-				center = ((maxExtents - minExtents) / 2.0f) + minExtents;
+	const auto rotMat = glm::rotate(glm::mat4(1.0f), glm::radians(m_updateTime * 50.0f), glm::vec3(0, 1, 0));
+	auto& trans = *m_previewWorld.getComponent<Transform_Component>(m_sunHandle);
+	trans.m_localTransform.m_orientation = glm::inverse(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(45.0f), glm::vec3(1, 0, 0)) * glm::quat_cast(rotMat));
+	trans.m_localTransform.update();
 
-			auto& camera = m_prefabCameras[count];
-			float cameraDistance = 2.0f; // Constant factor
-			float objectSize = glm::compMax(extents);
-			float cameraView = 2.0f * tanf(0.5f * glm::radians(90.0f)); // Visible height 1 meter in front
-			float distance = cameraDistance * objectSize / cameraView; // Combined wanted distance from the object
-			distance += 0.5f * objectSize; // Estimated offset from the center to the outside of the object
-			glm::vec3 newPosition = (center - glm::vec3(0, 0, -distance)) + prefab.spawnPoint;
-			(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), -newPosition);
-			(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
-			(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
-
-			count++;
+	int count(0);
+	for each (auto & prefab in m_prefabs) {
+		glm::vec3 minExtents(FLT_MAX), maxExtents(FLT_MIN);
+		for each (const auto & entityHandle in prefab.entityHandles) {
+			glm::vec3 scale(1.0f);
+			if (auto* trans = m_previewWorld.getComponent<Transform_Component>(entityHandle))
+				scale = trans->m_worldTransform.m_scale;
+			if (auto* prop = m_previewWorld.getComponent<Prop_Component>(entityHandle))
+				if (const auto& model = prop->m_model; model->existsYet()) {
+					minExtents = glm::min(minExtents, model->m_bboxMin * scale);
+					maxExtents = glm::max(maxExtents, model->m_bboxMax * scale);
+				}
 		}
+		const auto extents = (maxExtents - minExtents) / 2.0f, center = ((maxExtents - minExtents) / 2.0f) + minExtents;
 
-		GLint previousFBO(0);
-		glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFBO);
-		m_viewport->resize(glm::vec2((float)m_thumbSize), (int)m_prefabs.size());
-		//m_engine->getModule_Graphics().renderWorld(m_previewWorld, deltaTime, m_viewport, m_rhVolume, m_prefabCameras);
-		const auto screenSize = m_editor->getScreenSize();
-		glViewport(0, 0, screenSize.x, screenSize.y);
-		glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
+		auto& camera = m_prefabCameras[count];
+		constexpr float cameraDistance = 3.0f; // Constant factor
+		const float objectSize = glm::compMax(extents);
+		const float cameraView = 2.0f * tanf(0.5f * glm::radians(90.0f)); // Visible height 1 meter in front
+		float distance = cameraDistance * objectSize / cameraView; // Combined wanted distance from the object
+		distance += 0.5f * objectSize; // Estimated offset from the center to the outside of the object
+		const auto newPosition = prefab.spawnPoint + center + glm::vec3(0, 0, distance);
+		(*camera)->EyePosition = newPosition;
+		(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), -newPosition) * rotMat;
+		(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
+		(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
+
+		count++;
 	}
+
+	GLint previousFBO(0);
+	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFBO);
+	m_viewport->resize(glm::vec2((float)m_thumbSize), (int)m_prefabs.size());
+	m_engine->getModule_Graphics().renderWorld(m_previewWorld, deltaTime, m_viewport, m_prefabCameras);
+	const auto screenSize = m_editor->getScreenSize();
+	glViewport(0, 0, screenSize.x, screenSize.y);
+	glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
+
+	// Copy viewport layers into prefab textures
+	count = 0;
+	for each (const auto & prefab in m_prefabs)
+		glCopyImageSubData(m_viewport->m_gfxFBOS->getTexID("FXAA", 0), GL_TEXTURE_2D_ARRAY, 0, 0, 0, count++, prefab.texID, GL_TEXTURE_2D, 0, 0, 0, 0, m_thumbSize, m_thumbSize, 1);
 }
 
 void Prefabs::tickWindow(const float&)
@@ -346,8 +308,6 @@ void Prefabs::tickWindow(const float&)
 		ImGui::Columns(columnCount, nullptr, false);
 		int count(0);
 		for each (const auto & prefab in m_prefabs) {
-			const auto& srcThumbnailTexture = m_viewport->m_gfxFBOS->getTexID("LIGHTING", 0);
-			glCopyImageSubData(srcThumbnailTexture, GL_TEXTURE_2D_ARRAY, 0, 0, 0, count, prefab.texID, GL_TEXTURE_2D, 0, 0, 0, 0, m_thumbSize, m_thumbSize, 1);
 			if (filter.PassFilter(prefab.name.c_str())) {
 				ImGui::PushID(&prefab);
 				GLuint textureID = prefab.texID;
@@ -384,6 +344,7 @@ void Prefabs::tickWindow(const float&)
 					ImGui::EndPopup();
 				}
 				else if (ImGui::IsItemHovered()) {
+					m_hoverIndex = count;
 					ImGui::BeginTooltip();
 					ImGui::ImageButton(
 						(ImTextureID)static_cast<uintptr_t>(textureID),
@@ -431,9 +392,11 @@ void Prefabs::tickPopupDialogues(const float&)
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
 		if (ImGui::Button("Delete", { 50, 20 })) {
 			const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path);
-			std::filesystem::remove(fullPath);
+			if (m_prefabs[m_selectedIndex].path.size()) {
+				std::filesystem::remove(fullPath);
+				populatePrefabs(m_prefabSubDirectory);
+			}
 			m_selectedIndex = -1;
-			populatePrefabs(m_prefabSubDirectory);
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SetItemDefaultFocus();

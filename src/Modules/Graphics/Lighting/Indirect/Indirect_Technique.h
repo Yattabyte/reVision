@@ -64,6 +64,7 @@ public:
 	// Public Interface Implementations
 	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
 		m_frameData->lightBuffer.endReading();
+		m_frameData->viewInfo.clear();
 		m_drawIndex = 0;
 	}
 	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) override final {

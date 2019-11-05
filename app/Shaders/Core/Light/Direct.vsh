@@ -36,13 +36,13 @@ layout (location = 11) flat out int lightType;
 
 void main()
 {	
-	const int CamIndex = camIndexes[gl_InstanceID].x;
+	const int CamIndex = camIndexes[gl_DrawID].x;
 	pMatrixInverse = camBuffer[CamIndex].pMatrixInverse;
 	vMatrixInverse = camBuffer[CamIndex].vMatrixInverse;
 	EyePosition = camBuffer[CamIndex].EyePosition;
 	CameraDimensions = camBuffer[CamIndex].CameraDimensions;
-	lightIndex = lightIndexes[gl_InstanceID];	
+	lightIndex = lightIndexes[gl_DrawID];	
 	lightType = lightBuffers[lightIndex].Light_Type;
 	gl_Position = camBuffer[CamIndex].pvMatrix * lightBuffers[lightIndex].mMatrix * vec4(vertex, 1.0); 
-	gl_Layer = camIndexes[gl_InstanceID].y;
+	gl_Layer = camIndexes[gl_DrawID].y;
 }
