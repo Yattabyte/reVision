@@ -140,14 +140,6 @@ void Translation_Gizmo::checkMouseHover()
 	const auto ray_eye = glm::vec4(glm::vec2(clientCamera.pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
 	const auto ray_world = glm::normalize(glm::vec3(clientCamera.vMatrixInverse * ray_eye));
 
-	/*// Flip the model's axes based on which side of it were on
-	const auto dir = glm::normalize(ray_origin - position);
-	m_direction = glm::vec3(
-		dir.x > 0 ? 1 : -1,
-		dir.y > 0 ? 1 : -1,
-		dir.z > 0 ? 1 : -1
-	);*/
-
 	const auto scalingFactor = m_direction * glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * m_renderScale;
 	const auto mMatrix = glm::translate(glm::mat4(1.0f), position);
 	glm::vec3 arrowAxes_min[3], arrowAxes_max[3], doubleAxes_min[3], doubleAxes_max[3], plane_normals[3];
@@ -256,42 +248,47 @@ bool Translation_Gizmo::checkMousePress()
 
 	// An axis is now selected, perform dragging operation
 	else if ((m_selectedAxes != NONE) && ImGui::IsMouseDragging(0)) {
-		auto endingOffset = m_startingOffset;
+		constexpr auto gridSnapValue = [](const float& value, const float& delta, const float& snapAmt) -> float {
+			const float position = value - delta;
+			return snapAmt ? (float(int((position + (snapAmt / 2.0F)) / snapAmt)) * snapAmt) : position;
+		};
+
+		auto position = m_startingOffset;
 		if (m_selectedAxes == X_AXIS) {
 			// Check which of the ray-plane inter. point from xy and xz planes is closest to the camera
 			if (glm::distance(m_hoveredEnds[0], ray_origin) < glm::distance(m_hoveredEnds[1], ray_origin))
-				endingOffset.x = m_hoveredEnds[0].x;
+				position.x = gridSnapValue(m_hoveredEnds[0].x, m_axisDelta.x, m_gridSnap);
 			else
-				endingOffset.x = m_hoveredEnds[1].x;
+				position.x = gridSnapValue(m_hoveredEnds[1].x, m_axisDelta.x, m_gridSnap);
 		}
 		else if (m_selectedAxes == Y_AXIS) {
 			if (glm::distance(m_hoveredEnds[0], ray_origin) < glm::distance(m_hoveredEnds[2], ray_origin))
-				endingOffset.y = m_hoveredEnds[0].y;
+				position.y = gridSnapValue(m_hoveredEnds[0].y, m_axisDelta.y, m_gridSnap);
 			else
-				endingOffset.y = m_hoveredEnds[2].y;
+				position.y = gridSnapValue(m_hoveredEnds[2].y, m_axisDelta.y, m_gridSnap);
 		}
 		else if (m_selectedAxes == Z_AXIS) {
 			if (glm::distance(m_hoveredEnds[1], ray_origin) < glm::distance(m_hoveredEnds[2], ray_origin))
-				endingOffset.z = m_hoveredEnds[1].z;
+				position.z = gridSnapValue(m_hoveredEnds[1].z, m_axisDelta.z, m_gridSnap);
 			else
-				endingOffset.z = m_hoveredEnds[2].z;
+				position.z = gridSnapValue(m_hoveredEnds[2].z, m_axisDelta.z, m_gridSnap);
 		}
 		else if ((m_selectedAxes & X_AXIS) && (m_selectedAxes & Y_AXIS)) {
-			endingOffset.x = m_hoveredEnds[0].x;
-			endingOffset.y = m_hoveredEnds[0].y;
+			position.x = gridSnapValue(m_hoveredEnds[0].x, m_axisDelta.x, m_gridSnap);
+			position.y = gridSnapValue(m_hoveredEnds[0].y, m_axisDelta.y, m_gridSnap);
 		}
 		else if ((m_selectedAxes & X_AXIS) && (m_selectedAxes & Z_AXIS)) {
-			endingOffset.x = m_hoveredEnds[1].x;
-			endingOffset.z = m_hoveredEnds[1].z;
+			position.x = gridSnapValue(m_hoveredEnds[1].x, m_axisDelta.x, m_gridSnap);
+			position.z = gridSnapValue(m_hoveredEnds[1].z, m_axisDelta.z, m_gridSnap);
 		}
 		else if ((m_selectedAxes & Y_AXIS) && (m_selectedAxes & Z_AXIS)) {
-			endingOffset.y = m_hoveredEnds[2].y;
-			endingOffset.z = m_hoveredEnds[2].z;
+			position.y = gridSnapValue(m_hoveredEnds[2].y, m_axisDelta.y, m_gridSnap);
+			position.z = gridSnapValue(m_hoveredEnds[2].z, m_axisDelta.z, m_gridSnap);
 		}
 
-		const auto position = endingOffset - m_axisDelta;
-		auto gridSnappedPosition = m_gridSnap ? (glm::vec3(glm::ivec3((position + (m_gridSnap / 2.0F)) / m_gridSnap)) * m_gridSnap) : position;
-		m_transform.m_position = gridSnappedPosition;
+		//const auto position = endingOffset - m_axisDelta;
+		//auto gridSnappedPosition = m_gridSnap ? (glm::vec3(glm::ivec3((position + (m_gridSnap / 2.0F)) / m_gridSnap)) * m_gridSnap) : position;
+		m_transform.m_position = position;
 
 		struct Move_Selection_Command final : Editor_Command {
 			Engine* const m_engine = nullptr;
@@ -336,7 +333,7 @@ bool Translation_Gizmo::checkMousePress()
 				return false;
 			}
 		};
-		m_editor->doReversableAction(std::make_shared<Move_Selection_Command>(m_engine, m_editor, gridSnappedPosition, m_selectedAxes));
+		m_editor->doReversableAction(std::make_shared<Move_Selection_Command>(m_engine, m_editor, position, m_selectedAxes));
 		return true;
 	}
 

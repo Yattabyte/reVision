@@ -66,7 +66,7 @@ void Prefabs::addPrefab(Prefabs::Entry& prefab)
 	// Create the camera and move it to where the entity is located
 	auto camera = std::make_shared<Camera>();
 	(*camera)->Dimensions = glm::vec2((float)m_thumbSize);
-	(*camera)->FarPlane = 1000.0f;
+	(*camera)->FarPlane = 500.0f;
 	(*camera)->FOV = 90.0F;
 	(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), cursorPos);
 	(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
@@ -257,7 +257,6 @@ void Prefabs::tickThumbnails(const float& deltaTime)
 		(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), -newPosition) * rotMat;
 		(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
 		(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
-
 		count++;
 	}
 
