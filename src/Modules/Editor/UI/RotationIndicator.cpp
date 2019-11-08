@@ -79,13 +79,9 @@ void RotationIndicator::tick(const float&)
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 
 		// Generate matrices
-		auto pMatrix = glm::ortho(-4.2f, 4.2f, -4.2f, 4.2f, -10.0f, 10.0f);
-		auto camMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
-		camMatrix[3][0] = 0.0f;
-		camMatrix[3][1] = 0.0f;
-		camMatrix[3][2] = 0.0f;
-		camMatrix[3][3] = 1.0f;
-		auto vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -5.0f)) * camMatrix;
+		const auto pMatrix = glm::ortho(-4.2f, 4.2f, -4.2f, 4.2f, -10.0f, 10.0f);
+		const auto camMatrix = glm::mat4_cast(glm::quat_cast(m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix));
+		const auto vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -5.0f)) * camMatrix;
 		m_shader->setUniform(0, pMatrix * vMatrix);
 
 		m_indirectIndicator.drawCall();

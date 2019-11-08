@@ -59,10 +59,11 @@ private:
 		X_AXIS = 0b0000'0001,
 		Y_AXIS = 0b0000'0010,
 		Z_AXIS = 0b0000'0100,
+		ALL_AXES = 0b0000'1000,
 	};
 	float m_renderScale = 0.02f, m_angleSnapping = 12.5f;
 	unsigned int m_selectedAxes = NONE, m_hoveredAxes = NONE;
-	glm::vec3 m_hoveredPoint = glm::vec3(0.0f), m_hoveredEnds[3], m_startPoint = glm::vec3(0.0f), m_direction = glm::vec3(1.0f);
+	glm::vec3 m_hoveredPoint = glm::vec3(0.0f), m_hoveredEnds[4], m_startPoint = glm::vec3(0.0f);
 	glm::quat m_prevRot = glm::quat(1, 0, 0, 0);
 	float m_startingAngle = 0.0f, m_deltaAngle = 0.0f;
 	Shared_Auto_Model m_model;

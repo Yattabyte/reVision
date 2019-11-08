@@ -66,7 +66,7 @@ void Prefabs::addPrefab(Prefabs::Entry& prefab)
 	// Create the camera and move it to where the entity is located
 	auto camera = std::make_shared<Camera>();
 	(*camera)->Dimensions = glm::vec2((float)m_thumbSize);
-	(*camera)->FarPlane = 500.0f;
+	(*camera)->FarPlane = 250.0f;
 	(*camera)->FOV = 90.0F;
 	(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), cursorPos);
 	(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
@@ -225,10 +225,10 @@ void Prefabs::openPrefabEntry()
 
 void Prefabs::tickThumbnails(const float& deltaTime)
 {
-	m_updateTime += deltaTime;
-	const auto rotMat = glm::rotate(glm::mat4(1.0f), glm::radians(m_updateTime * 50.0f), glm::vec3(0, 1, 0));
+	auto rotation = glm::quat_cast(m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix);
+	const auto rotMat = glm::mat4_cast(rotation);
 	auto& trans = *m_previewWorld.getComponent<Transform_Component>(m_sunHandle);
-	trans.m_localTransform.m_orientation = glm::inverse(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(45.0f), glm::vec3(1, 0, 0)) * glm::quat_cast(rotMat));
+	trans.m_localTransform.m_orientation = glm::inverse(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(45.0f), glm::vec3(1, 0, 0)) * rotation);
 	trans.m_localTransform.update();
 
 	int count(0);
@@ -247,14 +247,15 @@ void Prefabs::tickThumbnails(const float& deltaTime)
 		const auto extents = (maxExtents - minExtents) / 2.0f, center = ((maxExtents - minExtents) / 2.0f) + minExtents;
 
 		auto& camera = m_prefabCameras[count];
-		constexpr float cameraDistance = 3.0f; // Constant factor
-		const float objectSize = glm::compMax(extents);
-		const float cameraView = 2.0f * tanf(0.5f * glm::radians(90.0f)); // Visible height 1 meter in front
-		float distance = cameraDistance * objectSize / cameraView; // Combined wanted distance from the object
+		const auto objectSize = glm::compMax(extents);
+		const auto cameraView = 2.0f * tanf(0.5f * glm::radians(90.0f)); // Visible height 1 meter in front
+		auto distance = 3.0f * objectSize / cameraView; // Combined wanted distance from the object
 		distance += 0.5f * objectSize; // Estimated offset from the center to the outside of the object
-		const auto newPosition = prefab.spawnPoint + center + glm::vec3(0, 0, distance);
+		// Rotate distance based on editor camera rotation
+		const auto rotatedPosition = glm::inverse(rotMat) * glm::vec4(0, 0, distance, 1);
+		const auto newPosition = prefab.spawnPoint + center + glm::vec3(rotatedPosition);
 		(*camera)->EyePosition = newPosition;
-		(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), -newPosition) * rotMat;
+		(*camera)->vMatrix = rotMat * glm::translate(glm::mat4(1.0f), -glm::vec3(newPosition));
 		(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
 		(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
 		count++;

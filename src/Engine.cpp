@@ -269,30 +269,33 @@ void Engine::initThreads()
 
 void Engine::printBoilerPlate()
 {
-	m_messageManager.statement("*****************************************");
-	m_messageManager.statement("* > reVision Engine:\t\t\t*");
+	m_messageManager.statement("+~-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-~\\");
+	m_messageManager.statement("  > reVision Engine:");
+	m_messageManager.statement("  -------------------------------");
 #ifdef NDEBUG
-	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + " (RELEASE)\t*");
+	m_messageManager.statement("  " + std::string(ENGINE_VERSION) + " (RELEASE)");
 #else
-	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + " (DEBUG)\t*");
+	m_messageManager.statement("  " + std::string(ENGINE_VERSION) + " (DEBUG)");
 #endif // DEBUG
-	m_messageManager.statement("*  - Build Date   November 4th, 2019\t*");
-	m_messageManager.statement("*****************************************");
-	m_messageManager.statement("* > Library Info:\t\t\t*");
-	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t\t*");
-	m_messageManager.statement("*  - Bullet       " + std::to_string(BT_BULLET_VERSION) + "\t\t\t*");
-	m_messageManager.statement("*  - Dear ImGui   " + std::string(ImGui::GetVersion()) + "\t\t*");
-	m_messageManager.statement("*  - Free Image   " + Image_IO::Get_Version() + "\t\t*");
-	m_messageManager.statement("*  - GLAD         " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor) + "\t\t\t*");
-	m_messageManager.statement("*  - GLFW         " + std::string(glfwGetVersionString(), 5) + "\t\t\t*");
-	m_messageManager.statement("*  - GLM          " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION) + "\t\t*");;
-	m_messageManager.statement("*  - SoLoud       " + std::to_string(m_soundManager.GetVersion()) + "\t\t*");
-	m_messageManager.statement("*****************************************");
-	m_messageManager.statement("* > Graphics Info:\t\t\t*");
-	m_messageManager.statement("*  - " + std::string(reinterpret_cast<char const*>(glGetString(GL_RENDERER))) + "\t\t*");
-	m_messageManager.statement("*  - OpenGL " + std::string(reinterpret_cast<char const*>(glGetString(GL_VERSION))) + "\t\t*");
-	m_messageManager.statement("*  - GLSL " + std::string(reinterpret_cast<char const*>(glGetString(GL_SHADING_LANGUAGE_VERSION))) + "\t\t\t*");
-	m_messageManager.statement("*****************************************");
+	m_messageManager.statement("  " + std::string(__TIMESTAMP__));
+	m_messageManager.statement("");
+	m_messageManager.statement("  > Library Info:");
+	m_messageManager.statement("  -------------------------------");
+	m_messageManager.statement("  ASSIMP       " + Mesh_IO::Get_Version());
+	m_messageManager.statement("  Bullet       " + std::to_string(BT_BULLET_VERSION));
+	m_messageManager.statement("  Dear ImGui   " + std::string(ImGui::GetVersion()));
+	m_messageManager.statement("  FreeImage    " + Image_IO::Get_Version());
+	m_messageManager.statement("  GLAD         " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor));
+	m_messageManager.statement("  GLFW         " + std::string(glfwGetVersionString(), 5));
+	m_messageManager.statement("  GLM          " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
+	m_messageManager.statement("  SoLoud       " + std::to_string(m_soundManager.GetVersion()));
+	m_messageManager.statement("");
+	m_messageManager.statement("  > Graphics Info:");
+	m_messageManager.statement("  -------------------------------");
+	m_messageManager.statement("  " + std::string(reinterpret_cast<char const*>(glGetString(GL_RENDERER))));
+	m_messageManager.statement("  OpenGL " + std::string(reinterpret_cast<char const*>(glGetString(GL_VERSION))));
+	m_messageManager.statement("  GLSL " + std::string(reinterpret_cast<char const*>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+	m_messageManager.statement("+~-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-~/");
 }
 
 void Engine::tick()
