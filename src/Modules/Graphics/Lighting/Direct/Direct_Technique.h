@@ -56,7 +56,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) override final {
 		m_frameData->lightBuffer.endReading();
 		m_frameData->viewInfo.clear();
 		m_drawIndex = 0;
@@ -158,7 +158,7 @@ public:
 
 private:
 	// Private Methods
-	/***/
+	/** Attempt to register the geometry of all light models. */
 	inline void registerLightShapes() {
 		if (m_shapeCube && m_shapeCube->existsYet() && m_shapeSphere && m_shapeSphere->existsYet() && m_shapeHemisphere && m_shapeHemisphere->existsYet()) {
 			// Create a container to store all vertices

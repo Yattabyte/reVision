@@ -7,7 +7,7 @@
 #include <memory>
 
 
-/***/
+/** An ECS system responsible for collecting cameras from entities with shadow components. */
 class ShadowPerspective_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors

@@ -29,7 +29,8 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Tick this module by a specific amount of delta time.
+	@param	deltaTime			the amount of time since last frame. */
 	void frameTick(const float& deltaTime);
 	/** Push a new UI element onto a stack to receive input and be rendered.
 	@param	rootElement			the main element of focus for this UI system. */

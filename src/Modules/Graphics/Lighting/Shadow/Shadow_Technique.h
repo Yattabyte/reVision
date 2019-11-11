@@ -37,7 +37,7 @@ public:
 	}
 
 	// Public Interface Implementations
-	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) override final {
 		m_frameData->shadowsToUpdate.clear();
 	}
 	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) override final {

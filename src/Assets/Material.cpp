@@ -132,7 +132,7 @@ bool const find(const std::string& s1, const std::string& s2) {
 	return (s1.find(s2) != std::string::npos);
 }
 
-/***/
+/** Parse a PBR material document. */
 std::vector<std::string> parse_pbr(std::ifstream& file_stream)
 {
 	std::vector<std::string> textures(MAX_PHYSICAL_IMAGES);

@@ -11,7 +11,7 @@ template <int BufferCount = 3>
 class DynamicBuffer final : public Buffer_Interface {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Wait for all fences to complete, then destroy this buffer. */
 	inline ~DynamicBuffer() {
 		for (int x = 0; x < BufferCount; ++x) {
 			WaitForFence(m_writeFence[x]);
@@ -22,7 +22,10 @@ public:
 			}
 		}
 	}
-	/***/
+	/** Construct a new Dynamic buffer.
+	@param	capacity	the starting capacity of this buffer.
+	@param	data		optional data buffer, must be at least as large.
+	@param	mapFlags	bit-field flags. */
 	inline DynamicBuffer(const GLsizeiptr& capacity = 256, const void* data = 0, const GLbitfield& mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT)
 		: m_maxCapacity(capacity), m_mapFlags(mapFlags) {
 		// Zero-initialize our starting variables
@@ -39,7 +42,7 @@ public:
 			m_bufferPtr[x] = glMapNamedBufferRange(m_bufferID[x], 0, m_maxCapacity, m_mapFlags);
 		}
 	}
-	/***/
+	/** Construct a new Dynamic buffer, from another buffer. */
 	inline DynamicBuffer(const DynamicBuffer& other) : DynamicBuffer(other.m_maxCapacity, 0, other.m_mapFlags) {
 		for (int x = 0; x < BufferCount; ++x)
 			glCopyNamedBufferSubData(other.m_bufferID[x], m_bufferID[x], 0, 0, m_maxCapacity);
@@ -133,7 +136,7 @@ public:
 		if (!m_writeFence[m_index])
 			m_writeFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	}
-	/***/
+	/** Signal that this multi-buffer is finished being read from. */
 	inline void endReading() {
 		if (!m_readFence[m_index])
 			m_readFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);

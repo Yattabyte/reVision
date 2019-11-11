@@ -60,7 +60,7 @@ bool Mouse_Gizmo::checkInput(const float& deltaTime)
 
 		// Set selection LAST, allow attempts at other gizmo's first
 		if (ImGui::IsMouseClicked(0)) {
-			m_editor->getActiveWorld().updateSystem(m_pickerSystem.get(), deltaTime);
+			m_editor->getWorld().updateSystem(m_pickerSystem.get(), deltaTime);
 			const auto& [entityHandle, selectionTransform, intersectionTransform] = (std::dynamic_pointer_cast<MousePicker_System>(m_pickerSystem))->getSelection();
 
 			// Set selection to all tools that need it
@@ -76,7 +76,7 @@ bool Mouse_Gizmo::checkInput(const float& deltaTime)
 			return m_editor->getSelection().size();
 		}
 		else if (ImGui::IsMouseClicked(2)) {
-			m_editor->getActiveWorld().updateSystem(m_pickerSystem.get(), deltaTime);
+			m_editor->getWorld().updateSystem(m_pickerSystem.get(), deltaTime);
 			const auto& [entityHandle, selectionTransform, intersectionTransform] = (std::dynamic_pointer_cast<MousePicker_System>(m_pickerSystem))->getSelection();
 			m_spawnTransform = intersectionTransform;
 			return true;

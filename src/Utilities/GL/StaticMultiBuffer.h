@@ -11,7 +11,7 @@ template <int BufferCount = 3>
 class StaticMultiBuffer final : public Buffer_Interface {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Wait on this buffers fences, then destroy it. */
 	inline ~StaticMultiBuffer() {
 		for (int x = 0; x < BufferCount; ++x) {
 			WaitForFence(m_writeFence[x]);
@@ -32,7 +32,10 @@ public:
 			m_readFence[x] = nullptr;
 		}
 	}
-	/***/
+	/** Construct a new Static Multi-Buffer.
+	@param	size			the starting size of this buffer.
+	@param	data			optional data buffer, must be at least as large.
+	@param	storageFlags	optional bit-field flags. */
 	inline explicit StaticMultiBuffer(const GLsizeiptr& size, const void* data = 0, const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT)
 		: m_size(size) {
 		// Zero-initialize our starting variables
@@ -51,7 +54,7 @@ public:
 				std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr[x]), data, size);
 		}
 	}
-	/***/
+	/** Construct a new Static Multi-Buffer, from another buffer. */
 	inline StaticMultiBuffer(const StaticMultiBuffer& other)
 		: StaticMultiBuffer(other.m_size, 0) {
 		// Zero-initialize our starting variables
@@ -86,9 +89,9 @@ public:
 
 	// Public Methods
 	/** Write the supplied data to GPU memory
-	@param	offset	byte offset from the beginning
-	@param	size	the size of the data to write
-	@param	data	the data to write */
+	@param	offset			byte offset from the beginning
+	@param	size			the size of the data to write
+	@param	data			the data to write */
 	inline void write(const GLsizeiptr& offset, const GLsizeiptr& size, const void* data) {
 		std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr[m_index]) + offset, data, size);
 	}
@@ -103,7 +106,7 @@ public:
 		if (!m_writeFence[m_index])
 			m_writeFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	}
-	/***/
+	/** Signal that this multi-buffer has finished being read from. */
 	inline void endReading() {
 		if (!m_readFence[m_index])
 			m_readFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);

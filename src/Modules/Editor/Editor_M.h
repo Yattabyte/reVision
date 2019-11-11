@@ -34,10 +34,9 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Tick this module by a specific amount of delta time.
+	@param	deltaTime		the amount of time since last frame. */
 	void frameTick(const float& deltaTime);
-	/***/
-	glm::ivec2 getScreenSize() const;
 	/** Display the level editor. */
 	void showEditor();
 	/** Close the level editor, returning to the main menu. */
@@ -45,8 +44,9 @@ public:
 	/** Check if the editor has any unsaved changes.
 	@return					true if the level has unsaved changes, false otherwise. */
 	bool hasUnsavedChanges() const;
-	/***/
-	ecsWorld& getActiveWorld();
+	/** Retrieve a reference to the currently active ecsWorld in the editor.
+	@return					reference to the currently active ecsWorld. */
+	ecsWorld& getWorld();
 	/** Retrieve the currently active map's file name.
 	@return					current map's file name. */
 	std::string getMapName() const;
@@ -151,9 +151,10 @@ public:
 
 private:
 	// Private Methods
-	/***/
+	/** Add a level name to the 'recent maps' list.
+	@param	name			a level name to add to the recent maps list. */
 	void addToRecentList(const std::string& name);
-	/***/
+	/** Populate the 'recent maps' list from disk. */
 	void populateRecentList();
 	/** Save the level with a specific name.
 	@param	name			the level name to save. */

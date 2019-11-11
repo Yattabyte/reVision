@@ -83,7 +83,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Type_Command>(m_editor->getActiveWorld(), getUUIDS(), static_cast<Light_Component::Light_Type>(item_current)));
+				m_editor->doReversableAction(std::make_shared<Type_Command>(m_editor->getWorld(), getUUIDS(), static_cast<Light_Component::Light_Type>(item_current)));
 			}
 
 			auto colorInput = lightComponent->m_color;
@@ -125,7 +125,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Color_Command>(m_editor->getActiveWorld(), getUUIDS(), colorInput));
+				m_editor->doReversableAction(std::make_shared<Color_Command>(m_editor->getWorld(), getUUIDS(), colorInput));
 			}
 
 			auto intensityInput = lightComponent->m_intensity;
@@ -168,7 +168,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Intensity_Command>(m_editor->getActiveWorld(), getUUIDS(), intensityInput));
+				m_editor->doReversableAction(std::make_shared<Intensity_Command>(m_editor->getWorld(), getUUIDS(), intensityInput));
 			}
 
 			auto radiusInput = lightComponent->m_radius;
@@ -211,7 +211,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Radius_Command>(m_editor->getActiveWorld(), getUUIDS(), radiusInput));
+				m_editor->doReversableAction(std::make_shared<Radius_Command>(m_editor->getWorld(), getUUIDS(), radiusInput));
 			}
 
 			auto cutoffInput = lightComponent->m_cutoff;
@@ -254,7 +254,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Cutoff_Command>(m_editor->getActiveWorld(), getUUIDS(), cutoffInput));
+				m_editor->doReversableAction(std::make_shared<Cutoff_Command>(m_editor->getWorld(), getUUIDS(), cutoffInput));
 			}
 		}
 	}

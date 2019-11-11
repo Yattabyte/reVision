@@ -14,7 +14,7 @@ SceneInspector::SceneInspector(Engine* engine, LevelEditor_Module* editor)
 void SceneInspector::tick(const float&)
 {
 	if (m_open) {
-		auto& ecsWorld = m_editor->getActiveWorld();
+		auto& ecsWorld = m_editor->getWorld();
 		const auto& selectedEntities = m_editor->getSelection();
 		if (ImGui::Begin("Scene Inspector", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
 			static ImGuiTextFilter filter;

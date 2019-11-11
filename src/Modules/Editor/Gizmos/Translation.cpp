@@ -299,7 +299,7 @@ bool Translation_Gizmo::checkMousePress()
 			Move_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::vec3& newPosition, const unsigned int& axis)
 				: m_engine(engine), m_editor(editor), m_oldPosition(m_editor->getGizmoTransform().m_position), m_newPosition(newPosition), m_axis(axis), m_uuids(m_editor->getSelection()) {}
 			void move(const glm::vec3& position) {
-				auto& ecsWorld = m_editor->getActiveWorld();
+				auto& ecsWorld = m_editor->getWorld();
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
 				for each (const auto & entityHandle in m_uuids)

@@ -28,15 +28,19 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Prepare the pipeline for rendering.
+	@param	deltaTime		the amount of time passed since last frame.
+	@param	world			the ecsWorld to source data from.
+	@param	cameras			the cameras to render from.
+	@return					camera and layer indices to render with. */
 	std::vector<std::pair<int, int>> begin(const float& deltaTime, ecsWorld& world, const std::vector<std::shared_ptr<Camera>>& cameras = {});
-	/***/
+	/** Flush the pipeline after rendering.
+	@param	deltaTime		the amount of time passed since last frame. */
 	void end(const float& deltaTime);
-	/***/
 	/** Apply this lighting technique.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	viewport		the viewport to render into.
-	@param	camera			the camera to render with.
+	@param	perspectives	the camera and layer indices to render with.
 	@param	categories		the allowed technique categories to render. */
 	void render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories = Graphics_Technique::ALL);
 	/** Use geometry techniques to cull shadows.

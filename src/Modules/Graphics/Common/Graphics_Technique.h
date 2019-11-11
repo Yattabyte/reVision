@@ -44,7 +44,7 @@ public:
 	// Public Interface
 	/** Prepare this technique for the next frame, swapping any of its buffers.
 	@param	deltaTime	the amount of time passed since last frame. */
-	inline virtual void prepareForNextFrame(const float& deltaTime) {}
+	inline virtual void clearCache(const float& deltaTime) {}
 	/** Update any data needed before rendering this frame.
 	@param	deltaTime	the amount of time passed since last frame. */
 	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) {}

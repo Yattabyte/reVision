@@ -34,7 +34,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) override final {
 		m_drawIndex = 0;
 	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {

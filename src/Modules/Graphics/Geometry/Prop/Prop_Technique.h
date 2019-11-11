@@ -39,7 +39,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) override final {
 		m_frameData->modelBuffer.endReading();
 		m_frameData->skeletonBuffer.endReading();
 		m_drawIndex = 0;

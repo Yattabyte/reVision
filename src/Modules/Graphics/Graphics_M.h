@@ -32,13 +32,21 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Retrieve a shared pointer to the rendering pipeline.
+	@return					shared pointer to the rendering pipeline. */
 	inline auto getPipeline() {
 		return m_pipeline;
 	}
-	/***/
+	/** Convenience function for rendering a given ecsWorld to a given FBO.
+	@param	world			the ecsWorld to source data from.
+	@param	deltaTime		the amount of time passed since last frame.
+	@param	fboID			the FBO to render to. */
 	void renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID = 0);
-	/***/
+	/** Convenience function for rendering a given ecsWorld into the pipeline.
+	@param	world			the ecsWorld to source data from.
+	@param	deltaTime		the amount of time passed since last frame.
+	@param	viewport		the viewport to render into.
+	@param	cameras			the cameras to render from. */
 	void renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::shared_ptr<Camera>>& cameras);
 	/** Generates a perspective matrix for the client camera. */
 	void genPerspectiveMatrix();

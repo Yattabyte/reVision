@@ -7,7 +7,7 @@
 #include "Modules/Graphics/Lighting/Indirect/IndirectData.h"
 
 
-/***/
+/** An ECS system responsible for populating render lists PER active perspective in a given frame, for all indirect light related entities. */
 class IndirectVisibility_System final : public ecsBaseSystem {
 public:
 	// Public (de)Constructors

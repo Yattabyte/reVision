@@ -28,6 +28,13 @@ Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor)
 	m_texMissingThumb = Shared_Texture(engine, "Editor//prefab.png");
 	m_texIconRefresh = Shared_Texture(engine, "Editor//iconRefresh.png");
 
+	// Preferences
+	auto& preferences = engine->getPreferenceState();
+	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
+	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) { m_renderSize.x = (int)f; });
+	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) { m_renderSize.y = (int)f; });
+
 	// Load prefabs
 	populatePrefabs();
 }
@@ -179,7 +186,6 @@ void Prefabs::populatePrefabs(const std::string& directory)
 			newPrefab.type = Entry::file;
 			std::ifstream prefabFile(entry, std::ios::beg);
 			if (prefabFile.is_open()) {
-				// To Do: Remove serial data from entry class
 				const auto size = std::filesystem::file_size(entry);
 				std::vector<char> data(size);
 				prefabFile.read(&data[0], (std::streamsize)size);
@@ -265,8 +271,7 @@ void Prefabs::tickThumbnails(const float& deltaTime)
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFBO);
 	m_viewport->resize(glm::vec2((float)m_thumbSize), (int)m_prefabs.size());
 	m_engine->getModule_Graphics().renderWorld(m_previewWorld, deltaTime, m_viewport, m_prefabCameras);
-	const auto screenSize = m_editor->getScreenSize();
-	glViewport(0, 0, screenSize.x, screenSize.y);
+	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
 
 	// Copy viewport layers into prefab textures

@@ -62,7 +62,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) override final {
 		m_frameData->lightBuffer.endReading();
 		m_frameData->viewInfo.clear();
 		m_drawIndex = 0;
@@ -115,7 +115,7 @@ public:
 
 private:
 	// Private Methods
-	/***/
+	/** Update the draw parameters for a draw call.	*/
 	inline void updateDrawParams(DynamicBuffer<>& camBufferIndex, DynamicBuffer<>& camBufferRebounce, DynamicBuffer<>& camBufferRecon, DynamicBuffer<>& visLights, StaticMultiBuffer<>& indirectBounce, IndirectDraw<>& indirectQuad, IndirectDraw<>& indirectQuadRecon, std::vector<glm::ivec2>& camIndicesGen, std::vector<glm::ivec2>& camIndiciesRebounce, std::vector<glm::ivec2>& camIndiciesRecon, std::vector<int>& lightIndices, const size_t& shadowCount, const std::vector<std::pair<int, int>>& perspectives) {
 		// Write accumulated data
 		camBufferIndex.beginWriting();
@@ -141,7 +141,9 @@ private:
 		indirectQuad.endWriting();
 		indirectQuadRecon.endWriting();
 	}
-	/***/
+	/** Populate the radiance hints volume with the first light bounce.
+	@param	shadowCount			the number of light casters with shadow maps.
+	@param	rhVolume			reference to the RH volume. */
 	inline void fillBounceVolume(const size_t& shadowCount, RH_Volume& rhVolume) {
 		// Prepare rendering state
 		glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
@@ -165,7 +167,8 @@ private:
 		m_drawData[m_drawIndex].indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
-	/***/
+	/** Re-bounce the light in the volume a second time.
+	@param	rhVolume			reference to the RH volume. */
 	inline void rebounceVolume(RH_Volume& rhVolume, DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) {
 		// Bind common data
 		glDepthMask(GL_TRUE);
@@ -190,7 +193,7 @@ private:
 		camBufferRebounce.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		indirectQuad.drawCall();
 	}
-	/***/
+	/** Reconstruct GI from the RH volume. */
 	inline void reconstructVolume(const std::shared_ptr<Viewport>& viewport, DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) {
 		// Reconstruct indirect radiance
 		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));

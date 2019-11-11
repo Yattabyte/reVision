@@ -111,7 +111,7 @@ void Graphics_Pipeline::end(const float& deltaTime)
 {
 	m_cameraBuffer.endReading();
 	for each (auto * tech in m_allTechniques)
-		tech->prepareForNextFrame(deltaTime);
+		tech->clearCache(deltaTime);
 }
 
 void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& allowedCategories)

@@ -64,11 +64,11 @@ public:
 	inline void beginWriting() {
 		m_buffer.beginWriting();
 	}
-	/** Signal that this buffer has finished being written to, place a sync fence, switch to next buffer set. */
+	/** Signal that this buffer has finished being written to. */
 	inline void endWriting() {
 		m_buffer.endWriting();
 	}
-	/***/
+	/** Signal that this buffer has finished being read from. */
 	inline void endReading() {
 		m_buffer.endReading();
 	}

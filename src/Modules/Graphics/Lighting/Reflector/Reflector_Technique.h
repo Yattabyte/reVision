@@ -63,7 +63,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void prepareForNextFrame(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) override final {
 		m_frameData->lightBuffer.endReading();
 		m_frameData->viewInfo.clear();
 		m_frameData->reflectorsToUpdate.clear();

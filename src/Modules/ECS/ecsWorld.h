@@ -123,9 +123,11 @@ public:
 	////////////////////////
 	/// PUBLIC FUNCTIONS ///
 	////////////////////////
-	/***/
+	/** Move the data from another ecsWorld into this.
+	@param	other		another ecsWorld to move the data from.
+	@return				reference to this. */
 	ecsWorld& operator=(ecsWorld&& other) noexcept;
-	/***/
+	/** Clear the data out of this ecsWorld. */
 	void clear();
 	/** Generate a universally unique identifier for entities or components.
 	@return						a new ID. */

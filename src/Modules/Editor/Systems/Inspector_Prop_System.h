@@ -89,7 +89,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Name_Command>(m_editor->getActiveWorld(), getUUIDS(), std::string(nameInput)));
+				m_editor->doReversableAction(std::make_shared<Name_Command>(m_editor->getWorld(), getUUIDS(), std::string(nameInput)));
 			}
 
 			auto skinInput = (int)(propComponent->m_skin);
@@ -132,7 +132,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Skin_Command>(m_editor->getActiveWorld(), getUUIDS(), skinInput));
+				m_editor->doReversableAction(std::make_shared<Skin_Command>(m_editor->getWorld(), getUUIDS(), skinInput));
 			}
 			for each (auto & componentParam in components)
 				static_cast<Prop_Component*>(componentParam[1])->m_skin = (unsigned int)skinInput;

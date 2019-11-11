@@ -42,11 +42,14 @@ private:
 	void populatePrefabs(const std::string& directory = "");
 	/** Open the selected prefab entry, spawning if its an object, if a folder populates with the folder contents.*/
 	void openPrefabEntry();
-	/***/
+	/** Update the thumbnails by a specific delta time.
+	@param	deltaTime		the amount of time since last frame. */
 	void tickThumbnails(const float& deltaTime);
-	/***/
+	/** Update the prefabs window.
+	@param	deltaTime		the amount of time since last frame. */
 	void tickWindow(const float& deltaTime);
-	/***/
+	/** Update any prefab pop-up's.
+	@param	deltaTime		the amount of time since last frame. */
 	void tickPopupDialogues(const float& deltaTime);
 
 
@@ -55,6 +58,7 @@ private:
 	LevelEditor_Module* m_editor = nullptr;
 	Shared_Texture m_texBack, m_texFolder, m_texMissingThumb, m_texIconRefresh;
 	std::string m_prefabSubDirectory = "";
+	glm::ivec2 m_renderSize;
 	int m_thumbSize = 256;
 	int m_selectedIndex = -1, m_hoverIndex = -1;
 	struct Entry {
@@ -78,7 +82,8 @@ private:
 
 
 	// Private Methods
-	/***/
+	/** Add a specific prefab to the list.
+	@param	prefab			the prefab to add. */
 	void addPrefab(Prefabs::Entry& prefab);
 };
 
