@@ -10,7 +10,7 @@
 /** A set of ECS entities and components forming a single level. */
 class ecsWorld {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this ECS World. */
 	~ecsWorld();
 	/** Construct an empty ECS World. */

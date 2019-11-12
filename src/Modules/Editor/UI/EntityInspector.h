@@ -14,7 +14,7 @@ class LevelEditor_Module;
 /** A level editor UI element responsible for allowing the user to inspect selected entity components. */
 class EntityInspector final : public ImGUI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this inspector. */
 	inline ~EntityInspector() = default;
 	/** Construct a component inspector.

@@ -8,7 +8,7 @@ class Engine;
 /** An interface for engine modules to implement. */
 class Engine_Module {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this engine module. */
 	inline virtual ~Engine_Module() = default;
 	/** Construct an engine module. */
@@ -18,7 +18,7 @@ public:
 	// Public Interface Declarations
 	/** Initialize the module. */
 	inline virtual void initialize(Engine* engine) { m_engine = engine; };
-	/** Deinitialize the module. */
+	/** De-initialize the module. */
 	inline virtual void deinitialize() {}
 
 

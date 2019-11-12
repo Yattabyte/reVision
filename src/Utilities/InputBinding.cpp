@@ -14,7 +14,7 @@ void InputBinding::loadFile(const std::string& filename)
 {
 	m_config = Shared_Config(m_engine, filename, ActionState::Action_Strings(), false);
 
-	// Hardcode default binds here
+	// Hard-code default binds here
 	static auto defaultBind = [&](const ActionState::ACTION_ENUM& bind, const KeyboardEvent::Key& key) {
 		if (m_config->m_configuration.find(bind) == m_config->m_configuration.end())
 			m_config->m_configuration[bind] = (float)key;

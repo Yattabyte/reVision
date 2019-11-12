@@ -14,7 +14,7 @@ class Config;
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Config final : public std::shared_ptr<Config> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Config() = default;
 	/** Begins the creation process for this asset.
@@ -27,10 +27,10 @@ public:
 };
 
 /** A map for configuration name-value pairs.
-Represents a series of values coresponding to strings, like user prefences or binds. */
+Represents a series of values corresponding to strings, like user preferences or binds. */
 class Config final : public Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Config. */
 	inline ~Config() = default;
 	/** Construct the config with a particular set of variable names.

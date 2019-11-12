@@ -15,7 +15,7 @@ class LevelEditor_Module;
 /** A level editor UI element which prompts the user to save or ignore unsaved changes in a level. */
 class UnsavedChangesDialogue final : public ImGUI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this Unsaved Changes dialogue. */
 	inline ~UnsavedChangesDialogue() = default;
 	/** Construct a Unsaved Changes dialogue.

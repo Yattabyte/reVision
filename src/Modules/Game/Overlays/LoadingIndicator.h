@@ -13,7 +13,7 @@
 /** Graphics effect responsible for showing a loading spinner ring while the engine is loading. */
 class LoadingIndicator final : public Overlay {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Virtual Destructor. */
 	inline ~LoadingIndicator() {
 		// Update indicator

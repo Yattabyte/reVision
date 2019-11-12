@@ -11,7 +11,7 @@
 /** An ECS system responsible for synchronizing light components and sending data to the GPU. */
 class DirectSync_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~DirectSync_System() = default;
 	/** Construct this system.

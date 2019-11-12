@@ -15,7 +15,7 @@ class Lighting_FBO;
 /** A post-processing technique for generating bloom from a lighting buffer. */
 class Bloom final : public Graphics_Technique {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Virtual Destructor. */
 	inline ~Bloom() {
 		// Update indicator

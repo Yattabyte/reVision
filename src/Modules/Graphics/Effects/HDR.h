@@ -13,7 +13,7 @@
 /** A post-processing technique for tone-mapping and gamma correcting the final lighting product. */
 class HDR final : public Graphics_Technique {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Virtual Destructor. */
 	inline ~HDR() {
 		// Update indicator

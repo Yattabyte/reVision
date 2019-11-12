@@ -10,7 +10,7 @@
 /** A module responsible for the engine entities, components, and systems. */
 class ECS_Module final : public Engine_Module {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this ECS module. */
 	inline ~ECS_Module() = default;
 	/** Construct a ECS module. */

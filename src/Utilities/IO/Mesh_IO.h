@@ -77,14 +77,14 @@ struct Mesh_Geometry {
 	Node* rootNode = nullptr;
 };
 struct SingleVertex {
-	glm::vec3 vertex;
-	glm::vec3 normal;
-	glm::vec3 tangent;
-	glm::vec3 bitangent;
-	glm::vec2 uv;
+	glm::vec3 vertex = glm::vec3(0.0f);
+	glm::vec3 normal = glm::vec3(0.0f);
+	glm::vec3 tangent = glm::vec3(0.0f);
+	glm::vec3 bitangent = glm::vec3(0.0f);
+	glm::vec2 uv = glm::vec2(0.0f);
 	GLuint matID = 0;
-	glm::ivec4 boneIDs;
-	glm::vec4 weights;
+	glm::ivec4 boneIDs = glm::ivec4(0);
+	glm::vec4 weights = glm::vec4(0.0f);
 };
 struct GeometryInfo {
 	std::vector<SingleVertex> m_vertices;
@@ -98,7 +98,7 @@ public:
 	@param	engine			the engine to import to
 	@param	relativePath	the path to the file
 	@param	importedData	the container to place the imported data within
-	@return					true on successfull import, false otherwise (error reported to engine) */
+	@return					true on successful import, false otherwise (error reported to engine) */
 	static bool Import_Model(Engine* engine, const std::string& relativePath, Mesh_Geometry& importedData);
 	/** Get the plugin version.
 	@return					the plugin version */

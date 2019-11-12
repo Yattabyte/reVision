@@ -7,7 +7,7 @@
 #include "Assets/Shader.h"
 
 
-/** A UI container class that laysout its children vertically, in a list.
+/** A UI container class that layout its children vertically, in a list.
 Only modifies the position of its children, not their scale.
 If children need to expand to fit inside a parent container, consider using a vertical layout. */
 class List : public UI_Element {
@@ -18,7 +18,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the list. */
 	inline ~List() {
 		// Delete geometry

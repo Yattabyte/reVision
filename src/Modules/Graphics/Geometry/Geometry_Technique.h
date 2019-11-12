@@ -8,7 +8,7 @@
 /** A rendering technique category responsible for displaying and shadowing geometry. */
 class Geometry_Technique : public Graphics_Technique {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this technique. */
 	inline ~Geometry_Technique() = default;
 	/** Construct this technique. */
@@ -29,7 +29,7 @@ public:
 	inline virtual void renderGeometry(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) {}
 	/** Use geometry techniques to cull shadows.
 	@param	deltaTime		the amount of time passed since last frame.
-	@param	perspectives	the camera and layer indicies to render. */
+	@param	perspectives	the camera and layer indices to render. */
 	inline virtual void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) {}
 	/** Use geometry techniques to render shadows.
 	@param	deltaTime		the amount of time passed since last frame. */

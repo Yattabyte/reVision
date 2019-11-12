@@ -21,7 +21,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the options menu. */
 	inline ~OptionsMenu() = default;
 	/** Construct an options menu.

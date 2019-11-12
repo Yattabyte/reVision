@@ -50,7 +50,7 @@ static bool RayOOBBIntersection(
 		if (fabs(f) > 0.001f) { // Standard case
 			float t1 = (e + aabb_min.x) / f; // Intersection with the "left" plane
 			float t2 = (e + aabb_max.x) / f; // Intersection with the "right" plane
-			// t1 and t2 now contain distances betwen ray origin and ray-plane intersections
+			// t1 and t2 now contain distances between ray origin and ray-plane intersections
 
 			// We want t1 to represent the nearest intersection,
 			// so if it's not the case, invert t1 and t2

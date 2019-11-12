@@ -30,22 +30,22 @@ public:
 	};
 
 
-	// Public (de)Constructors
-	/** Destroy this ui element. */
+	// Public (De)Constructors
+	/** Destroy this UI element. */
 	inline virtual ~UI_Element() = default;
-	/** Construct a ui element.
+	/** Construct a UI element.
 	@param	engine		the engine to use. */
 	explicit UI_Element(Engine* engine);
 
 
 	// Public Interface Declaration
-	/** Render this element (and all subelements).
-	@param	transform				transform to use. */
+	/** Render this element (and all sub-elements).
+	@param	transform				the transform to use. */
 	virtual void renderElement(const float& deltaTime, const glm::vec2& position = glm::vec2(0.0f), const glm::vec2& scale = glm::vec2(1.0f));
-	/** Applies a mouse action across this ui element.
-	@param	mouseEvent				the mouse event occuring. */
+	/** Applies a mouse action across this UI element.
+	@param	mouseEvent				the mouse event occurring. */
 	virtual void mouseAction(const MouseEvent& mouseEvent);
-	/** Propogates a keyboard action event from this UI element to its children.
+	/** Propagates a keyboard action event from this UI element to its children.
 	@param keyboardEvent			the event to propagate. */
 	virtual void keyboardAction(const KeyboardEvent& keyboardEvent);
 	/** Process user input from peripheral devices.
@@ -135,12 +135,12 @@ public:
 	/** Retrieve this element's clicked state.
 	@return						true if this element is clicked, false otherwise. */
 	static bool getClicked();
-	/** Reset this element, releasing, unpressing, unhovering this element and all its children. */
+	/** Reset this element, releasing, un-pressing, un-hovering this element and all its children. */
 	void clearFocus();
 	/** Get whether or not the mouse is within this element.
 	@return						true if the mouse is within this element. */
 	bool mouseWithin(const MouseEvent& mouseEvent) const;
-	/** Returns whether or not a point is within the bbox specified. */
+	/** Returns whether or not a point is within the BBox specified. */
 	static bool withinBBox(const glm::vec2& box_p1, const glm::vec2& box_p2, const glm::vec2& point);
 
 

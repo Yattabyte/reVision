@@ -18,7 +18,7 @@ void CameraController::tick(const float& deltaTime)
 	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(1)) {
 		auto& actionState = m_engine->getActionState();
 
-		// Save begining mouse click position
+		// Save beginning mouse click position
 		if (!m_beginPress) {
 			m_beginPress = true;
 			m_startPos = glm::vec2(actionState.at(ActionState::MOUSE_X), actionState.at(ActionState::MOUSE_Y));

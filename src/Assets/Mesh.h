@@ -18,7 +18,7 @@ class Mesh;
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Mesh final : public std::shared_ptr<Mesh> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Mesh() = default;
 	/** Begins the creation process for this asset.
@@ -34,7 +34,7 @@ public:
 This asset contains raw unformatted geometric data. */
 class Mesh final : public Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Mesh. */
 	~Mesh() = default;
 	/** Construct the Mesh.

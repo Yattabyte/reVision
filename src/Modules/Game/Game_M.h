@@ -19,7 +19,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this game module. */
 	inline ~Game_Module() = default;
 	/** Construct a game module. */

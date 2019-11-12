@@ -14,7 +14,7 @@
 /** A 3D transformation object.
 Takes in position, orientation, and scaling attributes, and calculates a transformation matrix. */
 struct Transform {
-	// (de)Constructors
+	// (De)Constructors
 	/** Default Destructor. */
 	inline ~Transform() = default;
 	/** Default Constructor. */

@@ -12,7 +12,7 @@
 /** An ECS system responsible for applying a transformation hierarchy between parent and child entities. */
 class Transform_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~Transform_System() = default;
 	/** Construct this system.

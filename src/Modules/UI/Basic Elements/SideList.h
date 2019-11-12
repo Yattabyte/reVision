@@ -19,7 +19,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the side list. */
 	inline ~SideList() {
 		// Delete geometry
@@ -49,7 +49,7 @@ public:
 		glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), 0, GL_DYNAMIC_STORAGE_BIT);
 		m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 
-		// Make a background panel for cosemetic purposes
+		// Make a background panel for cosmetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
 		m_backPanel = std::make_shared<Border>(engine, panel);
@@ -157,7 +157,7 @@ public:
 		setIndex(getIndex());
 	}
 	/** Retrieve the strings this list uses for each item in this list.
-	@return					the list of strgings describing each item. */
+	@return					the list of strings describing each item. */
 	inline std::vector<std::string> getStrings() const {
 		return m_strings;
 	}
@@ -167,7 +167,7 @@ protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */
 	inline void updateGeometry() {
-		// Shorten the back panel by the width of the arrowws
+		// Shorten the back panel by the width of the arrows
 		const float arrowHeight = m_scale.y;
 		m_backPanel->setScale(glm::vec2(getScale().x - (arrowHeight * 2.0f), getScale().y));
 

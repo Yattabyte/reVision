@@ -4,7 +4,7 @@
 #include <algorithm>
 
 
-// Public (de)Constructors
+// Public (De)Constructors
 
 UI_Element::UI_Element(Engine* engine)
 	: m_engine(engine)
@@ -52,7 +52,7 @@ void UI_Element::mouseAction(const MouseEvent& mouseEvent)
 	}
 	else {
 		// Element either invisible, disabled, or the mouse left bounds
-		// So 'revert' the ui state, clear its focus, unpress, unhover, etc.
+		// So 'revert' the UI state, clear its focus, un-press, un-hover, etc.
 		// This is true for all children too.
 		clearFocus();
 		for each (auto & child in m_children)
@@ -63,7 +63,7 @@ void UI_Element::mouseAction(const MouseEvent& mouseEvent)
 void UI_Element::keyboardAction(const KeyboardEvent& keyboardEvent)
 {
 	// Base UI element has no specific keyboard actions
-	// Keyboard actions are specific like typing in a textbox, NOT navigating a main menu
+	// Keyboard actions are specific like typing in a text-box, NOT navigating a main menu
 	// Propagate action onto children
 	for each (auto & child in m_children)
 		child->keyboardAction(keyboardEvent);

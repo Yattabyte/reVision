@@ -10,7 +10,7 @@
 /** An ECS system responsible for populating render lists PER active perspective in a given frame, for all prop related entities. */
 class PropVisibility_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~PropVisibility_System() = default;
 	/** Construct this system.

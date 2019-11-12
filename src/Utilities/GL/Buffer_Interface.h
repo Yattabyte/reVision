@@ -8,7 +8,7 @@
 /** An interface for OpenGL buffers. */
 class Buffer_Interface {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this buffer. */
 	inline virtual ~Buffer_Interface() = default;
 	/** Construct a buffer. */

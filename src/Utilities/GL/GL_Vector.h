@@ -12,7 +12,7 @@
 template <typename T, int BufferCount = 3>
 class GL_Vector final : public Buffer_Interface {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this GL Vector. */
 	inline ~GL_Vector() {
 		// Safely destroy each buffer this class owns
@@ -172,9 +172,9 @@ private:
 
 	// Private Attributes
 	constexpr const static GLbitfield BufferFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
-	mutable GLsync m_writeFence[BufferCount], m_readFence[BufferCount];
-	GLuint m_bufferID[BufferCount];
-	T* m_bufferPtr[BufferCount];
+	mutable GLsync m_writeFence[BufferCount]{}, m_readFence[BufferCount]{};
+	GLuint m_bufferID[BufferCount]{};
+	T* m_bufferPtr[BufferCount]{};
 	int m_index = 0;
 	size_t m_capacity = 0;
 };

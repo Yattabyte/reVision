@@ -16,7 +16,7 @@ class Shader_Geometry;
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Shader_Geometry final : public std::shared_ptr<Shader_Geometry> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Shader_Geometry() = default;
 	/** Begins the creation process for this asset.
@@ -28,13 +28,13 @@ public:
 };
 
 /** An entire OpenGL vertex/geometry/fragment shader program.
-An encapsulation of an opengl vertex & geometry & fragment shader program, extending the Shader asset.
+An encapsulation of an OpenGL vertex & geometry & fragment shader program, extending the Shader asset.
 Responsible for loading the files associated with this program from disk, and forming the program.
 Also provides support for explicitly setting uniform values for a given attribute location.
 Supports binary representation. */
 class Shader_Geometry : public Shader {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Shader. */
 	~Shader_Geometry();
 	/** Construct the Shader.

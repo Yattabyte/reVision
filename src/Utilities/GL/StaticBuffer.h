@@ -9,7 +9,7 @@
 /** Encapsulates an OpenGL buffer that is fixed in size. */
 class StaticBuffer final : public Buffer_Interface {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	inline ~StaticBuffer() {
 		if (m_bufferID != 0)
 			glDeleteBuffers(1, &m_bufferID);
@@ -31,7 +31,7 @@ public:
 	inline StaticBuffer(StaticBuffer&& other) noexcept : m_bufferID(0) {
 		(*this) = std::move(other);
 	}
-	/** Move gl object from 1 instance to another. */
+	/** Move OpenGL object from 1 instance to another. */
 	inline StaticBuffer& operator=(StaticBuffer&& other) noexcept {
 		if (this != &other) {
 			m_bufferID = other.m_bufferID;

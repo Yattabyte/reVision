@@ -21,16 +21,16 @@ struct Image_Data {
 Uses the FreeImage texture importer: http://freeimage.sourceforge.net/ */
 class Image_IO {
 public:
-	/** Initialzie the freeimage library. */
+	/** Initialize the FreeImage library. */
 	static void Initialize();
-	/** Shutdown the freeimage library*/
+	/** Shutdown the FreeImage library*/
 	static void Deinitialize();
 	/** Import an image from disk.
 	@param	engine			the engine to import to
 	@param	relativePath	the path to the file
 	@param	importedData	the container to place the imported data within
 	@param	linear			set to true to use linear filtering, false to use nearest
-	@return					true on successfull import, false otherwise (error reported to engine) */
+	@return					true on successful import, false otherwise (error reported to engine) */
 	static bool Import_Image(Engine* engine, const std::string& relativePath, Image_Data& importedData, const bool& linear = true);
 	/** Load pixel data from a bitmap object.
 	@param	bitmap			the FreeImage bitmap to read from

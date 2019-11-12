@@ -15,7 +15,7 @@ class Engine;
 /** A level editor UI element displaying which direction the camera is rotated towards. */
 class RotationIndicator final : public ImGUI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the rotation indicator. */
 	~RotationIndicator();
 	/** Construct a rotation indicator.

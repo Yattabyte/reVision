@@ -10,7 +10,7 @@
 /** An ECS system responsible for collecting cameras from entities with shadow components. */
 class ShadowPerspective_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~ShadowPerspective_System() = default;
 	/** Construct this system.

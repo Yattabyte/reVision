@@ -18,7 +18,7 @@ class LevelEditor_Module;
 /** A 3D tool allowing the user to translate a set of selected entities. */
 class Translation_Gizmo {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this gizmo. */
 	~Translation_Gizmo();
 	/** Construct this gizmo.
@@ -60,7 +60,7 @@ private:
 	};
 	float m_renderScale = 0.02f, m_gridSnap = 1.0f;
 	unsigned int m_selectedAxes = NONE, m_hoveredAxes = NONE;
-	glm::vec3 m_startingOffset = glm::vec3(0.0f), m_axisDelta = glm::vec3(0.0f), m_hoveredEnds[3], m_direction = glm::vec3(1.0f);
+	glm::vec3 m_startingOffset = glm::vec3(0.0f), m_axisDelta = glm::vec3(0.0f), m_hoveredEnds[3]{}, m_direction = glm::vec3(1.0f);
 	Shared_Auto_Model m_model;
 	Shared_Shader m_gizmoShader, m_axisShader;
 	IndirectDraw<1> m_indirectIndicator;

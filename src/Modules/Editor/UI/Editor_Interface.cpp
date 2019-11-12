@@ -61,8 +61,8 @@ Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor) :
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;	// Enable Gamepad Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		// Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;	// Enable Game-pad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		// Enable Game-pad Controls
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 	io.ConfigDockingWithShift = true;
 	ImGuiStyle& style = ImGui::GetStyle();

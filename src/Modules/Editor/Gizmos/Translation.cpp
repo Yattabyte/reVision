@@ -154,9 +154,9 @@ void Translation_Gizmo::checkMouseHover()
 	doubleAxes_max[1] = glm::vec3(2.0f, 0.5f, 2.0f) * scalingFactor;
 	doubleAxes_min[2] = glm::vec3(0.0f) * scalingFactor;
 	doubleAxes_max[2] = glm::vec3(0.5, 2.0f, 2.0f) * scalingFactor;
-	plane_normals[0] = glm::vec3(0, 0, 1) * m_direction; // xy
-	plane_normals[1] = glm::vec3(0, 1, 0) * m_direction; // xz
-	plane_normals[2] = glm::vec3(1, 0, 0) * m_direction; // yz
+	plane_normals[0] = glm::vec3(0, 0, 1) * m_direction; // XY
+	plane_normals[1] = glm::vec3(0, 1, 0) * m_direction; // XZ
+	plane_normals[2] = glm::vec3(1, 0, 0) * m_direction; // YZ
 
 	// Find the closest axis that the user may have clicked on
 	int hoveredAxis = -1;
@@ -210,7 +210,7 @@ bool Translation_Gizmo::checkMousePress()
 		m_startingOffset = position;
 		// Set the appropriate selected axis
 		if (m_hoveredAxes == X_AXIS) {
-			// Check which of the ray-plane inter. point from xy and xz planes is closest to the camera
+			// Check which of the ray-plane inter. point from XY and XZ planes is closest to the camera
 			if (glm::distance(m_hoveredEnds[0], ray_origin) < glm::distance(m_hoveredEnds[1], ray_origin))
 				m_startingOffset.x = m_hoveredEnds[0].x;
 			else
@@ -254,7 +254,7 @@ bool Translation_Gizmo::checkMousePress()
 
 		auto position = m_startingOffset;
 		if (m_selectedAxes == X_AXIS) {
-			// Check which of the ray-plane inter. point from xy and xz planes is closest to the camera
+			// Check which of the ray-plane inter. point from XY and XZ planes is closest to the camera
 			if (glm::distance(m_hoveredEnds[0], ray_origin) < glm::distance(m_hoveredEnds[1], ray_origin))
 				position.x = gridSnapValue(m_hoveredEnds[0].x, m_axisDelta.x, m_gridSnap);
 			else

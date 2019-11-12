@@ -13,7 +13,7 @@ class LevelEditor_Module;
 /** A level editor UI element prompting the user to recover an auto-saved file. */
 class RecoverDialogue final : public ImGUI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this level dialogue. */
 	inline ~RecoverDialogue() = default;
 	/** Construct a level dialogue.

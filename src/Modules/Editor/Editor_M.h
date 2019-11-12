@@ -21,7 +21,7 @@ class Graphics_Pipeline;
 /** A level editor module. */
 class LevelEditor_Module final : public Engine_Module {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this game module. */
 	inline ~LevelEditor_Module() = default;
 	/** Construct a game module. */

@@ -16,7 +16,7 @@
 /** A module responsible for the overall user interface. */
 class UI_Module final : public Engine_Module {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the UI module. */
 	inline ~UI_Module() = default;
 	/** Construct a UI module. */
@@ -59,11 +59,11 @@ public:
 	void applyChar(const unsigned int& character);
 	/** Propagates keyboard key input to all UI elements.
 	@param		key				The keyboard key that was pressed or released.
-	@param		scancode		The system-specific scancode of the key.
-	@param		action			Action::PRESS, RELEASE or REPEAT.
+	@param		scan-code		The system-specific scan-code of the key.
+	@param		action			PRESS, RELEASE or REPEAT.
 	@param		mods			Bit field describing which modifier keys were held down. */
 	void applyKey(const int& key, const int& scancode, const int& action, const int& mods);
-	/** Apply an action state to the the current focused UI element.
+	/** Apply an action state to the current focused UI element.
 	@param		actionState		the action state to apply. */
 	void applyActionState(ActionState& actionState);
 	/** Add a new callback to be called as-soon-as-possible.

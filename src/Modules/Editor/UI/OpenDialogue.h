@@ -15,7 +15,7 @@ class LevelEditor_Module;
 /** A level editor UI element allowing the user to open levels in the maps folder. */
 class OpenDialogue final : public ImGUI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this level opening dialogue. */
 	inline ~OpenDialogue() = default;
 	/** Construct a level opening dialogue.
@@ -31,7 +31,7 @@ public:
 private:
 	// Private Methods
 	/** Populate the level dialogue with an optional sub-directory.
-	@param	directory	if non-blank, a subfolder within the maps folder. */
+	@param	directory	if non-blank, a sub-folder within the maps folder. */
 	void populateLevels(const std::string& directory = "");
 	/** Tick the main dialogue, rendering it and performing all logic. */
 	void tickMainDialogue();

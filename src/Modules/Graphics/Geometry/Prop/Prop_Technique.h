@@ -17,7 +17,7 @@
 /** A core rendering technique for rendering props from a given viewing perspective. */
 class Prop_Technique final : public Geometry_Technique {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destructor. */
 	inline ~Prop_Technique() = default;
 	/** Constructor. */

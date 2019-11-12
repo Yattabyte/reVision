@@ -8,7 +8,7 @@
 /** A layout class which controls the position and sizes of its children, laying them out evenly in a column. */
 class Layout_Vertical : public UI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the layout. */
 	inline ~Layout_Vertical() = default;
 	/** Construct the layout.
@@ -35,7 +35,7 @@ public:
 		alignChildren();
 	}
 	/** Get the margin distance between elements and the edge of this layout.
-	@return				the the margin for this layout. */
+	@return				the margin for this layout. */
 	inline float getMargin() const {
 		return m_margin;
 	}
@@ -54,7 +54,7 @@ public:
 
 protected:
 	// Protected Methods
-	/** Rearrange the position and scale of children, to uniformally fit in this layout. */
+	/** Rearrange the position and scale of children, to uniformly fit in this layout. */
 	inline void alignChildren() {
 		const float innerRectSize = m_scale.y;
 

@@ -14,7 +14,7 @@ class Shader_Pkg;
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Shader_Pkg final : public std::shared_ptr<Shader_Pkg> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Shader_Pkg() = default;
 	/** Begins the creation process for this asset.
@@ -30,7 +30,7 @@ An accessory asset for shaders that stores code blocks for other shaders to use.
 Provides no functionality on its own, but can recursively import more code blocks for other shaders and itself. */
 class Shader_Pkg final : public Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Shader Package. */
 	~Shader_Pkg() = default;
 	/** Construct the Shader Package.

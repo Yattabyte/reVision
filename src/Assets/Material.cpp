@@ -27,7 +27,7 @@ Material::~Material()
 Material::Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures)
 	: Asset(engine, filename), m_textures(textures)
 {
-	// We need to reserve a region of gpu memory for all the textures
+	// We need to reserve a region of GPU memory for all the textures
 	// So we need to preemptively figure out the maximum number of textures we may need (can't delay until later)
 	// Thus, we will process any extra files ahead of time, like ".mat"
 

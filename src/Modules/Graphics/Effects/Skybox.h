@@ -14,7 +14,7 @@
 /** A core-rendering technique for writing the frame time to the screen. */
 class Skybox final : public Graphics_Technique {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Virtual Destructor. */
 	inline ~Skybox() {
 		// Update indicator

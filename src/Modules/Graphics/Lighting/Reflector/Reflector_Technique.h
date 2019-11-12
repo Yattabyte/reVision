@@ -18,7 +18,7 @@
 /** A core lighting technique responsible for all parallax reflectors. */
 class Reflector_Technique final : public Graphics_Technique {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destructor. */
 	inline ~Reflector_Technique() {
 		// Update indicator
@@ -37,7 +37,7 @@ public:
 		m_frameData(std::make_shared<ReflectorData>()),
 		m_sceneCameras(cameras)
 	{
-		// Auxilliary Systems
+		// Auxiliary Systems
 		m_auxilliarySystems.makeSystem<ReflectorScheduler_System>(engine, m_frameData);
 		m_auxilliarySystems.makeSystem<ReflectorVisibility_System>(m_frameData);
 		m_auxilliarySystems.makeSystem<ReflectorSync_System>(m_frameData);

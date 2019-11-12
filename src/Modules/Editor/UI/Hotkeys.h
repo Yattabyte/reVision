@@ -12,7 +12,7 @@ class LevelEditor_Module;
 /** An invisible level editor UI element responsible for handling hotkeys. */
 class Hotkeys final : public ImGUI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this element. */
 	inline ~Hotkeys() = default;
 	/** Construct this element.

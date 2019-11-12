@@ -15,7 +15,7 @@ struct Single_Primitive_Vertex;
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Auto_Model final : public std::shared_ptr<Auto_Model> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Auto_Model() = default;
 	/** Begins the creation process for this asset.
@@ -32,7 +32,7 @@ Typically used to load quads/spheres for fire & forget events.
 @note	owns 1 Shared_Mesh object. */
 class Auto_Model final : public Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Auto_Model. */
 	~Auto_Model();
 	/** Construct the Auto_Model.

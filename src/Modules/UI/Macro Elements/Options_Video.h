@@ -13,10 +13,10 @@
 /** A UI element serving as a video options menu. */
 class Options_Video : public Options_Pane {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the video pane. */
 	inline ~Options_Video() = default;
-	/** Contsruct a video pane.
+	/** Construct a video pane.
 	@param	engine		the engine to use. */
 	inline explicit Options_Video(Engine* engine)
 		: Options_Pane(engine) {

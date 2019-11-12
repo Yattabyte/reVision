@@ -25,7 +25,7 @@ const enum Resize_Policy : GLenum {
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Image final : public std::shared_ptr<Image> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Image() = default;
 	/** Begins the creation process for this asset.
@@ -42,7 +42,7 @@ public:
 Responsible for fetching and processing an image from disk and optionally resizing it. */
 class Image final : public Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Image. */
 	~Image();
 	/** Construct the Image.

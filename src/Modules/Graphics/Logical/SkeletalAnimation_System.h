@@ -10,7 +10,7 @@
 /** A system responsible for animating props with skeleton components. */
 class Skeletal_Animation_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the skeletal animation system. */
 	inline ~Skeletal_Animation_System() = default;
 	/** Construct a skeletal animation system. */

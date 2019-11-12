@@ -11,7 +11,7 @@
 /** A system responsible for updating player components based on keyboard/mouse. */
 class PlayerFreeLook_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this free-look system. */
 	inline ~PlayerFreeLook_System() = default;
 	/** Construct a free-look system. */

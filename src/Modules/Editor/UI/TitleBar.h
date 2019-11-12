@@ -10,10 +10,10 @@
 class Engine;
 class LevelEditor_Module;
 
-/** A level editor UI element acting as a titlebar with File, Edit, menus. */
+/** A level editor UI element acting as a title-bar with File, Edit, menus. */
 class TitleBar final : public ImGUI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this title bar. */
 	inline ~TitleBar() = default;
 	/** Construct a title bar.

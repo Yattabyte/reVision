@@ -15,7 +15,7 @@
 /** A core-rendering technique for deriving an ambient occlusion factor from the viewport itself. */
 class SSAO final : public Graphics_Technique {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Virtual Destructor. */
 	inline ~SSAO() {
 		// Update indicator

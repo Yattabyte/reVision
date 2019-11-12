@@ -16,14 +16,14 @@ class Engine;
 /** Represents a series of graphics rendering techniques to apply serially. */
 class Graphics_Pipeline {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this rendering pipeline. */
 	inline ~Graphics_Pipeline() = default;
 	/** Construct a PBR rendering pipeline.
 	@param	engine			the engine to use.
 	@param	clientCamera	the main camera.
 	@param	cameras			all the cameras active in the scene.
-	@param	auxSystems		container to add extra render-related ecs systems to. */
+	@param	auxSystems		container to add extra render-related ecsSystem's to. */
 	Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camera>& clientCamera);
 
 
@@ -45,7 +45,7 @@ public:
 	void render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories = Graphics_Technique::ALL);
 	/** Use geometry techniques to cull shadows.
 	@param	deltaTime		the amount of time passed since last frame.
-	@param	perspectives	the camera and layer indicies to render. */
+	@param	perspectives	the camera and layer indices to render. */
 	void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives);
 	/** Use geometry techniques to render shadows.
 	@param	deltaTime		the amount of time passed since last frame. */

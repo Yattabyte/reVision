@@ -13,7 +13,7 @@ class Cubemap;
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Cubemap final : public std::shared_ptr<Cubemap> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Cubemap() = default;
 	/** Begins the creation process for this asset.
@@ -25,11 +25,11 @@ public:
 };
 
 /** A cubemap texture object.
-Wraps an OpenGL texture object for cubemaps, dealing with the file fetching and uploading for all 6 images.
+Wraps an OpenGL texture object for cube-maps, dealing with the file fetching and uploading for all 6 images.
 @note	owns 6 Shared_Image objects. */
 class Cubemap final : public Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Cubemap. */
 	~Cubemap();
 	/** Construct the Cubemap.

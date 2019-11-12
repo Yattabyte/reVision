@@ -19,7 +19,7 @@ struct Viewport;
 @note	performs physically based rendering techniques using deferred rendering. */
 class Graphics_Module final : public Engine_Module {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this graphics rendering module. */
 	inline ~Graphics_Module() = default;
 	/** Construct a graphics rendering module. */

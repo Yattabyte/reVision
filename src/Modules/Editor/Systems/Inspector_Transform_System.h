@@ -13,7 +13,7 @@
 /** An ECS system allowing the user to inspect selected component transforms.*/
 class Inspector_Transform_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~Inspector_Transform_System() = default;
 	/** Construct this system.

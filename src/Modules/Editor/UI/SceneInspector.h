@@ -14,7 +14,7 @@ class LevelEditor_Module;
 /** A level editor UI element responsible for allowing the user to see all the elements of the active scene. */
 class SceneInspector final : public ImGUI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this scene inspector. */
 	inline ~SceneInspector() = default;
 	/** Construct a scene inspector.

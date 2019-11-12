@@ -13,7 +13,7 @@
 /** An ECS system allowing the user to ray-pick entities by selecting against their components. */
 class MousePicker_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~MousePicker_System() {
 		// Update indicator

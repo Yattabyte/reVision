@@ -9,7 +9,7 @@
 /** UI button class, affords being pushed and released. */
 class Button : public UI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the button. */
 	inline ~Button() = default;
 	/** Creates a button with specific text inside.

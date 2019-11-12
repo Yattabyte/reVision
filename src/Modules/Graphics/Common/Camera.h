@@ -26,7 +26,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the camera buffer. */
 	inline ~Camera() = default;
 	/** Construct a camera buffer. */

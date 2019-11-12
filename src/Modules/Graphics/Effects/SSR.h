@@ -14,7 +14,7 @@
 /** A core-rendering technique for deriving extra reflection information from the viewport itself. */
 class SSR final : public Graphics_Technique {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Virtual Destructor. */
 	inline ~SSR() {
 		// Update indicator
@@ -111,7 +111,7 @@ public:
 
 private:
 	// Private Methods
-	/** Convolute the lighting buffer into each of its mip levels.
+	/** Convolute the lighting buffer into each of its MIP levels.
 	@param	viewport	the viewport to render from. */
 	inline void updateMIPChain(const std::shared_ptr<Viewport>& viewport) {
 		const auto mipFboID = viewport->m_gfxFBOS->getFboID("SSR_MIP");

@@ -12,7 +12,7 @@
 /** A module responsible for physics. */
 class Physics_Module final : public Engine_Module {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	inline ~Physics_Module() = default;
 	inline Physics_Module() = default;
 

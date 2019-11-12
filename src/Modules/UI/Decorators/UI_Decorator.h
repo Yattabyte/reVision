@@ -8,7 +8,7 @@
 /** A UI decorator object, following the Decorator design pattern. */
 class UI_Decorator : public UI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this decorator. */
 	inline ~UI_Decorator() = default;
 	/** Construct a decorator, decorating the supplied component.

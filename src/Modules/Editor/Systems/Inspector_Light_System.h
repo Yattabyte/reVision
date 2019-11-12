@@ -13,7 +13,7 @@
 /** An ECS system allowing the user to inspect selected light components. */
 class Inspector_Light_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~Inspector_Light_System() = default;
 	/** Construct this system. */

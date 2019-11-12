@@ -13,7 +13,7 @@ public:
 	enum Key : int;
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the mouse event. */
 	inline ~MouseEvent() = default;
 	/** Construct a mouse event. */

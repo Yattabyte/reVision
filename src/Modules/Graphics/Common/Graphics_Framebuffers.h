@@ -14,27 +14,27 @@
 
 class Engine;
 
-/** Creates, stores, and manages the size of all the framebuffers needed for our PBR rendering pipeline.
-Decouples creation and management from the various sources who need a framebuffer, which isn't desireable, however easily allows them to be shared.
-Necessary such that 1 rendering pipeline can be reused for different sized viewports/viewing perspectives. */
+/** Creates, stores, and manages the size of all the frame-buffers needed for our PBR rendering pipeline.
+Decouples creation and management from the various sources who need a framebuffer, which isn't desirable, however easily allows them to be shared.
+Necessary such that 1 rendering pipeline can be reused for different sized view-ports/viewing perspectives. */
 class Graphics_Framebuffers {
 public:
-	// Public (de)Constructors
-	/** Destroy this collection of framebuffers. */
+	// Public (De)Constructors
+	/** Destroy this collection of frame-buffers. */
 	~Graphics_Framebuffers();
-	/** Construct a collection of pbr framebuffers at a specific size.
+	/** Construct a collection of PBR frame-buffers at a specific size.
 	@param	size			the size to use.
 	@param	engine			the active engine. */
 	Graphics_Framebuffers(const glm::ivec2& size, Engine* engine);
 
 
 	// Public Methods
-	/** Create a framebuffer with a specific name, specific formats, and optionally mipmap it to 6 lod intervals.
+	/** Create a framebuffer with a specific name, specific formats, and optionally mipmap it to 6 LOD intervals.
 	@param	name			the name of the framebuffer, for lookup later.
-	@param	textureFormats	vector of texture parameters to connect to the fbo.
-	@param	mipmapped		(optional) whether to mipmap the fbo textures, down to 6 lod intervals. */
+	@param	textureFormats	vector of texture parameters to connect to the FBO.
+	@param	mipmapped		(optional) whether to mipmap the FBO textures, down to 6 LOD intervals. */
 	void createFBO(const char* name, const std::vector<std::tuple<GLenum, GLenum, GLenum>>& textureFormats, const bool& mipmapped = false);
-	/** Bind a framebuffer for writting.
+	/** Bind a framebuffer for writing.
 	@param	name			the name of the framebuffer to bind. */
 	void bindForWriting(const char* name);
 	/** Bind a framebuffer for reading.

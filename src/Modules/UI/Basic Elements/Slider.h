@@ -16,7 +16,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the slider. */
 	inline ~Slider() = default;
 	/** Construct a slider with a given starting value.
@@ -25,7 +25,7 @@ public:
 	@param	range		the starting range to use. */
 	inline explicit Slider(Engine* engine, const float& value = 0.0f, const glm::vec2& range = { 0.0f, 1.0f })
 		: UI_Element(engine), m_value(value), m_lowerRange(range.x), m_upperRange(range.y) {
-		// Make a background panel for cosemetic purposes
+		// Make a background panel for cosmetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
 		m_backPanel = std::make_shared<Border>(engine, panel);

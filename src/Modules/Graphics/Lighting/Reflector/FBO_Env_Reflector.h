@@ -8,7 +8,7 @@
 /** Framebuffer containing texture data for all environment maps. */
 class FBO_Env_Reflector {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this framebuffer. */
 	inline ~FBO_Env_Reflector() {
 		glDeleteFramebuffers(6, m_fboID);
@@ -61,7 +61,7 @@ public:
 		const glm::vec3 clear(0.0f);
 		glClearTexSubImage(m_textureID, 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_RGB, GL_FLOAT, &clear);
 	}
-	/** Bind this framebuffer for writting, at the specific mipmap index. */
+	/** Bind this framebuffer for writing, at the specific mipmap index. */
 	inline void bindForWriting(const int& index) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID[index]);
 	}

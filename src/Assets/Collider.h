@@ -13,7 +13,7 @@ class Collider;
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Collider final : public std::shared_ptr<Collider> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Collider() = default;
 	/** Begins the creation process for this asset.
@@ -29,7 +29,7 @@ Represents a 3D mesh asset tuned for use in physics simulations instead of rende
 @note	uses Bullet library. */
 class Collider final : public Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Collider. */
 	inline ~Collider() = default;
 	/** Construct the Collider.

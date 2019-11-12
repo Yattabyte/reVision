@@ -4,13 +4,13 @@
 
 constexpr char* DIRECTORY_TEXTURE = "\\Textures\\";
 
-Shared_Texture::Shared_Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anis, const bool& threaded)
+Shared_Texture::Shared_Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy, const bool& threaded)
 {
 	(*(std::shared_ptr<Texture>*)(this)) = std::dynamic_pointer_cast<Texture>(
 		engine->getManager_Assets().shareAsset(
 			typeid(Texture).name(),
 			filename,
-			[engine, filename, type, mipmap, anis]() { return std::make_shared<Texture>(engine, filename, type, mipmap, anis); },
+			[engine, filename, type, mipmap, anisotropy]() { return std::make_shared<Texture>(engine, filename, type, mipmap, anisotropy); },
 			threaded
 		));
 }
@@ -25,11 +25,11 @@ Texture::~Texture()
 
 Texture::Texture(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
 
-Texture::Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anis) :
+Texture::Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy) :
 	Asset(engine, filename),
 	m_type(type),
 	m_mipmap(mipmap),
-	m_anis(anis)
+	m_anis(anisotropy)
 {
 }
 

@@ -12,7 +12,7 @@ class Engine;
 /** Responsible for loading a particular key-binding configuration. */
 class InputBinding {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the binding (not from disk) */
 	~InputBinding();
 	/** Construct a key-binding.

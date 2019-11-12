@@ -11,7 +11,7 @@
 /** An ECS system responsible for scheduling when reflector related entities should be updated. */
 class ReflectorScheduler_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~ReflectorScheduler_System() {
 		// Update indicator
@@ -90,7 +90,7 @@ public:
 			for (auto& [importance, time, reflectorSpot, camera] : m_frameData->reflectorsToUpdate)
 				camera->setEnabled(true);
 
-			// Resize reflectormap to fit number of entities this frame
+			// Resize the reflector map to fit number of entities this frame
 			m_frameData->envmapFBO.resize(m_frameData->envmapSize, (unsigned int)(cameraCount));
 			m_frameData->reflectorLayers = cameraCount;
 		}

@@ -12,10 +12,10 @@
 
 
 /** A UI element serving as a menu.
-Made to be subclassed and expanded upon, provides a method for adding menu buttons. */
+Made to be sub-classed and expanded upon, provides a method for adding menu buttons. */
 class Menu : public UI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the menu. */
 	inline ~Menu() = default;
 	/** Construct a menu.
@@ -27,7 +27,7 @@ public:
 		m_title(std::make_shared<Label>(engine)),
 		m_separator(std::make_shared<Separator>(engine))
 	{
-		// Make a background panel for cosemetic purposes
+		// Make a background panel for cosmetic purposes
 		m_backPanel->setColor(glm::vec4(0.1, 0.1, 0.1, 0.5));
 		addElement(m_backPanel);
 

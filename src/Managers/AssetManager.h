@@ -19,7 +19,7 @@ class Engine;
 /** Manages the storage and retrieval of assets. */
 class AssetManager {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the asset manager. */
 	inline ~AssetManager() = default;
 	/** Create the asset manager. */

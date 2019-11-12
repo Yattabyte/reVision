@@ -13,7 +13,7 @@
 /** A post-processing technique for writing the frame time to the screen. */
 class Frametime_Counter final : public Overlay {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Virtual Destructor. */
 	inline ~Frametime_Counter() {
 		// Update indicator
@@ -66,7 +66,7 @@ public:
 				m_shader->setUniform(3, 10); // set texture index to 11
 			}
 			else
-				m_shader->setUniform(3, number - 48); // remove the ascii encoding, convert to int
+				m_shader->setUniform(3, number - 48); // remove the ASCII encoding, convert to int
 
 			m_shader->setUniform(2, glm::translate(glm::mat4(1.0f), glm::vec3(x * 24, 24, 0)) * scale);
 			glDrawArrays(GL_TRIANGLES, 0, 6);

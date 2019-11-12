@@ -12,7 +12,7 @@
 /** A module responsible for the starting screen logic. */
 class StartScreen_Module final : public Engine_Module {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this start screen module. */
 	inline ~StartScreen_Module() = default;
 	/** Construct a start screen module. */

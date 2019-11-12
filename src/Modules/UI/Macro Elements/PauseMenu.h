@@ -19,7 +19,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the start menu. */
 	inline ~PauseMenu() = default;
 	/** Construct a start menu.

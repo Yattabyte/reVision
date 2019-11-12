@@ -10,7 +10,7 @@
 /** An ECS system responsible for populating render lists PER active perspective in a given frame, for all light related entities. */
 class DirectVisibility_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~DirectVisibility_System() = default;
 	/** Construct this system.

@@ -200,7 +200,7 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 						}
 					}
 				};
-				//std::string albedo = "albedo.png", normal = "normal.png", metalness = "metalness.png", roughness = "roughness.png", height = "height.png", ao = "ao.png";
+				//std::string albedo = "albedo.png", normal = "normal.png", metalness = "metalness.png", roughness = "roughness.png", height = "height.png", AO = "ao.png";
 				std::string albedo, normal, metalness, roughness, height, ao;
 				if (materialIndex >= 0) {
 					const auto* sceneMaterial = scene->mMaterials[materialIndex];

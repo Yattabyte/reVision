@@ -24,7 +24,7 @@ Represents some form of data to be loaded from disk, such as shaders, models, le
 @note	should be created once, and its pointer passed around using shared pointers. */
 class Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the asset only when all references are destroyed. */
 	inline virtual ~Asset() = default;
 

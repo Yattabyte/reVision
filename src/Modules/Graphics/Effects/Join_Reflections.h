@@ -14,7 +14,7 @@
 /** A core-rendering technique for writing the final scene reflections back into the lighting. */
 class Join_Reflections final : public Graphics_Technique {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Virtual Destructor. */
 	inline ~Join_Reflections() {
 		// Update indicator

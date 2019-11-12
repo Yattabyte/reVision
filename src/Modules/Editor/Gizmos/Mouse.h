@@ -24,7 +24,7 @@ class Rotation_Gizmo;
 /** A 3D tool allowing the user to select entities in a level. */
 class Mouse_Gizmo {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this gizmo. */
 	~Mouse_Gizmo();
 	/** Construct this gizmo.

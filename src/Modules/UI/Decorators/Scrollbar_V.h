@@ -18,7 +18,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this scrollbar. */
 	inline ~Scrollbar_V() {
 		// Delete geometry

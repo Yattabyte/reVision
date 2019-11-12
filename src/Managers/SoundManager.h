@@ -11,7 +11,7 @@ class SoundObj;
 /** API for playing sound assets in the engine. */
 class SoundManager {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the sound manager. */
 	~SoundManager();
 	/** Construct the sound manager*/

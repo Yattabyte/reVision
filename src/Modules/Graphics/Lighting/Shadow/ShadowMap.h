@@ -9,7 +9,7 @@
 /** Framebuffer containing shadow data for all light maps. */
 class ShadowMap {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this framebuffer. */
 	inline ~ShadowMap() {
 		glDeleteFramebuffers(1, &m_fboID);
@@ -68,7 +68,7 @@ public:
 		glClearTexSubImage(m_textureIDS[1], 0, 0, 0, zOffset, m_size.x, m_size.y, amount, GL_RGB, GL_FLOAT, &clear);
 		glClearTexSubImage(m_textureIDS[2], 0, 0, 0, zOffset, m_size.x, m_size.y, amount, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
 	}
-	/** Bind this framebuffer for writting. */
+	/** Bind this framebuffer for writing. */
 	inline void bindForWriting() {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 	}

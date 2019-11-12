@@ -10,10 +10,10 @@
 #include "Engine.h"
 
 
-/** A post-processing technique for applying fxaa to the currently bound 2D image. */
+/** A post-processing technique for applying FXAA to the currently bound 2D image. */
 class FXAA final : public Graphics_Technique {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Virtual Destructor. */
 	inline ~FXAA() {
 		// Update indicator

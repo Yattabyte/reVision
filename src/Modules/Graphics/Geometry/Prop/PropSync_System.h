@@ -9,10 +9,10 @@
 #include "glm/gtx/component_wise.hpp"
 
 
-/** An ECS system responsible for syncronizing prop components and sending data to the GPU. */
+/** An ECS system responsible for synchronizing prop components and sending data to the GPU. */
 class PropSync_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~PropSync_System() = default;
 	/** Construct this system.

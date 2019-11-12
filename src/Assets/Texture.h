@@ -13,7 +13,7 @@ class Texture;
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Texture final : public std::shared_ptr<Texture> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Texture() = default;
 	/** Begins the creation process for this asset.
@@ -21,10 +21,10 @@ public:
 	@param	filename		the filename to use.
 	@param	type			the texture type (2D, 3D, CUBEMAP, etc).
 	@param	mipmap			use mipmaps.
-	@param	anis			use 16x anistropic filtering.
+	@param	anisotropy		use 16x anisotropic filtering.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Texture(Engine* engine, const std::string& filename, const GLuint& type = GL_TEXTURE_2D, const bool& mipmap = false, const bool& anis = false, const bool& threaded = true);
+	explicit Shared_Texture(Engine* engine, const std::string& filename, const GLuint& type = GL_TEXTURE_2D, const bool& mipmap = false, const bool& anisotropy = false, const bool& threaded = true);
 };
 
 /** An encapsulation of an OpenGL texture object.
@@ -33,7 +33,7 @@ Supports MIP-mapping and anisotropic filtering.
 @note	owns 1 Shared_Image object. */
 class Texture final : public Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Texture. */
 	~Texture();
 	/** Construct the Texture.
@@ -45,8 +45,8 @@ public:
 	@param	filename		the asset file name (relative to engine directory).
 	@param	type			the texture type (2D, 3D, CUBEMAP, etc).
 	@param	mipmap			use mipmaps.
-	@param	anis			use 16x anistropic filtering. */
-	Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anis);
+	@param	anisotropy		use 16x anisotropic filtering. */
+	Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy);
 
 
 	// Public Methods

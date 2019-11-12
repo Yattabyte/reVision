@@ -15,7 +15,7 @@ public:
 	enum Key : unsigned int;
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the keyboard event. */
 	inline ~KeyboardEvent() = default;
 	/** Construct a keyboard event. */
@@ -23,12 +23,12 @@ public:
 
 
 	// Public Methods
-	/** Retrieve the keycode for the current key pressed.
+	/** Retrieve the key-code for the current key pressed.
 	@return					the current key pressed. */
 	inline unsigned int getChar() const {
 		return m_currentChar;
 	}
-	/** Set a keycode as the current key being pressed.
+	/** Set a key-code as the current key being pressed.
 	@param	currentChar		the key to set as pressed. */
 	inline void setChar(const unsigned int& currentChar) {
 		m_currentChar = currentChar;

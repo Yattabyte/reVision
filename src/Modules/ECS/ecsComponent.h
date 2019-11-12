@@ -25,7 +25,7 @@ using ComponentFreeFunction = std::function<void(ecsBaseComponent * comp)>;
 
 /** A base class representing components in an ECS architecture. */
 struct ecsBaseComponent {
-	// Public (de)Constructors
+	// Public (De)Constructors
 	inline virtual ~ecsBaseComponent() = default;
 	inline ecsBaseComponent(const ComponentID& ID, const size_t& size, const char* name)
 		: m_runtimeID(ID), m_size(size), m_name(name) { }
@@ -66,16 +66,16 @@ protected:
 	@return				runtime component ID. */
 	static ComponentID registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string);
 	/** Recover and load component data into this component from a char buffer.
-	param	data		serialized component data. */
+	@param	data		serialized component data. */
 	virtual void recover_data(const char* data) = 0;
 
 
 	// Protected Attributes
-	/** Runtime container mapping indicies to creation/destruction functions for components. */
+	/** Runtime container mapping indices to creation/destruction functions for components. */
 	static std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>> _componentRegistry;
 	/** A map between component class name's and it's runtime variables like ID and size. */
 	static MappedChar<ComponentID> _nameRegistry;
-	/** Allow the ecs world to interact with these members. */
+	/** Allow the ecsWorld to interact with these members. */
 	friend class ecsWorld;
 };
 
@@ -84,7 +84,7 @@ protected:
 @param	C	the type of this component */
 template <typename C, const char* chars>
 struct ecsComponent : public ecsBaseComponent {
-	// (de)Constructors
+	// (De)Constructors
 	inline virtual ~ecsComponent() = default;
 	inline ecsComponent() : ecsBaseComponent(ecsComponent::Runtime_ID, sizeof(C), chars) {}
 

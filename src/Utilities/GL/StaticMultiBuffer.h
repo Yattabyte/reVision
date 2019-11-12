@@ -10,7 +10,7 @@
 template <int BufferCount = 3>
 class StaticMultiBuffer final : public Buffer_Interface {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Wait on this buffers fences, then destroy it. */
 	inline ~StaticMultiBuffer() {
 		for (int x = 0; x < BufferCount; ++x) {
@@ -154,9 +154,9 @@ private:
 
 	// Private Attributes
 	GLbitfield m_mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
-	mutable GLsync m_writeFence[BufferCount], m_readFence[BufferCount];
-	GLuint m_bufferID[BufferCount];
-	void* m_bufferPtr[BufferCount];
+	mutable GLsync m_writeFence[BufferCount]{}, m_readFence[BufferCount]{};
+	GLuint m_bufferID[BufferCount]{};
+	void* m_bufferPtr[BufferCount]{};
 	int m_index = 0;
 	size_t m_size = 0ull;
 };

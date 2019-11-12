@@ -9,7 +9,7 @@
 /** Border decorator object. */
 class Border : public UI_Decorator {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the border. */
 	inline ~Border() {
 		// Delete geometry

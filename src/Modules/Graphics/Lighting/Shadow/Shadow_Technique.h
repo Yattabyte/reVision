@@ -13,7 +13,7 @@
 /** A rendering technique responsible for rendering/updating shadow casters in the scene. */
 class Shadow_Technique final : public Graphics_Technique {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destructor. */
 	inline ~Shadow_Technique() {
 		// Update indicator

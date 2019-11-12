@@ -18,7 +18,7 @@ class LevelEditor_Module;
 /** A 3D tool allowing the user to rotate a set of selected entities. */
 class Rotation_Gizmo {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this gizmo. */
 	~Rotation_Gizmo();
 	/** Construct this gizmo.

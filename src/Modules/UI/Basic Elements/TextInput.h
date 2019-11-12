@@ -19,7 +19,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the text input. */
 	inline ~TextInput() {
 		// Delete geometry

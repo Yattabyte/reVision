@@ -12,7 +12,7 @@ class Engine;
 /** Representation of the data backing a unique viewing perspective. Not a camera, but the buffers one would render into and with. */
 struct Viewport {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this viewport. */
 	inline ~Viewport() = default;
 	/** Construct a viewport, given an offset and size.
@@ -29,7 +29,7 @@ public:
 	void resize(const glm::ivec2& size, const int& layerFaces);
 	/** Bind this viewport. */
 	void bind();
-	/** Clear the data held by this viewport, such as it's framebuffers. */
+	/** Clear the data held by this viewport, such as it's frame-buffers. */
 	void clear();
 
 

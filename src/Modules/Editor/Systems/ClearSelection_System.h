@@ -11,7 +11,7 @@
 /** An ECS system responsible for deleting all Selected Components from entities. */
 class ClearSelection_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~ClearSelection_System() = default;
 	/** Construct this system.

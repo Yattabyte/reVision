@@ -18,7 +18,7 @@ class Model;
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Model final : public std::shared_ptr<Model> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Model() = default;
 	/** Begins the creation process for this asset.
@@ -35,7 +35,7 @@ Contains a formatted 3D mesh to be used for 3D rendering, including information 
 @note	owns 1 Shared_Material object. */
 class Model final : public Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Model. */
 	inline ~Model() = default;
 	/** Construct the Model.

@@ -11,7 +11,7 @@
 /** An ECS system responsible for frustum culling all render-able components with a bounding sphere and a position. */
 class FrustumCull_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~FrustumCull_System() = default;
 	/** Construct this system.
@@ -47,7 +47,7 @@ public:
 						objPosition += bboxComponent->m_positionOffset;
 						// Treat it like a sphere
 						const auto radius = glm::distance(bboxComponent->m_min * objScale, bboxComponent->m_max * objScale) / 2.0f;
-						// Update bsphere with whether or not the camera is within it
+						// Update BSphere with whether or not the camera is within it
 						if (glm::distance(camPosition, objPosition) > radius)
 							bboxComponent->m_cameraCollision = BoundingBox_Component::OUTSIDE;
 						else
@@ -57,7 +57,7 @@ public:
 					if (bsphereComponent) {
 						objPosition += bsphereComponent->m_positionOffset;
 						const auto radius = bsphereComponent->m_radius;
-						// Update bsphere with whether or not the camera is within it
+						// Update BSphere with whether or not the camera is within it
 						if (glm::distance(camPosition, objPosition) > radius)
 							bsphereComponent->m_cameraCollision = BoundingSphere_Component::OUTSIDE;
 						else

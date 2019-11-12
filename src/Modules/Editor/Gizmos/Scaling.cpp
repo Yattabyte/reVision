@@ -212,7 +212,7 @@ bool Scaling_Gizmo::checkMousePress()
 		m_startingOffset = position;
 		// Set the appropriate selected axis
 		if (m_hoveredAxes == X_AXIS) {
-			// Check which of the ray-plane inter. point from xy and xz planes is closest to the camera
+			// Check which of the ray-plane inter. point from XY and XZ planes is closest to the camera
 			if (glm::distance(m_hoveredEnds[0], ray_origin) < glm::distance(m_hoveredEnds[1], ray_origin))
 				m_startingOffset.x = m_hoveredEnds[0].x;
 			else
@@ -255,7 +255,7 @@ bool Scaling_Gizmo::checkMousePress()
 		};
 		auto scale = m_prevScale;
 		if (m_selectedAxes == X_AXIS) {
-			// Check which of the ray-plane inter. point from xy and xz planes is closest to the camera
+			// Check which of the ray-plane inter. point from XY and XZ planes is closest to the camera
 			if (glm::distance(m_hoveredEnds[0], ray_origin) < glm::distance(m_hoveredEnds[1], ray_origin))
 				scale.x = gridSnapValue(m_hoveredEnds[0].x, m_axisDelta.x, m_prevScale.x, m_startingPosition.x, m_gridSnap);
 			else

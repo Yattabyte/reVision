@@ -15,7 +15,7 @@
 /** An ECS system responsible for rendering outlines of selected entities bounding objects. */
 class Outline_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~Outline_System() {
 		// Update indicator

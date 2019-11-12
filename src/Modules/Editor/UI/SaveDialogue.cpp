@@ -264,7 +264,7 @@ void SaveDialogue::tickOverwriteDialogue()
 	bool openOverwrite = true;
 	ImGui::SetNextWindowSize({ 400, 106 }, ImGuiCond_Appearing);
 	if (ImGui::BeginPopupModal("Overwrite Level", &openOverwrite, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
-		ImGui::TextWrapped("This is a different file, are you sure you want to overwrite it?\r\nThis action is irreversable.\r\n");
+		ImGui::TextWrapped("This is a different file, are you sure you want to overwrite it?\r\nThis action is irreversible.\r\n");
 		ImGui::Spacing(); ImGui::Spacing();
 		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f));
@@ -318,7 +318,7 @@ void SaveDialogue::tickDeleteDialogue()
 	bool openDelete = true;
 	ImGui::SetNextWindowSize({ 350, 95 }, ImGuiCond_Appearing);
 	if (ImGui::BeginPopupModal("Delete Level", &openDelete, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
-		ImGui::TextWrapped("Are you sure you want to delete this item?\r\nThis action is irreversable.\r\n");
+		ImGui::TextWrapped("Are you sure you want to delete this item?\r\nThis action is irreversible.\r\n");
 		ImGui::Spacing(); ImGui::Spacing();
 		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0, 0.7f, 0.7f));

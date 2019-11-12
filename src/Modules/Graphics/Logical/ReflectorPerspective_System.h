@@ -11,7 +11,7 @@
 /** An ECS system responsible for updating a shared pointer with a list of all active cameras from reflectors in the scene. */
 class ReflectorPerspective_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~ReflectorPerspective_System() = default;
 	/** Construct this system.

@@ -74,7 +74,7 @@ void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData)
 	const glm::ivec2 dimensions(FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap));
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
 
-	// Always create rgba format
+	// Always create RGBA format
 	GLubyte* textureData = new GLubyte[size_t(size_mult) * 4ull];
 	const GLubyte* pixels = (GLubyte*)FreeImage_GetBits(bitmap);
 
@@ -97,7 +97,7 @@ void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, 
 	if (newSize.x && newSize.y && importedData.dimensions.x && importedData.dimensions.y)
 		// Proceed if dimensions aren't the same
 		if (newSize != importedData.dimensions) {
-			// Create freeimage bitmap from data provided
+			// Create FreeImage bitmap from data provided
 			GLubyte* BGRA_Pixels = RGBA_to_BGRA(importedData.pixelData, importedData.dimensions.x * importedData.dimensions.y);
 			delete importedData.pixelData;
 			FIBITMAP* bitmap = FreeImage_ConvertFromRawBits(BGRA_Pixels, importedData.dimensions.x, importedData.dimensions.y, importedData.pitch, importedData.bpp, 0, 0, 0);

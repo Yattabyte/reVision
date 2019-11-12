@@ -10,7 +10,7 @@
 /** UI panel class, affords containing other elements, and rendering a fixed color. */
 class Panel : public UI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the panel. */
 	inline ~Panel() {
 		// Delete geometry

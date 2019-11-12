@@ -25,7 +25,7 @@
 // Other
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "4.15.1";
+constexpr char ENGINE_VERSION[] = "4.15.2";
 struct GLFWwindow;
 
 
@@ -40,7 +40,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroys the engine. */
 	~Engine();
 	/** Zero-initialize the engine. */
@@ -51,7 +51,7 @@ private:
 	// Private Initialization Methods
 	/** Initialize the window for this application. */
 	void initWindow();
-	/** Initialize the auxilliary processing threads. */
+	/** Initialize the auxiliary processing threads. */
 	void initThreads();
 	/** Print the engine boiler-plate text to the message manager. */
 	void printBoilerPlate();

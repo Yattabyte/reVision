@@ -13,7 +13,7 @@ class SoundObj;
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Sound final : public std::shared_ptr<Sound> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Sound() = default;
 	/** Begins the creation process for this asset.
@@ -29,7 +29,7 @@ Represents a sound file loaded from disk.
 @note	requires the SoLoud library to use. */
 class Sound : public Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Sound. */
 	~Sound();
 	/** Construct the Sound.

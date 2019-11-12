@@ -11,7 +11,7 @@
 Holds a log of text in case they need to be accessed by any external UI */
 class MessageManager {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the message manager. */
 	inline ~MessageManager() = default;
 	/** Construct the message manager*/

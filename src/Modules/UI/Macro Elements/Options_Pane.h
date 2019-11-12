@@ -12,10 +12,10 @@
 
 
 /** A UI element serving as an options panel, with a title and a description.
-Made to be subclassed and expanded upon. Provides a method for adding new settings. */
+Made to be sub-classed and expanded upon. Provides a method for adding new settings. */
 class Options_Pane : public UI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the options pane. */
 	inline ~Options_Pane() = default;
 	/** Construct a options pane.
@@ -29,7 +29,7 @@ public:
 		m_separatorBot(std::make_shared<Separator>(engine)),
 		m_backPanel(std::make_shared<Panel>(engine))
 	{
-		// Make a background panel for cosemetic purposes
+		// Make a background panel for cosmetic purposes
 		m_backPanel->setColor(glm::vec4(0.1, 0.1, 0.1, 0.5));
 		addElement(m_backPanel);
 

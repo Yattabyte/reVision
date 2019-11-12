@@ -22,7 +22,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Virtual Destructor. */
 	inline virtual ~Graphics_Technique() = default;
 	/** Constructor. */

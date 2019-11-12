@@ -6,7 +6,7 @@
 /** An interface for game overlay effects. */
 class Overlay {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Virtual Destructor. */
 	inline virtual ~Overlay() = default;
 	/** Constructor. */

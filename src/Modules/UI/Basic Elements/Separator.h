@@ -10,7 +10,7 @@
 /** UI separator class. Renders a faded out line across its width. */
 class Separator : public UI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the separator. */
 	inline ~Separator() {
 		// Delete geometry

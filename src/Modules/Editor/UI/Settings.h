@@ -12,7 +12,7 @@ class LevelEditor_Module;
 /** A level editor dialogue allowing the user to modify level editor settings. */
 class Settings final : public ImGUI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this settings dialogue. */
 	inline ~Settings() = default;
 	/** Construct a settings dialogue.

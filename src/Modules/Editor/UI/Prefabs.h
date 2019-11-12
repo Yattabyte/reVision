@@ -16,7 +16,7 @@ class Camera;
 /** A level editor UI element allowing the user to spawn previously made prefab object sets. */
 class Prefabs final : public ImGUI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this prefab UI element. */
 	~Prefabs();
 	/** Construct a prefab UI element.

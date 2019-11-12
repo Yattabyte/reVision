@@ -15,7 +15,7 @@ class Shader;
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Shader final : public std::shared_ptr<Shader> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Shader() = default;
 	/** Begins the creation process for this asset.
@@ -28,7 +28,7 @@ public:
 
 /** A single shader object, like a fragment shader or a vertex shader, not a whole shader program. */
 struct ShaderObj {
-	// (de)Constructors
+	// (De)Constructors
 	/** Destroy the shader object. */
 	~ShaderObj();
 	/** Construct a shader object. */
@@ -37,9 +37,9 @@ struct ShaderObj {
 
 	// Functions
 	/** Retrieve a shader parameter by the name specified.
-	@param		pname			the program parameter name.
+	@param		parameterName	the program parameter name.
 	@return						the parameter value matching the name specified. */
-	GLint getShaderiv(const GLenum& pname) const;
+	GLint getShaderiv(const GLenum& parameterName) const;
 	/** Load a shader document from the file path specified.
 	@param		engine			the active engine to use.
 	@param		filePath		the relative path to the file to read.
@@ -59,13 +59,13 @@ struct ShaderObj {
 };
 
 /** An entire OpenGL vertex/fragment shader program.
-An encapsulation of an opengl vertex & fragment shader program.
+An encapsulation of an OpenGL vertex & fragment shader program.
 Responsible for loading the files associated with this program from disk, and forming the program.
 Also provides support for explicitly setting uniform values for a given attribute location.
 Supports binary representation. */
 class Shader : public Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Shader. */
 	~Shader();
 	/** Construct the Shader.
@@ -140,7 +140,7 @@ public:
 protected:
 	// Protected Methods
 	/** Retrieve a program parameter by the name specified.
-	@param		pname			the program parameter name.
+	@param		parameterName			the program parameter name.
 	@return						the parameter value matching the name specified. */
 	const GLint getProgramiv(const GLenum& pname) const;
 	/** Retrieve an error log corresponding to this shader program.

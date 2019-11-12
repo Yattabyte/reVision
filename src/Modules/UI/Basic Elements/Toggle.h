@@ -17,7 +17,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the toggle switch. */
 	inline ~Toggle() = default;
 	/** Construct a toggle switch with a given on/off state.
@@ -25,7 +25,7 @@ public:
 	@param	state		the on/off state to use. */
 	inline explicit Toggle(Engine* engine, const bool& state = true)
 		: UI_Element(engine) {
-		// Make a background panel for cosemetic purposes
+		// Make a background panel for cosmetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
 		m_backPanel = std::make_shared<Border>(engine, panel);

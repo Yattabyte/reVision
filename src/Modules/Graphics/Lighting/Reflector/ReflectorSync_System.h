@@ -7,10 +7,10 @@
 #include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
 
 
-/** An ECS system responsible for syncronizing reflector components and sending data to the GPU. */
+/** An ECS system responsible for synchronizing reflector components and sending data to the GPU. */
 class ReflectorSync_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~ReflectorSync_System() = default;
 	/** Construct this system.

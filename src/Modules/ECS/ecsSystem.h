@@ -6,7 +6,7 @@
 #include <memory>
 
 
-/** An interface for an ecs system. */
+/** An interface for an ecsSystem. */
 class ecsBaseSystem {
 public:
 	// Public enumerations
@@ -17,7 +17,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	inline virtual ~ecsBaseSystem() = default;
 	inline ecsBaseSystem() = default;
 
@@ -63,12 +63,12 @@ private:
 /** An ordered list of systems to be updated. */
 class ecsSystemList {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	inline explicit ecsSystemList() = default;
 
 
 	// Public Methods
-	/** Generate a system with a specifc type and input arguments.
+	/** Generate a system with a specific type and input arguments.
 	@param	<T>		the system class type.
 	@param	...Args	variadic arguments to forward to the system constructor. */
 	template <typename T, class...Args>

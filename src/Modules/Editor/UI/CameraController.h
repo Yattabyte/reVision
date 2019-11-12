@@ -11,7 +11,7 @@ class Engine;
 /** Allows the user to control the camera whenever not interacting with other UI elements. */
 class CameraController final : public ImGUI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the camera controller. */
 	inline ~CameraController() = default;
 	/** Construct a camera controller.

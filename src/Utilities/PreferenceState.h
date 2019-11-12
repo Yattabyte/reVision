@@ -15,7 +15,7 @@ class Engine;
 /** A container class that holds the preference state for the engine, such as window size and graphics options. */
 class PreferenceState {
 public:
-	// (de)Constructors
+	// (De)Constructors
 	/** Destroy the preference state. */
 	inline ~PreferenceState() {
 		save();

@@ -11,7 +11,7 @@
 /** An ECS system responsible for scheduling when light & shadow related entities should be updated. */
 class ShadowScheduler_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~ShadowScheduler_System() {
 		// Update indicator
@@ -92,7 +92,7 @@ public:
 			for (auto& [importance, time, shadowSpot, camera] : m_frameData->shadowsToUpdate)
 				camera->setEnabled(true);
 
-			// Resize shadowmap to fit number of entities this frame
+			// Resize the shadow map to fit number of entities this frame
 			m_frameData->shadowFBO.resize(glm::ivec2((int)m_frameData->shadowSize), (unsigned int)(cameraCount));
 		}
 	}

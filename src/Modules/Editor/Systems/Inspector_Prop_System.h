@@ -10,10 +10,10 @@
 #include "Engine.h"
 
 
-/** An ECS system allowing the user to inpsect selected prop components. */
+/** An ECS system allowing the user to inspect selected prop components. */
 class Inspector_Prop_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~Inspector_Prop_System() = default;
 	/** Construct this system. */

@@ -13,7 +13,7 @@
 /** A system responsible for spawning players at a specific spawn point. */
 class PlayerSpawn_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this free-look system. */
 	inline ~PlayerSpawn_System() {
 		// Update indicator

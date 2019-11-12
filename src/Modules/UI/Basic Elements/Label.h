@@ -27,7 +27,7 @@ public:
 	};
 
 
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the label. */
 	inline ~Label() {
 		// Delete geometry

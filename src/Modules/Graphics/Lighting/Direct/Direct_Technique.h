@@ -18,7 +18,7 @@
 /** A core lighting technique responsible for direct-diffuse and direct-specular lighting. */
 class Direct_Technique final : public Graphics_Technique {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destructor. */
 	inline ~Direct_Technique() {
 		// Update indicator

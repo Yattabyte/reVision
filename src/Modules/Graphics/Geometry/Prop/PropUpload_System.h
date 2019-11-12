@@ -13,7 +13,7 @@
 /** An ECS system responsible for uploading prop data to the GPU, such as geometrical data and material textures. */
 class PropUpload_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~PropUpload_System() {
 		glDeleteBuffers(1, &m_vboID);
@@ -196,7 +196,7 @@ private:
 		m_maxCapacity = std::max<size_t>(256ull, m_maxCapacity / 2ull);
 		m_modelMap.clear();
 
-		// Replace old vbo
+		// Replace old VBO
 		waitOnFence();
 		GLuint newVBOID = 0;
 		glCreateBuffers(1, &newVBOID);

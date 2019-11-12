@@ -25,7 +25,7 @@ private:
 
 
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the map. */
 	inline ~MappedChar() = default;
 	/** Construct the map. */
@@ -39,9 +39,9 @@ public:
 	inline void insert(const char* key) {
 		m_map.insert(std::pair<const char*, T>(key, T()));
 	}
-	/** Insert or ovewrite the value T at the index of key.
+	/** Insert or overwrite the value T at the index of key.
 	@param	key		the key to insert or use in the map.
-	@param	t		the value to newely insert or overwrite, pairing to the key. */
+	@param	t		the value to newly insert or overwrite, pairing to the key. */
 	inline void insertOrAssign(const char* key, const T& t) {
 		m_map.insert_or_assign(key, t);
 	}

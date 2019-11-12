@@ -16,7 +16,7 @@ class Material;
 Responsible for the creation, containing, and sharing of assets. */
 class Shared_Material final : public std::shared_ptr<Material> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Material() = default;
 	/** Begins the creation process for this asset.
@@ -42,7 +42,7 @@ A material is a collection of textures that are used to approximate a real surfa
 @note	owns many Shared_Image objects. */
 class Material final : public Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Material. */
 	~Material();
 	/** Construct the Material.

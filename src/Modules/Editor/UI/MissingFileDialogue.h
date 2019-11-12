@@ -13,7 +13,7 @@ class LevelEditor_Module;
 /** A level editor UI element which notifies the user that a file they've requested is missing. */
 class MissingFileDialogue final : public ImGUI_Element {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this missing file dialogue. */
 	inline ~MissingFileDialogue() = default;
 	/** Construct a missing file dialogue.

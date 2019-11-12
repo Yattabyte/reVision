@@ -14,7 +14,7 @@ struct ImGUI_Element;
 /** A top-level UI element representing the entire level editor's GUI. */
 class Editor_Interface {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the level editor UI. */
 	~Editor_Interface();
 	/** Creates the level editor UI.

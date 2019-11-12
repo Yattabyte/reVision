@@ -11,7 +11,7 @@ class Engine;
 /** Represents a data-structure containing radiance-hints volume data. */
 class RH_Volume {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the radiance hint volume. */
 	~RH_Volume();
 	/** Construct a radiance hint volume.

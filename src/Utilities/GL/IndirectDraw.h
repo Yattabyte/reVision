@@ -9,7 +9,7 @@
 template <int BufferCount = 3>
 class IndirectDraw {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this Indirect Draw Object. */
 	inline ~IndirectDraw() = default;
 	/** Default Constructor. */

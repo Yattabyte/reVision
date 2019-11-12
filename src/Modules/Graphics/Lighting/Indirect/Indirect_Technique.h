@@ -17,7 +17,7 @@
 /** A core lighting technique responsible for indirect-diffuse lighting. */
 class Indirect_Technique final : public Graphics_Technique {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destructor. */
 	inline ~Indirect_Technique() {
 		// Update indicator

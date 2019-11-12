@@ -13,7 +13,7 @@
 /** A system responsible for updating physics components that share a common transformation. */
 class TransformSync_Phys_System final : public ecsBaseSystem {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this physics sync system. */
 	inline ~TransformSync_Phys_System() = default;
 	/** Construct a physics sync system. */
