@@ -20,10 +20,8 @@ public:
 	@param	engine		the engine to use.
 	@param	component	the component to decorate. */
 	inline Border(Engine* engine, const std::shared_ptr<UI_Element>& component)
-		: UI_Decorator(engine, component) {
-		// Asset Loading
-		m_shader = Shared_Shader(engine, "UI\\Border");
-
+		: UI_Decorator(engine, component),
+		m_shader(Shared_Shader(engine, "UI\\Border")) {
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
 		glEnableVertexArrayAttrib(m_vaoID, 0);

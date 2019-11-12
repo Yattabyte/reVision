@@ -94,7 +94,7 @@ void SceneInspector::tick(const float&)
 							if (ImGui::BeginDragDropTarget()) {
 								if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
 									IM_ASSERT(payload->DataSize == sizeof(EntityHandle*));
-									m_editor->setSelection({ entityHandle, (*(EntityHandle*)(payload->Data)) });
+									m_editor->setSelection({ entityHandle, (*reinterpret_cast<EntityHandle*>(payload->Data)) });
 									m_editor->mergeSelection();
 									m_editor->setSelection({ entityHandle });
 								}
@@ -136,18 +136,18 @@ void SceneInspector::tick(const float&)
 								ImGui::Separator();
 								ImGui::Spacing();
 								constexpr const char* items[] = {
-									Transform_Component::m_name,
-									PlayerSpawn_Component::m_name,
-									Player3D_Component::m_name,
-									Camera_Component::m_name,
-									BoundingSphere_Component::m_name,
-									BoundingBox_Component::m_name,
-									Prop_Component::m_name,
-									Skeleton_Component::m_name,
-									Shadow_Component::m_name,
-									Light_Component::m_name,
-									Reflector_Component::m_name,
-									Collider_Component::m_name,
+									Transform_Component::Name,
+									PlayerSpawn_Component::Name,
+									Player3D_Component::Name,
+									Camera_Component::Name,
+									BoundingSphere_Component::Name,
+									BoundingBox_Component::Name,
+									Prop_Component::Name,
+									Skeleton_Component::Name,
+									Shadow_Component::Name,
+									Light_Component::Name,
+									Reflector_Component::Name,
+									Collider_Component::Name,
 								};
 								static int item_current = 0;
 								ImGui::Combo("", &item_current, items, IM_ARRAYSIZE(items));
@@ -189,7 +189,7 @@ void SceneInspector::tick(const float&)
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
 					IM_ASSERT(payload->DataSize == sizeof(EntityHandle*));
-					m_editor->setSelection({ EntityHandle(), (*(EntityHandle*)(payload->Data)) });
+					m_editor->setSelection({ EntityHandle(), (*reinterpret_cast<EntityHandle*>(payload->Data)) });
 					m_editor->mergeSelection();
 					m_editor->clearSelection();
 				}

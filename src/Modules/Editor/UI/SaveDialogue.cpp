@@ -9,14 +9,15 @@
 #include <time.h>
 
 
-SaveDialogue::SaveDialogue(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+SaveDialogue::SaveDialogue(Engine* engine, LevelEditor_Module* editor) :
+	m_engine(engine),
+	m_editor(editor),
+	m_iconFile(Shared_Texture(engine, "Editor//iconFile.png")),
+	m_iconFolder(Shared_Texture(engine, "Editor//iconFolder.png")),
+	m_iconBack(Shared_Texture(engine, "Editor//iconBack.png")),
+	m_iconRefresh(Shared_Texture(engine, "Editor//iconRefresh.png"))
 {
 	m_open = false;
-	m_iconFile = Shared_Texture(engine, "Editor//iconFile.png");
-	m_iconFolder = Shared_Texture(engine, "Editor//iconFolder.png");
-	m_iconBack = Shared_Texture(engine, "Editor//iconBack.png");
-	m_iconRefresh = Shared_Texture(engine, "Editor//iconRefresh.png");
 }
 
 void SaveDialogue::tick(const float&)
@@ -69,7 +70,6 @@ void SaveDialogue::populateLevels(const std::string& directory)
 				prefabEntry.extType = "Autosave";
 		}
 		else if (entry.is_directory()) {
-			prefabEntry.name = prefabEntry.name;
 			prefabEntry.type = LevelEntry::folder;
 			prefabEntry.extType = "Folder";
 		}
@@ -79,9 +79,9 @@ void SaveDialogue::populateLevels(const std::string& directory)
 
 void SaveDialogue::tickMainDialogue()
 {
-	static bool freshlyOpened = true; // flag used for operations that should happen only once-per-opening
-	const auto title = "Save Level";
 	if (m_open) {
+		static bool freshlyOpened = true; // flag used for operations that should happen only once-per-opening
+		const auto title = "Save Level";
 		ImGui::OpenPopup(title);
 		ImGui::SetNextWindowSize({ 600, 500 }, ImGuiCond_Appearing);
 		if (ImGui::BeginPopupModal(title, &m_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {

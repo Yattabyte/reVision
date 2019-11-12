@@ -471,7 +471,7 @@ void LevelEditor_Module::clearSelection()
 			// Add selection component to new selection
 			m_editor->m_mouseGizmo->setSelection(uuids);
 			for each (const auto & entityHandle in uuids)
-				ecsWorld.makeComponent(entityHandle, Selected_Component::m_ID);
+				ecsWorld.makeComponent(entityHandle, Selected_Component::Runtime_ID);
 
 			// Transform gizmo to center of group
 			Transform newTransform;
@@ -504,7 +504,7 @@ void LevelEditor_Module::clearSelection()
 			// Add selection component to new selection
 			m_editor->m_mouseGizmo->setSelection(m_uuids_old);
 			for each (const auto & entityHandle in m_uuids_old)
-				ecsWorld.makeComponent(entityHandle, Selected_Component::m_ID);
+				ecsWorld.makeComponent(entityHandle, Selected_Component::Runtime_ID);
 
 			// Transform gizmo to center of group
 			Transform newTransform;
@@ -523,7 +523,7 @@ void LevelEditor_Module::clearSelection()
 			newTransform.update();
 			m_editor->m_mouseGizmo->setTransform(newTransform);
 		}
-		virtual bool join(Editor_Command* const other) override final {
+		virtual bool join(Editor_Command* other) override final {
 			if (auto newCommand = dynamic_cast<Clear_Selection_Command*>(other))
 				return true;
 			return false;
@@ -556,7 +556,7 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles)
 			// Add selection component to new selection
 			m_editor->m_mouseGizmo->setSelection(uuids);
 			for each (const auto & entityHandle in uuids)
-				ecsWorld.makeComponent(entityHandle, Selected_Component::m_ID);
+				ecsWorld.makeComponent(entityHandle, Selected_Component::Runtime_ID);
 
 			// Transform gizmo to center of group
 			Transform newTransform;
@@ -581,7 +581,7 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles)
 		virtual void undo() override final {
 			switchSelection(m_uuids_old);
 		}
-		virtual bool join(Editor_Command* const other) override final {
+		virtual bool join(Editor_Command* other) override final {
 			if (auto newCommand = dynamic_cast<Set_Selection_Command*>(other)) {
 				// Join the 2 'new' sets together, make sure it's unique
 				m_uuids_new.insert(m_uuids_new.begin(), newCommand->m_uuids_new.cbegin(), newCommand->m_uuids_new.cend());
@@ -631,7 +631,7 @@ void LevelEditor_Module::mergeSelection()
 						ecsWorld.unparentEntity(entityHandle);
 			}
 		}
-		virtual bool join(Editor_Command* const other) override final {
+		virtual bool join(Editor_Command* other) override final {
 			if (auto newCommand = dynamic_cast<Merge_Selection_Command*>(other)) {
 				// If root is the same, continue
 				if (m_uuids[0] == newCommand->m_uuids[0]) {
@@ -692,10 +692,6 @@ void LevelEditor_Module::groupSelection()
 				ecsWorld.removeEntity(m_rootUUID);
 			}
 		}
-		virtual bool join(Editor_Command* const) override final {
-			// Disallow Joining
-			return false;
-		}
 	};
 
 	if (m_mouseGizmo->getSelection().size())
@@ -711,7 +707,7 @@ void LevelEditor_Module::ungroupSelection()
 		std::vector<std::vector<EntityHandle>> m_children;
 		Ungroup_Selection_Command(Engine* engine, LevelEditor_Module* editor)
 			: m_engine(engine), m_editor(editor), m_uuids(m_editor->getSelection()) {
-			auto& ecsWorld = m_editor->getWorld();
+			const auto& ecsWorld = m_editor->getWorld();
 			for each (const auto & entityHandle in m_uuids) {
 				std::vector<EntityHandle> childrenUUIDS;
 				for each (const auto & childHandle in ecsWorld.getEntityHandles(entityHandle))
@@ -731,10 +727,6 @@ void LevelEditor_Module::ungroupSelection()
 			for each (const auto & enityUUID in m_uuids)
 				for each (const auto & childUUID in m_children[childIndex++])
 					ecsWorld.parentEntity(enityUUID, childUUID);
-		}
-		virtual bool join(Editor_Command* const) override final {
-			// Disallow Joining
-			return false;
 		}
 	};
 
@@ -789,10 +781,6 @@ void LevelEditor_Module::deleteSelection()
 			while (dataRead < m_data.size() && uuidIndex < m_uuids.size())
 				ecsWorld.deserializeEntity(m_data.data(), m_data.size(), dataRead, EntityHandle(), m_uuids[uuidIndex]);
 		}
-		virtual bool join(Editor_Command* const) override final {
-			// Disallow Joining
-			return false;
-		}
 	};
 
 	auto& selection = m_mouseGizmo->getSelection();
@@ -827,10 +815,6 @@ void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const c
 				}
 			}
 		}
-		virtual bool join(Editor_Command* const) override final {
-			// Disallow Joining
-			return false;
-		}
 	};
 
 	doReversableAction(std::make_shared<Spawn_Component_Command>(m_engine, this, entityHandle, name));
@@ -860,10 +844,6 @@ void LevelEditor_Module::deleteComponent(const EntityHandle& entityHandle, const
 				const auto& copy = ecsBaseComponent::from_buffer(m_componentData.data(), dataRead);
 				m_editor->getWorld().makeComponent(m_entityHandle, copy.get(), m_componentHandle);
 			}
-		}
-		virtual bool join(Editor_Command* const) override final {
-			// Disallow Joining
-			return false;
 		}
 	};
 
@@ -913,10 +893,6 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const En
 			auto& ecsWorld = m_editor->getWorld();
 			for each (const auto & entityHandle in m_uuids)
 				ecsWorld.removeEntity(entityHandle);
-		}
-		virtual bool join(Editor_Command* const) override final {
-			// Disallow Joining
-			return false;
 		}
 	};
 

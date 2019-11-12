@@ -24,21 +24,22 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Indirect_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras)
-		: m_engine(engine), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
-		m_frameData = std::make_shared<Indirect_Light_Data>();
+	inline Indirect_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) :
+		Graphics_Technique(PRIMARY_LIGHTING),
+		m_engine(engine),
+		m_shader_Bounce(Shared_Shader(engine, "Core\\Light\\Bounce")),
+		m_shader_Recon(Shared_Shader(engine, "Core\\Light\\Reconstruction")),
+		m_shader_Rebounce(Shared_Shader(engine, "Core\\Light\\Rebounce")),
+		m_shapeQuad(Shared_Auto_Model(engine, "quad")),
+		m_frameData(std::make_shared<Indirect_Light_Data>()),
+		m_cameras(cameras)
+	{
 		m_frameData->clientCamera = clientCamera;
 		m_frameData->shadowData = shadowData;
 
 		// Auxiliary Systems
 		m_auxilliarySystems.makeSystem<IndirectVisibility_System>(m_frameData);
 		m_auxilliarySystems.makeSystem<IndirectSync_System>(m_frameData);
-
-		// Asset Loading
-		m_shader_Bounce = Shared_Shader(engine, "Core\\Light\\Bounce");
-		m_shader_Recon = Shared_Shader(engine, "Core\\Light\\Reconstruction");
-		m_shader_Rebounce = Shared_Shader(engine, "Core\\Light\\Rebounce");
-		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Noise Texture
 		std::uniform_real_distribution<float> randomFloats(0.0, 1.0);

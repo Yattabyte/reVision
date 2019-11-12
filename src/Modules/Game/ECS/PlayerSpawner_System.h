@@ -23,8 +23,8 @@ public:
 	inline PlayerSpawn_System(Engine* engine, Game_Module* game)
 		: m_engine(engine), m_game(game) {
 		// Declare component types used
-		addComponentType(PlayerSpawn_Component::m_ID, FLAG_REQUIRED);
-		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(PlayerSpawn_Component::Runtime_ID, FLAG_REQUIRED);
+		addComponentType(Transform_Component::Runtime_ID, FLAG_REQUIRED);
 
 		// Error Reporting
 		if (!isValid())
@@ -34,20 +34,19 @@ public:
 
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override final {
-		size_t playerCount(0ull);
 		for each (const auto & componentParam in components) {
 			//auto* spawnComponent = static_cast<PlayerSpawn_Component*>(componentParam[0]);
 			auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);
 
-			auto& transform = transformComponent->m_worldTransform;
-			if (playerCount == 0ull) {
+			if (m_playerCount == 0ull) {
 				Player3D_Component player;
 				Transform_Component trans;
 
-				trans.m_localTransform = transform;
+				trans.m_localTransform = transformComponent->m_worldTransform;
 
 				ecsBaseComponent* entityComponents[] = { &player, &trans };
 				m_game->getWorld().makeEntity(entityComponents, 2ull, "Player");
+				m_playerCount++;
 			}
 		}
 	};

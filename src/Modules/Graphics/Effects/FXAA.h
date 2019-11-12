@@ -21,11 +21,11 @@ public:
 	}
 	/** Constructor. */
 	inline explicit FXAA(Engine* engine)
-		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
-		// Asset Loading
-		m_shaderFXAA = Shared_Shader(engine, "Effects\\FXAA");
-		m_shapeQuad = Shared_Auto_Model(engine, "quad");
-
+		: Graphics_Technique(POST_PROCESSING),
+		m_engine(engine),
+		m_shaderFXAA(Shared_Shader(engine, "Effects\\FXAA")),
+		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
+	{
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_FXAA, m_enabled);

@@ -56,20 +56,20 @@ void Image_IO::Deinitialize()
 	FreeImage_DeInitialise();
 }
 
-bool Image_IO::Import_Image(Engine* engine, const std::string& relativePath, Image_Data& data_container, const bool& linear)
+bool Image_IO::Import_Image(Engine* engine, const std::string& relativePath, Image_Data& importedData, const bool& linear)
 {
-	const glm::ivec2 containerSize = data_container.dimensions;
+	const glm::ivec2 containerSize = importedData.dimensions;
 	FIBITMAP* bitmap = Import_Bitmap(engine, relativePath);
 	if (!bitmap) return false;
-	Load_Pixel_Data(bitmap, data_container);
+	Load_Pixel_Data(bitmap, importedData);
 	FreeImage_Unload(bitmap);
 	// If the image container already has a determined size, resize this new image to fit it (if it is a different size)
-	if (containerSize != glm::ivec2(0) && containerSize != data_container.dimensions)
-		Resize_Image(containerSize, data_container, linear);
+	if (containerSize != glm::ivec2(0) && containerSize != importedData.dimensions)
+		Resize_Image(containerSize, importedData, linear);
 	return true;
 }
 
-void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& data_container)
+void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData)
 {
 	const glm::ivec2 dimensions(FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap));
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
@@ -85,10 +85,10 @@ void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& data_container)
 		textureData[i * 4 + 3] = pixels[i * 4 + 3];
 	}
 
-	data_container.dimensions = dimensions;
-	data_container.pixelData = textureData;
-	data_container.pitch = FreeImage_GetPitch(bitmap);
-	data_container.bpp = FreeImage_GetBPP(bitmap);
+	importedData.dimensions = dimensions;
+	importedData.pixelData = textureData;
+	importedData.pitch = FreeImage_GetPitch(bitmap);
+	importedData.bpp = FreeImage_GetBPP(bitmap);
 }
 
 void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, const bool& linear)

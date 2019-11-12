@@ -21,7 +21,7 @@ public:
 	/** Construct a rotation indicator.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	RotationIndicator(Engine* engine);
+	explicit RotationIndicator(Engine* engine);
 
 
 	// Public Interface Implementation

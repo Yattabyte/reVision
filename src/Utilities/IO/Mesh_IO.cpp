@@ -65,7 +65,7 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d)
 	return newNode;
 }
 
-bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh_Geometry& data_container)
+bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh_Geometry& importedData)
 {
 	// Check if the file exists
 	if (!Engine::File_Exists(relativePath)) {
@@ -101,60 +101,60 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 			const aiFace& face = mesh->mFaces[x];
 			for (unsigned int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
 				const auto& index = face.mIndices[b];
-				data_container.vertices.push_back(glm::vec3(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z));
+				importedData.vertices.push_back(glm::vec3(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z));
 
 				const auto normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-				data_container.normals.push_back(glm::normalize(glm::vec3(normal.x, normal.y, normal.z)));
+				importedData.normals.push_back(glm::normalize(glm::vec3(normal.x, normal.y, normal.z)));
 
 				const auto tangent = mesh->HasTangentsAndBitangents() ? mesh->mTangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-				data_container.tangents.push_back(glm::normalize(glm::vec3(tangent.x, tangent.y, tangent.z)));
+				importedData.tangents.push_back(glm::normalize(glm::vec3(tangent.x, tangent.y, tangent.z)));
 
 				const auto bitangent = mesh->HasTangentsAndBitangents() ? mesh->mBitangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-				data_container.bitangents.push_back(glm::normalize(glm::vec3(bitangent.x, bitangent.y, bitangent.z)));
+				importedData.bitangents.push_back(glm::normalize(glm::vec3(bitangent.x, bitangent.y, bitangent.z)));
 
 				const auto uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
-				data_container.texCoords.push_back(glm::vec2(uvmap.x, uvmap.y));
+				importedData.texCoords.push_back(glm::vec2(uvmap.x, uvmap.y));
 
-				data_container.materialIndices.push_back(meshMaterialOffset);
-				data_container.meshIndices.push_back(a);
+				importedData.materialIndices.push_back(meshMaterialOffset);
+				importedData.meshIndices.push_back(a);
 			}
 		}
 	}
 
 	// Copy Animations
-	data_container.animations.resize(scene->mNumAnimations);
+	importedData.animations.resize(scene->mNumAnimations);
 	for (int a = 0, total = scene->mNumAnimations; a < total; ++a) {
 		auto* animation = scene->mAnimations[a];
-		data_container.animations[a] = Animation(animation->mNumChannels, animation->mTicksPerSecond, animation->mDuration);
+		importedData.animations[a] = Animation(animation->mNumChannels, animation->mTicksPerSecond, animation->mDuration);
 
 		// Copy Channels
-		data_container.animations[a].channels.resize(animation->mNumChannels);
+		importedData.animations[a].channels.resize(animation->mNumChannels);
 		for (unsigned int c = 0; c < scene->mAnimations[a]->mNumChannels; ++c) {
 			auto* channel = scene->mAnimations[a]->mChannels[c];
-			data_container.animations[a].channels[c] = new Node_Animation(std::string(channel->mNodeName.data));
+			importedData.animations[a].channels[c] = new Node_Animation(std::string(channel->mNodeName.data));
 
 			// Copy Keys
-			data_container.animations[a].channels[c]->scalingKeys.resize(channel->mNumScalingKeys);
+			importedData.animations[a].channels[c]->scalingKeys.resize(channel->mNumScalingKeys);
 			for (unsigned int n = 0; n < channel->mNumScalingKeys; ++n) {
 				auto& key = channel->mScalingKeys[n];
-				data_container.animations[a].channels[c]->scalingKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+				importedData.animations[a].channels[c]->scalingKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 			}
-			data_container.animations[a].channels[c]->rotationKeys.resize(channel->mNumRotationKeys);
+			importedData.animations[a].channels[c]->rotationKeys.resize(channel->mNumRotationKeys);
 			for (unsigned int n = 0; n < channel->mNumRotationKeys; ++n) {
 				auto& key = channel->mRotationKeys[n];
-				data_container.animations[a].channels[c]->rotationKeys[n] = Animation_Time_Key<glm::quat>(key.mTime, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
+				importedData.animations[a].channels[c]->rotationKeys[n] = Animation_Time_Key<glm::quat>(key.mTime, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
 			}
-			data_container.animations[a].channels[c]->positionKeys.resize(channel->mNumPositionKeys);
+			importedData.animations[a].channels[c]->positionKeys.resize(channel->mNumPositionKeys);
 			for (unsigned int n = 0; n < channel->mNumPositionKeys; ++n) {
 				auto& key = channel->mPositionKeys[n];
-				data_container.animations[a].channels[c]->positionKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+				importedData.animations[a].channels[c]->positionKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 			}
 		}
 	}
 
 	// Copy Root Node and bones
-	data_container.rootNode = copy_node(scene->mRootNode);
-	data_container.bones.resize(data_container.vertices.size());
+	importedData.rootNode = copy_node(scene->mRootNode);
+	importedData.bones.resize(importedData.vertices.size());
 	int vertexOffset = 0;
 	for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
 		const aiMesh* mesh = scene->mMeshes[a];
@@ -163,20 +163,20 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 			size_t BoneIndex = 0;
 			std::string BoneName(mesh->mBones[B]->mName.data);
 
-			if (data_container.boneMap.find(BoneName) == data_container.boneMap.end()) {
-				BoneIndex = data_container.boneTransforms.size();
-				data_container.boneTransforms.push_back(glm::mat4(1.0f));
+			if (importedData.boneMap.find(BoneName) == importedData.boneMap.end()) {
+				BoneIndex = importedData.boneTransforms.size();
+				importedData.boneTransforms.push_back(glm::mat4(1.0f));
 			}
 			else
-				BoneIndex = data_container.boneMap[BoneName];
+				BoneIndex = importedData.boneMap[BoneName];
 
-			data_container.boneMap[BoneName] = BoneIndex;
-			data_container.boneTransforms[BoneIndex] = aiMatrix_to_Mat4x4(mesh->mBones[B]->mOffsetMatrix);
+			importedData.boneMap[BoneName] = BoneIndex;
+			importedData.boneTransforms[BoneIndex] = aiMatrix_to_Mat4x4(mesh->mBones[B]->mOffsetMatrix);
 
 			for (unsigned int j = 0; j < mesh->mBones[B]->mNumWeights; j++) {
 				int VertexID = vertexOffset + mesh->mBones[B]->mWeights[j].mVertexId;
 				float Weight = mesh->mBones[B]->mWeights[j].mWeight;
-				data_container.bones[VertexID].AddBoneData((int)BoneIndex, Weight);
+				importedData.bones[VertexID].AddBoneData((int)BoneIndex, Weight);
 			}
 		}
 
@@ -229,11 +229,11 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 			};
 
 			// Import Mesh Material
-			data_container.materials.push_back(getMaterial(scene, x));
+			importedData.materials.push_back(getMaterial(scene, x));
 		}
 	else
-		//data_container.materials.push_back(Material_Strings("albedo.png", "normal.png", "metalness.png", "roughness.png", "height.png", "ao.png"));
-		data_container.materials.push_back(Material_Strings("", "", "", "", "", ""));
+		//importedData.materials.push_back(Material_Strings("albedo.png", "normal.png", "metalness.png", "roughness.png", "height.png", "ao.png"));
+		importedData.materials.push_back(Material_Strings("", "", "", "", "", ""));
 
 	// Free Importer Resource
 	importer_pool.returnImporter(importer);

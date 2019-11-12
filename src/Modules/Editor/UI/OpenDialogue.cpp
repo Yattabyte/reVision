@@ -9,14 +9,15 @@
 #include <time.h>
 
 
-OpenDialogue::OpenDialogue(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+OpenDialogue::OpenDialogue(Engine* engine, LevelEditor_Module* editor) :
+	m_engine(engine),
+	m_editor(editor),
+	m_iconFile(Shared_Texture(engine, "Editor//iconFile.png")),
+	m_iconFolder(Shared_Texture(engine, "Editor//iconFolder.png")),
+	m_iconBack(Shared_Texture(engine, "Editor//iconBack.png")),
+	m_iconRefresh(Shared_Texture(engine, "Editor//iconRefresh.png"))
 {
 	m_open = false;
-	m_iconFile = Shared_Texture(engine, "Editor//iconFile.png");
-	m_iconFolder = Shared_Texture(engine, "Editor//iconFolder.png");
-	m_iconBack = Shared_Texture(engine, "Editor//iconBack.png");
-	m_iconRefresh = Shared_Texture(engine, "Editor//iconRefresh.png");
 }
 
 void OpenDialogue::tick(const float&)
@@ -69,7 +70,6 @@ void OpenDialogue::populateLevels(const std::string& directory)
 				prefabEntry.extType = "Autosave";
 		}
 		else if (entry.is_directory()) {
-			prefabEntry.name = prefabEntry.name;
 			prefabEntry.type = LevelEntry::folder;
 			prefabEntry.extType = "Folder";
 		}

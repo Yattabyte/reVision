@@ -68,7 +68,7 @@ void Cubemap::initialize()
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	if (!glIsTexture(m_glTexID)) [[unlikely]]
+	if (!glIsTexture(m_glTexID))
 		m_engine->getManager_Messages().error("Texture \"" + m_filename + "\" failed to initialize.");
 
 	// Finalize

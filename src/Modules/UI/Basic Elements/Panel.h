@@ -19,11 +19,10 @@ public:
 	}
 	/** Construct a panel.
 	@param	engine		the engine to use. */
-	inline Panel(Engine* engine)
-		: UI_Element(engine) {
-		// Asset Loading
-		m_shader = Shared_Shader(engine, "UI\\Panel");
-
+	inline explicit Panel(Engine* engine) :
+		UI_Element(engine),
+		m_shader(Shared_Shader(engine, "UI\\Panel"))
+	{
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
 		glEnableVertexArrayAttrib(m_vaoID, 0);
@@ -48,7 +47,6 @@ public:
 
 		// Render
 		const glm::vec2 newPosition = position + m_position;
-		const glm::vec2 newScale = glm::min(m_scale, scale);
 		m_shader->bind();
 		m_shader->setUniform(0, newPosition);
 		m_shader->setUniform(1, m_color);

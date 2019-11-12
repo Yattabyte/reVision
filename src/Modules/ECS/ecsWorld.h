@@ -71,21 +71,22 @@ public:
 	/** Try to find an entity matching the UUID provided.
 	@param	UUID				the target entity's UUID.
 	@return						pointer to the found entity on success, nullptr on failure. */
-	ecsEntity* getEntity(const EntityHandle& uuid) const;
+	ecsEntity* getEntity(const EntityHandle& UUID) const;
 	/** Try to find a list of entities matching the UUID's provided.
 	@param	UUIDs				list of target entity UUID's
 	@return						list of pointers to the found entities. Dimensions may not match input list (nullptr's omitted) */
 	std::vector<ecsEntity*> getEntities(const std::vector<EntityHandle>& uuids) const;
-	/** Retrieve the top-level root of the map.
+	/** Retrieve a list of entity handles, given a root node.
+	@param	rootHandle			an optional root element to start fetching at (empty == map root)
 	@return						a vector of all level entities. */
-	std::vector<EntityHandle> getEntityHandles(const EntityHandle& root = EntityHandle()) const;
+	std::vector<EntityHandle> getEntityHandles(const EntityHandle& rootHandle = EntityHandle()) const;
 	/** Try to retrieve a component of a specific type from an entity matching the handle supplied.
 	@param	entityHandle		handle to the entity to retrieve from.
 	@param	<T>					the category of component being retrieved.
 	@return						the specific component of the type requested on success, nullptr otherwise. */
 	template <typename T>
 	inline T* getComponent(const EntityHandle& entityHandle) const {
-		if (auto* component = getComponent(entityHandle, T::m_ID))
+		if (auto* component = getComponent(entityHandle, T::Runtime_ID))
 			return static_cast<T*>(component);
 		return nullptr;
 	}
@@ -114,10 +115,10 @@ public:
 	ecsBaseComponent* getComponent(const ComponentHandle& componentHandle) const;
 	/** Retrieve the component from an entity matching the class specified.
 	@param	entityComponents	the array of entity component IDS.
-	@param	array				the array of component data.
+	@param	mem_array			the array of component data.
 	@param	componentID			the class ID of the component.
 	@return						the component pointer matching the ID specified. */
-	ecsBaseComponent* getComponent(const std::vector<std::tuple<ComponentID, int, ComponentHandle>>& entityComponents, const ComponentDataSpace& array, const ComponentID& componentID) const;
+	ecsBaseComponent* getComponent(const std::vector<std::tuple<ComponentID, int, ComponentHandle>>& entityComponents, const ComponentDataSpace& mem_array, const ComponentID& componentID) const;
 
 
 	////////////////////////
@@ -133,12 +134,12 @@ public:
 	@return						a new ID. */
 	static ecsHandle generateUUID();
 	/** Parent an entity to another entity.
-	@param	parentEntity		the handle to the desired parent entity.
-	@param	childEntity			the handle to the desired child entity. */
-	void parentEntity(const EntityHandle& parentEntity, const EntityHandle& childEntity);
+	@param	parentHandle		the handle to the desired parent entity.
+	@param	childHandle			the handle to the desired child entity. */
+	void parentEntity(const EntityHandle& parentHandle, const EntityHandle& childHandle);
 	/** Strip a child entity of its parent.
-	@param	childEntity			handle to the child entity, whom will be stripped of its parent. */
-	void unparentEntity(const EntityHandle& childEntity);
+	@param	entityHandle		handle to the child entity, whom will be stripped of its parent. */
+	void unparentEntity(const EntityHandle& entityHandle);
 	/** Serialize a specific set of entities to a char vector.
 	@param	entityHandles		the set of entities identified by their handles to serialize.
 	@return						char vector containing serialized entity data. */
@@ -166,7 +167,7 @@ public:
 	/** Try to find a component ID based on the component ID.
 	@param	name				the component class name to search for.
 	@return						optional component ID on success, nullptr on failure. */
-	std::optional<ComponentID> nameToComponentID(const char* name);
+	static std::optional<ComponentID> nameToComponentID(const char* name);
 	/** Search for a component template with a matching class name.
 	@param	name				the component class name to search for.
 	@return						shared pointer to the a new component with a matching class name if successful, nullptr otherwise. */

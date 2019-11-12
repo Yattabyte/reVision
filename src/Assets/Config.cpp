@@ -39,13 +39,13 @@ inline int find_CFG_Property(const std::string& s, const std::vector<std::string
 	return -1;
 }
 
-Shared_Config::Shared_Config(Engine* engine, const std::string& filename, const std::vector<std::string>& strings, const bool& threaded)
+Shared_Config::Shared_Config(Engine* engine, const std::string& filename, const std::vector<std::string>& cfg_strings, const bool& threaded)
 {
 	(*(std::shared_ptr<Config>*)(this)) = std::dynamic_pointer_cast<Config>(
 		engine->getManager_Assets().shareAsset(
 			typeid(Config).name(),
 			filename,
-			[engine, filename, strings]() { return std::make_shared<Config>(engine, filename, strings); },
+			[engine, filename, cfg_strings]() { return std::make_shared<Config>(engine, filename, cfg_strings); },
 			threaded
 		));
 }
@@ -87,7 +87,7 @@ float Config::getValue(const unsigned int& cfg_key) const
 	return std::nanf("");
 }
 
-void Config::saveConfig()
+void Config::saveConfig() const
 {
 	std::string output;
 	for each (const auto & value in m_configuration)

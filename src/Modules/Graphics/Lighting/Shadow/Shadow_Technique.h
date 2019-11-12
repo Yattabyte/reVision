@@ -20,9 +20,12 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Shadow_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras)
-		: m_engine(engine), m_sceneCameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
-		m_frameData = std::make_shared<ShadowData>();
+	inline Shadow_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras) :
+		Graphics_Technique(PRIMARY_LIGHTING),
+		m_engine(engine),
+		m_frameData(std::make_shared<ShadowData>()),
+		m_sceneCameras(cameras)
+	{
 		m_auxilliarySystems.makeSystem<ShadowScheduler_System>(engine, m_frameData);
 
 		// Preferences

@@ -20,15 +20,18 @@ public:
 	inline ~Menu() = default;
 	/** Construct a menu.
 	@param	engine		the engine to use. */
-	inline Menu(Engine* engine)
-		: UI_Element(engine) {
+	inline explicit Menu(Engine* engine) :
+		UI_Element(engine),
+		m_backPanel(std::make_shared<Panel>(engine)),
+		m_layout(std::make_shared<List>(engine)),
+		m_title(std::make_shared<Label>(engine)),
+		m_separator(std::make_shared<Separator>(engine))
+	{
 		// Make a background panel for cosemetic purposes
-		m_backPanel = std::make_shared<Panel>(engine);
 		m_backPanel->setColor(glm::vec4(0.1, 0.1, 0.1, 0.5));
 		addElement(m_backPanel);
 
 		// Make a vertical layout to house list items
-		m_layout = std::make_shared<List>(engine);
 		m_layout->setSpacing(10.0f);
 		m_layout->addCallback(List::on_selection, [&]() {
 			const auto index = m_layout->getSelectionIndex();
@@ -38,14 +41,12 @@ public:
 		m_backPanel->addElement(m_layout);
 
 		// Title
-		m_title = std::make_shared<Label>(engine);
 		m_title->setTextScale(15.0f);
 		m_title->setAlignment(Label::align_center);
 		m_title->setColor(glm::vec3(0.8, 0.6, 0.1));
 		m_backPanel->addElement(m_title);
 
 		// Title Separator
-		m_separator = std::make_shared<Separator>(engine);
 		m_backPanel->addElement(m_separator);
 
 		// Callbacks
@@ -73,7 +74,7 @@ public:
 	// Public Methods
 	/** Retrieve this menu's focus map.
 	@return				this menu's focus map. */
-	inline auto getFocusMap() {
+	inline auto getFocusMap() const {
 		return m_focusMap;
 	}
 
@@ -95,12 +96,12 @@ protected:
 
 
 	// Protected Attributes
-	std::shared_ptr<Label> m_title;
-	std::shared_ptr<List> m_layout;
-	std::vector<std::function<void()>> m_selectionCallbacks;
-	std::shared_ptr<Separator> m_separator;
 	std::shared_ptr<Panel> m_backPanel;
+	std::shared_ptr<List> m_layout;
+	std::shared_ptr<Label> m_title;
+	std::shared_ptr<Separator> m_separator;
 	std::shared_ptr<FocusMap> m_focusMap;
+	std::vector<std::function<void()>> m_selectionCallbacks;
 };
 
 #endif // MENU_H

@@ -28,23 +28,23 @@ Editor_Interface::~Editor_Interface()
 	ImGui::DestroyContext();
 }
 
-Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor) :
+	m_uiHotkeys(std::make_shared<Hotkeys>(engine, editor)),
+	m_uiCamController(std::make_shared<CameraController>(engine)),
+	m_uiRotIndicator(std::make_shared<RotationIndicator>(engine)),
+	m_uiTitlebar(std::make_shared<TitleBar>(engine, editor)),
+	m_uiPrefabs(std::make_shared<Prefabs>(engine, editor)),
+	m_uiSceneInspector(std::make_shared<SceneInspector>(engine, editor)),
+	m_uiEntityInspector(std::make_shared<EntityInspector>(engine, editor)),
+	m_uiSettings(std::make_shared<Settings>(engine, editor)),
+	m_uiRecoverDialogue(std::make_shared<RecoverDialogue>(engine, editor)),
+	m_uiOpenDialogue(std::make_shared<OpenDialogue>(engine, editor)),
+	m_uiSaveDialogue(std::make_shared<SaveDialogue>(engine, editor)),
+	m_uiUnsavedDialogue(std::make_shared<UnsavedChangesDialogue>(engine, editor)),
+	m_uiMissingDialogue(std::make_shared<MissingFileDialogue>(engine, editor)),
+	m_engine(engine),
+	m_editor(editor)
 {
-	m_uiHotkeys = std::make_shared<Hotkeys>(engine, editor);
-	m_uiCamController = std::make_shared<CameraController>(engine);
-	m_uiRotIndicator = std::make_shared<RotationIndicator>(engine);
-	m_uiTitlebar = std::make_shared<TitleBar>(engine, editor);
-	m_uiPrefabs = std::make_shared<Prefabs>(engine, editor);
-	m_uiSceneInspector = std::make_shared<SceneInspector>(engine, editor);
-	m_uiEntityInspector = std::make_shared<EntityInspector>(engine, editor);
-	m_uiSettings = std::make_shared<Settings>(engine, editor);
-	m_uiRecoverDialogue = std::make_shared<RecoverDialogue>(engine, editor);
-	m_uiOpenDialogue = std::make_shared<OpenDialogue>(engine, editor);
-	m_uiSaveDialogue = std::make_shared<SaveDialogue>(engine, editor);
-	m_uiUnsavedDialogue = std::make_shared<UnsavedChangesDialogue>(engine, editor);
-	m_uiMissingDialogue = std::make_shared<MissingFileDialogue>(engine, editor);
-
 	// Preferences
 	auto& preferences = engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
@@ -55,7 +55,6 @@ Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor)
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
 		});
-
 
 	// Initialize ImGUI
 	IMGUI_CHECKVERSION();

@@ -19,11 +19,10 @@ public:
 	}
 	/** Construct a separator.
 	@param	engine		the engine to use. */
-	inline Separator(Engine* engine)
-		: UI_Element(engine) {
-		// Asset Loading
-		m_shader = Shared_Shader(engine, "UI\\Separator");
-
+	inline explicit Separator(Engine* engine) :
+		UI_Element(engine),
+		m_shader(Shared_Shader(engine, "UI\\Separator"))
+	{
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
 		glEnableVertexArrayAttrib(m_vaoID, 0);

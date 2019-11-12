@@ -21,15 +21,15 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit Skybox(Engine* engine)
-		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
-		// Asset Loading
-		m_cubemapSky = Shared_Cubemap(engine, "sky\\");
-		m_shaderSky = Shared_Shader(engine, "Effects\\Skybox");
-		m_shaderSkyReflect = Shared_Shader(engine, "Effects\\Skybox Reflection");
-		m_shaderConvolute = Shared_Shader(engine, "Effects\\Sky_Convolution");
-		m_shapeQuad = Shared_Auto_Model(engine, "quad");
-
+	inline explicit Skybox(Engine* engine) :
+		Graphics_Technique(PRIMARY_LIGHTING),
+		m_engine(engine),
+		m_cubemapSky(Shared_Cubemap(engine, "sky\\")),
+		m_shaderSky(Shared_Shader(engine, "Effects\\Skybox")),
+		m_shaderSkyReflect(Shared_Shader(engine, "Effects\\Skybox Reflection")),
+		m_shaderConvolute(Shared_Shader(engine, "Effects\\Sky_Convolution")),
+		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
+	{
 		glCreateFramebuffers(1, &m_cubeFBO);
 		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_cubemapMipped);
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

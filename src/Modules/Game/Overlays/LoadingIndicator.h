@@ -20,13 +20,12 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline LoadingIndicator(Engine* engine)
-		: m_engine(engine) {
-		// Asset Loading
-		m_texture = Shared_Texture(engine, "spinner.png", GL_TEXTURE_2D);
-		m_shader = Shared_Shader(engine, "Effects\\LoadingIndicator");
-		m_shapeQuad = Shared_Auto_Model(engine, "quad");
-
+	inline explicit LoadingIndicator(Engine* engine) :
+		m_engine(engine),
+		m_shader(Shared_Shader(engine, "Effects\\LoadingIndicator")),
+		m_texture(Shared_Texture(engine, "spinner.png", GL_TEXTURE_2D)),
+		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
+	{
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
@@ -39,16 +38,6 @@ public:
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			m_indirectQuad = IndirectDraw<1>((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 			});
-
-		// World-Changed Callback
-		/*m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
-			if (state == World_Module::unloaded || state == World_Module::finishLoading)
-				m_show = false;
-			else if (state == World_Module::startLoading)
-				m_show = true;
-			else if (state == World_Module::updated)
-				m_blendAmt = 1.0f;
-			});*/
 	}
 
 

@@ -24,15 +24,15 @@ public:
 		glDeleteTextures(1, &m_bayerID);
 	}
 	/** Constructor. */
-	inline explicit SSR(Engine* engine)
-		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
-		// Asset Loading
-		m_shaderSSR1 = Shared_Shader(engine, "Effects\\SSR part 1");
-		m_shaderSSR2 = Shared_Shader(engine, "Effects\\SSR part 2");
-		m_shaderCopy = Shared_Shader(engine, "Effects\\Copy Texture");
-		m_shaderConvMips = Shared_Shader(engine, "Effects\\Gaussian Blur MIP");
-		m_shapeQuad = Shared_Auto_Model(engine, "quad");
-
+	inline explicit SSR(Engine* engine) :
+		Graphics_Technique(SECONDARY_LIGHTING),
+		m_engine(engine),
+		m_shaderSSR1(Shared_Shader(engine, "Effects\\SSR part 1")),
+		m_shaderSSR2(Shared_Shader(engine, "Effects\\SSR part 2")),
+		m_shaderCopy(Shared_Shader(engine, "Effects\\Copy Texture")),
+		m_shaderConvMips(Shared_Shader(engine, "Effects\\Gaussian Blur MIP")),
+		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
+	{
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_SSR, m_enabled);

@@ -23,13 +23,12 @@ public:
 	}
 	/** Constructor. */
 	inline explicit Bloom(Engine* engine)
-		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
-		// Asset Loading
-		m_shaderBloomExtract = Shared_Shader(engine, "Effects\\Bloom Extraction");
-		m_shaderCopy = Shared_Shader(engine, "Effects\\Copy Texture");
-		m_shaderGB = Shared_Shader(engine, "Effects\\Gaussian Blur");
-		m_shapeQuad = Shared_Auto_Model(engine, "quad");
-
+		: Graphics_Technique(POST_PROCESSING),
+		m_engine(engine),
+		m_shaderBloomExtract(Shared_Shader(engine, "Effects\\Bloom Extraction")),
+		m_shaderCopy(Shared_Shader(engine, "Effects\\Copy Texture")),
+		m_shaderGB(Shared_Shader(engine, "Effects\\Gaussian Blur")),
+		m_shapeQuad(Shared_Auto_Model(engine, "quad")) {
 		// Preference Callbacks
 		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_BLOOM, m_enabled);

@@ -20,13 +20,12 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Frametime_Counter(Engine* engine)
-		: m_engine(engine) {
-		// Asset Loading
-		m_numberTexture = Shared_Texture(engine, "numbers.png", GL_TEXTURE_2D, false, false);
-		m_shader = Shared_Shader(engine, "Utilities\\numberPrint");
-		m_shapeQuad = Shared_Auto_Model(engine, "quad");
-
+	inline explicit Frametime_Counter(Engine* engine) :
+		m_engine(engine),
+		m_shader(Shared_Shader(engine, "Utilities\\numberPrint")),
+		m_numberTexture(Shared_Texture(engine, "numbers.png", GL_TEXTURE_2D, false, false)),
+		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
+	{
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);

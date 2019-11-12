@@ -20,19 +20,18 @@ public:
 		const GLuint& primitiveCount,
 		const GLuint& first,
 		const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT
-	) : m_count(count), m_primitiveCount(primitiveCount), m_first(first) {
+	) : m_count(count), m_primitiveCount(primitiveCount), m_first(first), m_storageFlags(storageFlags) {
 		// Populate Buffer
 		const GLuint data[4] = { count, primitiveCount, first, 0 };
 		m_buffer = StaticMultiBuffer<BufferCount>(sizeof(GLuint) * 4, data, storageFlags);
 	}
 	/** Copy an Indirect Draw Object. */
-	inline IndirectDraw(const IndirectDraw& other)
-		: m_buffer(other.m_buffer) {
-		m_count = other.m_count;
-		m_primitiveCount = other.m_primitiveCount;
-		m_first = other.m_first;
-		m_storageFlags = other.m_storageFlags;
-	}
+	inline IndirectDraw(const IndirectDraw& other) :
+		m_count(other.m_count),
+		m_primitiveCount(other.m_primitiveCount),
+		m_first(other.m_first),
+		m_storageFlags(other.m_storageFlags),
+		m_buffer(other.m_buffer) {}
 	/** Move an Indirect Draw Object. */
 	inline IndirectDraw(IndirectDraw&& other) noexcept {
 		*this = std::move(other);
@@ -61,11 +60,11 @@ public:
 		glDrawArraysIndirect(GL_TRIANGLES, indirect);
 	}
 	/** Prepare this buffer for writing, waiting on its sync fence. */
-	inline void beginWriting() {
+	inline void beginWriting() const {
 		m_buffer.beginWriting();
 	}
 	/** Signal that this buffer has finished being written to. */
-	inline void endWriting() {
+	inline void endWriting() const {
 		m_buffer.endWriting();
 	}
 	/** Signal that this buffer has finished being read from. */

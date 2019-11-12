@@ -17,7 +17,7 @@ public:
 	inline ~Options_Graphics() = default;
 	/** Construct a graphics panel.
 	@param	engine		the engine to use. */
-	inline Options_Graphics(Engine* engine)
+	inline explicit Options_Graphics(Engine* engine)
 		: Options_Pane(engine) {
 		// Title
 		m_title->setText("Graphics Options");

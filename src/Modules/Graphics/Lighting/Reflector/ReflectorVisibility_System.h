@@ -17,8 +17,8 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline explicit ReflectorVisibility_System(const std::shared_ptr<ReflectorData>& visibility)
 		: m_frameData(visibility) {
-		addComponentType(Reflector_Component::m_ID, FLAG_REQUIRED);
-		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(Reflector_Component::Runtime_ID, FLAG_REQUIRED);
+		addComponentType(Transform_Component::Runtime_ID, FLAG_REQUIRED);
 	}
 
 

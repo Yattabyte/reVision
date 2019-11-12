@@ -27,11 +27,10 @@ public:
 	}
 	/** Constructs a list.
 	@param	engine		the engine. */
-	inline List(Engine* engine)
-		: UI_Element(engine) {
-		// Asset Loading
-		m_shader = Shared_Shader(engine, "UI\\List");
-
+	inline explicit List(Engine* engine) :
+		UI_Element(engine),
+		m_shader(Shared_Shader(engine, "UI\\List"))
+	{
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
 		glEnableVertexArrayAttrib(m_vaoID, 0);

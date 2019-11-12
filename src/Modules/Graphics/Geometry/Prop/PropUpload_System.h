@@ -22,7 +22,7 @@ public:
 	/** Construct this system. */
 	inline PropUpload_System(Engine* engine, const std::shared_ptr<PropData>& frameData)
 		: m_engine(engine), m_frameData(frameData) {
-		addComponentType(Prop_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(Prop_Component::Runtime_ID, FLAG_REQUIRED);
 
 		// Create VBO's
 		glCreateBuffers(1, &m_vboID);
@@ -73,19 +73,15 @@ public:
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
 		for each (const auto & componentParam in components) {
 			auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
-			auto& offset = propComponent->m_offset;
-			auto& count = propComponent->m_count;
-			auto& materialID = propComponent->m_materialID;
 			auto& model = propComponent->m_model;
-			auto& data = model->m_data;
 
 			// Try to upload model data
 			if (!model)
 				model = Shared_Model(m_engine, propComponent->m_modelName);
 			if (!propComponent->m_uploadModel && model->existsYet()) {
 				tryInsertModel(model);
-				offset = m_modelMap[model].first;
-				count = m_modelMap[model].second;
+				propComponent->m_offset = m_modelMap[model].first;
+				propComponent->m_count = m_modelMap[model].second;
 				propComponent->m_uploadModel = true;
 			}
 
@@ -93,7 +89,7 @@ public:
 			if (!propComponent->m_uploadMaterial && model->existsYet() && model->m_materialArray->existsYet()) {
 				// Get spot in the material array
 				tryInsertMaterial(model->m_materialArray);
-				materialID = m_materialMap[model->m_materialArray];
+				propComponent->m_materialID = m_materialMap[model->m_materialArray];
 
 				// Prepare fence
 				propComponent->m_uploadMaterial = true;

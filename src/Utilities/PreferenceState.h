@@ -23,7 +23,7 @@ public:
 	/** Construct the preference state.
 	@param	engine		the engine
 	@param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
-	inline PreferenceState(Engine* engine, const std::string& filename = "preferences") : m_engine(engine) {
+	inline explicit PreferenceState(Engine* engine, const std::string& filename = "preferences") : m_engine(engine) {
 		loadFile(filename);
 	}
 
@@ -157,7 +157,7 @@ public:
 			m_preferences->setValue(targetKey, castValue);
 
 			// Call callbacks
-			size_t index = 0;
+			size_t index(0ull);
 			if (m_callbacks.find(targetKey) != m_callbacks.end())
 				for each (const auto & pair in m_callbacks[targetKey]) {
 					if (pair.first)

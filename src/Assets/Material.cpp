@@ -24,8 +24,8 @@ Material::~Material()
 		delete m_materialData;
 }
 
-Material::Material(Engine* engine, const std::string& filename, const std::vector<std::string>& tx)
-	: Asset(engine, filename), m_textures(tx)
+Material::Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures)
+	: Asset(engine, filename), m_textures(textures)
 {
 	// We need to reserve a region of gpu memory for all the textures
 	// So we need to preemptively figure out the maximum number of textures we may need (can't delay until later)
@@ -35,19 +35,18 @@ Material::Material(Engine* engine, const std::string& filename, const std::vecto
 	const std::string relativePath = filename + MATERIAL_EXTENSION;
 	if (Engine::File_Exists(relativePath)) {
 		// Fetch a list of textures as defined in the file
-		auto textures = Material::Get_Material_Textures(relativePath);
+		auto tx = Material::Get_Material_Textures(relativePath);
 		// Recover the material folder directory from the filename
 		const size_t slash1Index = relativePath.find_last_of('/'), slash2Index = relativePath.find_last_of('\\');
 		const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
 		const std::string modelDirectory = relativePath.substr(0, furthestFolderIndex + 1);
 		// Apply these texture directories to the material whenever not null
-		m_textures.resize(textures.size());
 		for (size_t x = 0, size = m_textures.size(); x < size; ++x) {
 			// In case we made the original texture set larger, copy the original texture naming pattern
 			if (m_textures[x] == "")
 				m_textures[x] = m_textures[x % MAX_PHYSICAL_IMAGES];
-			if (textures[x] != "")
-				m_textures[x] = modelDirectory + textures[x];
+			if (tx[x] != "")
+				m_textures[x] = modelDirectory + tx[x];
 		}
 	}
 }
@@ -168,10 +167,10 @@ std::vector<std::string> parse_pbr(std::ifstream& file_stream)
 	return textures;
 }
 
-std::vector<std::string> Material::Get_Material_Textures(const std::string& relativePath)
+std::vector<std::string> Material::Get_Material_Textures(const std::string& filename)
 {
 	std::vector<std::string> textures;
-	std::ifstream file_stream(Engine::Get_Current_Dir() + relativePath);
+	std::ifstream file_stream(Engine::Get_Current_Dir() + filename);
 	int bracketCount = 0;
 	for (std::string line; std::getline(file_stream, line); ) {
 		if (find(line, "{")) {

@@ -34,8 +34,8 @@ Engine::~Engine()
 
 Engine::Engine() :
 	// Initialize engine-dependent members first
-	m_inputBindings(this),
-	m_preferenceState(this)
+	m_preferenceState(this),
+	m_inputBindings(this)
 {
 	// Initialize aN OGL context
 	initWindow();
@@ -230,7 +230,7 @@ void Engine::initWindow()
 				}
 
 				if (severity != GL_DEBUG_SEVERITY_NOTIFICATION && severity != GL_DEBUG_SEVERITY_LOW)
-					((MessageManager*)(data))->error(
+					(reinterpret_cast<MessageManager*>(data))->error(
 						std::to_string(id) + ": " + std::string(_type) + " of " + std::string(_severity) + " severity, raised from " + std::string(_source) + ": " + std::string(msg, length));
 			};
 			glDebugMessageCallbackKHR(myCallback, &m_messageManager);
@@ -394,12 +394,12 @@ void Engine::goToEditor()
 	m_moduleEditor.showEditor();
 }
 
-float Engine::getTime() const
+float Engine::getTime()
 {
 	return (float)glfwGetTime();
 }
 
-std::vector<glm::ivec3> Engine::getResolutions() const
+std::vector<glm::ivec3> Engine::getResolutions()
 {
 	int count(0);
 	const GLFWvidmode* modes = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);

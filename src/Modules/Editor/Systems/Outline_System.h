@@ -32,10 +32,10 @@ public:
 	inline Outline_System(Engine* engine, LevelEditor_Module* editor)
 		: m_engine(engine), m_editor(editor) {
 		// Declare component types used
-		addComponentType(Selected_Component::m_ID);
-		addComponentType(Transform_Component::m_ID);
-		addComponentType(Prop_Component::m_ID, FLAG_OPTIONAL);
-		addComponentType(Light_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(Selected_Component::Runtime_ID);
+		addComponentType(Transform_Component::Runtime_ID);
+		addComponentType(Prop_Component::Runtime_ID, FLAG_OPTIONAL);
+		addComponentType(Light_Component::Runtime_ID, FLAG_OPTIONAL);
 
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();

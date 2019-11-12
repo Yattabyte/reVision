@@ -134,7 +134,7 @@ public:
 	void setClicked();
 	/** Retrieve this element's clicked state.
 	@return						true if this element is clicked, false otherwise. */
-	bool getClicked() const;
+	static bool getClicked();
 	/** Reset this element, releasing, unpressing, unhovering this element and all its children. */
 	void clearFocus();
 	/** Get whether or not the mouse is within this element.
@@ -148,7 +148,7 @@ protected:
 	// Protected Methods
 	/** Triggers all callback functions identified by the event ID specified.
 	@param		interactionEventID	the event type. */
-	void enactCallback(const int& interactionEventID) const;
+	void enactCallback(const int& interactionEventID);
 
 
 	// Protected Attributes

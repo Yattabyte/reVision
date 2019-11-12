@@ -5,7 +5,7 @@ int main()
 {
 	Engine engine;
 
-	while (!(engine.shouldClose())) [[likely]]
+	while (!(engine.shouldClose()))
 		engine.tick();
 
 	return 1;

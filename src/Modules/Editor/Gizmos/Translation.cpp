@@ -14,16 +14,15 @@ Translation_Gizmo::~Translation_Gizmo()
 	glDeleteVertexArrays(1, &m_axisVAO);
 }
 
-Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor) :
+	m_engine(engine),
+	m_editor(editor),
+	m_model(Shared_Auto_Model(engine, "Editor\\translate")),
+	m_gizmoShader(Shared_Shader(engine, "Editor\\gizmoShader")),
+	m_axisShader(Shared_Shader(engine, "Editor\\axis_line"))
 {
 	// Update indicator
 	*m_aliveIndicator = true;
-
-	// Assets
-	m_model = Shared_Auto_Model(engine, "Editor\\translate");
-	m_gizmoShader = Shared_Shader(engine, "Editor\\gizmoShader");
-	m_axisShader = Shared_Shader(engine, "Editor\\axis_line");
 
 	// Asset-Finished Callbacks
 	m_model->addCallback(m_aliveIndicator, [&]() mutable {
@@ -323,7 +322,7 @@ bool Translation_Gizmo::checkMousePress()
 			virtual void undo() override final {
 				move(m_oldPosition);
 			}
-			virtual bool join(Editor_Command* const other) override final {
+			virtual bool join(Editor_Command* other) override final {
 				if (auto newCommand = dynamic_cast<Move_Selection_Command*>(other)) {
 					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 						m_newPosition = newCommand->m_newPosition;

@@ -25,7 +25,7 @@ public:
 	inline ~StartMenu() = default;
 	/** Construct a start menu.
 	@param	engine		the engine to use. */
-	inline StartMenu(Engine* engine)
+	inline explicit StartMenu(Engine* engine)
 		: Menu(engine) {
 		// Title
 		m_title->setText("MAIN MENU");

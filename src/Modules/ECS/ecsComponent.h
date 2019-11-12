@@ -28,7 +28,7 @@ struct ecsBaseComponent {
 	// Public (de)Constructors
 	inline virtual ~ecsBaseComponent() = default;
 	inline ecsBaseComponent(const ComponentID& ID, const size_t& size, const char* name)
-		: m_ID(ID), m_size(size), m_name(name) { }
+		: m_runtimeID(ID), m_size(size), m_name(name) { }
 
 
 	// Public Methods
@@ -44,7 +44,7 @@ struct ecsBaseComponent {
 
 	// Public Attributes
 	/** Runtime generated ID per class. */
-	ComponentID m_ID;
+	ComponentID m_runtimeID;
 	/** Total component byte-size. */
 	size_t m_size;
 	/** Specific class name. */
@@ -86,7 +86,7 @@ template <typename C, const char* chars>
 struct ecsComponent : public ecsBaseComponent {
 	// (de)Constructors
 	inline virtual ~ecsComponent() = default;
-	inline ecsComponent() : ecsBaseComponent(ecsComponent::m_ID, sizeof(C), chars) {}
+	inline ecsComponent() : ecsBaseComponent(ecsComponent::Runtime_ID, sizeof(C), chars) {}
 
 
 	// Public Methods
@@ -94,7 +94,7 @@ struct ecsComponent : public ecsBaseComponent {
 	@return				serialized component data. */
 	inline std::vector<char> serialize() {
 		std::vector<char> data(sizeof(C));
-		(*(C*)(&data[0])) = (*static_cast<C*>(this));
+		(*reinterpret_cast<C*>(&data[0])) = (*static_cast<C*>(this));
 		return data;
 	}
 	/** Default deserialization method.
@@ -127,9 +127,9 @@ struct ecsComponent : public ecsBaseComponent {
 
 	// Static Type-Specific Attributes
 	/** Runtime class name of this component, also stored in base-component. */
-	constexpr static const char* m_name = chars;
+	constexpr static const char* Name = chars;
 	/** Runtime generated ID per class, also stored in base-component. */
-	static const ComponentID m_ID;
+	static const ComponentID Runtime_ID;
 
 
 protected:
@@ -140,7 +140,7 @@ protected:
 		static_cast<C*>(this)->deserialize(data);
 
 		// Enforce runtime variables
-		ecsBaseComponent::m_ID = ecsComponent::m_ID;
+		ecsBaseComponent::m_runtimeID = ecsComponent::Runtime_ID;
 		ecsBaseComponent::m_size = sizeof(C);
 		ecsBaseComponent::m_name = chars;
 
@@ -182,6 +182,6 @@ inline constexpr static const void freeFn(ecsBaseComponent* comp) {
 
 /** Generate a static ID at run time for each type of component class used. */
 template <typename C, const char* chars>
-const ComponentID ecsComponent<C, chars>::m_ID(registerType(createFn<C>, freeFn<C>, newFn<C>, sizeof(C), chars));
+const ComponentID ecsComponent<C, chars>::Runtime_ID(registerType(createFn<C>, freeFn<C>, newFn<C>, sizeof(C), chars));
 
 #endif // ECS_COMPONENT_H

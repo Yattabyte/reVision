@@ -180,7 +180,7 @@ struct Shadow_Component final : public ecsComponent<Shadow_Component, shadowName
 	std::vector<Camera> m_cameras;
 	std::vector<float> m_updateTimes;
 
-	inline std::vector<char> serialize() {
+	inline static std::vector<char> serialize() {
 		return {};
 	}
 	inline void deserialize(const char*) {
@@ -206,7 +206,7 @@ struct Reflector_Component final : public ecsComponent<Reflector_Component, refl
 	float m_updateTime = 0.0f;
 	int m_cubeSpot = -1;
 
-	inline std::vector<char> serialize() {
+	inline static std::vector<char> serialize() {
 		return {};
 	}
 	inline void deserialize(const char*) {
@@ -225,12 +225,10 @@ struct Collider_Component final : public ecsComponent<Collider_Component, collid
 	btConvexHullShape* m_shape = nullptr;
 	Transform m_worldTransform;
 
-	inline std::vector<char> serialize() {
-		/**@todo*/
+	inline static std::vector<char> serialize() {
 		return {};
 	}
-	inline void deserialize(const char*) {
-		/**@todo*/
+	inline static void deserialize(const char*) {
 	}
 };
 

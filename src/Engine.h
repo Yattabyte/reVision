@@ -25,7 +25,7 @@
 // Other
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "4.15.0";
+constexpr char ENGINE_VERSION[] = "4.15.1";
 struct GLFWwindow;
 
 
@@ -84,9 +84,9 @@ public:
 	/** Set the mouse input mode, such as free-look or normal cursor. */
 	inline MouseInputMode getMouseInputMode() const { return m_mouseInputMode; };
 	/** Retrieve the current time. */
-	float getTime() const;
+	static float getTime();
 	/** Return a list of available resolutions. */
-	std::vector<glm::ivec3> getResolutions() const;
+	static std::vector<glm::ivec3> getResolutions();
 	/** Returns this engine's action state. */
 	ActionState& getActionState() { return m_actionState; }
 	/** Returns this engine's preference state. */

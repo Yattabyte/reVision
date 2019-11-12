@@ -20,15 +20,20 @@ public:
 	inline ~Options_Pane() = default;
 	/** Construct a options pane.
 	@param	engine		the engine to use. */
-	inline Options_Pane(Engine* engine)
-		: UI_Element(engine) {
+	inline explicit Options_Pane(Engine* engine) :
+		UI_Element(engine),
+		m_title(std::make_shared<Label>(engine)),
+		m_description(std::make_shared<Label>(engine)),
+		m_layout(std::make_shared<List>(engine)),
+		m_separatorTop(std::make_shared<Separator>(engine)),
+		m_separatorBot(std::make_shared<Separator>(engine)),
+		m_backPanel(std::make_shared<Panel>(engine))
+	{
 		// Make a background panel for cosemetic purposes
-		m_backPanel = std::make_shared<Panel>(engine);
 		m_backPanel->setColor(glm::vec4(0.1, 0.1, 0.1, 0.5));
 		addElement(m_backPanel);
 
 		// Make a vertical layout to house list items
-		m_layout = std::make_shared<List>(engine);
 		m_layout->setSpacing(1.0f);
 		m_layout->setMargin(50.0f);
 		m_layout->addCallback(List::on_selection, [&]() {
@@ -41,21 +46,17 @@ public:
 		m_backPanel->addElement(m_layout);
 
 		// Title
-		m_title = std::make_shared<Label>(engine);
 		m_title->setTextScale(20.0f);
 		m_title->setAlignment(Label::align_left);
 		m_backPanel->addElement(m_title);
 
 		// Top Separator
-		m_separatorTop = std::make_shared<Separator>(engine);
 		m_backPanel->addElement(m_separatorTop);
 
 		// Bottom Separator
-		m_separatorBot = std::make_shared<Separator>(engine);
 		m_backPanel->addElement(m_separatorBot);
 
 		// Bottom Description Label
-		m_description = std::make_shared<Label>(engine);
 		m_description->setAlignment(Label::align_left);
 		m_description->setTextScale(10.0f);
 		m_description->setColor(glm::vec3(0.8, 0.6, 0.1));

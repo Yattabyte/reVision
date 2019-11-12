@@ -13,7 +13,7 @@ public:
 	inline ~Layout_Horizontal() = default;
 	/** Construct the layout.
 	@param	engine		the engine to use. */
-	inline Layout_Horizontal(Engine* engine) : UI_Element(engine) {
+	inline explicit Layout_Horizontal(Engine* engine) : UI_Element(engine) {
 		// Add Callbacks
 		addCallback(UI_Element::on_resize, [&]() { alignChildren(); });
 		addCallback(UI_Element::on_childrenChange, [&]() { alignChildren(); });

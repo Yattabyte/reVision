@@ -23,7 +23,7 @@ public:
 	@param	engine		the engine to use.
 	@param	value		the starting value to use.
 	@param	range		the starting range to use. */
-	inline Slider(Engine* engine, const float& value = 0.0f, const glm::vec2& range = { 0.0f, 1.0f })
+	inline explicit Slider(Engine* engine, const float& value = 0.0f, const glm::vec2& range = { 0.0f, 1.0f })
 		: UI_Element(engine), m_value(value), m_lowerRange(range.x), m_upperRange(range.y) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);

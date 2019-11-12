@@ -31,22 +31,23 @@ public:
 		}
 	}
 	/** Constructor. */
-	inline Direct_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras)
-		: m_engine(engine), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
-		m_frameData = std::make_shared<Direct_Light_Data>();
+	inline Direct_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) :
+		Graphics_Technique(PRIMARY_LIGHTING),
+		m_engine(engine),
+		m_shader_Lighting(Shared_Shader(engine, "Core\\Light\\Direct")),
+		m_shader_Stencil(Shared_Shader(engine, "Core\\Light\\Stencil")),
+		m_shapeCube(Shared_Mesh(engine, "//Models//cube.obj")),
+		m_shapeSphere(Shared_Mesh(engine, "//Models//sphere.obj")),
+		m_shapeHemisphere(Shared_Mesh(engine, "//Models//hemisphere.obj")),
+		m_frameData(std::make_shared<Direct_Light_Data>()),
+		m_cameras(cameras)
+	{
 		m_frameData->clientCamera = clientCamera;
 		m_frameData->shadowData = shadowData;
 
 		// Auxiliary Systems
 		m_auxilliarySystems.makeSystem<DirectVisibility_System>(m_frameData);
 		m_auxilliarySystems.makeSystem<DirectSync_System>(m_frameData);
-
-		// Asset Loading
-		m_shader_Lighting = Shared_Shader(engine, "Core\\Light\\Direct");
-		m_shader_Stencil = Shared_Shader(engine, "Core\\Light\\Stencil");
-		m_shapeCube = Shared_Mesh(engine, "//Models//cube.obj");
-		m_shapeSphere = Shared_Mesh(engine, "//Models//sphere.obj");
-		m_shapeHemisphere = Shared_Mesh(engine, "//Models//hemisphere.obj");
 
 		// Asset-finished callbacks
 		m_shapeCube->addCallback(m_aliveIndicator, [&]() { registerLightShapes(); });

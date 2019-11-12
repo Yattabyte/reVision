@@ -32,7 +32,7 @@ struct ShaderObj {
 	/** Destroy the shader object. */
 	~ShaderObj();
 	/** Construct a shader object. */
-	ShaderObj(const GLenum& type);
+	explicit ShaderObj(const GLenum& type);
 
 
 	// Functions

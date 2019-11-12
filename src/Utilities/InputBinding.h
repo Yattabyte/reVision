@@ -17,7 +17,7 @@ public:
 	~InputBinding();
 	/** Construct a key-binding.
 	@param	engine		the engine */
-	InputBinding(Engine* engine);
+	explicit InputBinding(Engine* engine);
 
 
 	// Public Methods

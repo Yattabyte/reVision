@@ -10,9 +10,9 @@ std::string Asset::getFileName() const
 	return m_filename;
 }
 
-void Asset::setFileName(const std::string& fn)
+void Asset::setFileName(const std::string& filename)
 {
-	m_filename = fn;
+	m_filename = filename;
 }
 
 void Asset::addCallback(const std::shared_ptr<bool>& alive, const AssetFinalizedCallback& callback)
@@ -26,7 +26,7 @@ void Asset::addCallback(const std::shared_ptr<bool>& alive, const AssetFinalized
 bool Asset::existsYet() const
 {
 	// Exit early if this points to nothing
-	if (!this) [[unlikely]]
+	if (!this)
 		return false;
 
 	// Check if we're finalized

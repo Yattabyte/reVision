@@ -24,7 +24,7 @@ public:
 	inline ~PauseMenu() = default;
 	/** Construct a start menu.
 	@param	engine		the engine to use. */
-	inline PauseMenu(Engine* engine)
+	inline explicit PauseMenu(Engine* engine)
 		: Menu(engine) {
 		// Title
 		m_title->setText("PAUSE MENU");

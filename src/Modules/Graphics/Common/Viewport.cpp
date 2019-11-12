@@ -4,11 +4,12 @@
 #include <algorithm>
 
 
-Viewport::Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions, Engine* engine)
-	: m_screenPosition(screenPosition), m_dimensions(dimensions)
+Viewport::Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions, Engine* engine) :
+	m_screenPosition(screenPosition),
+	m_dimensions(dimensions),
+	m_gfxFBOS(std::make_shared<Graphics_Framebuffers>(dimensions, engine))
 {
-	// Initialize FBO's
-	m_gfxFBOS = std::make_shared<Graphics_Framebuffers>(dimensions, engine);
+	// Tie geometry depth texture to lighting & reflection FBO
 	glNamedFramebufferTexture(m_gfxFBOS->getFboID("LIGHTING"), GL_DEPTH_STENCIL_ATTACHMENT, m_gfxFBOS->getTexID("GEOMETRY", 3), 0);
 	glNamedFramebufferTexture(m_gfxFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_gfxFBOS->getTexID("GEOMETRY", 3), 0);
 }

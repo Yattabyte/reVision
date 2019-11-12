@@ -25,7 +25,7 @@ public:
 	// Public Methods
 	/** Returns the component types supported by this system.
 	@return		the component types supported by this system. */
-	inline const std::vector<std::pair<ComponentID, RequirementsFlag>>& getComponentTypes() {
+	inline const std::vector<std::pair<ComponentID, RequirementsFlag>>& getComponentTypes() const {
 		return m_componentTypes;
 	};
 	/** Returns whether or not this system is valid (has at least 1 non-optional component type)
@@ -104,7 +104,7 @@ public:
 	}
 	/** Retrieve a specific system at a given index.
 	@param	index	the index to fetch the system from. */
-	inline auto operator[](const size_t& index) {
+	inline auto operator[](const size_t& index) const {
 		return m_systems[index];
 	}
 	/** Retrieve an iterator to the beginning of this system list.

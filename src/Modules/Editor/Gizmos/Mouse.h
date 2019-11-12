@@ -54,7 +54,7 @@ public:
 	Transform getSpawnTransform() const;
 	/** Set a specific set of entities as the selection, moving the gizmo to their center.
 	@param	entityHandles	the new set of selected entity handles to use. */
-	void setSelection(const std::vector<EntityHandle>& entities);
+	void setSelection(const std::vector<EntityHandle>& entityHandles);
 	/** Retrieve the current set of selected entities.
 	@return					the active set of selected entity handles. */
 	std::vector<EntityHandle>& getSelection();

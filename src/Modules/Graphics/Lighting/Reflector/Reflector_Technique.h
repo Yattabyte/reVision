@@ -25,21 +25,22 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Reflector_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras)
-		: m_engine(engine), m_sceneCameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
+	inline Reflector_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras) :
+		Graphics_Technique(PRIMARY_LIGHTING),
+		m_engine(engine),
+		m_shaderLighting(Shared_Shader(engine, "Core\\Reflector\\IBL_Parallax")),
+		m_shaderStencil(Shared_Shader(engine, "Core\\Reflector\\Stencil")),
+		m_shaderCopy(Shared_Shader(engine, "Core\\Reflector\\2D_To_Cubemap")),
+		m_shaderConvolute(Shared_Shader(engine, "Core\\Reflector\\Cube_Convolution")),
+		m_shapeCube(Shared_Auto_Model(engine, "cube")),
+		m_shapeQuad(Shared_Auto_Model(engine, "quad")),
+		m_frameData(std::make_shared<ReflectorData>()),
+		m_sceneCameras(cameras)
+	{
 		// Auxilliary Systems
-		m_frameData = std::make_shared<ReflectorData>();
 		m_auxilliarySystems.makeSystem<ReflectorScheduler_System>(engine, m_frameData);
 		m_auxilliarySystems.makeSystem<ReflectorVisibility_System>(m_frameData);
 		m_auxilliarySystems.makeSystem<ReflectorSync_System>(m_frameData);
-
-		// Asset Loading
-		m_shaderLighting = Shared_Shader(engine, "Core\\Reflector\\IBL_Parallax");
-		m_shaderStencil = Shared_Shader(engine, "Core\\Reflector\\Stencil");
-		m_shaderCopy = Shared_Shader(engine, "Core\\Reflector\\2D_To_Cubemap");
-		m_shaderConvolute = Shared_Shader(engine, "Core\\Reflector\\Cube_Convolution");
-		m_shapeCube = Shared_Auto_Model(engine, "cube");
-		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
@@ -85,9 +86,6 @@ public:
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderLighting->existsYet() && m_shaderStencil->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
 				m_drawData.resize(size_t(m_drawIndex) + 1ull);
-			auto& drawBuffer = m_drawData[m_drawIndex];
-			auto& camBufferIndex = drawBuffer.bufferCamIndex;
-			auto& lightBufferIndex = drawBuffer.visLights;
 
 			// Accumulate all visibility info for the cameras passed in
 			std::vector<glm::ivec2> camIndices;
@@ -99,6 +97,10 @@ public:
 			}
 
 			if (lightIndices.size()) {
+				auto& drawBuffer = m_drawData[m_drawIndex];
+				auto& camBufferIndex = drawBuffer.bufferCamIndex;
+				auto& lightBufferIndex = drawBuffer.visLights;
+
 				// Write accumulated data
 				camBufferIndex.beginWriting();
 				lightBufferIndex.beginWriting();
@@ -250,8 +252,8 @@ private:
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	Shared_Auto_Model m_shapeCube, m_shapeQuad;
 	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
+	Shared_Auto_Model m_shapeCube, m_shapeQuad;
 	StaticMultiBuffer<> m_indirectQuad = StaticMultiBuffer(sizeof(GLuint) * 4), m_indirectQuadConvolute = StaticMultiBuffer(sizeof(GLuint) * 4);
 	std::shared_ptr<Viewport> m_viewport;
 	struct DrawData {

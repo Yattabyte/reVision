@@ -3,7 +3,7 @@
 #include <fstream>
 
 
-bool Text_IO::Import_Text(Engine* engine, const std::string& relativePath, std::string& data_container, std::ios_base::openmode mode)
+bool Text_IO::Import_Text(Engine* engine, const std::string& relativePath, std::string& importedData, const std::ios_base::openmode& mode)
 {
 	if (!Engine::File_Exists(relativePath)) {
 		engine->getManager_Messages().error("The file \"" + relativePath + "\" does not exist.");
@@ -14,7 +14,7 @@ bool Text_IO::Import_Text(Engine* engine, const std::string& relativePath, std::
 	std::string temp;
 	while (!file.eof()) {
 		std::getline(file, temp);
-		data_container.append(temp + '\n');
+		importedData.append(temp + '\n');
 	}
 
 	return true;

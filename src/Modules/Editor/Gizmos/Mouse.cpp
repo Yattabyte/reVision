@@ -13,23 +13,20 @@ Mouse_Gizmo::~Mouse_Gizmo()
 	*m_aliveIndicator = false;
 }
 
-Mouse_Gizmo::Mouse_Gizmo(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+Mouse_Gizmo::Mouse_Gizmo(Engine* engine, LevelEditor_Module* editor) :
+	m_engine(engine),
+	m_editor(editor),
+	m_pickerSystem(std::make_shared<MousePicker_System>(m_engine)),
+	m_translationGizmo(std::make_shared<Translation_Gizmo>(engine, editor)),
+	m_scalingGizmo(std::make_shared<Scaling_Gizmo>(engine, editor)),
+	m_rotationGizmo(std::make_shared<Rotation_Gizmo>(engine, editor)),
+	m_spawnModel(Shared_Auto_Model(engine, "Editor\\spawn")),
+	m_spawnShader(Shared_Shader(engine, "Editor\\spawnShader"))
 {
 	// Update indicator
 	*m_aliveIndicator = true;
 
-	// Create mouse picker system
-	m_pickerSystem = std::make_shared<MousePicker_System>(m_engine);
-
-	// Create Sub-Gizmos
-	m_translationGizmo = std::make_shared<Translation_Gizmo>(engine, editor);
-	m_scalingGizmo = std::make_shared<Scaling_Gizmo>(engine, editor);
-	m_rotationGizmo = std::make_shared<Rotation_Gizmo>(engine, editor);
-
-	// Assets
-	m_spawnModel = Shared_Auto_Model(engine, "Editor\\spawn");
-	m_spawnShader = Shared_Shader(engine, "Editor\\spawnShader");
+	// Asset-Finished Callbacks
 	m_spawnModel->addCallback(m_aliveIndicator, [&]() mutable {
 		m_spawnIndirect = IndirectDraw<1>((GLuint)m_spawnModel->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});

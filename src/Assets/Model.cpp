@@ -53,9 +53,9 @@ void Model::initialize()
 
 void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minOut, glm::vec3& maxOut, glm::vec3& scaleOut, glm::vec3& centerOut, float& radiusOut)
 {
-	if (mesh.size() >= 1) [[likely]] {
-		const glm::vec3 & vector = mesh[0].vertex;
-		float minX = vector.x, maxX = vector.x, minY = vector.y, maxY = vector.y, minZ = vector.z, maxZ = vector.z;
+	if (mesh.size() >= 1) {
+		const auto& vector = mesh[0].vertex;
+		auto minX = vector.x, maxX = vector.x, minY = vector.y, maxY = vector.y, minZ = vector.z, maxZ = vector.z;
 		for (size_t x = 1, total = mesh.size(); x < total; ++x) {
 			const glm::vec3& vertex = mesh[x].vertex;
 			if (vertex.x < minX)

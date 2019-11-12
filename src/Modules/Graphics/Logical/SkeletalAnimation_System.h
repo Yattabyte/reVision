@@ -17,7 +17,7 @@ public:
 	inline explicit Skeletal_Animation_System(Engine* engine)
 		: m_engine(engine) {
 		// Declare component types used
-		addComponentType(Skeleton_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(Skeleton_Component::Runtime_ID, FLAG_REQUIRED);
 	}
 
 

@@ -34,7 +34,7 @@ public:
 	// Public Methods
 	/** Retrieve a shared pointer to the rendering pipeline.
 	@return					shared pointer to the rendering pipeline. */
-	inline auto getPipeline() {
+	inline auto getPipeline() const {
 		return m_pipeline;
 	}
 	/** Convenience function for rendering a given ecsWorld to a given FBO.

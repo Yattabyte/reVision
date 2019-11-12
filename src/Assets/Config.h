@@ -50,7 +50,7 @@ public:
 	@return				the value assigned to supplied key (NaN if the supplied key doesn't exist). */
 	float getValue(const unsigned int& cfg_key) const;
 	/** Writes the configuration file back to disk within the \\Config\\ folder. */
-	void saveConfig();
+	void saveConfig() const;
 
 
 	// Public Attributes

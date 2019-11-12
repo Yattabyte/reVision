@@ -21,14 +21,14 @@ public:
 	inline Inspector_Transform_System(Engine* engine, LevelEditor_Module* editor)
 		: m_engine(engine), m_editor(editor) {
 		// Declare component types used
-		addComponentType(Selected_Component::m_ID);
-		addComponentType(Transform_Component::m_ID);
+		addComponentType(Selected_Component::Runtime_ID);
+		addComponentType(Transform_Component::Runtime_ID);
 	}
 
 
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
-		const auto text = std::string(Transform_Component::m_name) + ": (" + std::to_string(components.size()) + ")";
+		const auto text = std::string(Transform_Component::Name) + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
 			const auto getUUIDS = [&]() {
@@ -78,7 +78,7 @@ public:
 					virtual void undo() override final {
 						setPosition(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) override final {
+					virtual bool join(Editor_Command* other) override final {
 						if (auto newCommand = dynamic_cast<Move_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;
@@ -122,7 +122,7 @@ public:
 					virtual void undo() override final {
 						setOrientation(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) override final {
+					virtual bool join(Editor_Command* other) override final {
 						if (auto newCommand = dynamic_cast<Rotate_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;
@@ -168,7 +168,7 @@ public:
 					virtual void undo() override final {
 						setScale(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) override final {
+					virtual bool join(Editor_Command* other) override final {
 						if (auto newCommand = dynamic_cast<Scale_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;

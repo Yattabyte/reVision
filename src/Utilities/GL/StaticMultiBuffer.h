@@ -96,13 +96,13 @@ public:
 		std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr[m_index]) + offset, data, size);
 	}
 	/** Prepare this buffer for writing, waiting on any unfinished reads. */
-	inline void beginWriting() {
+	inline void beginWriting() const {
 		// Ensure all reads and writes at this index have finished.
 		WaitForFence(m_writeFence[m_index]);
 		WaitForFence(m_readFence[m_index]);
 	}
 	/** Signal that this multi-buffer is finished being written to. */
-	inline void endWriting() {
+	inline void endWriting() const {
 		if (!m_writeFence[m_index])
 			m_writeFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	}

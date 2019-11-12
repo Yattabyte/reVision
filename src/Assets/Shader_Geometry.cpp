@@ -30,8 +30,8 @@ void Shader_Geometry::initialize()
 {
 	// Attempt to load cache, otherwise load manually
 	m_glProgramID = glCreateProgram();
-	bool success = false;
 	if (!loadCachedBinary(DIRECTORY_SHADER + getFileName())) {
+		bool success = false;
 		// Create Geometry shader
 		if (initShaders(DIRECTORY_SHADER + getFileName())) {
 			glLinkProgram(m_glProgramID);

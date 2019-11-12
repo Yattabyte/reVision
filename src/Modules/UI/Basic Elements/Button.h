@@ -15,10 +15,9 @@ public:
 	/** Creates a button with specific text inside.
 	@param	engine		the engine.
 	@param	text		the button text. */
-	inline Button(Engine* engine, const std::string& text = "Button")
-		: UI_Element(engine) {
+	inline explicit Button(Engine* engine, const std::string& text = "Button")
+		: UI_Element(engine), m_label(std::make_shared<Label>(engine, text)) {
 		// All buttons have labels
-		m_label = std::make_shared<Label>(engine, text);
 		m_label->setAlignment(Label::align_center);
 		m_label->setTextScale(12.5f);
 		addElement(m_label);

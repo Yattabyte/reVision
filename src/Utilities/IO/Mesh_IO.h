@@ -74,7 +74,7 @@ struct Mesh_Geometry {
 	std::vector<glm::mat4> boneTransforms;
 	std::map<std::string, size_t> boneMap;
 	std::vector<Animation> animations;
-	Node* rootNode;
+	Node* rootNode = nullptr;
 };
 struct SingleVertex {
 	glm::vec3 vertex;

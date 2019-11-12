@@ -19,16 +19,15 @@ Rotation_Gizmo::~Rotation_Gizmo()
 	glDeleteVertexArrays(1, &m_axisVAO);
 }
 
-Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor) :
+	m_engine(engine),
+	m_editor(editor),
+	m_model(Shared_Auto_Model(engine, "Editor\\rotate")),
+	m_gizmoShader(Shared_Shader(engine, "Editor\\ringShader")),
+	m_axisShader(Shared_Shader(engine, "Editor\\axis_line"))
 {
 	// Update indicator
 	*m_aliveIndicator = true;
-
-	// Assets
-	m_model = Shared_Auto_Model(engine, "Editor\\rotate");
-	m_gizmoShader = Shared_Shader(engine, "Editor\\ringShader");
-	m_axisShader = Shared_Shader(engine, "Editor\\axis_line");
 
 	// Asset-Finished Callbacks
 	m_model->addCallback(m_aliveIndicator, [&]() mutable {
@@ -101,11 +100,6 @@ void Rotation_Gizmo::render(const float&)
 		const auto& position = m_transform.m_position;
 		const auto& pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
 		const auto& vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
-		auto vMatrixNoRot = vMatrix;
-		vMatrixNoRot[3][0] = 0.0f;
-		vMatrixNoRot[3][1] = 0.0f;
-		vMatrixNoRot[3][2] = 0.0f;
-		vMatrixNoRot[3][3] = 1.0f;
 
 		const auto trans = glm::translate(glm::mat4(1.0f), position);
 		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * m_renderScale));
@@ -175,7 +169,6 @@ void Rotation_Gizmo::checkMouseHover()
 	const auto ray_world = glm::normalize(glm::vec3(clientCamera.vMatrixInverse * ray_eye));
 
 	const auto scalingFactor = glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * m_renderScale;
-	const auto mMatrix = glm::translate(glm::mat4(1.0f), position);
 	const auto fourthAxisMat = glm::inverse(glm::mat4_cast(glm::quat_cast(clientCamera.vMatrix)));
 	const auto fourthAxisNormal = fourthAxisMat * glm::vec4(0, 0, 1, 1);
 
@@ -233,7 +226,7 @@ bool Rotation_Gizmo::checkMousePress()
 
 	// An axis is now selected, perform dragging operation
 	else if ((m_selectedAxes != NONE) && ImGui::IsMouseDragging(0)) {
-		const auto index = m_selectedAxes & X_AXIS ? 0 : m_selectedAxes & Y_AXIS ? 1 : m_selectedAxes & Z_AXIS ? 2 : 3;
+		const auto index = (m_selectedAxes & X_AXIS) ? 0 : (m_selectedAxes & Y_AXIS) ? 1 : (m_selectedAxes & Z_AXIS) ? 2 : 3;
 		const auto fourthAxisMat = glm::inverse(glm::mat4_cast(glm::quat_cast(m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix)));
 		const auto fourthAxisNormal = fourthAxisMat * glm::vec4(0, 0, 1, 1);
 		const glm::vec3 normals[4] = { glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::normalize(glm::vec3(fourthAxisNormal / fourthAxisNormal.w)) };
@@ -297,7 +290,7 @@ bool Rotation_Gizmo::checkMousePress()
 			virtual void undo() override final {
 				rotate(glm::inverse(m_newRotation) * m_oldRotation);
 			}
-			virtual bool join(Editor_Command* const other) override final {
+			virtual bool join(Editor_Command* other) override final {
 				if (auto newCommand = dynamic_cast<Rotate_Selection_Command*>(other)) {
 					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 						m_newRotation = newCommand->m_newRotation;

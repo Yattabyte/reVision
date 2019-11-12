@@ -21,20 +21,20 @@ public:
 	/** Destructor. */
 	inline ~Prop_Technique() = default;
 	/** Constructor. */
-	inline Prop_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& viewports)
-		: m_engine(engine), m_cameras(viewports) {
+	inline Prop_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& viewports) :
+		m_engine(engine),
+		m_shaderCull(Shared_Shader(engine, "Core\\Props\\culling")),
+		m_shaderGeometry(Shared_Shader(engine, "Core\\Props\\geometry")),
+		m_shaderShadowCull(Shared_Shader(engine, "Core\\Props\\shadow culling")),
+		m_shaderShadowGeometry(Shared_Shader(engine, "Core\\Props\\shadow")),
+		m_shapeCube(Shared_Auto_Model(engine, "cube")),
+		m_frameData(std::make_shared<PropData>()),
+		m_cameras(viewports)
+	{
 		// Auxiliary Systems
-		m_frameData = std::make_shared<PropData>();
 		m_auxilliarySystems.makeSystem<PropUpload_System>(engine, m_frameData);
 		m_auxilliarySystems.makeSystem<PropVisibility_System>(m_frameData, viewports);
 		m_auxilliarySystems.makeSystem<PropSync_System>(m_frameData);
-
-		// Asset Loading
-		m_shaderCull = Shared_Shader(engine, "Core\\Props\\culling");
-		m_shaderGeometry = Shared_Shader(engine, "Core\\Props\\geometry");
-		m_shaderShadowCull = Shared_Shader(engine, "Core\\Props\\shadow culling");
-		m_shaderShadowGeometry = Shared_Shader(engine, "Core\\Props\\shadow");
-		m_shapeCube = Shared_Auto_Model(engine, "cube");
 	}
 
 
@@ -55,12 +55,6 @@ public:
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderCull->existsYet() && m_shaderGeometry->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
 				m_drawData.resize(size_t(m_drawIndex) + 1ull);
-			auto& drawBuffer = m_drawData[m_drawIndex];
-			auto& camBufferIndex = drawBuffer.bufferCamIndex;
-			auto& propIndexBuffer = drawBuffer.bufferPropIndex;
-			auto& propCullingBuffer = drawBuffer.bufferCulling;
-			auto& propRenderBuffer = drawBuffer.bufferRender;
-			auto& propSkeletonBuffer = drawBuffer.bufferSkeletonIndex;
 
 			// Accumulate all visibility info for the cameras passed in
 			std::vector<glm::ivec2> camIndices;
@@ -78,6 +72,13 @@ public:
 
 			// Write all visibility info to a set of buffers
 			if (visibleIndices.size()) {
+				auto& drawBuffer = m_drawData[m_drawIndex];
+				auto& camBufferIndex = drawBuffer.bufferCamIndex;
+				auto& propIndexBuffer = drawBuffer.bufferPropIndex;
+				auto& propCullingBuffer = drawBuffer.bufferCulling;
+				auto& propRenderBuffer = drawBuffer.bufferRender;
+				auto& propSkeletonBuffer = drawBuffer.bufferSkeletonIndex;
+
 				// Prepare for writing
 				camBufferIndex.beginWriting();
 				propIndexBuffer.beginWriting();
@@ -155,12 +156,6 @@ public:
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
 				m_drawData.resize(size_t(m_drawIndex) + 1ull);
-			auto& drawBuffer = m_drawData[m_drawIndex];
-			auto& camBufferIndex = drawBuffer.bufferCamIndex;
-			auto& propIndexBuffer = drawBuffer.bufferPropIndex;
-			auto& propCullingBuffer = drawBuffer.bufferCulling;
-			auto& propRenderBuffer = drawBuffer.bufferRender;
-			auto& propSkeletonBuffer = drawBuffer.bufferSkeletonIndex;
 
 			// Accumulate all visibility info for the cameras passed in
 			std::vector<glm::ivec2> camIndices;
@@ -178,6 +173,13 @@ public:
 
 			// Write all visibility info to a set of buffers
 			if (visibleIndices.size()) {
+				auto& drawBuffer = m_drawData[m_drawIndex];
+				auto& camBufferIndex = drawBuffer.bufferCamIndex;
+				auto& propIndexBuffer = drawBuffer.bufferPropIndex;
+				auto& propCullingBuffer = drawBuffer.bufferCulling;
+				auto& propRenderBuffer = drawBuffer.bufferRender;
+				auto& propSkeletonBuffer = drawBuffer.bufferSkeletonIndex;
+
 				// Prepare for writing
 				camBufferIndex.beginWriting();
 				propIndexBuffer.beginWriting();

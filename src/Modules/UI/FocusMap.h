@@ -102,7 +102,7 @@ private:
 	/** Shorthand method returning if we can tab/switch to an element.
 	@param	element		the element to check.
 	@return				true if focusable, false otherwise. */
-	inline bool elementFocusable(const std::shared_ptr<UI_Element>& element) const {
+	inline bool static elementFocusable(const std::shared_ptr<UI_Element>& element) {
 		return element->getVisible() && element->getEnabled();
 	};
 

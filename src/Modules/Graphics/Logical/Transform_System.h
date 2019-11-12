@@ -19,7 +19,7 @@ public:
 	@param	engine		the currently active engine. */
 	inline explicit Transform_System(Engine* engine)
 		: m_engine(engine) {
-		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(Transform_Component::Runtime_ID, FLAG_REQUIRED);
 	}
 
 

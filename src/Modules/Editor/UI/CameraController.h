@@ -16,7 +16,7 @@ public:
 	inline ~CameraController() = default;
 	/** Construct a camera controller.
 	@param	engine		the currently active engine. */
-	CameraController(Engine* engine);
+	explicit CameraController(Engine* engine);
 
 
 	// Public Interface Implementation

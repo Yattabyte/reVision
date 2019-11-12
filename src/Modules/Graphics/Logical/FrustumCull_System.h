@@ -18,9 +18,9 @@ public:
 	@param	cameras		list of all the active cameras in the scene, updated per frame. */
 	inline explicit FrustumCull_System(const std::shared_ptr<std::vector<Camera*>>& sceneCameras)
 		: m_sceneCameras(sceneCameras) {
-		addComponentType(Transform_Component::m_ID, FLAG_REQUIRED);
-		addComponentType(BoundingBox_Component::m_ID, FLAG_OPTIONAL);
-		addComponentType(BoundingSphere_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(Transform_Component::Runtime_ID, FLAG_REQUIRED);
+		addComponentType(BoundingBox_Component::Runtime_ID, FLAG_OPTIONAL);
+		addComponentType(BoundingSphere_Component::Runtime_ID, FLAG_OPTIONAL);
 	}
 
 

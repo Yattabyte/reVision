@@ -15,10 +15,10 @@ public:
 	/** Destroy this free-look system. */
 	inline ~PlayerFreeLook_System() = default;
 	/** Construct a free-look system. */
-	inline PlayerFreeLook_System(Engine* engine) : m_engine(engine) {
+	inline explicit PlayerFreeLook_System(Engine* engine) : m_engine(engine) {
 		// Declare component types used
-		addComponentType(Transform_Component::m_ID);
-		addComponentType(Player3D_Component::m_ID);
+		addComponentType(Transform_Component::Runtime_ID);
+		addComponentType(Player3D_Component::Runtime_ID);
 
 		// Error Reporting
 		if (!isValid())

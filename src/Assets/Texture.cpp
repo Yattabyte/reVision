@@ -25,11 +25,12 @@ Texture::~Texture()
 
 Texture::Texture(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
 
-Texture::Texture(Engine* engine, const std::string& filename, const GLuint& t, const bool& m, const bool& a) : Texture(engine, filename)
+Texture::Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anis) :
+	Asset(engine, filename),
+	m_type(type),
+	m_mipmap(mipmap),
+	m_anis(anis)
 {
-	m_type = t;
-	m_mipmap = m;
-	m_anis = a;
 }
 
 void Texture::initialize()

@@ -28,11 +28,11 @@ public:
 	}
 	/** Construct the side list.
 	@param	engine		the engine to use. */
-	inline SideList(Engine* engine)
-		: UI_Element(engine) {
-		// Asset Loading
-		m_shader = Shared_Shader(engine, "UI\\SideList");
-
+	inline explicit SideList(Engine* engine) :
+		UI_Element(engine),
+		m_shader(Shared_Shader(engine, "UI\\SideList")),
+		m_label(std::make_shared<Label>(engine, ""))
+	{
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
 		glEnableVertexArrayAttrib(m_vaoID, 0);
@@ -56,7 +56,6 @@ public:
 		addElement(m_backPanel);
 
 		// Other UI elements
-		m_label = std::make_shared<Label>(engine, "");
 		m_label->setAlignment(Label::align_center);
 		m_label->setColor(glm::vec3(1.0f));
 		addElement(m_label);
@@ -113,7 +112,6 @@ public:
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet()) return;
 		const glm::vec2 newPosition = position + m_position;
-		const glm::vec2 newScale = glm::min(m_scale, scale);
 
 		// Render (background)
 		m_shader->bind();

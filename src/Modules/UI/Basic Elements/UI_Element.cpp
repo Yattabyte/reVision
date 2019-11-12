@@ -262,7 +262,7 @@ void UI_Element::setClicked()
 	enactCallback(on_clicked);
 }
 
-bool UI_Element::getClicked() const
+bool UI_Element::getClicked()
 {
 	return false;
 }
@@ -287,10 +287,7 @@ bool UI_Element::withinBBox(const glm::vec2& box_p1, const glm::vec2& box_p2, co
 	return (point.x >= box_p1.x && point.x <= box_p2.x && point.y >= box_p1.y && point.y <= box_p2.y);
 }
 
-
-// Protected Methods
-
-void UI_Element::enactCallback(const int& interactionEventID) const
+void UI_Element::enactCallback(const int& interactionEventID)
 {
 	// Callbacks aren't actually called immediately, but are deferred to the UI module to be performed later
 	// This is a safety net in case the callback drastically alters the overall engine state, like deleting the calling UI element

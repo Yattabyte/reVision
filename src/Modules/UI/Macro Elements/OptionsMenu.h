@@ -26,7 +26,7 @@ public:
 	inline ~OptionsMenu() = default;
 	/** Construct an options menu.
 	@param	engine		the engine to use. */
-	inline OptionsMenu(Engine* engine)
+	inline explicit OptionsMenu(Engine* engine)
 		: Menu(engine) {
 		// Title
 		m_title->setText("OPTIONS");

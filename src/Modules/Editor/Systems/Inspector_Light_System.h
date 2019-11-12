@@ -20,14 +20,14 @@ public:
 	inline Inspector_Light_System(Engine* engine, LevelEditor_Module* editor)
 		: m_engine(engine), m_editor(editor) {
 		// Declare component types used
-		addComponentType(Selected_Component::m_ID);
-		addComponentType(Light_Component::m_ID);
+		addComponentType(Selected_Component::Runtime_ID);
+		addComponentType(Light_Component::Runtime_ID);
 	}
 
 
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
-		const auto text = std::string(Light_Component::m_name) + ": (" + std::to_string(components.size()) + ")";
+		const auto text = std::string(Light_Component::Name) + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
 			const auto getUUIDS = [&]() {
@@ -73,7 +73,7 @@ public:
 					virtual void undo() override final {
 						setData(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) override final {
+					virtual bool join(Editor_Command* other) override final {
 						if (auto newCommand = dynamic_cast<Type_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;
@@ -115,7 +115,7 @@ public:
 					virtual void undo() override final {
 						setData(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) override final {
+					virtual bool join(Editor_Command* other) override final {
 						if (auto newCommand = dynamic_cast<Color_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;
@@ -158,7 +158,7 @@ public:
 					virtual void undo() override final {
 						setData(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) override final {
+					virtual bool join(Editor_Command* other) override final {
 						if (auto newCommand = dynamic_cast<Intensity_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;
@@ -201,7 +201,7 @@ public:
 					virtual void undo() override final {
 						setData(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) override final {
+					virtual bool join(Editor_Command* other) override final {
 						if (auto newCommand = dynamic_cast<Radius_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;
@@ -244,7 +244,7 @@ public:
 					virtual void undo() override final {
 						setData(m_oldData);
 					}
-					virtual bool join(Editor_Command* const other) override final {
+					virtual bool join(Editor_Command* other) override final {
 						if (auto newCommand = dynamic_cast<Cutoff_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;

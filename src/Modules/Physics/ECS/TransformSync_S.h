@@ -20,8 +20,8 @@ public:
 	inline TransformSync_Phys_System(Engine* engine, btDiscreteDynamicsWorld* world)
 		: ecsBaseSystem(), m_world(world) {
 		// Declare component types used
-		addComponentType(Transform_Component::m_ID);
-		addComponentType(Collider_Component::m_ID, FLAG_OPTIONAL);
+		addComponentType(Transform_Component::Runtime_ID);
+		addComponentType(Collider_Component::Runtime_ID, FLAG_OPTIONAL);
 
 		// Error Reporting
 		if (!isValid())

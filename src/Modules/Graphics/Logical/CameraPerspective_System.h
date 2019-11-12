@@ -18,7 +18,7 @@ public:
 	@param	cameras		shared list of scene cameras. */
 	inline explicit CameraPerspective_System(const std::shared_ptr<std::vector<Camera*>>& sceneCameras)
 		: m_sceneCameras(sceneCameras) {
-		addComponentType(Camera_Component::m_ID, FLAG_REQUIRED);
+		addComponentType(Camera_Component::Runtime_ID, FLAG_REQUIRED);
 	}
 
 

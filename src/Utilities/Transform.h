@@ -51,10 +51,10 @@ struct Transform {
 		glm::decompose(n.m_modelMatrix, n.m_scale, n.m_orientation, n.m_position, skew, perspective);
 		return n;
 	}
-	inline bool operator==(const Transform& other) {
+	inline bool operator==(const Transform& other) const {
 		return (m_position == other.m_position && m_orientation == other.m_orientation && m_scale == other.m_scale);
 	}
-	inline bool operator!=(const Transform& other) {
+	inline bool operator!=(const Transform& other) const {
 		return !((*this) == other);
 	}
 	inline Transform& operator*=(const Transform& o) {

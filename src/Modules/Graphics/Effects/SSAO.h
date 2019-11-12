@@ -22,14 +22,14 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit SSAO(Engine* engine)
-		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
-		// Asset Loading
-		m_shader = Shared_Shader(engine, "Effects\\SSAO");
-		m_shaderCopyAO = Shared_Shader(engine, "Effects\\SSAO To AO");
-		m_shaderGB_A = Shared_Shader(engine, "Effects\\Gaussian Blur Alpha");
-		m_shapeQuad = Shared_Auto_Model(engine, "quad");
-
+	inline explicit SSAO(Engine* engine) :
+		Graphics_Technique(SECONDARY_LIGHTING),
+		m_engine(engine),
+		m_shader(Shared_Shader(engine, "Effects\\SSAO")),
+		m_shaderCopyAO(Shared_Shader(engine, "Effects\\SSAO To AO")),
+		m_shaderGB_A(Shared_Shader(engine, "Effects\\Gaussian Blur Alpha")),
+		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
+	{
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_SSAO, m_enabled);

@@ -27,7 +27,7 @@ public:
 	@param	data		optional data buffer, must be at least as large.
 	@param	mapFlags	bit-field flags. */
 	inline DynamicBuffer(const GLsizeiptr& capacity = 256, const void* data = 0, const GLbitfield& mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT)
-		: m_maxCapacity(capacity), m_mapFlags(mapFlags) {
+		: m_mapFlags(mapFlags), m_maxCapacity(capacity) {
 		// Zero-initialize our starting variables
 		for (int x = 0; x < BufferCount; ++x) {
 			m_bufferID[x] = 0;
@@ -126,13 +126,13 @@ public:
 		}
 	}
 	/** Prepare this buffer for writing, waiting on any unfinished reads. */
-	inline void beginWriting() {
+	inline void beginWriting() const {
 		// Ensure all reads and writes at this index have finished.
 		WaitForFence(m_writeFence[m_index]);
 		WaitForFence(m_readFence[m_index]);
 	}
 	/** Signal that this multi-buffer is finished being written to. */
-	inline void endWriting() {
+	inline void endWriting() const {
 		if (!m_writeFence[m_index])
 			m_writeFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	}

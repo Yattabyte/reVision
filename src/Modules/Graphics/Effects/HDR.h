@@ -20,12 +20,12 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit HDR(Engine* engine)
-		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
-		// Asset Loading
-		m_shaderHDR = Shared_Shader(engine, "Effects\\HDR");
-		m_shapeQuad = Shared_Auto_Model(engine, "quad");
-
+	inline explicit HDR(Engine* engine) :
+		Graphics_Technique(POST_PROCESSING),
+		m_engine(engine),
+		m_shaderHDR(Shared_Shader(engine, "Effects\\HDR")),
+		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
+	{
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_GAMMA, m_gamma);

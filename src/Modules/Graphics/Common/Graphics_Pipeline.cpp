@@ -22,12 +22,10 @@
 #include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
 
 
-Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camera>& clientCamera)
-	: m_engine(engine)
+Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camera>& clientCamera) :
+	m_engine(engine),
+	m_sceneCameras(std::make_shared<std::vector<Camera*>>())
 {
-	// Camera
-	m_sceneCameras = std::make_shared<std::vector<Camera*>>();
-
 	// Create Systems
 	m_transHierachy = m_worldSystems.makeSystem<Transform_System>(m_engine);
 	m_worldSystems.makeSystem<FrustumCull_System>(m_sceneCameras);
@@ -114,11 +112,11 @@ void Graphics_Pipeline::end(const float& deltaTime)
 		tech->clearCache(deltaTime);
 }
 
-void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& allowedCategories)
+void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories)
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for each (auto * tech in m_allTechniques)
-		if (allowedCategories & tech->getCategory())
+		if (categories & tech->getCategory())
 			tech->renderTechnique(deltaTime, viewport, perspectives);
 }
 

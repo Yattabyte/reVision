@@ -43,7 +43,6 @@ external/
 !external/src/glad/
 
 # Other
-CMakeCache.txt
 *.opendb
 *.tlog
 *.idb
@@ -67,11 +66,13 @@ CMakeCache.txt
 *.shader
 *.iobj
 *.ipdb
+CMakeCache.txt
 app/nsight_profiler.cfg
+app/imgui.ini
+app/Maps/recent.editor
+src/reVision_project_suppressions.cfg
 CMakeDoxyfile.tpl.bak
 CMakeDoxyfile.in
 PredictedInputCache_Debug_x64.dat
 PredictedInputCache_Release_x64.dat
 Doxyfile.Documentation
-app/imgui.ini
-app/Maps/recent.editor

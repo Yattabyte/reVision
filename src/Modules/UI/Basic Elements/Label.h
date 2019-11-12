@@ -37,12 +37,11 @@ public:
 	/** Construct a label, giving it the desired text.
 	@param	engine		the engine.
 	@param	text		the label text. */
-	inline Label(Engine* engine, const std::string& text = "Label")
-		: UI_Element(engine) {
-		// Asset Loading
-		m_shader = Shared_Shader(engine, "UI\\Label");
-		m_textureFont = Shared_Texture(engine, "font.tga", GL_TEXTURE_2D, true, true);
-
+	inline explicit Label(Engine* engine, const std::string& text = "Label") :
+		UI_Element(engine),
+		m_shader(Shared_Shader(engine, "UI\\Label")),
+		m_textureFont(Shared_Texture(engine, "font.tga", GL_TEXTURE_2D, true, true))
+	{
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
 		glEnableVertexArrayAttrib(m_vaoID, 0);
