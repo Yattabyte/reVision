@@ -3,6 +3,7 @@
 #define	IMAGE_H
 
 #include "Assets/Asset.h"
+#include "Utilities/IO/Image_IO.h"
 #include "glm/glm.hpp"
 #include <any>
 #include <optional>
@@ -10,16 +11,6 @@
 
 class Engine;
 class Image;
-
-/** Public Policy Enumerations. */
-const enum Fill_Policy : GLenum {
-	Checkered,
-	Solid,
-};
-const enum Resize_Policy : GLenum {
-	Nearest,
-	Linear,
-};
 
 /** Shared version of an Image asset.
 Responsible for the creation, containing, and sharing of assets. */
@@ -35,7 +26,7 @@ public:
 	@param	category		the category of image, if available.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded = true, const GLenum& policyFill = Fill_Policy::Checkered, const GLenum& policyResize = Resize_Policy::Linear);
+	explicit Shared_Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded = true, const Fill_Policy& policyFill = Fill_Policy::CHECKERED, const Resize_Policy& policyResize = Resize_Policy::LINEAR);
 };
 
 /** Contains image data and related attributes.
@@ -51,7 +42,7 @@ public:
 	@param	specificSize	an optional size to force the image to.
 	@param	policyFill		the pixel fill policy.
 	@param	policyResize	the image resize policy. */
-	Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const GLenum& policyFill, const GLenum& policyResize);
+	Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize);
 
 
 	// Public Attributes
@@ -59,8 +50,8 @@ public:
 	GLubyte* m_pixelData = nullptr;
 	GLint m_pitch = 0;
 	GLuint m_bpp = 0;
-	GLenum m_policyFill = Fill_Policy::Checkered;
-	GLenum m_policyResize = Resize_Policy::Linear;
+	Fill_Policy m_policyFill = Fill_Policy::CHECKERED;
+	Resize_Policy m_policyResize = Resize_Policy::LINEAR;
 
 
 private:

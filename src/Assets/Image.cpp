@@ -1,10 +1,9 @@
 #include "Assets/Image.h"
-#include "Utilities/IO/Image_IO.h"
 #include "Engine.h"
 #include "glm/gtc/type_ptr.hpp"
 
 
-Shared_Image::Shared_Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded, const GLenum& policyFill, const GLenum& policyResize)
+Shared_Image::Shared_Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded, const Fill_Policy& policyFill, const Resize_Policy& policyResize)
 {
 	(*(std::shared_ptr<Image>*)(this)) = std::dynamic_pointer_cast<Image>(
 		engine->getManager_Assets().shareAsset(
@@ -20,7 +19,7 @@ Image::~Image()
 	delete m_pixelData;
 }
 
-Image::Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const GLenum& policyFill, const GLenum& policyResize) : Asset(engine, filename), m_policyFill(policyFill), m_policyResize(policyResize)
+Image::Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize) : Asset(engine, filename), m_policyFill(policyFill), m_policyResize(policyResize)
 {
 	if (specificSize)
 		m_size = specificSize.value();
@@ -51,7 +50,7 @@ void Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondaryColor)
 	m_pitch = m_size.x * 4;
 	m_bpp = 32;
 	switch (m_policyFill) {
-	case Solid: {
+	case Fill_Policy::SOLID: {
 		size_t pxComponent = 0;
 		std::generate(m_pixelData, m_pixelData + componentCount, [&](void)->GLubyte {
 			const unsigned int ID = (pxComponent++) % 4;
@@ -60,7 +59,7 @@ void Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondaryColor)
 			});
 		break;
 	}
-	case Checkered: {
+	case Fill_Policy::CHECKERED: {
 		// How many pixels wide and tall the checkers should be
 		constexpr size_t checkerSize = 32;
 		const size_t rowWidth = m_size.x;

@@ -13,7 +13,7 @@
 class Game_Module final : public Engine_Module {
 public:
 	// Public Enumerations
-	enum Game_State {
+	enum class Game_State {
 		in_pauseMenu,
 		in_game,
 	};
@@ -50,7 +50,7 @@ public:
 
 private:
 	// Private Attributes
-	Game_State m_gameState = in_game;
+	Game_State m_gameState = Game_State::in_game;
 	ecsSystemList m_Systems;
 	ecsWorld m_world;
 	std::shared_ptr<UI_Element> m_pauseMenu;

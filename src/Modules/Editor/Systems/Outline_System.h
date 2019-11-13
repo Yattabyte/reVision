@@ -34,13 +34,13 @@ public:
 		// Declare component types used
 		addComponentType(Selected_Component::Runtime_ID);
 		addComponentType(Transform_Component::Runtime_ID);
-		addComponentType(Prop_Component::Runtime_ID, FLAG_OPTIONAL);
-		addComponentType(Light_Component::Runtime_ID, FLAG_OPTIONAL);
+		addComponentType(Prop_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
+		addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::E_OUTLINE_SCALE, m_renderScale);
-		preferences.addCallback(PreferenceState::E_OUTLINE_SCALE, m_aliveIndicator, [&](const float& f) {
+		preferences.getOrSetValue(PreferenceState::Preference::E_OUTLINE_SCALE, m_renderScale);
+		preferences.addCallback(PreferenceState::Preference::E_OUTLINE_SCALE, m_aliveIndicator, [&](const float& f) {
 			m_renderScale = f;
 			});
 

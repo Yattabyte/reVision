@@ -12,8 +12,8 @@
 class StartMenu : public Menu {
 public:
 	// Public Interaction Enums
-	const enum interact {
-		on_start_game = last_interact_index,
+	enum class Interact : int {
+		on_start_game = (int)UI_Element::Interact::last_interact_index,
 		on_level_editor,
 		on_options,
 		on_quit,
@@ -39,13 +39,13 @@ public:
 		// Add 'Options' button
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
 		addButton(engine, "  OPTIONS >", [&]() { goToOptions(); });
-		m_optionsMenu->addCallback(OptionsMenu::on_back, [&]() { returnFromOptions(); });
+		m_optionsMenu->addCallback((int)OptionsMenu::Interact::on_back, [&]() { returnFromOptions(); });
 
 		// Add 'Quit' button
 		addButton(engine, "QUIT", [&]() { quit(); });
 
 		// Callbacks
-		addCallback(UI_Element::on_resize, [&]() {
+		addCallback((int)UI_Element::Interact::on_resize, [&]() {
 			const auto scale = getScale();
 			m_optionsMenu->setScale(scale);
 			});
@@ -63,12 +63,12 @@ protected:
 	/** Choose 'start game' from the main menu. */
 	inline void startGame() {
 		m_engine->getModule_UI().clear();
-		enactCallback(on_start_game);
+		enactCallback((int)StartMenu::Interact::on_start_game);
 	}
 	/** Choose 'level editor' from the main menu. */
 	inline void startEditor() {
 		m_engine->getModule_UI().clear();
-		enactCallback(on_level_editor);
+		enactCallback((int)StartMenu::Interact::on_level_editor);
 	}
 	/** Choose 'options' from the main menu. */
 	inline void goToOptions() {
@@ -77,7 +77,7 @@ protected:
 		ui.pushRootElement(m_optionsMenu);
 		ui.setFocusMap(m_optionsMenu->getFocusMap());
 		m_layout->setSelectionIndex(-1);
-		enactCallback(on_options);
+		enactCallback((int)StartMenu::Interact::on_options);
 	}
 	/** Chosen when control is returned from the options menu. */
 	inline void returnFromOptions() {
@@ -88,7 +88,7 @@ protected:
 	inline void quit() {
 		m_engine->getModule_UI().clear();
 		m_engine->shutDown();
-		enactCallback(on_quit);
+		enactCallback((int)StartMenu::Interact::on_quit);
 	}
 
 

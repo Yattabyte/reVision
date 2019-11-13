@@ -23,7 +23,7 @@ public:
 	}
 	/** Constructor. */
 	inline explicit Bloom(Engine* engine)
-		: Graphics_Technique(POST_PROCESSING),
+		: Graphics_Technique(Technique_Category::POST_PROCESSING),
 		m_engine(engine),
 		m_shaderBloomExtract(Shared_Shader(engine, "Effects\\Bloom Extraction")),
 		m_shaderCopy(Shared_Shader(engine, "Effects\\Copy Texture")),
@@ -31,10 +31,10 @@ public:
 		m_shapeQuad(Shared_Auto_Model(engine, "quad")) {
 		// Preference Callbacks
 		auto& preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_BLOOM, m_enabled);
-		preferences.addCallback(PreferenceState::C_BLOOM, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
-		preferences.getOrSetValue(PreferenceState::C_BLOOM_STRENGTH, m_bloomStrength);
-		preferences.addCallback(PreferenceState::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float& f) { setBloomStrength((int)f); });
+		preferences.getOrSetValue(PreferenceState::Preference::C_BLOOM, m_enabled);
+		preferences.addCallback(PreferenceState::Preference::C_BLOOM, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
+		preferences.getOrSetValue(PreferenceState::Preference::C_BLOOM_STRENGTH, m_bloomStrength);
+		preferences.addCallback(PreferenceState::Preference::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float& f) { setBloomStrength((int)f); });
 	}
 
 

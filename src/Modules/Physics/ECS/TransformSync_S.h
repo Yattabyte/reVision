@@ -21,7 +21,7 @@ public:
 		: ecsBaseSystem(), m_world(world) {
 		// Declare component types used
 		addComponentType(Transform_Component::Runtime_ID);
-		addComponentType(Collider_Component::Runtime_ID, FLAG_OPTIONAL);
+		addComponentType(Collider_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 
 		// Error Reporting
 		if (!isValid())

@@ -8,27 +8,27 @@
 
 
 /** A container class that holds the action state for the engine, such as forward/back/left/right and amount. */
-class ActionState final : public std::map<unsigned int, float> {
+class ActionState final {
 public:
 	// Public (De)Constructors
 	/** Destroy the action state. */
 	inline ~ActionState() = default;
 	/** Construct the action state. */
 	inline ActionState() {
-		for (unsigned int x = 0; x < ACTION_COUNT; ++x)
-			insert(std::pair<unsigned int, float>(x, 0.0f));
+		for (unsigned int x = 0; x < (unsigned int)Action::ACTION_COUNT; ++x)
+			m_keyStates.insert({ Action(x), { false, 0.0f } });
 	}
 
 
 	// Public Static Enumerations
 	/** Enumeration for whether the action key was pressed, released, or repeating. */
-	const enum STATE {
+	enum class State : int {
 		RELEASE,
 		PRESS,
 		REPEAT
 	};
 	/** Enumeration for indexing into actions. */
-	const enum ACTION_ENUM {
+	enum class Action : unsigned int {
 		MOUSE_X,
 		MOUSE_Y,
 		MOUSE_L,
@@ -86,27 +86,36 @@ public:
 
 
 	// Public Methods
-	inline ActionState::STATE isAction(const ActionState::ACTION_ENUM& actionEnum) {
+	/***/
+	inline float& operator[](const ActionState::Action& index) {
+		return std::get<1>(m_keyStates[index]);
+	}
+	inline const float& operator[](const ActionState::Action& index) const {
+		return std::get<1>(m_keyStates.at(index));
+	}
+	inline ActionState::State isAction(const ActionState::Action& actionEnum) {
 		return isAction(actionEnum, &m_keyStates);
 	}
-	inline ActionState::STATE isAction(const ActionState::ACTION_ENUM& actionEnum, std::map<ActionState::ACTION_ENUM, bool>* keyStates) const {
-		if (find(actionEnum) != end())
-			if (at(actionEnum) > 0.5f) {
-				if (!(*keyStates)[actionEnum]) {
-					(*keyStates)[actionEnum] = true;
-					return PRESS;
+	inline ActionState::State isAction(const ActionState::Action& actionEnum, std::map<ActionState::Action, std::pair<bool, float>>* keyStates) const {
+		if (m_keyStates.find(actionEnum) != m_keyStates.end()) {
+			auto& [state, amount] = (*keyStates)[actionEnum];
+			if (m_keyStates.at(actionEnum).second > 0.5f) {
+				if (!state) {
+					state = true;
+					return ActionState::State::PRESS;
 				}
-				return REPEAT;
+				return ActionState::State::REPEAT;
 			}
 			else
-				(*keyStates)[actionEnum] = false;
-		return RELEASE;
+				state = false;
+		}
+		return ActionState::State::RELEASE;
 	}
 
 
 protected:
 	// Protected Attributes
-	std::map<ActionState::ACTION_ENUM, bool> m_keyStates;
+	std::map<ActionState::Action, std::pair<bool, float>> m_keyStates;
 };
 
 #endif // ACTION_STATE_H

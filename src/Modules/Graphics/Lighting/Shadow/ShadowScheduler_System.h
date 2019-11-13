@@ -22,13 +22,13 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline ShadowScheduler_System(Engine* engine, const std::shared_ptr<ShadowData>& frameData)
 		: m_engine(engine), m_frameData(frameData) {
-		addComponentType(Shadow_Component::Runtime_ID, FLAG_REQUIRED);
-		addComponentType(Light_Component::Runtime_ID, FLAG_REQUIRED);
+		addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
+		addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 
 		auto& preferences = engine->getPreferenceState();
 		m_maxShadowsCasters = 1u;
-		preferences.getOrSetValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_maxShadowsCasters);
-		preferences.addCallback(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) { m_maxShadowsCasters = (unsigned int)f; });
+		preferences.getOrSetValue(PreferenceState::Preference::C_SHADOW_MAX_PER_FRAME, m_maxShadowsCasters);
+		preferences.addCallback(PreferenceState::Preference::C_SHADOW_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) { m_maxShadowsCasters = (unsigned int)f; });
 	}
 
 

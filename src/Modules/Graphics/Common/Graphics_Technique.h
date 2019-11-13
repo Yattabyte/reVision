@@ -13,7 +13,7 @@ struct Viewport;
 class Graphics_Technique {
 public:
 	// Public Enumerations
-	const enum Technique_Category : unsigned int {
+	enum class Technique_Category : unsigned int {
 		GEOMETRY = 0b0000'0001,
 		PRIMARY_LIGHTING = 0b0000'0010,
 		SECONDARY_LIGHTING = 0b0000'0100,

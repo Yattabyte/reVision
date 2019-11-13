@@ -47,12 +47,12 @@ private:
 	std::string m_chosen = "", m_subDirectory = "";
 	struct LevelEntry {
 		std::string name = "", path = "", extension = "", extType = "", date = "", size = "";
-		enum type {
-			none,
-			file,
-			folder,
-			back
-		} type = none;
+		enum class Type {
+			NONE,
+			FILE,
+			FOLDER,
+			BACK
+		} type = Type::NONE;
 	};
 	std::vector<LevelEntry> m_levels;
 	int m_selected = -1;

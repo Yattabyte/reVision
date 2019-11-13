@@ -10,9 +10,9 @@ class KeyboardEvent {
 public:
 	// Public Interaction Enums
 	/** The action states a key can be in: released, pressed, etc. */
-	enum Action;
+	enum class Action : int;
 	/** The name of all keys supported, and an appropriate key code for each of them. */
-	enum Key : unsigned int;
+	enum class Key : unsigned int;
 
 
 	// Public (De)Constructors
@@ -36,7 +36,7 @@ public:
 	/** Retrieve the key action state for a given key type.
 	@param	key				the key to check the state of.
 	@return					the action state for the given key. */
-	inline KeyboardEvent::Action getState(const Key& key) const {
+	inline KeyboardEvent::Action getState(const KeyboardEvent::Key& key) const {
 		if (m_keyStates.find(key) != m_keyStates.end())
 			return m_keyStates.at(key);
 		return KeyboardEvent::Action::RELEASE;
@@ -44,7 +44,7 @@ public:
 	/** Set the action state for a given key.
 	@param	key				the key to set the state for.
 	@param	action			the state to set for the given key. */
-	inline void setState(const Key& key, const KeyboardEvent::Action& action) {
+	inline void setState(const KeyboardEvent::Key& key, const KeyboardEvent::Action& action) {
 		m_keyStates[key] = action;
 	}
 
@@ -54,17 +54,17 @@ protected:
 	/** The key being pressed in a char stream. */
 	unsigned int m_currentChar = 0;
 	/** Map of key states over time, e.g. history if one is pressed or released. */
-	std::map<unsigned int, KeyboardEvent::Action> m_keyStates;
+	std::map<KeyboardEvent::Key, KeyboardEvent::Action> m_keyStates;
 
 
 public:
 	// Enumeration Implementation
-	enum Action {
+	enum class Action : int {
 		RELEASE,
 		PRESS,
 		REPEAT
 	};
-	enum Key : unsigned int {
+	enum class Key : unsigned int {
 		/* Printable keys */
 		SPACE = 32,
 		APOSTROPHE = 39,

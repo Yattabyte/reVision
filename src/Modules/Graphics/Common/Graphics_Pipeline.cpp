@@ -116,7 +116,7 @@ void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Vie
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for each (auto * tech in m_allTechniques)
-		if (categories & tech->getCategory())
+		if ((unsigned int)categories & (unsigned int)tech->getCategory())
 			tech->renderTechnique(deltaTime, viewport, perspectives);
 }
 

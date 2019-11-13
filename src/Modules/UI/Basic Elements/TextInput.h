@@ -14,8 +14,8 @@
 class TextInput : public UI_Element {
 public:
 	// Public Interaction Enums
-	const enum interact {
-		on_text_change = UI_Element::last_interact_index
+	enum class Interact : int {
+		on_text_change = (int)UI_Element::Interact::last_interact_index
 	};
 
 
@@ -35,12 +35,12 @@ public:
 
 		// Label
 		m_label = std::make_shared<Label>(engine);
-		m_label->setAlignment(Label::align_left);
+		m_label->setAlignment(Label::Alignment::align_left);
 		m_label->setColor(glm::vec3(0.0f));
 		addElement(m_label);
 
 		// Callbacks
-		addCallback(UI_Element::on_resize, [&]() {
+		addCallback((int)UI_Element::Interact::on_resize, [&]() {
 			m_label->setScale(getScale());
 			updateGeometry();
 			});
@@ -87,28 +87,28 @@ public:
 			if (auto character = keyboardEvent.getChar()) {
 				setText(m_text.substr(0, m_caretIndex) + char(character) + m_text.substr(m_caretIndex, m_text.size()));
 				setCaret(m_caretIndex + 1);
-				enactCallback(on_text_change);
+				enactCallback((int)TextInput::Interact::on_text_change);
 			}
 			// Otherwise, check keyboard states
 			else {
-				if (keyboardEvent.getState(KeyboardEvent::ENTER) || keyboardEvent.getState(KeyboardEvent::ESCAPE))
+				if ((int)keyboardEvent.getState(KeyboardEvent::Key::ENTER) || (int)keyboardEvent.getState(KeyboardEvent::Key::ESCAPE))
 					m_edit = false;
-				else if (keyboardEvent.getState(KeyboardEvent::BACKSPACE)) {
+				else if ((int)keyboardEvent.getState(KeyboardEvent::Key::BACKSPACE)) {
 					if (m_caretIndex > 0) {
 						setText(m_text.substr(0, m_caretIndex - 1) + m_text.substr(m_caretIndex, m_text.size()));
 						setCaret(m_caretIndex - 1);
-						enactCallback(on_text_change);
+						enactCallback((int)TextInput::Interact::on_text_change);
 					}
 				}
-				else if (keyboardEvent.getState(KeyboardEvent::DEL)) {
+				else if ((int)keyboardEvent.getState(KeyboardEvent::Key::DEL)) {
 					if (m_caretIndex + 1 <= m_text.size()) {
 						setText(m_text.substr(0, m_caretIndex) + m_text.substr(m_caretIndex + 1, m_text.size()));
-						enactCallback(on_text_change);
+						enactCallback((int)TextInput::Interact::on_text_change);
 					}
 				}
-				else if (keyboardEvent.getState(KeyboardEvent::LEFT))
+				else if ((int)keyboardEvent.getState(KeyboardEvent::Key::LEFT))
 					setCaret(m_caretIndex - 1);
-				else if (keyboardEvent.getState(KeyboardEvent::RIGHT))
+				else if ((int)keyboardEvent.getState(KeyboardEvent::Key::RIGHT))
 					setCaret(m_caretIndex + 1);
 			}
 		}

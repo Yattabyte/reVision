@@ -11,7 +11,7 @@ class ecsBaseSystem {
 public:
 	// Public enumerations
 	/** Component flag types. */
-	const enum RequirementsFlag {
+	enum class RequirementsFlag : unsigned int {
 		FLAG_REQUIRED = 0,
 		FLAG_OPTIONAL = 1
 	};
@@ -32,7 +32,7 @@ public:
 	@return		true if the system is valid, false otherwise. */
 	inline const bool isValid() const {
 		for (const auto& [componentID, componentFlag] : m_componentTypes)
-			if ((componentFlag & FLAG_OPTIONAL) == 0)
+			if (((unsigned int)componentFlag & (unsigned int)RequirementsFlag::FLAG_OPTIONAL) == 0)
 				return true;
 		return false;
 	}
@@ -50,7 +50,7 @@ protected:
 	/** Add a component type to be used by this system.
 	@param	componentType	the type of component to use
 	@param	componentFlag	flag indicating required/optional */
-	inline void addComponentType(const ComponentID& componentType, const RequirementsFlag& componentFlag = FLAG_REQUIRED) {
+	inline void addComponentType(const ComponentID& componentType, const RequirementsFlag& componentFlag = RequirementsFlag::FLAG_REQUIRED) {
 		m_componentTypes.push_back({ componentType, componentFlag });
 	}
 

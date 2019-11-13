@@ -18,7 +18,7 @@ public:
 	@param	cameras		shared list of scene cameras. */
 	inline explicit ReflectorPerspective_System(const std::shared_ptr<std::vector<Camera*>>& sceneCameras)
 		: m_sceneCameras(sceneCameras) {
-		addComponentType(Reflector_Component::Runtime_ID, FLAG_REQUIRED);
+		addComponentType(Reflector_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 	}
 
 

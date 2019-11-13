@@ -36,20 +36,20 @@ Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor) :
 
 	// Preferences
 	auto& preferences = m_engine->getPreferenceState();
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
+	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.x = (int)f;
 		});
-	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
 		});
-	preferences.getOrSetValue(PreferenceState::E_GIZMO_SCALE, m_renderScale);
-	preferences.addCallback(PreferenceState::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) {
+	preferences.getOrSetValue(PreferenceState::Preference::E_GIZMO_SCALE, m_renderScale);
+	preferences.addCallback(PreferenceState::Preference::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) {
 		m_renderScale = f;
 		});
-	preferences.getOrSetValue(PreferenceState::E_ANGLE_SNAP, m_angleSnapping);
-	preferences.addCallback(PreferenceState::E_ANGLE_SNAP, m_aliveIndicator, [&](const float& f) {
+	preferences.getOrSetValue(PreferenceState::Preference::E_ANGLE_SNAP, m_angleSnapping);
+	preferences.addCallback(PreferenceState::Preference::E_ANGLE_SNAP, m_aliveIndicator, [&](const float& f) {
 		m_angleSnapping = f;
 		});
 
@@ -164,7 +164,7 @@ void Rotation_Gizmo::checkMouseHover()
 	const auto& position = m_transform.m_position;
 	const auto& clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
 	const auto ray_origin = clientCamera.EyePosition;
-	const auto ray_nds = glm::vec2(2.0f * actionState.at(ActionState::MOUSE_X) / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState.at(ActionState::MOUSE_Y)) / m_renderSize.y);
+	const auto ray_nds = glm::vec2(2.0f * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
 	const auto ray_eye = glm::vec4(glm::vec2(clientCamera.pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
 	const auto ray_world = glm::normalize(glm::vec3(clientCamera.vMatrixInverse * ray_eye));
 

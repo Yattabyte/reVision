@@ -15,8 +15,8 @@ public:
 	@param	engine		the engine to use. */
 	inline explicit Layout_Horizontal(Engine* engine) : UI_Element(engine) {
 		// Add Callbacks
-		addCallback(UI_Element::on_resize, [&]() { alignChildren(); });
-		addCallback(UI_Element::on_childrenChange, [&]() { alignChildren(); });
+		addCallback((int)UI_Element::Interact::on_resize, [&]() { alignChildren(); });
+		addCallback((int)UI_Element::Interact::on_childrenChange, [&]() { alignChildren(); });
 	}
 
 

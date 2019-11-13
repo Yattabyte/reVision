@@ -15,22 +15,22 @@ void InputBinding::loadFile(const std::string& filename)
 	m_config = Shared_Config(m_engine, filename, ActionState::Action_Strings(), false);
 
 	// Hard-code default binds here
-	static auto defaultBind = [&](const ActionState::ACTION_ENUM& bind, const KeyboardEvent::Key& key) {
-		if (m_config->m_configuration.find(bind) == m_config->m_configuration.end())
-			m_config->m_configuration[bind] = (float)key;
+	static auto defaultBind = [&](const ActionState::Action& bind, const KeyboardEvent::Key& key) {
+		if (m_config->m_configuration.find((unsigned int)bind) == m_config->m_configuration.end())
+			m_config->m_configuration[(unsigned int)bind] = (float)key;
 	};
-	defaultBind(ActionState::UI_UP, KeyboardEvent::W);
-	defaultBind(ActionState::UI_DOWN, KeyboardEvent::S);
-	defaultBind(ActionState::UI_LEFT, KeyboardEvent::A);
-	defaultBind(ActionState::UI_RIGHT, KeyboardEvent::D);
-	defaultBind(ActionState::FORWARD, KeyboardEvent::W);
-	defaultBind(ActionState::BACKWARD, KeyboardEvent::S);
-	defaultBind(ActionState::LEFT, KeyboardEvent::A);
-	defaultBind(ActionState::RIGHT, KeyboardEvent::D);
-	defaultBind(ActionState::JUMP, KeyboardEvent::SPACE);
-	defaultBind(ActionState::RUN, KeyboardEvent::LEFT_SHIFT);
-	defaultBind(ActionState::UI_ENTER, KeyboardEvent::ENTER);
-	defaultBind(ActionState::UI_ESCAPE, KeyboardEvent::ESCAPE);
+	defaultBind(ActionState::Action::UI_UP, KeyboardEvent::Key::W);
+	defaultBind(ActionState::Action::UI_DOWN, KeyboardEvent::Key::S);
+	defaultBind(ActionState::Action::UI_LEFT, KeyboardEvent::Key::A);
+	defaultBind(ActionState::Action::UI_RIGHT, KeyboardEvent::Key::D);
+	defaultBind(ActionState::Action::FORWARD, KeyboardEvent::Key::W);
+	defaultBind(ActionState::Action::BACKWARD, KeyboardEvent::Key::S);
+	defaultBind(ActionState::Action::LEFT, KeyboardEvent::Key::A);
+	defaultBind(ActionState::Action::RIGHT, KeyboardEvent::Key::D);
+	defaultBind(ActionState::Action::JUMP, KeyboardEvent::Key::SPACE);
+	defaultBind(ActionState::Action::RUN, KeyboardEvent::Key::LEFT_SHIFT);
+	defaultBind(ActionState::Action::UI_ENTER, KeyboardEvent::Key::ENTER);
+	defaultBind(ActionState::Action::UI_ESCAPE, KeyboardEvent::Key::ESCAPE);
 }
 
 void InputBinding::save()

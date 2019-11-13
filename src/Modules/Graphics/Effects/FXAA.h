@@ -21,15 +21,15 @@ public:
 	}
 	/** Constructor. */
 	inline explicit FXAA(Engine* engine)
-		: Graphics_Technique(POST_PROCESSING),
+		: Graphics_Technique(Technique_Category::POST_PROCESSING),
 		m_engine(engine),
 		m_shaderFXAA(Shared_Shader(engine, "Effects\\FXAA")),
 		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
 	{
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_FXAA, m_enabled);
-		preferences.addCallback(PreferenceState::C_FXAA, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
+		preferences.getOrSetValue(PreferenceState::Preference::C_FXAA, m_enabled);
+		preferences.addCallback(PreferenceState::Preference::C_FXAA, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
 	}
 
 

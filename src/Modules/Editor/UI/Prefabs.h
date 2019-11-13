@@ -63,12 +63,12 @@ private:
 	int m_selectedIndex = -1, m_hoverIndex = -1;
 	struct Entry {
 		std::string name = "", path = "";
-		enum type {
-			none,
-			file,
-			folder,
-			back
-		} type = none;
+		enum class Type {
+			NONE,
+			FILE,
+			FOLDER,
+			BACK
+		} type = Type::NONE;
 		std::vector<EntityHandle> entityHandles;
 		glm::vec3 spawnPoint;
 		GLuint texID = 0;

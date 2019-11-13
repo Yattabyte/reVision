@@ -6,13 +6,6 @@
 /** Holds mouse interaction information. */
 class MouseEvent {
 public:
-	// Public Interaction Enums
-	/** The action states a mouse can be in: released, pressed, etc. */
-	enum Actions;
-	/** The name of all keys supported, and an appropriate key code for each of them. */
-	enum Key : int;
-
-
 	// Public (De)Constructors
 	/** Destroy the mouse event. */
 	inline ~MouseEvent() = default;
@@ -22,20 +15,17 @@ public:
 
 	// Public Attributes
 	double m_xPos = 0.0, m_yPos = 0.0;
-	int m_button = 0, m_action = 0, m_mods = 0;
-
-
-	// Enumeration Implementation
-	enum Action {
-		RELEASE,
-		PRESS,
-		MOVE,
-	};
-	enum Key : int {
+	int m_mods = 0;
+	enum class Action : int {
+		RELEASE = 0,
+		PRESS = 1,
+		MOVE = 2,
+	} m_action = Action::RELEASE;
+	enum class Key : int {
 		LEFT = 0,
-		RIGHT,
-		MIDDLE,
-	};
+		RIGHT = 1,
+		MIDDLE = 2,
+	} m_button = Key::LEFT;
 };
 
 #endif // MOUSEEVENT_H

@@ -28,29 +28,29 @@ void Graphics_Module::initialize(Engine* engine)
 
 	// Preferences
 	auto& preferences = m_engine->getPreferenceState();
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize = glm::ivec2(f, m_renderSize.y);
 		m_viewport->resize(m_renderSize, 1);
 		(*m_clientCamera)->Dimensions = m_renderSize;
 		});
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize = glm::ivec2(m_renderSize.x, f);
 		m_viewport->resize(m_renderSize, 1);
 		(*m_clientCamera)->Dimensions = m_renderSize;
 		});
 	float farPlane = 1000.0f;
-	preferences.getOrSetValue(PreferenceState::C_DRAW_DISTANCE, farPlane);
-	preferences.addCallback(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float& f) {
+	preferences.getOrSetValue(PreferenceState::Preference::C_DRAW_DISTANCE, farPlane);
+	preferences.addCallback(PreferenceState::Preference::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float& f) {
 		if ((*m_clientCamera)->FarPlane != f) {
 			(*m_clientCamera)->FarPlane = f;
 			genPerspectiveMatrix();
 		}
 		});
 	float fov = 90.0f;
-	preferences.getOrSetValue(PreferenceState::C_FOV, fov);
-	preferences.addCallback(PreferenceState::C_FOV, m_aliveIndicator, [&](const float& f) {
+	preferences.getOrSetValue(PreferenceState::Preference::C_FOV, fov);
+	preferences.addCallback(PreferenceState::Preference::C_FOV, m_aliveIndicator, [&](const float& f) {
 		if ((*m_clientCamera)->FOV != f) {
 			(*m_clientCamera)->FOV = f;
 			genPerspectiveMatrix();

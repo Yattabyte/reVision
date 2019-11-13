@@ -21,15 +21,15 @@ public:
 	}
 	/** Constructor. */
 	inline explicit HDR(Engine* engine) :
-		Graphics_Technique(POST_PROCESSING),
+		Graphics_Technique(Technique_Category::POST_PROCESSING),
 		m_engine(engine),
 		m_shaderHDR(Shared_Shader(engine, "Effects\\HDR")),
 		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
 	{
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_GAMMA, m_gamma);
-		preferences.addCallback(PreferenceState::C_GAMMA, m_aliveIndicator, [&](const float& f) { m_gamma = f; });
+		preferences.getOrSetValue(PreferenceState::Preference::C_GAMMA, m_gamma);
+		preferences.addCallback(PreferenceState::Preference::C_GAMMA, m_aliveIndicator, [&](const float& f) { m_gamma = f; });
 	}
 
 

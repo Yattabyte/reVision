@@ -25,7 +25,7 @@ public:
 	}
 	/** Constructor. */
 	inline explicit SSR(Engine* engine) :
-		Graphics_Technique(SECONDARY_LIGHTING),
+		Graphics_Technique(Technique_Category::SECONDARY_LIGHTING),
 		m_engine(engine),
 		m_shaderSSR1(Shared_Shader(engine, "Effects\\SSR part 1")),
 		m_shaderSSR2(Shared_Shader(engine, "Effects\\SSR part 2")),
@@ -35,8 +35,8 @@ public:
 	{
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_SSR, m_enabled);
-		preferences.addCallback(PreferenceState::C_SSR, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
+		preferences.getOrSetValue(PreferenceState::Preference::C_SSR, m_enabled);
+		preferences.addCallback(PreferenceState::Preference::C_SSR, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
 
 		// Bayer matrix
 		GLubyte data[16] = { 0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5 };

@@ -30,7 +30,7 @@ public:
 
 	// Public Static Enumerations
 	/** Enumeration for indexing into preferences. */
-	const enum Preference {
+	enum class Preference {
 		// Window Options
 		C_WINDOW_WIDTH,
 		C_WINDOW_HEIGHT,
@@ -75,7 +75,7 @@ public:
 	// Public Static Methods
 	/* Retrieve a static list of all user-preferences.
 	@return	std::vector of preference names as strings */
-	static std::vector<std::string> Preference_Strings() {
+	static const std::vector<std::string> Preference_Strings() {
 		static const std::vector<std::string> preferenceStrings = {
 			// Window Options
 			"C_WINDOW_WIDTH",
@@ -137,13 +137,13 @@ public:
 	template <typename T>
 	inline void getOrSetValue(const Preference& targetKey, T& container) {
 		if (m_preferences->existsYet()) {
-			const float value = m_preferences->getValue(targetKey);
+			const float value = m_preferences->getValue((unsigned int)targetKey);
 
 			// Only modify if the value exists
 			if (!std::isnan(value))
 				container = static_cast<T>(value);
 			else
-				m_preferences->setValue(targetKey, (float)container);
+				m_preferences->setValue((unsigned int)targetKey, (float)container);
 		}
 	}
 	/** Sets a value for a preference with the given ID.
@@ -154,7 +154,7 @@ public:
 	inline void setValue(const Preference& targetKey, const T& targetValue) {
 		const float castValue = (float)targetValue;
 		if (m_preferences) {
-			m_preferences->setValue(targetKey, castValue);
+			m_preferences->setValue((unsigned int)targetKey, castValue);
 
 			// Call callbacks
 			size_t index(0ull);
@@ -180,7 +180,7 @@ public:
 private:
 	Engine* m_engine = nullptr;
 	Shared_Config m_preferences;
-	std::map< Preference, std::vector<std::pair<std::shared_ptr<bool>, std::function<void(float)>>> > m_callbacks;
+	std::map<Preference, std::vector<std::pair<std::shared_ptr<bool>, std::function<void(float)>>>> m_callbacks;
 };
 
 #endif // PREFERENCE_STATE_H

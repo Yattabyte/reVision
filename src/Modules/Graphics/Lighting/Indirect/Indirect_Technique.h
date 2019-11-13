@@ -25,7 +25,7 @@ public:
 	}
 	/** Constructor. */
 	inline Indirect_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) :
-		Graphics_Technique(PRIMARY_LIGHTING),
+		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_shader_Bounce(Shared_Shader(engine, "Core\\Light\\Bounce")),
 		m_shader_Recon(Shared_Shader(engine, "Core\\Light\\Reconstruction")),
@@ -57,8 +57,8 @@ public:
 
 		// Preferences
 		auto& preferences = engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_bounceSize);
-		preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) { m_bounceSize = (GLuint)f; });
+		preferences.getOrSetValue(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_bounceSize);
+		preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) { m_bounceSize = (GLuint)f; });
 	}
 
 

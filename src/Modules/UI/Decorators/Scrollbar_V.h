@@ -13,8 +13,8 @@
 class Scrollbar_V : public UI_Decorator {
 public:
 	// Public Interaction Enums
-	const enum interact {
-		on_scroll_change = UI_Element::last_interact_index
+	enum class Interact : int {
+		on_scroll_change = (int)UI_Element::Interact::last_interact_index
 	};
 
 
@@ -56,10 +56,10 @@ public:
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
 		constexpr auto num_data = 2 * 3;
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
-		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 
 		// Add Callbacks
-		addCallback(UI_Element::on_resize, [&]() { updateGeometry(); });
+		addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
 	}
 
 
@@ -71,14 +71,14 @@ public:
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
 			if (m_children.size() == 3) {
-				if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed() && mouseEvent.m_action == MouseEvent::MOVE)
+				if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed() && mouseEvent.m_action == MouseEvent::Action::MOVE)
 					setLinear(float(subEvent.m_yPos) / (m_scale.y - 25.0f - 12.5f));
 			}
-			enactCallback(on_hover_start);
-			if (mouseEvent.m_action == MouseEvent::PRESS)
-				enactCallback(on_press);
+			enactCallback((int)UI_Element::Interact::on_hover_start);
+			if (mouseEvent.m_action == MouseEvent::Action::PRESS)
+				enactCallback((int)UI_Element::Interact::on_press);
 			else
-				enactCallback(on_release);
+				enactCallback((int)UI_Element::Interact::on_release);
 		}
 	}
 	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
@@ -105,7 +105,7 @@ public:
 	inline void setLinear(const float& linear) {
 		m_linear = std::clamp<float>(linear, -1.0f, 1.0f);
 		updateElementPosition();
-		enactCallback(on_scroll_change);
+		enactCallback((int)Scrollbar_V::Interact::on_scroll_change);
 	}
 	/** Get the linear value for this scrollbar.
 	@return				the linear value for this scroll bar. */
@@ -155,7 +155,7 @@ protected:
 	float m_linear = 1.0f;
 	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
-	IndirectDraw m_indirect;
+	IndirectDraw<1> m_indirect;
 };
 
 #endif // UI_SCROLLBAR_V_H

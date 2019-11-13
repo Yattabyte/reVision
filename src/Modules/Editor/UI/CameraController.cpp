@@ -21,11 +21,11 @@ void CameraController::tick(const float& deltaTime)
 		// Save beginning mouse click position
 		if (!m_beginPress) {
 			m_beginPress = true;
-			m_startPos = glm::vec2(actionState.at(ActionState::MOUSE_X), actionState.at(ActionState::MOUSE_Y));
+			m_startPos = glm::vec2(actionState[ActionState::Action::MOUSE_X], actionState[ActionState::Action::MOUSE_Y]);
 		}
 		// Calculate delta rotation
 		else if (m_beginPress && ImGui::IsMouseDragging(1)) {
-			const auto currentPos = glm::vec2(actionState.at(ActionState::MOUSE_X), actionState.at(ActionState::MOUSE_Y));
+			const auto currentPos = glm::vec2(actionState[ActionState::Action::MOUSE_X], actionState[ActionState::Action::MOUSE_Y]);
 			const auto delta = currentPos - m_startPos;
 			m_rotation = glm::vec2(delta + m_lastRotation);
 			m_rotation.x = fmodf(m_rotation.x, 360.0f);
@@ -41,13 +41,13 @@ void CameraController::tick(const float& deltaTime)
 		const float velocity = 25.0f;
 		const float moveAmount = velocity * deltaTime;
 		glm::vec3 deltaPosition(0.0f);
-		if (actionState.isAction(ActionState::FORWARD))
+		if ((int)actionState.isAction(ActionState::Action::FORWARD))
 			deltaPosition += glm::vec3(0, 0, -moveAmount);
-		if (actionState.isAction(ActionState::BACKWARD))
+		if ((int)actionState.isAction(ActionState::Action::BACKWARD))
 			deltaPosition += glm::vec3(0, 0, moveAmount);
-		if (actionState.isAction(ActionState::LEFT))
+		if ((int)actionState.isAction(ActionState::Action::LEFT))
 			deltaPosition += glm::vec3(-moveAmount, 0, 0);
-		if (actionState.isAction(ActionState::RIGHT))
+		if ((int)actionState.isAction(ActionState::Action::RIGHT))
 			deltaPosition += glm::vec3(moveAmount, 0, 0);
 
 		// Integrate rotation and translation into a new set of matrices

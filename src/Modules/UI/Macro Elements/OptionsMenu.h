@@ -13,8 +13,8 @@
 class OptionsMenu : public Menu {
 public:
 	// Public Interaction Enums
-	const enum interact {
-		on_video = last_interact_index,
+	enum class Interact : int {
+		on_video = (int)UI_Element::Interact::last_interact_index,
 		on_graphics,
 		on_controls,
 		on_back,
@@ -50,7 +50,7 @@ public:
 		addButton(engine, "< BACK  ", [&]() { back(); });
 
 		// Callbacks
-		addCallback(UI_Element::on_resize, [&]() {
+		addCallback((int)UI_Element::Interact::on_resize, [&]() {
 			const auto scale = getScale();
 			m_videoMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f });
 			m_gfxMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f });
@@ -77,7 +77,7 @@ protected:
 		m_focusMap->addElement(m_layout);
 		m_focusMap->addElement(m_videoMenu);
 		m_focusMap->focusElement(m_videoMenu);
-		enactCallback(on_video);
+		enactCallback((int)OptionsMenu::Interact::on_video);
 	}
 	/** Choose 'graphics' from the options menu. */
 	inline void graphics() {
@@ -90,11 +90,11 @@ protected:
 		m_focusMap->addElement(m_layout);
 		m_focusMap->addElement(m_gfxMenu);
 		m_focusMap->focusElement(m_gfxMenu);
-		enactCallback(on_graphics);
+		enactCallback((int)OptionsMenu::Interact::on_graphics);
 	}
 	/** Choose 'controls' from the options menu. */
 	inline void controls() {
-		enactCallback(on_controls);
+		enactCallback((int)OptionsMenu::Interact::on_controls);
 	}
 	/** Choose 'back' from the options menu. */
 	inline void back() {
@@ -106,7 +106,7 @@ protected:
 		// Revert appearance and control back to previous element (start menu, pause menu, etc)
 		m_engine->getModule_UI().popRootElement();
 		m_layout->setSelectionIndex(-1);
-		enactCallback(on_back);
+		enactCallback((int)OptionsMenu::Interact::on_back);
 	}
 
 

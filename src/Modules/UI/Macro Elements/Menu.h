@@ -33,7 +33,7 @@ public:
 
 		// Make a vertical layout to house list items
 		m_layout->setSpacing(10.0f);
-		m_layout->addCallback(List::on_selection, [&]() {
+		m_layout->addCallback((int)List::Interact::on_selection, [&]() {
 			const auto index = m_layout->getSelectionIndex();
 			if (index >= 0 && index < m_selectionCallbacks.size())
 				m_selectionCallbacks[index]();
@@ -42,7 +42,7 @@ public:
 
 		// Title
 		m_title->setTextScale(15.0f);
-		m_title->setAlignment(Label::align_center);
+		m_title->setAlignment(Label::Alignment::align_center);
 		m_title->setColor(glm::vec3(0.8, 0.6, 0.1));
 		m_backPanel->addElement(m_title);
 
@@ -50,7 +50,7 @@ public:
 		m_backPanel->addElement(m_separator);
 
 		// Callbacks
-		addCallback(UI_Element::on_resize, [&]() {
+		addCallback((int)UI_Element::Interact::on_resize, [&]() {
 			const auto scale = getScale();
 			m_backPanel->setScale({ 128, scale.y });
 			m_backPanel->setPosition(glm::vec2(256, scale.y));
@@ -88,7 +88,7 @@ protected:
 	inline void addButton(Engine* engine, const char* buttonText, const std::function<void()>& callback) {
 		auto button = std::make_shared<Button>(engine, buttonText);
 		button->setScale({ 120, 20 });
-		button->addCallback(Button::on_clicked, callback);
+		button->addCallback((int)Button::Interact::on_clicked, callback);
 		m_selectionCallbacks.push_back(callback);
 		m_layout->addElement(button);
 		m_layout->getFocusMap().addElement(button);

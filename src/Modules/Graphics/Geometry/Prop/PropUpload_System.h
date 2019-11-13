@@ -22,7 +22,7 @@ public:
 	/** Construct this system. */
 	inline PropUpload_System(Engine* engine, const std::shared_ptr<PropData>& frameData)
 		: m_engine(engine), m_frameData(frameData) {
-		addComponentType(Prop_Component::Runtime_ID, FLAG_REQUIRED);
+		addComponentType(Prop_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 
 		// Create VBO's
 		glCreateBuffers(1, &m_vboID);
@@ -50,7 +50,7 @@ public:
 		frameData->m_geometryVAOID = m_vaoID;
 
 		// Preference Values
-		m_engine->getPreferenceState().getOrSetValue(PreferenceState::C_MATERIAL_SIZE, m_materialSize);
+		m_engine->getPreferenceState().getOrSetValue(PreferenceState::Preference::C_MATERIAL_SIZE, m_materialSize);
 
 		// Size-dependent variable set up
 		m_maxMips = GLsizei(floor(log2f(float(m_materialSize)) + 1.0f));

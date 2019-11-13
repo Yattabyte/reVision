@@ -24,11 +24,11 @@ void Game_Module::initialize(Engine* engine)
 	// Create Pause Menu
 	auto pauseMenu = std::make_shared<PauseMenu>(engine);
 	m_pauseMenu = pauseMenu;
-	pauseMenu->addCallback(PauseMenu::on_resume_game, [&]() {
+	pauseMenu->addCallback((int)PauseMenu::Interact::on_resume_game, [&]() {
 		showPauseMenu(false);
 		pauseMenu->setVisible(true);
 		});
-	pauseMenu->addCallback(PauseMenu::on_end, [&]() {
+	pauseMenu->addCallback((int)PauseMenu::Interact::on_end, [&]() {
 		showPauseMenu(false);
 		m_engine->goToMainMenu();
 		});
@@ -42,18 +42,18 @@ void Game_Module::deinitialize()
 void Game_Module::frameTick(const float& deltaTime)
 {
 	auto& actionState = m_engine->getActionState();
-	if (m_gameState == in_pauseMenu || m_gameState == in_game) {
+	if (m_gameState == Game_State::in_pauseMenu || m_gameState == Game_State::in_game) {
 		// Check if we should show the overlay
-		if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
-			showPauseMenu(m_gameState == in_game ? true : false);
+		if (actionState.isAction(ActionState::Action::UI_ESCAPE) == ActionState::State::PRESS)
+			showPauseMenu(m_gameState == Game_State::in_game ? true : false);
 
 		// Handle GLOBAL user input
-		if (m_gameState == in_game) {
-			if (m_engine->getMouseInputMode() == Engine::FREE_LOOK) {
-				actionState[ActionState::LOOK_X] = actionState[ActionState::MOUSE_X];
-				actionState[ActionState::LOOK_Y] = actionState[ActionState::MOUSE_Y];
-				actionState[ActionState::FIRE1] = actionState[ActionState::MOUSE_L];
-				actionState[ActionState::FIRE2] = actionState[ActionState::MOUSE_R];
+		if (m_gameState == Game_State::in_game) {
+			if (m_engine->getMouseInputMode() == Engine::MouseInputMode::FREE_LOOK) {
+				actionState[ActionState::Action::LOOK_X] = actionState[ActionState::Action::MOUSE_X];
+				actionState[ActionState::Action::LOOK_Y] = actionState[ActionState::Action::MOUSE_Y];
+				actionState[ActionState::Action::FIRE1] = actionState[ActionState::Action::MOUSE_L];
+				actionState[ActionState::Action::FIRE2] = actionState[ActionState::Action::MOUSE_R];
 			}
 		}
 	}
@@ -78,7 +78,7 @@ void Game_Module::renderOverlays(const float& deltaTime)
 
 void Game_Module::showGame()
 {
-	m_gameState = in_game;
+	m_gameState = Game_State::in_game;
 	//m_engine->getModule_World().loadWorld("a.bmap");
 	m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
 }
@@ -90,11 +90,11 @@ void Game_Module::showPauseMenu(const bool& show)
 		m_engine->getModule_UI().clear();
 		m_engine->getModule_UI().pushRootElement(m_pauseMenu);
 		m_engine->getModule_UI().setFocusMap(std::dynamic_pointer_cast<PauseMenu>(m_pauseMenu)->getFocusMap());
-		m_gameState = in_pauseMenu;
+		m_gameState = Game_State::in_pauseMenu;
 	}
 	else {
 		m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
 		m_engine->getModule_UI().clear();
-		m_gameState = in_game;
+		m_gameState = Game_State::in_game;
 	}
 }

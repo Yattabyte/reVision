@@ -12,8 +12,8 @@
 class PauseMenu : public Menu {
 public:
 	// Public Interaction Enums
-	const enum interact {
-		on_resume_game = last_interact_index,
+	enum class Interact : int {
+		on_resume_game = (int)UI_Element::Interact::last_interact_index,
 		on_options,
 		on_end,
 	};
@@ -35,13 +35,13 @@ public:
 		// Add 'Options' button
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
 		addButton(engine, "  OPTIONS >", [&]() { goToOptions(); });
-		m_optionsMenu->addCallback(OptionsMenu::on_back, [&]() { returnFromOptions(); });
+		m_optionsMenu->addCallback((int)OptionsMenu::Interact::on_back, [&]() { returnFromOptions(); });
 
 		// Add 'Quit' button
 		addButton(engine, "END GAME", [&]() { quit(); });
 
 		// Callbacks
-		addCallback(UI_Element::on_resize, [&]() {
+		addCallback((int)UI_Element::Interact::on_resize, [&]() {
 			const auto scale = getScale();
 			m_optionsMenu->setScale(scale);
 			});
@@ -57,7 +57,7 @@ protected:
 	// Protected Methods
 	/** Choose 'resume' from the pause menu. */
 	inline void resume() {
-		enactCallback(on_resume_game);
+		enactCallback((int)PauseMenu::Interact::on_resume_game);
 	}
 	/** Choose 'options' from the main menu. */
 	inline void goToOptions() {
@@ -66,7 +66,7 @@ protected:
 		ui.pushRootElement(m_optionsMenu);
 		ui.setFocusMap(m_optionsMenu->getFocusMap());
 		m_layout->setSelectionIndex(-1);
-		enactCallback(on_options);
+		enactCallback((int)PauseMenu::Interact::on_options);
 	}
 	/** Chosen when control is returned from the options menu. */
 	inline void returnFromOptions() {
@@ -76,7 +76,7 @@ protected:
 	/** Choose 'quit' from the pause menu. */
 	inline void quit() {
 		m_engine->getModule_UI().clear();
-		enactCallback(on_end);
+		enactCallback((int)PauseMenu::Interact::on_end);
 	}
 
 

@@ -33,7 +33,7 @@ void SaveDialogue::populateLevels(const std::string& directory)
 	const auto rootPath = Engine::Get_Current_Dir() + "\\Maps\\";
 	const auto path = std::filesystem::path(rootPath + directory);
 	if (directory != "" && directory != "." && directory != "..")
-		m_levels.push_back(LevelEntry{ "..", std::filesystem::relative(path.parent_path(), rootPath).string(), "", "", "", "", LevelEntry::back });
+		m_levels.push_back(LevelEntry{ "..", std::filesystem::relative(path.parent_path(), rootPath).string(), "", "", "", "", LevelEntry::Type::BACK });
 	for (auto& entry : std::filesystem::directory_iterator(path)) {
 		std::string timeString = "";
 		struct _stat64 fileInfo;
@@ -63,14 +63,14 @@ void SaveDialogue::populateLevels(const std::string& directory)
 			readableFileSize(entry.file_size())
 		};
 		if (entry.is_regular_file()) {
-			prefabEntry.type = LevelEntry::file;
+			prefabEntry.type = LevelEntry::Type::FILE;
 			if (prefabEntry.extension == ".bmap")
 				prefabEntry.extType = "Map";
 			else if (prefabEntry.extension == ".autosave")
 				prefabEntry.extType = "Autosave";
 		}
 		else if (entry.is_directory()) {
-			prefabEntry.type = LevelEntry::folder;
+			prefabEntry.type = LevelEntry::Type::FOLDER;
 			prefabEntry.extType = "Folder";
 		}
 		m_levels.push_back(prefabEntry);
@@ -85,14 +85,14 @@ void SaveDialogue::tickMainDialogue()
 		ImGui::OpenPopup(title);
 		ImGui::SetNextWindowSize({ 600, 500 }, ImGuiCond_Appearing);
 		if (ImGui::BeginPopupModal(title, &m_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
-			enum DialogueOptions {
-				none,
-				itemClicked,
-				save,
-				clone,
-				rename,
-				del,
-			} option = none;
+			enum class DialogueOptions {
+				NONE,
+				ITEM_CLICKED,
+				SAVE,
+				CLONE,
+				RENAME,
+				DELETE,
+			} option = DialogueOptions::NONE;
 			static char nameInput[256];
 			static auto setName = [&]() {
 				if (m_selected != -1) {
@@ -125,9 +125,9 @@ void SaveDialogue::tickMainDialogue()
 			ImGui::Separator();
 			int index = 0;
 			for each (const auto & level in m_levels) {
-				GLuint icon = (level.type == LevelEntry::file && m_iconFile->existsYet()) ? m_iconFile->m_glTexID :
-					(level.type == LevelEntry::folder && m_iconFolder->existsYet()) ? m_iconFolder->m_glTexID :
-					(level.type == LevelEntry::back && m_iconBack->existsYet()) ? m_iconBack->m_glTexID : 0;
+				GLuint icon = (level.type == LevelEntry::Type::FILE && m_iconFile->existsYet()) ? m_iconFile->m_glTexID :
+					(level.type == LevelEntry::Type::FOLDER && m_iconFolder->existsYet()) ? m_iconFolder->m_glTexID :
+					(level.type == LevelEntry::Type::BACK && m_iconBack->existsYet()) ? m_iconBack->m_glTexID : 0;
 				ImGui::PushID(index);
 				ImGui::Image((ImTextureID)static_cast<uintptr_t>(icon), ImVec2(15, 15), { 0.0f, 1.0f }, { 1.0f, 0.0f });
 				ImGui::SameLine(0);
@@ -137,16 +137,16 @@ void SaveDialogue::tickMainDialogue()
 					m_selected = index;
 					setName();
 					if (ImGui::IsMouseDoubleClicked(0))
-						option = itemClicked;
+						option = DialogueOptions::ITEM_CLICKED;
 				}
 				else if (ImGui::BeginPopupContextItem("Edit Level")) {
 					m_selected = index;
-					if (ImGui::MenuItem("Open")) { option = itemClicked; }
+					if (ImGui::MenuItem("Open")) { option = DialogueOptions::ITEM_CLICKED; }
 					ImGui::Separator();
-					if (ImGui::MenuItem("Clone")) { option = clone; }
-					if (ImGui::MenuItem("Rename")) { option = rename; }
+					if (ImGui::MenuItem("Clone")) { option = DialogueOptions::CLONE; }
+					if (ImGui::MenuItem("Rename")) { option = DialogueOptions::RENAME; }
 					ImGui::Separator();
-					if (ImGui::MenuItem("Delete")) { option = del; }
+					if (ImGui::MenuItem("Delete")) { option = DialogueOptions::DELETE; }
 					ImGui::EndPopup();
 				}
 				ImGui::SameLine(250);
@@ -164,7 +164,7 @@ void SaveDialogue::tickMainDialogue()
 			// Display an input field with a specific entry name on the same line
 			const auto inputFlags = ImGuiInputTextFlags_EnterReturnsTrue;
 			if (ImGui::InputText("File name", nameInput, IM_ARRAYSIZE(nameInput), inputFlags))
-				option = save;
+				option = DialogueOptions::SAVE;
 			ImGui::Spacing();
 
 			// Display a save button
@@ -174,7 +174,7 @@ void SaveDialogue::tickMainDialogue()
 			ImGui::PushItemFlag(ImGuiItemFlags_Disabled, std::string(nameInput) == "");
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * (std::string(nameInput) == "" ? 0.25f : 1.0f));
 			if (ImGui::Button("Save", { 75, 20 }))
-				option = save;
+				option = DialogueOptions::SAVE;
 			ImGui::PopItemFlag();
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor(3);
@@ -189,9 +189,9 @@ void SaveDialogue::tickMainDialogue()
 			}
 			ImGui::SetItemDefaultFocus();
 
-			if (option == itemClicked) {
+			if (option == DialogueOptions::ITEM_CLICKED) {
 				const auto& selectedLevel = m_levels[m_selected];
-				if (selectedLevel.type == LevelEntry::back || selectedLevel.type == LevelEntry::folder) {
+				if (selectedLevel.type == LevelEntry::Type::BACK || selectedLevel.type == LevelEntry::Type::FOLDER) {
 					const std::string nameCopy(selectedLevel.path);
 					populateLevels(nameCopy);
 					m_selected = -1;
@@ -199,11 +199,11 @@ void SaveDialogue::tickMainDialogue()
 				else
 					tryToSave(nameInput);
 			}
-			else if (option == save)
+			else if (option == DialogueOptions::SAVE)
 				tryToSave(nameInput);
 			tickOverwriteDialogue();
 
-			if (option == clone) {
+			if (option == DialogueOptions::CLONE) {
 				const auto srcPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\" + m_levels[m_selected].path);
 				auto dstPath = srcPath;
 				int count = 1;
@@ -217,11 +217,11 @@ void SaveDialogue::tickMainDialogue()
 				populateLevels(m_subDirectory);
 			}
 
-			if (option == rename)
+			if (option == DialogueOptions::RENAME)
 				ImGui::OpenPopup("Rename Level");
 			tickRenameDialogue();
 
-			if (option == del)
+			if (option == DialogueOptions::DELETE)
 				ImGui::OpenPopup("Delete Level");
 			tickDeleteDialogue();
 
@@ -300,7 +300,7 @@ void SaveDialogue::tickRenameDialogue()
 			ImGui::SetKeyboardFocusHere(0);
 		if (ImGui::InputText("", nameInput, IM_ARRAYSIZE(nameInput), ImGuiInputTextFlags_EnterReturnsTrue)) {
 			m_levels[m_selected].name = nameInput;
-			if (m_levels[m_selected].type == LevelEntry::folder)
+			if (m_levels[m_selected].type == LevelEntry::Type::FOLDER)
 				m_levels[m_selected].name = "\\" + m_levels[m_selected].name + "\\";
 			const auto oldPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\" + m_levels[m_selected].path);
 			const auto newPath = std::filesystem::path(oldPath.parent_path().string() + "\\" + std::string(nameInput) + (oldPath.has_extension() ? oldPath.extension().string() : "")).string();

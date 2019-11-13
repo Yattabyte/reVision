@@ -18,9 +18,9 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline explicit DirectSync_System(const std::shared_ptr<Direct_Light_Data>& frameData)
 		: m_frameData(frameData) {
-		addComponentType(Transform_Component::Runtime_ID, FLAG_REQUIRED);
-		addComponentType(Light_Component::Runtime_ID, FLAG_REQUIRED);
-		addComponentType(Shadow_Component::Runtime_ID, FLAG_OPTIONAL);
+		addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
+		addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
+		addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 	}
 
 

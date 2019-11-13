@@ -23,8 +23,8 @@ public:
 	inline PlayerSpawn_System(Engine* engine, Game_Module* game)
 		: m_engine(engine), m_game(game) {
 		// Declare component types used
-		addComponentType(PlayerSpawn_Component::Runtime_ID, FLAG_REQUIRED);
-		addComponentType(Transform_Component::Runtime_ID, FLAG_REQUIRED);
+		addComponentType(PlayerSpawn_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
+		addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 
 		// Error Reporting
 		if (!isValid())

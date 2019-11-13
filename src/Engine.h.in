@@ -34,7 +34,7 @@ class Engine {
 public:
 	// Public Enumerations
 	/** Different mouse input modes. */
-	enum MouseInputMode {
+	enum class MouseInputMode {
 		NORMAL,
 		FREE_LOOK
 	};
@@ -134,11 +134,11 @@ private:
 
 
 	// Private Attributes
-	enum Engine_State {
+	enum class Engine_State {
 		in_startMenu,
 		in_game,
 		in_editor
-	} m_engineState = in_startMenu;
+	} m_engineState = Engine_State::in_startMenu;
 	float m_lastTime = 0;
 	float m_frameAccumulator = 0;
 	float m_refreshRate = 120.0f;

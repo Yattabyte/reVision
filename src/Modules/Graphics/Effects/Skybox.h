@@ -22,7 +22,7 @@ public:
 	}
 	/** Constructor. */
 	inline explicit Skybox(Engine* engine) :
-		Graphics_Technique(PRIMARY_LIGHTING),
+		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_cubemapSky(Shared_Cubemap(engine, "sky\\")),
 		m_shaderSky(Shared_Shader(engine, "Effects\\Skybox")),

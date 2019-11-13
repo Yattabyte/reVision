@@ -14,8 +14,8 @@ Controllable by directional arrows. */
 class SideList : public UI_Element {
 public:
 	// Public Interaction Enums
-	const enum interact {
-		on_index_changed = UI_Element::last_interact_index
+	enum class Interact : int {
+		on_index_changed = (int)UI_Element::Interact::last_interact_index
 	};
 
 
@@ -56,12 +56,12 @@ public:
 		addElement(m_backPanel);
 
 		// Other UI elements
-		m_label->setAlignment(Label::align_center);
+		m_label->setAlignment(Label::Alignment::align_center);
 		m_label->setColor(glm::vec3(1.0f));
 		addElement(m_label);
 
 		// Add Callbacks
-		addCallback(UI_Element::on_resize, [&]() { updateGeometry(); });
+		addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
 
 		// Configure THIS element
 		setIndex(0);
@@ -76,9 +76,9 @@ public:
 			// Left button
 			if (mx >= -m_scale.x && mx <= (-m_scale.x + 14) && m_lEnabled) {
 				m_lhighlighted = true;
-				if (!m_lpressed && mouseEvent.m_action == MouseEvent::PRESS)
+				if (!m_lpressed && mouseEvent.m_action == MouseEvent::Action::PRESS)
 					m_lpressed = true;
-				else if (m_lpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+				else if (m_lpressed && mouseEvent.m_action == MouseEvent::Action::RELEASE) {
 					m_lpressed = false;
 					setIndex(getIndex() - 1);
 				}
@@ -86,9 +86,9 @@ public:
 			// Right button
 			if (mx >= (m_scale.x - 14) && mx <= m_scale.x && m_rEnabled) {
 				m_rhighlighted = true;
-				if (!m_rpressed && mouseEvent.m_action == MouseEvent::PRESS)
+				if (!m_rpressed && mouseEvent.m_action == MouseEvent::Action::PRESS)
 					m_rpressed = true;
-				else if (m_rpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+				else if (m_rpressed && mouseEvent.m_action == MouseEvent::Action::RELEASE) {
 					m_rpressed = false;
 					setIndex(getIndex() + 1);
 				}
@@ -103,9 +103,9 @@ public:
 	}
 	inline virtual void userAction(ActionState& actionState) override {
 		// User can only change selection by using the left/right directional key actions
-		if (actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
+		if (actionState.isAction(ActionState::Action::UI_LEFT) == ActionState::State::PRESS)
 			setIndex(m_index - 1);
-		else if (actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS)
+		else if (actionState.isAction(ActionState::Action::UI_RIGHT) == ActionState::State::PRESS)
 			setIndex(m_index + 1);
 	}
 	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
@@ -142,7 +142,7 @@ public:
 
 			m_lEnabled = (index > 0);
 			m_rEnabled = (index < (int)(m_strings.size() - 1ull));
-			enactCallback(on_index_changed);
+			enactCallback((int)SideList::Interact::on_index_changed);
 		}
 	}
 	/** Get the index currently used in this list.

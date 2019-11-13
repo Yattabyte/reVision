@@ -26,7 +26,7 @@ public:
 	}
 	/** Constructor. */
 	inline Reflector_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras) :
-		Graphics_Technique(PRIMARY_LIGHTING),
+		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_shaderLighting(Shared_Shader(engine, "Core\\Reflector\\IBL_Parallax")),
 		m_shaderStencil(Shared_Shader(engine, "Core\\Reflector\\Stencil")),
@@ -44,8 +44,8 @@ public:
 
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_ENVMAP_SIZE, m_frameData->envmapSize.x);
-		preferences.addCallback(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float& f) {
+		preferences.getOrSetValue(PreferenceState::Preference::C_ENVMAP_SIZE, m_frameData->envmapSize.x);
+		preferences.addCallback(PreferenceState::Preference::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float& f) {
 			m_frameData->envmapSize = glm::ivec2(std::max(1u, (unsigned int)f));
 			m_viewport->resize(glm::ivec2(m_frameData->envmapSize), (int)m_frameData->reflectorLayers);
 			});
@@ -164,7 +164,8 @@ private:
 			m_indirectQuadConvolute.endWriting();
 
 			// Update all reflectors at once
-			m_engine->getModule_Graphics().getPipeline()->render(deltaTime, m_viewport, perspectives, Graphics_Technique::GEOMETRY | Graphics_Technique::PRIMARY_LIGHTING | Graphics_Technique::SECONDARY_LIGHTING);
+			constexpr unsigned int categories = (unsigned int)Graphics_Technique::Technique_Category::GEOMETRY | (unsigned int)Graphics_Technique::Technique_Category::PRIMARY_LIGHTING | (unsigned int)Graphics_Technique::Technique_Category::SECONDARY_LIGHTING;
+			m_engine->getModule_Graphics().getPipeline()->render(deltaTime, m_viewport, perspectives, categories);
 
 			// Copy all lighting results into cube faces, generating cubemap's
 			m_viewport->m_gfxFBOS->bindForReading("LIGHTING", 0);

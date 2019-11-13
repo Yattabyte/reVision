@@ -56,7 +56,7 @@ void Image_IO::Deinitialize()
 	FreeImage_DeInitialise();
 }
 
-bool Image_IO::Import_Image(Engine* engine, const std::string& relativePath, Image_Data& importedData, const bool& linear)
+bool Image_IO::Import_Image(Engine* engine, const std::string& relativePath, Image_Data& importedData, const Resize_Policy& resizePolicy)
 {
 	const glm::ivec2 containerSize = importedData.dimensions;
 	FIBITMAP* bitmap = Import_Bitmap(engine, relativePath);
@@ -65,7 +65,7 @@ bool Image_IO::Import_Image(Engine* engine, const std::string& relativePath, Ima
 	FreeImage_Unload(bitmap);
 	// If the image container already has a determined size, resize this new image to fit it (if it is a different size)
 	if (containerSize != glm::ivec2(0) && containerSize != importedData.dimensions)
-		Resize_Image(containerSize, importedData, linear);
+		Resize_Image(containerSize, importedData, resizePolicy);
 	return true;
 }
 
@@ -91,7 +91,7 @@ void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData)
 	importedData.bpp = FreeImage_GetBPP(bitmap);
 }
 
-void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, const bool& linear)
+void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, const Resize_Policy& resizePolicy)
 {
 	// Make sure new sizes AREN'T zero
 	if (newSize.x && newSize.y && importedData.dimensions.x && importedData.dimensions.y)
@@ -104,7 +104,7 @@ void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, 
 			delete BGRA_Pixels;
 
 			// Resize the bitmap
-			FIBITMAP* newBitmap = FreeImage_Rescale(bitmap, newSize.x, newSize.y, linear ? FREE_IMAGE_FILTER::FILTER_CATMULLROM : FREE_IMAGE_FILTER::FILTER_BOX);
+			FIBITMAP* newBitmap = FreeImage_Rescale(bitmap, newSize.x, newSize.y, resizePolicy == Resize_Policy::LINEAR ? FREE_IMAGE_FILTER::FILTER_CATMULLROM : FREE_IMAGE_FILTER::FILTER_BOX);
 			Load_Pixel_Data(newBitmap, importedData);
 
 			// Free Resources

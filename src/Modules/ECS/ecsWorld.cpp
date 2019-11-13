@@ -544,7 +544,7 @@ std::vector<std::vector<ecsBaseComponent*>> ecsWorld::getRelevantComponents(cons
 						if (j == minSizeIndex)
 							continue;
 						componentParam[j] = getComponent(entityComponents, *componentArrays[j], componentID);
-						if ((componentParam[j] == nullptr) && (componentFlag & ecsBaseSystem::FLAG_OPTIONAL) == 0) {
+						if ((componentParam[j] == nullptr) && ((unsigned int)componentFlag & (unsigned int)ecsBaseSystem::RequirementsFlag::FLAG_OPTIONAL) == 0) {
 							isValid = false;
 							break;
 						}
@@ -564,7 +564,7 @@ size_t ecsWorld::findLeastCommonComponent(const std::vector<std::pair<ComponentI
 	auto minIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < componentTypes.size(); ++i) {
 		const auto& [componentID, componentFlag] = componentTypes[i];
-		if ((componentFlag & ecsBaseSystem::FLAG_OPTIONAL) != 0)
+		if (((unsigned int)componentFlag & (unsigned int)ecsBaseSystem::RequirementsFlag::FLAG_OPTIONAL) != 0)
 			continue;
 
 		const auto& [createFn, freeFn, newFn, typeSize] = ecsBaseComponent::_componentRegistry[componentID];

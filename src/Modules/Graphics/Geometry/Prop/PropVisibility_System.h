@@ -17,9 +17,9 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline PropVisibility_System(const std::shared_ptr<PropData>& frameData, const std::shared_ptr<std::vector<Camera*>>& cameras)
 		: m_frameData(frameData), m_cameras(cameras) {
-		addComponentType(Prop_Component::Runtime_ID, FLAG_REQUIRED);
-		addComponentType(Skeleton_Component::Runtime_ID, FLAG_OPTIONAL);
-		addComponentType(BoundingBox_Component::Runtime_ID, FLAG_OPTIONAL);
+		addComponentType(Prop_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
+		addComponentType(Skeleton_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
+		addComponentType(BoundingBox_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 	}
 
 
@@ -45,7 +45,7 @@ public:
 
 					viewInfo.skeletonData.push_back(skeletonComponent ? index : -1); // get skeleton ID if this entity has one
 					// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
-					if ((count >= 100) && bboxComponent && bboxComponent->m_cameraCollision == BoundingBox_Component::OUTSIDE) {
+					if ((count >= 100) && bboxComponent && bboxComponent->m_cameraCollision == BoundingBox_Component::CameraCollision::OUTSIDE) {
 						// Allow occlusion culling
 						viewInfo.cullingDrawData.push_back(glm::ivec4(36, 1, 0, 1));
 						viewInfo.renderingDrawData.push_back(glm::ivec4(count, 0, offset, 1));

@@ -11,8 +11,8 @@
 class Slider : public UI_Element {
 public:
 	// Public Interaction Enums
-	const enum interact {
-		on_value_change = UI_Element::last_interact_index
+	enum class Interact : int {
+		on_value_change = (int)UI_Element::Interact::last_interact_index
 	};
 
 
@@ -38,13 +38,13 @@ public:
 
 		// Add a label indicating the toggle state
 		m_label = std::make_shared<Label>(engine, std::to_string(value));
-		m_label->setAlignment(Label::align_right);
+		m_label->setAlignment(Label::Alignment::align_right);
 		m_label->setTextScale(12.0f);
 		m_label->setColor(glm::vec3(0.75f));
 		addElement(m_label);
 
 		// Callbacks
-		addCallback(on_resize, [&]() { updateGeometry(); });
+		addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
 
 		// Configure THIS element
 		setValue(value);
@@ -67,7 +67,7 @@ public:
 	inline virtual void mouseAction(const MouseEvent& mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
-			if (m_pressed && mouseEvent.m_action == MouseEvent::MOVE) {
+			if (m_pressed && mouseEvent.m_action == MouseEvent::Action::MOVE) {
 				const float mx = float(mouseEvent.m_xPos) - m_position.x - m_backPanel->getPosition().x + m_backPanel->getScale().x;
 				setValue(((mx / (m_backPanel->getScale().x * 2.0f)) * (m_upperRange - m_lowerRange)) + m_lowerRange);
 			}
@@ -75,9 +75,9 @@ public:
 	}
 	inline virtual void userAction(ActionState& actionState) override {
 		const float offsetAmount = std::min<float>((m_upperRange - m_lowerRange) / 100.0f, 1.0f);
-		if (actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
+		if (actionState.isAction(ActionState::Action::UI_LEFT) == ActionState::State::PRESS)
 			setValue(getValue() - offsetAmount);
-		else if (actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS)
+		else if (actionState.isAction(ActionState::Action::UI_RIGHT) == ActionState::State::PRESS)
 			setValue(getValue() + offsetAmount);
 	}
 
@@ -89,7 +89,7 @@ public:
 		m_value = std::clamp<float>(amount, m_lowerRange, m_upperRange);
 		setText(std::to_string((int)std::round(m_value)));
 		updatePaddle();
-		enactCallback(on_value_change);
+		enactCallback((int)Slider::Interact::on_value_change);
 	}
 	/** Get the percentage value for this scrollbar.
 	@return				the percentage value for this slider. */

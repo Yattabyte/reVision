@@ -17,7 +17,7 @@ public:
 	@param	cameras		shared list of scene cameras. */
 	inline explicit ShadowPerspective_System(const std::shared_ptr<std::vector<Camera*>>& sceneCameras)
 		: m_sceneCameras(sceneCameras) {
-		addComponentType(Shadow_Component::Runtime_ID, FLAG_REQUIRED);
+		addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 	}
 
 

@@ -32,7 +32,7 @@ public:
 	}
 	/** Constructor. */
 	inline Direct_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) :
-		Graphics_Technique(PRIMARY_LIGHTING),
+		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_shader_Lighting(Shared_Shader(engine, "Core\\Light\\Direct")),
 		m_shader_Stencil(Shared_Shader(engine, "Core\\Light\\Stencil")),

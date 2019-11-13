@@ -13,8 +13,8 @@ If children need to expand to fit inside a parent container, consider using a ve
 class List : public UI_Element {
 public:
 	// Public Interaction Enums
-	const enum interact {
-		on_selection = UI_Element::last_interact_index,
+	enum class Interact : int {
+		on_selection = (int)UI_Element::Interact::last_interact_index
 	};
 
 
@@ -42,11 +42,11 @@ public:
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
 
 		// Add Callbacks
-		addCallback(UI_Element::on_resize, [&]() {
+		addCallback((int)UI_Element::Interact::on_resize, [&]() {
 			alignChildren();
 			updateSelectionGeometry();
 			});
-		addCallback(UI_Element::on_childrenChange, [&]() {
+		addCallback((int)UI_Element::Interact::on_childrenChange, [&]() {
 			alignChildren();
 			});
 	}
@@ -92,7 +92,7 @@ public:
 			for each (auto & child in m_children) {
 				if (child->mouseWithin(subEvent)) {
 					setHoverIndex(index); // Set hovered item to whatever is beneath mouse
-					if (mouseEvent.m_action == MouseEvent::RELEASE)
+					if (mouseEvent.m_action == MouseEvent::Action::RELEASE)
 						setSelectionIndex(index); // Set selected item to whatever is beneath mouse
 					break;
 				}
@@ -114,19 +114,19 @@ public:
 				m_focusMap.applyActionState(actionState);
 
 			// After, process remaining input for the list
-			if (actionState.isAction(ActionState::UI_UP) == ActionState::PRESS) {
+			if (actionState.isAction(ActionState::Action::UI_UP) == ActionState::State::PRESS) {
 				setHoverIndex(m_hoverIndex - 1 < 0 ? int(m_children.size() - 1ull) : m_hoverIndex - 1);
 
 				if (m_selectionIndex != -1)
 					setSelectionIndex(-1);
 			}
-			else if (actionState.isAction(ActionState::UI_DOWN) == ActionState::PRESS) {
+			else if (actionState.isAction(ActionState::Action::UI_DOWN) == ActionState::State::PRESS) {
 				setHoverIndex(m_hoverIndex + 1 > int(m_children.size() - 1ull) ? 0 : m_hoverIndex + 1);
 
 				if (m_selectionIndex != -1)
 					setSelectionIndex(-1);
 			}
-			else if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS) {
+			else if (actionState.isAction(ActionState::Action::UI_ENTER) == ActionState::State::PRESS) {
 				if (m_hoverIndex > -1 && m_hoverIndex < m_children.size())
 					setSelectionIndex(m_hoverIndex);
 			}
@@ -157,7 +157,7 @@ public:
 		m_selectionIndex = newIndex;
 		m_focusMap.focusIndex(m_selectionIndex);
 		updateSelectionGeometry();
-		enactCallback(on_selection);
+		enactCallback((int)List::Interact::on_selection);
 	}
 	/** Retrieve this list's selected item index.
 	@return					this list's selected index. */

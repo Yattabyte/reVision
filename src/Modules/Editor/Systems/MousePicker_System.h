@@ -25,19 +25,19 @@ public:
 		: m_engine(engine) {
 		// Declare component types used
 		addComponentType(Transform_Component::Runtime_ID);
-		addComponentType(BoundingBox_Component::Runtime_ID, FLAG_OPTIONAL);
-		addComponentType(BoundingSphere_Component::Runtime_ID, FLAG_OPTIONAL);
-		addComponentType(Collider_Component::Runtime_ID, FLAG_OPTIONAL);
-		addComponentType(Prop_Component::Runtime_ID, FLAG_OPTIONAL);
+		addComponentType(BoundingBox_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
+		addComponentType(BoundingSphere_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
+		addComponentType(Collider_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
+		addComponentType(Prop_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+		preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
+		preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
+		preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 			m_renderSize.x = (int)f;
 			});
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+		preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 			m_renderSize.y = (int)f;
 			});
 	}
@@ -48,7 +48,7 @@ public:
 		const auto& actionState = m_engine->getActionState();
 		const auto& clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
 		const auto ray_origin = clientCamera.EyePosition;
-		const auto ray_nds = glm::vec2(2.0f * actionState.at(ActionState::MOUSE_X) / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState.at(ActionState::MOUSE_Y)) / m_renderSize.y);
+		const auto ray_nds = glm::vec2(2.0f * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
 		const auto ray_eye = glm::vec4(glm::vec2(clientCamera.pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
 		const auto ray_direction = glm::normalize(glm::vec3(clientCamera.vMatrixInverse * ray_eye));
 

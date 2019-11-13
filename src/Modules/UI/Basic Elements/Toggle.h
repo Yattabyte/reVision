@@ -12,8 +12,8 @@
 class Toggle : public UI_Element {
 public:
 	// Public Interaction Enums
-	const enum interact {
-		on_toggle = UI_Element::last_interact_index
+	enum class Interact : int {
+		on_toggle = (int)UI_Element::Interact::last_interact_index
 	};
 
 
@@ -38,14 +38,14 @@ public:
 
 		// Add a label indicating the toggle state
 		m_label = std::make_shared<Label>(engine);
-		m_label->setAlignment(Label::align_right);
+		m_label->setAlignment(Label::Alignment::align_right);
 		m_label->setTextScale(12.0f);
 		m_label->setColor(glm::vec3(0.75f));
 		addElement(m_label);
 
 		// Callbacks
-		addCallback(on_clicked, [&]() { setToggled(!m_toggledOn); });
-		addCallback(on_resize, [&]() { updateGeometry(); });
+		addCallback((int)UI_Element::Interact::on_clicked, [&]() { setToggled(!m_toggledOn); });
+		addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
 
 		// Configure THIS element
 		setToggled(state);
@@ -66,11 +66,11 @@ public:
 		UI_Element::renderElement(deltaTime, position, scale);
 	}
 	inline virtual void userAction(ActionState& actionState) override {
-		if (actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
+		if (actionState.isAction(ActionState::Action::UI_LEFT) == ActionState::State::PRESS)
 			setToggled(false);
-		else if (actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS)
+		else if (actionState.isAction(ActionState::Action::UI_RIGHT) == ActionState::State::PRESS)
 			setToggled(true);
-		else if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS)
+		else if (actionState.isAction(ActionState::Action::UI_ENTER) == ActionState::State::PRESS)
 			setToggled(!m_toggledOn);
 	}
 
@@ -92,7 +92,7 @@ public:
 		m_toggledOn = state;
 		setText(m_toggledOn ? "ON" : "OFF");
 		updateGeometry();
-		enactCallback(on_toggle);
+		enactCallback((int)Toggle::Interact::on_toggle);
 	}
 	/** Return the toggle state of this button.
 	@return			whether or not this toggle is on or off. */

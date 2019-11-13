@@ -17,40 +17,50 @@ struct Image_Data {
 	unsigned int bpp = 0;
 };
 
+enum class Fill_Policy {
+	CHECKERED,
+	SOLID,
+};
+
+enum class Resize_Policy {
+	NEAREST,
+	LINEAR,
+};
+
 /** A static helper class used for reading/writing images.
 Uses the FreeImage texture importer: http://freeimage.sourceforge.net/ */
 class Image_IO {
 public:
 	/** Initialize the FreeImage library. */
 	static void Initialize();
-	/** Shutdown the FreeImage library*/
+	/** Shutdown the FreeImage library. */
 	static void Deinitialize();
 	/** Import an image from disk.
-	@param	engine			the engine to import to
-	@param	relativePath	the path to the file
-	@param	importedData	the container to place the imported data within
-	@param	linear			set to true to use linear filtering, false to use nearest
-	@return					true on successful import, false otherwise (error reported to engine) */
-	static bool Import_Image(Engine* engine, const std::string& relativePath, Image_Data& importedData, const bool& linear = true);
+	@param	engine			the engine to import to.
+	@param	relativePath	the path to the file.
+	@param	importedData	the container to place the imported data within.
+	@param	resizePolicy	the resize policy to use, such as nearest neighbor or linear interpolation.
+	@return					true on successful import, false otherwise (error reported to engine). */
+	static bool Import_Image(Engine* engine, const std::string& relativePath, Image_Data& importedData, const Resize_Policy& resizePolicy = Resize_Policy::LINEAR);
 	/** Load pixel data from a bitmap object.
-	@param	bitmap			the FreeImage bitmap to read from
-	@param	importedData	the container to place the imported data within */
+	@param	bitmap			the FreeImage bitmap to read from.
+	@param	importedData	the container to place the imported data within. */
 	static void Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData);
 	/** Resize and update an image.
-	@param	newSize			the desired image size
-	@param	importedData	the container holding the image data (gets updated with new data)
-	@param	linear			set to true to use linear filtering, false to use nearest */
-	static void Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, const bool& linear = true);
+	@param	newSize			the desired image size.
+	@param	importedData	the container holding the image data (gets updated with new data).
+	@param	resizePolicy	the resize policy to use, such as nearest neighbor or linear interpolation. */
+	static void Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, const Resize_Policy& resizePolicy = Resize_Policy::LINEAR);
 	/** Get the plugin version.
-	@return					the plugin version */
+	@return					the plugin version. */
 	static std::string Get_Version();
 
 
 private:
 	/** Import a FreeImage bitmap from disk.
-	@param	engine			the engine to import to
-	@param	relativePath	the path to the file
-	@return					the free image bitmap object */
+	@param	engine			the engine to import to.
+	@param	relativePath	the path to the file.
+	@return					the free image bitmap object. */
 	static FIBITMAP* Import_Bitmap(Engine* engine, const std::string& relativePath);
 };
 

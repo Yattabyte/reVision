@@ -42,26 +42,26 @@ void LevelEditor_Module::initialize(Engine* engine)
 
 	// Preferences
 	auto& preferences = engine->getPreferenceState();
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
+	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.x = (int)f;
 		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, 0);
 		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
 		});
-	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
 		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, 0);
 		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
 		});
-	preferences.getOrSetValue(PreferenceState::E_AUTOSAVE_INTERVAL, m_autosaveInterval);
-	preferences.addCallback(PreferenceState::E_AUTOSAVE_INTERVAL, m_aliveIndicator, [&](const float& f) {
+	preferences.getOrSetValue(PreferenceState::Preference::E_AUTOSAVE_INTERVAL, m_autosaveInterval);
+	preferences.addCallback(PreferenceState::Preference::E_AUTOSAVE_INTERVAL, m_aliveIndicator, [&](const float& f) {
 		m_autosaveInterval = f;
 		});
 	float undoStacksize = 500.0f;
-	preferences.getOrSetValue(PreferenceState::E_UNDO_STACKSIZE, undoStacksize);
+	preferences.getOrSetValue(PreferenceState::Preference::E_UNDO_STACKSIZE, undoStacksize);
 	m_maxUndo = int(undoStacksize);
-	preferences.addCallback(PreferenceState::E_UNDO_STACKSIZE, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::E_UNDO_STACKSIZE, m_aliveIndicator, [&](const float& f) {
 		m_maxUndo = int(f);
 		});
 

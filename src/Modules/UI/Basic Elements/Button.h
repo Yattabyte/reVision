@@ -18,19 +18,19 @@ public:
 	inline explicit Button(Engine* engine, const std::string& text = "Button")
 		: UI_Element(engine), m_label(std::make_shared<Label>(engine, text)) {
 		// All buttons have labels
-		m_label->setAlignment(Label::align_center);
+		m_label->setAlignment(Label::Alignment::align_center);
 		m_label->setTextScale(12.5f);
 		addElement(m_label);
 
 		// Callbacks
-		addCallback(on_resize, [&]() { m_label->setScale(getScale()); });
+		addCallback((int)UI_Element::Interact::on_resize, [&]() { m_label->setScale(getScale()); });
 	}
 
 
 	// Public Interface Implementation
 	inline virtual void userAction(ActionState& actionState) override {
 		// Only thing a user can do is press the button
-		if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS)
+		if (actionState.isAction(ActionState::Action::UI_ENTER) == ActionState::State::PRESS)
 			pressButton();
 	}
 	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
@@ -50,7 +50,7 @@ public:
 	// Public Methods
 	/** Fully press and release this button, enacting its on_clicked callback. */
 	inline void pressButton() {
-		enactCallback(UI_Element::on_clicked);
+		enactCallback((int)UI_Element::Interact::on_clicked);
 	}
 	/** Set this label element's text.
 	@param	text	the text to use. */

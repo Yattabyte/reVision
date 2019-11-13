@@ -17,7 +17,7 @@ class Engine;
 class UI_Element {
 public:
 	// Public Interaction Enums
-	const enum interact {
+	enum class Interact : int {
 		on_resize,
 		on_reposition,
 		on_childrenChange,

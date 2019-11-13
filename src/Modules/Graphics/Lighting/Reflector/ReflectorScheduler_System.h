@@ -22,12 +22,12 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline ReflectorScheduler_System(Engine* engine, const std::shared_ptr<ReflectorData>& frameData)
 		: m_engine(engine), m_frameData(frameData) {
-		addComponentType(Reflector_Component::Runtime_ID, FLAG_REQUIRED);
+		addComponentType(Reflector_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 
 		auto& preferences = engine->getPreferenceState();
 		m_maxReflectionCasters = 1u;
-		preferences.getOrSetValue(PreferenceState::C_ENVMAP_MAX_PER_FRAME, m_maxReflectionCasters);
-		preferences.addCallback(PreferenceState::C_ENVMAP_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) { m_maxReflectionCasters = (unsigned int)f; });
+		preferences.getOrSetValue(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_maxReflectionCasters);
+		preferences.addCallback(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) { m_maxReflectionCasters = (unsigned int)f; });
 	}
 
 

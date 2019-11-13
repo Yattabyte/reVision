@@ -37,7 +37,7 @@ public:
 			auto& rotation = playerComponent->m_rotation;
 			auto& transform = transformComponent->m_worldTransform;
 			// Determine how much the camera should rotate
-			rotation += 25.0f * deltaTime * glm::vec3(actionState.at(ActionState::LOOK_X), actionState.at(ActionState::LOOK_Y), 0);
+			rotation += 25.0f * deltaTime * glm::vec3(actionState[ActionState::Action::LOOK_X], actionState[ActionState::Action::LOOK_Y], 0);
 			rotation.x = fmodf(rotation.x, 360.0f);
 			if (rotation.x < 0.0f)
 				rotation.x += 360.0f;
@@ -52,13 +52,13 @@ public:
 			const float velocity = 25.0f;
 			const float moveAmount = velocity * deltaTime;
 			glm::vec3 deltaPosition(0.0f);
-			if (actionState.isAction(ActionState::FORWARD))
+			if ((int)actionState.isAction(ActionState::Action::FORWARD))
 				deltaPosition += glm::vec3(0, 0, -moveAmount);
-			if (actionState.isAction(ActionState::BACKWARD))
+			if ((int)actionState.isAction(ActionState::Action::BACKWARD))
 				deltaPosition += glm::vec3(0, 0, moveAmount);
-			if (actionState.isAction(ActionState::LEFT))
+			if ((int)actionState.isAction(ActionState::Action::LEFT))
 				deltaPosition += glm::vec3(-moveAmount, 0, 0);
-			if (actionState.isAction(ActionState::RIGHT))
+			if ((int)actionState.isAction(ActionState::Action::RIGHT))
 				deltaPosition += glm::vec3(moveAmount, 0, 0);
 			// Make the translation amount be relative to the camera's orientation
 			glm::vec4 rotatedPosition = glm::inverse(rotationMatrix) * glm::vec4(deltaPosition, 1.0f);

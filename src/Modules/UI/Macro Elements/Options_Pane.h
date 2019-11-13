@@ -36,7 +36,7 @@ public:
 		// Make a vertical layout to house list items
 		m_layout->setSpacing(1.0f);
 		m_layout->setMargin(50.0f);
-		m_layout->addCallback(List::on_selection, [&]() {
+		m_layout->addCallback((int)List::Interact::on_selection, [&]() {
 			const auto index = m_layout->getSelectionIndex();
 			if (index > -1 && size_t(index) < m_descriptions.size())
 				std::dynamic_pointer_cast<Label>(m_description)->setText(m_descriptions[index]);
@@ -47,7 +47,7 @@ public:
 
 		// Title
 		m_title->setTextScale(20.0f);
-		m_title->setAlignment(Label::align_left);
+		m_title->setAlignment(Label::Alignment::align_left);
 		m_backPanel->addElement(m_title);
 
 		// Top Separator
@@ -57,14 +57,14 @@ public:
 		m_backPanel->addElement(m_separatorBot);
 
 		// Bottom Description Label
-		m_description->setAlignment(Label::align_left);
+		m_description->setAlignment(Label::Alignment::align_left);
 		m_description->setTextScale(10.0f);
 		m_description->setColor(glm::vec3(0.8, 0.6, 0.1));
 		m_description->setText("");
 		m_backPanel->addElement(m_description);
 
 		// Callbacks
-		addCallback(UI_Element::on_resize, [&]() {
+		addCallback((int)UI_Element::Interact::on_resize, [&]() {
 			const auto scale = getScale();
 			m_backPanel->setScale(scale);
 			m_layout->setScale(scale - glm::vec2(0, 50));
@@ -84,7 +84,7 @@ public:
 	inline virtual void userAction(ActionState& actionState) override {
 		// Options menu doesn't implement any custom controls, focus is on the list
 		m_layout->userAction(actionState);
-		if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
+		if (actionState.isAction(ActionState::Action::UI_ESCAPE) == ActionState::State::PRESS)
 			m_engine->getModule_UI().getFocusMap()->back();
 	}
 

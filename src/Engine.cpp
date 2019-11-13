@@ -100,30 +100,30 @@ void Engine::initWindow()
 	m_refreshRate = float(glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate);
 	m_windowSize.x = glfwGetVideoMode(glfwGetPrimaryMonitor())->width;
 	m_windowSize.y = glfwGetVideoMode(glfwGetPrimaryMonitor())->height;
-	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_windowSize.x);
-	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_windowSize.y);
-	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_refreshRate);
-	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_FULLSCREEN, m_useFullscreen);
-	m_preferenceState.getOrSetValue(PreferenceState::C_VSYNC, m_vsync);
+	m_preferenceState.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_windowSize.x);
+	m_preferenceState.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_windowSize.y);
+	m_preferenceState.getOrSetValue(PreferenceState::Preference::C_WINDOW_REFRESH_RATE, m_refreshRate);
+	m_preferenceState.getOrSetValue(PreferenceState::Preference::C_WINDOW_FULLSCREEN, m_useFullscreen);
+	m_preferenceState.getOrSetValue(PreferenceState::Preference::C_VSYNC, m_vsync);
 
 	// Preference Callbacks
-	m_preferenceState.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_windowSize.x = int(f);
 		configureWindow();
 		});
-	m_preferenceState.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_windowSize.y = int(f);
 		configureWindow();
 		});
-	m_preferenceState.addCallback(PreferenceState::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float& f) {
+	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float& f) {
 		m_refreshRate = f;
 		configureWindow();
 		});
-	m_preferenceState.addCallback(PreferenceState::C_WINDOW_FULLSCREEN, m_aliveIndicator, [&](const float& f) {
+	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_FULLSCREEN, m_aliveIndicator, [&](const float& f) {
 		m_useFullscreen = f;
 		configureWindow();
 		});
-	m_preferenceState.addCallback(PreferenceState::C_VSYNC, m_aliveIndicator, [&](const float& f) {
+	m_preferenceState.addCallback(PreferenceState::Preference::C_VSYNC, m_aliveIndicator, [&](const float& f) {
 		m_vsync = f;
 		glfwSwapInterval((int)f);
 		});
@@ -133,8 +133,8 @@ void Engine::initWindow()
 	glfwSetWindowUserPointer(m_window, this);
 	glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
 		auto& preferences = static_cast<Engine*>(glfwGetWindowUserPointer(window))->getPreferenceState();
-		preferences.setValue(PreferenceState::C_WINDOW_WIDTH, width);
-		preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, height);
+		preferences.setValue(PreferenceState::Preference::C_WINDOW_WIDTH, width);
+		preferences.setValue(PreferenceState::Preference::C_WINDOW_HEIGHT, height);
 		});
 	glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xPos, double yPos) {
 		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyCursorPos(xPos, yPos);
@@ -310,28 +310,28 @@ void Engine::tick()
 	// Updated mouse states, manually
 	double mouseX, mouseY;
 	glfwGetCursorPos(m_window, &mouseX, &mouseY);
-	m_actionState[ActionState::MOUSE_L] = (float)glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT);
-	m_actionState[ActionState::MOUSE_R] = (float)glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT);
-	m_actionState[ActionState::MOUSE_X] = (float)mouseX;
-	m_actionState[ActionState::MOUSE_Y] = (float)mouseY;
-	if (m_mouseInputMode == FREE_LOOK)
+	m_actionState[ActionState::Action::MOUSE_L] = (float)glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT);
+	m_actionState[ActionState::Action::MOUSE_R] = (float)glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT);
+	m_actionState[ActionState::Action::MOUSE_X] = (float)mouseX;
+	m_actionState[ActionState::Action::MOUSE_Y] = (float)mouseY;
+	if (m_mouseInputMode == MouseInputMode::FREE_LOOK)
 		glfwSetCursorPos(m_window, 0, 0);
 
 	// Update key binding states, manually
 	if (const auto& bindings = m_inputBindings.getBindings())
 		if (bindings->existsYet())
 			for each (const auto & pair in bindings.get()->m_configuration)
-				m_actionState[pair.first] = glfwGetKey(m_window, (int)pair.second) ? 1.0f : 0.0f;
+				m_actionState[ActionState::Action(pair.first)] = glfwGetKey(m_window, (int)pair.second) ? 1.0f : 0.0f;
 
 	// Update UI module based on action state, manually
 	m_moduleUI.applyActionState(m_actionState);
 
 	// Tick relevant systems
-	if (m_engineState == in_startMenu)
+	if (m_engineState == Engine_State::in_startMenu)
 		m_moduleStartScreen.frameTick(deltaTime);
-	else if (m_engineState == in_game)
+	else if (m_engineState == Engine_State::in_game)
 		m_moduleGame.frameTick(deltaTime);
-	else if (m_engineState == in_editor)
+	else if (m_engineState == Engine_State::in_editor)
 		m_moduleEditor.frameTick(deltaTime);
 	m_moduleUI.frameTick(deltaTime);
 
@@ -364,33 +364,33 @@ void Engine::setMouseInputMode(const MouseInputMode& mode)
 {
 	m_mouseInputMode = mode;
 	switch (mode) {
-	case NORMAL:
+	case MouseInputMode::NORMAL:
 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		break;
-	case FREE_LOOK:
+	case MouseInputMode::FREE_LOOK:
 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		glfwSetCursorPos(m_window, m_actionState[ActionState::LOOK_X], m_actionState[ActionState::LOOK_Y]);
-		m_actionState[ActionState::LOOK_X] = m_actionState[ActionState::MOUSE_X];
-		m_actionState[ActionState::LOOK_Y] = m_actionState[ActionState::MOUSE_Y];
+		glfwSetCursorPos(m_window, m_actionState[ActionState::Action::LOOK_X], m_actionState[ActionState::Action::LOOK_Y]);
+		m_actionState[ActionState::Action::LOOK_X] = m_actionState[ActionState::Action::MOUSE_X];
+		m_actionState[ActionState::Action::LOOK_Y] = m_actionState[ActionState::Action::MOUSE_Y];
 		break;
 	}
 }
 
 void Engine::goToMainMenu()
 {
-	m_engineState = in_startMenu;
+	m_engineState = Engine_State::in_startMenu;
 	m_moduleStartScreen.showStartMenu();
 }
 
 void Engine::goToGame()
 {
-	m_engineState = in_game;
+	m_engineState = Engine_State::in_game;
 	m_moduleGame.showGame();
 }
 
 void Engine::goToEditor()
 {
-	m_engineState = in_editor;
+	m_engineState = Engine_State::in_editor;
 	m_moduleEditor.showEditor();
 }
 

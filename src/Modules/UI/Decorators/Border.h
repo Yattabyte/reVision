@@ -34,7 +34,7 @@ public:
 		m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 
 		// Add Callbacks
-		addCallback(UI_Element::on_resize, [&]() { updateGeometry(); });
+		addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
 	}
 
 

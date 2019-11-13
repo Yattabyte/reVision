@@ -23,7 +23,7 @@ public:
 	}
 	/** Constructor. */
 	inline explicit SSAO(Engine* engine) :
-		Graphics_Technique(SECONDARY_LIGHTING),
+		Graphics_Technique(Technique_Category::SECONDARY_LIGHTING),
 		m_engine(engine),
 		m_shader(Shared_Shader(engine, "Effects\\SSAO")),
 		m_shaderCopyAO(Shared_Shader(engine, "Effects\\SSAO To AO")),
@@ -32,14 +32,14 @@ public:
 	{
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_SSAO, m_enabled);
-		preferences.addCallback(PreferenceState::C_SSAO, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
-		preferences.getOrSetValue(PreferenceState::C_SSAO_RADIUS, m_radius);
-		preferences.addCallback(PreferenceState::C_SSAO_RADIUS, m_aliveIndicator, [&](const float& f) { m_radius = f; if (m_shader->existsYet()) m_shader->setUniform(0, m_radius); });
-		preferences.getOrSetValue(PreferenceState::C_SSAO_QUALITY, m_quality);
-		preferences.addCallback(PreferenceState::C_SSAO_QUALITY, m_aliveIndicator, [&](const float& f) { m_quality = (int)f; if (m_shader->existsYet()) m_shader->setUniform(1, m_quality); });
-		preferences.getOrSetValue(PreferenceState::C_SSAO_BLUR_STRENGTH, m_blurStrength);
-		preferences.addCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, m_aliveIndicator, [&](const float& f) { m_blurStrength = (int)f; });
+		preferences.getOrSetValue(PreferenceState::Preference::C_SSAO, m_enabled);
+		preferences.addCallback(PreferenceState::Preference::C_SSAO, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
+		preferences.getOrSetValue(PreferenceState::Preference::C_SSAO_RADIUS, m_radius);
+		preferences.addCallback(PreferenceState::Preference::C_SSAO_RADIUS, m_aliveIndicator, [&](const float& f) { m_radius = f; if (m_shader->existsYet()) m_shader->setUniform(0, m_radius); });
+		preferences.getOrSetValue(PreferenceState::Preference::C_SSAO_QUALITY, m_quality);
+		preferences.addCallback(PreferenceState::Preference::C_SSAO_QUALITY, m_aliveIndicator, [&](const float& f) { m_quality = (int)f; if (m_shader->existsYet()) m_shader->setUniform(1, m_quality); });
+		preferences.getOrSetValue(PreferenceState::Preference::C_SSAO_BLUR_STRENGTH, m_blurStrength);
+		preferences.addCallback(PreferenceState::Preference::C_SSAO_BLUR_STRENGTH, m_aliveIndicator, [&](const float& f) { m_blurStrength = (int)f; });
 
 		// Prepare the noise texture and kernel
 		std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);

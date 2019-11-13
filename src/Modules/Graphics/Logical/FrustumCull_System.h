@@ -18,9 +18,9 @@ public:
 	@param	cameras		list of all the active cameras in the scene, updated per frame. */
 	inline explicit FrustumCull_System(const std::shared_ptr<std::vector<Camera*>>& sceneCameras)
 		: m_sceneCameras(sceneCameras) {
-		addComponentType(Transform_Component::Runtime_ID, FLAG_REQUIRED);
-		addComponentType(BoundingBox_Component::Runtime_ID, FLAG_OPTIONAL);
-		addComponentType(BoundingSphere_Component::Runtime_ID, FLAG_OPTIONAL);
+		addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
+		addComponentType(BoundingBox_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
+		addComponentType(BoundingSphere_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 	}
 
 
@@ -49,9 +49,9 @@ public:
 						const auto radius = glm::distance(bboxComponent->m_min * objScale, bboxComponent->m_max * objScale) / 2.0f;
 						// Update BSphere with whether or not the camera is within it
 						if (glm::distance(camPosition, objPosition) > radius)
-							bboxComponent->m_cameraCollision = BoundingBox_Component::OUTSIDE;
+							bboxComponent->m_cameraCollision = BoundingBox_Component::CameraCollision::OUTSIDE;
 						else
-							bboxComponent->m_cameraCollision = BoundingBox_Component::INSIDE;
+							bboxComponent->m_cameraCollision = BoundingBox_Component::CameraCollision::INSIDE;
 					}
 					// Frustum x Bounding-Sphere Test
 					if (bsphereComponent) {
@@ -59,9 +59,9 @@ public:
 						const auto radius = bsphereComponent->m_radius;
 						// Update BSphere with whether or not the camera is within it
 						if (glm::distance(camPosition, objPosition) > radius)
-							bsphereComponent->m_cameraCollision = BoundingSphere_Component::OUTSIDE;
+							bsphereComponent->m_cameraCollision = BoundingSphere_Component::CameraCollision::OUTSIDE;
 						else
-							bsphereComponent->m_cameraCollision = BoundingSphere_Component::INSIDE;
+							bsphereComponent->m_cameraCollision = BoundingSphere_Component::CameraCollision::INSIDE;
 					}
 				}
 			}

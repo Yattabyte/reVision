@@ -81,9 +81,9 @@ public:
 				m_elements[m_index]->userAction(actionState);
 
 			// Switch focus last, let element try to consume input first
-			if (actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
+			if (actionState.isAction(ActionState::Action::UI_LEFT) == ActionState::State::PRESS)
 				back();
-			else if (actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS)
+			else if (actionState.isAction(ActionState::Action::UI_RIGHT) == ActionState::State::PRESS)
 				forward();
 		}
 	}

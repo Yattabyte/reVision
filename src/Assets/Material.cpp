@@ -63,16 +63,16 @@ void Material::initialize()
 
 	// Load all images
 	float materialSize = 512.0f;
-	m_engine->getPreferenceState().getOrSetValue(PreferenceState::C_MATERIAL_SIZE, materialSize);
+	m_engine->getPreferenceState().getOrSetValue(PreferenceState::Preference::C_MATERIAL_SIZE, materialSize);
 	m_images.resize(textureCount);
 	m_size = glm::ivec2((int)materialSize);
-	constexpr GLenum fillPolicies[MAX_PHYSICAL_IMAGES] = {
-		Fill_Policy::Checkered,
-		Fill_Policy::Solid,
-		Fill_Policy::Solid,
-		Fill_Policy::Solid,
-		Fill_Policy::Solid,
-		Fill_Policy::Solid
+	constexpr Fill_Policy fillPolicies[MAX_PHYSICAL_IMAGES] = {
+		Fill_Policy::CHECKERED,
+		Fill_Policy::SOLID,
+		Fill_Policy::SOLID,
+		Fill_Policy::SOLID,
+		Fill_Policy::SOLID,
+		Fill_Policy::SOLID
 	};
 	for (size_t x = 0; x < textureCount; ++x)
 		m_images[x] = Shared_Image(m_engine, m_textures[x], m_size, false, fillPolicies[x]);

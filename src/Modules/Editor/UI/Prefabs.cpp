@@ -30,10 +30,10 @@ Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor)
 
 	// Preferences
 	auto& preferences = engine->getPreferenceState();
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) { m_renderSize.x = (int)f; });
-	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) { m_renderSize.y = (int)f; });
+	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
+	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) { m_renderSize.x = (int)f; });
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) { m_renderSize.y = (int)f; });
 
 	// Load prefabs
 	populatePrefabs();
@@ -95,7 +95,7 @@ void Prefabs::addPrefab(Prefabs::Entry& prefab)
 
 void Prefabs::addPrefab(const std::vector<char>& entityData)
 {
-	Prefabs::Entry newPrefab = { "New Entity", m_prefabSubDirectory + "\\New Entity", Entry::file };
+	Prefabs::Entry newPrefab = { "New Entity", m_prefabSubDirectory + "\\New Entity", Entry::Type::FILE };
 
 	size_t dataRead(0ull);
 	while (dataRead < entityData.size())
@@ -131,7 +131,7 @@ void Prefabs::populatePrefabs(const std::string& directory)
 
 	// Add an entry to go back a folder
 	if (directory != "" && directory != "." && directory != "..")
-		m_prefabs.emplace_back(Entry{ "back", std::filesystem::relative(path.parent_path(), rootPath).string(), Entry::back, {} });
+		m_prefabs.emplace_back(Entry{ "back", std::filesystem::relative(path.parent_path(), rootPath).string(), Entry::Type::BACK, {} });
 
 
 	// If in the root folder, add hard-coded prefab entries
@@ -145,7 +145,7 @@ void Prefabs::populatePrefabs(const std::string& directory)
 			a.m_localTransform.update();
 			c.m_modelName = "FireHydrant\\FireHydrantMesh.obj";
 			ecsBaseComponent* entityComponents[] = { &a, &b, &c };
-			Prefabs::Entry entry{ "Basic Model", "", Entry::file, {m_previewWorld.makeEntity(entityComponents, 3ull, "Basic Model")} };
+			Prefabs::Entry entry{ "Basic Model", "", Entry::Type::FILE, {m_previewWorld.makeEntity(entityComponents, 3ull, "Basic Model")} };
 			addPrefab(entry);
 		}
 		/*// Basic Sun Prefab
@@ -183,7 +183,7 @@ void Prefabs::populatePrefabs(const std::string& directory)
 	for (auto& entry : std::filesystem::directory_iterator(path)) {
 		Prefabs::Entry newPrefab{ entry.path().filename().string(), std::filesystem::relative(entry, rootPath).string() };
 		if (entry.is_regular_file()) {
-			newPrefab.type = Entry::file;
+			newPrefab.type = Entry::Type::FILE;
 			std::ifstream prefabFile(entry, std::ios::beg);
 			if (prefabFile.is_open()) {
 				const auto size = std::filesystem::file_size(entry);
@@ -198,7 +198,7 @@ void Prefabs::populatePrefabs(const std::string& directory)
 			prefabFile.close();
 		}
 		else if (entry.is_directory())
-			newPrefab.type = Entry::folder;
+			newPrefab.type = Entry::Type::FOLDER;
 		addPrefab(newPrefab);
 	}
 
@@ -219,7 +219,7 @@ void Prefabs::populatePrefabs(const std::string& directory)
 void Prefabs::openPrefabEntry()
 {
 	const auto& selectedPrefab = m_prefabs[m_selectedIndex];
-	if (selectedPrefab.type == Entry::back || selectedPrefab.type == Entry::folder) {
+	if (selectedPrefab.type == Entry::Type::BACK || selectedPrefab.type == Entry::Type::FOLDER) {
 		const std::string nameCopy(selectedPrefab.path);
 		populatePrefabs(nameCopy);
 		m_selectedIndex = -1;
@@ -282,12 +282,12 @@ void Prefabs::tickThumbnails(const float& deltaTime)
 
 void Prefabs::tickWindow(const float&)
 {
-	enum PrefabOptions {
-		none,
-		open,
-		del,
-		rename
-	} prefabOption = none;
+	enum class PrefabOptions {
+		NONE,
+		OPEN,
+		DELETE,
+		RENAME
+	} prefabOption = PrefabOptions::NONE;
 
 	// Draw Prefabs window
 	if (ImGui::Begin("Prefabs", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
@@ -316,9 +316,9 @@ void Prefabs::tickWindow(const float&)
 			if (filter.PassFilter(prefab.name.c_str())) {
 				ImGui::PushID(&prefab);
 				GLuint textureID = prefab.texID;
-				if (prefab.type == Entry::back && m_texBack->existsYet())
+				if (prefab.type == Entry::Type::BACK && m_texBack->existsYet())
 					textureID = m_texBack->m_glTexID;
-				else if (prefab.type == Entry::folder && m_texFolder->existsYet())
+				else if (prefab.type == Entry::Type::FOLDER && m_texFolder->existsYet())
 					textureID = m_texFolder->m_glTexID;
 				/*else if ((prefab.type == Entry::file) && m_texMissingThumb->existsYet())
 					textureID = m_texMissingThumb->m_glTexID;*/
@@ -337,15 +337,15 @@ void Prefabs::tickWindow(const float&)
 				if (ImGui::IsItemClicked()) {
 					m_selectedIndex = count;
 					if (ImGui::IsMouseDoubleClicked(0))
-						prefabOption = open;
+						prefabOption = PrefabOptions::OPEN;
 				}
 				else if (ImGui::BeginPopupContextItem("Edit Prefab")) {
 					m_selectedIndex = count;
-					if (ImGui::MenuItem("Open")) { prefabOption = open; }
+					if (ImGui::MenuItem("Open")) { prefabOption = PrefabOptions::OPEN; }
 					ImGui::Separator();
-					if (ImGui::MenuItem("Delete")) { prefabOption = del; }
+					if (ImGui::MenuItem("Delete")) { prefabOption = PrefabOptions::DELETE; }
 					ImGui::Separator();
-					if (ImGui::MenuItem("Rename")) { prefabOption = rename; }
+					if (ImGui::MenuItem("Rename")) { prefabOption = PrefabOptions::RENAME; }
 					ImGui::EndPopup();
 				}
 				else if (ImGui::IsItemHovered()) {
@@ -370,13 +370,13 @@ void Prefabs::tickWindow(const float&)
 
 	// Do something with the option chosen
 	switch (prefabOption) {
-	case open:
+	case PrefabOptions::OPEN:
 		openPrefabEntry();
 		break;
-	case del:
+	case PrefabOptions::DELETE:
 		ImGui::OpenPopup("Delete Prefab");
 		break;
-	case rename:
+	case PrefabOptions::RENAME:
 		ImGui::OpenPopup("Rename Prefab");
 		break;
 	}

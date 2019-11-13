@@ -21,7 +21,7 @@ public:
 	}
 	/** Constructor. */
 	inline Shadow_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras) :
-		Graphics_Technique(PRIMARY_LIGHTING),
+		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_frameData(std::make_shared<ShadowData>()),
 		m_sceneCameras(cameras)
@@ -30,8 +30,8 @@ public:
 
 		// Preferences
 		auto& preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE, m_frameData->shadowSize);
-		preferences.addCallback(PreferenceState::C_SHADOW_SIZE, m_aliveIndicator, [&](const float& f) {
+		preferences.getOrSetValue(PreferenceState::Preference::C_SHADOW_SIZE, m_frameData->shadowSize);
+		preferences.addCallback(PreferenceState::Preference::C_SHADOW_SIZE, m_aliveIndicator, [&](const float& f) {
 			m_frameData->shadowSize = std::max(1.0f, f);
 			m_frameData->shadowSizeRCP = 1.0f / m_frameData->shadowSize;
 			});

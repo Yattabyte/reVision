@@ -16,11 +16,11 @@
 class Label : public UI_Element {
 public:
 	// Public Interaction Enums
-	const enum interact {
-		on_textChanged = UI_Element::last_interact_index
+	enum class Interact : int {
+		on_textChanged = (int)UI_Element::Interact::last_interact_index
 	};
 	// Public Alignment Enums
-	const enum Alignment {
+	enum class Alignment {
 		align_left = -1,
 		align_center = 0,
 		align_right = 1
@@ -115,7 +115,7 @@ public:
 		m_charCount = count;
 
 		// Notify text changed
-		enactCallback(on_textChanged);
+		enactCallback((int)Label::Interact::on_textChanged);
 	}
 	/** Retrieve this label's text.
 	@return	the text this label uses. */
@@ -160,7 +160,7 @@ protected:
 	std::string m_text = "";
 	float m_textScale = 10.0f;
 	glm::vec3 m_color = glm::vec3(1.0f);
-	Alignment m_textAlignment = align_left;
+	Alignment m_textAlignment = Alignment::align_left;
 	GLuint m_vaoID = 0, m_vboID = 0, m_charCount = 0;
 	Shared_Shader m_shader;
 	Shared_Texture m_textureFont;

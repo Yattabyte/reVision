@@ -12,7 +12,7 @@ public:
 	/** Destroy this technique. */
 	inline ~Geometry_Technique() = default;
 	/** Construct this technique. */
-	inline Geometry_Technique() : Graphics_Technique(GEOMETRY) {}
+	inline Geometry_Technique() : Graphics_Technique(Technique_Category::GEOMETRY) {}
 
 
 	// Public Interface Implementation

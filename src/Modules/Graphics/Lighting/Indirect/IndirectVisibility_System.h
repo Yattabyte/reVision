@@ -17,8 +17,8 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline explicit IndirectVisibility_System(const std::shared_ptr<Indirect_Light_Data>& frameData)
 		: m_frameData(frameData) {
-		addComponentType(Light_Component::Runtime_ID, FLAG_REQUIRED);
-		addComponentType(Shadow_Component::Runtime_ID, FLAG_REQUIRED);
+		addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
+		addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 	}
 
 
