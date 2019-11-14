@@ -26,29 +26,29 @@ class Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the asset only when all references are destroyed. */
-	inline virtual ~Asset() = default;
+	inline virtual ~Asset() noexcept = default;
 
 
 	// Public Methods
 	/** Gets the file name of this asset.
 	@return				the file name belonging to this asset. */
-	std::string getFileName() const;
+	std::string getFileName() const noexcept;
 	/** Sets the file name of this asset.
 	@param	filename	the file name to set this asset to. */
-	void setFileName(const std::string& filename);
+	void setFileName(const std::string& filename) noexcept;
 	/** Attaches a callback method to be triggered when the asset finishes loading.
 	@param	alive		a shared pointer indicating whether the caller is still alive or not.
 	@param	callback	the method to be triggered. */
-	void addCallback(const std::shared_ptr<bool>& alive, const AssetFinalizedCallback& callback);
+	void addCallback(const std::shared_ptr<bool>& alive, const AssetFinalizedCallback& callback) noexcept;
 	/** Returns whether or not this asset has completed finalizing.
 	@return				true if this asset has finished finalizing, false otherwise. */
-	bool existsYet() const;
+	bool existsYet() const noexcept;
 
 
 protected:
 	// Protected Constructors
 	/** Create asset that uses the specified file-path. */
-	Asset(Engine* engine, const std::string& filename);
+	Asset(Engine* engine, const std::string& filename) noexcept;
 
 
 	// Protected Interface
@@ -59,7 +59,7 @@ protected:
 
 	// Protected Methods
 	/** Declares this asset ready-to-use. */
-	void finalize();
+	void finalize() noexcept;
 
 
 	// Protected Attributes
@@ -73,9 +73,9 @@ protected:
 private:
 	// Private but deleted
 	/** Disallow asset assignment. */
-	inline Asset(const Asset&) = delete;
+	inline Asset(const Asset&) noexcept = delete;
 	/** Disallow asset assignment. */
-	inline const Asset& operator =(const Asset&) = delete;
+	inline const Asset& operator =(const Asset&)  noexcept = delete;
 };
 
 #endif // ASSET_H

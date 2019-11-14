@@ -15,7 +15,7 @@ class Shared_Texture final : public std::shared_ptr<Texture> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Texture() = default;
+	inline Shared_Texture() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used.
 	@param	filename		the filename to use.
@@ -24,7 +24,7 @@ public:
 	@param	anisotropy		use 16x anisotropic filtering.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Texture(Engine* engine, const std::string& filename, const GLuint& type = GL_TEXTURE_2D, const bool& mipmap = false, const bool& anisotropy = false, const bool& threaded = true);
+	explicit Shared_Texture(Engine* engine, const std::string& filename, const GLuint& type = GL_TEXTURE_2D, const bool& mipmap = false, const bool& anisotropy = false, const bool& threaded = true) noexcept;
 };
 
 /** An encapsulation of an OpenGL texture object.
@@ -35,18 +35,18 @@ class Texture final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Texture. */
-	~Texture();
+	~Texture() noexcept;
 	/** Construct the Texture.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Texture(Engine* engine, const std::string& filename);
+	Texture(Engine* engine, const std::string& filename) noexcept;
 	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory).
 	@param	type			the texture type (2D, 3D, CUBEMAP, etc).
 	@param	mipmap			use mipmaps.
 	@param	anisotropy		use 16x anisotropic filtering. */
-	Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy);
+	Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy) noexcept;
 
 
 	// Public Methods
@@ -64,7 +64,7 @@ public:
 
 private:
 	// Private Interface Implementation
-	virtual void initialize() override final;
+	virtual void initialize() noexcept override final;
 
 
 	// Private Attributes

@@ -27,8 +27,8 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void initialize(Engine* engine) override final;
-	virtual void deinitialize() override final;
+	virtual void initialize(Engine* engine) noexcept override final;
+	virtual void deinitialize() noexcept override final;
 
 
 	// Public Methods

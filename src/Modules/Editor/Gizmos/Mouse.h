@@ -26,38 +26,38 @@ class Mouse_Gizmo {
 public:
 	// Public (De)Constructors
 	/** Destroy this gizmo. */
-	~Mouse_Gizmo();
+	~Mouse_Gizmo() noexcept;
 	/** Construct this gizmo.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	Mouse_Gizmo(Engine* engine, LevelEditor_Module* editor);
+	Mouse_Gizmo(Engine* engine, LevelEditor_Module* editor) noexcept;
 
 
 	// Public Methods
 	/** Tick this gizmo, checking for input and rendering.
 	@param	deltaTime		the amount of time since the last frame. */
-	void frameTick(const float& deltaTime);
+	void frameTick(const float& deltaTime) noexcept;
 	/** Check for user input.
 	@param	deltaTime		the amount of time since the last frame. */
-	bool checkInput(const float& deltaTime);
+	bool checkInput(const float& deltaTime) noexcept;
 	/** Render this gizmo.
 	@param	deltaTime		the amount of time since the last frame. */
-	void render(const float& deltaTime);
+	void render(const float& deltaTime) noexcept;
 	/** Apply a specific transform.
 	@param	transform		the new transform to use. */
-	void setTransform(const Transform& transform);
+	void setTransform(const Transform& transform) noexcept;
 	/** Retrieve this gizmo's transform.
 	@return					the transform used by this gizmo. */
-	Transform getSelectionTransform() const;
+	Transform getSelectionTransform() const noexcept;
 	/** Retrieve this gizmo's spawn point transform.
 	@return					the transform used for spawn points. */
-	Transform getSpawnTransform() const;
+	Transform getSpawnTransform() const noexcept;
 	/** Set a specific set of entities as the selection, moving the gizmo to their center.
 	@param	entityHandles	the new set of selected entity handles to use. */
-	void setSelection(const std::vector<EntityHandle>& entityHandles);
+	void setSelection(const std::vector<EntityHandle>& entityHandles) noexcept;
 	/** Retrieve the current set of selected entities.
 	@return					the active set of selected entity handles. */
-	std::vector<EntityHandle>& getSelection();
+	std::vector<EntityHandle>& getSelection() noexcept;
 
 
 private:

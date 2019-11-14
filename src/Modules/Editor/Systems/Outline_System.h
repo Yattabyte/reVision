@@ -17,7 +17,7 @@ class Outline_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~Outline_System() {
+	inline ~Outline_System() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 
@@ -29,8 +29,10 @@ public:
 	/** Construct this system.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	inline Outline_System(Engine* engine, LevelEditor_Module* editor)
-		: m_engine(engine), m_editor(editor) {
+	inline Outline_System(Engine* engine, LevelEditor_Module* editor) noexcept :
+		m_engine(engine),
+		m_editor(editor)
+	{
 		// Declare component types used
 		addComponentType(Selected_Component::Runtime_ID);
 		addComponentType(Transform_Component::Runtime_ID);
@@ -67,7 +69,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		if (m_shader->existsYet()) {
 			// Collate all component data to generate a draw call
 			const auto& camera = m_engine->getModule_Graphics().getClientCamera()->get();
@@ -157,7 +159,7 @@ private:
 	// Private Methods
 	/** Attempt to insert the mesh supplied into the mesh map, failing only if it is already present.
 	@param	mesh		the mesh to insert only 1 copy of. */
-	inline void tryInsertModel(const Shared_Mesh& mesh) {
+	inline void tryInsertModel(const Shared_Mesh& mesh) noexcept {
 		if (m_meshMap.find(mesh) == m_meshMap.end()) {
 			// Prop hasn't been uploaded yet
 			const size_t arraySize = mesh->m_geometry.vertices.size() * (sizeof(glm::vec3) * 2);
@@ -183,7 +185,7 @@ private:
 		}
 	}
 	/** Wait on the prop fence if it still exists. */
-	inline void waitOnFence() {
+	inline void waitOnFence() noexcept {
 		if (m_fence) {
 			// Wait for data fence to be passed
 			GLenum state = GL_UNSIGNALED;
@@ -195,7 +197,7 @@ private:
 	}
 	/** Attempt to expand the props' vertex buffer if it isn't large enough.
 	@param	arraySize	the new size to use. */
-	inline void tryToExpand(const size_t& arraySize) {
+	inline void tryToExpand(const size_t& arraySize) noexcept {
 		if (m_currentSize + arraySize > m_maxCapacity) {
 			// Create new set of VBO's large enough to fit old data + desired data
 			m_maxCapacity += arraySize * 2;

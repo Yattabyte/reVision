@@ -23,7 +23,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		// Compile results PER viewport
 		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
 			auto& viewInfo = m_frameData->viewInfo[x];

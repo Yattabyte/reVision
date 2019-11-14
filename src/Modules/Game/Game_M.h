@@ -27,25 +27,25 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void initialize(Engine* engine) override final;
-	virtual void deinitialize() override final;
+	virtual void initialize(Engine* engine) noexcept override final;
+	virtual void deinitialize() noexcept override final;
 
 
 	// Public Methods
 	/** Tick this module by a specific amount of delta time.
 	@param	deltaTime		the amount of time since last frame. */
-	void frameTick(const float& deltaTime);
+	void frameTick(const float& deltaTime) noexcept;
 	/** Retrieve a reference to the currently active ecsWorld in the editor.
 	@return					reference to the currently active ecsWorld. */
-	ecsWorld& getWorld();
+	ecsWorld& getWorld() noexcept;
 	/** Render any and all of the game module's overlays to the screen.
 	@param	deltaTime		the amount of time passed since last frame. */
-	void renderOverlays(const float& deltaTime);
+	void renderOverlays(const float& deltaTime) noexcept;
 	/** Show the game. */
-	void showGame();
+	void showGame() noexcept;
 	/** Either show or hide the pause menu.
 	@param	show			whether to show or hide the pause menu. */
-	void showPauseMenu(const bool& show);
+	void showPauseMenu(const bool& show) noexcept;
 
 
 private:

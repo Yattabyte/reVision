@@ -4,13 +4,14 @@
 #include "Engine.h"
 
 
-UnsavedChangesDialogue::UnsavedChangesDialogue(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+UnsavedChangesDialogue::UnsavedChangesDialogue(Engine* engine, LevelEditor_Module* editor) noexcept :
+	m_engine(engine),
+	m_editor(editor)
 {
 	m_open = false;
 }
 
-void UnsavedChangesDialogue::tick(const float&)
+void UnsavedChangesDialogue::tick(const float&) noexcept
 {
 	// Draw 'Delete Level' confirmation
 	if (m_open) {
@@ -46,7 +47,7 @@ void UnsavedChangesDialogue::tick(const float&)
 	}
 }
 
-void UnsavedChangesDialogue::tryPrompt(const std::function<void()>& funcAfterPrompt)
+void UnsavedChangesDialogue::tryPrompt(const std::function<void()>& funcAfterPrompt) noexcept
 {
 	m_open = m_editor->hasUnsavedChanges();
 	m_func = funcAfterPrompt;
@@ -55,7 +56,7 @@ void UnsavedChangesDialogue::tryPrompt(const std::function<void()>& funcAfterPro
 		executeFunction();
 }
 
-void UnsavedChangesDialogue::executeFunction()
+void UnsavedChangesDialogue::executeFunction() noexcept
 {
 	if (m_func) {
 		m_func();

@@ -25,18 +25,18 @@ public:
 	// Public Methods
 	/** Retrieve the key-code for the current key pressed.
 	@return					the current key pressed. */
-	inline unsigned int getChar() const {
+	inline unsigned int getChar() const noexcept {
 		return m_currentChar;
 	}
 	/** Set a key-code as the current key being pressed.
 	@param	currentChar		the key to set as pressed. */
-	inline void setChar(const unsigned int& currentChar) {
+	inline void setChar(const unsigned int& currentChar) noexcept {
 		m_currentChar = currentChar;
 	}
 	/** Retrieve the key action state for a given key type.
 	@param	key				the key to check the state of.
 	@return					the action state for the given key. */
-	inline KeyboardEvent::Action getState(const KeyboardEvent::Key& key) const {
+	inline KeyboardEvent::Action getState(const KeyboardEvent::Key& key) const noexcept {
 		if (m_keyStates.find(key) != m_keyStates.end())
 			return m_keyStates.at(key);
 		return KeyboardEvent::Action::RELEASE;
@@ -44,7 +44,7 @@ public:
 	/** Set the action state for a given key.
 	@param	key				the key to set the state for.
 	@param	action			the state to set for the given key. */
-	inline void setState(const KeyboardEvent::Key& key, const KeyboardEvent::Action& action) {
+	inline void setState(const KeyboardEvent::Key& key, const KeyboardEvent::Action& action) noexcept {
 		m_keyStates[key] = action;
 	}
 

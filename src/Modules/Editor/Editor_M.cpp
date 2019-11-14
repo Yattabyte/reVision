@@ -15,7 +15,7 @@
 #include <fstream>
 
 
-void LevelEditor_Module::initialize(Engine* engine)
+void LevelEditor_Module::initialize(Engine* engine) noexcept
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: Level Editor...");
@@ -84,7 +84,7 @@ void LevelEditor_Module::initialize(Engine* engine)
 	glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 }
 
-void LevelEditor_Module::deinitialize()
+void LevelEditor_Module::deinitialize() noexcept
 {
 	m_engine->getManager_Messages().statement("Unloading Module: Level Editor...");
 
@@ -100,7 +100,7 @@ void LevelEditor_Module::deinitialize()
 	glDeleteTextures(1, &m_depthID);
 }
 
-void LevelEditor_Module::frameTick(const float& deltaTime)
+void LevelEditor_Module::frameTick(const float& deltaTime) noexcept
 {
 	if (m_active) {
 		constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -158,27 +158,27 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 	}
 }
 
-void LevelEditor_Module::setGizmoTransform(const Transform& transform)
+void LevelEditor_Module::setGizmoTransform(const Transform& transform) noexcept
 {
 	m_mouseGizmo->setTransform(transform);
 }
 
-Transform LevelEditor_Module::getGizmoTransform() const
+Transform LevelEditor_Module::getGizmoTransform() const noexcept
 {
 	return m_mouseGizmo->getSelectionTransform();
 }
 
-Transform LevelEditor_Module::getSpawnTransform() const
+Transform LevelEditor_Module::getSpawnTransform() const noexcept
 {
 	return m_mouseGizmo->getSpawnTransform();
 }
 
-const glm::vec3& LevelEditor_Module::getCameraPosition() const
+const glm::vec3& LevelEditor_Module::getCameraPosition() const noexcept
 {
 	return m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition;
 }
 
-void LevelEditor_Module::toggleAddToSelection(const EntityHandle& entityHandle)
+void LevelEditor_Module::toggleAddToSelection(const EntityHandle& entityHandle) noexcept
 {
 	auto selectionCopy = m_mouseGizmo->getSelection();
 
@@ -192,27 +192,27 @@ void LevelEditor_Module::toggleAddToSelection(const EntityHandle& entityHandle)
 	setSelection(selectionCopy);
 }
 
-bool LevelEditor_Module::hasCopy() const
+bool LevelEditor_Module::hasCopy() const noexcept
 {
 	return m_copiedData.size() ? true : false;
 }
 
-void LevelEditor_Module::openSceneInspector()
+void LevelEditor_Module::openSceneInspector() noexcept
 {
 	m_editorInterface->m_uiSceneInspector->open();
 }
 
-void LevelEditor_Module::openEntityInspector()
+void LevelEditor_Module::openEntityInspector() noexcept
 {
 	m_editorInterface->m_uiEntityInspector->open();
 }
 
-void LevelEditor_Module::openPrefabs()
+void LevelEditor_Module::openPrefabs() noexcept
 {
 	m_editorInterface->m_uiPrefabs->open();
 }
 
-void LevelEditor_Module::showEditor()
+void LevelEditor_Module::showEditor() noexcept
 {
 	m_active = true;
 	newLevel();
@@ -228,7 +228,7 @@ void LevelEditor_Module::showEditor()
 	populateRecentList();
 }
 
-void LevelEditor_Module::exit()
+void LevelEditor_Module::exit() noexcept
 {
 	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() {
 		m_engine->goToMainMenu();
@@ -240,27 +240,27 @@ void LevelEditor_Module::exit()
 		});
 }
 
-bool LevelEditor_Module::hasUnsavedChanges() const
+bool LevelEditor_Module::hasUnsavedChanges() const noexcept
 {
 	return m_unsavedChanges;
 }
 
-ecsWorld& LevelEditor_Module::getWorld()
+ecsWorld& LevelEditor_Module::getWorld() noexcept
 {
 	return m_world;
 }
 
-std::string LevelEditor_Module::getMapName() const
+std::string LevelEditor_Module::getMapName() const noexcept
 {
 	return m_currentLevelName;
 }
 
-std::deque<std::string> LevelEditor_Module::getRecentLevels() const
+std::deque<std::string> LevelEditor_Module::getRecentLevels() const noexcept
 {
 	return m_recentLevels;
 }
 
-void LevelEditor_Module::newLevel()
+void LevelEditor_Module::newLevel() noexcept
 {
 	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() {
 		m_world = ecsWorld();
@@ -273,7 +273,7 @@ void LevelEditor_Module::newLevel()
 		});
 }
 
-void LevelEditor_Module::openLevel(const std::string& name)
+void LevelEditor_Module::openLevel(const std::string& name) noexcept
 {
 	if (!std::filesystem::exists(Engine::Get_Current_Dir() + "\\Maps\\" + name)) {
 		std::dynamic_pointer_cast<MissingFileDialogue>(m_editorInterface->m_uiMissingDialogue)->notifyMissing(name);
@@ -303,14 +303,14 @@ void LevelEditor_Module::openLevel(const std::string& name)
 	}
 }
 
-void LevelEditor_Module::openLevelDialogue()
+void LevelEditor_Module::openLevelDialogue() noexcept
 {
 	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() {
 		m_editorInterface->m_uiOpenDialogue->open();
 		});
 }
 
-void LevelEditor_Module::saveLevel(const std::string& name)
+void LevelEditor_Module::saveLevel(const std::string& name) noexcept
 {
 	// Make sure the level has a valid name, otherwise open the naming dialogue
 	m_currentLevelName = name;
@@ -333,7 +333,7 @@ void LevelEditor_Module::saveLevel(const std::string& name)
 	}
 }
 
-void LevelEditor_Module::saveLevel_Internal(const std::string& name)
+void LevelEditor_Module::saveLevel_Internal(const std::string& name) noexcept
 {
 	auto& ecsWorld = getWorld();
 	const auto data = ecsWorld.serializeEntities(ecsWorld.getEntityHandles());
@@ -347,32 +347,32 @@ void LevelEditor_Module::saveLevel_Internal(const std::string& name)
 	mapFile.close();
 }
 
-void LevelEditor_Module::saveLevel()
+void LevelEditor_Module::saveLevel() noexcept
 {
 	saveLevel(m_currentLevelName);
 }
 
-void LevelEditor_Module::saveLevelDialogue()
+void LevelEditor_Module::saveLevelDialogue() noexcept
 {
 	m_editorInterface->m_uiSaveDialogue->open();
 }
 
-void LevelEditor_Module::openSettingsDialogue()
+void LevelEditor_Module::openSettingsDialogue() noexcept
 {
 	m_editorInterface->m_uiSettings->open();
 }
 
-bool LevelEditor_Module::canUndo() const
+bool LevelEditor_Module::canUndo() const noexcept
 {
 	return m_undoStack.size();
 }
 
-bool LevelEditor_Module::canRedo() const
+bool LevelEditor_Module::canRedo() const noexcept
 {
 	return m_redoStack.size();
 }
 
-void LevelEditor_Module::undo()
+void LevelEditor_Module::undo() noexcept
 {
 	if (m_undoStack.size()) {
 		// Undo the last action
@@ -387,7 +387,7 @@ void LevelEditor_Module::undo()
 	}
 }
 
-void LevelEditor_Module::redo()
+void LevelEditor_Module::redo() noexcept
 {
 	if (m_redoStack.size()) {
 		// Redo the last action
@@ -402,7 +402,7 @@ void LevelEditor_Module::redo()
 	}
 }
 
-void LevelEditor_Module::doReversableAction(const std::shared_ptr<Editor_Command>& command)
+void LevelEditor_Module::doReversableAction(const std::shared_ptr<Editor_Command>& command) noexcept
 {
 	// Clear the redo stack
 	m_redoStack = {};
@@ -421,7 +421,7 @@ void LevelEditor_Module::doReversableAction(const std::shared_ptr<Editor_Command
 	m_unsavedChanges = true;
 }
 
-void LevelEditor_Module::addToRecentList(const std::string& name)
+void LevelEditor_Module::addToRecentList(const std::string& name) noexcept
 {
 	if (std::find(m_recentLevels.cbegin(), m_recentLevels.cend(), name) != m_recentLevels.cend())
 		m_recentLevels.erase(std::remove(m_recentLevels.begin(), m_recentLevels.end(), name));
@@ -439,7 +439,7 @@ void LevelEditor_Module::addToRecentList(const std::string& name)
 	file.close();
 }
 
-void LevelEditor_Module::populateRecentList()
+void LevelEditor_Module::populateRecentList() noexcept
 {
 	// Fetch recent-list data from disk
 	m_recentLevels.clear();
@@ -454,15 +454,15 @@ void LevelEditor_Module::populateRecentList()
 	file.close();
 }
 
-void LevelEditor_Module::clearSelection()
+void LevelEditor_Module::clearSelection() noexcept
 {
 	struct Clear_Selection_Command final : Editor_Command {
 		Engine* const m_engine;
 		LevelEditor_Module* const m_editor;
 		const std::vector<EntityHandle> m_uuids_old;
-		Clear_Selection_Command(Engine* engine, LevelEditor_Module* editor)
+		Clear_Selection_Command(Engine* engine, LevelEditor_Module* editor) noexcept
 			: m_engine(engine), m_editor(editor), m_uuids_old(m_editor->getSelection()) {}
-		void switchSelection(const std::vector<EntityHandle>& uuids) {
+		void switchSelection(const std::vector<EntityHandle>& uuids) noexcept {
 			// Remove all selection components from world
 			auto& ecsWorld = m_editor->getWorld();
 			ecsWorld.updateSystem(m_editor->m_systemSelClearer.get(), 0.0f);
@@ -490,12 +490,12 @@ void LevelEditor_Module::clearSelection()
 			newTransform.update();
 			m_editor->m_mouseGizmo->setTransform(newTransform);
 		};
-		virtual void execute() override final {
+		virtual void execute() noexcept override final {
 			// Remove all selection components from world
 			m_editor->getWorld().updateSystem(m_editor->m_systemSelClearer.get(), 0.0f);
 			m_editor->m_mouseGizmo->getSelection().clear();
 		}
-		virtual void undo() override final {
+		virtual void undo() noexcept override final {
 			// Remove all selection components from world
 			auto& ecsWorld = m_editor->getWorld();
 			ecsWorld.updateSystem(m_editor->m_systemSelClearer.get(), 0.0f);
@@ -523,7 +523,7 @@ void LevelEditor_Module::clearSelection()
 			newTransform.update();
 			m_editor->m_mouseGizmo->setTransform(newTransform);
 		}
-		virtual bool join(Editor_Command* other) override final {
+		virtual bool join(Editor_Command* other) noexcept override final {
 			if (auto newCommand = dynamic_cast<Clear_Selection_Command*>(other))
 				return true;
 			return false;
@@ -534,20 +534,20 @@ void LevelEditor_Module::clearSelection()
 		doReversableAction(std::make_shared<Clear_Selection_Command>(m_engine, this));
 }
 
-void LevelEditor_Module::selectAll()
+void LevelEditor_Module::selectAll() noexcept
 {
 	setSelection(getWorld().getEntityHandles());
 }
 
-void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles)
+void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles) noexcept
 {
 	struct Set_Selection_Command final : Editor_Command {
 		Engine* const m_engine;
 		LevelEditor_Module* const m_editor;
 		std::vector<EntityHandle> m_uuids_new, m_uuids_old;
-		Set_Selection_Command(Engine* engine, LevelEditor_Module* editor, const std::vector<EntityHandle>& newSelection)
+		Set_Selection_Command(Engine* engine, LevelEditor_Module* editor, const std::vector<EntityHandle>& newSelection) noexcept
 			: m_engine(engine), m_editor(editor), m_uuids_new(newSelection), m_uuids_old(m_editor->getSelection()) {}
-		void switchSelection(const std::vector<EntityHandle>& uuids) {
+		void switchSelection(const std::vector<EntityHandle>& uuids) noexcept {
 			// Remove all selection components from world
 			auto& ecsWorld = m_editor->getWorld();
 			ecsWorld.updateSystem(m_editor->m_systemSelClearer.get(), 0.0f);
@@ -575,13 +575,13 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles)
 			newTransform.update();
 			m_editor->m_mouseGizmo->setTransform(newTransform);
 		};
-		virtual void execute() override final {
+		virtual void execute() noexcept override final {
 			switchSelection(m_uuids_new);
 		}
-		virtual void undo() override final {
+		virtual void undo() noexcept override final {
 			switchSelection(m_uuids_old);
 		}
-		virtual bool join(Editor_Command* other) override final {
+		virtual bool join(Editor_Command* other) noexcept override final {
 			if (auto newCommand = dynamic_cast<Set_Selection_Command*>(other)) {
 				// Join the 2 'new' sets together, make sure it's unique
 				m_uuids_new.insert(m_uuids_new.begin(), newCommand->m_uuids_new.cbegin(), newCommand->m_uuids_new.cend());
@@ -596,20 +596,20 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles)
 		doReversableAction(std::make_shared<Set_Selection_Command>(m_engine, this, handles));
 }
 
-const std::vector<EntityHandle>& LevelEditor_Module::getSelection() const
+const std::vector<EntityHandle>& LevelEditor_Module::getSelection() const noexcept
 {
 	return m_mouseGizmo->getSelection();
 }
 
-void LevelEditor_Module::mergeSelection()
+void LevelEditor_Module::mergeSelection() noexcept
 {
 	struct Merge_Selection_Command final : Editor_Command {
 		Engine* const m_engine;
 		LevelEditor_Module* const m_editor;
 		std::vector<EntityHandle> m_uuids;
-		Merge_Selection_Command(Engine* engine, LevelEditor_Module* editor)
+		Merge_Selection_Command(Engine* engine, LevelEditor_Module* editor) noexcept
 			: m_engine(engine), m_editor(editor), m_uuids(m_editor->getSelection()) {}
-		virtual void execute() override final {
+		virtual void execute() noexcept override final {
 			auto& ecsWorld = m_editor->getWorld();
 			// Find the root element
 			const auto& root = m_uuids[0];
@@ -621,7 +621,7 @@ void LevelEditor_Module::mergeSelection()
 				m_editor->m_mouseGizmo->getSelection() = { root };
 			}
 		}
-		virtual void undo() override final {
+		virtual void undo() noexcept override final {
 			auto& ecsWorld = m_editor->getWorld();
 			// Find the root element
 			if (auto* root = ecsWorld.getEntity(m_uuids[0])) {
@@ -631,7 +631,7 @@ void LevelEditor_Module::mergeSelection()
 						ecsWorld.unparentEntity(entityHandle);
 			}
 		}
-		virtual bool join(Editor_Command* other) override final {
+		virtual bool join(Editor_Command* other) noexcept override final {
 			if (auto newCommand = dynamic_cast<Merge_Selection_Command*>(other)) {
 				// If root is the same, continue
 				if (m_uuids[0] == newCommand->m_uuids[0]) {
@@ -649,16 +649,16 @@ void LevelEditor_Module::mergeSelection()
 		doReversableAction(std::make_shared<Merge_Selection_Command>(m_engine, this));
 }
 
-void LevelEditor_Module::groupSelection()
+void LevelEditor_Module::groupSelection() noexcept
 {
 	struct Group_Selection_Command final : Editor_Command {
 		Engine* const m_engine;
 		LevelEditor_Module* const m_editor;
 		const std::vector<EntityHandle> m_uuids;
 		EntityHandle m_rootUUID;
-		Group_Selection_Command(Engine* engine, LevelEditor_Module* editor)
+		Group_Selection_Command(Engine* engine, LevelEditor_Module* editor) noexcept
 			: m_engine(engine), m_editor(editor), m_uuids(m_editor->getSelection()) {}
-		virtual void execute() override final {
+		virtual void execute() noexcept override final {
 			// Determine a new central transform for the whole group
 			auto& ecsWorld = m_editor->getWorld();
 			Transform_Component rootTransform;
@@ -680,7 +680,7 @@ void LevelEditor_Module::groupSelection()
 			for each (auto & uuid in m_uuids)
 				ecsWorld.parentEntity(m_rootUUID, uuid);
 		}
-		virtual void undo() override final {
+		virtual void undo() noexcept override final {
 			auto& ecsWorld = m_editor->getWorld();
 			auto& selection = m_editor->m_mouseGizmo->getSelection();
 			selection.clear();
@@ -698,14 +698,14 @@ void LevelEditor_Module::groupSelection()
 		doReversableAction(std::make_shared<Group_Selection_Command>(m_engine, this));
 }
 
-void LevelEditor_Module::ungroupSelection()
+void LevelEditor_Module::ungroupSelection() noexcept
 {
 	struct Ungroup_Selection_Command final : Editor_Command {
 		Engine* const m_engine;
 		LevelEditor_Module* const m_editor;
 		const std::vector<EntityHandle> m_uuids;
 		std::vector<std::vector<EntityHandle>> m_children;
-		Ungroup_Selection_Command(Engine* engine, LevelEditor_Module* editor)
+		Ungroup_Selection_Command(Engine* engine, LevelEditor_Module* editor) noexcept
 			: m_engine(engine), m_editor(editor), m_uuids(m_editor->getSelection()) {
 			const auto& ecsWorld = m_editor->getWorld();
 			for each (const auto & entityHandle in m_uuids) {
@@ -715,13 +715,13 @@ void LevelEditor_Module::ungroupSelection()
 				m_children.push_back(childrenUUIDS);
 			}
 		}
-		virtual void execute() override final {
+		virtual void execute() noexcept override final {
 			auto& ecsWorld = m_editor->getWorld();
 			for each (const auto & entityHandle in m_uuids)
 				for each (const auto & childHandle in ecsWorld.getEntityHandles(entityHandle))
 					ecsWorld.unparentEntity(childHandle);
 		}
-		virtual void undo() override final {
+		virtual void undo() noexcept override final {
 			auto& ecsWorld = m_editor->getWorld();
 			size_t childIndex(0ull);
 			for each (const auto & enityUUID in m_uuids)
@@ -734,18 +734,18 @@ void LevelEditor_Module::ungroupSelection()
 		doReversableAction(std::make_shared<Ungroup_Selection_Command>(m_engine, this));
 }
 
-void LevelEditor_Module::makePrefab()
+void LevelEditor_Module::makePrefab() noexcept
 {
 	std::dynamic_pointer_cast<Prefabs>(m_editorInterface->m_uiPrefabs)->addPrefab(getWorld().serializeEntities(getSelection()));
 }
 
-void LevelEditor_Module::cutSelection()
+void LevelEditor_Module::cutSelection() noexcept
 {
 	copySelection();
 	deleteSelection();
 }
 
-void LevelEditor_Module::copySelection()
+void LevelEditor_Module::copySelection() noexcept
 {
 	m_copiedData.clear();
 	auto& ecsWorld = getWorld();
@@ -755,27 +755,27 @@ void LevelEditor_Module::copySelection()
 	}
 }
 
-void LevelEditor_Module::paste()
+void LevelEditor_Module::paste() noexcept
 {
 	if (m_copiedData.size())
 		addEntity(m_copiedData);
 }
 
-void LevelEditor_Module::deleteSelection()
+void LevelEditor_Module::deleteSelection() noexcept
 {
 	struct Delete_Selection_Command final : Editor_Command {
 		Engine* const m_engine;
 		LevelEditor_Module* const m_editor;
 		const std::vector<char> m_data;
 		const std::vector<EntityHandle> m_uuids;
-		Delete_Selection_Command(Engine* engine, LevelEditor_Module* editor, const std::vector<EntityHandle>& selection)
+		Delete_Selection_Command(Engine* engine, LevelEditor_Module* editor, const std::vector<EntityHandle>& selection) noexcept
 			: m_engine(engine), m_editor(editor), m_data(editor->getWorld().serializeEntities(selection)), m_uuids(selection) {}
-		virtual void execute() override final {
+		virtual void execute() noexcept override final {
 			auto& ecsWorld = m_editor->getWorld();
 			for each (const auto & entityHandle in m_uuids)
 				ecsWorld.removeEntity(entityHandle);
 		}
-		virtual void undo() override final {
+		virtual void undo() noexcept override final {
 			auto& ecsWorld = m_editor->getWorld();
 			size_t dataRead(0ull), uuidIndex(0ull);
 			while (dataRead < m_data.size() && uuidIndex < m_uuids.size())
@@ -788,7 +788,7 @@ void LevelEditor_Module::deleteSelection()
 		doReversableAction(std::make_shared<Delete_Selection_Command>(m_engine, this, selection));
 }
 
-void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const char* name)
+void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const char* name) noexcept
 {
 	struct Spawn_Component_Command final : Editor_Command {
 		Engine* m_engine;
@@ -796,14 +796,14 @@ void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const c
 		const EntityHandle m_entityHandle;
 		const char* m_componentName;
 		ComponentHandle m_componentHandle;
-		Spawn_Component_Command(Engine* engine, LevelEditor_Module* editor, const EntityHandle& entityHandle, const char* name)
+		Spawn_Component_Command(Engine* engine, LevelEditor_Module* editor, const EntityHandle& entityHandle, const char* name) noexcept
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentName(name) {}
-		virtual void execute() override final {
+		virtual void execute() noexcept override final {
 			auto& ecsWorld = m_editor->getWorld();
 			if (const auto& componentID = ecsWorld.nameToComponentID(m_componentName))
 				m_componentHandle = ecsWorld.makeComponent(m_entityHandle, *componentID, nullptr, m_componentHandle);
 		}
-		virtual void undo() override final {
+		virtual void undo() noexcept override final {
 			auto& ecsWorld = m_editor->getWorld();
 			if (const auto& componentID = ecsWorld.nameToComponentID(m_componentName)) {
 				for each (auto & component in ecsWorld.getEntity(m_entityHandle)->m_components) {
@@ -820,7 +820,7 @@ void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const c
 	doReversableAction(std::make_shared<Spawn_Component_Command>(m_engine, this, entityHandle, name));
 }
 
-void LevelEditor_Module::deleteComponent(const EntityHandle& entityHandle, const int& componentID)
+void LevelEditor_Module::deleteComponent(const EntityHandle& entityHandle, const int& componentID) noexcept
 {
 	struct Delete_Component_Command final : Editor_Command {
 		Engine* m_engine;
@@ -829,16 +829,16 @@ void LevelEditor_Module::deleteComponent(const EntityHandle& entityHandle, const
 		const ComponentHandle m_componentHandle;
 		const int m_componentID;
 		std::vector<char> m_componentData;
-		Delete_Component_Command(Engine* engine, LevelEditor_Module* editor, const EntityHandle& entityHandle, const ComponentHandle& componentHandle, const int componentID)
+		Delete_Component_Command(Engine* engine, LevelEditor_Module* editor, const EntityHandle& entityHandle, const ComponentHandle& componentHandle, const int& componentID) noexcept
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentHandle(componentHandle), m_componentID(componentID) {
 			auto& ecsWorld = m_editor->getWorld();
 			if (const auto& component = ecsWorld.getComponent(m_entityHandle, m_componentID))
 				m_componentData = component->to_buffer();
 		}
-		virtual void execute() override final {
+		virtual void execute() noexcept override final {
 			m_editor->getWorld().removeEntityComponent(m_entityHandle, m_componentID);
 		}
-		virtual void undo() override final {
+		virtual void undo() noexcept override final {
 			if (m_componentData.size()) {
 				size_t dataRead(0ull);
 				const auto& copy = ecsBaseComponent::from_buffer(m_componentData.data(), dataRead);
@@ -851,7 +851,7 @@ void LevelEditor_Module::deleteComponent(const EntityHandle& entityHandle, const
 		doReversableAction(std::make_shared<Delete_Component_Command>(m_engine, this, entityHandle, component->m_handle, componentID));
 }
 
-void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const EntityHandle& parentUUID)
+void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const EntityHandle& parentUUID) noexcept
 {
 	struct Spawn_Command final : Editor_Command {
 		Engine* m_engine;
@@ -860,9 +860,9 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const En
 		const EntityHandle m_parentUUID;
 		const Transform m_cursor;
 		std::vector<EntityHandle> m_uuids;
-		Spawn_Command(Engine* engine, LevelEditor_Module* editor, const std::vector<char>& data, const EntityHandle& pUUID)
+		Spawn_Command(Engine* engine, LevelEditor_Module* editor, const std::vector<char>& data, const EntityHandle& pUUID) noexcept
 			: m_engine(engine), m_editor(editor), m_data(data), m_parentUUID(pUUID), m_cursor(m_editor->getSpawnTransform()) {}
-		virtual void execute() override final {
+		virtual void execute() noexcept override final {
 			auto& ecsWorld = m_editor->getWorld();
 			size_t dataRead(0ull), handleCount(0ull);
 			glm::vec3 center(0.0f);
@@ -889,7 +889,7 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const En
 				transform->m_localTransform.update();
 			}
 		}
-		virtual void undo() override final {
+		virtual void undo() noexcept override final {
 			auto& ecsWorld = m_editor->getWorld();
 			for each (const auto & entityHandle in m_uuids)
 				ecsWorld.removeEntity(entityHandle);
@@ -900,12 +900,12 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const En
 		doReversableAction(std::make_shared<Spawn_Command>(m_engine, this, entityData, parentUUID));
 }
 
-void LevelEditor_Module::bindFBO()
+void LevelEditor_Module::bindFBO() noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 }
 
-void LevelEditor_Module::bindTexture(const GLuint& offset)
+void LevelEditor_Module::bindTexture(const GLuint& offset) noexcept
 {
 	glBindTextureUnit(offset, m_texID);
 }

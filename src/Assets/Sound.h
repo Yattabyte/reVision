@@ -15,13 +15,13 @@ class Shared_Sound final : public std::shared_ptr<Sound> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Sound() = default;
+	inline Shared_Sound() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Sound(Engine* engine, const std::string& filename, const bool& threaded = true);
+	explicit Shared_Sound(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** A sound byte object.
@@ -31,11 +31,11 @@ class Sound : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Sound. */
-	~Sound();
+	~Sound() noexcept;
 	/** Construct the Sound.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Sound(Engine* engine, const std::string& filename);
+	Sound(Engine* engine, const std::string& filename) noexcept;
 
 
 	// Public Attributes
@@ -44,7 +44,7 @@ public:
 
 protected:
 	// Private Interface Implementation
-	virtual void initialize() override final;
+	virtual void initialize() noexcept override final;
 
 
 	// Private Attributes

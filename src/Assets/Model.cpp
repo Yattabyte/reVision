@@ -4,7 +4,7 @@
 
 constexpr char* DIRECTORY_MODEL = "\\Models\\";
 
-Shared_Model::Shared_Model(Engine* engine, const std::string& filename, const bool& threaded)
+Shared_Model::Shared_Model(Engine* engine, const std::string& filename, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Model>*)(this)) = std::dynamic_pointer_cast<Model>(
 		engine->getManager_Assets().shareAsset(
@@ -15,9 +15,9 @@ Shared_Model::Shared_Model(Engine* engine, const std::string& filename, const bo
 		));
 }
 
-Model::Model(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
+Model::Model(Engine* engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
-void Model::initialize()
+void Model::initialize() noexcept
 {
 	// Forward asset creation
 	m_mesh = Shared_Mesh(m_engine, DIRECTORY_MODEL + getFileName(), false);

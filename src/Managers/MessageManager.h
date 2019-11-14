@@ -21,19 +21,19 @@ public:
 	// Public Methods
 	/** Prints a general statement into the console.
 	@param	input	std::string message to print */
-	void statement(const std::string& input);
+	void statement(const std::string& input) noexcept;
 	/** Prints a warning message into the console.
 	@param	input	std::string message to print */
-	void warning(const std::string& input);
+	void warning(const std::string& input) noexcept;
 	/** Prints an error message into the console.
 	@param	input	the error message to be displayed. */
-	void error(const std::string& input);
+	void error(const std::string& input) noexcept;
 
 
 private:
 	// Private Methods
 	/** A helper function that writes the message to a log and to the console. */
-	void textOutput(const std::string& output);
+	void textOutput(const std::string& output) noexcept;
 
 
 	// Private Attributes

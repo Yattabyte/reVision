@@ -16,11 +16,11 @@ public:
 	inline ~CameraController() = default;
 	/** Construct a camera controller.
 	@param	engine		the currently active engine. */
-	explicit CameraController(Engine* engine);
+	explicit CameraController(Engine* engine) noexcept;
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override final;
+	virtual void tick(const float& deltaTime) noexcept override final;
 
 
 private:

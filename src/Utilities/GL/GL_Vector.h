@@ -14,7 +14,7 @@ class GL_Vector final : public Buffer_Interface {
 public:
 	// Public (De)Constructors
 	/** Destroy this GL Vector. */
-	inline ~GL_Vector() {
+	inline ~GL_Vector() noexcept {
 		// Safely destroy each buffer this class owns
 		for (int x = 0; x < BufferCount; ++x) {
 			WaitForFence(m_writeFence[x]);
@@ -27,7 +27,7 @@ public:
 	}
 	/** Construct a GL Vector.
 	@param	capacity		the starting capacity (1 or more). */
-	inline GL_Vector(const size_t& capacity = 1) : m_capacity(std::max(1ull, capacity)) {
+	inline GL_Vector(const size_t& capacity = 1) noexcept : m_capacity(std::max(1ull, capacity)) {
 		// Zero-initialize our starting variables
 		for (int x = 0; x < BufferCount; ++x) {
 			m_bufferID[x] = 0;
@@ -52,12 +52,12 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void bindBuffer(const GLenum& target) const override final {
+	inline virtual void bindBuffer(const GLenum& target) const noexcept override final {
 		// Ensure writing has finished before reading
 		//WaitForFence(m_writeFence[m_index]);
 		glBindBuffer(target, m_bufferID[m_index]);
 	}
-	inline virtual void bindBufferBase(const GLenum& target, const GLuint& index) const override final {
+	inline virtual void bindBufferBase(const GLenum& target, const GLuint& index) const noexcept override final {
 		// Ensure writing has finished before reading
 		//WaitForFence(m_writeFence[m_index]);
 		glBindBufferBase(target, index, m_bufferID[m_index]);
@@ -66,18 +66,18 @@ public:
 
 	// Public Methods
 	/** Prepare this buffer for writing, waiting on any unfinished reads. */
-	inline void beginWriting() const {
+	inline void beginWriting() const noexcept {
 		// Ensure all reads and writes at this index have finished.
 		WaitForFence(m_writeFence[m_index]);
 		WaitForFence(m_readFence[m_index]);
 	}
 	/** Signal that this multi-buffer is finished being written to. */
-	inline void endWriting() const {
+	inline void endWriting() const noexcept {
 		if (!m_writeFence[m_index])
 			m_writeFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	}
 	/** Signal that this multi-buffer is finished being read from. */
-	inline void endReading() {
+	inline void endReading() noexcept {
 		if (!m_readFence[m_index])
 			m_readFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		m_index = (m_index + 1) % BufferCount;
@@ -87,7 +87,7 @@ public:
 	@note					Currently, only grows, never shrinks
 	@note					May stall waiting for old buffers to finish, invalidate them.
 	@param	newCapacity		the new desired capacity. */
-	inline void resize(const size_t& newCapacity) {
+	inline void resize(const size_t& newCapacity) noexcept {
 		// See if we must expand this container
 		if (newCapacity > m_capacity) {
 			// Calculate old and new byte sizes
@@ -121,7 +121,7 @@ public:
 	}
 	/** Retrieve the length of this vector (the number of elements in it).
 	@return					the number of elements in this array. */
-	inline size_t getLength() const {
+	inline size_t getLength() const noexcept {
 		return m_capacity;
 	}
 	/** Assignment operator, for moving another buffer into this one.
@@ -147,7 +147,7 @@ public:
 	/** Index operator, retrieve a reference to the element at the index specified.
 	@param	index			an index to the element desired.
 	@return					reference to the element desired. */
-	inline T& operator [] (const size_t& index) {
+	inline T& operator [] (const size_t& index) noexcept {
 		return m_bufferPtr[m_index][index];
 	}
 
@@ -156,7 +156,7 @@ private:
 	// Private Methods
 	/** Wait for the fence at the supplied index to pass.
 	@param	fence			the fence belonging to a particular internal buffer. */
-	static void WaitForFence(GLsync& fence) {
+	static void WaitForFence(GLsync& fence) noexcept {
 		while (fence) {
 			GLbitfield waitFlags = 0;
 			if (auto waitReturn = glClientWaitSync(fence, waitFlags, 1);

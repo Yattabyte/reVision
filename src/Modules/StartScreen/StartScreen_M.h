@@ -20,16 +20,16 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void initialize(Engine* engine) override final;
-	virtual void deinitialize() override final;
+	virtual void initialize(Engine* engine) noexcept override final;
+	virtual void deinitialize() noexcept override final;
 
 
 	// Public Methods
 	/** Tick this module by a specific amount of delta time.
 	@param	deltaTime		the amount of time since last frame. */
-	void frameTick(const float& deltaTime);
+	void frameTick(const float& deltaTime) noexcept;
 	/** Display the start menu. */
-	void showStartMenu();
+	void showStartMenu() noexcept;
 
 
 private:

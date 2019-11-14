@@ -8,7 +8,7 @@
 #include "Engine.h"
 
 
-void Game_Module::initialize(Engine* engine)
+void Game_Module::initialize(Engine* engine) noexcept
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: Game...");
@@ -34,12 +34,12 @@ void Game_Module::initialize(Engine* engine)
 		});
 }
 
-void Game_Module::deinitialize()
+void Game_Module::deinitialize() noexcept
 {
 	m_engine->getManager_Messages().statement("Unloading Module: Game...");
 }
 
-void Game_Module::frameTick(const float& deltaTime)
+void Game_Module::frameTick(const float& deltaTime) noexcept
 {
 	auto& actionState = m_engine->getActionState();
 	if (m_gameState == Game_State::in_pauseMenu || m_gameState == Game_State::in_game) {
@@ -65,25 +65,25 @@ void Game_Module::frameTick(const float& deltaTime)
 	renderOverlays(deltaTime);
 }
 
-ecsWorld& Game_Module::getWorld()
+ecsWorld& Game_Module::getWorld() noexcept
 {
 	return m_world;
 }
 
-void Game_Module::renderOverlays(const float& deltaTime)
+void Game_Module::renderOverlays(const float& deltaTime) noexcept
 {
 	m_loadingRing->applyEffect(deltaTime);
 	m_frameTime->applyEffect(deltaTime);
 }
 
-void Game_Module::showGame()
+void Game_Module::showGame() noexcept
 {
 	m_gameState = Game_State::in_game;
 	//m_engine->getModule_World().loadWorld("a.bmap");
 	m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
 }
 
-void Game_Module::showPauseMenu(const bool& show)
+void Game_Module::showPauseMenu(const bool& show) noexcept
 {
 	if (show) {
 		m_engine->setMouseInputMode(Engine::MouseInputMode::NORMAL);

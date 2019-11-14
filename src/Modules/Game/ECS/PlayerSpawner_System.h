@@ -15,12 +15,12 @@ class PlayerSpawn_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this free-look system. */
-	inline ~PlayerSpawn_System() {
+	inline ~PlayerSpawn_System() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Construct a free-look system. */
-	inline PlayerSpawn_System(Engine* engine, Game_Module* game)
+	inline PlayerSpawn_System(Engine* engine, Game_Module* game) noexcept
 		: m_engine(engine), m_game(game) {
 		// Declare component types used
 		addComponentType(PlayerSpawn_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
@@ -33,7 +33,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		for each (const auto & componentParam in components) {
 			//auto* spawnComponent = static_cast<PlayerSpawn_Component*>(componentParam[0]);
 			auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);

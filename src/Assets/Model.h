@@ -20,13 +20,13 @@ class Shared_Model final : public std::shared_ptr<Model> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Model() = default;
+	inline Shared_Model() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Model(Engine* engine, const std::string& filename, const bool& threaded = true);
+	explicit Shared_Model(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** A 3D mesh formated for model rendering.
@@ -37,11 +37,11 @@ class Model final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Model. */
-	inline ~Model() = default;
+	inline ~Model() noexcept = default;
 	/** Construct the Model.
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
-	Model(Engine* engine, const std::string& filename);
+	Model(Engine* engine, const std::string& filename) noexcept;
 
 
 	// Public Attributes
@@ -74,7 +74,7 @@ private:
 
 
 	// Private Interface Implementation
-	virtual void initialize() override final;
+	virtual void initialize() noexcept override final;
 
 
 	// Private Attributes

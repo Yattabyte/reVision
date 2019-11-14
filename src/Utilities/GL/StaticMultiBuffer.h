@@ -12,7 +12,7 @@ class StaticMultiBuffer final : public Buffer_Interface {
 public:
 	// Public (De)Constructors
 	/** Wait on this buffers fences, then destroy it. */
-	inline ~StaticMultiBuffer() {
+	inline ~StaticMultiBuffer() noexcept {
 		for (int x = 0; x < BufferCount; ++x) {
 			WaitForFence(m_writeFence[x]);
 			WaitForFence(m_readFence[x]);
@@ -23,7 +23,7 @@ public:
 		}
 	}
 	/** Default Constructor. */
-	inline StaticMultiBuffer() {
+	inline StaticMultiBuffer() noexcept {
 		// Zero-initialize our starting variables
 		for (int x = 0; x < BufferCount; ++x) {
 			m_bufferID[x] = 0;
@@ -36,7 +36,7 @@ public:
 	@param	size			the starting size of this buffer.
 	@param	data			optional data buffer, must be at least as large.
 	@param	storageFlags	optional bit-field flags. */
-	inline explicit StaticMultiBuffer(const GLsizeiptr& size, const void* data = 0, const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT)
+	inline explicit StaticMultiBuffer(const GLsizeiptr& size, const void* data = 0, const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT) noexcept
 		: m_size(size) {
 		// Zero-initialize our starting variables
 		for (int x = 0; x < BufferCount; ++x) {
@@ -55,7 +55,7 @@ public:
 		}
 	}
 	/** Construct a new Static Multi-Buffer, from another buffer. */
-	inline StaticMultiBuffer(const StaticMultiBuffer& other)
+	inline StaticMultiBuffer(const StaticMultiBuffer& other) noexcept
 		: StaticMultiBuffer(other.m_size, 0) {
 		// Zero-initialize our starting variables
 		for (int x = 0; x < BufferCount; ++x) {
@@ -75,12 +75,12 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void bindBuffer(const GLenum& target) const override final {
+	inline virtual void bindBuffer(const GLenum& target) const noexcept override final {
 		// Ensure writing has finished before reading
 		//WaitForFence(m_writeFence[m_index]);
 		glBindBuffer(target, m_bufferID[m_index]);
 	}
-	inline virtual void bindBufferBase(const GLenum& target, const GLuint& index) const override final {
+	inline virtual void bindBufferBase(const GLenum& target, const GLuint& index) const noexcept override final {
 		// Ensure writing has finished before reading
 		//WaitForFence(m_writeFence[m_index]);
 		glBindBufferBase(target, index, m_bufferID[m_index]);
@@ -92,22 +92,22 @@ public:
 	@param	offset			byte offset from the beginning
 	@param	size			the size of the data to write
 	@param	data			the data to write */
-	inline void write(const GLsizeiptr& offset, const GLsizeiptr& size, const void* data) {
+	inline void write(const GLsizeiptr& offset, const GLsizeiptr& size, const void* data) noexcept {
 		std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr[m_index]) + offset, data, size);
 	}
 	/** Prepare this buffer for writing, waiting on any unfinished reads. */
-	inline void beginWriting() const {
+	inline void beginWriting() const noexcept {
 		// Ensure all reads and writes at this index have finished.
 		WaitForFence(m_writeFence[m_index]);
 		WaitForFence(m_readFence[m_index]);
 	}
 	/** Signal that this multi-buffer is finished being written to. */
-	inline void endWriting() const {
+	inline void endWriting() const noexcept {
 		if (!m_writeFence[m_index])
 			m_writeFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	}
 	/** Signal that this multi-buffer has finished being read from. */
-	inline void endReading() {
+	inline void endReading() noexcept {
 		if (!m_readFence[m_index])
 			m_readFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		m_index = (m_index + 1) % BufferCount;
@@ -138,7 +138,7 @@ private:
 	// Private Methods
 	/** Wait for the fence at the supplied index to pass.
 	@param	fence			the fence belonging to a particular internal buffer. */
-	static void WaitForFence(GLsync& fence) {
+	static void WaitForFence(GLsync& fence) noexcept {
 		while (fence) {
 			GLbitfield waitFlags = 0;
 			if (auto waitReturn = glClientWaitSync(fence, waitFlags, 1);

@@ -16,15 +16,15 @@ class Editor_Interface {
 public:
 	// Public (De)Constructors
 	/** Destroy the level editor UI. */
-	~Editor_Interface();
+	~Editor_Interface() noexcept;
 	/** Creates the level editor UI.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	Editor_Interface(Engine* engine, LevelEditor_Module* editor);
+	Editor_Interface(Engine* engine, LevelEditor_Module* editor) noexcept;
 
 
 	// Public Methods
-	void tick(const float& deltaTime);
+	void tick(const float& deltaTime) noexcept;
 
 
 	// Public Attributes
@@ -58,9 +58,9 @@ struct ImGUI_Element {
 	inline virtual ~ImGUI_Element() = default;
 	inline ImGUI_Element() = default;
 	bool m_open = true;
-	inline void open() { m_open = true; }
-	inline void close() { m_open = false; }
-	inline virtual void tick(const float& deltaTime) {};
+	inline void open() noexcept { m_open = true; }
+	inline void close() noexcept { m_open = false; }
+	inline virtual void tick(const float& deltaTime) noexcept {};
 };
 
 #endif // EDITOR_INTERFACE_H

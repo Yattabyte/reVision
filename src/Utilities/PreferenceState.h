@@ -17,13 +17,13 @@ class PreferenceState {
 public:
 	// (De)Constructors
 	/** Destroy the preference state. */
-	inline ~PreferenceState() {
+	inline ~PreferenceState() noexcept {
 		save();
 	}
 	/** Construct the preference state.
 	@param	engine		the engine
 	@param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
-	inline explicit PreferenceState(Engine* engine, const std::string& filename = "preferences") : m_engine(engine) {
+	inline explicit PreferenceState(Engine* engine, const std::string& filename = "preferences") noexcept : m_engine(engine) {
 		loadFile(filename);
 	}
 
@@ -123,11 +123,11 @@ public:
 	// Public Methods
 	/** Loads a preference file from disk.
 	@param	filename	the relative path to the preference file to load */
-	inline void loadFile(const std::string& filename) {
+	inline void loadFile(const std::string& filename) noexcept {
 		m_preferences = Shared_Config(m_engine, filename, PreferenceState::Preference_Strings(), false);
 	}
 	/** Saves the preference file to disk, using the same filename as when loaded. */
-	inline void save() {
+	inline void save() noexcept {
 		if (m_preferences->existsYet())
 			m_preferences->saveConfig();
 	}
@@ -135,7 +135,7 @@ public:
 	@param	targetKey	the preference key to look up
 	@param	container	the object to update */
 	template <typename T>
-	inline void getOrSetValue(const Preference& targetKey, T& container) {
+	inline void getOrSetValue(const Preference& targetKey, T& container) noexcept {
 		if (m_preferences->existsYet()) {
 			const float value = m_preferences->getValue((unsigned int)targetKey);
 
@@ -151,7 +151,7 @@ public:
 	@param	targetValue	the value to tie to the key supplied
 	@param	<T>			the value type to use */
 	template <typename T>
-	inline void setValue(const Preference& targetKey, const T& targetValue) {
+	inline void setValue(const Preference& targetKey, const T& targetValue) noexcept {
 		const float castValue = (float)targetValue;
 		if (m_preferences) {
 			m_preferences->setValue((unsigned int)targetKey, castValue);
@@ -172,7 +172,7 @@ public:
 	@param	targetKey	the preference-ID to which this callback will be attached
 	@param	alive		the
 	@param	callback	the method to be triggered on value update */
-	inline void addCallback(const Preference& targetKey, const std::shared_ptr<bool>& alive, const std::function<void(float)>& callback) {
+	inline void addCallback(const Preference& targetKey, const std::shared_ptr<bool>& alive, const std::function<void(float)>& callback) noexcept {
 		m_callbacks[targetKey].emplace_back(std::make_pair(alive, callback));
 	}
 

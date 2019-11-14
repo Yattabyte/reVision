@@ -27,19 +27,19 @@ using ComponentFreeFunction = std::function<void(ecsBaseComponent * comp)>;
 struct ecsBaseComponent {
 	// Public (De)Constructors
 	inline virtual ~ecsBaseComponent() = default;
-	inline ecsBaseComponent(const ComponentID& ID, const size_t& size, const char* name)
+	inline ecsBaseComponent(const ComponentID& ID, const size_t& size, const char* name) noexcept
 		: m_runtimeID(ID), m_size(size), m_name(name) { }
 
 
 	// Public Methods
 	/** Save this component to a char buffer. Fulfilled by sub-class using CRTP.
 	@return				serialized version of self. */
-	virtual std::vector<char> to_buffer() = 0;
+	virtual std::vector<char> to_buffer() noexcept = 0;
 	/** Recover and generate a component from a char buffer.
 	@param	data		serialized version of component.
 	@param	dataRead	reference updated with the number of bytes read.
 	@return				if successful a shared pointer to a new component, nullptr otherwise. */
-	static std::shared_ptr<ecsBaseComponent> from_buffer(const char* data, size_t& dataRead);
+	static std::shared_ptr<ecsBaseComponent> from_buffer(const char* data, size_t& dataRead) noexcept;
 
 
 	// Public Attributes
@@ -64,10 +64,10 @@ protected:
 	@param	string		type-name of the component, for name-lookups between since component ID's can change.
 	@param	templateC	template component used for copying from.
 	@return				runtime component ID. */
-	static ComponentID registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string);
+	static ComponentID registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string) noexcept;
 	/** Recover and load component data into this component from a char buffer.
 	@param	data		serialized component data. */
-	virtual void recover_data(const char* data) = 0;
+	virtual void recover_data(const char* data) noexcept = 0;
 
 
 	// Protected Attributes
@@ -86,25 +86,25 @@ template <typename C, const char* chars>
 struct ecsComponent : public ecsBaseComponent {
 	// (De)Constructors
 	inline virtual ~ecsComponent() = default;
-	inline ecsComponent() : ecsBaseComponent(ecsComponent::Runtime_ID, sizeof(C), chars) {}
+	inline ecsComponent() noexcept : ecsBaseComponent(ecsComponent::Runtime_ID, sizeof(C), chars) {}
 
 
 	// Public Methods
 	/** Default serialization method.
 	@return				serialized component data. */
-	inline std::vector<char> serialize() {
+	inline std::vector<char> serialize() noexcept {
 		std::vector<char> data(sizeof(C));
 		(*reinterpret_cast<C*>(&data[0])) = (*static_cast<C*>(this));
 		return data;
 	}
 	/** Default deserialization method.
 	@param	data		serialized component data. */
-	inline void deserialize(const char* data) {
+	inline void deserialize(const char* data) noexcept {
 		(*static_cast<C*>(this)) = (*(C*)(&data[0]));
 	}
 	/** Save this component to a char buffer.
 	@return				serialized version of self. */
-	inline virtual std::vector<char> to_buffer() override {
+	inline virtual std::vector<char> to_buffer() noexcept override {
 		// Get portable name data
 		const auto charCount = (int)std::string(chars).size();
 		std::vector<char> nameData(sizeof(unsigned int) + (charCount * sizeof(char)));
@@ -134,7 +134,7 @@ struct ecsComponent : public ecsBaseComponent {
 
 protected:
 	// Protected Interface Implementation
-	inline virtual void recover_data(const char* data) override final {
+	inline virtual void recover_data(const char* data) noexcept override final {
 		// Previously recovered type name, created this class
 		// Next recover data
 		static_cast<C*>(this)->deserialize(data);
@@ -157,7 +157,7 @@ protected:
 @param	comp			temporary pre-constructed component to copy data from, or nullptr.
 @return					the index into the memory array where this component was created at. */
 template <typename C>
-inline constexpr static const int createFn(ComponentDataSpace& memory, const ComponentHandle& componentHandle, const EntityHandle& entityHandle, const ecsBaseComponent* comp = nullptr) {
+inline constexpr static const int createFn(ComponentDataSpace& memory, const ComponentHandle& componentHandle, const EntityHandle& entityHandle, const ecsBaseComponent* comp = nullptr) noexcept {
 	const size_t index = memory.size();
 	memory.resize(index + sizeof(C));
 	C* component = comp ? new(&memory[index])C(*(C*)comp) : new(&memory[index])C();
@@ -169,14 +169,14 @@ inline constexpr static const int createFn(ComponentDataSpace& memory, const Com
 /** Construct a new component of type <C> on the heap.
 @return					shared pointer to the new component. */
 template <typename C>
-inline constexpr static const auto newFn() {
+inline constexpr static const auto newFn() noexcept {
 	return std::make_shared<C>();
 }
 
 /** Destructs the supplied component, invalidating the memory range it occupied.
 @param	comp			the component to destruct. */
 template <typename C>
-inline constexpr static const void freeFn(ecsBaseComponent* comp) {
+inline constexpr static const void freeFn(ecsBaseComponent* comp) noexcept {
 	(static_cast<C*>(comp))->~C();
 }
 

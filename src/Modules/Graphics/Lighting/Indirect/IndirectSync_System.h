@@ -25,7 +25,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		// Resize light buffers to match number of entities this frame
 		m_frameData->lightBuffer.resize(components.size());
 		m_frameData->lightBuffer.beginWriting();

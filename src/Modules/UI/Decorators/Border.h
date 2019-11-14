@@ -11,7 +11,7 @@ class Border : public UI_Decorator {
 public:
 	// Public (De)Constructors
 	/** Destroy the border. */
-	inline ~Border() {
+	inline ~Border() noexcept {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
@@ -19,8 +19,8 @@ public:
 	/** Construct a border, decorating the supplied component.
 	@param	engine		the engine to use.
 	@param	component	the component to decorate. */
-	inline Border(Engine* engine, const std::shared_ptr<UI_Element>& component)
-		: UI_Decorator(engine, component),
+	inline Border(Engine* engine, const std::shared_ptr<UI_Element>& component) noexcept :
+		UI_Decorator(engine, component),
 		m_shader(Shared_Shader(engine, "UI\\Border")) {
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
@@ -39,7 +39,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override {
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet()) return;
 		const glm::vec2 newPosition = position + m_position;
@@ -61,30 +61,30 @@ public:
 	// Public Methods
 	/** Set the border size for this decorator.
 	@param		size		the new border size to use. */
-	inline void setBorderSize(const float& size) {
+	inline void setBorderSize(const float& size) noexcept {
 		m_borderSize = size;
 		updateGeometry();
 	}
 	/** Retrieve the border size of this decorator.
 	@return					the size of the border this decorator uses. */
-	inline float getBorderSize() const {
+	inline float getBorderSize() const noexcept {
 		return m_borderSize;
 	}
 	/** Set the border color.
 	@param		size		the new border color to use. */
-	inline void setBorderColor(const glm::vec3& color) {
+	inline void setBorderColor(const glm::vec3& color) noexcept {
 		m_borderColor = color;
 	}
 	/** Retrieve the border color of this decorator.
 	@return					the color of the border this decorator uses. */
-	inline glm::vec3 getBorderColor() const {
+	inline glm::vec3 getBorderColor() const noexcept {
 		return m_borderColor;
 	}
 
 
 protected:
 	// Protected Methods
-	inline void updateGeometry() {
+	inline void updateGeometry() noexcept {
 		constexpr auto num_data = 8 * 3;
 		std::vector<glm::vec3> data(num_data);
 

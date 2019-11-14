@@ -18,17 +18,17 @@ public:
 	/** Construct a settings dialogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
-	Settings(Engine* engine, LevelEditor_Module* editor);
+	Settings(Engine* engine, LevelEditor_Module* editor) noexcept;
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override final;
+	virtual void tick(const float& deltaTime) noexcept override final;
 
 
 private:
 	// Private Methods
 	/** Tick the main dialogue, rendering it and performing all logic. */
-	void tickMainDialogue();
+	void tickMainDialogue() noexcept;
 
 
 	// Private Attributes

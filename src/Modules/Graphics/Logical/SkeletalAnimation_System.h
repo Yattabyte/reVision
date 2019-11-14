@@ -22,7 +22,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		for each (const auto & componentParam in components) {
 			auto* skeletonComponent = static_cast<Skeleton_Component*>(componentParam[0]);
 

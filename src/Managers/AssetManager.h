@@ -33,19 +33,19 @@ public:
 	@param	constructor			a construction method, for creating the asset should it be needed.
 	@param	threaded			flag to create in a separate thread.
 	@return						the asset, if found, or blank otherwise. */
-	[[nodiscard]] Shared_Asset shareAsset(const char* assetType, const std::string& filename, const std::function<Shared_Asset(void)>& constructor, const bool& threaded);
+	[[nodiscard]] Shared_Asset shareAsset(const char* assetType, const std::string& filename, const std::function<Shared_Asset(void)>& constructor, const bool& threaded) noexcept;
 	/** Pop's the first work order and completes it. */
-	void beginWorkOrder();
+	void beginWorkOrder() noexcept;
 	/** Forwards an asset-is-finalized notification request, which will be activated from the main thread. */
-	void submitNotifyee(const std::pair<std::shared_ptr<bool>, std::function<void()>>& callBack);
+	void submitNotifyee(const std::pair<std::shared_ptr<bool>, std::function<void()>>& callBack) noexcept;
 	/** From the main thread, calls all notification calls (for completed asset loading). */
-	void notifyObservers();
+	void notifyObservers() noexcept;
 	/** Returns whether or not this manager is ready to use.
 	@return					true if all work is finished, false otherwise. */
-	bool readyToUse();
+	bool readyToUse() noexcept;
 	/** Returns whether or not any changes have occurred to this manager since the last check
 	@return					true if any changes occurred, false otherwise */
-	bool hasChanged();
+	bool hasChanged() noexcept;
 
 
 private:

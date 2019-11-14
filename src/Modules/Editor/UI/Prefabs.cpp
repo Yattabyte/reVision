@@ -10,14 +10,15 @@
 #include <filesystem>
 
 
-Prefabs::~Prefabs()
+Prefabs::~Prefabs() noexcept
 {
 	// Update indicator
 	*m_aliveIndicator = false;
 }
 
-Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor) noexcept :
+	m_engine(engine),
+	m_editor(editor)
 {
 	m_open = true;
 	m_viewport = std::make_shared<Viewport>(glm::vec2(0.0f), glm::vec2((float)m_thumbSize), engine);
@@ -39,7 +40,7 @@ Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor)
 	populatePrefabs();
 }
 
-void Prefabs::tick(const float& deltaTime)
+void Prefabs::tick(const float& deltaTime) noexcept
 {
 	if (m_open) {
 		tickThumbnails(deltaTime);
@@ -48,7 +49,7 @@ void Prefabs::tick(const float& deltaTime)
 	}
 }
 
-void Prefabs::addPrefab(Prefabs::Entry& prefab)
+void Prefabs::addPrefab(Prefabs::Entry& prefab) noexcept
 {
 	glm::vec3 center(0.0f);
 	std::vector<Transform_Component*> transformComponents;
@@ -93,7 +94,7 @@ void Prefabs::addPrefab(Prefabs::Entry& prefab)
 	m_prefabs.emplace_back(prefab);
 };
 
-void Prefabs::addPrefab(const std::vector<char>& entityData)
+void Prefabs::addPrefab(const std::vector<char>& entityData) noexcept
 {
 	Prefabs::Entry newPrefab = { "New Entity", m_prefabSubDirectory + "\\New Entity", Entry::Type::FILE };
 
@@ -114,7 +115,7 @@ void Prefabs::addPrefab(const std::vector<char>& entityData)
 	mapFile.close();
 }
 
-void Prefabs::populatePrefabs(const std::string& directory)
+void Prefabs::populatePrefabs(const std::string& directory) noexcept
 {
 	// Delete the textures
 	for each (auto & entry in m_prefabs)
@@ -216,7 +217,7 @@ void Prefabs::populatePrefabs(const std::string& directory)
 	}
 }
 
-void Prefabs::openPrefabEntry()
+void Prefabs::openPrefabEntry() noexcept
 {
 	const auto& selectedPrefab = m_prefabs[m_selectedIndex];
 	if (selectedPrefab.type == Entry::Type::BACK || selectedPrefab.type == Entry::Type::FOLDER) {
@@ -229,7 +230,7 @@ void Prefabs::openPrefabEntry()
 			m_editor->addEntity(m_previewWorld.serializeEntity(handle));
 }
 
-void Prefabs::tickThumbnails(const float& deltaTime)
+void Prefabs::tickThumbnails(const float& deltaTime) noexcept
 {
 	auto rotation = glm::quat_cast(m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix);
 	const auto rotMat = glm::mat4_cast(rotation);
@@ -280,7 +281,7 @@ void Prefabs::tickThumbnails(const float& deltaTime)
 		glCopyImageSubData(m_viewport->m_gfxFBOS->getTexID("FXAA", 0), GL_TEXTURE_2D_ARRAY, 0, 0, 0, count++, prefab.texID, GL_TEXTURE_2D, 0, 0, 0, 0, m_thumbSize, m_thumbSize, 1);
 }
 
-void Prefabs::tickWindow(const float&)
+void Prefabs::tickWindow(const float&) noexcept
 {
 	enum class PrefabOptions {
 		NONE,
@@ -382,7 +383,7 @@ void Prefabs::tickWindow(const float&)
 	}
 }
 
-void Prefabs::tickPopupDialogues(const float&)
+void Prefabs::tickPopupDialogues(const float&) noexcept
 {
 	// Draw 'Delete Prefab' confirmation
 	ImGui::SetNextWindowSize({ 350, 90 }, ImGuiCond_Appearing);

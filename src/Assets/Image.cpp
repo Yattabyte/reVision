@@ -3,7 +3,7 @@
 #include "glm/gtc/type_ptr.hpp"
 
 
-Shared_Image::Shared_Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded, const Fill_Policy& policyFill, const Resize_Policy& policyResize)
+Shared_Image::Shared_Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded, const Fill_Policy& policyFill, const Resize_Policy& policyResize) noexcept
 {
 	(*(std::shared_ptr<Image>*)(this)) = std::dynamic_pointer_cast<Image>(
 		engine->getManager_Assets().shareAsset(
@@ -14,18 +14,18 @@ Shared_Image::Shared_Image(Engine* engine, const std::string& filename, const st
 		));
 }
 
-Image::~Image()
+Image::~Image() noexcept
 {
 	delete m_pixelData;
 }
 
-Image::Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize) : Asset(engine, filename), m_policyFill(policyFill), m_policyResize(policyResize)
+Image::Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize) noexcept : Asset(engine, filename), m_policyFill(policyFill), m_policyResize(policyResize)
 {
 	if (specificSize)
 		m_size = specificSize.value();
 }
 
-void Image::initialize()
+void Image::initialize() noexcept
 {
 	Image_Data dataContainer{ m_pixelData, m_size, m_pitch, m_bpp };
 	if (Image_IO::Import_Image(m_engine, getFileName(), dataContainer, m_policyResize)) {

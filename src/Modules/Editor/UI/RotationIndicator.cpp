@@ -5,7 +5,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 
-RotationIndicator::~RotationIndicator()
+RotationIndicator::~RotationIndicator() noexcept
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -15,8 +15,8 @@ RotationIndicator::~RotationIndicator()
 	glDeleteTextures(1, &m_depthID);
 }
 
-RotationIndicator::RotationIndicator(Engine* engine)
-	: m_engine(engine)
+RotationIndicator::RotationIndicator(Engine* engine) noexcept :
+	m_engine(engine)
 {
 	m_open = true;
 
@@ -59,7 +59,7 @@ RotationIndicator::RotationIndicator(Engine* engine)
 	glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 }
 
-void RotationIndicator::tick(const float&)
+void RotationIndicator::tick(const float&) noexcept
 {
 	if (m_open && m_3dIndicator->existsYet() && m_colorPalette->existsYet() && m_shader->existsYet()) {
 		// Set up state

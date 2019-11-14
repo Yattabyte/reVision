@@ -9,7 +9,7 @@
 #include <time.h>
 
 
-SaveDialogue::SaveDialogue(Engine* engine, LevelEditor_Module* editor) :
+SaveDialogue::SaveDialogue(Engine* engine, LevelEditor_Module* editor) noexcept :
 	m_engine(engine),
 	m_editor(editor),
 	m_iconFile(Shared_Texture(engine, "Editor//iconFile.png")),
@@ -20,12 +20,12 @@ SaveDialogue::SaveDialogue(Engine* engine, LevelEditor_Module* editor) :
 	m_open = false;
 }
 
-void SaveDialogue::tick(const float&)
+void SaveDialogue::tick(const float&) noexcept
 {
 	tickMainDialogue();
 }
 
-void SaveDialogue::populateLevels(const std::string& directory)
+void SaveDialogue::populateLevels(const std::string& directory) noexcept
 {
 	m_levels.clear();
 	m_subDirectory = directory;
@@ -77,7 +77,7 @@ void SaveDialogue::populateLevels(const std::string& directory)
 	}
 }
 
-void SaveDialogue::tickMainDialogue()
+void SaveDialogue::tickMainDialogue() noexcept
 {
 	if (m_open) {
 		static bool freshlyOpened = true; // flag used for operations that should happen only once-per-opening
@@ -233,7 +233,7 @@ void SaveDialogue::tickMainDialogue()
 	}
 }
 
-void SaveDialogue::tryToSave(const std::string& chosenName)
+void SaveDialogue::tryToSave(const std::string& chosenName) noexcept
 {
 	constexpr const auto compareNCase = [](const std::string& str1, const std::string& str2) {
 		return ((str1.size() == str2.size()) && std::equal(str1.cbegin(), str1.cend(), str2.cbegin(), [](const char& c1, const char& c2) {
@@ -259,7 +259,7 @@ void SaveDialogue::tryToSave(const std::string& chosenName)
 	m_open = false;
 }
 
-void SaveDialogue::tickOverwriteDialogue()
+void SaveDialogue::tickOverwriteDialogue() noexcept
 {
 	bool openOverwrite = true;
 	ImGui::SetNextWindowSize({ 400, 106 }, ImGuiCond_Appearing);
@@ -286,7 +286,7 @@ void SaveDialogue::tickOverwriteDialogue()
 	}
 }
 
-void SaveDialogue::tickRenameDialogue()
+void SaveDialogue::tickRenameDialogue() noexcept
 {
 	bool openRename = true;
 	if (ImGui::BeginPopupModal("Rename Level", &openRename, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
@@ -313,7 +313,7 @@ void SaveDialogue::tickRenameDialogue()
 	}
 }
 
-void SaveDialogue::tickDeleteDialogue()
+void SaveDialogue::tickDeleteDialogue() noexcept
 {
 	bool openDelete = true;
 	ImGui::SetNextWindowSize({ 350, 95 }, ImGuiCond_Appearing);

@@ -3,7 +3,7 @@
 #include "FreeImagePlus.h"
 
 
-GLubyte* RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size)
+GLubyte* RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size) noexcept
 {
 	GLubyte* newPixels = new GLubyte[size_t(size) * 4ull];
 	for (unsigned int x = 0; x < size; ++x) {
@@ -15,7 +15,7 @@ GLubyte* RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size)
 	return newPixels;
 }
 
-FIBITMAP* Image_IO::Import_Bitmap(Engine* engine, const std::string& relativePath)
+FIBITMAP* Image_IO::Import_Bitmap(Engine* engine, const std::string& relativePath) noexcept
 {
 	FIBITMAP* bitmap = nullptr;
 	if (!relativePath.empty()) {
@@ -46,17 +46,17 @@ FIBITMAP* Image_IO::Import_Bitmap(Engine* engine, const std::string& relativePat
 	return bitmap;
 }
 
-void Image_IO::Initialize()
+void Image_IO::Initialize() noexcept
 {
 	FreeImage_Initialise();
 }
 
-void Image_IO::Deinitialize()
+void Image_IO::Deinitialize() noexcept
 {
 	FreeImage_DeInitialise();
 }
 
-bool Image_IO::Import_Image(Engine* engine, const std::string& relativePath, Image_Data& importedData, const Resize_Policy& resizePolicy)
+bool Image_IO::Import_Image(Engine* engine, const std::string& relativePath, Image_Data& importedData, const Resize_Policy& resizePolicy) noexcept
 {
 	const glm::ivec2 containerSize = importedData.dimensions;
 	FIBITMAP* bitmap = Import_Bitmap(engine, relativePath);
@@ -69,7 +69,7 @@ bool Image_IO::Import_Image(Engine* engine, const std::string& relativePath, Ima
 	return true;
 }
 
-void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData)
+void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData) noexcept
 {
 	const glm::ivec2 dimensions(FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap));
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
@@ -91,7 +91,7 @@ void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData)
 	importedData.bpp = FreeImage_GetBPP(bitmap);
 }
 
-void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, const Resize_Policy& resizePolicy)
+void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, const Resize_Policy& resizePolicy) noexcept
 {
 	// Make sure new sizes AREN'T zero
 	if (newSize.x && newSize.y && importedData.dimensions.x && importedData.dimensions.y)
@@ -113,7 +113,7 @@ void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, 
 		}
 }
 
-std::string Image_IO::Get_Version()
+std::string Image_IO::Get_Version() noexcept
 {
 	return std::string(FreeImage_GetVersion());
 }

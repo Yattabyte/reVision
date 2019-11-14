@@ -13,11 +13,11 @@ struct ecsHandle {
 	/** Default Constructor. */
 	inline ecsHandle() = default;
 	/** Explicit Constructor. */
-	inline explicit ecsHandle(const char id[32]) {
+	inline explicit ecsHandle(const char id[32]) noexcept {
 		std::memcpy(uuid, id, size_t(sizeof(char) * 32));
 	}
 	/** Copy Constructor. */
-	inline ecsHandle(const ecsHandle& other) {
+	inline ecsHandle(const ecsHandle& other) noexcept {
 		std::memcpy(uuid, other.uuid, size_t(sizeof(char) * 32));
 	}
 	/** Move Constructor. */
@@ -30,20 +30,20 @@ struct ecsHandle {
 		return *this;
 	}
 	// Compare against another handle
-	inline bool operator==(const ecsHandle& other) const {
+	inline bool operator==(const ecsHandle& other) const noexcept {
 		return bool(std::strncmp(uuid, other.uuid, 32ull) == 0);
 	}
 	// Compare if this should be ordered before another handle
-	inline bool operator<(const ecsHandle& other) const {
+	inline bool operator<(const ecsHandle& other) const noexcept {
 		return bool(std::strncmp(uuid, other.uuid, 32ull) < 0);
 	}
 	// Return if handle is valid
-	inline operator bool() const {
+	inline operator bool() const noexcept {
 		constexpr const ecsHandle empty;
 		return !bool((*this) == empty);
 	}
 	// Return if handle is valid
-	inline bool isValid() const {
+	inline bool isValid() const noexcept {
 		constexpr const ecsHandle empty;
 		return !bool((*this) == empty);
 	}
@@ -51,11 +51,11 @@ struct ecsHandle {
 
 struct EntityHandle final : ecsHandle {
 	inline EntityHandle() = default;
-	inline explicit EntityHandle(const ecsHandle& handle) : ecsHandle(handle) {}
+	inline explicit EntityHandle(const ecsHandle& handle) noexcept : ecsHandle(handle) {}
 };
 struct ComponentHandle final : ecsHandle {
 	inline ComponentHandle() = default;
-	explicit ComponentHandle(const ecsHandle& handle) : ecsHandle(handle) {}
+	explicit ComponentHandle(const ecsHandle& handle) noexcept : ecsHandle(handle) {}
 };
 
 #endif // ECS_HANDLE_H

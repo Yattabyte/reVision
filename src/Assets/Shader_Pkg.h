@@ -16,13 +16,13 @@ class Shared_Shader_Pkg final : public std::shared_ptr<Shader_Pkg> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Shader_Pkg() = default;
+	inline Shared_Shader_Pkg() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Shader_Pkg(Engine* engine, const std::string& filename, const bool& threaded = true);
+	Shared_Shader_Pkg(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** An accessory asset for loading shader code chunks.
@@ -32,11 +32,11 @@ class Shader_Pkg final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Shader Package. */
-	~Shader_Pkg() = default;
+	~Shader_Pkg() noexcept = default;
 	/** Construct the Shader Package.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Shader_Pkg(Engine* engine, const std::string& filename);
+	Shader_Pkg(Engine* engine, const std::string& filename) noexcept;
 
 
 	// Public Methods
@@ -53,7 +53,7 @@ public:
 
 private:
 	// Private Interface Implementation
-	virtual void initialize() override final;
+	virtual void initialize() noexcept override final;
 
 
 	// Private Attributes

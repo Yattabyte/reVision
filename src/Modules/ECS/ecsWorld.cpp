@@ -7,12 +7,12 @@
 #include <sstream>
 
 
-ecsWorld::~ecsWorld()
+ecsWorld::~ecsWorld() noexcept
 {
 	clear();
 }
 
-ecsWorld::ecsWorld(const std::vector<char>& data)
+ecsWorld::ecsWorld(const std::vector<char>& data) noexcept
 {
 	if (data.size()) {
 		size_t dataRead(0ull);
@@ -31,7 +31,7 @@ ecsWorld::ecsWorld(ecsWorld&& other) noexcept
 /// PUBLIC MAKE FUNCTIONS ///
 /////////////////////////////
 
-EntityHandle ecsWorld::makeEntity(ecsBaseComponent** components, const size_t& numComponents, const std::string& name, const EntityHandle& UUID, const EntityHandle& parentUUID)
+EntityHandle ecsWorld::makeEntity(ecsBaseComponent** components, const size_t& numComponents, const std::string& name, const EntityHandle& UUID, const EntityHandle& parentUUID) noexcept
 {
 	const auto finalHandle = UUID == EntityHandle() ? (EntityHandle)(generateUUID()) : UUID;
 	auto* newEntity = new ecsEntity();
@@ -47,12 +47,12 @@ EntityHandle ecsWorld::makeEntity(ecsBaseComponent** components, const size_t& n
 	return finalHandle;
 }
 
-ComponentHandle ecsWorld::makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* component, const ComponentHandle& UUID)
+ComponentHandle ecsWorld::makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* component, const ComponentHandle& UUID) noexcept
 {
 	return makeComponent(entityHandle, component->m_runtimeID, component, UUID);
 }
 
-ComponentHandle ecsWorld::makeComponent(const EntityHandle& entityHandle, const ComponentID& componentID, const ecsBaseComponent* component, const ComponentHandle& UUID)
+ComponentHandle ecsWorld::makeComponent(const EntityHandle& entityHandle, const ComponentID& componentID, const ecsBaseComponent* component, const ComponentHandle& UUID) noexcept
 {
 	auto finalHandle = ComponentHandle();
 	// Check if entity is valid
@@ -77,7 +77,7 @@ ComponentHandle ecsWorld::makeComponent(const EntityHandle& entityHandle, const 
 /// PUBLIC REMOVE FUNCTIONS ///
 ///////////////////////////////
 
-bool ecsWorld::removeEntity(const EntityHandle& entityHandle)
+bool ecsWorld::removeEntity(const EntityHandle& entityHandle) noexcept
 {
 	// Delete this entity's components
 	if (auto* entity = getEntity(entityHandle)) {
@@ -97,7 +97,7 @@ bool ecsWorld::removeEntity(const EntityHandle& entityHandle)
 	return false;
 }
 
-bool ecsWorld::removeComponent(const ComponentHandle& componentHandle)
+bool ecsWorld::removeComponent(const ComponentHandle& componentHandle) noexcept
 {
 	// TO DO
 	if (auto* component = getComponent(componentHandle)) {
@@ -106,7 +106,7 @@ bool ecsWorld::removeComponent(const ComponentHandle& componentHandle)
 	return false;
 }
 
-bool ecsWorld::removeEntityComponent(const EntityHandle& entityHandle, const ComponentID& componentID)
+bool ecsWorld::removeEntityComponent(const EntityHandle& entityHandle, const ComponentID& componentID) noexcept
 {
 	// Check if entity is valid
 	if (auto* entity = getEntity(entityHandle)) {
@@ -131,7 +131,7 @@ bool ecsWorld::removeEntityComponent(const EntityHandle& entityHandle, const Com
 /// PUBLIC GET FUNCTIONS ///
 ////////////////////////////
 
-ecsEntity* ecsWorld::getEntity(const EntityHandle& UUID) const
+ecsEntity* ecsWorld::getEntity(const EntityHandle& UUID) const noexcept
 {
 	std::function<ecsEntity * (const EntityHandle&, const std::map<EntityHandle, ecsEntity*>&)> find_entity = [&](const EntityHandle& UUID, const std::map<EntityHandle, ecsEntity*>& entities) -> ecsEntity* {
 		// First try to find in main map using built-in algorithm
@@ -148,7 +148,7 @@ ecsEntity* ecsWorld::getEntity(const EntityHandle& UUID) const
 	return find_entity(UUID, m_entities);
 }
 
-std::vector<ecsEntity*> ecsWorld::getEntities(const std::vector<EntityHandle>& uuids) const
+std::vector<ecsEntity*> ecsWorld::getEntities(const std::vector<EntityHandle>& uuids) const noexcept
 {
 	std::vector<ecsEntity*> entities;
 	entities.reserve(uuids.size());
@@ -158,7 +158,7 @@ std::vector<ecsEntity*> ecsWorld::getEntities(const std::vector<EntityHandle>& u
 	return entities;
 }
 
-std::vector<EntityHandle> ecsWorld::getEntityHandles(const EntityHandle& rootHandle) const
+std::vector<EntityHandle> ecsWorld::getEntityHandles(const EntityHandle& rootHandle) const noexcept
 {
 	std::vector<EntityHandle> entityHandles;
 	auto* root = rootHandle != EntityHandle() ? &getEntity(rootHandle)->m_children : &m_entities;
@@ -168,7 +168,7 @@ std::vector<EntityHandle> ecsWorld::getEntityHandles(const EntityHandle& rootHan
 	return entityHandles;
 }
 
-ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle) const
+ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle) const noexcept
 {
 	std::function<ecsBaseComponent * (const EntityMap&, const ComponentHandle&)> find_component = [&](const EntityMap& entities, const ComponentHandle& componentHandle) -> ecsBaseComponent* {
 		// Search all entities in the list supplied
@@ -187,7 +187,7 @@ ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle)
 	return find_component(m_entities, componentHandle);
 }
 
-ecsBaseComponent* ecsWorld::getComponent(const std::vector<std::tuple<ComponentID, int, ComponentHandle>>& entityComponents, const ComponentDataSpace& mem_array, const ComponentID& componentID) const
+ecsBaseComponent* ecsWorld::getComponent(const std::vector<std::tuple<ComponentID, int, ComponentHandle>>& entityComponents, const ComponentDataSpace& mem_array, const ComponentID& componentID) const noexcept
 {
 	for (size_t i = 0ull; i < entityComponents.size(); ++i) {
 		const auto& [compId, fn, compHandle] = entityComponents[i];
@@ -211,7 +211,7 @@ ecsWorld& ecsWorld::operator=(ecsWorld&& other) noexcept
 	return *this;
 }
 
-void ecsWorld::clear()
+void ecsWorld::clear() noexcept
 {
 	// Remove all components
 	for (auto it = m_components.begin(); it != m_components.end(); ++it) {
@@ -233,7 +233,7 @@ void ecsWorld::clear()
 	m_entities.clear();
 }
 
-ecsHandle ecsWorld::generateUUID()
+ecsHandle ecsWorld::generateUUID() noexcept
 {
 	std::stringstream ss;
 	for (auto i = 0; i < 16; i++) {
@@ -252,7 +252,7 @@ ecsHandle ecsWorld::generateUUID()
 	return handle;
 }
 
-void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle& childHandle)
+void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle& childHandle) noexcept
 {
 	// Validate input parameters
 	if (!childHandle.isValid() || parentHandle == childHandle)
@@ -303,7 +303,7 @@ void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle
 	}
 }
 
-void ecsWorld::unparentEntity(const EntityHandle& entityHandle)
+void ecsWorld::unparentEntity(const EntityHandle& entityHandle) noexcept
 {
 	// Move entity up tree, making it a child of its old parent's parent
 	if (entityHandle.isValid())
@@ -313,12 +313,12 @@ void ecsWorld::unparentEntity(const EntityHandle& entityHandle)
 					parentEntity(parent->m_parent.isValid() ? parent->m_parent : EntityHandle(), entityHandle);
 }
 
-bool ecsWorld::isComponentIDValid(const ComponentID& componentID)
+bool ecsWorld::isComponentIDValid(const ComponentID& componentID) noexcept
 {
 	return (componentID < ecsBaseComponent::_componentRegistry.size());
 }
 
-void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID& index)
+void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID& index) noexcept
 {
 	if (isComponentIDValid(componentID)) {
 		auto& mem_array = m_components[componentID];
@@ -348,12 +348,12 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 	}
 }
 
-std::vector<char> ecsWorld::serializeEntities(const std::vector<EntityHandle>& entityHandles) const
+std::vector<char> ecsWorld::serializeEntities(const std::vector<EntityHandle>& entityHandles) const noexcept
 {
 	return serializeEntities(getEntities(entityHandles));
 }
 
-std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsEntity*>& entities) const
+std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsEntity*>& entities) const noexcept
 {
 	std::vector<char> data;
 	for each (const auto & entity in entities) {
@@ -365,14 +365,14 @@ std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsEntity*>& ent
 	return data;
 }
 
-std::vector<char> ecsWorld::serializeEntity(const EntityHandle& entityHandle) const
+std::vector<char> ecsWorld::serializeEntity(const EntityHandle& entityHandle) const noexcept
 {
 	if (const auto& entity = getEntity(entityHandle))
 		return serializeEntity(*entity);
 	return {};
 }
 
-std::vector<char> ecsWorld::serializeEntity(const ecsEntity& entity) const
+std::vector<char> ecsWorld::serializeEntity(const ecsEntity& entity) const noexcept
 {
 	/* ENTITY DATA STRUCTURE {
 		name char count
@@ -422,7 +422,7 @@ std::vector<char> ecsWorld::serializeEntity(const ecsEntity& entity) const
 	return data;
 }
 
-std::pair<EntityHandle, ecsEntity*> ecsWorld::deserializeEntity(const char* data, const size_t& dataSize, size_t& dataRead, const EntityHandle& parentHandle, const EntityHandle& desiredHandle)
+std::pair<EntityHandle, ecsEntity*> ecsWorld::deserializeEntity(const char* data, const size_t& dataSize, size_t& dataRead, const EntityHandle& parentHandle, const EntityHandle& desiredHandle) noexcept
 {
 	/* ENTITY DATA STRUCTURE {
 		name char count
@@ -471,12 +471,12 @@ std::pair<EntityHandle, ecsEntity*> ecsWorld::deserializeEntity(const char* data
 	return { thisEntityHandle, thisEntity };
 }
 
-std::optional<ComponentID> ecsWorld::nameToComponentID(const char* name)
+std::optional<ComponentID> ecsWorld::nameToComponentID(const char* name) noexcept
 {
 	return ecsBaseComponent::_nameRegistry.search(name);
 }
 
-std::shared_ptr<ecsBaseComponent> ecsWorld::makeComponentType(const char* name)
+std::shared_ptr<ecsBaseComponent> ecsWorld::makeComponentType(const char* name) noexcept
 {
 	if (const auto& componentID = nameToComponentID(name)) {
 		const auto& [createFn, freeFn, newFn, componentSize] = ecsBaseComponent::_componentRegistry[*componentID];
@@ -485,30 +485,30 @@ std::shared_ptr<ecsBaseComponent> ecsWorld::makeComponentType(const char* name)
 	return {};
 }
 
-void ecsWorld::updateSystems(ecsSystemList& systems, const float& deltaTime)
+void ecsWorld::updateSystems(ecsSystemList& systems, const float& deltaTime) noexcept
 {
 	for (size_t i = 0; i < systems.size(); ++i)
 		updateSystem(systems[i].get(), deltaTime);
 }
 
-void ecsWorld::updateSystem(ecsBaseSystem* system, const float& deltaTime)
+void ecsWorld::updateSystem(ecsBaseSystem* system, const float& deltaTime) noexcept
 {
 	if (auto components = getRelevantComponents(system->getComponentTypes()); components.size() > 0ull)
 		system->updateComponents(deltaTime, components);
 }
 
-void ecsWorld::updateSystem(const std::shared_ptr<ecsBaseSystem>& system, const float& deltaTime)
+void ecsWorld::updateSystem(const std::shared_ptr<ecsBaseSystem>& system, const float& deltaTime) noexcept
 {
 	updateSystem(system.get(), deltaTime);
 }
 
-void ecsWorld::updateSystem(const float& deltaTime, const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func)
+void ecsWorld::updateSystem(const float& deltaTime, const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func) noexcept
 {
 	if (auto components = getRelevantComponents(componentTypes); components.size() > 0ull)
 		func(deltaTime, components);
 }
 
-std::vector<std::vector<ecsBaseComponent*>> ecsWorld::getRelevantComponents(const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes)
+std::vector<std::vector<ecsBaseComponent*>> ecsWorld::getRelevantComponents(const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes) noexcept
 {
 	std::vector<std::vector<ecsBaseComponent*>> components;
 	if (componentTypes.size() > 0ull) {
@@ -558,7 +558,7 @@ std::vector<std::vector<ecsBaseComponent*>> ecsWorld::getRelevantComponents(cons
 	return components;
 }
 
-size_t ecsWorld::findLeastCommonComponent(const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes)
+size_t ecsWorld::findLeastCommonComponent(const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes) noexcept
 {
 	auto minSize = std::numeric_limits<size_t>::max();
 	auto minIndex = std::numeric_limits<size_t>::max();

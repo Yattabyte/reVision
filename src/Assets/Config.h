@@ -16,14 +16,14 @@ class Shared_Config final : public std::shared_ptr<Config> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Config() = default;
+	inline Shared_Config() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used.
 	@param	filename		the filename to use.
 	@param	cfg_strings		the configuration strings to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Config(Engine* engine, const std::string& filename, const std::vector<std::string>& cfg_strings, const bool& threaded = true);
+	Shared_Config(Engine* engine, const std::string& filename, const std::vector<std::string>& cfg_strings, const bool& threaded = true) noexcept;
 };
 
 /** A map for configuration name-value pairs.
@@ -32,12 +32,12 @@ class Config final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Config. */
-	inline ~Config() = default;
+	inline ~Config() noexcept = default;
 	/** Construct the config with a particular set of variable names.
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory).
 	@param	strings		the configuration strings to use. */
-	Config(Engine* engine, const std::string& filename, const std::vector<std::string>& strings);
+	Config(Engine* engine, const std::string& filename, const std::vector<std::string>& strings) noexcept;
 
 
 	// Public Methods
@@ -60,7 +60,7 @@ public:
 
 private:
 	// Private Interface Implementation
-	virtual void initialize() override final;
+	virtual void initialize() noexcept override final;
 
 
 	// Private Attributes

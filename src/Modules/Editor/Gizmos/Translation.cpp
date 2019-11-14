@@ -5,7 +5,7 @@
 #include "Engine.h"
 
 
-Translation_Gizmo::~Translation_Gizmo()
+Translation_Gizmo::~Translation_Gizmo() noexcept
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -14,7 +14,7 @@ Translation_Gizmo::~Translation_Gizmo()
 	glDeleteVertexArrays(1, &m_axisVAO);
 }
 
-Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor) :
+Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor) noexcept :
 	m_engine(engine),
 	m_editor(editor),
 	m_model(Shared_Auto_Model(engine, "Editor\\translate")),
@@ -60,7 +60,7 @@ Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	glVertexArrayVertexBuffer(m_axisVAO, 0, m_axisVBO, 0, sizeof(glm::vec3));
 }
 
-bool Translation_Gizmo::checkMouseInput(const float&)
+bool Translation_Gizmo::checkMouseInput(const float&) noexcept
 {
 	// See if the mouse intersects any entities.
 	checkMouseHover();
@@ -75,7 +75,7 @@ bool Translation_Gizmo::checkMouseInput(const float&)
 	return false;
 }
 
-void Translation_Gizmo::render(const float&)
+void Translation_Gizmo::render(const float&) noexcept
 {
 	// Safety check first
 	if (m_model->existsYet() && m_gizmoShader->existsYet() && m_editor->getSelection().size()) {
@@ -124,12 +124,12 @@ void Translation_Gizmo::render(const float&)
 	}
 }
 
-void Translation_Gizmo::setTransform(const Transform& transform)
+void Translation_Gizmo::setTransform(const Transform& transform) noexcept
 {
 	m_transform = transform;
 }
 
-void Translation_Gizmo::checkMouseHover()
+void Translation_Gizmo::checkMouseHover() noexcept
 {
 	const auto& actionState = m_engine->getActionState();
 	const auto& position = m_transform.m_position;
@@ -198,7 +198,7 @@ void Translation_Gizmo::checkMouseHover()
 		m_hoveredAxes |= Y_AXIS | Z_AXIS;
 }
 
-bool Translation_Gizmo::checkMousePress()
+bool Translation_Gizmo::checkMousePress() noexcept
 {
 	const auto& clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
 	const auto ray_origin = clientCamera.EyePosition;
@@ -295,9 +295,9 @@ bool Translation_Gizmo::checkMousePress()
 			glm::vec3 m_oldPosition, m_newPosition;
 			const unsigned int m_axis = NONE;
 			const std::vector<EntityHandle> m_uuids;
-			Move_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::vec3& newPosition, const unsigned int& axis)
+			Move_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::vec3& newPosition, const unsigned int& axis) noexcept
 				: m_engine(engine), m_editor(editor), m_oldPosition(m_editor->getGizmoTransform().m_position), m_newPosition(newPosition), m_axis(axis), m_uuids(m_editor->getSelection()) {}
-			void move(const glm::vec3& position) {
+			void move(const glm::vec3& position) noexcept {
 				auto& ecsWorld = m_editor->getWorld();
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
@@ -316,13 +316,13 @@ bool Translation_Gizmo::checkMousePress()
 				gizmoTransform.update();
 				m_editor->setGizmoTransform(gizmoTransform);
 			}
-			virtual void execute() override final {
+			virtual void execute() noexcept override final {
 				move(m_newPosition);
 			}
-			virtual void undo() override final {
+			virtual void undo() noexcept override final {
 				move(m_oldPosition);
 			}
-			virtual bool join(Editor_Command* other) override final {
+			virtual bool join(Editor_Command* other) noexcept override final {
 				if (auto newCommand = dynamic_cast<Move_Selection_Command*>(other)) {
 					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 						m_newPosition = newCommand->m_newPosition;

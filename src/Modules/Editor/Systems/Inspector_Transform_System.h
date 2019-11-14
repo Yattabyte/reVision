@@ -18,8 +18,10 @@ public:
 	inline ~Inspector_Transform_System() = default;
 	/** Construct this system.
 	@param	editor		the level editor. */
-	inline Inspector_Transform_System(Engine* engine, LevelEditor_Module* editor)
-		: m_engine(engine), m_editor(editor) {
+	inline Inspector_Transform_System(Engine* engine, LevelEditor_Module* editor) noexcept :
+		m_engine(engine),
+		m_editor(editor)
+	{
 		// Declare component types used
 		addComponentType(Selected_Component::Runtime_ID);
 		addComponentType(Transform_Component::Runtime_ID);
@@ -27,7 +29,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		const auto text = std::string(Transform_Component::Name) + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
@@ -48,7 +50,7 @@ public:
 					LevelEditor_Module& m_editor;
 					const std::vector<ComponentHandle> m_uuids;
 					std::vector<glm::vec3> m_oldData, m_newData;
-					Move_Command(ecsWorld& world, LevelEditor_Module& editor, const std::vector<ComponentHandle>& uuids, const glm::vec3& newPosition)
+					Move_Command(ecsWorld& world, LevelEditor_Module& editor, const std::vector<ComponentHandle>& uuids, const glm::vec3& newPosition) noexcept
 						: m_ecsWorld(world), m_editor(editor), m_uuids(uuids) {
 						for each (const auto & componentHandle in m_uuids) {
 							if (const auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
@@ -57,7 +59,7 @@ public:
 							}
 						}
 					}
-					void setPosition(const std::vector<glm::vec3>& positions) {
+					void setPosition(const std::vector<glm::vec3>& positions) noexcept {
 						if (positions.size()) {
 							size_t index(0ull);
 							for each (const auto & componentHandle in m_uuids) {
@@ -72,13 +74,13 @@ public:
 							m_editor.setGizmoTransform(newTransform);
 						}
 					}
-					virtual void execute() override final {
+					virtual void execute() noexcept override final {
 						setPosition(m_newData);
 					}
-					virtual void undo() override final {
+					virtual void undo() noexcept override final {
 						setPosition(m_oldData);
 					}
-					virtual bool join(Editor_Command* other) override final {
+					virtual bool join(Editor_Command* other) noexcept override final {
 						if (auto newCommand = dynamic_cast<Move_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;
@@ -98,7 +100,7 @@ public:
 					ecsWorld& m_ecsWorld;
 					const std::vector<ComponentHandle> m_uuids;
 					std::vector<glm::quat> m_oldData, m_newData;
-					Rotate_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::quat& newOrientation)
+					Rotate_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::quat& newOrientation) noexcept
 						: m_ecsWorld(world), m_uuids(uuids) {
 						for each (const auto & componentHandle in m_uuids) {
 							if (const auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
@@ -107,7 +109,7 @@ public:
 							}
 						}
 					}
-					void setOrientation(const std::vector<glm::quat>& orientations) {
+					void setOrientation(const std::vector<glm::quat>& orientations) noexcept {
 						size_t index(0ull);
 						for each (const auto & componentHandle in m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
@@ -116,13 +118,13 @@ public:
 							}
 						}
 					}
-					virtual void execute() override final {
+					virtual void execute() noexcept override final {
 						setOrientation(m_newData);
 					}
-					virtual void undo() override final {
+					virtual void undo() noexcept override final {
 						setOrientation(m_oldData);
 					}
-					virtual bool join(Editor_Command* other) override final {
+					virtual bool join(Editor_Command* other) noexcept override final {
 						if (auto newCommand = dynamic_cast<Rotate_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;
@@ -142,7 +144,7 @@ public:
 					ecsWorld& m_ecsWorld;
 					const std::vector<ComponentHandle> m_uuids;
 					std::vector<glm::vec3> m_oldData, m_newData;
-					Scale_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::vec3& newScale)
+					Scale_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::vec3& newScale) noexcept
 						: m_ecsWorld(world), m_uuids(uuids) {
 						for each (const auto & componentHandle in m_uuids) {
 							if (const auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
@@ -151,7 +153,7 @@ public:
 							}
 						}
 					}
-					void setScale(const std::vector<glm::vec3>& scales) {
+					void setScale(const std::vector<glm::vec3>& scales) noexcept {
 						if (scales.size()) {
 							size_t index(0ull);
 							for each (const auto & componentHandle in m_uuids) {
@@ -162,13 +164,13 @@ public:
 							}
 						}
 					}
-					virtual void execute() override final {
+					virtual void execute() noexcept override final {
 						setScale(m_newData);
 					}
-					virtual void undo() override final {
+					virtual void undo() noexcept override final {
 						setScale(m_oldData);
 					}
-					virtual bool join(Editor_Command* other) override final {
+					virtual bool join(Editor_Command* other) noexcept override final {
 						if (auto newCommand = dynamic_cast<Scale_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;

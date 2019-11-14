@@ -20,13 +20,13 @@ class Shared_Mesh final : public std::shared_ptr<Mesh> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Mesh() = default;
+	inline Shared_Mesh() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Mesh(Engine* engine, const std::string& filename, const bool& threaded = true);
+	explicit Shared_Mesh(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 
@@ -36,11 +36,11 @@ class Mesh final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Mesh. */
-	~Mesh() = default;
+	~Mesh() noexcept = default;
 	/** Construct the Mesh.
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
-	Mesh(Engine* engine, const std::string& filename);
+	Mesh(Engine* engine, const std::string& filename) noexcept;
 
 
 	// Public Attributes
@@ -49,7 +49,7 @@ public:
 
 private:
 	// Private Interface Implementation
-	virtual void initialize() override final;
+	virtual void initialize() noexcept override final;
 
 
 	// Private Attributes

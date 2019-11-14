@@ -10,7 +10,7 @@ constexpr float DISK_RADIUS = 8.0F;
 constexpr size_t DISK_MAX_POINTS = (size_t)DISK_VERTICES * 6ull;
 
 
-Rotation_Gizmo::~Rotation_Gizmo()
+Rotation_Gizmo::~Rotation_Gizmo() noexcept
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -19,7 +19,7 @@ Rotation_Gizmo::~Rotation_Gizmo()
 	glDeleteVertexArrays(1, &m_axisVAO);
 }
 
-Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor) :
+Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor) noexcept :
 	m_engine(engine),
 	m_editor(editor),
 	m_model(Shared_Auto_Model(engine, "Editor\\rotate")),
@@ -74,7 +74,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor) :
 	glVertexArrayVertexBuffer(m_diskVAO, 0, m_diskVBO, 0, sizeof(glm::vec3));
 }
 
-bool Rotation_Gizmo::checkMouseInput(const float&)
+bool Rotation_Gizmo::checkMouseInput(const float&) noexcept
 {
 	// See if the mouse intersects any entities
 	checkMouseHover();
@@ -89,7 +89,7 @@ bool Rotation_Gizmo::checkMouseInput(const float&)
 	return false;
 }
 
-void Rotation_Gizmo::render(const float&)
+void Rotation_Gizmo::render(const float&) noexcept
 {
 	// Safety check first
 	if (m_model->existsYet() && m_gizmoShader->existsYet() && m_editor->getSelection().size()) {
@@ -153,12 +153,12 @@ void Rotation_Gizmo::render(const float&)
 	}
 }
 
-void Rotation_Gizmo::setTransform(const Transform& transform)
+void Rotation_Gizmo::setTransform(const Transform& transform) noexcept
 {
 	m_transform = transform;
 }
 
-void Rotation_Gizmo::checkMouseHover()
+void Rotation_Gizmo::checkMouseHover() noexcept
 {
 	const auto& actionState = m_engine->getActionState();
 	const auto& position = m_transform.m_position;
@@ -209,7 +209,7 @@ void Rotation_Gizmo::checkMouseHover()
 		m_hoveredAxes = ALL_AXES;
 }
 
-bool Rotation_Gizmo::checkMousePress()
+bool Rotation_Gizmo::checkMousePress() noexcept
 {
 	const auto& position = m_transform.m_position;
 	const auto& rotation = m_transform.m_orientation;
@@ -258,9 +258,9 @@ bool Rotation_Gizmo::checkMousePress()
 			glm::quat m_oldRotation, m_newRotation;
 			const unsigned int m_axis = NONE;
 			const std::vector<EntityHandle> m_uuids;
-			Rotate_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::quat& oldRotation, const glm::quat& newRotation, const unsigned int& axis)
+			Rotate_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::quat& oldRotation, const glm::quat& newRotation, const unsigned int& axis) noexcept
 				: m_engine(engine), m_editor(editor), m_oldRotation(oldRotation), m_newRotation(newRotation), m_axis(axis), m_uuids(m_editor->getSelection()) {}
-			void rotate(const glm::quat& rotation) {
+			void rotate(const glm::quat& rotation) noexcept {
 				auto& ecsWorld = m_editor->getWorld();
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
@@ -284,13 +284,13 @@ bool Rotation_Gizmo::checkMousePress()
 				gizmoTransform.update();
 				m_editor->setGizmoTransform(gizmoTransform);
 			}
-			virtual void execute() override final {
+			virtual void execute() noexcept override final {
 				rotate(m_newRotation * glm::inverse(m_oldRotation));
 			}
-			virtual void undo() override final {
+			virtual void undo() noexcept override final {
 				rotate(glm::inverse(m_newRotation) * m_oldRotation);
 			}
-			virtual bool join(Editor_Command* other) override final {
+			virtual bool join(Editor_Command* other) noexcept override final {
 				if (auto newCommand = dynamic_cast<Rotate_Selection_Command*>(other)) {
 					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 						m_newRotation = newCommand->m_newRotation;
@@ -308,7 +308,7 @@ bool Rotation_Gizmo::checkMousePress()
 	return false;
 }
 
-void Rotation_Gizmo::updateDisk()
+void Rotation_Gizmo::updateDisk() noexcept
 {
 	const auto fourthAxisMat = glm::inverse(glm::mat4_cast(glm::quat_cast(m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix)));
 	int steps = (int)ceilf((abs(m_deltaAngle) / 360.0f) * DISK_VERTICES);

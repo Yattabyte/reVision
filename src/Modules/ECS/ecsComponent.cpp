@@ -5,7 +5,7 @@
 std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>> ecsBaseComponent::_componentRegistry = std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>>();
 MappedChar<ComponentID> ecsBaseComponent::_nameRegistry = MappedChar<ComponentID>();
 
-ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string)
+ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string) noexcept
 {
 	const auto componentID = static_cast<ComponentID>(_componentRegistry.size());
 	_componentRegistry.push_back({ createFn, freeFn, newFn, size });
@@ -14,7 +14,7 @@ ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& create
 	return componentID;
 }
 
-std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const char* data, size_t& dataRead)
+std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const char* data, size_t& dataRead) noexcept
 {
 	// Read Name
 	int charCount(0);

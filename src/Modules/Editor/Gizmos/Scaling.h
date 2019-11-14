@@ -20,31 +20,31 @@ class Scaling_Gizmo {
 public:
 	// Public (De)Constructors
 	/** Destroy this gizmo. */
-	~Scaling_Gizmo();
+	~Scaling_Gizmo() noexcept;
 	/** Construct this gizmo.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	Scaling_Gizmo(Engine* engine, LevelEditor_Module* editor);
+	Scaling_Gizmo(Engine* engine, LevelEditor_Module* editor) noexcept;
 
 
 	// Public Methods
 	/** Check for mouse input.
 	@param	deltaTime	the amount of time since the last frame. */
-	bool checkMouseInput(const float& deltaTime);
+	bool checkMouseInput(const float& deltaTime) noexcept;
 	/** Render this gizmo.
 	@param	deltaTime	the amount of time since the last frame. */
-	void render(const float& deltaTime);
+	void render(const float& deltaTime) noexcept;
 	/** Apply a specific transform.
 	@param	transform	the new transform to use. */
-	void setTransform(const Transform& transform);
+	void setTransform(const Transform& transform) noexcept;
 
 
 private:
 	// Private Methods
 	/** Check if the mouse is hovering over any particular element of this gizmo, highlighting it. */
-	void checkMouseHover();
+	void checkMouseHover() noexcept;
 	/** Check if the mouse is pressing any particular element of this gizmo, selecting or dragging it. */
-	bool checkMousePress();
+	bool checkMousePress() noexcept;
 
 
 	// Private Attributes

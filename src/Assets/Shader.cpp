@@ -17,7 +17,7 @@ struct ShaderHeader {
 	GLsizei length;
 };
 
-Shared_Shader::Shared_Shader(Engine* engine, const std::string& filename, const bool& threaded)
+Shared_Shader::Shared_Shader(Engine* engine, const std::string& filename, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Shader>*)(this)) = std::dynamic_pointer_cast<Shader>(
 		engine->getManager_Assets().shareAsset(
@@ -28,15 +28,15 @@ Shared_Shader::Shared_Shader(Engine* engine, const std::string& filename, const 
 		));
 }
 
-Shader::~Shader()
+Shader::~Shader() noexcept
 {
 	if (existsYet())
 		glDeleteProgram(m_glProgramID);
 }
 
-Shader::Shader(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
+Shader::Shader(Engine* engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
-void Shader::initialize()
+void Shader::initialize() noexcept
 {
 	// Attempt to load cache, otherwise load manually
 	m_glProgramID = glCreateProgram();
@@ -195,9 +195,9 @@ const bool Shader::validateProgram()
 	return false;
 }
 
-ShaderObj::~ShaderObj() { glDeleteShader(m_shaderID); }
+ShaderObj::~ShaderObj() noexcept { glDeleteShader(m_shaderID); }
 
-ShaderObj::ShaderObj(const GLenum& type) : m_type(type) {}
+ShaderObj::ShaderObj(const GLenum& type) noexcept : m_type(type) {}
 
 GLint ShaderObj::getShaderiv(const GLenum& pname) const
 {

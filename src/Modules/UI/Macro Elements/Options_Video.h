@@ -18,7 +18,7 @@ public:
 	inline ~Options_Video() = default;
 	/** Construct a video pane.
 	@param	engine		the engine to use. */
-	inline explicit Options_Video(Engine* engine)
+	inline explicit Options_Video(Engine* engine) noexcept
 		: Options_Pane(engine) {
 		// Title
 		m_title->setText("Video Options");

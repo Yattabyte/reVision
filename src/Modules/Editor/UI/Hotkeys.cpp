@@ -4,13 +4,14 @@
 #include "Engine.h"
 
 
-Hotkeys::Hotkeys(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+Hotkeys::Hotkeys(Engine* engine, LevelEditor_Module* editor) noexcept :
+	m_engine(engine),
+	m_editor(editor)
 {
 	m_open = true;
 }
 
-void Hotkeys::tick(const float&)
+void Hotkeys::tick(const float&) noexcept
 {
 	if (m_open && !ImGui::IsAnyItemActive()) {
 		// Check keyboard input

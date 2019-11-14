@@ -17,7 +17,7 @@ public:
 	/** Destroy this physics sync system. */
 	inline ~TransformSync_Phys_System() = default;
 	/** Construct a physics sync system. */
-	inline TransformSync_Phys_System(Engine* engine, btDiscreteDynamicsWorld* world)
+	inline TransformSync_Phys_System(Engine* engine, btDiscreteDynamicsWorld* world) noexcept
 		: ecsBaseSystem(), m_world(world) {
 		// Declare component types used
 		addComponentType(Transform_Component::Runtime_ID);
@@ -30,7 +30,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		for each (const auto & componentParam in components) {
 			auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
 			auto* colliderComponent = static_cast<Collider_Component*>(componentParam[1]);

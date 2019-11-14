@@ -23,8 +23,9 @@ public:
 	@param	engine		the engine to use.
 	@param	value		the starting value to use.
 	@param	range		the starting range to use. */
-	inline explicit Slider(Engine* engine, const float& value = 0.0f, const glm::vec2& range = { 0.0f, 1.0f })
-		: UI_Element(engine), m_value(value), m_lowerRange(range.x), m_upperRange(range.y) {
+	inline explicit Slider(Engine* engine, const float& value = 0.0f, const glm::vec2& range = { 0.0f, 1.0f }) noexcept :
+		UI_Element(engine), m_value(value), m_lowerRange(range.x), m_upperRange(range.y)
+	{
 		// Make a background panel for cosmetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
@@ -52,7 +53,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override {
 		// Update Colors
 		glm::vec4 color(0.75);
 		if (m_pressed)
@@ -64,7 +65,7 @@ public:
 		// Render Children
 		UI_Element::renderElement(deltaTime, position, scale);
 	}
-	inline virtual void mouseAction(const MouseEvent& mouseEvent) override {
+	inline virtual void mouseAction(const MouseEvent& mouseEvent) noexcept override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			if (m_pressed && mouseEvent.m_action == MouseEvent::Action::MOVE) {
@@ -73,7 +74,7 @@ public:
 			}
 		}
 	}
-	inline virtual void userAction(ActionState& actionState) override {
+	inline virtual void userAction(ActionState& actionState) noexcept override {
 		const float offsetAmount = std::min<float>((m_upperRange - m_lowerRange) / 100.0f, 1.0f);
 		if (actionState.isAction(ActionState::Action::UI_LEFT) == ActionState::State::PRESS)
 			setValue(getValue() - offsetAmount);
@@ -85,7 +86,7 @@ public:
 	// Public Methods
 	/** Set the percentage for this slider.
 	@param	amount		the value to put this slider at. */
-	inline void setValue(const float& amount) {
+	inline void setValue(const float& amount) noexcept {
 		m_value = std::clamp<float>(amount, m_lowerRange, m_upperRange);
 		setText(std::to_string((int)std::round(m_value)));
 		updatePaddle();
@@ -93,13 +94,13 @@ public:
 	}
 	/** Get the percentage value for this scrollbar.
 	@return				the percentage value for this slider. */
-	inline float getValue() const {
+	inline float getValue() const noexcept {
 		return m_value;
 	}
 	/** Set the lower and upper ranges for this slider.
 	@param	lowerRange	the lowest number this slider can use.
 	@param	upperRange	the highest number this slider can use. */
-	inline void setRanges(const float& lowerRange, const float& upperRange) {
+	inline void setRanges(const float& lowerRange, const float& upperRange) noexcept {
 		m_lowerRange = lowerRange;
 		m_upperRange = upperRange;
 
@@ -109,12 +110,12 @@ public:
 	}
 	/** Set this slider's text.
 	@param	text	the text to use. */
-	inline void setText(const std::string& text) {
+	inline void setText(const std::string& text) noexcept {
 		m_label->setText(text);
 	}
 	/** Retrieve this slider's text.
 	@return			the text this label uses. */
-	inline std::string getText() const {
+	inline std::string getText() const noexcept {
 		return m_label->getText();
 	}
 

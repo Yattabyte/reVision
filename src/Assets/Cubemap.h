@@ -15,13 +15,13 @@ class Shared_Cubemap final : public std::shared_ptr<Cubemap> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Cubemap() = default;
+	inline Shared_Cubemap() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Cubemap(Engine* engine, const std::string& filename, const bool& threaded = true);
+	Shared_Cubemap(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** A cubemap texture object.
@@ -31,11 +31,11 @@ class Cubemap final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Cubemap. */
-	~Cubemap();
+	~Cubemap() noexcept;
 	/** Construct the Cubemap.
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
-	Cubemap(Engine* engine, const std::string& filename);
+	Cubemap(Engine* engine, const std::string& filename) noexcept;
 
 
 	// Public Methods
@@ -51,7 +51,7 @@ public:
 
 private:
 	// Private Interface Implementation
-	virtual void initialize() override final;
+	virtual void initialize() noexcept override final;
 
 
 	// Private Attributes

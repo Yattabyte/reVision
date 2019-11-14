@@ -18,13 +18,13 @@ class Shared_Shader_Geometry final : public std::shared_ptr<Shader_Geometry> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Shader_Geometry() = default;
+	inline Shared_Shader_Geometry() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Shader_Geometry(Engine* engine, const std::string& filename, const bool& threaded = true);
+	Shared_Shader_Geometry(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** An entire OpenGL vertex/geometry/fragment shader program.
@@ -36,11 +36,11 @@ class Shader_Geometry : public Shader {
 public:
 	// Public (De)Constructors
 	/** Destroy the Shader. */
-	~Shader_Geometry();
+	~Shader_Geometry() noexcept;
 	/** Construct the Shader.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Shader_Geometry(Engine* engine, const std::string& filename);
+	Shader_Geometry(Engine* engine, const std::string& filename) noexcept;
 
 
 	// Public Attributes
@@ -54,7 +54,7 @@ protected:
 
 private:
 	// Private Interface Implementation
-	virtual void initialize() override final;
+	virtual void initialize() noexcept override final;
 
 
 	// Private Attributes

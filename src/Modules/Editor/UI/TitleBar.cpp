@@ -4,8 +4,9 @@
 #include "Engine.h"
 
 
-TitleBar::TitleBar(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+TitleBar::TitleBar(Engine* engine, LevelEditor_Module* editor) noexcept :
+	m_engine(engine),
+	m_editor(editor)
 {
 	m_open = true;
 
@@ -36,7 +37,7 @@ TitleBar::TitleBar(Engine* engine, LevelEditor_Module* editor)
 	m_iconSettings = Shared_Texture(engine, "Editor//iconOptions.png");
 }
 
-void TitleBar::tick(const float&)
+void TitleBar::tick(const float&) noexcept
 {
 	if (m_open) {
 		constexpr static auto BeginMenuWIcon = [](const char* string, const Shared_Texture& iconTexture, const char* shortcut = nullptr, bool* selected = nullptr, const bool& enabled = true) -> bool {

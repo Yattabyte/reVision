@@ -18,39 +18,39 @@ class Prefabs final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this prefab UI element. */
-	~Prefabs();
+	~Prefabs() noexcept;
 	/** Construct a prefab UI element.
 	@param	engine			the currently active engine.
 	@param	editor			the level editor. */
-	Prefabs(Engine* engine, LevelEditor_Module* editor);
+	Prefabs(Engine* engine, LevelEditor_Module* editor) noexcept;
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override final;
+	virtual void tick(const float& deltaTime) noexcept override final;
 
 
 	// Public Methods
 	/** Construct a prefab from serialized entity data.
 	@param	entityData		serialized entity data. */
-	void addPrefab(const std::vector<char>& entityData);
+	void addPrefab(const std::vector<char>& entityData) noexcept;
 
 
 private:
 	// Private Methods
 	/** Populate a list of prefabs given an optional subdirectory.
 	@param	directory		if non-blank, a subdirectory within the prefabs folder. */
-	void populatePrefabs(const std::string& directory = "");
+	void populatePrefabs(const std::string& directory = "") noexcept;
 	/** Open the selected prefab entry, spawning if its an object, if a folder populates with the folder contents.*/
-	void openPrefabEntry();
+	void openPrefabEntry() noexcept;
 	/** Update the thumbnails by a specific delta time.
 	@param	deltaTime		the amount of time since last frame. */
-	void tickThumbnails(const float& deltaTime);
+	void tickThumbnails(const float& deltaTime) noexcept;
 	/** Update the prefabs window.
 	@param	deltaTime		the amount of time since last frame. */
-	void tickWindow(const float& deltaTime);
+	void tickWindow(const float& deltaTime) noexcept;
 	/** Update any prefab pop-up's.
 	@param	deltaTime		the amount of time since last frame. */
-	void tickPopupDialogues(const float& deltaTime);
+	void tickPopupDialogues(const float& deltaTime) noexcept;
 
 
 	// Private Attributes
@@ -84,7 +84,7 @@ private:
 	// Private Methods
 	/** Add a specific prefab to the list.
 	@param	prefab			the prefab to add. */
-	void addPrefab(Prefabs::Entry& prefab);
+	void addPrefab(Prefabs::Entry& prefab) noexcept;
 };
 
 #endif // PREFABS_H

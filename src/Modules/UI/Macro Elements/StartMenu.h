@@ -25,7 +25,7 @@ public:
 	inline ~StartMenu() = default;
 	/** Construct a start menu.
 	@param	engine		the engine to use. */
-	inline explicit StartMenu(Engine* engine)
+	inline explicit StartMenu(Engine* engine) noexcept
 		: Menu(engine) {
 		// Title
 		m_title->setText("MAIN MENU");
@@ -61,17 +61,17 @@ public:
 protected:
 	// Protected Methods
 	/** Choose 'start game' from the main menu. */
-	inline void startGame() {
+	inline void startGame() noexcept {
 		m_engine->getModule_UI().clear();
 		enactCallback((int)StartMenu::Interact::on_start_game);
 	}
 	/** Choose 'level editor' from the main menu. */
-	inline void startEditor() {
+	inline void startEditor() noexcept {
 		m_engine->getModule_UI().clear();
 		enactCallback((int)StartMenu::Interact::on_level_editor);
 	}
 	/** Choose 'options' from the main menu. */
-	inline void goToOptions() {
+	inline void goToOptions() noexcept {
 		// Transfer appearance and control to options menu
 		auto& ui = m_engine->getModule_UI();
 		ui.pushRootElement(m_optionsMenu);
@@ -80,12 +80,12 @@ protected:
 		enactCallback((int)StartMenu::Interact::on_options);
 	}
 	/** Chosen when control is returned from the options menu. */
-	inline void returnFromOptions() {
+	inline void returnFromOptions() noexcept {
 		// Transfer control back to this menu
 		m_engine->getModule_UI().setFocusMap(getFocusMap());
 	}
 	/** Choose 'quit' from the main menu. */
-	inline void quit() {
+	inline void quit() noexcept {
 		m_engine->getModule_UI().clear();
 		m_engine->shutDown();
 		enactCallback((int)StartMenu::Interact::on_quit);

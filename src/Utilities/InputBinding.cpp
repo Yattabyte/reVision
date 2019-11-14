@@ -3,14 +3,14 @@
 #include "Engine.h"
 
 
-InputBinding::~InputBinding()
+InputBinding::~InputBinding() noexcept
 {
 	save();
 }
 
-InputBinding::InputBinding(Engine* engine) : m_engine(engine) {}
+InputBinding::InputBinding(Engine* engine) noexcept : m_engine(engine) {}
 
-void InputBinding::loadFile(const std::string& filename)
+void InputBinding::loadFile(const std::string& filename) noexcept
 {
 	m_config = Shared_Config(m_engine, filename, ActionState::Action_Strings(), false);
 
@@ -33,13 +33,13 @@ void InputBinding::loadFile(const std::string& filename)
 	defaultBind(ActionState::Action::UI_ESCAPE, KeyboardEvent::Key::ESCAPE);
 }
 
-void InputBinding::save()
+void InputBinding::save() noexcept
 {
 	if (m_config->existsYet())
 		m_config->saveConfig();
 }
 
-const Shared_Config& InputBinding::getBindings() const
+const Shared_Config& InputBinding::getBindings() const noexcept
 {
 	return m_config;
 }

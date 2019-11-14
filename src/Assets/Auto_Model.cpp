@@ -13,7 +13,7 @@ struct Single_Primitive_Vertex {
 	glm::vec3 normal;
 };
 
-Shared_Auto_Model::Shared_Auto_Model(Engine* engine, const std::string& filename, const bool& threaded)
+Shared_Auto_Model::Shared_Auto_Model(Engine* engine, const std::string& filename, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Auto_Model>*)(this)) = std::dynamic_pointer_cast<Auto_Model>(
 		engine->getManager_Assets().shareAsset(
@@ -25,13 +25,13 @@ Shared_Auto_Model::Shared_Auto_Model(Engine* engine, const std::string& filename
 		);
 }
 
-Auto_Model::~Auto_Model()
+Auto_Model::~Auto_Model() noexcept
 {
 	if (existsYet())
 		glDeleteBuffers(1, &m_vboID);
 }
 
-Auto_Model::Auto_Model(Engine* engine, const std::string& filename) : Asset(engine, filename)
+Auto_Model::Auto_Model(Engine* engine, const std::string& filename) noexcept : Asset(engine, filename)
 {
 	glCreateVertexArrays(1, &m_vaoID);
 	glEnableVertexArrayAttrib(m_vaoID, 0);
@@ -50,7 +50,7 @@ Auto_Model::Auto_Model(Engine* engine, const std::string& filename) : Asset(engi
 	glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(Single_Primitive_Vertex));
 }
 
-void Auto_Model::initialize()
+void Auto_Model::initialize() noexcept
 {
 	// Forward asset creation
 	m_mesh = Shared_Mesh(m_engine, DIRECTORY_PRIMITIVE + getFileName() + EXT_PRIMITIVE, false);

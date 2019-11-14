@@ -17,22 +17,22 @@ class Shared_Shader final : public std::shared_ptr<Shader> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Shader() = default;
+	inline Shared_Shader() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Shader(Engine* engine, const std::string& filename, const bool& threaded = true);
+	Shared_Shader(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** A single shader object, like a fragment shader or a vertex shader, not a whole shader program. */
 struct ShaderObj {
 	// (De)Constructors
 	/** Destroy the shader object. */
-	~ShaderObj();
+	~ShaderObj() noexcept;
 	/** Construct a shader object. */
-	explicit ShaderObj(const GLenum& type);
+	explicit ShaderObj(const GLenum& type) noexcept;
 
 
 	// Functions
@@ -67,11 +67,11 @@ class Shader : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Shader. */
-	~Shader();
+	~Shader() noexcept;
 	/** Construct the Shader.
 	@param	engine				the engine to use.
 	@param	filename			the asset file name (relative to engine directory). */
-	Shader(Engine* engine, const std::string& filename);
+	Shader(Engine* engine, const std::string& filename) noexcept;
 
 
 public:
@@ -165,7 +165,7 @@ protected:
 
 private:
 	// Private Interface Implementation
-	virtual void initialize() override;
+	virtual void initialize() noexcept override;
 
 
 	// Private Attributes

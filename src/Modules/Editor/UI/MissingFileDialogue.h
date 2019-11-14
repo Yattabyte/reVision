@@ -19,16 +19,16 @@ public:
 	/** Construct a missing file dialogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
-	MissingFileDialogue(Engine* engine, LevelEditor_Module* editor);
+	MissingFileDialogue(Engine* engine, LevelEditor_Module* editor) noexcept;
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override final;
+	virtual void tick(const float& deltaTime) noexcept override final;
 
 
 	// Public Methods
 	/** Notify the user that a file is missing. */
-	void notifyMissing(const std::string& filename);
+	void notifyMissing(const std::string& filename) noexcept;
 
 
 private:

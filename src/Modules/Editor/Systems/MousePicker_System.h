@@ -15,14 +15,15 @@ class MousePicker_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~MousePicker_System() {
+	inline ~MousePicker_System() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Construct this system.
 	@param	engine		the currently active engine. */
-	inline explicit MousePicker_System(Engine* engine)
-		: m_engine(engine) {
+	inline explicit MousePicker_System(Engine* engine)  noexcept :
+		m_engine(engine)
+	{
 		// Declare component types used
 		addComponentType(Transform_Component::Runtime_ID);
 		addComponentType(BoundingBox_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
@@ -44,7 +45,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		const auto& actionState = m_engine->getActionState();
 		const auto& clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
 		const auto ray_origin = clientCamera.EyePosition;
@@ -105,7 +106,7 @@ public:
 
 	// Public Methods
 	/** Retrieve this system's last selection result. */
-	std::tuple<EntityHandle, Transform, Transform> getSelection() const {
+	std::tuple<EntityHandle, Transform, Transform> getSelection() const noexcept {
 		return { m_selection, m_selectionTransform, m_intersectionTransform };
 	}
 
@@ -120,7 +121,7 @@ private:
 	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
 	@param	confidence				reference updated with the confidence level for this function.
 	@return							true on successful intersection, false if disjoint. */
-	static bool RayProp(Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) {
+	static bool RayProp(Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept {
 		bool intersection = false;
 		if (prop->m_model && prop->m_model->existsYet()) {
 			float distance = FLT_MAX;
@@ -153,7 +154,7 @@ private:
 	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
 	@param	confidence				reference updated with the confidence level for this function.
 	@return							true on successful intersection, false if disjoint. */
-	static bool RayCollider(Transform_Component* transformComponent, Collider_Component* collider, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) {
+	static bool RayCollider(Transform_Component* transformComponent, Collider_Component* collider, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept {
 		//confidence = 3;
 		return false;
 	}
@@ -165,7 +166,7 @@ private:
 	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
 	@param	confidence				reference updated with the confidence level for this function.
 	@return							true on successful intersection, false if disjoint. */
-	static bool RayBBox(Transform_Component* transformComponent, BoundingBox_Component* bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) {
+	static bool RayBBox(Transform_Component* transformComponent, BoundingBox_Component* bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept {
 		float distance;
 		const auto& scale = transformComponent->m_worldTransform.m_scale;
 		Transform newTransform = transformComponent->m_worldTransform;
@@ -190,7 +191,7 @@ private:
 	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
 	@param	confidence				reference updated with the confidence level for this function.
 	@return							true on successful intersection, false if disjoint. */
-	static bool RayBSphere(Transform_Component* transformComponent, BoundingSphere_Component* bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) {
+	static bool RayBSphere(Transform_Component* transformComponent, BoundingSphere_Component* bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept {
 		// Check if the distance is closer than the last entity found, so we can find the 'best' selection
 		if (auto distance = RaySphereIntersection(ray_origin, ray_direction, transformComponent->m_worldTransform.m_position + bSphere->m_positionOffset, bSphere->m_radius); distance >= 0.0f) {
 			distanceFromScreen = distance;
@@ -207,7 +208,7 @@ private:
 	@param	confidence				reference updated with the confidence level for this function.
 	@param	engine					the currently active engine
 	@return							true on successful intersection, false if disjoint. */
-	static bool RayOrigin(Transform_Component* transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine* engine) {
+	static bool RayOrigin(Transform_Component* transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine* engine) noexcept {
 		// Create scaling factor to keep all origins same screen size
 		const auto radius = glm::distance(transformComponent->m_worldTransform.m_position, engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.033f;
 

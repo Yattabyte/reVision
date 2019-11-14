@@ -20,7 +20,7 @@
 #include "GLFW/glfw3.h"
 
 
-Editor_Interface::~Editor_Interface()
+Editor_Interface::~Editor_Interface() noexcept
 {
 	// Cleanup
 	ImGui_ImplOpenGL3_Shutdown();
@@ -28,7 +28,7 @@ Editor_Interface::~Editor_Interface()
 	ImGui::DestroyContext();
 }
 
-Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor) :
+Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor) noexcept :
 	m_uiHotkeys(std::make_shared<Hotkeys>(engine, editor)),
 	m_uiCamController(std::make_shared<CameraController>(engine)),
 	m_uiRotIndicator(std::make_shared<RotationIndicator>(engine)),
@@ -76,7 +76,7 @@ Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor) :
 	ImGui_ImplOpenGL3_Init("#version 150");
 }
 
-void Editor_Interface::tick(const float& deltaTime)
+void Editor_Interface::tick(const float& deltaTime) noexcept
 {
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();

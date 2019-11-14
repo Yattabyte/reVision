@@ -5,7 +5,7 @@
 
 constexpr char* DIRECTORY_SOUNDS = "Sounds\\";
 
-Shared_Sound::Shared_Sound(Engine* engine, const std::string& filename, const bool& threaded)
+Shared_Sound::Shared_Sound(Engine* engine, const std::string& filename, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Sound>*)(this)) = std::dynamic_pointer_cast<Sound>(
 		engine->getManager_Assets().shareAsset(
@@ -16,15 +16,15 @@ Shared_Sound::Shared_Sound(Engine* engine, const std::string& filename, const bo
 		));
 }
 
-Sound::~Sound()
+Sound::~Sound() noexcept
 {
 	if (m_finalized)
 		delete reinterpret_cast<SoLoud::Wav*>(m_soundObj);
 }
 
-Sound::Sound(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
+Sound::Sound(Engine* engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
-void Sound::initialize()
+void Sound::initialize() noexcept
 {
 	// Forward asset creation
 	auto* wave = new SoLoud::Wav();

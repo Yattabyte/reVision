@@ -8,7 +8,7 @@
 #include <typeinfo>
 
 
-void Graphics_Module::initialize(Engine* engine)
+void Graphics_Module::initialize(Engine* engine) noexcept
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: Graphics...");
@@ -70,7 +70,7 @@ void Graphics_Module::initialize(Engine* engine)
 	m_pipeline = std::make_unique<Graphics_Pipeline>(engine, m_clientCamera);
 }
 
-void Graphics_Module::deinitialize()
+void Graphics_Module::deinitialize() noexcept
 {
 	m_engine->getManager_Messages().statement("Unloading Module: Graphics...");
 

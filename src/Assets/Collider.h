@@ -15,13 +15,13 @@ class Shared_Collider final : public std::shared_ptr<Collider> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Collider() = default;
+	inline Shared_Collider() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
 	@param	threaded		create in a separate thread
 	@return					the desired asset */
-	explicit Shared_Collider(Engine* engine, const std::string& filename, const bool& threaded = true);
+	Shared_Collider(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** A collision shape asset used in physics.
@@ -31,11 +31,11 @@ class Collider final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Collider. */
-	inline ~Collider() = default;
+	inline ~Collider() noexcept = default;
 	/** Construct the Collider.
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
-	Collider(Engine* engine, const std::string& filename);
+	Collider(Engine* engine, const std::string& filename) noexcept;
 
 
 	// Public Attributes
@@ -45,7 +45,7 @@ public:
 
 protected:
 	// Private Interface Implementation
-	virtual void initialize() override final;
+	virtual void initialize() noexcept override final;
 
 
 	// Private Attributes

@@ -3,19 +3,19 @@
 #include <algorithm>
 
 
-Asset::Asset(Engine* engine, const std::string& filename) : m_engine(engine), m_filename(filename) {}
+Asset::Asset(Engine* engine, const std::string& filename) noexcept : m_engine(engine), m_filename(filename) {}
 
-std::string Asset::getFileName() const
+std::string Asset::getFileName() const noexcept
 {
 	return m_filename;
 }
 
-void Asset::setFileName(const std::string& filename)
+void Asset::setFileName(const std::string& filename) noexcept
 {
 	m_filename = filename;
 }
 
-void Asset::addCallback(const std::shared_ptr<bool>& alive, const AssetFinalizedCallback& callback)
+void Asset::addCallback(const std::shared_ptr<bool>& alive, const AssetFinalizedCallback& callback) noexcept
 {
 	if (!existsYet())
 		m_callbacks.emplace_back(std::move(std::make_pair(alive, callback)));
@@ -23,7 +23,7 @@ void Asset::addCallback(const std::shared_ptr<bool>& alive, const AssetFinalized
 		callback();
 }
 
-bool Asset::existsYet() const
+bool Asset::existsYet() const noexcept
 {
 	// Exit early if this points to nothing
 	if (!this)
@@ -46,7 +46,7 @@ bool Asset::existsYet() const
 	return true;
 }
 
-void Asset::finalize()
+void Asset::finalize() noexcept
 {
 	m_finalized = true;
 

@@ -9,8 +9,9 @@
 #include "Modules/Editor/Systems/Inspector_Light_System.h"
 
 
-EntityInspector::EntityInspector(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+EntityInspector::EntityInspector(Engine* engine, LevelEditor_Module* editor) noexcept :
+	m_engine(engine),
+	m_editor(editor)
 {
 	m_open = true;
 	m_inspectorSystems.makeSystem<Inspector_Transform_System>(engine, editor);
@@ -18,7 +19,7 @@ EntityInspector::EntityInspector(Engine* engine, LevelEditor_Module* editor)
 	m_inspectorSystems.makeSystem<Inspector_Light_System>(engine, editor);
 }
 
-void EntityInspector::tick(const float& deltaTime)
+void EntityInspector::tick(const float& deltaTime) noexcept
 {
 	if (m_open) {
 		const auto& selectedEntities = m_editor->getSelection();

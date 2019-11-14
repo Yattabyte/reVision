@@ -7,13 +7,13 @@
 #include "Engine.h"
 
 
-Mouse_Gizmo::~Mouse_Gizmo()
+Mouse_Gizmo::~Mouse_Gizmo() noexcept
 {
 	// Update indicator
 	*m_aliveIndicator = false;
 }
 
-Mouse_Gizmo::Mouse_Gizmo(Engine* engine, LevelEditor_Module* editor) :
+Mouse_Gizmo::Mouse_Gizmo(Engine* engine, LevelEditor_Module* editor) noexcept :
 	m_engine(engine),
 	m_editor(editor),
 	m_pickerSystem(std::make_shared<MousePicker_System>(m_engine)),
@@ -32,13 +32,13 @@ Mouse_Gizmo::Mouse_Gizmo(Engine* engine, LevelEditor_Module* editor) :
 		});
 }
 
-void Mouse_Gizmo::frameTick(const float& deltaTime)
+void Mouse_Gizmo::frameTick(const float& deltaTime) noexcept
 {
 	checkInput(deltaTime);
 	render(deltaTime);
 }
 
-bool Mouse_Gizmo::checkInput(const float& deltaTime)
+bool Mouse_Gizmo::checkInput(const float& deltaTime) noexcept
 {
 	if (!ImGui::GetIO().WantCaptureMouse) {
 		if (ImGui::IsKeyPressed('t') || ImGui::IsKeyPressed('T'))
@@ -82,7 +82,7 @@ bool Mouse_Gizmo::checkInput(const float& deltaTime)
 	return false;
 }
 
-void Mouse_Gizmo::render(const float& deltaTime)
+void Mouse_Gizmo::render(const float& deltaTime) noexcept
 {
 	if (m_inputMode == 0)
 		m_translationGizmo->render(deltaTime);
@@ -108,7 +108,7 @@ void Mouse_Gizmo::render(const float& deltaTime)
 	}
 }
 
-void Mouse_Gizmo::setTransform(const Transform& transform)
+void Mouse_Gizmo::setTransform(const Transform& transform) noexcept
 {
 	m_selectionTransform = transform;
 	m_translationGizmo->setTransform(transform);
@@ -116,22 +116,22 @@ void Mouse_Gizmo::setTransform(const Transform& transform)
 	m_scalingGizmo->setTransform(transform);
 }
 
-Transform Mouse_Gizmo::getSelectionTransform() const
+Transform Mouse_Gizmo::getSelectionTransform() const noexcept
 {
 	return m_selectionTransform;
 }
 
-Transform Mouse_Gizmo::getSpawnTransform() const
+Transform Mouse_Gizmo::getSpawnTransform() const noexcept
 {
 	return m_spawnTransform;
 }
 
-void Mouse_Gizmo::setSelection(const std::vector<EntityHandle>& entityHandles)
+void Mouse_Gizmo::setSelection(const std::vector<EntityHandle>& entityHandles) noexcept
 {
 	m_selection = entityHandles;
 }
 
-std::vector<EntityHandle>& Mouse_Gizmo::getSelection()
+std::vector<EntityHandle>& Mouse_Gizmo::getSelection() noexcept
 {
 	return m_selection;
 }

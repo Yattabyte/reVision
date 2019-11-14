@@ -4,7 +4,7 @@
 
 constexpr char* DIRECTORY_CUBEMAP = "\\Textures\\Cubemaps\\";
 
-Shared_Cubemap::Shared_Cubemap(Engine* engine, const std::string& filename, const bool& threaded)
+Shared_Cubemap::Shared_Cubemap(Engine* engine, const std::string& filename, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Cubemap>*)(this)) = std::dynamic_pointer_cast<Cubemap>(
 		engine->getManager_Assets().shareAsset(
@@ -15,7 +15,7 @@ Shared_Cubemap::Shared_Cubemap(Engine* engine, const std::string& filename, cons
 		));
 }
 
-Cubemap::~Cubemap()
+Cubemap::~Cubemap() noexcept
 {
 	if (existsYet()) {
 		glDeleteBuffers(6, m_pboIDs);
@@ -23,9 +23,9 @@ Cubemap::~Cubemap()
 	}
 }
 
-Cubemap::Cubemap(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
+Cubemap::Cubemap(Engine* engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
-void Cubemap::initialize()
+void Cubemap::initialize() noexcept
 {
 	static const std::string side_suffixes[6] = { "right", "left", "bottom", "top", "front", "back" };
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };

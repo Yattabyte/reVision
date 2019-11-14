@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-void UI_Module::initialize(Engine* engine)
+void UI_Module::initialize(Engine* engine) noexcept
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: User Interface...");
@@ -32,7 +32,7 @@ void UI_Module::initialize(Engine* engine)
 	calcOthoProj(m_renderSize, m_projectionBuffer);
 }
 
-void UI_Module::deinitialize()
+void UI_Module::deinitialize() noexcept
 {
 	m_engine->getManager_Messages().statement("Unloading Module: User Interface...");
 
@@ -42,7 +42,7 @@ void UI_Module::deinitialize()
 	m_rootElement.clear();
 }
 
-void UI_Module::frameTick(const float& deltaTime)
+void UI_Module::frameTick(const float& deltaTime) noexcept
 {
 	glViewport(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -68,36 +68,36 @@ void UI_Module::frameTick(const float& deltaTime)
 	}
 }
 
-void UI_Module::pushRootElement(const std::shared_ptr<UI_Element>& rootElement)
+void UI_Module::pushRootElement(const std::shared_ptr<UI_Element>& rootElement) noexcept
 {
 	m_rootElement.push_back(rootElement);
 	if (rootElement)
 		rootElement->setScale(m_renderSize);
 }
 
-void UI_Module::popRootElement()
+void UI_Module::popRootElement() noexcept
 {
 	if (m_rootElement.size() > 1)
 		m_rootElement.pop_back();
 }
 
-void UI_Module::setFocusMap(const std::shared_ptr<FocusMap>& focusMap)
+void UI_Module::setFocusMap(const std::shared_ptr<FocusMap>& focusMap) noexcept
 {
 	m_focusMap = focusMap;
 }
 
-std::shared_ptr<FocusMap> UI_Module::getFocusMap() const
+std::shared_ptr<FocusMap> UI_Module::getFocusMap() const noexcept
 {
 	return m_focusMap;
 }
 
-void UI_Module::clear()
+void UI_Module::clear() noexcept
 {
 	m_rootElement.clear();
 	m_focusMap.reset();
 }
 
-void UI_Module::applyCursorPos(const double& xPos, const double& yPos)
+void UI_Module::applyCursorPos(const double& xPos, const double& yPos) noexcept
 {
 	m_mouseEvent.m_xPos = xPos;
 	m_mouseEvent.m_yPos = m_renderSize.y - yPos;
@@ -107,7 +107,7 @@ void UI_Module::applyCursorPos(const double& xPos, const double& yPos)
 		m_rootElement.back()->mouseAction(m_mouseEvent);
 }
 
-void UI_Module::applyCursorButton(const int& button, const int& action, const int& mods)
+void UI_Module::applyCursorButton(const int& button, const int& action, const int& mods) noexcept
 {
 	m_mouseEvent.m_button = MouseEvent::Key(button);
 	m_mouseEvent.m_action = MouseEvent::Action(action);
@@ -117,7 +117,7 @@ void UI_Module::applyCursorButton(const int& button, const int& action, const in
 		m_rootElement.back()->mouseAction(m_mouseEvent);
 }
 
-void UI_Module::applyChar(const unsigned int& character)
+void UI_Module::applyChar(const unsigned int& character) noexcept
 {
 	m_keyboardEvent.setChar(character);
 	if (m_rootElement.size())
@@ -125,20 +125,20 @@ void UI_Module::applyChar(const unsigned int& character)
 	m_keyboardEvent.setChar(0);
 }
 
-void UI_Module::applyKey(const int& key, const int&, const int& action, const int&)
+void UI_Module::applyKey(const int& key, const int&, const int& action, const int&) noexcept
 {
 	m_keyboardEvent.setState(KeyboardEvent::Key((unsigned int)key), KeyboardEvent::Action(action));
 	if (m_rootElement.size())
 		m_rootElement.back()->keyboardAction(m_keyboardEvent);
 }
 
-void UI_Module::applyActionState(ActionState& actionState)
+void UI_Module::applyActionState(ActionState& actionState) noexcept
 {
 	if (m_focusMap)
 		m_focusMap->applyActionState(actionState);
 }
 
-void UI_Module::pushCallback(const std::function<void()>& callback)
+void UI_Module::pushCallback(const std::function<void()>& callback) noexcept
 {
 	m_callbacks.push_back(callback);
 }

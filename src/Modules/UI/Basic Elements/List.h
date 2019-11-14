@@ -20,14 +20,14 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy the list. */
-	inline ~List() {
+	inline ~List() noexcept {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Constructs a list.
 	@param	engine		the engine. */
-	inline explicit List(Engine* engine) :
+	inline explicit List(Engine* engine) noexcept :
 		UI_Element(engine),
 		m_shader(Shared_Shader(engine, "UI\\List"))
 	{
@@ -53,7 +53,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override {
 		// Exit Early
 		if (!getVisible() || !m_children.size() || !m_shader->existsYet()) return;
 
@@ -81,7 +81,7 @@ public:
 		// Render Children
 		UI_Element::renderElement(deltaTime, position, scale);
 	}
-	inline virtual void mouseAction(const MouseEvent& mouseEvent) override {
+	inline virtual void mouseAction(const MouseEvent& mouseEvent) noexcept override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			// Move hover selection to whatever is beneath mouse
@@ -105,7 +105,7 @@ public:
 				m_children[m_hoverIndex]->setHovered();
 		}
 	}
-	inline virtual void userAction(ActionState& actionState) override {
+	inline virtual void userAction(ActionState& actionState) noexcept override {
 		// User can go up or down the list with an input device
 		// User input wraps around, and if an item is selected, moving will deselect it
 		if (m_children.size()) {
@@ -136,7 +136,7 @@ public:
 	// Public Methods
 	/** Change the item this list is hovered over.
 	@param	newIndex		the new hover index to use. */
-	inline void setHoverIndex(const int& newIndex) {
+	inline void setHoverIndex(const int& newIndex) noexcept {
 		m_hoverIndex = newIndex;
 		if (m_children.size()) {
 			for each (auto & child in m_children)
@@ -148,12 +148,12 @@ public:
 	}
 	/** Retrieve this list's hovered item index.
 	@return					this list's hovered index. */
-	inline int getHoverIndex() const {
+	inline int getHoverIndex() const noexcept {
 		return m_hoverIndex;
 	}
 	/** Change this lists selected item.
 	@param	newIndex		the new selected index. */
-	inline void setSelectionIndex(const int& newIndex) {
+	inline void setSelectionIndex(const int& newIndex) noexcept {
 		m_selectionIndex = newIndex;
 		m_focusMap.focusIndex(m_selectionIndex);
 		updateSelectionGeometry();
@@ -161,47 +161,47 @@ public:
 	}
 	/** Retrieve this list's selected item index.
 	@return					this list's selected index. */
-	inline int getSelectionIndex() const {
+	inline int getSelectionIndex() const noexcept {
 		return m_selectionIndex;
 	}
 	/** Retrieve this list's focus map.
 	Lists use a separate focus map, because the top-level element in each list slot may be a container or cosmetic only.
 	@return					the focus map for this list. */
-	FocusMap& getFocusMap() {
+	FocusMap& getFocusMap() noexcept {
 		return m_focusMap;
 	}
 	/** Set the margin distance between elements and the edge of this layout.
 	@param	margin		the margin for this layout. */
-	inline void setMargin(const float& margin) {
+	inline void setMargin(const float& margin) noexcept {
 		m_margin = margin;
 		alignChildren();
 	}
 	/** Get the margin distance between elements and the edge of this layout.
 	@return				the margin for this layout. */
-	inline float getMargin() const {
+	inline float getMargin() const noexcept {
 		return m_margin;
 	}
 	/** Set the spacing distance between elements in this layout.
 	@param	spacing		the spacing distance between elements. */
-	inline void setSpacing(const float& spacing) {
+	inline void setSpacing(const float& spacing) noexcept {
 		m_spacing = spacing;
 		alignChildren();
 		updateSelectionGeometry();
 	}
 	/** Get the spacing distance between elements in this layout.
 	@return				the spacing distance between elements. */
-	inline float getSpacing() const {
+	inline float getSpacing() const noexcept {
 		return m_spacing;
 	}
 	/** Set the border size.
 	@param		size		the new border size to use. */
-	inline void setBorderSize(const float& size) {
+	inline void setBorderSize(const float& size) noexcept {
 		m_borderSize = size;
 		updateSelectionGeometry();
 	}
 	/** Get the border size.
 	@return				border size. */
-	inline float getBorderSize() const {
+	inline float getBorderSize() const noexcept {
 		return m_borderSize;
 	}
 
@@ -209,7 +209,7 @@ public:
 protected:
 	// Protected Methods
 	/** Update position of each child element. */
-	inline void alignChildren() {
+	inline void alignChildren() noexcept {
 		float positionFromTop = m_scale.y - m_margin;
 		for (size_t x = 0; x < m_children.size(); ++x) {
 			const float size = m_children[x]->getScale().y;
@@ -224,7 +224,7 @@ protected:
 		}
 	}
 	/** Update the geometry of the selection box. */
-	inline void updateSelectionGeometry() {
+	inline void updateSelectionGeometry() noexcept {
 		if (m_children.size() < 1) return;
 		constexpr auto num_data = 8 * 6;
 		std::vector<glm::vec3> m_data(num_data);

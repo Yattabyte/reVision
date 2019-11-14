@@ -3,23 +3,24 @@
 #include "Engine.h"
 
 
-RecoverDialogue::RecoverDialogue(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+RecoverDialogue::RecoverDialogue(Engine* engine, LevelEditor_Module* editor) noexcept :
+	m_engine(engine),
+	m_editor(editor)
 {
 	m_open = false;
 }
 
-void RecoverDialogue::tick(const float&)
+void RecoverDialogue::tick(const float&) noexcept
 {
 	tickMainDialogue();
 }
 
-void RecoverDialogue::setPath(const std::filesystem::path& path)
+void RecoverDialogue::setPath(const std::filesystem::path& path) noexcept
 {
 	m_recoveredPath = path;
 }
 
-void RecoverDialogue::tickMainDialogue()
+void RecoverDialogue::tickMainDialogue() noexcept
 {
 	if (m_open) {
 		ImGui::OpenPopup("Recover Level");
@@ -67,7 +68,7 @@ void RecoverDialogue::tickMainDialogue()
 	}
 }
 
-void RecoverDialogue::tickDeleteDialogue()
+void RecoverDialogue::tickDeleteDialogue() noexcept
 {
 	bool openDelete = true;
 	ImGui::SetNextWindowSize({ 350, 95 }, ImGuiCond_Appearing);

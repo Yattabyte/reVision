@@ -15,7 +15,8 @@ public:
 	/** Destroy this free-look system. */
 	inline ~PlayerFreeLook_System() = default;
 	/** Construct a free-look system. */
-	inline explicit PlayerFreeLook_System(Engine* engine) : m_engine(engine) {
+	inline explicit PlayerFreeLook_System(Engine* engine) noexcept
+		: m_engine(engine) {
 		// Declare component types used
 		addComponentType(Transform_Component::Runtime_ID);
 		addComponentType(Player3D_Component::Runtime_ID);
@@ -27,7 +28,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		auto& graphicsModule = m_engine->getModule_Graphics();
 		for each (const auto & componentParam in components) {
 			auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);

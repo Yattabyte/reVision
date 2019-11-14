@@ -7,7 +7,7 @@
 
 constexpr char* MATERIAL_EXTENSION = ".mat";
 
-Shared_Material::Shared_Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded)
+Shared_Material::Shared_Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Material>*)(this)) = std::dynamic_pointer_cast<Material>(
 		engine->getManager_Assets().shareAsset(
@@ -18,13 +18,13 @@ Shared_Material::Shared_Material(Engine* engine, const std::string& filename, co
 		));
 }
 
-Material::~Material()
+Material::~Material() noexcept
 {
 	if (m_materialData)
 		delete m_materialData;
 }
 
-Material::Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures)
+Material::Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures) noexcept
 	: Asset(engine, filename), m_textures(textures)
 {
 	// We need to reserve a region of GPU memory for all the textures
@@ -51,7 +51,7 @@ Material::Material(Engine* engine, const std::string& filename, const std::vecto
 	}
 }
 
-void Material::initialize()
+void Material::initialize() noexcept
 {
 	// Some definitions for later
 	const size_t remainder = m_textures.size() % size_t(6u);

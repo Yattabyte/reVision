@@ -4,7 +4,7 @@
 
 constexpr char* DIRECTORY_TEXTURE = "\\Textures\\";
 
-Shared_Texture::Shared_Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy, const bool& threaded)
+Shared_Texture::Shared_Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Texture>*)(this)) = std::dynamic_pointer_cast<Texture>(
 		engine->getManager_Assets().shareAsset(
@@ -15,7 +15,7 @@ Shared_Texture::Shared_Texture(Engine* engine, const std::string& filename, cons
 		));
 }
 
-Texture::~Texture()
+Texture::~Texture() noexcept
 {
 	if (existsYet()) {
 		glDeleteBuffers(1, &m_pboID);
@@ -23,9 +23,9 @@ Texture::~Texture()
 	}
 }
 
-Texture::Texture(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
+Texture::Texture(Engine* engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
-Texture::Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy) :
+Texture::Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy) noexcept :
 	Asset(engine, filename),
 	m_type(type),
 	m_mipmap(mipmap),
@@ -33,7 +33,7 @@ Texture::Texture(Engine* engine, const std::string& filename, const GLuint& type
 {
 }
 
-void Texture::initialize()
+void Texture::initialize() noexcept
 {
 	// Forward asset creation
 	m_image = Shared_Image(m_engine, DIRECTORY_TEXTURE + getFileName(), {}, false);

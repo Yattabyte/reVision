@@ -23,8 +23,9 @@ public:
 	/** Construct a toggle switch with a given on/off state.
 	@param	engine		the engine to use.
 	@param	state		the on/off state to use. */
-	inline explicit Toggle(Engine* engine, const bool& state = true)
-		: UI_Element(engine) {
+	inline explicit Toggle(Engine* engine, const bool& state = true) noexcept :
+		UI_Element(engine)
+	{
 		// Make a background panel for cosmetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
@@ -53,7 +54,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override {
 		// Update Colors
 		glm::vec4 color(0.75);
 		if (m_pressed)
@@ -65,7 +66,7 @@ public:
 		// Render Children
 		UI_Element::renderElement(deltaTime, position, scale);
 	}
-	inline virtual void userAction(ActionState& actionState) override {
+	inline virtual void userAction(ActionState& actionState) noexcept override {
 		if (actionState.isAction(ActionState::Action::UI_LEFT) == ActionState::State::PRESS)
 			setToggled(false);
 		else if (actionState.isAction(ActionState::Action::UI_RIGHT) == ActionState::State::PRESS)
@@ -78,17 +79,17 @@ public:
 	// Public Methods
 	/** Set this slider's text.
 	@param	text	the text to use. */
-	inline void setText(const std::string& text) {
+	inline void setText(const std::string& text) noexcept {
 		m_label->setText(text);
 	}
 	/** Retrieve this slider's text.
 	@return			the text this label uses. */
-	inline std::string getText() const {
+	inline std::string getText() const noexcept {
 		return m_label->getText();
 	}
 	/** Set the toggle state of this button.
 	@param	state	the new state to use. */
-	inline void setToggled(const bool& state) {
+	inline void setToggled(const bool& state) noexcept {
 		m_toggledOn = state;
 		setText(m_toggledOn ? "ON" : "OFF");
 		updateGeometry();
@@ -96,7 +97,7 @@ public:
 	}
 	/** Return the toggle state of this button.
 	@return			whether or not this toggle is on or off. */
-	inline bool getToggled() const {
+	inline bool getToggled() const noexcept {
 		return m_toggledOn;
 	}
 
@@ -104,7 +105,7 @@ public:
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */
-	inline void updateGeometry() {
+	inline void updateGeometry() noexcept {
 		// Shorten the back panel by 50 units, and it is offset to the right by 50 units
 		m_backPanel->setPosition({ 50, 0 });
 		m_backPanel->setScale(glm::vec2(getScale().x - m_backPanel->getPosition().x, getScale().y));

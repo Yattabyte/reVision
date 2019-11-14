@@ -20,11 +20,11 @@ public:
 	/** Construct a component inspector.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	EntityInspector(Engine* engine, LevelEditor_Module* editor);
+	EntityInspector(Engine* engine, LevelEditor_Module* editor) noexcept;
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override final;
+	virtual void tick(const float& deltaTime) noexcept override final;
 
 
 private:

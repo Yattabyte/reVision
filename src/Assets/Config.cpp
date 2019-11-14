@@ -39,7 +39,7 @@ inline int find_CFG_Property(const std::string& s, const std::vector<std::string
 	return -1;
 }
 
-Shared_Config::Shared_Config(Engine* engine, const std::string& filename, const std::vector<std::string>& cfg_strings, const bool& threaded)
+Shared_Config::Shared_Config(Engine* engine, const std::string& filename, const std::vector<std::string>& cfg_strings, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Config>*)(this)) = std::dynamic_pointer_cast<Config>(
 		engine->getManager_Assets().shareAsset(
@@ -50,9 +50,9 @@ Shared_Config::Shared_Config(Engine* engine, const std::string& filename, const 
 		));
 }
 
-Config::Config(Engine* engine, const std::string& filename, const std::vector<std::string>& strings) : Asset(engine, filename), m_strings(strings) {}
+Config::Config(Engine* engine, const std::string& filename, const std::vector<std::string>& strings) noexcept : Asset(engine, filename), m_strings(strings) {}
 
-void Config::initialize()
+void Config::initialize() noexcept
 {
 	try {
 		std::ifstream file_stream(Engine::Get_Current_Dir() + DIRECTORY_CONFIG + getFileName() + EXT_CONFIG);

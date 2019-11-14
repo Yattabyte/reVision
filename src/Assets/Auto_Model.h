@@ -17,13 +17,13 @@ class Shared_Auto_Model final : public std::shared_ptr<Auto_Model> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Auto_Model() = default;
+	inline Shared_Auto_Model() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Auto_Model(Engine* engine, const std::string& filename, const bool& threaded = true);
+	Shared_Auto_Model(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** A basic 3D model used in visual processing.
@@ -34,11 +34,11 @@ class Auto_Model final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Auto_Model. */
-	~Auto_Model();
+	~Auto_Model() noexcept;
 	/** Construct the Auto_Model.
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
-	Auto_Model(Engine* engine, const std::string& filename);
+	Auto_Model(Engine* engine, const std::string& filename) noexcept;
 
 
 	// Public Methods
@@ -57,7 +57,7 @@ public:
 
 private:
 	// Private Interface Implementation
-	virtual void initialize() override final;
+	virtual void initialize() noexcept override final;
 
 
 	// Private Attributes

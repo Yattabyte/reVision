@@ -18,14 +18,14 @@ class Shared_Material final : public std::shared_ptr<Material> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Material() = default;
+	inline Shared_Material() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used.
 	@param	filename		the filename to use.
 	@param	textures		the textures to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded = true);
+	explicit Shared_Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded = true) noexcept;
 };
 
 /** A collection of textures which together form 1 or more PBR surfaces.
@@ -44,12 +44,12 @@ class Material final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Material. */
-	~Material();
+	~Material() noexcept;
 	/** Construct the Material.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory).
 	@param	textures		the textures to use. */
-	Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures);
+	Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures) noexcept;
 
 
 	// Public Methods
@@ -69,7 +69,7 @@ public:
 
 private:
 	// Private Interface Implementation
-	virtual void initialize() override final;
+	virtual void initialize() noexcept override final;
 
 
 	// Private Attributes

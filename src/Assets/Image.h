@@ -18,7 +18,7 @@ class Shared_Image final : public std::shared_ptr<Image> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Image() = default;
+	inline Shared_Image() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used.
 	@param	filename		the filename to use.
@@ -26,7 +26,7 @@ public:
 	@param	category		the category of image, if available.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded = true, const Fill_Policy& policyFill = Fill_Policy::CHECKERED, const Resize_Policy& policyResize = Resize_Policy::LINEAR);
+	explicit Shared_Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded = true, const Fill_Policy& policyFill = Fill_Policy::CHECKERED, const Resize_Policy& policyResize = Resize_Policy::LINEAR) noexcept;
 };
 
 /** Contains image data and related attributes.
@@ -35,14 +35,14 @@ class Image final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Image. */
-	~Image();
+	~Image() noexcept;
 	/** Construct the Image.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory).
 	@param	specificSize	an optional size to force the image to.
 	@param	policyFill		the pixel fill policy.
 	@param	policyResize	the image resize policy. */
-	Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize);
+	Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize) noexcept;
 
 
 	// Public Attributes
@@ -66,7 +66,7 @@ private:
 
 
 	// Private Interface Implementation
-	virtual void initialize() override final;
+	virtual void initialize() noexcept override final;
 
 
 	// Private Attributes

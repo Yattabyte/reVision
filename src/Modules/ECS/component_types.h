@@ -37,12 +37,12 @@ struct Camera_Component final : public ecsComponent<Camera_Component, cameraName
 	Camera m_camera;
 	float m_updateTime = 0.0f;
 
-	inline std::vector<char> serialize() {
+	inline std::vector<char> serialize() noexcept {
 		std::vector<char> data(sizeof(Camera));
 		std::memcpy(&data[0], &m_camera, sizeof(Camera));
 		return data;
 	}
-	inline void deserialize(const char* data) {
+	inline void deserialize(const char* data) noexcept {
 		std::memcpy(&m_camera, &data[0], sizeof(Camera));
 	}
 };
@@ -78,7 +78,7 @@ struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 	size_t m_offset = 0ull, m_count = 0ull;
 	GLuint m_materialID = 0u;
 
-	inline std::vector<char> serialize() {
+	inline std::vector<char> serialize() noexcept {
 		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
 			sizeof(unsigned int) + sizeof(float) + sizeof(glm::vec3);
 		std::vector<char> data(propSize);
@@ -99,7 +99,7 @@ struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 
 		return data;
 	}
-	inline void deserialize(const char* data) {
+	inline void deserialize(const char* data) noexcept {
 		// Want a pointer that I can increment, promise to not change underlying data
 		auto ptr = const_cast<char*>(&data[0]);
 
@@ -134,7 +134,7 @@ struct Skeleton_Component final : public ecsComponent<Skeleton_Component, skelet
 	float m_animTime = 0, m_animStart = 0;
 	std::vector<glm::mat4> m_transforms;
 
-	inline std::vector<char> serialize() {
+	inline std::vector<char> serialize() noexcept {
 		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
 			sizeof(int) + sizeof(bool);
 		std::vector<char> data(propSize);
@@ -153,7 +153,7 @@ struct Skeleton_Component final : public ecsComponent<Skeleton_Component, skelet
 
 		return data;
 	}
-	inline void deserialize(const char* data) {
+	inline void deserialize(const char* data) noexcept {
 		// Want a pointer that I can increment, promise to not change underlying data
 		auto ptr = const_cast<char*>(&data[0]);
 
@@ -180,10 +180,10 @@ struct Shadow_Component final : public ecsComponent<Shadow_Component, shadowName
 	std::vector<Camera> m_cameras;
 	std::vector<float> m_updateTimes;
 
-	inline static std::vector<char> serialize() {
+	inline static std::vector<char> serialize() noexcept {
 		return {};
 	}
-	inline void deserialize(const char*) {
+	inline void deserialize(const char*) noexcept {
 		m_cameras = {};
 	}
 };
@@ -206,10 +206,10 @@ struct Reflector_Component final : public ecsComponent<Reflector_Component, refl
 	float m_updateTime = 0.0f;
 	int m_cubeSpot = -1;
 
-	inline static std::vector<char> serialize() {
+	inline static std::vector<char> serialize() noexcept {
 		return {};
 	}
-	inline void deserialize(const char*) {
+	inline void deserialize(const char*) noexcept {
 		m_cameras = {};
 	}
 };
@@ -225,10 +225,10 @@ struct Collider_Component final : public ecsComponent<Collider_Component, collid
 	btConvexHullShape* m_shape = nullptr;
 	Transform m_worldTransform;
 
-	inline static std::vector<char> serialize() {
+	inline static std::vector<char> serialize() noexcept {
 		return {};
 	}
-	inline static void deserialize(const char*) {
+	inline static void deserialize(const char*) noexcept {
 	}
 };
 

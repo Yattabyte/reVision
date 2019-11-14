@@ -17,15 +17,15 @@ class RotationIndicator final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy the rotation indicator. */
-	~RotationIndicator();
+	~RotationIndicator() noexcept;
 	/** Construct a rotation indicator.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	explicit RotationIndicator(Engine* engine);
+	explicit RotationIndicator(Engine* engine) noexcept;
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override final;
+	virtual void tick(const float& deltaTime) noexcept override final;
 
 
 private:

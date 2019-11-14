@@ -21,14 +21,14 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy the side list. */
-	inline ~SideList() {
+	inline ~SideList() noexcept {
 		// Delete geometry
 		glDeleteBuffers(2, m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Construct the side list.
 	@param	engine		the engine to use. */
-	inline explicit SideList(Engine* engine) :
+	inline explicit SideList(Engine* engine) noexcept :
 		UI_Element(engine),
 		m_shader(Shared_Shader(engine, "UI\\SideList")),
 		m_label(std::make_shared<Label>(engine, ""))
@@ -69,7 +69,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void mouseAction(const MouseEvent& mouseEvent) override {
+	inline virtual void mouseAction(const MouseEvent& mouseEvent) noexcept override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			const float mx = float(mouseEvent.m_xPos) - m_position.x;
@@ -101,14 +101,14 @@ public:
 			m_rpressed = false;
 		}
 	}
-	inline virtual void userAction(ActionState& actionState) override {
+	inline virtual void userAction(ActionState& actionState) noexcept override {
 		// User can only change selection by using the left/right directional key actions
 		if (actionState.isAction(ActionState::Action::UI_LEFT) == ActionState::State::PRESS)
 			setIndex(m_index - 1);
 		else if (actionState.isAction(ActionState::Action::UI_RIGHT) == ActionState::State::PRESS)
 			setIndex(m_index + 1);
 	}
-	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override {
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet()) return;
 		const glm::vec2 newPosition = position + m_position;
@@ -135,7 +135,7 @@ public:
 	// Public Methods
 	/** Set the index to display as selected in the list.
 	@param		index		the new integer index to use. */
-	inline void setIndex(const int& index) {
+	inline void setIndex(const int& index) noexcept {
 		if (m_index != index) {
 			m_index = std::clamp<int>(index, 0, int(m_strings.size()) - 1);
 			m_label->setText(m_strings[m_index]);
@@ -147,18 +147,18 @@ public:
 	}
 	/** Get the index currently used in this list.
 	@return		currently active index. */
-	inline int getIndex() const {
+	inline int getIndex() const noexcept {
 		return m_index;
 	}
 	/** Set the strings to display in this list.
 	@param		strings		the new strings to use in this list. */
-	inline void setStrings(const std::vector<std::string>& strings) {
+	inline void setStrings(const std::vector<std::string>& strings) noexcept {
 		m_strings = strings;
 		setIndex(getIndex());
 	}
 	/** Retrieve the strings this list uses for each item in this list.
 	@return					the list of strings describing each item. */
-	inline std::vector<std::string> getStrings() const {
+	inline std::vector<std::string> getStrings() const noexcept {
 		return m_strings;
 	}
 
@@ -166,7 +166,7 @@ public:
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */
-	inline void updateGeometry() {
+	inline void updateGeometry() noexcept {
 		// Shorten the back panel by the width of the arrows
 		const float arrowHeight = m_scale.y;
 		m_backPanel->setScale(glm::vec2(getScale().x - (arrowHeight * 2.0f), getScale().y));

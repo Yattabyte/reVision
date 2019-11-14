@@ -4,18 +4,19 @@
 #include "Engine.h"
 
 
-Settings::Settings(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+Settings::Settings(Engine* engine, LevelEditor_Module* editor) noexcept :
+	m_engine(engine),
+	m_editor(editor)
 {
 	m_open = true;
 }
 
-void Settings::tick(const float&)
+void Settings::tick(const float&) noexcept
 {
 	tickMainDialogue();
 }
 
-void Settings::tickMainDialogue()
+void Settings::tickMainDialogue() noexcept
 {
 	if (m_open) {
 		if (ImGui::Begin("Preferences", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {

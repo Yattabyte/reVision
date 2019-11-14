@@ -18,17 +18,17 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void initialize(Engine* engine) override final;
-	virtual void deinitialize() override final;
+	virtual void initialize(Engine* engine) noexcept override final;
+	virtual void deinitialize() noexcept override final;
 
 
 	// Public Methods
 	/** Tick this module by a specific amount of delta time.
 	@param	deltaTime		the amount of time since last frame. */
-	void frameTick(ecsWorld& world, const float& deltaTime);
+	void frameTick(ecsWorld& world, const float& deltaTime) noexcept;
 	/** Returns a pointer to the physics-world.
 	@return					the physics world. */
-	inline btDiscreteDynamicsWorld* getWorld() { return m_world; }
+	inline btDiscreteDynamicsWorld* getWorld() noexcept { return m_world; }
 
 
 private:

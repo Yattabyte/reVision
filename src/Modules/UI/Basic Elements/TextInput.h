@@ -21,15 +21,16 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy the text input. */
-	inline ~TextInput() {
+	inline ~TextInput() noexcept {
 		// Delete geometry
 		glDeleteBuffers(2, m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Construct a text input.
 	@param	engine		the engine to use. */
-	inline TextInput(Engine* engine)
-		: UI_Element(engine) {
+	inline TextInput(Engine* engine) noexcept :
+		UI_Element(engine)
+	{
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\TextInput");
 
@@ -64,7 +65,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void mouseAction(const MouseEvent& mouseEvent) override {
+	inline virtual void mouseAction(const MouseEvent& mouseEvent) noexcept override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			if (m_clicked) {
@@ -81,7 +82,7 @@ public:
 		else
 			m_edit = false;
 	}
-	inline virtual void keyboardAction(const KeyboardEvent& keyboardEvent) override {
+	inline virtual void keyboardAction(const KeyboardEvent& keyboardEvent) noexcept override {
 		if (m_edit) {
 			// Check for a text stream
 			if (auto character = keyboardEvent.getChar()) {
@@ -113,7 +114,7 @@ public:
 			}
 		}
 	}
-	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override {
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet()) return;
 		const glm::vec2 newPosition = position + m_position;
@@ -137,13 +138,13 @@ public:
 	// Public Methods
 	/** Set the text to display in this field.
 	@param		string		the new text to display. */
-	inline void setText(const std::string& text) {
+	inline void setText(const std::string& text) noexcept {
 		m_text = text;
 		m_label->setText(text);
 	}
 	/** Get the text displayed in this field.
 	@return					the text displayed in this field. */
-	inline std::string getText() const {
+	inline std::string getText() const noexcept {
 		return m_text;
 	}
 
@@ -151,12 +152,12 @@ public:
 protected:
 	// Protected Methods
 	/** Set the caret position in this text box. */
-	inline void setCaret(const int& index) {
+	inline void setCaret(const int& index) noexcept {
 		m_caretIndex = std::clamp<int>(index, 0, (int)m_text.size());
 		updateGeometry();
 	}
 	/** Update the data dependant on the scale of this element. */
-	inline void updateGeometry() {
+	inline void updateGeometry() noexcept {
 		constexpr auto num_data = 4 * 3;
 		std::vector<glm::vec3> data(num_data);
 		std::vector<int> objIndices(num_data);

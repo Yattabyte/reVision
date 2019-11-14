@@ -20,7 +20,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy this scrollbar. */
-	inline ~Scrollbar_V() {
+	inline ~Scrollbar_V() noexcept {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
@@ -28,7 +28,7 @@ public:
 	/** Construct a vertical scrollbar, decorating the supplied component.
 	@param	engine		the engine to use.
 	@param	component	the component to decorate. */
-	inline Scrollbar_V(Engine* engine, const std::shared_ptr<UI_Element>& component)
+	inline Scrollbar_V(Engine* engine, const std::shared_ptr<UI_Element>& component) noexcept
 		: UI_Decorator(engine, component) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\ScrollBar");
@@ -64,7 +64,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void mouseAction(const MouseEvent& mouseEvent) override {
+	inline virtual void mouseAction(const MouseEvent& mouseEvent) noexcept override {
 		UI_Decorator::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			MouseEvent subEvent = mouseEvent;
@@ -81,7 +81,7 @@ public:
 				enactCallback((int)UI_Element::Interact::on_release);
 		}
 	}
-	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override {
 		// Quit Early
 		if (!getVisible() || !m_shader->existsYet()) return;
 		const auto newPosition = position + m_position;
@@ -102,14 +102,14 @@ public:
 	// Public Methods
 	/** Set the linear amount for the location of the scroll bar.
 	@param	linear		the linear amount to put the scroll bar. */
-	inline void setLinear(const float& linear) {
+	inline void setLinear(const float& linear) noexcept {
 		m_linear = std::clamp<float>(linear, -1.0f, 1.0f);
 		updateElementPosition();
 		enactCallback((int)Scrollbar_V::Interact::on_scroll_change);
 	}
 	/** Get the linear value for this scrollbar.
 	@return				the linear value for this scroll bar. */
-	inline float getLinear() const {
+	inline float getLinear() const noexcept {
 		return m_linear;
 	}
 
@@ -117,7 +117,7 @@ public:
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */
-	inline void updateGeometry() {
+	inline void updateGeometry() noexcept {
 		constexpr auto num_data = 2 * 3;
 		std::vector<glm::vec3> data(num_data);
 
@@ -138,7 +138,7 @@ protected:
 		m_component->setScale(glm::vec2(m_scale.x - 12.5f, m_scale.y));
 	}
 	/** Update the position of all scrollbar elements. */
-	inline void updateElementPosition() {
+	inline void updateElementPosition() noexcept {
 		if (m_children.size() == 3) {
 			// Buttons
 			m_children[0]->setPosition(glm::vec2(getScale() - 12.5f));

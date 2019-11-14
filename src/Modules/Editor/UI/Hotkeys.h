@@ -18,11 +18,11 @@ public:
 	/** Construct this element.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	Hotkeys(Engine* engine, LevelEditor_Module* editor);
+	Hotkeys(Engine* engine, LevelEditor_Module* editor) noexcept;
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override final;
+	virtual void tick(const float& deltaTime) noexcept override final;
 
 
 private:

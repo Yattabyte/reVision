@@ -32,7 +32,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		// Maintain list of reflectors, update with oldest within range
 		// Technique will clear list when ready
 		auto& reflectors = m_frameData->reflectorsToUpdate;

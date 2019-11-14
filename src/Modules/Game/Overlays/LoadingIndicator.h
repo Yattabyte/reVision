@@ -15,12 +15,12 @@ class LoadingIndicator final : public Overlay {
 public:
 	// Public (De)Constructors
 	/** Virtual Destructor. */
-	inline ~LoadingIndicator() {
+	inline ~LoadingIndicator() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit LoadingIndicator(Engine* engine) :
+	inline explicit LoadingIndicator(Engine* engine) noexcept :
 		m_engine(engine),
 		m_shader(Shared_Shader(engine, "Effects\\LoadingIndicator")),
 		m_texture(Shared_Texture(engine, "spinner.png", GL_TEXTURE_2D)),
@@ -42,7 +42,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyEffect(const float& deltaTime) override final {
+	inline virtual void applyEffect(const float& deltaTime) noexcept override final {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_texture->existsYet())
 			return;
 		if (m_show)
@@ -74,7 +74,7 @@ public:
 
 private:
 	// Private Methods
-	inline void resize(const glm::ivec2& s) {
+	inline void resize(const glm::ivec2& s) noexcept {
 		m_renderSize = s;
 		m_projMatrix = glm::ortho(0.0f, (float)s.x, 0.0f, (float)s.y);
 	}

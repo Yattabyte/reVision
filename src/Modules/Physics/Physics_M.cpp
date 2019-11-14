@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-void Physics_Module::initialize(Engine* engine)
+void Physics_Module::initialize(Engine* engine) noexcept
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: Physics...");
@@ -19,7 +19,7 @@ void Physics_Module::initialize(Engine* engine)
 	m_physicsSystems.makeSystem<TransformSync_Phys_System>(engine, m_world);
 }
 
-void Physics_Module::deinitialize()
+void Physics_Module::deinitialize() noexcept
 {
 	// Update indicator
 	m_engine->getManager_Messages().statement("Unloading Module: Physics...");
@@ -33,7 +33,7 @@ void Physics_Module::deinitialize()
 	delete m_world;
 }
 
-void Physics_Module::frameTick(ecsWorld& world, const float& deltaTime)
+void Physics_Module::frameTick(ecsWorld& world, const float& deltaTime) noexcept
 {
 	// To Do: disable physics per object if object isn't fully initialized
 	m_world->stepSimulation(deltaTime);

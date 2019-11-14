@@ -16,13 +16,13 @@ struct Importer_Pool {
 	size_t available = MAX_IMPORTERS;
 	std::mutex poolMutex;
 
-	Importer_Pool() {
+	Importer_Pool() noexcept {
 		std::generate(pool, pool + MAX_IMPORTERS, []() {return new Assimp::Importer(); });
 	}
 
 	/** Borrow a single importer.
 	@return		returns a single importer*/
-	[[nodiscard]] Assimp::Importer* rentImporter() {
+	[[nodiscard]] Assimp::Importer* rentImporter() noexcept {
 		// Check if any of our importers are free to be used
 		std::unique_lock<std::mutex> readGuard(poolMutex);
 		if (available)
@@ -32,7 +32,7 @@ struct Importer_Pool {
 			return new Assimp::Importer();
 	}
 
-	void returnImporter(Assimp::Importer* returnedImporter) {
+	void returnImporter(Assimp::Importer* returnedImporter) noexcept {
 		// Check if we have enough importers, free extra
 		std::unique_lock<std::mutex> readGuard(poolMutex);
 		if (available >= 4)
@@ -47,7 +47,7 @@ static Importer_Pool importer_pool;
 /** Convert an aiMatrix to glm::mat4.
 @param	d	the aiMatrix to convert from
 @return		the glm::mat4 converted to */
-inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d)
+inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d) noexcept
 {
 	return glm::mat4(d.a1, d.b1, d.c1, d.d1,
 		d.a2, d.b2, d.c2, d.d2,
@@ -55,7 +55,7 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d)
 		d.a4, d.b4, d.c4, d.d4);
 }
 
-[[nodiscard]] inline Node* copy_node(const aiNode* oldNode)
+[[nodiscard]] inline Node* copy_node(const aiNode* oldNode) noexcept
 {
 	Node* newNode = new Node(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
 	// Copy Children
@@ -65,7 +65,7 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d)
 	return newNode;
 }
 
-bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh_Geometry& importedData)
+bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh_Geometry& importedData) noexcept
 {
 	// Check if the file exists
 	if (!Engine::File_Exists(relativePath)) {
@@ -240,17 +240,17 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 	return true;
 }
 
-std::string Mesh_IO::Get_Version()
+std::string Mesh_IO::Get_Version() noexcept
 {
 	return std::to_string(aiGetVersionMajor()) + "." + std::to_string(aiGetVersionMinor()) + "." + std::to_string(aiGetVersionRevision());
 }
 
-VertexBoneData::VertexBoneData()
+VertexBoneData::VertexBoneData() noexcept
 {
 	Reset();
 }
 
-VertexBoneData::VertexBoneData(const VertexBoneData& vbd)
+VertexBoneData::VertexBoneData(const VertexBoneData& vbd) noexcept
 {
 	Reset();
 	for (size_t i = 0; i < 4; ++i) {
@@ -259,13 +259,13 @@ VertexBoneData::VertexBoneData(const VertexBoneData& vbd)
 	}
 }
 
-inline void VertexBoneData::Reset()
+inline void VertexBoneData::Reset() noexcept
 {
 	memset(IDs, 0, sizeof(IDs));
 	memset(Weights, 0, sizeof(Weights));
 }
 
-inline void VertexBoneData::AddBoneData(const int& BoneID, const float& Weight)
+inline void VertexBoneData::AddBoneData(const int& BoneID, const float& Weight) noexcept
 {
 	for (size_t i = 0; i < 4; ++i)
 		if (Weights[i] == 0.0) {

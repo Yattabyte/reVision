@@ -30,7 +30,7 @@ public:
 	};
 	/** Returns whether or not this system is valid (has at least 1 non-optional component type)
 	@return		true if the system is valid, false otherwise. */
-	inline const bool isValid() const {
+	inline const bool isValid() const noexcept {
 		for (const auto& [componentID, componentFlag] : m_componentTypes)
 			if (((unsigned int)componentFlag & (unsigned int)RequirementsFlag::FLAG_OPTIONAL) == 0)
 				return true;
@@ -42,7 +42,7 @@ public:
 	/** Tick this system by deltaTime, passing in all the components matching this system's requirements.
 	@param	deltaTime		the amount of time which passed since last update
 	@param	components		the components to update. */
-	virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) = 0;
+	virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) noexcept = 0;
 
 
 protected:
@@ -50,7 +50,7 @@ protected:
 	/** Add a component type to be used by this system.
 	@param	componentType	the type of component to use
 	@param	componentFlag	flag indicating required/optional */
-	inline void addComponentType(const ComponentID& componentType, const RequirementsFlag& componentFlag = RequirementsFlag::FLAG_REQUIRED) {
+	inline void addComponentType(const ComponentID& componentType, const RequirementsFlag& componentFlag = RequirementsFlag::FLAG_REQUIRED) noexcept {
 		m_componentTypes.push_back({ componentType, componentFlag });
 	}
 
@@ -72,7 +72,7 @@ public:
 	@param	<T>		the system class type.
 	@param	...Args	variadic arguments to forward to the system constructor. */
 	template <typename T, class...Args>
-	[[maybe_unused]] inline std::shared_ptr<T> makeSystem(Args ...args) {
+	[[maybe_unused]] inline std::shared_ptr<T> makeSystem(Args ...args) noexcept {
 		const auto& system = std::make_shared<T>(args...);
 		if (!system->isValid())
 			return {};
@@ -81,7 +81,7 @@ public:
 	}
 	/** Adds a system to the list.
 	@param	system	the system to add. */
-	inline const bool addSystem(const std::shared_ptr<ecsBaseSystem>& system) {
+	inline const bool addSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept {
 		if (!system->isValid())
 			return false;
 		m_systems.push_back(system);
@@ -89,7 +89,7 @@ public:
 	}
 	/** Removes a system from the list.
 	@param	system	the system to remove. */
-	inline const bool removeSystem(const std::shared_ptr<ecsBaseSystem>& system) {
+	inline const bool removeSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept {
 		for (size_t i = 0; i < m_systems.size(); ++i)
 			if (system.get() == m_systems[i].get()) {
 				m_systems.erase(m_systems.begin() + i);
@@ -99,32 +99,32 @@ public:
 	}
 	/** Get the number of systems in the list.
 	@return			the size of the list. */
-	inline const size_t size() const {
+	inline const size_t size() const noexcept {
 		return m_systems.size();
 	}
 	/** Retrieve a specific system at a given index.
 	@param	index	the index to fetch the system from. */
-	inline auto operator[](const size_t& index) const {
+	inline auto operator[](const size_t& index) const noexcept {
 		return m_systems[index];
 	}
 	/** Retrieve an iterator to the beginning of this system list.
 	@return			 an iterator to the beginning of this system list. */
-	inline auto begin() {
+	inline auto begin() noexcept {
 		return m_systems.begin();
 	}
 	/** Retrieve a const iterator to the beginning of this system list.
 	@return			a const iterator to the beginning of this system list. */
-	inline auto begin() const {
+	inline auto begin() const noexcept {
 		return m_systems.cbegin();
 	}
 	/** Retrieve an iterator to the end of this system list.
 	@return			an iterator to the end of this system list. */
-	inline auto end() {
+	inline auto end() noexcept {
 		return m_systems.end();
 	}
 	/** Retrieve a const iterator to the end of this system list.
 	@return			a const iterator to the end of this system list. */
-	inline auto end() const {
+	inline auto end() const noexcept {
 		return m_systems.cend();
 	}
 

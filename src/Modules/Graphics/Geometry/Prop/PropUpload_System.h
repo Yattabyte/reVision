@@ -70,7 +70,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		for each (const auto & componentParam in components) {
 			auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
 			auto& model = propComponent->m_model;

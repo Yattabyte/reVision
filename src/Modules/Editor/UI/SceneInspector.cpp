@@ -5,13 +5,14 @@
 #include "Engine.h"
 
 
-SceneInspector::SceneInspector(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+SceneInspector::SceneInspector(Engine* engine, LevelEditor_Module* editor) noexcept :
+	m_engine(engine),
+	m_editor(editor)
 {
 	m_open = true;
 }
 
-void SceneInspector::tick(const float&)
+void SceneInspector::tick(const float&) noexcept
 {
 	if (m_open) {
 		auto& ecsWorld = m_editor->getWorld();

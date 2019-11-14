@@ -17,8 +17,8 @@ public:
 	inline ~Options_Graphics() = default;
 	/** Construct a graphics panel.
 	@param	engine		the engine to use. */
-	inline explicit Options_Graphics(Engine* engine)
-		: Options_Pane(engine) {
+	inline explicit Options_Graphics(Engine* engine) noexcept :
+		Options_Pane(engine) {
 		// Title
 		m_title->setText("Graphics Options");
 
@@ -131,42 +131,42 @@ protected:
 	// Protected Methods
 	/** Set the resolution.
 	@param	index	the resolution index to use. */
-	inline void setTextureResolution(const size_t& index) {
+	inline void setTextureResolution(const size_t& index) noexcept {
 		m_engine->getPreferenceState().setValue(PreferenceState::Preference::C_MATERIAL_SIZE, m_materialSizes[index]);
 	}
 	/** Set the shadow size.
 	@param	index	the shadow size index to use. */
-	inline void setShadowSize(const size_t& index) {
+	inline void setShadowSize(const size_t& index) noexcept {
 		m_engine->getPreferenceState().setValue(PreferenceState::Preference::C_SHADOW_SIZE, m_shadowSizes[index]);
 	}
 	/** Set the reflection size.
 	@param	index	the reflection size index to use. */
-	inline void setReflectionSize(const size_t& index) {
+	inline void setReflectionSize(const size_t& index) noexcept {
 		m_engine->getPreferenceState().setValue(PreferenceState::Preference::C_ENVMAP_SIZE, m_reflectionSizes[index]);
 	}
 	/** Set the light bounce quality.
 	@param	index	the light bounce quality index to use. */
-	inline void setBounceQuality(const size_t& index) {
+	inline void setBounceQuality(const size_t& index) noexcept {
 		m_engine->getPreferenceState().setValue(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_bounceQuality[index]);
 	}
 	/** Turn the bloom on or off.
 	@param	b		whether to turn bloom on or off. */
-	inline void setBloom(const bool& b) {
+	inline void setBloom(const bool& b) noexcept {
 		m_engine->getPreferenceState().setValue(PreferenceState::Preference::C_BLOOM, b ? 1.0f : 0.0f);
 	}
 	/** Turn the SSAO on or off.
 	@param	b		whether to turn SSAO on or off. */
-	inline void setSSAO(const bool& b) {
+	inline void setSSAO(const bool& b) noexcept {
 		m_engine->getPreferenceState().setValue(PreferenceState::Preference::C_SSAO, b ? 1.0f : 0.0f);
 	}
 	/** Turn the SSR on or off.
 	@param	b		whether to turn SSR on or off. */
-	inline void setSSR(const bool& b) {
+	inline void setSSR(const bool& b) noexcept {
 		m_engine->getPreferenceState().setValue(PreferenceState::Preference::C_SSR, b ? 1.0f : 0.0f);
 	}
 	/** Turn the FXAA on or off.
 	@param	b		whether to turn FXAA on or off. */
-	inline void setFXAA(const bool& b) {
+	inline void setFXAA(const bool& b) noexcept {
 		m_engine->getPreferenceState().setValue(PreferenceState::Preference::C_FXAA, b ? 1.0f : 0.0f);
 	}
 

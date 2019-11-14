@@ -17,9 +17,9 @@ public:
 
 	// Public Interface Declarations
 	/** Initialize the module. */
-	inline virtual void initialize(Engine* engine) { m_engine = engine; };
+	inline virtual void initialize(Engine* engine) noexcept { m_engine = engine; };
 	/** De-initialize the module. */
-	inline virtual void deinitialize() {}
+	inline virtual void deinitialize() noexcept {}
 
 
 protected:

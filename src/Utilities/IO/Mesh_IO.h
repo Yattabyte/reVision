@@ -18,42 +18,42 @@ struct VertexBoneData {
 	int IDs[NUM_BONES_PER_VEREX];
 	float Weights[NUM_BONES_PER_VEREX];
 	inline ~VertexBoneData() = default;
-	VertexBoneData();
-	VertexBoneData(const VertexBoneData& vbd);
-	void Reset();
-	void AddBoneData(const int& BoneID, const float& Weight);
+	VertexBoneData() noexcept;
+	VertexBoneData(const VertexBoneData& vbd) noexcept;
+	void Reset() noexcept;
+	void AddBoneData(const int& BoneID, const float& Weight) noexcept;
 };
 struct Material_Strings {
 	std::string albedo = "", normal = "", metalness = "", roughness = "", height = "", ao = "";
-	inline Material_Strings(const std::string& al = "albedo", const std::string& n = "normal", const std::string& m = "metalness", const std::string& r = "roughness", const std::string& h = "height", const std::string& a = "ao")
+	inline Material_Strings(const std::string& al = "albedo", const std::string& n = "normal", const std::string& m = "metalness", const std::string& r = "roughness", const std::string& h = "height", const std::string& a = "ao")  noexcept
 		: albedo(al), normal(n), metalness(m), roughness(r), height(h), ao(a) {}
 };
 template<typename T>
 struct Animation_Time_Key {
 	double time = 0.0;
 	T value = T();
-	inline Animation_Time_Key() {};
-	inline Animation_Time_Key(const double& t, const T& v) : time(t), value(v) {};
+	inline Animation_Time_Key() noexcept {};
+	inline Animation_Time_Key(const double& t, const T& v) noexcept : time(t), value(v) {};
 };
 struct Node_Animation {
 	std::string nodeName = "";
 	std::vector<Animation_Time_Key<glm::vec3>> scalingKeys;
 	std::vector<Animation_Time_Key<glm::quat>> rotationKeys;
 	std::vector<Animation_Time_Key<glm::vec3>> positionKeys;
-	inline Node_Animation(const std::string& name = "") : nodeName(name) {}
+	inline Node_Animation(const std::string& name = "") noexcept : nodeName(name) {}
 };
 struct Node {
 	std::string name = "";
 	glm::mat4 transformation = glm::mat4(1);
 	std::vector<Node*> children;
-	inline Node(const std::string& n, const glm::mat4& t) : name(n), transformation(t) {}
+	inline Node(const std::string& n, const glm::mat4& t) noexcept : name(n), transformation(t) {}
 };
 struct Animation {
 	unsigned int numChannels = 0;
 	double ticksPerSecond = 0.0;
 	double duration = 0.0;
 	std::vector<Node_Animation*> channels;
-	inline Animation(const unsigned int& nC = 0, const double& tick = 0, const double& dur = 0)
+	inline Animation(const unsigned int& nC = 0, const double& tick = 0, const double& dur = 0) noexcept
 		: numChannels(nC), ticksPerSecond(tick), duration(dur) {}
 };
 struct Mesh_Geometry {
@@ -99,10 +99,10 @@ public:
 	@param	relativePath	the path to the file
 	@param	importedData	the container to place the imported data within
 	@return					true on successful import, false otherwise (error reported to engine) */
-	static bool Import_Model(Engine* engine, const std::string& relativePath, Mesh_Geometry& importedData);
+	static bool Import_Model(Engine* engine, const std::string& relativePath, Mesh_Geometry& importedData) noexcept;
 	/** Get the plugin version.
 	@return					the plugin version */
-	static std::string Get_Version();
+	static std::string Get_Version() noexcept;
 };
 
 #endif // Mesh_IO_H

@@ -26,7 +26,7 @@ public:
 	inline ~OptionsMenu() = default;
 	/** Construct an options menu.
 	@param	engine		the engine to use. */
-	inline explicit OptionsMenu(Engine* engine)
+	inline explicit OptionsMenu(Engine* engine) noexcept
 		: Menu(engine) {
 		// Title
 		m_title->setText("OPTIONS");
@@ -67,7 +67,7 @@ public:
 protected:
 	// Protected Methods
 	/** Choose 'video' from the options menu. */
-	inline void video() {
+	inline void video() noexcept {
 		// Remove control from the graphics menu
 		m_gfxMenu->setVisible(false);
 		m_focusMap->clear();
@@ -80,7 +80,7 @@ protected:
 		enactCallback((int)OptionsMenu::Interact::on_video);
 	}
 	/** Choose 'graphics' from the options menu. */
-	inline void graphics() {
+	inline void graphics() noexcept {
 		// Remove control from the video menu
 		m_videoMenu->setVisible(false);
 		m_focusMap->clear();
@@ -93,11 +93,11 @@ protected:
 		enactCallback((int)OptionsMenu::Interact::on_graphics);
 	}
 	/** Choose 'controls' from the options menu. */
-	inline void controls() {
+	inline void controls() noexcept {
 		enactCallback((int)OptionsMenu::Interact::on_controls);
 	}
 	/** Choose 'back' from the options menu. */
-	inline void back() {
+	inline void back() noexcept {
 		m_videoMenu->setVisible(false);
 		m_gfxMenu->setVisible(false);
 		m_focusMap->clear();

@@ -14,7 +14,7 @@ public:
 	/** Destroy the action state. */
 	inline ~ActionState() = default;
 	/** Construct the action state. */
-	inline ActionState() {
+	inline ActionState() noexcept {
 		for (unsigned int x = 0; x < (unsigned int)Action::ACTION_COUNT; ++x)
 			m_keyStates.insert({ Action(x), { false, 0.0f } });
 	}
@@ -87,16 +87,16 @@ public:
 
 	// Public Methods
 	/***/
-	inline float& operator[](const ActionState::Action& index) {
+	inline float& operator[](const ActionState::Action& index) noexcept {
 		return std::get<1>(m_keyStates[index]);
 	}
-	inline const float& operator[](const ActionState::Action& index) const {
+	inline const float& operator[](const ActionState::Action& index) const noexcept {
 		return std::get<1>(m_keyStates.at(index));
 	}
-	inline ActionState::State isAction(const ActionState::Action& actionEnum) {
+	inline ActionState::State isAction(const ActionState::Action& actionEnum) noexcept {
 		return isAction(actionEnum, &m_keyStates);
 	}
-	inline ActionState::State isAction(const ActionState::Action& actionEnum, std::map<ActionState::Action, std::pair<bool, float>>* keyStates) const {
+	inline ActionState::State isAction(const ActionState::Action& actionEnum, std::map<ActionState::Action, std::pair<bool, float>>* keyStates) const noexcept {
 		if (m_keyStates.find(actionEnum) != m_keyStates.end()) {
 			auto& [state, amount] = (*keyStates)[actionEnum];
 			if (m_keyStates.at(actionEnum).second > 0.5f) {

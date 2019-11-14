@@ -7,7 +7,7 @@
 constexpr char* EXT_SHADER_GEOMETRY = ".gsh";
 constexpr char* DIRECTORY_SHADER = "\\Shaders\\";
 
-Shared_Shader_Geometry::Shared_Shader_Geometry(Engine* engine, const std::string& filename, const bool& threaded)
+Shared_Shader_Geometry::Shared_Shader_Geometry(Engine* engine, const std::string& filename, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Shader_Geometry>*)(this)) = std::dynamic_pointer_cast<Shader_Geometry>(
 		engine->getManager_Assets().shareAsset(
@@ -18,15 +18,15 @@ Shared_Shader_Geometry::Shared_Shader_Geometry(Engine* engine, const std::string
 		));
 }
 
-Shader_Geometry::~Shader_Geometry()
+Shader_Geometry::~Shader_Geometry() noexcept
 {
 	if (existsYet())
 		glDeleteProgram(m_glProgramID);
 }
 
-Shader_Geometry::Shader_Geometry(Engine* engine, const std::string& filename) : Shader(engine, filename) {}
+Shader_Geometry::Shader_Geometry(Engine* engine, const std::string& filename) noexcept : Shader(engine, filename) {}
 
-void Shader_Geometry::initialize()
+void Shader_Geometry::initialize() noexcept
 {
 	// Attempt to load cache, otherwise load manually
 	m_glProgramID = glCreateProgram();

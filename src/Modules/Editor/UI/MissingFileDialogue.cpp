@@ -4,13 +4,14 @@
 #include "Engine.h"
 
 
-MissingFileDialogue::MissingFileDialogue(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+MissingFileDialogue::MissingFileDialogue(Engine* engine, LevelEditor_Module* editor) noexcept :
+	m_engine(engine),
+	m_editor(editor)
 {
 	m_open = false;
 }
 
-void MissingFileDialogue::tick(const float&)
+void MissingFileDialogue::tick(const float&) noexcept
 {
 	// Draw 'Missing File' notification
 	if (m_open && !m_fileName.empty()) {
@@ -32,7 +33,7 @@ void MissingFileDialogue::tick(const float&)
 	}
 }
 
-void MissingFileDialogue::notifyMissing(const std::string& filename)
+void MissingFileDialogue::notifyMissing(const std::string& filename) noexcept
 {
 	m_fileName = filename;
 	m_open = !filename.empty();

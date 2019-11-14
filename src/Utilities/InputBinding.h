@@ -14,21 +14,21 @@ class InputBinding {
 public:
 	// Public (De)Constructors
 	/** Destroy the binding (not from disk) */
-	~InputBinding();
+	~InputBinding() noexcept;
 	/** Construct a key-binding.
 	@param	engine		the engine */
-	explicit InputBinding(Engine* engine);
+	explicit InputBinding(Engine* engine) noexcept;
 
 
 	// Public Methods
 	/** Loads a preference file from disk.
 	@param	filename	the relative path to the bindings file to load */
-	void loadFile(const std::string& filename);
+	void loadFile(const std::string& filename) noexcept;
 	/** Saves the preference file to disk, using the same filename as when loaded. */
-	void save();
+	void save() noexcept;
 	/** Retrieve the key-bindings.
 	@return	the configuration asset used */
-	const Shared_Config& getBindings() const;
+	const Shared_Config& getBindings() const noexcept;
 
 
 private:

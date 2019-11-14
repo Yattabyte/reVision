@@ -12,14 +12,14 @@ class Separator : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy the separator. */
-	inline ~Separator() {
+	inline ~Separator() noexcept {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Construct a separator.
 	@param	engine		the engine to use. */
-	inline explicit Separator(Engine* engine) :
+	inline explicit Separator(Engine* engine) noexcept :
 		UI_Element(engine),
 		m_shader(Shared_Shader(engine, "UI\\Separator"))
 	{
@@ -46,7 +46,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override {
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet()) return;
 
@@ -69,12 +69,12 @@ public:
 	// Public Methods
 	/** Set this element's color.
 	@param	text	the new color to render with. */
-	inline void setColor(const glm::vec4& color) {
+	inline void setColor(const glm::vec4& color) noexcept {
 		m_color = color;
 	}
 	/** Retrieve this element's color.
 	@return			the color used by this element. */
-	inline glm::vec4 getColor() const {
+	inline glm::vec4 getColor() const noexcept {
 		return m_color;
 	}
 

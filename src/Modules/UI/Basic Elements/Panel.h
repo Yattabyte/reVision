@@ -12,14 +12,14 @@ class Panel : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy the panel. */
-	inline ~Panel() {
+	inline ~Panel() noexcept {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Construct a panel.
 	@param	engine		the engine to use. */
-	inline explicit Panel(Engine* engine) :
+	inline explicit Panel(Engine* engine) noexcept :
 		UI_Element(engine),
 		m_shader(Shared_Shader(engine, "UI\\Panel"))
 	{
@@ -41,7 +41,7 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) override {
+	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override {
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet()) return;
 
@@ -62,12 +62,12 @@ public:
 	// Public Methods
 	/** Set this panel's color.
 	@param	text	the new color to render with. */
-	inline void setColor(const glm::vec4& color) {
+	inline void setColor(const glm::vec4& color) noexcept {
 		m_color = color;
 	}
 	/** Retrieve this panel's color.
 	@return	the color used by this element. */
-	inline glm::vec4 getColor() const {
+	inline glm::vec4 getColor() const noexcept {
 		return m_color;
 	}
 
@@ -75,7 +75,7 @@ public:
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */
-	inline void updateGeometry() {
+	inline void updateGeometry() noexcept {
 		constexpr auto num_data = 2 * 3;
 		std::vector<glm::vec3> data(num_data);
 

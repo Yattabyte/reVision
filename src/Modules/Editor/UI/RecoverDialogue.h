@@ -19,25 +19,25 @@ public:
 	/** Construct a level dialogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
-	RecoverDialogue(Engine* engine, LevelEditor_Module* editor);
+	RecoverDialogue(Engine* engine, LevelEditor_Module* editor) noexcept;
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override final;
+	virtual void tick(const float& deltaTime) noexcept override final;
 
 
 	// Public Methods
 	/** Set the recovered file path.
 	@param	path		the recovered file path*/
-	void setPath(const std::filesystem::path& path);
+	void setPath(const std::filesystem::path& path) noexcept;
 
 
 private:
 	// Private Methods
 	/** Tick the main dialogue, rendering it and performing all logic. */
-	void tickMainDialogue();
+	void tickMainDialogue() noexcept;
 	/** Tick the delete dialogue, rendering it and performing all logic. */
-	void tickDeleteDialogue();
+	void tickDeleteDialogue() noexcept;
 
 
 	// Private Attributes

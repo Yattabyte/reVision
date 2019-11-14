@@ -34,7 +34,7 @@ inline static void parse(Engine* engine, Shader_Pkg& userAsset)
 	userAsset.m_packageText = input;
 }
 
-Shared_Shader_Pkg::Shared_Shader_Pkg(Engine* engine, const std::string& filename, const bool& threaded)
+Shared_Shader_Pkg::Shared_Shader_Pkg(Engine* engine, const std::string& filename, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Shader_Pkg>*)(this)) = std::dynamic_pointer_cast<Shader_Pkg>(
 		engine->getManager_Assets().shareAsset(
@@ -45,9 +45,9 @@ Shared_Shader_Pkg::Shared_Shader_Pkg(Engine* engine, const std::string& filename
 		));
 }
 
-Shader_Pkg::Shader_Pkg(Engine* engine, const std::string& filename) : Asset(engine, filename) {}
+Shader_Pkg::Shader_Pkg(Engine* engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
-void Shader_Pkg::initialize()
+void Shader_Pkg::initialize() noexcept
 {
 	const bool found = Text_IO::Import_Text(m_engine, DIRECTORY_SHADER_PKG + getFileName() + EXT_PACKAGE, m_packageText);
 

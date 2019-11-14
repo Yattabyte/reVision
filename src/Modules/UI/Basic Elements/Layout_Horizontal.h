@@ -13,7 +13,9 @@ public:
 	inline ~Layout_Horizontal() = default;
 	/** Construct the layout.
 	@param	engine		the engine to use. */
-	inline explicit Layout_Horizontal(Engine* engine) : UI_Element(engine) {
+	inline explicit Layout_Horizontal(Engine* engine) noexcept :
+		UI_Element(engine)
+	{
 		// Add Callbacks
 		addCallback((int)UI_Element::Interact::on_resize, [&]() { alignChildren(); });
 		addCallback((int)UI_Element::Interact::on_childrenChange, [&]() { alignChildren(); });
@@ -24,30 +26,30 @@ public:
 	/** Add a child to this layout, optionally using a specific fraction of size alloted to it.
 	@param	child		the child to add to this layout.
 	@param	sizeRatio	the fractional amount of size this element should retain when resizing. */
-	inline void addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio = 1.0f) {
+	inline void addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio = 1.0f) noexcept {
 		UI_Element::addElement(child);
 		m_sizedChildren.push_back(std::make_pair(child, sizeRatio));
 	}
 	/** Set the margin distance between elements and the edge of this layout.
 	@param	margin		the margin for this layout. */
-	inline void setMargin(const float& margin) {
+	inline void setMargin(const float& margin) noexcept {
 		m_margin = margin;
 		alignChildren();
 	}
 	/** Get the margin distance between elements and the edge of this layout.
 	@return				the margin for this layout. */
-	inline float getMargin() const {
+	inline float getMargin() const noexcept {
 		return m_margin;
 	}
 	/** Set the spacing distance between elements in this layout.
 	@param	spacing		the spacing distance between elements. */
-	inline void setSpacing(const float& spacing) {
+	inline void setSpacing(const float& spacing) noexcept {
 		m_spacing = spacing;
 		alignChildren();
 	}
 	/** Get the spacing distance between elements in this layout.
 	@return				the spacing distance between elements. */
-	inline float getSpacing() const {
+	inline float getSpacing() const noexcept {
 		return m_spacing;
 	}
 
@@ -55,7 +57,7 @@ public:
 protected:
 	// Protected Methods
 	/** Rearrange the position and scale of children, to uniformly fit in this layout. */
-	inline void alignChildren() {
+	inline void alignChildren() noexcept {
 		const float innerRectSize = m_scale.x;
 
 		// Available space -= margin

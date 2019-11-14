@@ -21,22 +21,22 @@ public:
 	/** Construct a Unsaved Changes dialogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
-	UnsavedChangesDialogue(Engine* engine, LevelEditor_Module* editor);
+	UnsavedChangesDialogue(Engine* engine, LevelEditor_Module* editor) noexcept;
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) override final;
+	virtual void tick(const float& deltaTime) noexcept override final;
 
 
 	// Public Methods
 	/** Checks if the editor has unsaved changes, otherwise executes the supplied function. Prompts user to save.  */
-	void tryPrompt(const std::function<void()>& funcAfterPrompt);
+	void tryPrompt(const std::function<void()>& funcAfterPrompt) noexcept;
 
 
 private:
 	// Private Methods
 	/** Executes a stored function awaiting the level's changes to be saved, or ignored. */
-	void executeFunction();
+	void executeFunction() noexcept;
 
 
 	// Private Attributes

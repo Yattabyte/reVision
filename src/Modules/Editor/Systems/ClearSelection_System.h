@@ -16,15 +16,17 @@ public:
 	inline ~ClearSelection_System() = default;
 	/** Construct this system.
 	@param	engine		the currently active engine. */
-	inline ClearSelection_System(Engine* engine, LevelEditor_Module* editor)
-		: m_engine(engine), m_editor(editor) {
+	inline ClearSelection_System(Engine* engine, LevelEditor_Module* editor) noexcept :
+		m_engine(engine),
+		m_editor(editor)
+	{
 		// Declare component types used
 		addComponentType(Selected_Component::Runtime_ID);
 	}
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) override final {
+	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		auto& ecsWorld = m_editor->getWorld();
 		for each (const auto & componentParam in components)
 			ecsWorld.removeEntityComponent((static_cast<Selected_Component*>(componentParam[0]))->m_entity, Selected_Component::Runtime_ID);

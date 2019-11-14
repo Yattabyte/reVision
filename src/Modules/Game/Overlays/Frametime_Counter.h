@@ -15,12 +15,12 @@ class Frametime_Counter final : public Overlay {
 public:
 	// Public (De)Constructors
 	/** Virtual Destructor. */
-	inline ~Frametime_Counter() {
+	inline ~Frametime_Counter() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit Frametime_Counter(Engine* engine) :
+	inline explicit Frametime_Counter(Engine* engine) noexcept :
 		m_engine(engine),
 		m_shader(Shared_Shader(engine, "Utilities\\numberPrint")),
 		m_numberTexture(Shared_Texture(engine, "numbers.png", GL_TEXTURE_2D, false, false)),
@@ -37,7 +37,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyEffect(const float& deltaTime) override final {
+	inline virtual void applyEffect(const float& deltaTime) noexcept override final {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_numberTexture->existsYet())
 			return;
 		glEnable(GL_BLEND);
@@ -78,7 +78,7 @@ public:
 
 private:
 	// Private Methods
-	inline void resize(const glm::ivec2& s) {
+	inline void resize(const glm::ivec2& s) noexcept {
 		m_renderSize = s;
 		m_projMatrix = glm::ortho(0.0f, (float)s.x, 0.0f, (float)s.y);
 	}
