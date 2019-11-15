@@ -5,7 +5,7 @@
 
 GLubyte* RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size) noexcept
 {
-	GLubyte* newPixels = new GLubyte[size_t(size) * 4ull];
+	auto* newPixels = new GLubyte[size_t(size) * 4ull];
 	for (unsigned int x = 0; x < size; ++x) {
 		newPixels[x * 4 + 0] = pixels[x * 4 + 2];
 		newPixels[x * 4 + 1] = pixels[x * 4 + 1];
@@ -60,7 +60,7 @@ bool Image_IO::Import_Image(Engine* engine, const std::string& relativePath, Ima
 {
 	const glm::ivec2 containerSize = importedData.dimensions;
 	FIBITMAP* bitmap = Import_Bitmap(engine, relativePath);
-	if (!bitmap) return false;
+	if (bitmap == nullptr) return false;
 	Load_Pixel_Data(bitmap, importedData);
 	FreeImage_Unload(bitmap);
 	// If the image container already has a determined size, resize this new image to fit it (if it is a different size)
@@ -75,7 +75,7 @@ void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData) noexc
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
 
 	// Always create RGBA format
-	GLubyte* textureData = new GLubyte[size_t(size_mult) * 4ull];
+	auto* textureData = new GLubyte[size_t(size_mult) * 4ull];
 	const GLubyte* pixels = (GLubyte*)FreeImage_GetBits(bitmap);
 
 	for (unsigned int i = 0; i < size_mult; ++i) {
@@ -94,7 +94,7 @@ void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData) noexc
 void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, const Resize_Policy& resizePolicy) noexcept
 {
 	// Make sure new sizes AREN'T zero
-	if (newSize.x && newSize.y && importedData.dimensions.x && importedData.dimensions.y)
+	if ((newSize.x != 0) && (newSize.y != 0) && (importedData.dimensions.x != 0) && (importedData.dimensions.y != 0))
 		// Proceed if dimensions aren't the same
 		if (newSize != importedData.dimensions) {
 			// Create FreeImage bitmap from data provided

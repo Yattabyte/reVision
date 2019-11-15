@@ -69,7 +69,7 @@ void UI_Element::keyboardAction(const KeyboardEvent& keyboardEvent) noexcept
 		child->keyboardAction(keyboardEvent);
 }
 
-void UI_Element::userAction(ActionState&) noexcept
+void UI_Element::userAction(ActionState& /*unused*/) noexcept
 {
 	// Base UI element has no specific user action support
 	// User actions are specific actions like navigating a menu, toggling a switch

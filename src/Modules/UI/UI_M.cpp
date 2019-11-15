@@ -14,7 +14,7 @@ void UI_Module::initialize(Engine* engine) noexcept
 		const glm::mat4 proj = glm::ortho<float>(0.0f, (float)renderSize.x, 0.0f, (float)renderSize.y, -1.0f, 1.0f);
 		projectionBuffer.write(0, sizeof(glm::mat4), &proj[0][0]);
 	};
-	m_projectionBuffer = StaticBuffer(sizeof(glm::mat4), 0, GL_DYNAMIC_STORAGE_BIT);
+	m_projectionBuffer = StaticBuffer(sizeof(glm::mat4), nullptr, GL_DYNAMIC_STORAGE_BIT);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
@@ -54,7 +54,7 @@ void UI_Module::frameTick(const float& deltaTime) noexcept
 	for each (const auto & func in copySelection)
 		func();
 
-	if (m_rootElement.size() && m_rootElement.back()) {
+	if ((!m_rootElement.empty() != 0u) && m_rootElement.back()) {
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -125,7 +125,7 @@ void UI_Module::applyChar(const unsigned int& character) noexcept
 	m_keyboardEvent.setChar(0);
 }
 
-void UI_Module::applyKey(const int& key, const int&, const int& action, const int&) noexcept
+void UI_Module::applyKey(const int& key, const int& /*unused*/, const int& action, const int& /*unused*/) noexcept
 {
 	m_keyboardEvent.setState(KeyboardEvent::Key((unsigned int)key), KeyboardEvent::Action(action));
 	if (m_rootElement.size())

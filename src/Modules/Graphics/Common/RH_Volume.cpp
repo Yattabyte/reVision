@@ -25,7 +25,7 @@ RH_Volume::RH_Volume(Engine* engine) noexcept :
 	for (int bounce = 0; bounce < 2; ++bounce) {
 		glCreateTextures(GL_TEXTURE_3D, RH_TEXTURE_COUNT, m_textureIDS[bounce]);
 		for (int channel = 0; channel < RH_TEXTURE_COUNT; ++channel) {
-			glTextureImage3DEXT(m_textureIDS[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, 0);
+			glTextureImage3DEXT(m_textureIDS[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, nullptr);
 			glTextureParameteri(m_textureIDS[bounce][channel], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTextureParameteri(m_textureIDS[bounce][channel], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glTextureParameteri(m_textureIDS[bounce][channel], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -74,17 +74,17 @@ void RH_Volume::updateVolume(const Camera* camera) noexcept
 void RH_Volume::resize(const float& resolution) noexcept
 {
 	m_resolution = resolution;
-	for (int bounce = 0; bounce < 2; ++bounce)
+	for (auto & bounce : m_textureIDS)
 		for (int channel = 0; channel < RH_TEXTURE_COUNT; ++channel)
-			glTextureImage3DEXT(m_textureIDS[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, 0);
+			glTextureImage3DEXT(bounce[channel], GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, nullptr);
 }
 
 void RH_Volume::clear() noexcept
 {
 	GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	for (int bounce = 0; bounce < 2; ++bounce)
+	for (unsigned int bounce : m_fboIDS)
 		for (GLint x = 0; x < RH_TEXTURE_COUNT; ++x)
-			glClearNamedFramebufferfv(m_fboIDS[bounce], GL_COLOR, x, clearColor);
+			glClearNamedFramebufferfv(bounce, GL_COLOR, x, clearColor);
 }
 
 void RH_Volume::writePrimary() noexcept

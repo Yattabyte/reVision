@@ -84,6 +84,7 @@ void Model::loadMaterial(const std::string& relativePath, Shared_Material& model
 {
 	// Retrieve texture directories from the mesh file
 	const size_t slash1Index = relativePath.find_last_of('/'), slash2Index = relativePath.find_last_of('\\');
+	const size_t slash2Index = relativePath.find_last_of('\\');
 	const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
 	const std::string meshDirectory = relativePath.substr(0, furthestFolderIndex + 1);
 	std::vector<std::string> textures(materials.size() * (size_t)MAX_PHYSICAL_IMAGES);

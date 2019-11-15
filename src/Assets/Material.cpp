@@ -1,6 +1,6 @@
 #include "Assets/Material.h"
 #include "Engine.h"
-#include <math.h>
+#include <cmath>
 #include <fstream>
 #include <sstream>
 
@@ -37,7 +37,8 @@ Material::Material(Engine* engine, const std::string& filename, const std::vecto
 		// Fetch a list of textures as defined in the file
 		auto tx = Material::Get_Material_Textures(relativePath);
 		// Recover the material folder directory from the filename
-		const size_t slash1Index = relativePath.find_last_of('/'), slash2Index = relativePath.find_last_of('\\');
+		const size_t slash1Index = relativePath.find_last_of('/');
+		const size_t slash2Index = relativePath.find_last_of('\\');
 		const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
 		const std::string modelDirectory = relativePath.substr(0, furthestFolderIndex + 1);
 		// Apply these texture directories to the material whenever not null
@@ -100,7 +101,7 @@ void Material::initialize() noexcept
 
 /** Attempts to retrieve a std::string between quotation marks "<std::string>"
 @return	the std::string between quotation marks */
-[[nodiscard]] static std::string const get_between_quotes(std::string& s) noexcept
+[[nodiscard]] static std::string get_between_quotes(std::string& s) noexcept
 {
 	std::string output = s;
 	size_t spot1 = s.find_first_of("\"");
@@ -119,7 +120,7 @@ void Material::initialize() noexcept
 /** Parse a given line between parentheses and convert it to a string.
 @param	in	the string to convert
 @return		a string */
-[[nodiscard]] static std::string const getType_String(std::string& in) noexcept
+[[nodiscard]] static std::string getType_String(std::string& in) noexcept
 {
 	return get_between_quotes(in);
 }

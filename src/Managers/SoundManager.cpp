@@ -12,7 +12,7 @@ SoundManager::~SoundManager() noexcept
 
 SoundManager::SoundManager() noexcept
 {
-	SoLoud::Soloud* soLoud = new SoLoud::Soloud();
+	auto* soLoud = new SoLoud::Soloud();
 	soLoud->init();
 
 	m_soundEngine = reinterpret_cast<SoundEngineObj*>(soLoud);

@@ -145,7 +145,7 @@ protected:
 	const GLint getProgramiv(const GLenum& pname) const noexcept;
 	/** Retrieve an error log corresponding to this shader program.
 	@return						an error log for this shader program. */
-	[[nodiscard]] const std::vector<GLchar> getErrorLog() const noexcept;
+	[[nodiscard]] std::vector<GLchar> getErrorLog() const noexcept;
 	/** Attempt to load a shader program from a cached binary file.
 	@param		relativePath	the relative path of the binary file.
 	@return						true on success, false otherwise. */

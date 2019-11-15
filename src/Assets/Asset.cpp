@@ -26,7 +26,7 @@ void Asset::addCallback(const std::shared_ptr<bool>& alive, const AssetFinalized
 bool Asset::existsYet() const noexcept
 {
 	// Exit early if this points to nothing
-	if (!this)
+	if (this == nullptr)
 		return false;
 
 	// Check if we're finalized
@@ -34,7 +34,7 @@ bool Asset::existsYet() const noexcept
 		return false;
 
 	// Check if we have a fence
-	if (m_fence) {
+	if (m_fence != nullptr) {
 		// Check if the fence has passed
 		const GLenum state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
 		if (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED)

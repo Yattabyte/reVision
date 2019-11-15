@@ -2,7 +2,8 @@
 #include "Engine.h"
 
 
-constexpr char* DIRECTORY_CUBEMAP = "\\Textures\\Cubemaps\\";
+constexpr char* DIRECTORY_CUBEMAP = R"(\Textures\Cubemaps\)";
+constexpr auto CUBEMAP_SIDE_COUNT = 6;
 
 Shared_Cubemap::Shared_Cubemap(Engine* engine, const std::string& filename, const bool& threaded) noexcept
 {
@@ -18,7 +19,7 @@ Shared_Cubemap::Shared_Cubemap(Engine* engine, const std::string& filename, cons
 Cubemap::~Cubemap() noexcept
 {
 	if (existsYet()) {
-		glDeleteBuffers(6, m_pboIDs);
+		glDeleteBuffers(CUBEMAP_SIDE_COUNT, m_pboIDs);
 		glDeleteTextures(1, &m_glTexID);
 	}
 }
@@ -27,11 +28,11 @@ Cubemap::Cubemap(Engine* engine, const std::string& filename) noexcept : Asset(e
 
 void Cubemap::initialize() noexcept
 {
-	static const std::string side_suffixes[6] = { "right", "left", "bottom", "top", "front", "back" };
+	static const std::string side_suffixes[CUBEMAP_SIDE_COUNT] = { "right", "left", "bottom", "top", "front", "back" };
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };
 	glm::ivec2 size(0);
-	for (int side = 0; side < 6; ++side) {
-		std::string specific_side_directory = "";
+	for (int side = 0; side < CUBEMAP_SIDE_COUNT; ++side) {
+		std::string specific_side_directory;
 		for (int x = 0; x < 3; ++x) {
 			specific_side_directory = DIRECTORY_CUBEMAP + getFileName() + side_suffixes[side] + extensions[x];
 			if (Engine::File_Exists(specific_side_directory))
@@ -53,11 +54,11 @@ void Cubemap::initialize() noexcept
 
 	// Create the final texture
 	glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_glTexID);
-	glCreateBuffers(6, m_pboIDs);
+	glCreateBuffers(CUBEMAP_SIDE_COUNT, m_pboIDs);
 
 	// Load the final texture
 	glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_images[0]->m_size.x, m_images[0]->m_size.x);
-	for (int x = 0; x < 6; ++x) {
+	for (int x = 0; x < CUBEMAP_SIDE_COUNT; ++x) {
 		glNamedBufferStorage(m_pboIDs[x], GLsizeiptr(m_images[x]->m_size.x) * GLsizeiptr(m_images[x]->m_size.x) * 4LL, m_images[x]->m_pixelData, 0);
 		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboIDs[x]);
 		glTextureSubImage3D(m_glTexID, 0, 0, 0, x, m_images[x]->m_size.x, m_images[x]->m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, (void*)0);

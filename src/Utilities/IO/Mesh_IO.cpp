@@ -88,7 +88,7 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 	);
 
 	// Check if scene imported successfully
-	if (!scene) {
+	if (scene == nullptr) {
 		engine->getManager_Messages().error("The file \"" + relativePath + "\" exists, but is corrupted.");
 		return false;
 	}
@@ -165,7 +165,7 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 
 			if (importedData.boneMap.find(BoneName) == importedData.boneMap.end()) {
 				BoneIndex = importedData.boneTransforms.size();
-				importedData.boneTransforms.push_back(glm::mat4(1.0f));
+				importedData.boneTransforms.emplace_back(1.0f);
 			}
 			else
 				BoneIndex = importedData.boneMap[BoneName];
@@ -233,7 +233,7 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 		}
 	else
 		//importedData.materials.push_back(Material_Strings("albedo.png", "normal.png", "metalness.png", "roughness.png", "height.png", "ao.png"));
-		importedData.materials.push_back(Material_Strings("", "", "", "", "", ""));
+		importedData.materials.emplace_back("", "", "", "", "", "");
 
 	// Free Importer Resource
 	importer_pool.returnImporter(importer);

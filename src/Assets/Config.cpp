@@ -31,8 +31,8 @@ inline std::string get_between_quotes(std::string& s)
 inline int find_CFG_Property(const std::string& s, const std::vector<std::string>& m_strings)
 {
 	std::string upperCase(s);
-	for (size_t x = 0, size = upperCase.size(); x < size; ++x)
-		upperCase[x] = char(toupper(int(upperCase[x])));
+	for (char & x : upperCase)
+		x = char(toupper(int(x)));
 	for (auto value = begin(m_strings); value != end(m_strings); value++)
 		if ((*value) == upperCase)
 			return (int)std::distance(m_strings.begin(), value);

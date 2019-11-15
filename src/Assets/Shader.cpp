@@ -10,7 +10,7 @@ constexpr char* EXT_SHADER_VERTEX = ".vsh";
 constexpr char* EXT_SHADER_FRAGMENT = ".fsh";
 constexpr char* EXT_SHADER_BINARY = ".shader";
 constexpr char* DIRECTORY_SHADER = "\\Shaders\\";
-constexpr char* DIRECTORY_SHADER_CACHE = "\\cache\\shaders\\";
+constexpr char* DIRECTORY_SHADER_CACHE = R"(\cache\shaders\)";
 
 struct ShaderHeader {
 	GLenum format;
@@ -104,7 +104,7 @@ const GLint Shader::getProgramiv(const GLenum& pname) const noexcept
 	return param;
 }
 
-const std::vector<GLchar> Shader::getErrorLog() const noexcept
+std::vector<GLchar> Shader::getErrorLog() const noexcept
 {
 	const auto size = getProgramiv(GL_INFO_LOG_LENGTH);
 	std::vector<GLchar> infoLog(size);
@@ -125,7 +125,7 @@ const bool Shader::loadCachedBinary(const std::string& relativePath) noexcept
 			file.close();
 
 			glProgramBinary(m_glProgramID, header.format, binary.data(), header.length);
-			if (getProgramiv(GL_LINK_STATUS)) {
+			if (getProgramiv(GL_LINK_STATUS) != 0) {
 				glValidateProgram(m_glProgramID);
 				return true;
 			}
@@ -183,7 +183,7 @@ bool Shader::initShaders(const std::string& relativePath) noexcept
 const bool Shader::validateProgram() noexcept
 {
 	// Check Validation
-	if (getProgramiv(GL_LINK_STATUS)) {
+	if (getProgramiv(GL_LINK_STATUS) != 0) {
 		glValidateProgram(m_glProgramID);
 
 		// Detach the shaders now that the program is complete
@@ -199,10 +199,10 @@ ShaderObj::~ShaderObj() noexcept { glDeleteShader(m_shaderID); }
 
 ShaderObj::ShaderObj(const GLenum& type) noexcept : m_type(type) {}
 
-GLint ShaderObj::getShaderiv(const GLenum& pname) const noexcept
+GLint ShaderObj::getShaderiv(const GLenum& parameterName) const noexcept
 {
 	GLint param;
-	glGetShaderiv(m_shaderID, pname, &param);
+	glGetShaderiv(m_shaderID, parameterName, &param);
 	return param;
 }
 
@@ -237,13 +237,13 @@ bool ShaderObj::createGLShader(Engine* engine, const std::string& filename) noex
 {
 	// Create shader object
 	const char* source = m_shaderText.c_str();
-	const GLint length = (GLint)m_shaderText.length();
+	const auto length = (GLint)m_shaderText.length();
 	m_shaderID = glCreateShader(m_type);
 	glShaderSource(m_shaderID, 1, &source, &length);
 	glCompileShader(m_shaderID);
 
 	// Validate shader object
-	if (getShaderiv(GL_COMPILE_STATUS))
+	if (getShaderiv(GL_COMPILE_STATUS) != 0)
 		return true;
 
 	// Report any errors
