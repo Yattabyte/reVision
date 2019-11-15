@@ -18,7 +18,7 @@ void Asset::setFileName(const std::string& filename) noexcept
 void Asset::addCallback(const std::shared_ptr<bool>& alive, const AssetFinalizedCallback& callback) noexcept
 {
 	if (!existsYet())
-		m_callbacks.emplace_back(std::move(std::make_pair(alive, callback)));
+		m_callbacks.emplace_back(std::make_pair(alive, callback));
 	else
 		callback();
 }

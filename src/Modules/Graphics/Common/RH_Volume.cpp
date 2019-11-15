@@ -58,8 +58,8 @@ void RH_Volume::updateVolume(const Camera* camera) noexcept
 		frustumSlice[1] * tanHalfVFOV
 	};
 	float largestCoordinate = std::max(abs(frustumSlice[0]), abs(frustumSlice[1]));
-	for (int x = 0; x < 4; ++x)
-		largestCoordinate = std::max(largestCoordinate, abs(frustumPoints[x]));
+	for (float frustumPoint : frustumPoints)
+		largestCoordinate = std::max(largestCoordinate, abs(frustumPoint));
 	const glm::vec3 centerOfVolume(0, 0, ((frustumSlice[1] - frustumSlice[0]) / 2.0f) + frustumSlice[0]);
 	const float radius = glm::distance(glm::vec3(largestCoordinate), centerOfVolume);
 	const glm::vec3 aabb(radius);
@@ -75,8 +75,8 @@ void RH_Volume::resize(const float& resolution) noexcept
 {
 	m_resolution = resolution;
 	for (auto & bounce : m_textureIDS)
-		for (int channel = 0; channel < RH_TEXTURE_COUNT; ++channel)
-			glTextureImage3DEXT(bounce[channel], GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, nullptr);
+		for (unsigned int channel : bounce)
+			glTextureImage3DEXT(channel, GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, nullptr);
 }
 
 void RH_Volume::clear() noexcept

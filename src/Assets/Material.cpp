@@ -5,7 +5,7 @@
 #include <sstream>
 
 
-constexpr char* MATERIAL_EXTENSION = ".mat";
+constexpr const char* MATERIAL_EXTENSION = ".mat";
 
 Shared_Material::Shared_Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded) noexcept
 {
@@ -44,9 +44,9 @@ Material::Material(Engine* engine, const std::string& filename, const std::vecto
 		// Apply these texture directories to the material whenever not null
 		for (size_t x = 0, size = m_textures.size(); x < size; ++x) {
 			// In case we made the original texture set larger, copy the original texture naming pattern
-			if (m_textures[x] == "")
+			if (m_textures[x].empty())
 				m_textures[x] = m_textures[x % MAX_PHYSICAL_IMAGES];
-			if (tx[x] != "")
+			if (!tx[x].empty())
 				m_textures[x] = modelDirectory + tx[x];
 		}
 	}
@@ -56,7 +56,7 @@ void Material::initialize() noexcept
 {
 	// Some definitions for later
 	const size_t remainder = m_textures.size() % size_t(6u);
-	const size_t textureCount = remainder
+	const size_t textureCount = remainder != 0u
 		? m_textures.size() + size_t(6u) - remainder // if remainder != 0, round up to nearest multiple of 6
 		: std::max(size_t(6u), m_textures.size()); // else remainder == 0, enforce minimum size of 6
 	const size_t materialCount = textureCount / MAX_PHYSICAL_IMAGES;
@@ -104,10 +104,10 @@ void Material::initialize() noexcept
 [[nodiscard]] static std::string get_between_quotes(std::string& s) noexcept
 {
 	std::string output = s;
-	size_t spot1 = s.find_first_of("\"");
+	size_t spot1 = s.find_first_of('\"');
 	if (spot1 != std::string::npos) {
 		output = output.substr(spot1 + 1, output.length() - spot1 - 1);
-		size_t spot2 = output.find_first_of("\"");
+		size_t spot2 = output.find_first_of('\"');
 		if (spot2 != std::string::npos) {
 			output = output.substr(0, spot2);
 
@@ -140,12 +140,12 @@ void Material::initialize() noexcept
 	std::vector<std::string> textures(MAX_PHYSICAL_IMAGES);
 	int bracketCount = 0;
 	for (std::string line; std::getline(file_stream, line); ) {
-		if (line.length() && line != "" && line != " ") {
+		if ((line.length() != 0u) && !line.empty() && line != " ") {
 			if (find(line, "{")) {
 				bracketCount++;
 				continue;
 			}
-			else if (find(line, "}")) {
+			if (find(line, "}")) {
 				bracketCount--;
 				if (bracketCount <= 0)
 					break;
@@ -180,7 +180,7 @@ void Material::initialize() noexcept
 			bracketCount++;
 			continue;
 		}
-		else if (find(line, "}")) {
+		if (find(line, "}")) {
 			bracketCount--;
 			if (bracketCount <= 0)
 				break;

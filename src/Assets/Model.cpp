@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-constexpr char* DIRECTORY_MODEL = "\\Models\\";
+constexpr const char* DIRECTORY_MODEL = "\\Models\\";
 
 Shared_Model::Shared_Model(Engine* engine, const std::string& filename, const bool& threaded) noexcept
 {
@@ -53,7 +53,7 @@ void Model::initialize() noexcept
 
 void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minOut, glm::vec3& maxOut, glm::vec3& scaleOut, glm::vec3& centerOut, float& radiusOut) noexcept
 {
-	if (mesh.size() >= 1) {
+	if (!mesh.empty()) {
 		const auto& vector = mesh[0].vertex;
 		auto minX = vector.x, maxX = vector.x, minY = vector.y, maxY = vector.y, minZ = vector.z, maxZ = vector.z;
 		for (size_t x = 1, total = mesh.size(); x < total; ++x) {
@@ -83,7 +83,7 @@ void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minO
 void Model::loadMaterial(const std::string& relativePath, Shared_Material& modelMaterial, const std::vector<Material_Strings>& materials) noexcept
 {
 	// Retrieve texture directories from the mesh file
-	const size_t slash1Index = relativePath.find_last_of('/'), slash2Index = relativePath.find_last_of('\\');
+	const size_t slash1Index = relativePath.find_last_of('/');
 	const size_t slash2Index = relativePath.find_last_of('\\');
 	const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
 	const std::string meshDirectory = relativePath.substr(0, furthestFolderIndex + 1);
@@ -104,6 +104,6 @@ void Model::loadMaterial(const std::string& relativePath, Shared_Material& model
 	}
 
 	// Attempt to find a .mat file if it exists
-	std::string materialFilename = relativePath.substr(0, relativePath.find_first_of("."));
+	std::string materialFilename = relativePath.substr(0, relativePath.find_first_of('.'));
 	modelMaterial = Shared_Material(m_engine, materialFilename, textures);
 }

@@ -89,7 +89,7 @@ void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const
 
 void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::shared_ptr<Camera>>& cameras) noexcept
 {
-	if (cameras.size()) {
+	if (!cameras.empty()) {
 		// Prepare rendering pipeline for a new frame, wait for buffers to free
 		const auto perspectives = m_pipeline->begin(deltaTime, world, cameras);
 		viewport->bind();

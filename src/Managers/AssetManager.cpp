@@ -29,7 +29,7 @@ Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& 
 	// Initialize now or later, depending if we are threading this order or not
 	if (threaded) {
 		std::unique_lock<std::shared_mutex> worker_write_guard(m_Mutex_Workorders);
-		m_Workorders.emplace_back(std::move(std::bind(&Asset::initialize, asset)));
+		m_Workorders.emplace_back(std::bind(&Asset::initialize, asset));
 	}
 	else
 		asset->initialize();
@@ -40,7 +40,7 @@ void AssetManager::beginWorkOrder() noexcept
 {
 	// Start reading work orders
 	std::unique_lock<std::shared_mutex> writeGuard(m_Mutex_Workorders);
-	if (!m_Workorders.empty() != 0u) {
+	if (!m_Workorders.empty()) {
 		// Remove front of queue
 		const Asset_Work_Order workOrder = m_Workorders.front();
 		m_Workorders.pop_front();
@@ -76,7 +76,7 @@ bool AssetManager::readyToUse() noexcept
 {
 	{
 		std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Workorders);
-		if (!m_Workorders.empty() != 0u)
+		if (!m_Workorders.empty())
 			return false;
 	}
 	{

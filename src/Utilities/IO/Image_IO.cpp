@@ -29,7 +29,7 @@ FIBITMAP* Image_IO::Import_Bitmap(Engine* engine, const std::string& relativePat
 		else if (format == FIF_UNKNOWN) {
 			messageManager.error("The file \"" + relativePath + "\" exists, but is corrupted. Attempting to recover...");
 			format = FreeImage_GetFIFFromFilename(file);
-			if (!FreeImage_FIFSupportsReading(format))
+			if (FreeImage_FIFSupportsReading(format) == 0)
 				messageManager.warning("Failed to recover the file \"" + relativePath + ".");
 		}
 		else if (format == FIF_GIF)

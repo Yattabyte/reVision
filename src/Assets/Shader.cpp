@@ -6,11 +6,11 @@
 #include <fstream>
 
 
-constexpr char* EXT_SHADER_VERTEX = ".vsh";
-constexpr char* EXT_SHADER_FRAGMENT = ".fsh";
-constexpr char* EXT_SHADER_BINARY = ".shader";
-constexpr char* DIRECTORY_SHADER = "\\Shaders\\";
-constexpr char* DIRECTORY_SHADER_CACHE = R"(\cache\shaders\)";
+constexpr const char* EXT_SHADER_VERTEX = ".vsh";
+constexpr const char* EXT_SHADER_FRAGMENT = ".fsh";
+constexpr const char* EXT_SHADER_BINARY = ".shader";
+constexpr const char* DIRECTORY_SHADER = "\\Shaders\\";
+constexpr const char* DIRECTORY_SHADER_CACHE = R"(\cache\shaders\)";
 
 struct ShaderHeader {
 	GLenum format;
@@ -108,7 +108,7 @@ std::vector<GLchar> Shader::getErrorLog() const noexcept
 {
 	const auto size = getProgramiv(GL_INFO_LOG_LENGTH);
 	std::vector<GLchar> infoLog(size);
-	if (size)
+	if (size != 0)
 		glGetProgramInfoLog(m_glProgramID, (GLsizei)infoLog.size(), nullptr, &infoLog[0]);
 	return infoLog;
 }
@@ -209,7 +209,7 @@ GLint ShaderObj::getShaderiv(const GLenum& parameterName) const noexcept
 bool ShaderObj::loadDocument(Engine* engine, const std::string& filePath) noexcept
 {
 	// Exit early if document not found or no text is found in the document
-	if (!Text_IO::Import_Text(engine, filePath, m_shaderText) || m_shaderText == "")
+	if (!Text_IO::Import_Text(engine, filePath, m_shaderText) || m_shaderText.empty())
 		return false;
 
 	// Update document, including any packages required
@@ -217,8 +217,8 @@ bool ShaderObj::loadDocument(Engine* engine, const std::string& filePath) noexce
 	while (spot != std::string::npos) {
 		std::string directory = m_shaderText.substr(spot);
 
-		const size_t qspot1 = directory.find("\"");
-		const size_t qspot2 = directory.find("\"", qspot1 + 1);
+		const size_t qspot1 = directory.find('\"');
+		const size_t qspot2 = directory.find('\"', qspot1 + 1);
 		// find std::string quotes and remove them
 		directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
 

@@ -2,8 +2,8 @@
 #include "Engine.h"
 
 
-constexpr char* DIRECTORY_CUBEMAP = R"(\Textures\Cubemaps\)";
-constexpr auto CUBEMAP_SIDE_COUNT = 6;
+constexpr const char* DIRECTORY_CUBEMAP = R"(\Textures\Cubemaps\)";
+constexpr const auto CUBEMAP_SIDE_COUNT = 6;
 
 Shared_Cubemap::Shared_Cubemap(Engine* engine, const std::string& filename, const bool& threaded) noexcept
 {
@@ -33,11 +33,11 @@ void Cubemap::initialize() noexcept
 	glm::ivec2 size(0);
 	for (int side = 0; side < CUBEMAP_SIDE_COUNT; ++side) {
 		std::string specific_side_directory;
-		for (int x = 0; x < 3; ++x) {
-			specific_side_directory = DIRECTORY_CUBEMAP + getFileName() + side_suffixes[side] + extensions[x];
+		for (const auto & extension : extensions) {
+			specific_side_directory = DIRECTORY_CUBEMAP + getFileName() + side_suffixes[side] + extension;
 			if (Engine::File_Exists(specific_side_directory))
 				break;
-			specific_side_directory = DIRECTORY_CUBEMAP + getFileName() + "\\" + side_suffixes[side] + extensions[x];
+			specific_side_directory = DIRECTORY_CUBEMAP + getFileName() + "\\" + side_suffixes[side] + extension;
 			if (Engine::File_Exists(specific_side_directory))
 				break;
 		}
@@ -61,7 +61,7 @@ void Cubemap::initialize() noexcept
 	for (int x = 0; x < CUBEMAP_SIDE_COUNT; ++x) {
 		glNamedBufferStorage(m_pboIDs[x], GLsizeiptr(m_images[x]->m_size.x) * GLsizeiptr(m_images[x]->m_size.x) * 4LL, m_images[x]->m_pixelData, 0);
 		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboIDs[x]);
-		glTextureSubImage3D(m_glTexID, 0, 0, 0, x, m_images[x]->m_size.x, m_images[x]->m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, (void*)0);
+		glTextureSubImage3D(m_glTexID, 0, 0, 0, x, m_images[x]->m_size.x, m_images[x]->m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, (void*)nullptr);
 	}
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

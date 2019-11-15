@@ -54,7 +54,7 @@ void UI_Module::frameTick(const float& deltaTime) noexcept
 	for each (const auto & func in copySelection)
 		func();
 
-	if ((!m_rootElement.empty() != 0u) && m_rootElement.back()) {
+	if (!m_rootElement.empty() && m_rootElement.back()) {
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -103,7 +103,7 @@ void UI_Module::applyCursorPos(const double& xPos, const double& yPos) noexcept
 	m_mouseEvent.m_yPos = m_renderSize.y - yPos;
 	m_mouseEvent.m_action = MouseEvent::Action::MOVE;
 
-	if (m_rootElement.size())
+	if (!m_rootElement.empty())
 		m_rootElement.back()->mouseAction(m_mouseEvent);
 }
 
@@ -113,14 +113,14 @@ void UI_Module::applyCursorButton(const int& button, const int& action, const in
 	m_mouseEvent.m_action = MouseEvent::Action(action);
 	m_mouseEvent.m_mods = mods;
 
-	if (m_rootElement.size())
+	if (!m_rootElement.empty() != 0u)
 		m_rootElement.back()->mouseAction(m_mouseEvent);
 }
 
 void UI_Module::applyChar(const unsigned int& character) noexcept
 {
 	m_keyboardEvent.setChar(character);
-	if (m_rootElement.size())
+	if (!m_rootElement.empty())
 		m_rootElement.back()->keyboardAction(m_keyboardEvent);
 	m_keyboardEvent.setChar(0);
 }
@@ -128,7 +128,7 @@ void UI_Module::applyChar(const unsigned int& character) noexcept
 void UI_Module::applyKey(const int& key, const int& /*unused*/, const int& action, const int& /*unused*/) noexcept
 {
 	m_keyboardEvent.setState(KeyboardEvent::Key((unsigned int)key), KeyboardEvent::Action(action));
-	if (m_rootElement.size())
+	if (!m_rootElement.empty())
 		m_rootElement.back()->keyboardAction(m_keyboardEvent);
 }
 

@@ -4,8 +4,8 @@
 #include "Engine.h"
 
 
-constexpr char* EXT_SHADER_GEOMETRY = ".gsh";
-constexpr char* DIRECTORY_SHADER = "\\Shaders\\";
+constexpr const char* EXT_SHADER_GEOMETRY = ".gsh";
+constexpr const char* DIRECTORY_SHADER = "\\Shaders\\";
 
 Shared_Shader_Geometry::Shared_Shader_Geometry(Engine* engine, const std::string& filename, const bool& threaded) noexcept
 {

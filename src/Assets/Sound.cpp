@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-constexpr char* DIRECTORY_SOUNDS = "Sounds\\";
+constexpr const char* DIRECTORY_SOUNDS = "Sounds\\";
 
 Shared_Sound::Shared_Sound(Engine* engine, const std::string& filename, const bool& threaded) noexcept
 {

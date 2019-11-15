@@ -3,8 +3,8 @@
 #include "Engine.h"
 
 
-constexpr char* EXT_PRIMITIVE = ".obj";
-constexpr char* DIRECTORY_PRIMITIVE = "\\Models\\";
+constexpr const char* EXT_PRIMITIVE = ".obj";
+constexpr const char* DIRECTORY_PRIMITIVE = "\\Models\\";
 
 struct Single_Primitive_Vertex {
 	glm::vec3 vertex;

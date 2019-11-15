@@ -8,7 +8,7 @@ Graphics_Framebuffers::~Graphics_Framebuffers() noexcept
 	for (auto& [name, fboData] : m_fbos) {
 		auto& [fboID, mipmapped, texdata] = fboData;
 		glDeleteFramebuffers(1, &fboID);
-		for (const auto [texID, internalFormat, format, type, attachment] : texdata)
+		for (const auto& [texID, internalFormat, format, type, attachment] : texdata)
 			glDeleteTextures(1, &texID);
 	}
 }
@@ -97,7 +97,7 @@ void Graphics_Framebuffers::bindForWriting(const char* name) noexcept
 void Graphics_Framebuffers::bindForReading(const char* name, const GLuint& binding) noexcept
 {
 	int counter(0);
-	for (const auto [texID, internalFormat, format, type, attachment] : std::get<2>(m_fbos[name]))
+	for (const auto& [texID, internalFormat, format, type, attachment] : std::get<2>(m_fbos[name]))
 		glBindTextureUnit(binding + counter++, texID);
 }
 
@@ -112,7 +112,7 @@ void Graphics_Framebuffers::clear() noexcept
 	for (auto& [name, fboData] : m_fbos) {
 		auto& [fboID, mipmapped, texdata] = fboData;
 		int counter(0);
-		for (const auto [texID, internalFormat, format, type, attachment] : texdata) {
+		for (const auto& [texID, internalFormat, format, type, attachment] : texdata) {
 			if (attachment == GL_DEPTH_STENCIL_ATTACHMENT)
 				glClearNamedFramebufferfi(fboID, GL_DEPTH_STENCIL, 0, clearDepth, clearStencil);
 			else if (attachment == GL_DEPTH_ATTACHMENT)
@@ -132,7 +132,7 @@ void Graphics_Framebuffers::resize(const glm::ivec2& newSize, const int& layerFa
 	m_layerFaces = layerFaces;
 	for (auto& [name, fboData] : m_fbos) {
 		auto& [fboID, mipmapped, texdata] = fboData;
-		for (const auto [texID, internalFormat, format, type, attachment] : texdata) {
+		for (const auto& [texID, internalFormat, format, type, attachment] : texdata) {
 			if (mipmapped) {
 				for (int x = 0; x < 6; ++x) {
 					const glm::ivec2 mippedSize(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));

@@ -101,7 +101,7 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 			const aiFace& face = mesh->mFaces[x];
 			for (unsigned int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
 				const auto& index = face.mIndices[b];
-				importedData.vertices.push_back(glm::vec3(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z));
+				importedData.vertices.emplace_back(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z);
 
 				const auto normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0f, 1.0f, 1.0f);
 				importedData.normals.push_back(glm::normalize(glm::vec3(normal.x, normal.y, normal.z)));
@@ -113,7 +113,7 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 				importedData.bitangents.push_back(glm::normalize(glm::vec3(bitangent.x, bitangent.y, bitangent.z)));
 
 				const auto uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
-				importedData.texCoords.push_back(glm::vec2(uvmap.x, uvmap.y));
+				importedData.texCoords.emplace_back(uvmap.x, uvmap.y);
 
 				importedData.materialIndices.push_back(meshMaterialOffset);
 				importedData.meshIndices.push_back(a);

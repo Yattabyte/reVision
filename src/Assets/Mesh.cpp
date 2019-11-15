@@ -2,6 +2,7 @@
 #include "Utilities/IO/Mesh_IO.h"
 #include "Engine.h"
 
+
 Shared_Mesh::Shared_Mesh(Engine* engine, const std::string& filename, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Mesh>*)(this)) = std::dynamic_pointer_cast<Mesh>(
