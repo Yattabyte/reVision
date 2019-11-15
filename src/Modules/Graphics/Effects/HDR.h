@@ -15,12 +15,12 @@ class HDR final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Virtual Destructor. */
-	inline ~HDR() {
+	inline ~HDR() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit HDR(Engine* engine) :
+	inline explicit HDR(Engine* engine) noexcept :
 		Graphics_Technique(Technique_Category::POST_PROCESSING),
 		m_engine(engine),
 		m_shaderHDR(Shared_Shader(engine, "Effects\\HDR")),
@@ -34,10 +34,10 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void clearCache(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) noexcept override final {
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderHDR->existsYet())
 			return;
 

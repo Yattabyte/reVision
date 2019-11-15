@@ -16,12 +16,12 @@ class Skybox final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Virtual Destructor. */
-	inline ~Skybox() {
+	inline ~Skybox() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit Skybox(Engine* engine) :
+	inline explicit Skybox(Engine* engine) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_cubemapSky(Shared_Cubemap(engine, "sky\\")),
@@ -64,10 +64,10 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void clearCache(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) noexcept override final {
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
 
@@ -124,7 +124,7 @@ private:
 	// Private Methods
 	/** Convolute the skybox cubemap, generating blurred MIPs (for rougher materials).
 	@param	viewport	the viewport to render from. */
-	inline void convoluteSky(const std::shared_ptr<Viewport>& viewport) {
+	inline void convoluteSky(const std::shared_ptr<Viewport>& viewport) noexcept {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		glDepthMask(GL_FALSE);

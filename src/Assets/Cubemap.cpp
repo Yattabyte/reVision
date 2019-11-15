@@ -76,7 +76,7 @@ void Cubemap::initialize() noexcept
 	Asset::finalize();
 }
 
-void Cubemap::bind(const unsigned int& texture_unit)
+void Cubemap::bind(const unsigned int& texture_unit) noexcept
 {
 	glBindTextureUnit(texture_unit, m_glTexID);
 }

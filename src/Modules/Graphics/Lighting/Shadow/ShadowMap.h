@@ -11,12 +11,12 @@ class ShadowMap {
 public:
 	// Public (De)Constructors
 	/** Destroy this framebuffer. */
-	inline ~ShadowMap() {
+	inline ~ShadowMap() noexcept {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(3, m_textureIDS);
 	}
 	/** Construct this framebuffer. */
-	inline ShadowMap() {
+	inline ShadowMap() noexcept {
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D_ARRAY, 3, m_textureIDS);
 		resize(glm::vec2(1), 1);
@@ -44,7 +44,7 @@ public:
 	/** Set the size of this framebuffer.
 	@param	newSize		the new size to use.
 	@param	depth		the new depth to use. */
-	inline void resize(const glm::ivec2& newSize, const int& layerFaces) {
+	inline void resize(const glm::ivec2& newSize, const int& layerFaces) noexcept {
 		if (m_size != newSize || m_layerFaces != layerFaces) {
 			m_size = glm::max(glm::ivec2(1), newSize);
 			m_layerFaces = std::max<int>(1, layerFaces);
@@ -61,7 +61,7 @@ public:
 	/** Clear the data out of a specific layer in the framebuffer.
 	@param	zOffset		the layer to clear out of.
 	@param	amount		the number of layers to clear. */
-	inline void clear(const GLint& zOffset, const GLsizei& amount) {
+	inline void clear(const GLint& zOffset, const GLsizei& amount) noexcept {
 		constexpr float clearDepth(1.0f);
 		constexpr glm::vec3 clear(0.0f);
 		glClearTexSubImage(m_textureIDS[0], 0, 0, 0, zOffset, m_size.x, m_size.y, amount, GL_RGB, GL_FLOAT, &clear);
@@ -69,7 +69,7 @@ public:
 		glClearTexSubImage(m_textureIDS[2], 0, 0, 0, zOffset, m_size.x, m_size.y, amount, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
 	}
 	/** Bind this framebuffer for writing. */
-	inline void bindForWriting() {
+	inline void bindForWriting() noexcept {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 	}
 

@@ -17,12 +17,12 @@ class SSAO final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Virtual Destructor. */
-	inline ~SSAO() {
+	inline ~SSAO() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit SSAO(Engine* engine) :
+	inline explicit SSAO(Engine* engine) noexcept :
 		Graphics_Technique(Technique_Category::SECONDARY_LIGHTING),
 		m_engine(engine),
 		m_shader(Shared_Shader(engine, "Effects\\SSAO")),
@@ -86,10 +86,10 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void clearCache(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) noexcept override final {
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_shaderCopyAO->existsYet() && m_shaderGB_A->existsYet())
 			return;
 

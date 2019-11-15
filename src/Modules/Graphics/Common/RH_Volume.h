@@ -13,31 +13,31 @@ class RH_Volume {
 public:
 	// Public (De)Constructors
 	/** Destroy the radiance hint volume. */
-	~RH_Volume();
+	~RH_Volume() noexcept;
 	/** Construct a radiance hint volume.
 	@param	engine			the engine to use. */
-	explicit RH_Volume(Engine* engine);
+	explicit RH_Volume(Engine* engine) noexcept;
 
 
 	// Public Methods
 	/** Update the volume's attributes based on the input camera.
 	@param	cameraBuffer	the camera to use the frustum of. */
-	void updateVolume(const Camera* camera);
+	void updateVolume(const Camera* camera) noexcept;
 	/** Resize this volume's 3D texture.
 	@param	resolution		the new size to use. */
-	void resize(const float& resolution = 16.0f);
+	void resize(const float& resolution = 16.0f) noexcept;
 	/** Clear the data out of this framebuffer's textures. */
-	void clear();
+	void clear() noexcept;
 	/** Write to the first bounce framebuffer. */
-	void writePrimary();
+	void writePrimary() noexcept;
 	/** Read from the first bounce framebuffer.
 	@param	binding			the reading index to bind to. */
-	void readPrimary(const GLuint& binding = 0);
+	void readPrimary(const GLuint& binding = 0) noexcept;
 	/** Write to the second bounce framebuffer. */
-	void writeSecondary();
+	void writeSecondary() noexcept;
 	/** Read from the second bounce framebuffer.
 	@param	binding			the reading index to bind to. */
-	void readSecondary(const GLuint& binding = 0);
+	void readSecondary(const GLuint& binding = 0) noexcept;
 
 
 	// Public Attributes

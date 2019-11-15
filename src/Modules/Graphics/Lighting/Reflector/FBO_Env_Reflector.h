@@ -10,12 +10,12 @@ class FBO_Env_Reflector {
 public:
 	// Public (De)Constructors
 	/** Destroy this framebuffer. */
-	inline ~FBO_Env_Reflector() {
+	inline ~FBO_Env_Reflector() noexcept {
 		glDeleteFramebuffers(6, m_fboID);
 		glDeleteTextures(1, &m_textureID);
 	}
 	/** Construct this framebuffer. */
-	inline FBO_Env_Reflector() {
+	inline FBO_Env_Reflector() noexcept {
 		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_textureID);
 		glTextureParameteri(m_textureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTextureParameteri(m_textureID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -39,7 +39,7 @@ public:
 	/** Set the size of this framebuffer.
 	@param	newSize		the new size to use.
 	@param	depth		the new depth to use. */
-	inline void resize(const glm::ivec2 newSize, const GLuint& depth) {
+	inline void resize(const glm::ivec2 newSize, const GLuint& depth) noexcept {
 		if (m_size != newSize || m_depth != depth) {
 			m_size = newSize;
 			m_depth = depth;
@@ -50,24 +50,24 @@ public:
 		}
 	}
 	/** Clear the data out of the entire framebuffer. */
-	inline void clear() {
+	inline void clear() noexcept {
 		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		for (int x = 0; x < 6; ++x)
 			glClearNamedFramebufferfv(m_fboID[x], GL_COLOR, 0, clearColor);
 	}
 	/** Clear the data out of a specific layer in the framebuffer.
 	@param	zOffset		the layer to clear out of. */
-	inline void clear(const GLint& zOffset) {
+	inline void clear(const GLint& zOffset) noexcept {
 		const glm::vec3 clear(0.0f);
 		glClearTexSubImage(m_textureID, 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_RGB, GL_FLOAT, &clear);
 	}
 	/** Bind this framebuffer for writing, at the specific mipmap index. */
-	inline void bindForWriting(const int& index) {
+	inline void bindForWriting(const int& index) noexcept {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID[index]);
 	}
 	/** Bind this framebuffer for reading, with the binding offset specified.
 	@param	binding		the texture binding point. */
-	inline void bindForReading(const GLuint& binding = 0) {
+	inline void bindForReading(const GLuint& binding = 0) noexcept {
 		glBindTextureUnit(binding, m_textureID);
 	}
 

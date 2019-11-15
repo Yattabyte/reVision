@@ -40,7 +40,7 @@ void Image::initialize() noexcept
 	Asset::finalize();
 }
 
-void Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondaryColor)
+void Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondaryColor) noexcept
 {
 	if (m_size == glm::ivec2(0))
 		m_size = glm::ivec2(256);
@@ -86,7 +86,7 @@ void Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondaryColor)
 	};
 }
 
-void Image::resize(const glm::ivec2 newSize)
+void Image::resize(const glm::ivec2 newSize) noexcept
 {
 	Image_Data dataContainer{ m_pixelData, m_size, m_pitch, m_bpp };
 	Image_IO::Resize_Image(newSize, dataContainer, m_policyResize);

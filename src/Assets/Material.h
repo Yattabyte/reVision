@@ -57,7 +57,7 @@ public:
 	@brief					Updates the appropriate supplied string with a path to the appropriate file.
 	@param	filename		the absolute file path of the '.mat' file to read from.
 	@return					the vector storing texture directories. */
-	static std::vector<std::string> Get_Material_Textures(const std::string& filename);
+	static std::vector<std::string> Get_Material_Textures(const std::string& filename) noexcept;
 
 
 	// Public Attributes

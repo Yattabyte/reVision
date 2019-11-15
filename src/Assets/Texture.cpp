@@ -87,7 +87,7 @@ void Texture::initialize() noexcept
 	Asset::finalize();
 }
 
-void Texture::bind(const unsigned int& texture_unit)
+void Texture::bind(const unsigned int& texture_unit) noexcept
 {
 	glBindTextureUnit(texture_unit, m_glTexID);
 }

@@ -16,12 +16,12 @@ class Join_Reflections final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Virtual Destructor. */
-	inline ~Join_Reflections() {
+	inline ~Join_Reflections() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit Join_Reflections(Engine* engine) :
+	inline explicit Join_Reflections(Engine* engine) noexcept :
 		Graphics_Technique(Technique_Category::SECONDARY_LIGHTING),
 		m_engine(engine),
 		m_shader(Shared_Shader(engine, "Effects\\Join Reflections")),
@@ -32,10 +32,10 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void clearCache(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) noexcept override final {
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet())
 			return;
 

@@ -15,8 +15,9 @@ public:
 	inline ~DirectVisibility_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline explicit DirectVisibility_System(const std::shared_ptr<Direct_Light_Data>& frameData)
-		: m_frameData(frameData) {
+	inline explicit DirectVisibility_System(const std::shared_ptr<Direct_Light_Data>& frameData) noexcept :
+		m_frameData(frameData)
+	{
 		addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 	}
 

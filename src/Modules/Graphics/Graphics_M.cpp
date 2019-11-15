@@ -81,13 +81,13 @@ void Graphics_Module::deinitialize() noexcept
 	m_clientCamera.reset();
 }
 
-void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID)
+void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID) noexcept
 {
 	renderWorld(world, deltaTime, m_viewport, { m_clientCamera });
 	copyToScreen(fboID);
 }
 
-void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::shared_ptr<Camera>>& cameras)
+void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::shared_ptr<Camera>>& cameras) noexcept
 {
 	if (cameras.size()) {
 		// Prepare rendering pipeline for a new frame, wait for buffers to free
@@ -102,7 +102,7 @@ void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const
 	}
 }
 
-void Graphics_Module::genPerspectiveMatrix()
+void Graphics_Module::genPerspectiveMatrix() noexcept
 {
 	// Update Perspective Matrix
 	const float ar = std::max(1.0f, (*m_clientCamera)->Dimensions.x) / std::max(1.0f, (*m_clientCamera)->Dimensions.y);
@@ -113,7 +113,7 @@ void Graphics_Module::genPerspectiveMatrix()
 	(*m_clientCamera)->pvMatrix = (*m_clientCamera)->pMatrix * (*m_clientCamera)->vMatrix;
 }
 
-void Graphics_Module::copyToScreen(const GLuint& fboID)
+void Graphics_Module::copyToScreen(const GLuint& fboID) noexcept
 {
 	if (m_shapeQuad->existsYet() && m_shader->existsYet()) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID);

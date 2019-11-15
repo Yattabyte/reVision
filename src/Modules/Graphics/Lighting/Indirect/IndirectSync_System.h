@@ -16,8 +16,9 @@ public:
 	inline ~IndirectSync_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline explicit IndirectSync_System(const std::shared_ptr<Indirect_Light_Data>& frameData)
-		: m_frameData(frameData) {
+	inline explicit IndirectSync_System(const std::shared_ptr<Indirect_Light_Data>& frameData) noexcept :
+		m_frameData(frameData)
+	{
 		addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 		addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 		addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

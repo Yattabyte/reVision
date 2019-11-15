@@ -4,7 +4,7 @@
 #include <algorithm>
 
 
-Viewport::Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions, Engine* engine) :
+Viewport::Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions, Engine* engine) noexcept :
 	m_screenPosition(screenPosition),
 	m_dimensions(dimensions),
 	m_gfxFBOS(std::make_shared<Graphics_Framebuffers>(dimensions, engine))
@@ -14,7 +14,7 @@ Viewport::Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimension
 	glNamedFramebufferTexture(m_gfxFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_gfxFBOS->getTexID("GEOMETRY", 3), 0);
 }
 
-void Viewport::resize(const glm::ivec2& size, const int& layerFaces)
+void Viewport::resize(const glm::ivec2& size, const int& layerFaces) noexcept
 {
 	if (m_dimensions != size || m_layerFaces != layerFaces) {
 		m_dimensions = size;
@@ -23,12 +23,12 @@ void Viewport::resize(const glm::ivec2& size, const int& layerFaces)
 	}
 }
 
-void Viewport::bind()
+void Viewport::bind() noexcept
 {
 	glViewport(m_screenPosition.x, m_screenPosition.y, m_dimensions.x, m_dimensions.y);
 }
 
-void Viewport::clear()
+void Viewport::clear() noexcept
 {
 	m_gfxFBOS->clear();
 }

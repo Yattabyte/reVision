@@ -39,17 +39,17 @@ struct ShaderObj {
 	/** Retrieve a shader parameter by the name specified.
 	@param		parameterName	the program parameter name.
 	@return						the parameter value matching the name specified. */
-	GLint getShaderiv(const GLenum& parameterName) const;
+	GLint getShaderiv(const GLenum& parameterName) const noexcept;
 	/** Load a shader document from the file path specified.
 	@param		engine			the active engine to use.
 	@param		filePath		the relative path to the file to read.
 	@return						true on success, false otherwise. */
-	bool loadDocument(Engine* engine, const std::string& filePath);
+	bool loadDocument(Engine* engine, const std::string& filePath) noexcept;
 	/** Create an OpenGL shader object from this class, using the document string loaded.
 	@param		engine			the active engine to use.
 	@param		filename		the shader file name (for reporting purposes).
 	@return						true on success, false otherwise. */
-	bool createGLShader(Engine* engine, const std::string& filename);
+	bool createGLShader(Engine* engine, const std::string& filename) noexcept;
 
 
 	// Attributes
@@ -77,58 +77,58 @@ public:
 public:
 	// Public Methods
 	/** Make this shader program active */
-	void bind();
+	void bind() noexcept;
 	/** Inactivate any currently bound shader program. */
-	static void Release();
+	static void Release() noexcept;
 
 
 	/**********************************************************************
 	----Convenient DSA functions for changing program uniform variables----
 	***********************************************************************/
 
-	inline void setUniform(const GLuint& i, const bool& o) { glProgramUniform1i(m_glProgramID, i, o); }
-	inline void setUniform(const GLuint& i, const int& o) { glProgramUniform1i(m_glProgramID, i, o); }
-	inline void setUniform(const GLuint& i, const unsigned int& o) { glProgramUniform1ui(m_glProgramID, i, o); }
-	inline void setUniform(const GLuint& i, const double& o) { glProgramUniform1d(m_glProgramID, i, o); }
-	inline void setUniform(const GLuint& i, const float& o) { glProgramUniform1f(m_glProgramID, i, o); }
-	inline void setUniform(const GLuint& i, const GLuint64& o) { glProgramUniformHandleui64ARB(m_glProgramID, i, o); }
-	inline void setUniform(const GLuint& i, const glm::vec2& o) { glProgramUniform2f(m_glProgramID, i, o.x, o.y); }
-	inline void setUniform(const GLuint& i, const glm::vec3& o) { glProgramUniform3f(m_glProgramID, i, o.x, o.y, o.z); }
-	inline void setUniform(const GLuint& i, const glm::vec4& o) { glProgramUniform4f(m_glProgramID, i, o.x, o.y, o.z, o.w); }
-	inline void setUniform(const GLuint& i, const glm::ivec2& o) { glProgramUniform2i(m_glProgramID, i, o.x, o.y); }
-	inline void setUniform(const GLuint& i, const glm::ivec3& o) { glProgramUniform3i(m_glProgramID, i, o.x, o.y, o.z); }
-	inline void setUniform(const GLuint& i, const glm::ivec4& o) { glProgramUniform4i(m_glProgramID, i, o.x, o.y, o.z, o.w); }
-	inline void setUniform(const GLuint& i, const glm::mat3& o) { glProgramUniformMatrix3fv(m_glProgramID, i, 1, GL_FALSE, &o[0][0]); }
-	inline void setUniform(const GLuint& i, const glm::mat4& o) { glProgramUniformMatrix4fv(m_glProgramID, i, 1, GL_FALSE, &o[0][0]); }
-	inline void setUniform(const GLuint& i, const int* o) { glProgramUniform1iv(m_glProgramID, i, 1, o); }
-	inline void setUniform(const GLuint& i, const unsigned int* o) { glProgramUniform1uiv(m_glProgramID, i, 1, o); }
-	inline void setUniform(const GLuint& i, const double* o) { glProgramUniform1dv(m_glProgramID, i, 1, o); }
-	inline void setUniform(const GLuint& i, const float* o) { glProgramUniform1fv(m_glProgramID, i, 1, o); }
-	inline void setUniform(const GLuint& i, const GLuint64* o) { glProgramUniformHandleui64ARB(m_glProgramID, i, *o); }
-	inline void setUniform(const GLuint& i, const glm::vec2* o) { glProgramUniform2fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
-	inline void setUniform(const GLuint& i, const glm::vec3* o) { glProgramUniform3fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
-	inline void setUniform(const GLuint& i, const glm::vec4* o) { glProgramUniform4fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
-	inline void setUniform(const GLuint& i, const glm::mat3* o) { glProgramUniformMatrix3fv(m_glProgramID, i, 1, GL_FALSE, glm::value_ptr(*o)); }
-	inline void setUniform(const GLuint& i, const glm::mat4* o) { glProgramUniformMatrix4fv(m_glProgramID, i, 1, GL_FALSE, glm::value_ptr(*o)); }
-	inline void setUniformArray(const GLuint& i, const int& o, const int& count) { glProgramUniform1iv(m_glProgramID, i, count, &o); }
-	inline void setUniformArray(const GLuint& i, const unsigned int& o, const int& count) { glProgramUniform1uiv(m_glProgramID, i, count, &o); }
-	inline void setUniformArray(const GLuint& i, const double& o, const int& count) { glProgramUniform1dv(m_glProgramID, i, count, &o); }
-	inline void setUniformArray(const GLuint& i, const float& o, const int& count) { glProgramUniform1fv(m_glProgramID, i, count, &o); }
-	inline void setUniformArray(const GLuint& i, const GLuint64& o, const int& count) { glProgramUniformHandleui64vARB(m_glProgramID, i, count, &o); }
-	inline void setUniformArray(const GLuint& i, const glm::vec2& o, const int& count) { glProgramUniform2fv(m_glProgramID, i, count, glm::value_ptr(o)); }
-	inline void setUniformArray(const GLuint& i, const glm::vec3& o, const int& count) { glProgramUniform3fv(m_glProgramID, i, count, glm::value_ptr(o)); }
-	inline void setUniformArray(const GLuint& i, const glm::vec4& o, const int& count) { glProgramUniform4fv(m_glProgramID, i, count, glm::value_ptr(o)); }
-	inline void setUniformArray(const GLuint& i, const glm::mat4& o, const int& count) { glProgramUniformMatrix4fv(m_glProgramID, i, count, GL_FALSE, glm::value_ptr(o)); }
-	inline void setUniformArray(const GLuint& i, const int* o, const int& count) { glProgramUniform1iv(m_glProgramID, i, count, o); }
-	inline void setUniformArray(const GLuint& i, const unsigned int* o, const int& count) { glProgramUniform1uiv(m_glProgramID, i, count, o); }
-	inline void setUniformArray(const GLuint& i, const double* o, const int& count) { glProgramUniform1dv(m_glProgramID, i, count, o); }
-	inline void setUniformArray(const GLuint& i, const float* o, const int& count) { glProgramUniform1fv(m_glProgramID, i, count, o); }
-	inline void setUniformArray(const GLuint& i, const GLuint64* o, const int& count) { glProgramUniformHandleui64vARB(m_glProgramID, i, count, o); }
-	inline void setUniformArray(const GLuint& i, const glm::vec2* o, const int& count) { glProgramUniform2fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
-	inline void setUniformArray(const GLuint& i, const glm::vec3* o, const int& count) { glProgramUniform3fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
-	inline void setUniformArray(const GLuint& i, const glm::vec4* o, const int& count) { glProgramUniform4fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
-	inline void setUniformArray(const GLuint& i, const glm::mat4* o, const int& count) { glProgramUniformMatrix4fv(m_glProgramID, i, count, GL_FALSE, glm::value_ptr(*o)); }
-	inline void setUniformMatrixArray(const GLuint& i, const float* o, const int& count, const GLboolean& transpose) { glProgramUniformMatrix4fv(m_glProgramID, i, count, transpose, o); }
+	inline void setUniform(const GLuint& i, const bool& o) noexcept { glProgramUniform1i(m_glProgramID, i, o); }
+	inline void setUniform(const GLuint& i, const int& o) noexcept { glProgramUniform1i(m_glProgramID, i, o); }
+	inline void setUniform(const GLuint& i, const unsigned int& o) noexcept { glProgramUniform1ui(m_glProgramID, i, o); }
+	inline void setUniform(const GLuint& i, const double& o) noexcept { glProgramUniform1d(m_glProgramID, i, o); }
+	inline void setUniform(const GLuint& i, const float& o) noexcept { glProgramUniform1f(m_glProgramID, i, o); }
+	inline void setUniform(const GLuint& i, const GLuint64& o) noexcept { glProgramUniformHandleui64ARB(m_glProgramID, i, o); }
+	inline void setUniform(const GLuint& i, const glm::vec2& o) noexcept { glProgramUniform2f(m_glProgramID, i, o.x, o.y); }
+	inline void setUniform(const GLuint& i, const glm::vec3& o) noexcept { glProgramUniform3f(m_glProgramID, i, o.x, o.y, o.z); }
+	inline void setUniform(const GLuint& i, const glm::vec4& o) noexcept { glProgramUniform4f(m_glProgramID, i, o.x, o.y, o.z, o.w); }
+	inline void setUniform(const GLuint& i, const glm::ivec2& o) noexcept { glProgramUniform2i(m_glProgramID, i, o.x, o.y); }
+	inline void setUniform(const GLuint& i, const glm::ivec3& o) noexcept { glProgramUniform3i(m_glProgramID, i, o.x, o.y, o.z); }
+	inline void setUniform(const GLuint& i, const glm::ivec4& o) noexcept { glProgramUniform4i(m_glProgramID, i, o.x, o.y, o.z, o.w); }
+	inline void setUniform(const GLuint& i, const glm::mat3& o) noexcept { glProgramUniformMatrix3fv(m_glProgramID, i, 1, GL_FALSE, &o[0][0]); }
+	inline void setUniform(const GLuint& i, const glm::mat4& o) noexcept { glProgramUniformMatrix4fv(m_glProgramID, i, 1, GL_FALSE, &o[0][0]); }
+	inline void setUniform(const GLuint& i, const int* o) noexcept { glProgramUniform1iv(m_glProgramID, i, 1, o); }
+	inline void setUniform(const GLuint& i, const unsigned int* o) noexcept { glProgramUniform1uiv(m_glProgramID, i, 1, o); }
+	inline void setUniform(const GLuint& i, const double* o) noexcept { glProgramUniform1dv(m_glProgramID, i, 1, o); }
+	inline void setUniform(const GLuint& i, const float* o) noexcept { glProgramUniform1fv(m_glProgramID, i, 1, o); }
+	inline void setUniform(const GLuint& i, const GLuint64* o) noexcept { glProgramUniformHandleui64ARB(m_glProgramID, i, *o); }
+	inline void setUniform(const GLuint& i, const glm::vec2* o) noexcept { glProgramUniform2fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
+	inline void setUniform(const GLuint& i, const glm::vec3* o) noexcept { glProgramUniform3fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
+	inline void setUniform(const GLuint& i, const glm::vec4* o) noexcept { glProgramUniform4fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
+	inline void setUniform(const GLuint& i, const glm::mat3* o) noexcept { glProgramUniformMatrix3fv(m_glProgramID, i, 1, GL_FALSE, glm::value_ptr(*o)); }
+	inline void setUniform(const GLuint& i, const glm::mat4* o) noexcept { glProgramUniformMatrix4fv(m_glProgramID, i, 1, GL_FALSE, glm::value_ptr(*o)); }
+	inline void setUniformArray(const GLuint& i, const int& o, const int& count) noexcept { glProgramUniform1iv(m_glProgramID, i, count, &o); }
+	inline void setUniformArray(const GLuint& i, const unsigned int& o, const int& count) noexcept { glProgramUniform1uiv(m_glProgramID, i, count, &o); }
+	inline void setUniformArray(const GLuint& i, const double& o, const int& count) noexcept { glProgramUniform1dv(m_glProgramID, i, count, &o); }
+	inline void setUniformArray(const GLuint& i, const float& o, const int& count) noexcept { glProgramUniform1fv(m_glProgramID, i, count, &o); }
+	inline void setUniformArray(const GLuint& i, const GLuint64& o, const int& count) noexcept { glProgramUniformHandleui64vARB(m_glProgramID, i, count, &o); }
+	inline void setUniformArray(const GLuint& i, const glm::vec2& o, const int& count) noexcept { glProgramUniform2fv(m_glProgramID, i, count, glm::value_ptr(o)); }
+	inline void setUniformArray(const GLuint& i, const glm::vec3& o, const int& count) noexcept { glProgramUniform3fv(m_glProgramID, i, count, glm::value_ptr(o)); }
+	inline void setUniformArray(const GLuint& i, const glm::vec4& o, const int& count) noexcept { glProgramUniform4fv(m_glProgramID, i, count, glm::value_ptr(o)); }
+	inline void setUniformArray(const GLuint& i, const glm::mat4& o, const int& count) noexcept { glProgramUniformMatrix4fv(m_glProgramID, i, count, GL_FALSE, glm::value_ptr(o)); }
+	inline void setUniformArray(const GLuint& i, const int* o, const int& count) noexcept { glProgramUniform1iv(m_glProgramID, i, count, o); }
+	inline void setUniformArray(const GLuint& i, const unsigned int* o, const int& count) noexcept { glProgramUniform1uiv(m_glProgramID, i, count, o); }
+	inline void setUniformArray(const GLuint& i, const double* o, const int& count) noexcept { glProgramUniform1dv(m_glProgramID, i, count, o); }
+	inline void setUniformArray(const GLuint& i, const float* o, const int& count) noexcept { glProgramUniform1fv(m_glProgramID, i, count, o); }
+	inline void setUniformArray(const GLuint& i, const GLuint64* o, const int& count) noexcept { glProgramUniformHandleui64vARB(m_glProgramID, i, count, o); }
+	inline void setUniformArray(const GLuint& i, const glm::vec2* o, const int& count) noexcept { glProgramUniform2fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
+	inline void setUniformArray(const GLuint& i, const glm::vec3* o, const int& count) noexcept { glProgramUniform3fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
+	inline void setUniformArray(const GLuint& i, const glm::vec4* o, const int& count) noexcept { glProgramUniform4fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
+	inline void setUniformArray(const GLuint& i, const glm::mat4* o, const int& count) noexcept { glProgramUniformMatrix4fv(m_glProgramID, i, count, GL_FALSE, glm::value_ptr(*o)); }
+	inline void setUniformMatrixArray(const GLuint& i, const float* o, const int& count, const GLboolean& transpose) noexcept { glProgramUniformMatrix4fv(m_glProgramID, i, count, transpose, o); }
 
 
 	// Public Attributes
@@ -142,25 +142,25 @@ protected:
 	/** Retrieve a program parameter by the name specified.
 	@param		parameterName			the program parameter name.
 	@return						the parameter value matching the name specified. */
-	const GLint getProgramiv(const GLenum& pname) const;
+	const GLint getProgramiv(const GLenum& pname) const noexcept;
 	/** Retrieve an error log corresponding to this shader program.
 	@return						an error log for this shader program. */
-	[[nodiscard]] const std::vector<GLchar> getErrorLog() const;
+	[[nodiscard]] const std::vector<GLchar> getErrorLog() const noexcept;
 	/** Attempt to load a shader program from a cached binary file.
 	@param		relativePath	the relative path of the binary file.
 	@return						true on success, false otherwise. */
-	const bool loadCachedBinary(const std::string& relativePath);
+	const bool loadCachedBinary(const std::string& relativePath) noexcept;
 	/** Attempt to save a shader program to a cached binary file.
 	@param		relativePath	the relative path of the binary file.
 	@return						true on success, false otherwise. */
-	const bool saveCachedBinary(const std::string& relativePath);
+	const bool saveCachedBinary(const std::string& relativePath) noexcept;
 	/** Attempt to load a shader program from separate shader files.
 	@param		relativePath	the relative path of the shader files.
 	@return						true on success, false otherwise. */
-	virtual bool initShaders(const std::string& relativePath);
+	virtual bool initShaders(const std::string& relativePath) noexcept;
 	/** Use to validate this shader program after linking.
 	@return						true on success, false otherwise. */
-	const bool validateProgram();
+	const bool validateProgram() noexcept;
 
 
 private:

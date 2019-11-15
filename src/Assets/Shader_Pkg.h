@@ -42,7 +42,7 @@ public:
 	// Public Methods
 	/** Retrieves this package's content as a std::string.
 	* @return				package contents. */
-	inline std::string getPackageText() const {
+	inline std::string getPackageText() const noexcept {
 		return m_packageText;
 	}
 

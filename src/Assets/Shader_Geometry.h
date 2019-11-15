@@ -49,7 +49,7 @@ public:
 
 protected:
 	// Interface Implementation
-	virtual bool initShaders(const std::string& relativePath) override final;
+	virtual bool initShaders(const std::string& relativePath) noexcept override final;
 
 
 private:

@@ -15,12 +15,12 @@ class Shadow_Technique final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destructor. */
-	inline ~Shadow_Technique() {
+	inline ~Shadow_Technique() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Shadow_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras) :
+	inline Shadow_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_frameData(std::make_shared<ShadowData>()),
@@ -40,13 +40,13 @@ public:
 	}
 
 	// Public Interface Implementations
-	inline virtual void clearCache(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) noexcept override final {
 		m_frameData->shadowsToUpdate.clear();
 	}
-	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) override final {
+	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept override final {
 		world.updateSystems(m_auxilliarySystems, deltaTime);
 	}
-	inline virtual void updatePass(const float& deltaTime) override final {
+	inline virtual void updatePass(const float& deltaTime) noexcept override final {
 		// Render important shadows
 		if (m_enabled)
 			updateShadows(deltaTime);
@@ -54,7 +54,7 @@ public:
 
 
 	// Public Methods
-	inline std::shared_ptr<ShadowData> getShadowData() const {
+	inline std::shared_ptr<ShadowData> getShadowData() const noexcept {
 		return m_frameData;
 	}
 
@@ -63,7 +63,7 @@ private:
 	// Private Methods
 	/** Render all the geometry from each light.
 	@param	deltaTime	the amount of time passed since last frame. */
-	inline void updateShadows(const float& deltaTime) {
+	inline void updateShadows(const float& deltaTime) noexcept {
 		auto clientTime = m_engine->getTime();
 		if (m_frameData->shadowsToUpdate.size()) {
 			// Prepare Viewport

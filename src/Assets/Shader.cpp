@@ -87,24 +87,24 @@ void Shader::initialize() noexcept
 	Asset::finalize();
 }
 
-void Shader::bind()
+void Shader::bind() noexcept
 {
 	glUseProgram(m_glProgramID);
 }
 
-void Shader::Release()
+void Shader::Release() noexcept
 {
 	glUseProgram(0);
 }
 
-const GLint Shader::getProgramiv(const GLenum& pname) const
+const GLint Shader::getProgramiv(const GLenum& pname) const noexcept
 {
 	GLint param;
 	glGetProgramiv(m_glProgramID, pname, &param);
 	return param;
 }
 
-const std::vector<GLchar> Shader::getErrorLog() const
+const std::vector<GLchar> Shader::getErrorLog() const noexcept
 {
 	const auto size = getProgramiv(GL_INFO_LOG_LENGTH);
 	std::vector<GLchar> infoLog(size);
@@ -113,7 +113,7 @@ const std::vector<GLchar> Shader::getErrorLog() const
 	return infoLog;
 }
 
-const bool Shader::loadCachedBinary(const std::string& relativePath)
+const bool Shader::loadCachedBinary(const std::string& relativePath) noexcept
 {
 	if (Engine::File_Exists(relativePath + EXT_SHADER_BINARY)) {
 		ShaderHeader header;
@@ -140,7 +140,7 @@ const bool Shader::loadCachedBinary(const std::string& relativePath)
 	return false;
 }
 
-const bool Shader::saveCachedBinary(const std::string& relativePath)
+const bool Shader::saveCachedBinary(const std::string& relativePath) noexcept
 {
 	glProgramParameteri(m_glProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 	ShaderHeader header = { 0,  getProgramiv(GL_PROGRAM_BINARY_LENGTH) };
@@ -160,7 +160,7 @@ const bool Shader::saveCachedBinary(const std::string& relativePath)
 	return false;
 }
 
-bool Shader::initShaders(const std::string& relativePath)
+bool Shader::initShaders(const std::string& relativePath) noexcept
 {
 	const std::string filename = getFileName();
 
@@ -180,7 +180,7 @@ bool Shader::initShaders(const std::string& relativePath)
 	return true;
 }
 
-const bool Shader::validateProgram()
+const bool Shader::validateProgram() noexcept
 {
 	// Check Validation
 	if (getProgramiv(GL_LINK_STATUS)) {
@@ -199,14 +199,14 @@ ShaderObj::~ShaderObj() noexcept { glDeleteShader(m_shaderID); }
 
 ShaderObj::ShaderObj(const GLenum& type) noexcept : m_type(type) {}
 
-GLint ShaderObj::getShaderiv(const GLenum& pname) const
+GLint ShaderObj::getShaderiv(const GLenum& pname) const noexcept
 {
 	GLint param;
 	glGetShaderiv(m_shaderID, pname, &param);
 	return param;
 }
 
-bool ShaderObj::loadDocument(Engine* engine, const std::string& filePath)
+bool ShaderObj::loadDocument(Engine* engine, const std::string& filePath) noexcept
 {
 	// Exit early if document not found or no text is found in the document
 	if (!Text_IO::Import_Text(engine, filePath, m_shaderText) || m_shaderText == "")
@@ -233,7 +233,7 @@ bool ShaderObj::loadDocument(Engine* engine, const std::string& filePath)
 	return true;
 }
 
-bool ShaderObj::createGLShader(Engine* engine, const std::string& filename)
+bool ShaderObj::createGLShader(Engine* engine, const std::string& filename) noexcept
 {
 	// Create shader object
 	const char* source = m_shaderText.c_str();

@@ -16,7 +16,7 @@ class SSR final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Virtual Destructor. */
-	inline ~SSR() {
+	inline ~SSR() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 
@@ -24,7 +24,7 @@ public:
 		glDeleteTextures(1, &m_bayerID);
 	}
 	/** Constructor. */
-	inline explicit SSR(Engine* engine) :
+	inline explicit SSR(Engine* engine) noexcept :
 		Graphics_Technique(Technique_Category::SECONDARY_LIGHTING),
 		m_engine(engine),
 		m_shaderSSR1(Shared_Shader(engine, "Effects\\SSR part 1")),
@@ -56,10 +56,10 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void clearCache(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) noexcept override final {
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet())
 			return;
 
@@ -113,7 +113,7 @@ private:
 	// Private Methods
 	/** Convolute the lighting buffer into each of its MIP levels.
 	@param	viewport	the viewport to render from. */
-	inline void updateMIPChain(const std::shared_ptr<Viewport>& viewport) {
+	inline void updateMIPChain(const std::shared_ptr<Viewport>& viewport) noexcept {
 		const auto mipFboID = viewport->m_gfxFBOS->getFboID("SSR_MIP");
 		const auto mipTexID = viewport->m_gfxFBOS->getTexID("SSR_MIP", 0);
 		const auto dimensions = glm::vec2(viewport->m_dimensions);

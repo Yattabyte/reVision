@@ -17,13 +17,13 @@ class Bloom final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Virtual Destructor. */
-	inline ~Bloom() {
+	inline ~Bloom() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit Bloom(Engine* engine)
-		: Graphics_Technique(Technique_Category::POST_PROCESSING),
+	inline explicit Bloom(Engine* engine) noexcept :
+		Graphics_Technique(Technique_Category::POST_PROCESSING),
 		m_engine(engine),
 		m_shaderBloomExtract(Shared_Shader(engine, "Effects\\Bloom Extraction")),
 		m_shaderCopy(Shared_Shader(engine, "Effects\\Copy Texture")),
@@ -39,10 +39,10 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void clearCache(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) noexcept override final {
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet() || !m_shaderGB->existsYet())
 			return;
 
@@ -111,7 +111,7 @@ private:
 	// Private Methods
 	/** Change the strength of the bloom effect.
 	@param	strength		the new strength of the bloom effect. */
-	inline void setBloomStrength(const int& strength) {
+	inline void setBloomStrength(const int& strength) noexcept {
 		m_bloomStrength = strength;
 	}
 

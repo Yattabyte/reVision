@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-Graphics_Framebuffers::~Graphics_Framebuffers()
+Graphics_Framebuffers::~Graphics_Framebuffers() noexcept
 {
 	// Destroy OpenGL objects
 	for (auto& [name, fboData] : m_fbos) {
@@ -13,7 +13,7 @@ Graphics_Framebuffers::~Graphics_Framebuffers()
 	}
 }
 
-Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2& size, Engine* engine) :
+Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2& size, Engine* engine) noexcept :
 	m_renderSize(size),
 	m_rhVolume(engine)
 {
@@ -30,7 +30,7 @@ Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2& size, Engine* eng
 	createFBO("FXAA", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 }
 
-void Graphics_Framebuffers::createFBO(const char* name, const std::vector<std::tuple<GLenum, GLenum, GLenum>>& textureFormats, const bool& mipmapped)
+void Graphics_Framebuffers::createFBO(const char* name, const std::vector<std::tuple<GLenum, GLenum, GLenum>>& textureFormats, const bool& mipmapped) noexcept
 {
 	//  Variables for this frame buffer entry
 	GLuint fboID(0);	// FBO ID
@@ -89,19 +89,19 @@ void Graphics_Framebuffers::createFBO(const char* name, const std::vector<std::t
 	m_fbos[name] = { fboID, mipmapped, textures };
 }
 
-void Graphics_Framebuffers::bindForWriting(const char* name)
+void Graphics_Framebuffers::bindForWriting(const char* name) noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getFboID(name));
 }
 
-void Graphics_Framebuffers::bindForReading(const char* name, const GLuint& binding)
+void Graphics_Framebuffers::bindForReading(const char* name, const GLuint& binding) noexcept
 {
 	int counter(0);
 	for (const auto [texID, internalFormat, format, type, attachment] : std::get<2>(m_fbos[name]))
 		glBindTextureUnit(binding + counter++, texID);
 }
 
-void Graphics_Framebuffers::clear()
+void Graphics_Framebuffers::clear() noexcept
 {
 	glDepthMask(GL_TRUE);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -126,7 +126,7 @@ void Graphics_Framebuffers::clear()
 	m_rhVolume.clear();
 }
 
-void Graphics_Framebuffers::resize(const glm::ivec2& newSize, const int& layerFaces)
+void Graphics_Framebuffers::resize(const glm::ivec2& newSize, const int& layerFaces) noexcept
 {
 	m_renderSize = newSize;
 	m_layerFaces = layerFaces;
@@ -146,12 +146,12 @@ void Graphics_Framebuffers::resize(const glm::ivec2& newSize, const int& layerFa
 	}
 }
 
-GLuint Graphics_Framebuffers::getFboID(const char* name)
+GLuint Graphics_Framebuffers::getFboID(const char* name) noexcept
 {
 	return std::get<0>(m_fbos[name]);
 }
 
-GLuint Graphics_Framebuffers::getTexID(const char* name, const size_t& index)
+GLuint Graphics_Framebuffers::getTexID(const char* name, const size_t& index) noexcept
 {
 	return std::get<0>(
 		(std::get<2>(m_fbos[name]))[index] // inner '() brackets' is the vector

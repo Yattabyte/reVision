@@ -100,7 +100,7 @@ void Material::initialize() noexcept
 
 /** Attempts to retrieve a std::string between quotation marks "<std::string>"
 @return	the std::string between quotation marks */
-[[nodiscard]] std::string const get_between_quotes(std::string& s)
+[[nodiscard]] static std::string const get_between_quotes(std::string& s) noexcept
 {
 	std::string output = s;
 	size_t spot1 = s.find_first_of("\"");
@@ -119,7 +119,8 @@ void Material::initialize() noexcept
 /** Parse a given line between parentheses and convert it to a string.
 @param	in	the string to convert
 @return		a string */
-[[nodiscard]] std::string const getType_String(std::string& in) {
+[[nodiscard]] static std::string const getType_String(std::string& in) noexcept
+{
 	return get_between_quotes(in);
 }
 
@@ -127,12 +128,13 @@ void Material::initialize() noexcept
 @param		s1	the string to search within
 @param		s2	the target string to find
 @return		true if the second string is found in the first, else otherwise. */
-bool const find(const std::string& s1, const std::string& s2) {
+[[nodiscard]] static bool find(const std::string& s1, const std::string& s2) noexcept
+{
 	return (s1.find(s2) != std::string::npos);
 }
 
 /** Parse a PBR material document. */
-std::vector<std::string> parse_pbr(std::ifstream& file_stream)
+[[nodiscard]] static std::vector<std::string> parse_pbr(std::ifstream& file_stream) noexcept
 {
 	std::vector<std::string> textures(MAX_PHYSICAL_IMAGES);
 	int bracketCount = 0;
@@ -167,7 +169,7 @@ std::vector<std::string> parse_pbr(std::ifstream& file_stream)
 	return textures;
 }
 
-std::vector<std::string> Material::Get_Material_Textures(const std::string& filename)
+[[nodiscard]] std::vector<std::string> Material::Get_Material_Textures(const std::string& filename) noexcept
 {
 	std::vector<std::string> textures;
 	std::ifstream file_stream(Engine::Get_Current_Dir() + filename);

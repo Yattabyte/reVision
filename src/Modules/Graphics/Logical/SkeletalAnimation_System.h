@@ -14,8 +14,9 @@ public:
 	/** Destroy the skeletal animation system. */
 	inline ~Skeletal_Animation_System() = default;
 	/** Construct a skeletal animation system. */
-	inline explicit Skeletal_Animation_System(Engine* engine)
-		: m_engine(engine) {
+	inline explicit Skeletal_Animation_System(Engine* engine) noexcept :
+		m_engine(engine)
+	{
 		// Declare component types used
 		addComponentType(Skeleton_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 	}
@@ -52,8 +53,8 @@ public:
 
 
 	// Public functions
-	template <typename T> inline static T valueMix(const T& t1, const T& t2, const float& f) { return glm::mix(t1, t2, f); }
-	template <> inline static glm::quat valueMix(const glm::quat& t1, const glm::quat& t2, const float& f) { return glm::slerp(t1, t2, f); }
+	template <typename T> inline static T valueMix(const T& t1, const T& t2, const float& f) noexcept { return glm::mix(t1, t2, f); }
+	template <> inline static glm::quat valueMix(const glm::quat& t1, const glm::quat& t2, const float& f) noexcept { return glm::slerp(t1, t2, f); }
 
 
 protected:
@@ -107,7 +108,7 @@ protected:
 	@param	parentNode		parent node in the node hierarchy.
 	@param	model			the model to process the animations from.
 	@param	ParentTransform	parent transform in the node hierarchy. */
-	inline static void ReadNodeHeirarchy(std::vector<glm::mat4>& transforms, const float& AnimationTime, const int& animation_ID, const Node* parentNode, const Shared_Mesh& model, const glm::mat4& ParentTransform) {
+	inline static void ReadNodeHeirarchy(std::vector<glm::mat4>& transforms, const float& AnimationTime, const int& animation_ID, const Node* parentNode, const Shared_Mesh& model, const glm::mat4& ParentTransform) noexcept {
 		const std::string& NodeName = parentNode->name;
 		const Animation& pAnimation = model->m_geometry.animations[animation_ID];
 		const Node_Animation* pNodeAnim = FindNodeAnim(pAnimation, NodeName);

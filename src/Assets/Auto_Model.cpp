@@ -73,12 +73,12 @@ void Auto_Model::initialize() noexcept
 	Asset::finalize();
 }
 
-size_t Auto_Model::getSize() const
+size_t Auto_Model::getSize() const noexcept
 {
 	return m_data.size();
 }
 
-void Auto_Model::bind()
+void Auto_Model::bind() noexcept
 {
 	glBindVertexArray(m_vaoID);
 }

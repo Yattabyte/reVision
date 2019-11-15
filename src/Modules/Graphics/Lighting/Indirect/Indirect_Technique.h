@@ -19,12 +19,12 @@ class Indirect_Technique final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destructor. */
-	inline ~Indirect_Technique() {
+	inline ~Indirect_Technique() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Indirect_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) :
+	inline Indirect_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_shader_Bounce(Shared_Shader(engine, "Core\\Light\\Bounce")),
@@ -63,17 +63,17 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void clearCache(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) noexcept override final {
 		m_frameData->lightBuffer.endReading();
 		m_frameData->viewInfo.clear();
 		m_drawIndex = 0;
 	}
-	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) override final {
+	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept override final {
 		// Link together the dimensions of view info to that of the viewport vectors
 		m_frameData->viewInfo.resize(m_cameras->size());
 		world.updateSystems(m_auxilliarySystems, deltaTime);
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		// Update light-bounce volume
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeQuad->existsYet() && m_shader_Bounce->existsYet() && m_shader_Recon->existsYet() && m_shader_Rebounce->existsYet()) {
 			// Light bounce using client camera
@@ -117,7 +117,7 @@ public:
 private:
 	// Private Methods
 	/** Update the draw parameters for a draw call.	*/
-	inline void updateDrawParams(DynamicBuffer<>& camBufferIndex, DynamicBuffer<>& camBufferRebounce, DynamicBuffer<>& camBufferRecon, DynamicBuffer<>& visLights, StaticMultiBuffer<>& indirectBounce, IndirectDraw<>& indirectQuad, IndirectDraw<>& indirectQuadRecon, std::vector<glm::ivec2>& camIndicesGen, std::vector<glm::ivec2>& camIndiciesRebounce, std::vector<glm::ivec2>& camIndiciesRecon, std::vector<int>& lightIndices, const size_t& shadowCount, const std::vector<std::pair<int, int>>& perspectives) {
+	inline void updateDrawParams(DynamicBuffer<>& camBufferIndex, DynamicBuffer<>& camBufferRebounce, DynamicBuffer<>& camBufferRecon, DynamicBuffer<>& visLights, StaticMultiBuffer<>& indirectBounce, IndirectDraw<>& indirectQuad, IndirectDraw<>& indirectQuadRecon, std::vector<glm::ivec2>& camIndicesGen, std::vector<glm::ivec2>& camIndiciesRebounce, std::vector<glm::ivec2>& camIndiciesRecon, std::vector<int>& lightIndices, const size_t& shadowCount, const std::vector<std::pair<int, int>>& perspectives) noexcept {
 		// Write accumulated data
 		camBufferIndex.beginWriting();
 		camBufferRebounce.beginWriting();
@@ -145,7 +145,7 @@ private:
 	/** Populate the radiance hints volume with the first light bounce.
 	@param	shadowCount			the number of light casters with shadow maps.
 	@param	rhVolume			reference to the RH volume. */
-	inline void fillBounceVolume(const size_t& shadowCount, RH_Volume& rhVolume) {
+	inline void fillBounceVolume(const size_t& shadowCount, RH_Volume& rhVolume) noexcept {
 		// Prepare rendering state
 		glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
@@ -170,7 +170,7 @@ private:
 	}
 	/** Re-bounce the light in the volume a second time.
 	@param	rhVolume			reference to the RH volume. */
-	inline void rebounceVolume(RH_Volume& rhVolume, DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) {
+	inline void rebounceVolume(RH_Volume& rhVolume, DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) noexcept {
 		// Bind common data
 		glDepthMask(GL_TRUE);
 		glBlendEquation(GL_FUNC_ADD);
@@ -195,7 +195,7 @@ private:
 		indirectQuad.drawCall();
 	}
 	/** Reconstruct GI from the RH volume. */
-	inline void reconstructVolume(const std::shared_ptr<Viewport>& viewport, DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) {
+	inline void reconstructVolume(const std::shared_ptr<Viewport>& viewport, DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept {
 		// Reconstruct indirect radiance
 		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 		m_shader_Recon->bind();

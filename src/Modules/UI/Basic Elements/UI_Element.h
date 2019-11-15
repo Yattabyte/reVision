@@ -156,8 +156,8 @@ protected:
 	glm::vec2
 		m_position = glm::vec2(0.0f),
 		m_scale = glm::vec2(1.0f),
-		m_maxScale = glm::vec2(std::nanf(char(0))),
-		m_minScale = glm::vec2(std::nanf(char(0)));
+		m_maxScale = glm::vec2(std::nanf("1")),
+		m_minScale = glm::vec2(std::nanf("1"));
 	bool
 		m_visible = true,
 		m_enabled = true,

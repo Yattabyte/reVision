@@ -44,13 +44,13 @@ public:
 	/** Assigns the specified value to the specified key.
 	@param	cfg_key		the key to apply this new value to.
 	@param	cfg_value	the new value to give to this key. */
-	void setValue(const unsigned int& cfg_key, const float& cfg_value);
+	void setValue(const unsigned int& cfg_key, const float& cfg_value) noexcept;
 	/** Retrieves the value assigned to the supplied key.
 	@param	cfg_key		the key in which to fetch the value from.
 	@return				the value assigned to supplied key (NaN if the supplied key doesn't exist). */
-	float getValue(const unsigned int& cfg_key) const;
+	float getValue(const unsigned int& cfg_key) const noexcept;
 	/** Writes the configuration file back to disk within the \\Config\\ folder. */
-	void saveConfig() const;
+	void saveConfig() const noexcept;
 
 
 	// Public Attributes

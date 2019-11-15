@@ -53,7 +53,7 @@ void Shader_Geometry::initialize() noexcept
 	Asset::finalize();
 }
 
-bool Shader_Geometry::initShaders(const std::string& relativePath)
+bool Shader_Geometry::initShaders(const std::string& relativePath) noexcept
 {
 	const std::string filename = getFileName();
 

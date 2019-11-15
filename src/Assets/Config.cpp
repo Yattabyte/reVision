@@ -74,20 +74,20 @@ void Config::initialize() noexcept
 	Asset::finalize();
 }
 
-void Config::setValue(const unsigned int& cfg_key, const float& cfg_value)
+void Config::setValue(const unsigned int& cfg_key, const float& cfg_value) noexcept
 {
 	// If the key doesn't exist in the map, [ ] will create it
 	m_configuration[cfg_key] = cfg_value;
 }
 
-float Config::getValue(const unsigned int& cfg_key) const
+float Config::getValue(const unsigned int& cfg_key) const noexcept
 {
 	if (m_configuration.find(cfg_key) != m_configuration.end())
 		return m_configuration.at(cfg_key);
 	return std::nanf("");
 }
 
-void Config::saveConfig() const
+void Config::saveConfig() const noexcept
 {
 	std::string output;
 	for each (const auto & value in m_configuration)

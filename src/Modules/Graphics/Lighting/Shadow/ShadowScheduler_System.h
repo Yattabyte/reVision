@@ -13,15 +13,17 @@ class ShadowScheduler_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~ShadowScheduler_System() {
+	inline ~ShadowScheduler_System() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Construct this system.
 	@param	engine		the engine to use.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline ShadowScheduler_System(Engine* engine, const std::shared_ptr<ShadowData>& frameData)
-		: m_engine(engine), m_frameData(frameData) {
+	inline ShadowScheduler_System(Engine* engine, const std::shared_ptr<ShadowData>& frameData) noexcept :
+		m_engine(engine),
+		m_frameData(frameData)
+	{
 		addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 		addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 

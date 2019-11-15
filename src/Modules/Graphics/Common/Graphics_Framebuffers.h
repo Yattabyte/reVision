@@ -21,11 +21,11 @@ class Graphics_Framebuffers {
 public:
 	// Public (De)Constructors
 	/** Destroy this collection of frame-buffers. */
-	~Graphics_Framebuffers();
+	~Graphics_Framebuffers() noexcept;
 	/** Construct a collection of PBR frame-buffers at a specific size.
 	@param	size			the size to use.
 	@param	engine			the active engine. */
-	Graphics_Framebuffers(const glm::ivec2& size, Engine* engine);
+	Graphics_Framebuffers(const glm::ivec2& size, Engine* engine) noexcept;
 
 
 	// Public Methods
@@ -33,27 +33,27 @@ public:
 	@param	name			the name of the framebuffer, for lookup later.
 	@param	textureFormats	vector of texture parameters to connect to the FBO.
 	@param	mipmapped		(optional) whether to mipmap the FBO textures, down to 6 LOD intervals. */
-	void createFBO(const char* name, const std::vector<std::tuple<GLenum, GLenum, GLenum>>& textureFormats, const bool& mipmapped = false);
+	void createFBO(const char* name, const std::vector<std::tuple<GLenum, GLenum, GLenum>>& textureFormats, const bool& mipmapped = false) noexcept;
 	/** Bind a framebuffer for writing.
 	@param	name			the name of the framebuffer to bind. */
-	void bindForWriting(const char* name);
+	void bindForWriting(const char* name) noexcept;
 	/** Bind a framebuffer for reading.
 	@param	name			the name of the framebuffer to bind.
 	@param	binding			the reading index which the framebuffer should bind to. */
-	void bindForReading(const char* name, const GLuint& binding = 0);
+	void bindForReading(const char* name, const GLuint& binding = 0) noexcept;
 	/** Clear all framebuffer color attachments of their data. */
-	void clear();
+	void clear() noexcept;
 	/** Resize all framebuffer textures.
 	@param	newSize			the new size all framebuffer textures should expand/shrink to.
 	@param	layerFaces		the number of layers to use. */
-	void resize(const glm::ivec2& newSize, const int& layerFaces);
+	void resize(const glm::ivec2& newSize, const int& layerFaces) noexcept;
 	/** Retrieve the FBO ID for a given framebuffer.
 	@param	name			the name of the framebuffer to retrieve from. */
-	GLuint getFboID(const char* name);
+	GLuint getFboID(const char* name) noexcept;
 	/** Retrieve the Texture ID for a given framebuffer at a given texture index.
 	@param	name			the name of the framebuffer to retrieve from.
 	@param	index			the index into this framebuffer to retrieve the texture ID from. (spot 0, spot 1, etc...) */
-	GLuint getTexID(const char* name, const size_t& index);
+	GLuint getTexID(const char* name, const size_t& index) noexcept;
 
 
 	// Public Attributes

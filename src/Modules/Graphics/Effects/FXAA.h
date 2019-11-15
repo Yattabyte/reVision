@@ -15,13 +15,13 @@ class FXAA final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Virtual Destructor. */
-	inline ~FXAA() {
+	inline ~FXAA() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit FXAA(Engine* engine)
-		: Graphics_Technique(Technique_Category::POST_PROCESSING),
+	inline explicit FXAA(Engine* engine) noexcept :
+		Graphics_Technique(Technique_Category::POST_PROCESSING),
 		m_engine(engine),
 		m_shaderFXAA(Shared_Shader(engine, "Effects\\FXAA")),
 		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
@@ -34,10 +34,10 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void clearCache(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) noexcept override final {
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderFXAA->existsYet())
 			return;
 

@@ -3,7 +3,7 @@
 #include <algorithm>
 
 
-RH_Volume::~RH_Volume()
+RH_Volume::~RH_Volume() noexcept
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -12,8 +12,8 @@ RH_Volume::~RH_Volume()
 	glDeleteTextures(RH_TEXTURE_COUNT, m_textureIDS[1]);
 }
 
-RH_Volume::RH_Volume(Engine* engine)
-	: m_engine(engine)
+RH_Volume::RH_Volume(Engine* engine) noexcept :
+	m_engine(engine)
 {
 	// Preferences
 	auto& preferences = m_engine->getPreferenceState();
@@ -43,7 +43,7 @@ RH_Volume::RH_Volume(Engine* engine)
 	}
 }
 
-void RH_Volume::updateVolume(const Camera* camera)
+void RH_Volume::updateVolume(const Camera* camera) noexcept
 {
 	const glm::mat4 InverseView = camera->get()->vMatrixInverse;
 	const auto& ViewDimensions = camera->get()->Dimensions;
@@ -71,7 +71,7 @@ void RH_Volume::updateVolume(const Camera* camera)
 	m_max = aabb + m_center;
 }
 
-void RH_Volume::resize(const float& resolution)
+void RH_Volume::resize(const float& resolution) noexcept
 {
 	m_resolution = resolution;
 	for (int bounce = 0; bounce < 2; ++bounce)
@@ -79,7 +79,7 @@ void RH_Volume::resize(const float& resolution)
 			glTextureImage3DEXT(m_textureIDS[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, 0);
 }
 
-void RH_Volume::clear()
+void RH_Volume::clear() noexcept
 {
 	GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	for (int bounce = 0; bounce < 2; ++bounce)
@@ -87,23 +87,23 @@ void RH_Volume::clear()
 			glClearNamedFramebufferfv(m_fboIDS[bounce], GL_COLOR, x, clearColor);
 }
 
-void RH_Volume::writePrimary()
+void RH_Volume::writePrimary() noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDS[0]);
 }
 
-void RH_Volume::readPrimary(const GLuint& binding)
+void RH_Volume::readPrimary(const GLuint& binding) noexcept
 {
 	for (GLuint x = 0; x < RH_TEXTURE_COUNT; ++x)
 		glBindTextureUnit(binding + x, m_textureIDS[0][x]);
 }
 
-void RH_Volume::writeSecondary()
+void RH_Volume::writeSecondary() noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDS[1]);
 }
 
-void RH_Volume::readSecondary(const GLuint& binding)
+void RH_Volume::readSecondary(const GLuint& binding) noexcept
 {
 	for (GLuint x = 0; x < RH_TEXTURE_COUNT; ++x)
 		glBindTextureUnit(binding + x, m_textureIDS[1][x]);

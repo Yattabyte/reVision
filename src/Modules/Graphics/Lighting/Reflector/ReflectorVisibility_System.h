@@ -15,8 +15,9 @@ public:
 	inline ~ReflectorVisibility_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline explicit ReflectorVisibility_System(const std::shared_ptr<ReflectorData>& visibility)
-		: m_frameData(visibility) {
+	inline explicit ReflectorVisibility_System(const std::shared_ptr<ReflectorData>& visibility) noexcept :
+		m_frameData(visibility)
+	{
 		addComponentType(Reflector_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 		addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 	}

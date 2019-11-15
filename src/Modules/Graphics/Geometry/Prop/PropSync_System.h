@@ -17,8 +17,8 @@ public:
 	inline ~PropSync_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline explicit PropSync_System(const std::shared_ptr<PropData>& frameData)
-		: m_frameData(frameData) {
+	inline explicit PropSync_System(const std::shared_ptr<PropData>& frameData) noexcept :
+		m_frameData(frameData) {
 		addComponentType(Prop_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 		addComponentType(Skeleton_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 		addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);

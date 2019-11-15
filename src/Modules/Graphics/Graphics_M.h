@@ -34,25 +34,25 @@ public:
 	// Public Methods
 	/** Retrieve a shared pointer to the rendering pipeline.
 	@return					shared pointer to the rendering pipeline. */
-	inline auto getPipeline() const {
+	inline auto getPipeline() const noexcept {
 		return m_pipeline;
 	}
 	/** Convenience function for rendering a given ecsWorld to a given FBO.
 	@param	world			the ecsWorld to source data from.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	fboID			the FBO to render to. */
-	void renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID = 0);
+	void renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID = 0) noexcept;
 	/** Convenience function for rendering a given ecsWorld into the pipeline.
 	@param	world			the ecsWorld to source data from.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	viewport		the viewport to render into.
 	@param	cameras			the cameras to render from. */
-	void renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::shared_ptr<Camera>>& cameras);
+	void renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::shared_ptr<Camera>>& cameras) noexcept;
 	/** Generates a perspective matrix for the client camera. */
-	void genPerspectiveMatrix();
+	void genPerspectiveMatrix() noexcept;
 	/** Returns a shared pointer to the primary camera.
 	@return					the primary camera. */
-	inline std::shared_ptr<Camera> getClientCamera() const {
+	inline std::shared_ptr<Camera> getClientCamera() const noexcept {
 		return m_clientCamera;
 	}
 
@@ -60,7 +60,7 @@ public:
 private:
 	// Private Methods
 	/** Copy the client camera's final color buffer to the screen. */
-	void copyToScreen(const GLuint& fboID);
+	void copyToScreen(const GLuint& fboID) noexcept;
 
 
 	// Private Attributes

@@ -15,8 +15,10 @@ public:
 	inline ~PropVisibility_System() = default;
 	/** Construct this system.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline PropVisibility_System(const std::shared_ptr<PropData>& frameData, const std::shared_ptr<std::vector<Camera*>>& cameras)
-		: m_frameData(frameData), m_cameras(cameras) {
+	inline PropVisibility_System(const std::shared_ptr<PropData>& frameData, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
+		m_frameData(frameData),
+		m_cameras(cameras)
+	{
 		addComponentType(Prop_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 		addComponentType(Skeleton_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 		addComponentType(BoundingBox_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);

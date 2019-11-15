@@ -44,9 +44,9 @@ public:
 	// Public Methods
 	/** Returns the vertex-count of this object.
 	@return					vertex-count of this object. */
-	size_t getSize() const;
+	size_t getSize() const noexcept;
 	/** Bind this model's VAO to the currently active GL context. */
-	void bind();
+	void bind() noexcept;
 
 
 	// Public Attributes

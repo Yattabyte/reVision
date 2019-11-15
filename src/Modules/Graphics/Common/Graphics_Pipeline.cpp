@@ -22,7 +22,7 @@
 #include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
 
 
-Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camera>& clientCamera) :
+Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camera>& clientCamera) noexcept :
 	m_engine(engine),
 	m_sceneCameras(std::make_shared<std::vector<Camera*>>())
 {
@@ -65,7 +65,7 @@ Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camer
 	};
 }
 
-std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime, ecsWorld& world, const std::vector<std::shared_ptr<Camera>>& cameras)
+std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime, ecsWorld& world, const std::vector<std::shared_ptr<Camera>>& cameras) noexcept
 {
 	// Add input cameras to shared list
 	m_sceneCameras->clear();
@@ -105,14 +105,14 @@ std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime
 	return perspectives;
 }
 
-void Graphics_Pipeline::end(const float& deltaTime)
+void Graphics_Pipeline::end(const float& deltaTime) noexcept
 {
 	m_cameraBuffer.endReading();
 	for each (auto * tech in m_allTechniques)
 		tech->clearCache(deltaTime);
 }
 
-void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories)
+void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories) noexcept
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for each (auto * tech in m_allTechniques)
@@ -120,14 +120,14 @@ void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Vie
 			tech->renderTechnique(deltaTime, viewport, perspectives);
 }
 
-void Graphics_Pipeline::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives)
+void Graphics_Pipeline::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for each (auto * tech in m_geometryTechniques)
 		tech->cullShadows(deltaTime, perspectives);
 }
 
-void Graphics_Pipeline::renderShadows(const float& deltaTime)
+void Graphics_Pipeline::renderShadows(const float& deltaTime) noexcept
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for each (auto * tech in m_geometryTechniques)

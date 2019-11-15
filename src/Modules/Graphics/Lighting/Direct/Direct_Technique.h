@@ -20,7 +20,7 @@ class Direct_Technique final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destructor. */
-	inline ~Direct_Technique() {
+	inline ~Direct_Technique() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 
@@ -31,7 +31,7 @@ public:
 		}
 	}
 	/** Constructor. */
-	inline Direct_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) :
+	inline Direct_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_shader_Lighting(Shared_Shader(engine, "Core\\Light\\Direct")),
@@ -57,17 +57,17 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void clearCache(const float& deltaTime) override final {
+	inline virtual void clearCache(const float& deltaTime) noexcept override final {
 		m_frameData->lightBuffer.endReading();
 		m_frameData->viewInfo.clear();
 		m_drawIndex = 0;
 	}
-	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) override final {
+	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept override final {
 		// Link together the dimensions of view info to that of the viewport vectors
 		m_frameData->viewInfo.resize(m_cameras->size());
 		world.updateSystems(m_auxilliarySystems, deltaTime);
 	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override final {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		// Exit Early
 		if (m_enabled && m_geometryReady && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shader_Lighting->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
@@ -160,7 +160,7 @@ public:
 private:
 	// Private Methods
 	/** Attempt to register the geometry of all light models. */
-	inline void registerLightShapes() {
+	inline void registerLightShapes() noexcept {
 		if (m_shapeCube && m_shapeCube->existsYet() && m_shapeSphere && m_shapeSphere->existsYet() && m_shapeHemisphere && m_shapeHemisphere->existsYet()) {
 			// Create a container to store all vertices
 			std::vector<glm::vec3> combinedData;

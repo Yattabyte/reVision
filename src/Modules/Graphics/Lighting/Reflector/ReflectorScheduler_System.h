@@ -13,15 +13,17 @@ class ReflectorScheduler_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~ReflectorScheduler_System() {
+	inline ~ReflectorScheduler_System() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
 	/** Construct this system.
 	@param	engine		the engine to use.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline ReflectorScheduler_System(Engine* engine, const std::shared_ptr<ReflectorData>& frameData)
-		: m_engine(engine), m_frameData(frameData) {
+	inline ReflectorScheduler_System(Engine* engine, const std::shared_ptr<ReflectorData>& frameData) noexcept :
+		m_engine(engine),
+		m_frameData(frameData)
+	{
 		addComponentType(Reflector_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 
 		auto& preferences = engine->getPreferenceState();

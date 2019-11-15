@@ -51,7 +51,7 @@ void Model::initialize() noexcept
 	Asset::finalize();
 }
 
-void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minOut, glm::vec3& maxOut, glm::vec3& scaleOut, glm::vec3& centerOut, float& radiusOut)
+void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minOut, glm::vec3& maxOut, glm::vec3& scaleOut, glm::vec3& centerOut, float& radiusOut) noexcept
 {
 	if (mesh.size() >= 1) {
 		const auto& vector = mesh[0].vertex;
@@ -80,7 +80,7 @@ void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minO
 	}
 }
 
-void Model::loadMaterial(const std::string& relativePath, Shared_Material& modelMaterial, const std::vector<Material_Strings>& materials)
+void Model::loadMaterial(const std::string& relativePath, Shared_Material& modelMaterial, const std::vector<Material_Strings>& materials) noexcept
 {
 	// Retrieve texture directories from the mesh file
 	const size_t slash1Index = relativePath.find_last_of('/'), slash2Index = relativePath.find_last_of('\\');
