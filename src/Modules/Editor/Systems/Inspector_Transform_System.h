@@ -36,7 +36,7 @@ public:
 			const auto getUUIDS = [&]() {
 				std::vector<ComponentHandle> uuids;
 				uuids.reserve(components.size());
-				for each (const auto & componentParam in components)
+				for (const auto& componentParam : components)
 					uuids.push_back(componentParam[1]->m_handle);
 				return uuids;
 			};
@@ -52,7 +52,7 @@ public:
 					std::vector<glm::vec3> m_oldData, m_newData;
 					Move_Command(ecsWorld& world, LevelEditor_Module& editor, const std::vector<ComponentHandle>& uuids, const glm::vec3& newPosition) noexcept
 						: m_ecsWorld(world), m_editor(editor), m_uuids(uuids) {
-						for each (const auto & componentHandle in m_uuids) {
+						for (const auto & componentHandle : m_uuids) {
 							if (const auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
 								m_oldData.push_back(component->m_localTransform.m_position);
 								m_newData.push_back(newPosition);
@@ -62,7 +62,7 @@ public:
 					void setPosition(const std::vector<glm::vec3>& positions) noexcept {
 						if (positions.size()) {
 							size_t index(0ull);
-							for each (const auto & componentHandle in m_uuids) {
+							for (const auto & componentHandle : m_uuids) {
 								if (auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
 									component->m_localTransform.m_position = positions[index++];
 									component->m_localTransform.update();
@@ -102,7 +102,7 @@ public:
 					std::vector<glm::quat> m_oldData, m_newData;
 					Rotate_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::quat& newOrientation) noexcept
 						: m_ecsWorld(world), m_uuids(uuids) {
-						for each (const auto & componentHandle in m_uuids) {
+						for (const auto & componentHandle : m_uuids) {
 							if (const auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
 								m_oldData.push_back(component->m_localTransform.m_orientation);
 								m_newData.push_back(newOrientation);
@@ -111,7 +111,7 @@ public:
 					}
 					void setOrientation(const std::vector<glm::quat>& orientations) noexcept {
 						size_t index(0ull);
-						for each (const auto & componentHandle in m_uuids) {
+						for (const auto & componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
 								component->m_localTransform.m_orientation = orientations[index++];
 								component->m_localTransform.update();
@@ -146,7 +146,7 @@ public:
 					std::vector<glm::vec3> m_oldData, m_newData;
 					Scale_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::vec3& newScale) noexcept
 						: m_ecsWorld(world), m_uuids(uuids) {
-						for each (const auto & componentHandle in m_uuids) {
+						for (const auto & componentHandle : m_uuids) {
 							if (const auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
 								m_oldData.push_back(component->m_localTransform.m_scale);
 								m_newData.push_back(newScale);
@@ -156,7 +156,7 @@ public:
 					void setScale(const std::vector<glm::vec3>& scales) noexcept {
 						if (scales.size()) {
 							size_t index(0ull);
-							for each (const auto & componentHandle in m_uuids) {
+							for (const auto & componentHandle : m_uuids) {
 								if (auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
 									component->m_localTransform.m_scale = scales[index++];
 									component->m_localTransform.update();

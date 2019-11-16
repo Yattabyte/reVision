@@ -34,7 +34,7 @@ public:
 		m_frameData->modelBuffer.beginWriting();
 		m_frameData->skeletonBuffer.beginWriting();
 		int index = 0;
-		for each (const auto & componentParam in components) {
+		for (const auto& componentParam : components) {
 			auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
 			auto* skeletonComponent = static_cast<Skeleton_Component*>(componentParam[1]);
 			auto* transformComponent = static_cast<Transform_Component*>(componentParam[2]);

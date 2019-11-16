@@ -149,7 +149,7 @@ std::vector<ecsEntity*> ecsWorld::getEntities(const std::vector<EntityHandle>& u
 {
 	std::vector<ecsEntity*> entities;
 	entities.reserve(uuids.size());
-	for each (const auto & uuid in uuids)
+	for (const auto & uuid : uuids)
 		if (auto* entity = getEntity(uuid))
 			entities.push_back(entity);
 	return entities;
@@ -353,7 +353,7 @@ std::vector<char> ecsWorld::serializeEntities(const std::vector<EntityHandle>& e
 std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsEntity*>& entities) const noexcept
 {
 	std::vector<char> data;
-	for each (const auto & entity in entities) {
+	for (const auto & entity : entities) {
 		if (entity) {
 			const auto entData = serializeEntity(*entity);
 			data.insert(data.end(), entData.begin(), entData.end());

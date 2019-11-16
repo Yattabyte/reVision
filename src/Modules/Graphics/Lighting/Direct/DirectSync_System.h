@@ -31,7 +31,7 @@ public:
 		m_frameData->lightBuffer.resize(components.size());
 		m_frameData->lightBuffer.beginWriting();
 		int index = 0;
-		for each (const auto & componentParam in components) {
+		for (const auto& componentParam : components) {
 			auto* trans = static_cast<Transform_Component*>(componentParam[0]);
 			auto* light = static_cast<Light_Component*>(componentParam[1]);
 			auto* shadow = static_cast<Shadow_Component*>(componentParam[2]);

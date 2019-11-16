@@ -143,7 +143,7 @@ void Editor_Interface::tick(const float& deltaTime) noexcept
 	const auto elements = {
 		m_uiHotkeys,m_uiCamController,m_uiRotIndicator,m_uiTitlebar,m_uiPrefabs,m_uiSceneInspector,m_uiEntityInspector,m_uiSettings,m_uiRecoverDialogue,m_uiOpenDialogue,m_uiSaveDialogue,m_uiUnsavedDialogue,m_uiMissingDialogue,
 	};
-	for each (auto & element in elements)
+	for (auto & element : elements)
 		element->tick(deltaTime);
 
 	// Rendering

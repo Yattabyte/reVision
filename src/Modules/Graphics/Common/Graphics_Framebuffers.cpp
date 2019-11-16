@@ -47,7 +47,7 @@ void Graphics_Framebuffers::createFBO(const char* name, const std::vector<std::t
 	glCreateFramebuffers(1, &fboID);
 	// Create all the textures
 	int counter(0);
-	for each (const auto & texture in textureFormats) {
+	for (const auto & texture : textureFormats) {
 		const auto& [internalFormat, format, type] = texture;
 		GLuint texID(0);
 		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &texID);

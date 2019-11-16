@@ -31,7 +31,7 @@ public:
 
 			viewInfo.lightIndices.clear();
 			int index = 0;
-			for each (const auto & componentParam in components) {
+			for (const auto& componentParam : components) {
 				//const auto* reflectorComponent = static_cast<Reflector_Component*>(componentParam[0]);
 				//const auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);
 

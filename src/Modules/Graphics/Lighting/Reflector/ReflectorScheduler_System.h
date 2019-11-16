@@ -44,7 +44,7 @@ public:
 		const auto clientTime = m_engine->getTime();
 		if (int availableRoom = (int)m_maxReflectionCasters - (int)m_frameData->reflectorsToUpdate.size()) {
 			int cameraCount = 0;
-			for each (const auto & componentParam in components) {
+			for (const auto& componentParam : components) {
 				auto* reflectorComponent = static_cast<Reflector_Component*>(componentParam[0]);
 
 				auto tryToAddReflector = [&reflectors, &maxReflectors, &clientPosition, &clientFarPlane, &clientTime](const int& reflectorSpot, Camera* cb, float* updateTime) {

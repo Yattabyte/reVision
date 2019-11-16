@@ -53,7 +53,7 @@ void Prefabs::addPrefab(Prefabs::Entry& prefab) noexcept
 {
 	glm::vec3 center(0.0f);
 	std::vector<Transform_Component*> transformComponents;
-	for each (const auto & entityHandle in prefab.entityHandles) {
+	for (const auto & entityHandle : prefab.entityHandles) {
 		if (auto* transform = m_previewWorld.getComponent<Transform_Component>(entityHandle)) {
 			transformComponents.push_back(transform);
 			center += transform->m_localTransform.m_position;
@@ -64,7 +64,7 @@ void Prefabs::addPrefab(Prefabs::Entry& prefab) noexcept
 	const auto cursorPos = glm::vec3(m_prefabs.size() * 1000.0f * glm::vec3(0, -1, 0));
 	if (transformComponents.size()) {
 		center /= transformComponents.size();
-		for each (auto * transform in transformComponents) {
+		for (auto * transform : transformComponents) {
 			transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + cursorPos;
 			transform->m_localTransform.update();
 		}
@@ -118,7 +118,7 @@ void Prefabs::addPrefab(const std::vector<char>& entityData) noexcept
 void Prefabs::populatePrefabs(const std::string& directory) noexcept
 {
 	// Delete the textures
-	for each (auto & entry in m_prefabs)
+	for (auto & entry : m_prefabs)
 		glDeleteTextures(1, &entry.texID);
 
 	// Reset prefab data
@@ -226,7 +226,7 @@ void Prefabs::openPrefabEntry() noexcept
 		m_selectedIndex = -1;
 	}
 	else
-		for each (const auto & handle in selectedPrefab.entityHandles)
+		for (const auto & handle : selectedPrefab.entityHandles)
 			m_editor->addEntity(m_previewWorld.serializeEntity(handle));
 }
 
@@ -239,9 +239,9 @@ void Prefabs::tickThumbnails(const float& deltaTime) noexcept
 	trans.m_localTransform.update();
 
 	int count(0);
-	for each (auto & prefab in m_prefabs) {
+	for (auto & prefab : m_prefabs) {
 		glm::vec3 minExtents(FLT_MAX), maxExtents(FLT_MIN);
-		for each (const auto & entityHandle in prefab.entityHandles) {
+		for (const auto & entityHandle : prefab.entityHandles) {
 			glm::vec3 scale(1.0f);
 			if (auto* trans = m_previewWorld.getComponent<Transform_Component>(entityHandle))
 				scale = trans->m_worldTransform.m_scale;
@@ -277,7 +277,7 @@ void Prefabs::tickThumbnails(const float& deltaTime) noexcept
 
 	// Copy viewport layers into prefab textures
 	count = 0;
-	for each (const auto & prefab in m_prefabs)
+	for (const auto & prefab : m_prefabs)
 		glCopyImageSubData(m_viewport->m_gfxFBOS->getTexID("FXAA", 0), GL_TEXTURE_2D_ARRAY, 0, 0, 0, count++, prefab.texID, GL_TEXTURE_2D, 0, 0, 0, 0, m_thumbSize, m_thumbSize, 1);
 }
 
@@ -313,7 +313,7 @@ void Prefabs::tickWindow(const float&) noexcept
 		columnCount = columnCount < 1 ? 1 : columnCount;
 		ImGui::Columns(columnCount, nullptr, false);
 		int count(0);
-		for each (const auto & prefab in m_prefabs) {
+		for (const auto & prefab : m_prefabs) {
 			if (filter.PassFilter(prefab.name.c_str())) {
 				ImGui::PushID(&prefab);
 				GLuint textureID = prefab.texID;

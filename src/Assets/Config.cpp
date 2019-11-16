@@ -90,7 +90,7 @@ float Config::getValue(const unsigned int& cfg_key) const noexcept
 void Config::saveConfig() const noexcept
 {
 	std::string output;
-	for each (const auto & value in m_configuration)
+	for (const auto & value : m_configuration)
 		output += "\"" + m_strings[value.first] + "\" \"" + std::to_string(value.second) + "\"\n";
 	Text_IO::Export_Text(DIRECTORY_CONFIG + getFileName() + EXT_CONFIG, output);
 }

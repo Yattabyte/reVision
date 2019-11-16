@@ -70,7 +70,7 @@ void SceneInspector::tick(const float&) noexcept
 										ImGui::Separator();
 									}
 									if (ImGui::MenuItem("Make Prefab", "CTRL+G", nullptr, selectedEntities.size())) { m_editor->makePrefab(); }
-									for each (const auto & entityHandle in selectedEntities)
+									for (const auto & entityHandle : selectedEntities)
 										if (ecsWorld.getEntity(entityHandle)->m_children.size()) {
 											if (ImGui::MenuItem("Ungroup")) { m_editor->ungroupSelection(); }
 											ImGui::Separator();
@@ -108,7 +108,7 @@ void SceneInspector::tick(const float&) noexcept
 							tryLeftClickElement();
 							tryRightClickElement();
 							tryDragElement();
-							for each (const auto & subEntityHandle in ecsWorld.getEntityHandles(entityHandle))
+							for (const auto & subEntityHandle : ecsWorld.getEntityHandles(entityHandle))
 								displayEntity(subEntityHandle);
 							for (int x = 0; x < components.size(); ++x) {
 								const auto& component = components[x];
@@ -183,7 +183,7 @@ void SceneInspector::tick(const float&) noexcept
 			};
 
 			ImGui::Separator();
-			for each (const auto & entityHandle in ecsWorld.getEntityHandles())
+			for (const auto & entityHandle : ecsWorld.getEntityHandles())
 				displayEntity(entityHandle);
 
 			// Special case to allow dragging to end of scene list

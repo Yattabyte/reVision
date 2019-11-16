@@ -29,7 +29,7 @@ public:
 		element_material_list->setStrings({ "Low",	"Medium",	"High",		"Very High",	"Ultra" });
 		m_materialSizes = { 128.0f,		256.0f,		512.0f,		1024.0f,	2048.0f };
 		int counter = 0, index = 0;
-		for each (const auto & size in m_materialSizes) {
+		for (const auto & size : m_materialSizes) {
 			if (materialSize == size)
 				index = counter;
 			counter++;
@@ -45,7 +45,7 @@ public:
 		m_shadowSizes = { 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
 		counter = 0;
 		index = 0;
-		for each (const auto & size in m_shadowSizes) {
+		for (const auto & size : m_shadowSizes) {
 			if (shadowSize == size)
 				index = counter;
 			counter++;
@@ -61,7 +61,7 @@ public:
 		m_reflectionSizes = { 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
 		counter = 0;
 		index = 0;
-		for each (const auto & size in m_reflectionSizes) {
+		for (const auto & size : m_reflectionSizes) {
 			if (envSize == size)
 				index = counter;
 			counter++;
@@ -77,7 +77,7 @@ public:
 		m_bounceQuality = { 8,			12,			16,			24,			32,				64 };
 		counter = 0;
 		index = 0;
-		for each (const auto & size in m_bounceQuality) {
+		for (const auto & size : m_bounceQuality) {
 			if (bounceSize == size)
 				index = counter;
 			counter++;

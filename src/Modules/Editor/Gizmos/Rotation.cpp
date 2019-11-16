@@ -264,13 +264,13 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 				auto& ecsWorld = m_editor->getWorld();
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
-				for each (const auto & entityHandle in m_uuids)
+				for (const auto & entityHandle : m_uuids)
 					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
 						center += transform->m_localTransform.m_position;
 					}
 				center /= transformComponents.size();
-				for each (auto * transform in transformComponents) {
+				for (auto * transform : transformComponents) {
 					const auto delta = transform->m_localTransform.m_position - center;
 					auto rotatedDelta = glm::mat4_cast(rotation) * glm::vec4(delta, 1.0f);
 					rotatedDelta /= rotatedDelta.w;

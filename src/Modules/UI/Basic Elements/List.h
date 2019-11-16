@@ -89,7 +89,7 @@ public:
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
 			int index(0);
-			for each (auto & child in m_children) {
+			for (auto & child : m_children) {
 				if (child->mouseWithin(subEvent)) {
 					setHoverIndex(index); // Set hovered item to whatever is beneath mouse
 					if (mouseEvent.m_action == MouseEvent::Action::RELEASE)
@@ -139,7 +139,7 @@ public:
 	inline void setHoverIndex(const int& newIndex) noexcept {
 		m_hoverIndex = newIndex;
 		if (m_children.size()) {
-			for each (auto & child in m_children)
+			for (auto & child : m_children)
 				child->clearFocus();
 			if (m_hoverIndex > -1 && m_hoverIndex < m_children.size())
 				m_children[m_hoverIndex]->setHovered();

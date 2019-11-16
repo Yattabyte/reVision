@@ -5,7 +5,7 @@ Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& 
 {
 	// Find out if the asset already exists
 	std::shared_lock<std::shared_mutex> asset_read_guard(m_Mutex_Assets);
-	for each (const Shared_Asset asset in m_AssetMap[assetType])
+	for (const Shared_Asset asset : m_AssetMap[assetType])
 		if (asset->getFileName() == filename) {
 			asset_read_guard.unlock();
 			asset_read_guard.release();
@@ -67,7 +67,7 @@ void AssetManager::notifyObservers() noexcept
 		copyNotifyees = m_notifyees;
 		m_notifyees.clear();
 	}
-	for each (const auto & pair in copyNotifyees)
+	for (const auto & pair : copyNotifyees)
 		if (pair.first)
 			pair.second();
 }
@@ -81,8 +81,8 @@ bool AssetManager::readyToUse() noexcept
 	}
 	{
 		std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Assets);
-		for each (const auto & assetCategory in m_AssetMap)
-			for each (const auto & asset in assetCategory.second)
+		for (const auto & assetCategory : m_AssetMap)
+			for (const auto & asset : assetCategory.second)
 				if (!asset->existsYet())
 					return false;
 	}

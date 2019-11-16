@@ -35,7 +35,7 @@ public:
 			const auto getUUIDS = [&]() {
 				std::vector<ComponentHandle> uuids;
 				uuids.reserve(components.size());
-				for each (const auto & componentParam in components)
+				for (const auto& componentParam : components)
 					uuids.push_back(componentParam[1]->m_handle);
 				return uuids;
 			};
@@ -52,7 +52,7 @@ public:
 					std::vector<std::string> m_oldData, m_newData;
 					Name_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const std::string& data) noexcept
 						: m_ecsWorld(world), m_uuids(uuids) {
-						for each (const auto & componentHandle in m_uuids) {
+						for (const auto & componentHandle : m_uuids) {
 							if (const auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle)) {
 								m_oldData.push_back(component->m_modelName);
 								m_newData.push_back(data);
@@ -62,7 +62,7 @@ public:
 					void setData(const std::vector<std::string>& data) noexcept {
 						if (data.size()) {
 							size_t index(0ull);
-							for each (const auto & componentHandle in m_uuids) {
+							for (const auto & componentHandle : m_uuids) {
 								if (auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle)) {
 									component->m_modelName = data[index++];
 									component->m_model.reset();
@@ -102,7 +102,7 @@ public:
 					std::vector<unsigned int> m_oldData, m_newData;
 					Skin_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const unsigned int& data) noexcept
 						: m_ecsWorld(world), m_uuids(uuids) {
-						for each (const auto & componentHandle in m_uuids) {
+						for (const auto & componentHandle : m_uuids) {
 							if (const auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle)) {
 								m_oldData.push_back(component->m_skin);
 								m_newData.push_back(data);
@@ -112,7 +112,7 @@ public:
 					void setData(const std::vector<unsigned int>& data) noexcept {
 						if (data.size()) {
 							size_t index(0ull);
-							for each (const auto & componentHandle in m_uuids) {
+							for (const auto & componentHandle : m_uuids) {
 								if (auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle))
 									component->m_skin = data[index++];
 							}
@@ -136,7 +136,7 @@ public:
 				};
 				m_editor->doReversableAction(std::make_shared<Skin_Command>(m_editor->getWorld(), getUUIDS(), skinInput));
 			}
-			for each (auto & componentParam in components)
+			for (const auto& componentParam : components)
 				static_cast<Prop_Component*>(componentParam[1])->m_skin = (unsigned int)skinInput;
 		}
 	}

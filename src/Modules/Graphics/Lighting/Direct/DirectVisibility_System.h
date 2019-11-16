@@ -31,7 +31,7 @@ public:
 			viewInfo.lightTypes.clear();
 
 			int index = 0;
-			for each (const auto & componentParam in components) {
+			for (const auto& componentParam : components) {
 				// Render lights and shadows for all directional lights
 				const auto& lightComponent = static_cast<Light_Component*>(componentParam[0]);
 				viewInfo.lightIndices.push_back((GLuint)index++);

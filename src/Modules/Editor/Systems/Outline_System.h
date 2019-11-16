@@ -77,7 +77,7 @@ public:
 			const auto& vMatrix = camera->vMatrix;
 			std::vector<glm::mat4> baseTransforms;
 			std::vector<glm::ivec4> drawData;
-			for each (const auto & componentParam in components) {
+			for (const auto& componentParam : components) {
 				//auto* selectedComponent = static_cast<Selected_Component*>(componentParam[0]);
 				auto* trans = static_cast<Transform_Component*>(componentParam[1]);
 				auto* prop = static_cast<Prop_Component*>(componentParam[2]);

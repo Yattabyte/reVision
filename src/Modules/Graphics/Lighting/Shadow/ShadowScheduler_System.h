@@ -45,7 +45,7 @@ public:
 		const auto clientTime = m_engine->getTime();
 		if (int availableRoom = (int)m_maxShadowsCasters - (int)m_frameData->shadowsToUpdate.size()) {
 			int cameraCount = 0;
-			for each (const auto & componentParam in components) {
+			for (const auto& componentParam : components) {
 				auto* shadow = static_cast<Shadow_Component*>(componentParam[0]);
 				//const auto* light = static_cast<Light_Component*>(componentParam[1]);
 

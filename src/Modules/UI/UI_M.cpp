@@ -20,13 +20,13 @@ void UI_Module::initialize(Engine* engine) noexcept
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.x = (int)f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
-		for each (auto element in m_rootElement)
+		for (auto element : m_rootElement)
 			element->setScale(m_renderSize);
 		});
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
-		for each (auto element in m_rootElement)
+		for (auto element : m_rootElement)
 			element->setScale(m_renderSize);
 		});
 	calcOthoProj(m_renderSize, m_projectionBuffer);
@@ -51,7 +51,7 @@ void UI_Module::frameTick(const float& deltaTime) noexcept
 	// We use a copy because any callback may alter the list,
 	auto copySelection = m_callbacks;
 	m_callbacks.clear();
-	for each (const auto & func in copySelection)
+	for (const auto & func : copySelection)
 		func();
 
 	if (!m_rootElement.empty() && m_rootElement.back()) {

@@ -187,7 +187,7 @@ void Material::initialize() noexcept
 			continue;
 		}
 		if (find(line, "PBR"))
-			for each (const auto & texture in parse_pbr(file_stream))
+			for (const auto & texture : parse_pbr(file_stream))
 				textures.push_back(texture);
 	}
 	return textures;

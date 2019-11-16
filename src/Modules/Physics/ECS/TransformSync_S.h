@@ -31,7 +31,7 @@ public:
 
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
-		for each (const auto & componentParam in components) {
+		for (const auto& componentParam : components) {
 			auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
 			auto* colliderComponent = static_cast<Collider_Component*>(componentParam[1]);
 

@@ -25,7 +25,7 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
-		for each (const auto & componentParam in components) {
+		for (const auto& componentParam : components) {
 			auto* cameraComponent = static_cast<Camera_Component*>(componentParam[0]);
 			m_sceneCameras->push_back(&cameraComponent->m_camera);
 		}

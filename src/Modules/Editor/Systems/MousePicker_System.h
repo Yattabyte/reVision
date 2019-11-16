@@ -60,7 +60,7 @@ public:
 		float closestDistance = FLT_MAX;
 		int highestConfidence = 0;
 		bool found = false;
-		for each (const auto & componentParam in components) {
+		for (const auto& componentParam : components) {
 			auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
 			auto* bBox = static_cast<BoundingBox_Component*>(componentParam[1]);
 			auto* bSphere = static_cast<BoundingSphere_Component*>(componentParam[2]);

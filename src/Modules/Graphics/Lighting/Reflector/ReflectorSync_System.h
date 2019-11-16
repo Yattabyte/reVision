@@ -29,7 +29,7 @@ public:
 		m_frameData->lightBuffer.resize(components.size());
 		m_frameData->lightBuffer.beginWriting();
 		int index = 0;
-		for each (const auto & componentParam in components) {
+		for (const auto& componentParam : components) {
 			auto* reflectorComponent = static_cast<Reflector_Component*>(componentParam[0]);
 			auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);
 

@@ -31,7 +31,7 @@ public:
 			viewInfo.lightIndices.clear();
 
 			int index = 0;
-			for each (const auto & componentParam in components)
+			for (const auto& componentParam : components)
 				viewInfo.lightIndices.push_back((GLuint)index++);
 		}
 	}
