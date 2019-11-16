@@ -72,7 +72,7 @@ bool Image_IO::Import_Image(Engine* engine, const std::string& relativePath, Ima
 void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData) noexcept
 {
 	const glm::ivec2 dimensions(FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap));
-	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
+	const unsigned int size_mult = (unsigned int)(dimensions.x) * (unsigned int)(dimensions.y);
 
 	// Always create RGBA format
 	auto* textureData = new GLubyte[size_t(size_mult) * 4ULL];

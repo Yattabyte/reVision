@@ -7,7 +7,7 @@
 #include <sstream>
 
 
-ecsWorld::~ecsWorld() noexcept
+ecsWorld::~ecsWorld()
 {
 	clear();
 }
