@@ -97,7 +97,7 @@ void Shader::Release() noexcept
 	glUseProgram(0);
 }
 
-const GLint Shader::getProgramiv(const GLenum& pname) const noexcept
+GLint Shader::getProgramiv(const GLenum& pname) const noexcept
 {
 	GLint param;
 	glGetProgramiv(m_glProgramID, pname, &param);
@@ -113,7 +113,7 @@ std::vector<GLchar> Shader::getErrorLog() const noexcept
 	return infoLog;
 }
 
-const bool Shader::loadCachedBinary(const std::string& relativePath) noexcept
+bool Shader::loadCachedBinary(const std::string& relativePath) noexcept
 {
 	if (Engine::File_Exists(relativePath + EXT_SHADER_BINARY)) {
 		ShaderHeader header{};
@@ -140,7 +140,7 @@ const bool Shader::loadCachedBinary(const std::string& relativePath) noexcept
 	return false;
 }
 
-const bool Shader::saveCachedBinary(const std::string& relativePath) noexcept
+bool Shader::saveCachedBinary(const std::string& relativePath) noexcept
 {
 	glProgramParameteri(m_glProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 	ShaderHeader header = { 0,  getProgramiv(GL_PROGRAM_BINARY_LENGTH) };
@@ -180,7 +180,7 @@ bool Shader::initShaders(const std::string& relativePath) noexcept
 	return true;
 }
 
-const bool Shader::validateProgram() noexcept
+bool Shader::validateProgram() noexcept
 {
 	// Check Validation
 	if (getProgramiv(GL_LINK_STATUS) != 0) {

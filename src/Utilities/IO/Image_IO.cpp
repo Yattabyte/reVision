@@ -87,7 +87,7 @@ void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData) noexc
 
 	importedData.dimensions = dimensions;
 	importedData.pixelData = textureData;
-	importedData.pitch = FreeImage_GetPitch(bitmap);
+	importedData.pitch = (int)FreeImage_GetPitch(bitmap);
 	importedData.bpp = FreeImage_GetBPP(bitmap);
 }
 

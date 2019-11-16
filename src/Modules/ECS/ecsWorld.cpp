@@ -173,7 +173,7 @@ ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle)
 			// Check if this entity contains the component handle
 			for (const auto& [compID, fn, compHandle] : entity->m_components)
 				if (compHandle == componentHandle)
-					return (ecsBaseComponent*) & (m_components.at(compID)[fn]);
+					return (ecsBaseComponent*)(&(m_components.at(compID)[fn]));
 			// Check if this entity's children contain the component handle
 			if (auto* component = find_component(entity->m_children, componentHandle))
 				return component;
@@ -184,12 +184,12 @@ ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle)
 	return find_component(m_entities, componentHandle);
 }
 
-ecsBaseComponent* ecsWorld::getComponent(const std::vector<std::tuple<ComponentID, int, ComponentHandle>>& entityComponents, const ComponentDataSpace& mem_array, const ComponentID& componentID) const noexcept
+ecsBaseComponent* ecsWorld::getComponent(const std::vector<std::tuple<ComponentID, int, ComponentHandle>>& entityComponents, const ComponentDataSpace& mem_array, const ComponentID& componentID) noexcept
 {
 	for (const auto & entityComponent : entityComponents) {
 		const auto& [compId, fn, compHandle] = entityComponent;
 		if (componentID == compId)
-			return (ecsBaseComponent*)&mem_array[fn];
+			return (ecsBaseComponent*)(&mem_array[fn]);
 	}
 	return nullptr;
 }
@@ -214,7 +214,7 @@ void ecsWorld::clear() noexcept
 	for (auto & m_component : m_components) {
 		const auto& [createFn, freeFn, newFn, typeSize] = ecsBaseComponent::_componentRegistry[m_component.first];
 		for (size_t i = 0; i < m_component.second.size(); i += typeSize)
-			freeFn((ecsBaseComponent*)&m_component.second[i]);
+			freeFn(reinterpret_cast<ecsBaseComponent*>(&m_component.second[i]));
 		m_component.second.clear();
 	}
 	m_components.clear();
@@ -518,7 +518,7 @@ std::vector<std::vector<ecsBaseComponent*>> ecsWorld::getRelevantComponents(cons
 			const auto& mem_array = m_components[componentID];
 			components.resize(mem_array.size() / typeSize);
 			for (size_t j = 0, k = 0; j < mem_array.size(); j += typeSize, ++k)
-				components[k].push_back((ecsBaseComponent*)&mem_array[j]);
+				components[k].push_back((ecsBaseComponent*)(&mem_array[j]));
 		}
 		else {
 			// More complex procedure for system with > 1 component type
@@ -533,7 +533,7 @@ std::vector<std::vector<ecsBaseComponent*>> ecsWorld::getRelevantComponents(cons
 			const auto& mem_array = *componentArrays[minSizeIndex];
 			components.reserve(mem_array.size() / typeSize); // reserve, not resize, as the component at [i] may be invalid
 			for (size_t i = 0; i < mem_array.size(); i += typeSize) {
-				componentParam[minSizeIndex] = (ecsBaseComponent*)&mem_array[i];
+				componentParam[minSizeIndex] = (ecsBaseComponent*)(&mem_array[i]);
 				if (const auto* entity = getEntity(componentParam[minSizeIndex]->m_entity)) {
 					const auto& entityComponents = entity->m_components;
 

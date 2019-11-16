@@ -20,7 +20,7 @@ Shared_Material::Shared_Material(Engine* engine, const std::string& filename, co
 
 Material::~Material() noexcept
 {
-	if (m_materialData)
+	if (m_materialData != nullptr)
 		delete m_materialData;
 }
 

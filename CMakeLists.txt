@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0079 NEW)
 include(ExternalProject)
-project(reVision VERSION 4.15.8 DESCRIPTION "Video game engine project.")
+project(reVision VERSION 4.15.9 DESCRIPTION "Video game engine project.")
 
 
 # Get dependency directory locations from the user

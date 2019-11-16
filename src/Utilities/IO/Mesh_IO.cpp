@@ -12,10 +12,6 @@
 
 constexpr size_t MAX_IMPORTERS = 4;
 struct Importer_Pool {
-	Assimp::Importer* pool[MAX_IMPORTERS]{};
-	size_t available = MAX_IMPORTERS;
-	std::mutex poolMutex;
-
 	Importer_Pool() noexcept {
 		std::generate(pool, pool + MAX_IMPORTERS, []() {return new Assimp::Importer(); });
 	}
@@ -25,10 +21,9 @@ struct Importer_Pool {
 	[[nodiscard]] Assimp::Importer* rentImporter() noexcept {
 		// Check if any of our importers are free to be used
 		std::unique_lock<std::mutex> readGuard(poolMutex);
-		if (available != 0u)
+		if (available != 0ULL)
 			return pool[--available];
-		// Otherwise create a new one
-		
+		// Otherwise create a new one		
 			return new Assimp::Importer();
 	}
 
@@ -40,6 +35,12 @@ struct Importer_Pool {
 		else
 			pool[available++] = returnedImporter;
 	}
+
+
+private:
+	Assimp::Importer* pool[MAX_IMPORTERS]{};
+	size_t available = MAX_IMPORTERS;
+	std::mutex poolMutex;
 };
 
 static Importer_Pool importer_pool;
@@ -156,12 +157,12 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 	importedData.rootNode = copy_node(scene->mRootNode);
 	importedData.bones.resize(importedData.vertices.size());
 	int vertexOffset = 0;
-	for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
+	for (auto a = 0U, atotal = scene->mNumMeshes; a < atotal; ++a) {
 		const aiMesh* mesh = scene->mMeshes[a];
 
-		for (int B = 0, numBones = mesh->mNumBones; B < numBones; B++) {
+		for (auto b = 0U, numBones = mesh->mNumBones; b < numBones; ++b) {
 			size_t BoneIndex = 0;
-			std::string BoneName(mesh->mBones[B]->mName.data);
+			std::string BoneName(mesh->mBones[b]->mName.data);
 
 			if (importedData.boneMap.find(BoneName) == importedData.boneMap.end()) {
 				BoneIndex = importedData.boneTransforms.size();
@@ -171,25 +172,25 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 				BoneIndex = importedData.boneMap[BoneName];
 
 			importedData.boneMap[BoneName] = BoneIndex;
-			importedData.boneTransforms[BoneIndex] = aiMatrix_to_Mat4x4(mesh->mBones[B]->mOffsetMatrix);
+			importedData.boneTransforms[BoneIndex] = aiMatrix_to_Mat4x4(mesh->mBones[b]->mOffsetMatrix);
 
-			for (unsigned int j = 0; j < mesh->mBones[B]->mNumWeights; j++) {
-				int VertexID = vertexOffset + mesh->mBones[B]->mWeights[j].mVertexId;
-				float Weight = mesh->mBones[B]->mWeights[j].mWeight;
+			for (auto j = 0U, numWeights = mesh->mBones[b]->mNumWeights; j < numWeights; ++j) {
+				int VertexID = vertexOffset + mesh->mBones[b]->mWeights[j].mVertexId;
+				float Weight = mesh->mBones[b]->mWeights[j].mWeight;
 				importedData.bones[VertexID].AddBoneData((int)BoneIndex, Weight);
 			}
 		}
 
-		for (int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
-			const aiFace& face = mesh->mFaces[x];
-			for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b)
+		for (auto x = 0U, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
+			const auto& face = mesh->mFaces[x];
+			for (auto b = 0U, indCount = face.mNumIndices; b < indCount; ++b)
 				vertexOffset++;
 		}
 	}
 
 	// Copy Texture Paths
 	if (scene->mNumMaterials > 1U)
-		for (unsigned int x = 1; x < scene->mNumMaterials; ++x) {
+		for (auto x = 1U; x < scene->mNumMaterials; ++x) {
 			constexpr static auto getMaterial = [](const aiScene* scene, const unsigned int& materialIndex) -> Material_Strings {
 				constexpr static auto getTexture = [](const aiMaterial* sceneMaterial, const aiTextureType& textureType, std::string& texturePath) {
 					aiString path;

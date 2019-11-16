@@ -142,25 +142,25 @@ protected:
 	/** Retrieve a program parameter by the name specified.
 	@param		parameterName			the program parameter name.
 	@return						the parameter value matching the name specified. */
-	const GLint getProgramiv(const GLenum& pname) const noexcept;
+	GLint getProgramiv(const GLenum& pname) const noexcept;
 	/** Retrieve an error log corresponding to this shader program.
 	@return						an error log for this shader program. */
 	[[nodiscard]] std::vector<GLchar> getErrorLog() const noexcept;
 	/** Attempt to load a shader program from a cached binary file.
 	@param		relativePath	the relative path of the binary file.
 	@return						true on success, false otherwise. */
-	const bool loadCachedBinary(const std::string& relativePath) noexcept;
+	bool loadCachedBinary(const std::string& relativePath) noexcept;
 	/** Attempt to save a shader program to a cached binary file.
 	@param		relativePath	the relative path of the binary file.
 	@return						true on success, false otherwise. */
-	const bool saveCachedBinary(const std::string& relativePath) noexcept;
+	bool saveCachedBinary(const std::string& relativePath) noexcept;
 	/** Attempt to load a shader program from separate shader files.
 	@param		relativePath	the relative path of the shader files.
 	@return						true on success, false otherwise. */
 	virtual bool initShaders(const std::string& relativePath) noexcept;
 	/** Use to validate this shader program after linking.
 	@return						true on success, false otherwise. */
-	const bool validateProgram() noexcept;
+	bool validateProgram() noexcept;
 
 
 private:

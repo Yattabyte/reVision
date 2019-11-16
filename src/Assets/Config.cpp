@@ -67,7 +67,7 @@ void Config::initialize() noexcept
 			}
 		}
 	}
-	catch (const std::ifstream::failure) {
+	catch (const std::ifstream::failure&) {
 		m_engine->getManager_Messages().error("Config \"" + m_filename + "\" failed to initialize.");
 	}
 
