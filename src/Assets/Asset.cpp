@@ -26,11 +26,10 @@ void Asset::addCallback(const std::shared_ptr<bool>& alive, const AssetFinalized
 bool Asset::existsYet() const noexcept
 {
 	// Exit early if this points to nothing
-	// Un-needed, as this cannot be null
-	/*if (this == nullptr)
-		return false;*/
+	if (this == nullptr)
+		return false;
 
-	// Check if we're finalized
+		// Check if we're finalized
 	if (!(m_finalized.load()))
 		return false;
 

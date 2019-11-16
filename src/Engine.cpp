@@ -230,7 +230,7 @@ void Engine::initWindow()
 				}
 
 				if (severity != GL_DEBUG_SEVERITY_NOTIFICATION && severity != GL_DEBUG_SEVERITY_LOW)
-					(reinterpret_cast<MessageManager*>(data))->error(
+					(reinterpret_cast<MessageManager*>(const_cast<void*>(data)))->error(
 						std::to_string(id) + ": " + std::string(_type) + " of " + std::string(_severity) + " severity, raised from " + std::string(_source) + ": " + std::string(msg, length));
 			};
 			glDebugMessageCallbackKHR(myCallback, &m_messageManager);
@@ -320,7 +320,7 @@ void Engine::tick()
 	// Update key binding states, manually
 	if (const auto& bindings = m_inputBindings.getBindings())
 		if (bindings->existsYet())
-			for (const auto & pair : bindings.get()->m_configuration)
+			for (const auto& pair : bindings.get()->m_configuration)
 				m_actionState[ActionState::Action(pair.first)] = glfwGetKey(m_window, (int)pair.second) ? 1.0f : 0.0f;
 
 	// Update UI module based on action state, manually

@@ -24,7 +24,7 @@ void UI_Element::renderElement(const float& deltaTime, const glm::vec2& position
 	const glm::vec2 newScale = glm::min(m_scale, scale);
 
 	// Render all visible children
-	for (auto & child : m_children)
+	for (auto& child : m_children)
 		if (child->getVisible())
 			child->renderElement(deltaTime, newPosition, newScale);
 }
@@ -39,7 +39,7 @@ void UI_Element::mouseAction(const MouseEvent& mouseEvent) noexcept
 		MouseEvent subEvent = mouseEvent;
 		subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 		subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-		for (auto & child : m_children)
+		for (auto& child : m_children)
 			child->mouseAction(subEvent);
 
 		// Since mouse is within bounds, flag this element as hovered, pressed, or released (clicked if pressed->released)
@@ -55,7 +55,7 @@ void UI_Element::mouseAction(const MouseEvent& mouseEvent) noexcept
 		// So 'revert' the UI state, clear its focus, un-press, un-hover, etc.
 		// This is true for all children too.
 		clearFocus();
-		for (auto & child : m_children)
+		for (auto& child : m_children)
 			child->clearFocus();
 	}
 }
@@ -65,7 +65,7 @@ void UI_Element::keyboardAction(const KeyboardEvent& keyboardEvent) noexcept
 	// Base UI element has no specific keyboard actions
 	// Keyboard actions are specific like typing in a text-box, NOT navigating a main menu
 	// Propagate action onto children
-	for (auto & child : m_children)
+	for (auto& child : m_children)
 		child->keyboardAction(keyboardEvent);
 }
 
@@ -207,7 +207,7 @@ bool UI_Element::getVisible() const noexcept
 void UI_Element::setEnabled(const bool& enabled) noexcept
 {
 	m_enabled = enabled;
-	for (auto & child : m_children)
+	for (auto& child : m_children)
 		child->setEnabled(enabled);
 }
 
@@ -292,6 +292,6 @@ void UI_Element::enactCallback(const int& interactionEventID) noexcept
 	// Callbacks aren't actually called immediately, but are deferred to the UI module to be performed later
 	// This is a safety net in case the callback drastically alters the overall engine state, like deleting the calling UI element
 	if (m_callbacks.find(interactionEventID) != m_callbacks.end())
-		for (const auto & func : m_callbacks.at(interactionEventID))
+		for (const auto& func : m_callbacks.at(interactionEventID))
 			m_engine->getModule_UI().pushCallback(func);
 }

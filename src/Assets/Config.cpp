@@ -31,7 +31,7 @@ inline std::string get_between_quotes(std::string& s)
 inline int find_CFG_Property(const std::string& s, const std::vector<std::string>& m_strings)
 {
 	std::string upperCase(s);
-	for (char & x : upperCase)
+	for (char& x : upperCase)
 		x = char(toupper(int(x)));
 	for (auto value = begin(m_strings); value != end(m_strings); value++)
 		if ((*value) == upperCase)
@@ -90,7 +90,7 @@ float Config::getValue(const unsigned int& cfg_key) const noexcept
 void Config::saveConfig() const noexcept
 {
 	std::string output;
-	for (const auto & value : m_configuration)
+	for (const auto& value : m_configuration)
 		output += "\"" + m_strings[value.first] + "\" \"" + std::to_string(value.second) + "\"\n";
 	Text_IO::Export_Text(DIRECTORY_CONFIG + getFileName() + EXT_CONFIG, output);
 }

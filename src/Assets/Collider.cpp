@@ -24,7 +24,7 @@ void Collider::initialize() noexcept
 	// Forward asset creation
 	m_mesh = Shared_Mesh(m_engine, DIRECTORY_COLLIDER + getFileName(), false);
 	auto* shape = new btConvexHullShape();
-	for (const auto & vertex : m_mesh->m_geometry.vertices)
+	for (const auto& vertex : m_mesh->m_geometry.vertices)
 		shape->addPoint(btVector3(vertex.x, vertex.y, vertex.z));
 	shape->recalcLocalAabb();
 	m_shape = shape;

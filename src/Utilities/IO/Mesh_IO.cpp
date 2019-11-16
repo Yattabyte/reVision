@@ -23,8 +23,8 @@ struct Importer_Pool {
 		std::unique_lock<std::mutex> readGuard(poolMutex);
 		if (available != 0ULL)
 			return pool[--available];
-		// Otherwise create a new one		
-			return new Assimp::Importer();
+		// Otherwise create a new one
+		return new Assimp::Importer();
 	}
 
 	void returnImporter(Assimp::Importer* returnedImporter) noexcept {

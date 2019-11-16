@@ -67,7 +67,7 @@ void AssetManager::notifyObservers() noexcept
 		copyNotifyees = m_notifyees;
 		m_notifyees.clear();
 	}
-	for (const auto & pair : copyNotifyees)
+	for (const auto& pair : copyNotifyees)
 		if (pair.first)
 			pair.second();
 }
@@ -81,8 +81,8 @@ bool AssetManager::readyToUse() noexcept
 	}
 	{
 		std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Assets);
-		for (const auto & assetCategory : m_AssetMap)
-			for (const auto & asset : assetCategory.second)
+		for (const auto& assetCategory : m_AssetMap)
+			for (const auto& asset : assetCategory.second)
 				if (!asset->existsYet())
 					return false;
 	}

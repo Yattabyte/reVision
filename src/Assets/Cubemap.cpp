@@ -33,7 +33,7 @@ void Cubemap::initialize() noexcept
 	glm::ivec2 size(0);
 	for (int side = 0; side < CUBEMAP_SIDE_COUNT; ++side) {
 		std::string specific_side_directory;
-		for (const auto & extension : extensions) {
+		for (const auto& extension : extensions) {
 			specific_side_directory = DIRECTORY_CUBEMAP + getFileName() + side_suffixes[side] + extension;
 			if (Engine::File_Exists(specific_side_directory))
 				break;

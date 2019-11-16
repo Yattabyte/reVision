@@ -35,7 +35,7 @@ public:
 		// Compound the transforms of all parent-child entities
 		const std::function<void(const EntityHandle&)> transformHierarchy = [&](const EntityHandle& entityHandle) {
 			if (auto* entityTransform = m_world->getComponent<Transform_Component>(entityHandle)) {
-				for (const auto & childHandle : m_world->getEntityHandles(entityHandle)) {
+				for (const auto& childHandle : m_world->getEntityHandles(entityHandle)) {
 					if (auto* childTransform = m_world->getComponent<Transform_Component>(childHandle)) {
 						childTransform->m_worldTransform = entityTransform->m_worldTransform * childTransform->m_worldTransform;
 						transformHierarchy(childHandle);
@@ -43,7 +43,7 @@ public:
 				}
 			}
 		};
-		for (const auto & entity : m_world->getEntityHandles())
+		for (const auto& entity : m_world->getEntityHandles())
 			transformHierarchy(entity);
 	}
 

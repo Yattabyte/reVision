@@ -65,7 +65,7 @@ protected:
 
 		// Available space -= the dimensions of fixed-sized elements
 		int fixedElementCount = 0;
-		for (const auto & pair : m_sizedChildren) {
+		for (const auto& pair : m_sizedChildren) {
 			auto [child, ratio] = pair;
 			if (!std::isnan(child->getMinScale().x) || !std::isnan(child->getMaxScale().x)) {
 				sizeUsed += child->getScale().x * ratio;
@@ -83,7 +83,7 @@ protected:
 
 		float positionFromLeft = -m_scale.x + m_margin;
 		const float left = positionFromLeft;
-		for (const auto & pair : m_sizedChildren) {
+		for (const auto& pair : m_sizedChildren) {
 			auto [child, ratio] = pair;
 			child->setScale(glm::vec2(elementSize * ratio, m_scale.y - m_margin));
 			if (m_sizedChildren.size() == 1) {

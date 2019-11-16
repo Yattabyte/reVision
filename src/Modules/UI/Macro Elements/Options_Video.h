@@ -31,7 +31,7 @@ public:
 		m_resolutions = engine->getResolutions();
 		std::vector<std::string> strings(m_resolutions.size());
 		int counter = 0, index = 0;
-		for (const auto & res : m_resolutions) {
+		for (const auto& res : m_resolutions) {
 			const auto string = std::to_string(res.x) + "x" + std::to_string(res.y) + " @ " + std::to_string(res.z) + "Hz";
 			strings[counter] = string;
 			if (res.x == width && res.y == height)

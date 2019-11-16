@@ -113,7 +113,7 @@ void OpenDialogue::tickMainDialogue() noexcept
 		ImGui::Text("Size");
 		ImGui::Separator();
 		int index = 0;
-		for (const auto & level : m_levels) {
+		for (const auto& level : m_levels) {
 			GLuint icon = (level.type == LevelEntry::Type::FILE && m_iconFile->existsYet()) ? m_iconFile->m_glTexID :
 				(level.type == LevelEntry::Type::FOLDER && m_iconFolder->existsYet()) ? m_iconFolder->m_glTexID :
 				(level.type == LevelEntry::Type::BACK && m_iconBack->existsYet()) ? m_iconBack->m_glTexID : 0;

@@ -80,7 +80,7 @@ public:
 				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
 				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
 				lightIndices.insert(lightIndices.end(), m_frameData->viewInfo[camIndex].lightIndices.begin(), m_frameData->viewInfo[camIndex].lightIndices.end());
-				for (const auto & type : m_frameData->viewInfo[camIndex].lightTypes) {
+				for (const auto& type : m_frameData->viewInfo[camIndex].lightTypes) {
 					if (type == Light_Component::Light_Type::DIRECTIONAL)
 						drawData.push_back({ m_cubeParams.second, 1, m_cubeParams.first, 0 });
 					else if (type == Light_Component::Light_Type::POINT)

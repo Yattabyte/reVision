@@ -151,20 +151,19 @@ void Material::initialize() noexcept
 					break;
 				continue;
 			}
-			
-				if (find(line, "albedo"))
-					textures[0] = getType_String(line);
-				else if (find(line, "normal"))
-					textures[1] = getType_String(line);
-				else if (find(line, "metalness"))
-					textures[2] = getType_String(line);
-				else if (find(line, "roughness"))
-					textures[3] = getType_String(line);
-				else if (find(line, "height"))
-					textures[4] = getType_String(line);
-				else if (find(line, "occlusion"))
-					textures[5] = getType_String(line);
-			
+
+			if (find(line, "albedo"))
+				textures[0] = getType_String(line);
+			else if (find(line, "normal"))
+				textures[1] = getType_String(line);
+			else if (find(line, "metalness"))
+				textures[2] = getType_String(line);
+			else if (find(line, "roughness"))
+				textures[3] = getType_String(line);
+			else if (find(line, "height"))
+				textures[4] = getType_String(line);
+			else if (find(line, "occlusion"))
+				textures[5] = getType_String(line);
 		}
 	}
 	return textures;
@@ -187,7 +186,7 @@ void Material::initialize() noexcept
 			continue;
 		}
 		if (find(line, "PBR"))
-			for (const auto & texture : parse_pbr(file_stream))
+			for (const auto& texture : parse_pbr(file_stream))
 				textures.push_back(texture);
 	}
 	return textures;

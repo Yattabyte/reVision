@@ -32,7 +32,7 @@ public:
 	inline bool removeElement(const std::shared_ptr<UI_Element>& element) noexcept {
 		size_t index(0ull);
 		bool found = false;
-		for (const auto & e : m_elements) {
+		for (const auto& e : m_elements) {
 			if (e.get() == element.get()) {
 				found = true;
 				break;
@@ -61,7 +61,7 @@ public:
 	inline bool focusElement(const std::shared_ptr<UI_Element>& element) noexcept {
 		int index(0);
 		bool found = false;
-		for (const auto & e : m_elements) {
+		for (const auto& e : m_elements) {
 			if (e.get() == element.get()) {
 				found = true;
 				break;

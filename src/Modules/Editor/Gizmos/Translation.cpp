@@ -301,13 +301,13 @@ bool Translation_Gizmo::checkMousePress() noexcept
 				auto& ecsWorld = m_editor->getWorld();
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
-				for (const auto & entityHandle : m_uuids)
+				for (const auto& entityHandle : m_uuids)
 					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
 						center += transform->m_localTransform.m_position;
 					}
 				center /= transformComponents.size();
-				for (auto * transform : transformComponents) {
+				for (auto* transform : transformComponents) {
 					transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + position;
 					transform->m_localTransform.update();
 				}

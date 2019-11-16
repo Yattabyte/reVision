@@ -51,7 +51,7 @@ void UI_Module::frameTick(const float& deltaTime) noexcept
 	// We use a copy because any callback may alter the list,
 	auto copySelection = m_callbacks;
 	m_callbacks.clear();
-	for (const auto & func : copySelection)
+	for (const auto& func : copySelection)
 		func();
 
 	if (!m_rootElement.empty() && m_rootElement.back()) {

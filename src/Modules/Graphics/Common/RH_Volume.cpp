@@ -74,7 +74,7 @@ void RH_Volume::updateVolume(const Camera* camera) noexcept
 void RH_Volume::resize(const float& resolution) noexcept
 {
 	m_resolution = resolution;
-	for (auto & bounce : m_textureIDS)
+	for (auto& bounce : m_textureIDS)
 		for (unsigned int channel : bounce)
 			glTextureImage3DEXT(channel, GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, nullptr);
 }

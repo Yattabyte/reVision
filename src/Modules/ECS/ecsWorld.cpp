@@ -136,7 +136,7 @@ ecsEntity* ecsWorld::getEntity(const EntityHandle& UUID) const noexcept
 		if (pos != entities.end())
 			return pos->second;
 
-		// Next start searching children		
+		// Next start searching children
 		for (auto& [handle, entity] : entities)
 			if (auto* childEntity = find_entity(UUID, entity->m_children))
 				return childEntity;
@@ -149,7 +149,7 @@ std::vector<ecsEntity*> ecsWorld::getEntities(const std::vector<EntityHandle>& u
 {
 	std::vector<ecsEntity*> entities;
 	entities.reserve(uuids.size());
-	for (const auto & uuid : uuids)
+	for (const auto& uuid : uuids)
 		if (auto* entity = getEntity(uuid))
 			entities.push_back(entity);
 	return entities;
@@ -186,7 +186,7 @@ ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle)
 
 ecsBaseComponent* ecsWorld::getComponent(const std::vector<std::tuple<ComponentID, int, ComponentHandle>>& entityComponents, const ComponentDataSpace& mem_array, const ComponentID& componentID) noexcept
 {
-	for (const auto & entityComponent : entityComponents) {
+	for (const auto& entityComponent : entityComponents) {
 		const auto& [compId, fn, compHandle] = entityComponent;
 		if (componentID == compId)
 			return (ecsBaseComponent*)(&mem_array[fn]);
@@ -211,7 +211,7 @@ ecsWorld& ecsWorld::operator=(ecsWorld&& other) noexcept
 void ecsWorld::clear() noexcept
 {
 	// Remove all components
-	for (auto & m_component : m_components) {
+	for (auto& m_component : m_components) {
 		const auto& [createFn, freeFn, newFn, typeSize] = ecsBaseComponent::_componentRegistry[m_component.first];
 		for (size_t i = 0; i < m_component.second.size(); i += typeSize)
 			freeFn(reinterpret_cast<ecsBaseComponent*>(&m_component.second[i]));
@@ -334,7 +334,7 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 		std::memcpy((void*)destComponent, srcComponent, typeSize);
 
 		// Update references
-		for (auto & srcEntity : getEntity(srcComponent->m_entity)->m_components) {
+		for (auto& srcEntity : getEntity(srcComponent->m_entity)->m_components) {
 			auto& [compID, fn, compHandle] = srcEntity;
 			if (componentID == compID && static_cast<ComponentID>(srcIndex) == fn) {
 				fn = index;
@@ -353,7 +353,7 @@ std::vector<char> ecsWorld::serializeEntities(const std::vector<EntityHandle>& e
 std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsEntity*>& entities) const noexcept
 {
 	std::vector<char> data;
-	for (const auto & entity : entities) {
+	for (const auto& entity : entities) {
 		if (entity) {
 			const auto entData = serializeEntity(*entity);
 			data.insert(data.end(), entData.begin(), entData.end());
@@ -486,7 +486,7 @@ std::shared_ptr<ecsBaseComponent> ecsWorld::makeComponentType(const char* name) 
 
 void ecsWorld::updateSystems(ecsSystemList& systems, const float& deltaTime) noexcept
 {
-	for (auto && system : systems)
+	for (auto& system : systems)
 		updateSystem(system.get(), deltaTime);
 }
 

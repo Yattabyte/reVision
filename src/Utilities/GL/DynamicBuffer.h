@@ -88,7 +88,7 @@ public:
 	inline void write_immediate(const GLsizeiptr& offset, const GLsizeiptr& size, const void* data) noexcept {
 		expandToFit(offset, size);
 
-		for (const auto & buffer : m_bufferID)
+		for (const auto& buffer : m_bufferID)
 			glNamedBufferSubData(buffer, offset, size, data);
 	}
 	/** Expands this buffer's container if it can't fit the specified range to write into

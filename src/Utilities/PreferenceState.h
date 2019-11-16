@@ -159,7 +159,7 @@ public:
 			// Call callbacks
 			size_t index(0ull);
 			if (m_callbacks.find(targetKey) != m_callbacks.end())
-				for (const auto & pair : m_callbacks[targetKey]) {
+				for (const auto& pair : m_callbacks[targetKey]) {
 					if (pair.first)
 						pair.second(castValue);
 					else

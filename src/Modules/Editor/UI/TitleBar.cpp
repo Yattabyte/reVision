@@ -58,7 +58,7 @@ void TitleBar::tick(const float&) noexcept
 					ImGui::SameLine();
 					const auto recentLevels = m_editor->getRecentLevels();
 					if (ImGui::BeginMenu("Open Recent", recentLevels.size())) {
-						for (const auto & levelName : recentLevels) {
+						for (const auto& levelName : recentLevels) {
 							ImGui::PushID(&levelName);
 							if (ImGui::MenuItem(levelName.c_str()))
 								m_editor->openLevel(levelName);

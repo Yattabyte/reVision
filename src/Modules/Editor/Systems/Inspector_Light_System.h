@@ -54,7 +54,7 @@ public:
 					std::vector<Light_Component::Light_Type> m_oldData, m_newData;
 					Type_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const Light_Component::Light_Type& data) noexcept
 						: m_ecsWorld(world), m_uuids(uuids) {
-						for (const auto & componentHandle : m_uuids) {
+						for (const auto& componentHandle : m_uuids) {
 							if (const auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle)) {
 								m_oldData.push_back(component->m_type);
 								m_newData.push_back(data);
@@ -64,7 +64,7 @@ public:
 					void setData(const std::vector<Light_Component::Light_Type>& data) noexcept {
 						if (data.size()) {
 							size_t index(0ull);
-							for (const auto & componentHandle : m_uuids)
+							for (const auto& componentHandle : m_uuids)
 								if (auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle))
 									component->m_type = data[index++];
 						}
@@ -96,7 +96,7 @@ public:
 					std::vector<glm::vec3> m_oldData, m_newData;
 					Color_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::vec3& data) noexcept
 						: m_ecsWorld(world), m_uuids(uuids) {
-						for (const auto & componentHandle : m_uuids) {
+						for (const auto& componentHandle : m_uuids) {
 							if (const auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle)) {
 								m_oldData.push_back(component->m_color);
 								m_newData.push_back(data);
@@ -106,7 +106,7 @@ public:
 					void setData(const std::vector<glm::vec3>& data) noexcept {
 						if (data.size()) {
 							size_t index(0ull);
-							for (const auto & componentHandle : m_uuids)
+							for (const auto& componentHandle : m_uuids)
 								if (auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle))
 									component->m_color = data[index++];
 						}
@@ -138,7 +138,7 @@ public:
 					std::vector<float> m_oldData, m_newData;
 					Intensity_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const float& data) noexcept
 						: m_ecsWorld(world), m_uuids(uuids) {
-						for (const auto & componentHandle : m_uuids) {
+						for (const auto& componentHandle : m_uuids) {
 							if (const auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle)) {
 								m_oldData.push_back(component->m_intensity);
 								m_newData.push_back(data);
@@ -148,7 +148,7 @@ public:
 					void setData(const std::vector<float>& data) noexcept {
 						if (data.size()) {
 							size_t index(0ull);
-							for (const auto & componentHandle : m_uuids) {
+							for (const auto& componentHandle : m_uuids) {
 								if (auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle))
 									component->m_intensity = data[index++];
 							}
@@ -181,7 +181,7 @@ public:
 					std::vector<float> m_oldData, m_newData;
 					Radius_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const float& data) noexcept
 						: m_ecsWorld(world), m_uuids(uuids) {
-						for (const auto & componentHandle : m_uuids) {
+						for (const auto& componentHandle : m_uuids) {
 							if (const auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle)) {
 								m_oldData.push_back(component->m_radius);
 								m_newData.push_back(data);
@@ -191,7 +191,7 @@ public:
 					void setData(const std::vector<float>& data) noexcept {
 						if (data.size()) {
 							size_t index(0ull);
-							for (const auto & componentHandle : m_uuids) {
+							for (const auto& componentHandle : m_uuids) {
 								if (auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle))
 									component->m_radius = data[index++];
 							}
@@ -224,7 +224,7 @@ public:
 					std::vector<float> m_oldData, m_newData;
 					Cutoff_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const float& data) noexcept
 						: m_ecsWorld(world), m_uuids(uuids) {
-						for (const auto & componentHandle : m_uuids) {
+						for (const auto& componentHandle : m_uuids) {
 							if (const auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle)) {
 								m_oldData.push_back(component->m_cutoff);
 								m_newData.push_back(data);
@@ -234,7 +234,7 @@ public:
 					void setData(const std::vector<float>& data) noexcept {
 						if (data.size()) {
 							size_t index(0ull);
-							for (const auto & componentHandle : m_uuids) {
+							for (const auto& componentHandle : m_uuids) {
 								if (auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle))
 									component->m_cutoff = data[index++];
 							}
