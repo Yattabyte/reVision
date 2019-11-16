@@ -61,7 +61,7 @@ void UI_Module::frameTick(const float& deltaTime) noexcept
 		glDisable(GL_DEPTH_TEST);
 
 		m_projectionBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
-		m_rootElement.back()->renderElement(deltaTime, glm::vec2(0.0f), m_renderSize);
+		m_rootElement.back()->renderElement(deltaTime, glm::vec2(0.0F), m_renderSize);
 
 		glDisable(GL_BLEND);
 		Shader::Release();
@@ -113,7 +113,7 @@ void UI_Module::applyCursorButton(const int& button, const int& action, const in
 	m_mouseEvent.m_action = MouseEvent::Action(action);
 	m_mouseEvent.m_mods = mods;
 
-	if (!m_rootElement.empty() != 0u)
+	if (!m_rootElement.empty())
 		m_rootElement.back()->mouseAction(m_mouseEvent);
 }
 

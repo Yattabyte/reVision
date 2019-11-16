@@ -116,7 +116,7 @@ std::vector<GLchar> Shader::getErrorLog() const noexcept
 const bool Shader::loadCachedBinary(const std::string& relativePath) noexcept
 {
 	if (Engine::File_Exists(relativePath + EXT_SHADER_BINARY)) {
-		ShaderHeader header;
+		ShaderHeader header{};
 		std::ifstream file((Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY).c_str(), std::ios::binary);
 		if (file.is_open()) {
 			file.read(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));

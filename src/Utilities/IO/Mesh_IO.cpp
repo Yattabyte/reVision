@@ -12,7 +12,7 @@
 
 constexpr size_t MAX_IMPORTERS = 4;
 struct Importer_Pool {
-	Assimp::Importer* pool[MAX_IMPORTERS];
+	Assimp::Importer* pool[MAX_IMPORTERS]{};
 	size_t available = MAX_IMPORTERS;
 	std::mutex poolMutex;
 
@@ -25,10 +25,10 @@ struct Importer_Pool {
 	[[nodiscard]] Assimp::Importer* rentImporter() noexcept {
 		// Check if any of our importers are free to be used
 		std::unique_lock<std::mutex> readGuard(poolMutex);
-		if (available)
+		if (available != 0u)
 			return pool[--available];
 		// Otherwise create a new one
-		else
+		
 			return new Assimp::Importer();
 	}
 
@@ -96,20 +96,20 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 	// Import geometry
 	for (unsigned int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
 		const aiMesh* mesh = scene->mMeshes[a];
-		const GLuint meshMaterialOffset = std::max(0u, scene->mNumMaterials > 1 ? mesh->mMaterialIndex - 1u : 0u);
+		const GLuint meshMaterialOffset = std::max(0U, scene->mNumMaterials > 1 ? mesh->mMaterialIndex - 1U : 0U);
 		for (unsigned int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
 			const aiFace& face = mesh->mFaces[x];
 			for (unsigned int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
 				const auto& index = face.mIndices[b];
 				importedData.vertices.emplace_back(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z);
 
-				const auto normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0f, 1.0f, 1.0f);
+				const auto normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0F, 1.0F, 1.0F);
 				importedData.normals.push_back(glm::normalize(glm::vec3(normal.x, normal.y, normal.z)));
 
-				const auto tangent = mesh->HasTangentsAndBitangents() ? mesh->mTangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
+				const auto tangent = mesh->HasTangentsAndBitangents() ? mesh->mTangents[index] : aiVector3D(1.0F, 1.0F, 1.0F);
 				importedData.tangents.push_back(glm::normalize(glm::vec3(tangent.x, tangent.y, tangent.z)));
 
-				const auto bitangent = mesh->HasTangentsAndBitangents() ? mesh->mBitangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
+				const auto bitangent = mesh->HasTangentsAndBitangents() ? mesh->mBitangents[index] : aiVector3D(1.0F, 1.0F, 1.0F);
 				importedData.bitangents.push_back(glm::normalize(glm::vec3(bitangent.x, bitangent.y, bitangent.z)));
 
 				const auto uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
@@ -165,7 +165,7 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 
 			if (importedData.boneMap.find(BoneName) == importedData.boneMap.end()) {
 				BoneIndex = importedData.boneTransforms.size();
-				importedData.boneTransforms.emplace_back(1.0f);
+				importedData.boneTransforms.emplace_back(1.0F);
 			}
 			else
 				BoneIndex = importedData.boneMap[BoneName];
@@ -188,7 +188,7 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 	}
 
 	// Copy Texture Paths
-	if (scene->mNumMaterials > 1u)
+	if (scene->mNumMaterials > 1U)
 		for (unsigned int x = 1; x < scene->mNumMaterials; ++x) {
 			constexpr static auto getMaterial = [](const aiScene* scene, const unsigned int& materialIndex) -> Material_Strings {
 				constexpr static auto getTexture = [](const aiMaterial* sceneMaterial, const aiTextureType& textureType, std::string& texturePath) {

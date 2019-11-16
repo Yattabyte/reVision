@@ -74,9 +74,9 @@ void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minO
 
 		minOut = glm::vec3(minX, minY, minZ);
 		maxOut = glm::vec3(maxX, maxY, maxZ);
-		scaleOut = (maxOut - minOut) / 2.0f;
-		centerOut = ((maxOut - minOut) / 2.0f) + minOut;
-		radiusOut = glm::distance(minOut, maxOut) / 2.0f;
+		scaleOut = (maxOut - minOut) / 2.0F;
+		centerOut = ((maxOut - minOut) / 2.0F) + minOut;
+		radiusOut = glm::distance(minOut, maxOut) / 2.0F;
 	}
 }
 

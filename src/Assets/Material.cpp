@@ -55,15 +55,15 @@ Material::Material(Engine* engine, const std::string& filename, const std::vecto
 void Material::initialize() noexcept
 {
 	// Some definitions for later
-	const size_t remainder = m_textures.size() % size_t(6u);
-	const size_t textureCount = remainder != 0u
-		? m_textures.size() + size_t(6u) - remainder // if remainder != 0, round up to nearest multiple of 6
-		: std::max(size_t(6u), m_textures.size()); // else remainder == 0, enforce minimum size of 6
+	const size_t remainder = m_textures.size() % size_t(6U);
+	const size_t textureCount = remainder != 0U
+		? m_textures.size() + size_t(6U) - remainder // if remainder != 0, round up to nearest multiple of 6
+		: std::max(size_t(6U), m_textures.size()); // else remainder == 0, enforce minimum size of 6
 	const size_t materialCount = textureCount / MAX_PHYSICAL_IMAGES;
 	m_textures.resize(textureCount);
 
 	// Load all images
-	float materialSize = 512.0f;
+	float materialSize = 512.0F;
 	m_engine->getPreferenceState().getOrSetValue(PreferenceState::Preference::C_MATERIAL_SIZE, materialSize);
 	m_images.resize(textureCount);
 	m_size = glm::ivec2((int)materialSize);
@@ -79,7 +79,7 @@ void Material::initialize() noexcept
 		m_images[x] = Shared_Image(m_engine, m_textures[x], m_size, false, fillPolicies[x]);
 
 	// Merge data into single array
-	const size_t pixelsPerImage = size_t(m_size.x) * size_t(m_size.y) * 4ull;
+	const size_t pixelsPerImage = size_t(m_size.x) * size_t(m_size.y) * 4ULL;
 	m_materialData = new GLubyte[(pixelsPerImage)*MAX_DIGITAL_IMAGES * materialCount]();
 	size_t arrayIndex = 0;
 	for (size_t tx = 0; tx < textureCount; tx += MAX_PHYSICAL_IMAGES) {
@@ -140,7 +140,7 @@ void Material::initialize() noexcept
 	std::vector<std::string> textures(MAX_PHYSICAL_IMAGES);
 	int bracketCount = 0;
 	for (std::string line; std::getline(file_stream, line); ) {
-		if ((line.length() != 0u) && !line.empty() && line != " ") {
+		if ((line.length() != 0U) && !line.empty() && line != " ") {
 			if (find(line, "{")) {
 				bracketCount++;
 				continue;
@@ -151,7 +151,7 @@ void Material::initialize() noexcept
 					break;
 				continue;
 			}
-			else {
+			
 				if (find(line, "albedo"))
 					textures[0] = getType_String(line);
 				else if (find(line, "normal"))
@@ -164,7 +164,7 @@ void Material::initialize() noexcept
 					textures[4] = getType_String(line);
 				else if (find(line, "occlusion"))
 					textures[5] = getType_String(line);
-			}
+			
 		}
 	}
 	return textures;
@@ -186,7 +186,7 @@ void Material::initialize() noexcept
 				break;
 			continue;
 		}
-		else if (find(line, "PBR"))
+		if (find(line, "PBR"))
 			for each (const auto & texture in parse_pbr(file_stream))
 				textures.push_back(texture);
 	}

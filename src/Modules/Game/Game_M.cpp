@@ -45,7 +45,7 @@ void Game_Module::frameTick(const float& deltaTime) noexcept
 	if (m_gameState == Game_State::in_pauseMenu || m_gameState == Game_State::in_game) {
 		// Check if we should show the overlay
 		if (actionState.isAction(ActionState::Action::UI_ESCAPE) == ActionState::State::PRESS)
-			showPauseMenu(m_gameState == Game_State::in_game ? true : false);
+			showPauseMenu(m_gameState == Game_State::in_game);
 
 		// Handle GLOBAL user input
 		if (m_gameState == Game_State::in_game) {

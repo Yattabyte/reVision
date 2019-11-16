@@ -40,7 +40,7 @@ void Graphics_Module::initialize(Engine* engine) noexcept
 		m_viewport->resize(m_renderSize, 1);
 		(*m_clientCamera)->Dimensions = m_renderSize;
 		});
-	float farPlane = 1000.0f;
+	float farPlane = 1000.0F;
 	preferences.getOrSetValue(PreferenceState::Preference::C_DRAW_DISTANCE, farPlane);
 	preferences.addCallback(PreferenceState::Preference::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float& f) {
 		if ((*m_clientCamera)->FarPlane != f) {
@@ -48,7 +48,7 @@ void Graphics_Module::initialize(Engine* engine) noexcept
 			genPerspectiveMatrix();
 		}
 		});
-	float fov = 90.0f;
+	float fov = 90.0F;
 	preferences.getOrSetValue(PreferenceState::Preference::C_FOV, fov);
 	preferences.addCallback(PreferenceState::Preference::C_FOV, m_aliveIndicator, [&](const float& f) {
 		if ((*m_clientCamera)->FOV != f) {
@@ -105,9 +105,9 @@ void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const
 void Graphics_Module::genPerspectiveMatrix() noexcept
 {
 	// Update Perspective Matrix
-	const float ar = std::max(1.0f, (*m_clientCamera)->Dimensions.x) / std::max(1.0f, (*m_clientCamera)->Dimensions.y);
+	const float ar = std::max(1.0F, (*m_clientCamera)->Dimensions.x) / std::max(1.0F, (*m_clientCamera)->Dimensions.y);
 	const float horizontalRad = glm::radians((*m_clientCamera)->FOV);
-	const float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
+	const float verticalRad = 2.0F * atanf(tanf(horizontalRad / 2.0F) / ar);
 	(*m_clientCamera)->pMatrix = glm::perspective(verticalRad, ar, Camera::ConstNearPlane, (*m_clientCamera)->FarPlane);
 	(*m_clientCamera)->pMatrixInverse = glm::inverse((*m_clientCamera)->pMatrix);
 	(*m_clientCamera)->pvMatrix = (*m_clientCamera)->pMatrix * (*m_clientCamera)->vMatrix;

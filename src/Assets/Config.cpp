@@ -57,7 +57,7 @@ void Config::initialize() noexcept
 	try {
 		std::ifstream file_stream(Engine::Get_Current_Dir() + DIRECTORY_CONFIG + getFileName() + EXT_CONFIG);
 		for (std::string line; std::getline(file_stream, line); ) {
-			if (line.length() != 0u) {
+			if (line.length() != 0U) {
 				const std::string cfg_property = get_between_quotes(line);
 				int spot = find_CFG_Property(cfg_property, m_strings);
 				if (spot >= 0) {

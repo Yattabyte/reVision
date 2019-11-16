@@ -106,8 +106,8 @@ void Graphics_Framebuffers::clear() noexcept
 	glDepthMask(GL_TRUE);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glStencilMask(0xFF);
-	constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	constexpr GLfloat clearDepth = 1.0f;
+	constexpr GLfloat clearColor[] = { 0.0F, 0.0F, 0.0F, 0.0F };
+	constexpr GLfloat clearDepth = 1.0F;
 	constexpr GLint clearStencil = 0;
 	for (auto& [name, fboData] : m_fbos) {
 		auto& [fboID, mipmapped, texdata] = fboData;

@@ -20,13 +20,13 @@ std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const char* data
 	int charCount(0);
 	std::memcpy(&charCount, &data[dataRead], sizeof(int));
 	dataRead += sizeof(int);
-	char* nameString = new char[size_t(charCount) + 1ull];
+	char* nameString = new char[size_t(charCount) + 1ULL];
 	std::fill(&nameString[0], &nameString[charCount + 1], '\0');
 	std::memcpy(nameString, &data[dataRead], charCount);
 	dataRead += sizeof(char) * charCount;
 	const auto componentTypeName = std::string(nameString);
 	delete[] nameString;
-	size_t classDataSize(0ull);
+	size_t classDataSize(0ULL);
 	std::memcpy(&classDataSize, &data[dataRead], sizeof(size_t));
 	dataRead += sizeof(size_t);
 

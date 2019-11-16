@@ -48,9 +48,9 @@ void RH_Volume::updateVolume(const Camera* camera) noexcept
 	const glm::mat4 InverseView = camera->get()->vMatrixInverse;
 	const auto& ViewDimensions = camera->get()->Dimensions;
 	const float AspectRatio = ViewDimensions.x / ViewDimensions.y;
-	const float tanHalfHFOV = glm::radians(camera->get()->FOV) / 2.0f;
+	const float tanHalfHFOV = glm::radians(camera->get()->FOV) / 2.0F;
 	const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / AspectRatio);
-	const float frustumSlice[2] = { camera->get()->NearPlane, (camera->get()->FarPlane * 0.25f) };
+	const float frustumSlice[2] = { camera->get()->NearPlane, (camera->get()->FarPlane * 0.25F) };
 	const float frustumPoints[4] = {
 		frustumSlice[0] * tanHalfHFOV,
 		frustumSlice[1] * tanHalfHFOV,
@@ -60,13 +60,13 @@ void RH_Volume::updateVolume(const Camera* camera) noexcept
 	float largestCoordinate = std::max(abs(frustumSlice[0]), abs(frustumSlice[1]));
 	for (float frustumPoint : frustumPoints)
 		largestCoordinate = std::max(largestCoordinate, abs(frustumPoint));
-	const glm::vec3 centerOfVolume(0, 0, ((frustumSlice[1] - frustumSlice[0]) / 2.0f) + frustumSlice[0]);
+	const glm::vec3 centerOfVolume(0, 0, ((frustumSlice[1] - frustumSlice[0]) / 2.0F) + frustumSlice[0]);
 	const float radius = glm::distance(glm::vec3(largestCoordinate), centerOfVolume);
 	const glm::vec3 aabb(radius);
 	m_unitSize = (radius - -radius) / m_resolution;
-	const glm::vec3 frustumpos = (InverseView * glm::vec4(centerOfVolume, 1.0f));
+	const glm::vec3 frustumpos = (InverseView * glm::vec4(centerOfVolume, 1.0F));
 	// Snap volume position to grid
-	m_center = glm::floor((frustumpos + (m_unitSize / 2.0f)) / m_unitSize) * m_unitSize;
+	m_center = glm::floor((frustumpos + (m_unitSize / 2.0F)) / m_unitSize) * m_unitSize;
 	m_min = -aabb + m_center;
 	m_max = aabb + m_center;
 }
@@ -81,7 +81,7 @@ void RH_Volume::resize(const float& resolution) noexcept
 
 void RH_Volume::clear() noexcept
 {
-	GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	GLfloat clearColor[] = { 0.0F, 0.0F, 0.0F, 0.0F };
 	for (unsigned int bounce : m_fboIDS)
 		for (GLint x = 0; x < RH_TEXTURE_COUNT; ++x)
 			glClearNamedFramebufferfv(bounce, GL_COLOR, x, clearColor);

@@ -5,7 +5,7 @@
 
 GLubyte* RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size) noexcept
 {
-	auto* newPixels = new GLubyte[size_t(size) * 4ull];
+	auto* newPixels = new GLubyte[size_t(size) * 4ULL];
 	for (unsigned int x = 0; x < size; ++x) {
 		newPixels[x * 4 + 0] = pixels[x * 4 + 2];
 		newPixels[x * 4 + 1] = pixels[x * 4 + 1];
@@ -75,7 +75,7 @@ void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData) noexc
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
 
 	// Always create RGBA format
-	auto* textureData = new GLubyte[size_t(size_mult) * 4ull];
+	auto* textureData = new GLubyte[size_t(size_mult) * 4ULL];
 	const GLubyte* pixels = (GLubyte*)FreeImage_GetBits(bitmap);
 
 	for (unsigned int i = 0; i < size_mult; ++i) {
