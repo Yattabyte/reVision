@@ -103,6 +103,9 @@ public:
 	/** Get the plugin version.
 	@return					the plugin version */
 	static std::string Get_Version() noexcept;
+	/** Get a list of all supported model extensions. 
+	@return					list of supported file types. */
+	static std::vector<std::string> Get_Supported_Types() noexcept;
 };
 
 #endif // Mesh_IO_H

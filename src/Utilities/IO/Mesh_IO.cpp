@@ -246,6 +246,23 @@ std::string Mesh_IO::Get_Version() noexcept
 	return std::to_string(aiGetVersionMajor()) + "." + std::to_string(aiGetVersionMinor()) + "." + std::to_string(aiGetVersionRevision());
 }
 
+std::vector<std::string> Mesh_IO::Get_Supported_Types() noexcept
+{
+	aiString ext;
+	Assimp::Importer importer;
+	importer.GetExtensionList(ext);
+
+	std::vector<std::string> extensions;
+	std::string allExt(ext.C_Str());
+	auto spot = allExt.find(';');
+	while (spot != std::string::npos) {
+		extensions.push_back(allExt.substr(1, spot - 1));
+		allExt = allExt.substr(spot + 1, allExt.size() - spot);
+		spot = allExt.find(';');
+	}
+	return extensions;
+}
+
 VertexBoneData::VertexBoneData() noexcept
 {
 	Reset();

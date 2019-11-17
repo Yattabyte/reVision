@@ -5,9 +5,12 @@
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/component_types.h"
+#include "Utilities/IO/Mesh_IO.h"
 #include "imgui.h"
 #include "glm/gtc/type_ptr.hpp"
 #include "Engine.h"
+#include <algorithm>
+#include <filesystem>
 
 
 /** An ECS system allowing the user to inspect selected prop components. */
@@ -24,6 +27,8 @@ public:
 		// Declare component types used
 		addComponentType(Selected_Component::Runtime_ID);
 		addComponentType(Prop_Component::Runtime_ID);
+
+		populateModels();
 	}
 
 
@@ -41,11 +46,27 @@ public:
 			};
 			auto* propComponent = static_cast<Prop_Component*>(components[0][1]);
 
-			char nameInput[256];
-			for (size_t x = 0; x < (propComponent)->m_modelName.length() && x < IM_ARRAYSIZE(nameInput); ++x)
-				nameInput[x] = (propComponent)->m_modelName[x];
-			nameInput[std::min(256ull, propComponent->m_modelName.length())] = '\0';
-			if (ImGui::InputText("Model Name", nameInput, IM_ARRAYSIZE(nameInput))) {
+			static ImGuiTextFilter filter;
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
+			filter.Draw("Filter");
+			ImGui::PopStyleVar();
+
+			auto typeInput = 0ull;
+			std::vector<const char*> entries;
+			entries.reserve(m_entries.size());
+			auto x = 0ull;
+			for (const auto& entry : m_entries) {
+				if (filter.PassFilter(entry.c_str())) {
+					entries.push_back(entry.c_str());
+					if (propComponent->m_modelName == entry)
+						typeInput = x;
+				}
+				++x;
+			}
+			if (entries.empty())
+				entries.resize(1ull);
+			static int item_current = static_cast<int>(typeInput);
+			if (ImGui::Combo("Model File", &item_current, &entries[0], (int)entries.size())) {
 				struct Name_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
 					const std::vector<ComponentHandle> m_uuids;
@@ -91,9 +112,10 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Name_Command>(m_editor->getWorld(), getUUIDS(), std::string(nameInput)));
+				item_current = std::clamp(item_current, 0, (int)m_entries.size());
+				m_editor->doReversableAction(std::make_shared<Name_Command>(m_editor->getWorld(), getUUIDS(), m_entries[item_current]));
 			}
-
+			
 			auto skinInput = (int)(propComponent->m_skin);
 			if (ImGui::DragInt("Skin", &skinInput)) {
 				struct Skin_Command final : Editor_Command {
@@ -143,9 +165,27 @@ public:
 
 
 private:
+	// Private Methods
+	/** Populates an internal list of models found & supported recursively within the application's models directory. */
+	void populateModels() {
+		// Delete the entries
+		m_entries.clear();
+
+		const auto rootPath = Engine::Get_Current_Dir() + "\\Models\\";
+		const auto path = std::filesystem::path(rootPath);
+		const auto types = Mesh_IO::Get_Supported_Types();
+		
+		// Cycle through each entry on disk, making prefab entries
+		for (auto& entry : std::filesystem::recursive_directory_iterator(path)) 
+			if (entry.is_regular_file() && entry.path().has_extension() && std::any_of(types.cbegin(), types.cend(), [&](const auto& s) {return entry.path().extension().string() == s;}))
+				m_entries.push_back(std::filesystem::relative(entry, rootPath).string());
+	}
+
+
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
+	std::vector<std::string> m_entries;
 };
 
 #endif // INSPECTOR_PROP_SYSTEM_H
