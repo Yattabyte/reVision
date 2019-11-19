@@ -5,6 +5,7 @@
 #include "Modules/Game/Overlays/Frametime_Counter.h"
 #include "Modules/UI/Macro Elements/StartMenu.h"
 #include "Modules/UI/Macro Elements/PauseMenu.h"
+#include "Utilities/IO/Level_IO.h"
 #include "Engine.h"
 
 
@@ -79,8 +80,9 @@ void Game_Module::renderOverlays(const float& deltaTime) noexcept
 void Game_Module::showGame() noexcept
 {
 	m_gameState = Game_State::in_game;
-	//m_engine->getModule_World().loadWorld("a.bmap");
 	m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
+	if (!Level_IO::Import_BMap("Phys Test.bmap", m_world)) 
+		m_engine->getManager_Messages().error("Cannot open the level: Phys Test.bmap");
 }
 
 void Game_Module::showPauseMenu(const bool& show) noexcept

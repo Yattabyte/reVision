@@ -52,10 +52,10 @@ void CameraController::tick(const float& deltaTime) noexcept
 
 		// Integrate rotation and translation into a new set of matrices
 		auto cam = m_engine->getModule_Graphics().getClientCamera();
-		auto& eyePosition = cam->get()->EyePosition;
 		const auto rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation.y), glm::vec3(1.0f, 0, 0)) * glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation.x), glm::vec3(0, 1.0f, 0));
 		// Make the translation amount be relative to the camera's orientation
 		const auto rotatedPosition = glm::inverse(rotationMatrix) * glm::vec4(deltaPosition, 1.0f);
+		auto& eyePosition = cam->get()->EyePosition;
 		eyePosition += glm::vec3(rotatedPosition / rotatedPosition.w);
 		const auto vMatrix = rotationMatrix * glm::translate(glm::mat4(1.0f), -eyePosition);
 		cam->get()->vMatrix = vMatrix;

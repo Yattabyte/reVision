@@ -34,11 +34,10 @@ public:
 
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
-		for (const auto& componentParam : components) {
-			//auto* spawnComponent = static_cast<PlayerSpawn_Component*>(componentParam[0]);
-			auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);
-
-			if (m_playerCount == 0ull) {
+		if (m_playerCount == 0ull) {
+			for (const auto& componentParam : components) {
+				//auto* spawnComponent = static_cast<PlayerSpawn_Component*>(componentParam[0]);
+				auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);
 				Player3D_Component player;
 				Transform_Component trans;
 

@@ -8,6 +8,7 @@
 #include "Modules/Editor/Systems/ClearSelection_System.h"
 #include "Modules/Editor/Systems/Outline_System.h"
 #include "Modules/ECS/component_types.h"
+#include "Utilities/IO/Level_IO.h"
 #include "imgui.h"
 #include "Engine.h"
 #include <algorithm>
@@ -263,7 +264,7 @@ std::deque<std::string> LevelEditor_Module::getRecentLevels() const noexcept
 void LevelEditor_Module::newLevel() noexcept
 {
 	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() {
-		m_world = ecsWorld();
+		m_world.clear();
 		m_currentLevelName = "My Map.bmap";
 
 		// Starting new level, changes will be discarded
@@ -275,31 +276,23 @@ void LevelEditor_Module::newLevel() noexcept
 
 void LevelEditor_Module::openLevel(const std::string& name) noexcept
 {
-	if (!std::filesystem::exists(Engine::Get_Current_Dir() + "\\Maps\\" + name)) {
+	// If the level doesn't exist, remove it from the 'recent levels' list
+	if (!Level_IO::Level_Exists(name)) {
 		std::dynamic_pointer_cast<MissingFileDialogue>(m_editorInterface->m_uiMissingDialogue)->notifyMissing(name);
 		if (std::find(m_recentLevels.cbegin(), m_recentLevels.cend(), name) != m_recentLevels.cend())
 			m_recentLevels.erase(std::remove(m_recentLevels.begin(), m_recentLevels.end(), name));
 	}
+	// Otherwise, try opening the level
 	else {
-		// Read ecsData from disk
-		m_world = ecsWorld();
-		const auto path = Engine::Get_Current_Dir() + "\\Maps\\" + name;
-		std::vector<char> ecsData(std::filesystem::file_size(path));
-		std::ifstream mapFile(path, std::ios::beg);
-		if (!mapFile.is_open())
-			m_engine->getManager_Messages().error("Cannot read the binary map file from disk!");
+		if (Level_IO::Import_BMap(name, m_world)) {
+			m_undoStack = {};
+			m_redoStack = {};
+			m_unsavedChanges = false;
+			m_currentLevelName = name;
+			addToRecentList(name);
+		}
 		else
-			mapFile.read(ecsData.data(), (std::streamsize)ecsData.size());
-		mapFile.close();
-		m_world = ecsWorld(ecsData);
-
-		m_currentLevelName = name;
-		addToRecentList(name);
-
-		// Starting new level, changes will be discarded
-		m_unsavedChanges = false;
-		m_undoStack = {};
-		m_redoStack = {};
+			m_engine->getManager_Messages().error("Cannot open the level: " + name);
 	}
 }
 
@@ -335,16 +328,10 @@ void LevelEditor_Module::saveLevel(const std::string& name) noexcept
 
 void LevelEditor_Module::saveLevel_Internal(const std::string& name) noexcept
 {
-	auto& ecsWorld = getWorld();
-	const auto data = ecsWorld.serializeEntities(ecsWorld.getEntityHandles());
-
-	// Write ECS data to disk
-	std::fstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\" + name, std::ios::binary | std::ios::out);
-	if (!mapFile.is_open())
-		m_engine->getManager_Messages().error("Cannot write the binary map file to disk!");
+	if (Level_IO::Export_BMap(name, m_world)) 
+		m_engine->getManager_Messages().statement("Level saved successfully.");
 	else
-		mapFile.write(data.data(), (std::streamsize)data.size());
-	mapFile.close();
+		m_engine->getManager_Messages().error("Cannot save the level: " + name);	
 }
 
 void LevelEditor_Module::saveLevel() noexcept
