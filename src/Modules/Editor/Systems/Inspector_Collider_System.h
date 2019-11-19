@@ -1,6 +1,6 @@
 #pragma once
-#ifndef INSPECTOR_PROP_SYSTEM_H
-#define INSPECTOR_PROP_SYSTEM_H
+#ifndef INSPECTOR_COLLIDER_SYSTEM_H
+#define INSPECTOR_COLLIDER_SYSTEM_H
 
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/ECS/ecsSystem.h"
@@ -13,20 +13,20 @@
 #include <filesystem>
 
 
-/** An ECS system allowing the user to inspect selected prop components. */
-class Inspector_Prop_System final : public ecsBaseSystem {
+/***/
+class Inspector_Collider_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~Inspector_Prop_System() = default;
+	inline ~Inspector_Collider_System() = default;
 	/** Construct this system. */
-	inline Inspector_Prop_System(Engine* engine, LevelEditor_Module* editor) noexcept :
+	inline Inspector_Collider_System(Engine* engine, LevelEditor_Module* editor) noexcept :
 		m_engine(engine),
 		m_editor(editor)
 	{
 		// Declare component types used
 		addComponentType(Selected_Component::Runtime_ID);
-		addComponentType(Prop_Component::Runtime_ID);
+		addComponentType(Collider_Component::Runtime_ID);
 
 		populateModels();
 	}
@@ -35,7 +35,7 @@ public:
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		ImGui::PushID(this);
-		const auto text = std::string(Prop_Component::Name) + ": (" + std::to_string(components.size()) + ")";
+		const auto text = std::string(Collider_Component::Name) + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
 			const auto getUUIDS = [&]() {
@@ -45,7 +45,7 @@ public:
 					uuids.push_back(componentParam[1]->m_handle);
 				return uuids;
 			};
-			auto* propComponent = static_cast<Prop_Component*>(components[0][1]);
+			auto* colliderComponent = static_cast<Collider_Component*>(components[0][1]);
 
 			static ImGuiTextFilter filter;
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
@@ -59,7 +59,7 @@ public:
 			for (const auto& entry : m_entries) {
 				if (filter.PassFilter(entry.c_str())) {
 					entries.push_back(entry.c_str());
-					if (propComponent->m_modelName == entry)
+					if (colliderComponent->m_modelName == entry)
 						typeInput = x;
 				}
 				++x;
@@ -87,12 +87,6 @@ public:
 							for (const auto& componentHandle : m_uuids) {
 								if (auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle)) {
 									component->m_modelName = data[index++];
-									component->m_model.reset();
-									component->m_uploadModel = false;
-									component->m_uploadMaterial = false;
-									component->m_offset = 0ull;
-									component->m_count = 0ull;
-									component->m_materialID = 0u;
 								}
 							}
 						}
@@ -116,28 +110,28 @@ public:
 				item_current = std::clamp(item_current, 0, (int)m_entries.size());
 				m_editor->doReversableAction(std::make_shared<Name_Command>(m_editor->getWorld(), getUUIDS(), m_entries[item_current]));
 			}
-			
-			auto skinInput = (int)(propComponent->m_skin);
-			if (ImGui::DragInt("Skin", &skinInput)) {
-				struct Skin_Command final : Editor_Command {
+
+			auto restitutionInput = colliderComponent->m_restitution;
+			if (ImGui::DragFloat("Restitution", &restitutionInput, 0.1f, 0.0f, 1.0f)) {
+				struct Restitution_Command final : Editor_Command {
 					ecsWorld& m_ecsWorld;
 					const std::vector<ComponentHandle> m_uuids;
-					std::vector<unsigned int> m_oldData, m_newData;
-					Skin_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const unsigned int& data) noexcept
+					std::vector<float> m_oldData, m_newData;
+					Restitution_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const float& data) noexcept
 						: m_ecsWorld(world), m_uuids(uuids) {
 						for (const auto& componentHandle : m_uuids) {
-							if (const auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle)) {
-								m_oldData.push_back(component->m_skin);
+							if (const auto* component = m_ecsWorld.getComponent<Collider_Component>(componentHandle)) {
+								m_oldData.push_back(component->m_restitution);
 								m_newData.push_back(data);
 							}
 						}
 					}
-					void setData(const std::vector<unsigned int>& data) noexcept {
+					void setData(const std::vector<float>& data) noexcept {
 						if (data.size()) {
 							size_t index(0ull);
 							for (const auto& componentHandle : m_uuids) {
-								if (auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle))
-									component->m_skin = data[index++];
+								if (auto* component = m_ecsWorld.getComponent<Collider_Component>(componentHandle))
+									component->m_restitution = data[index++];
 							}
 						}
 					}
@@ -148,7 +142,7 @@ public:
 						setData(m_oldData);
 					}
 					virtual bool join(Editor_Command* other) noexcept override final {
-						if (auto newCommand = dynamic_cast<Skin_Command*>(other)) {
+						if (auto newCommand = dynamic_cast<Restitution_Command*>(other)) {
 							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 								m_newData = newCommand->m_newData;
 								return true;
@@ -157,10 +151,94 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Skin_Command>(m_editor->getWorld(), getUUIDS(), skinInput));
+				m_editor->doReversableAction(std::make_shared<Restitution_Command>(m_editor->getWorld(), getUUIDS(), restitutionInput));
 			}
-			for (const auto& componentParam : components)
-				static_cast<Prop_Component*>(componentParam[1])->m_skin = (unsigned int)skinInput;
+
+			auto frictionInput = colliderComponent->m_friction;
+			if (ImGui::DragFloat("Friction", &frictionInput, 0.1f, 0.0f, 1.0f)) {
+				struct Friction_Command final : Editor_Command {
+					ecsWorld& m_ecsWorld;
+					const std::vector<ComponentHandle> m_uuids;
+					std::vector<float> m_oldData, m_newData;
+					Friction_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const float& data) noexcept
+						: m_ecsWorld(world), m_uuids(uuids) {
+						for (const auto& componentHandle : m_uuids) {
+							if (const auto* component = m_ecsWorld.getComponent<Collider_Component>(componentHandle)) {
+								m_oldData.push_back(component->m_friction);
+								m_newData.push_back(data);
+							}
+						}
+					}
+					void setData(const std::vector<float>& data) noexcept {
+						if (data.size()) {
+							size_t index(0ull);
+							for (const auto& componentHandle : m_uuids) {
+								if (auto* component = m_ecsWorld.getComponent<Collider_Component>(componentHandle))
+									component->m_friction = data[index++];
+							}
+						}
+					}
+					virtual void execute() noexcept override final {
+						setData(m_newData);
+					}
+					virtual void undo() noexcept override final {
+						setData(m_oldData);
+					}
+					virtual bool join(Editor_Command* other) noexcept override final {
+						if (auto newCommand = dynamic_cast<Friction_Command*>(other)) {
+							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
+								m_newData = newCommand->m_newData;
+								return true;
+							}
+						}
+						return false;
+					}
+				};
+				m_editor->doReversableAction(std::make_shared<Friction_Command>(m_editor->getWorld(), getUUIDS(), frictionInput));
+			}
+
+			auto massInput = colliderComponent->m_mass;
+			if (ImGui::DragFloat("Mass", &massInput)) {
+				struct Mass_Command final : Editor_Command {
+					ecsWorld& m_ecsWorld;
+					const std::vector<ComponentHandle> m_uuids;
+					std::vector<float> m_oldData, m_newData;
+					Mass_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const float& data) noexcept
+						: m_ecsWorld(world), m_uuids(uuids) {
+						for (const auto& componentHandle : m_uuids) {
+							if (const auto* component = m_ecsWorld.getComponent<Collider_Component>(componentHandle)) {
+								m_oldData.push_back(component->m_mass);
+								m_newData.push_back(data);
+							}
+						}
+					}
+					void setData(const std::vector<float>& data) noexcept {
+						if (data.size()) {
+							size_t index(0ull);
+							for (const auto& componentHandle : m_uuids) {
+								if (auto* component = m_ecsWorld.getComponent<Collider_Component>(componentHandle))
+									component->m_mass = data[index++];
+							}
+						}
+					}
+					virtual void execute() noexcept override final {
+						setData(m_newData);
+					}
+					virtual void undo() noexcept override final {
+						setData(m_oldData);
+					}
+					virtual bool join(Editor_Command* other) noexcept override final {
+						if (auto newCommand = dynamic_cast<Mass_Command*>(other)) {
+							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
+								m_newData = newCommand->m_newData;
+								return true;
+							}
+						}
+						return false;
+					}
+				};
+				m_editor->doReversableAction(std::make_shared<Mass_Command>(m_editor->getWorld(), getUUIDS(), massInput));
+			}
 		}
 		ImGui::PopID();
 	}
@@ -190,4 +268,4 @@ private:
 	std::vector<std::string> m_entries;
 };
 
-#endif // INSPECTOR_PROP_SYSTEM_H
+#endif // INSPECTOR_COLLIDER_SYSTEM_H

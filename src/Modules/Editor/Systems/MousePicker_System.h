@@ -8,7 +8,7 @@
 #include "Engine.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
-
+#include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
 /** An ECS system allowing the user to ray-pick entities by selecting against their components. */
 class MousePicker_System final : public ecsBaseSystem {
@@ -54,8 +54,24 @@ public:
 		const auto ray_direction = glm::normalize(glm::vec3(clientCamera.vMatrixInverse * ray_eye));
 
 		// Set the selection position for the worst-case scenario
-		m_selectionTransform.m_position = clientCamera.EyePosition + (ray_direction * glm::vec3(50.0f));
-		m_intersectionTransform.m_position = clientCamera.EyePosition + (ray_direction * glm::vec3(50.0f));
+		const auto ray_end = ray_origin + (ray_direction * glm::vec3(50.0f));
+		const auto ray_end_far = ray_origin + (ray_direction * clientCamera.FarPlane);
+		m_selectionTransform.m_position = ray_end;
+		m_intersectionTransform.m_position = ray_end;
+
+		const btVector3 origin(ray_origin.x, ray_origin.y, ray_origin.z);
+		const btVector3 direction(ray_end_far.x, ray_end_far.y, ray_end_far.z);
+		btCollisionWorld::ClosestRayResultCallback closestResults(origin, direction);
+		closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+		m_engine->getModule_Physics().getWorld()->rayTest(origin, direction, closestResults);
+		void* closestPhysicsShape = nullptr;
+		float closetstPhysicsHit = FLT_MAX;
+		if (closestResults.hasHit()) {
+			const auto p = origin.lerp(direction, closestResults.m_closestHitFraction);
+			closetstPhysicsHit = glm::distance(ray_origin, glm::vec3(p.x(), p.y(), p.z()));
+			// We won't change this at all, we just need the pointer address
+			closestPhysicsShape = const_cast<btCollisionShape*>(closestResults.m_collisionObject->getCollisionShape());
+		}
 
 		float closestDistance = FLT_MAX;
 		int highestConfidence = 0;
@@ -79,13 +95,13 @@ public:
 				result = RayBSphere(transformComponent, bSphere, ray_origin, ray_direction, distanceFromScreen, confidence);
 
 			// Attempt more complex tests
-			if (prop && ((hasBoundingShape && result) || (!hasBoundingShape))) {
+			if (collider && ((hasBoundingShape && result) || (!hasBoundingShape))) {
+				distanceFromScreen = FLT_MAX;
+				result = RayCollider(collider, closestPhysicsShape, closetstPhysicsHit, distanceFromScreen, confidence);
+			}
+			else if (prop && ((hasBoundingShape && result) || (!hasBoundingShape))) {
 				distanceFromScreen = FLT_MAX;
 				result = RayProp(transformComponent, prop, ray_origin, ray_direction, distanceFromScreen, confidence);
-			}
-			else if (collider && ((hasBoundingShape && result) || (!hasBoundingShape))) {
-				distanceFromScreen = FLT_MAX;
-				result = RayCollider(transformComponent, collider, ray_origin, ray_direction, distanceFromScreen, confidence);
 			}
 
 			// Find the closest best match
@@ -154,8 +170,12 @@ private:
 	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
 	@param	confidence				reference updated with the confidence level for this function.
 	@return							true on successful intersection, false if disjoint. */
-	static bool RayCollider(Transform_Component* transformComponent, Collider_Component* collider, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept {
-		//confidence = 3;
+	static bool RayCollider(Collider_Component* collider, const void* const closestPhysicsShape, const float& closetstPhysicsHit, float& distanceFromScreen, int& confidence) noexcept {
+		if (collider->m_shape && collider->m_shape == closestPhysicsShape) {			
+			distanceFromScreen = closetstPhysicsHit;
+			confidence = 3;
+			return true;
+		}
 		return false;
 	}
 	/** Perform a ray-bounding-box intersection test.

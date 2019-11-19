@@ -122,6 +122,9 @@ void LevelEditor_Module::frameTick(const float& deltaTime) noexcept
 		m_mouseGizmo->frameTick(deltaTime);
 		m_editorInterface->tick(deltaTime);
 
+		// Just apply physics systems, don't update simulation
+		m_engine->getModule_Physics().updateSystems(m_world, deltaTime);
+
 		// Render world into default FBO
 		m_engine->getModule_Graphics().renderWorld(m_world, deltaTime);
 

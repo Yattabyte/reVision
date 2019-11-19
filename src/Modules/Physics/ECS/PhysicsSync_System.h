@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TRANSFORMSYNC_PHYS_S_H
-#define TRANSFORMSYNC_PHYS_S_H
+#ifndef PHYSICSSYNC_SYSTEM_H
+#define PHYSICSSYNC_SYSTEM_H
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "Modules/ECS/ecsSystem.h"
@@ -11,21 +11,20 @@
 
 
 /** A system responsible for updating physics components that share a common transformation. */
-class TransformSync_Phys_System final : public ecsBaseSystem {
+class PhysicsSync_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this physics sync system. */
-	inline ~TransformSync_Phys_System() = default;
+	inline ~PhysicsSync_System() = default;
 	/** Construct a physics sync system. */
-	inline TransformSync_Phys_System(Engine* engine, btDiscreteDynamicsWorld* world) noexcept
-		: ecsBaseSystem(), m_world(world) {
+	inline PhysicsSync_System(Engine* engine, btDiscreteDynamicsWorld* world) noexcept :
+		ecsBaseSystem(), 
+		m_engine(engine), 
+		m_world(world)
+	{
 		// Declare component types used
 		addComponentType(Transform_Component::Runtime_ID);
 		addComponentType(Collider_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
-
-		// Error Reporting
-		if (!isValid())
-			engine->getManager_Messages().error("Invalid ECS System: TransformSync_Phys_System");
 	}
 
 
@@ -40,7 +39,9 @@ public:
 			const auto& scale = transformComponent->m_worldTransform.m_scale;
 
 			if (colliderComponent) {
-				if (colliderComponent->m_collider->existsYet()) {
+				if (!colliderComponent->m_collider) 
+					colliderComponent->m_collider = Shared_Collider(m_engine, colliderComponent->m_modelName);
+				else if (colliderComponent->m_collider->existsYet()) {
 					// If the collider's transformation is out of date
 					if (colliderComponent->m_worldTransform != transformComponent->m_localTransform) {
 						// Remove from the physics simulation
@@ -74,13 +75,12 @@ public:
 						// Update the transform
 						colliderComponent->m_worldTransform = transformComponent->m_worldTransform;
 					}
-
 					// Otherwise update the transform with the collider info
 					else {
 						btTransform trans;
 						colliderComponent->m_motionState->getWorldTransform(trans);
-						const btQuaternion quat = trans.getRotation();
-						const btVector3 pos = trans.getOrigin();
+						const auto quat = trans.getRotation();
+						const auto pos = trans.getOrigin();
 						transformComponent->m_localTransform.m_position = glm::vec3(pos.x(), pos.y(), pos.z());
 						transformComponent->m_localTransform.m_orientation = glm::quat(quat.w(), quat.x(), quat.y(), quat.z());
 						transformComponent->m_localTransform.update();
@@ -94,7 +94,8 @@ public:
 
 private:
 	// Private Attributes
+	Engine* m_engine = nullptr;
 	btDiscreteDynamicsWorld* m_world = nullptr;
 };
 
-#endif // TRANSFORMSYNC_PHYS_S_H
+#endif // PHYSICSSYNC_SYSTEM_H

@@ -1,5 +1,5 @@
 #include "Modules/Physics/Physics_M.h"
-#include "Modules/Physics/ECS/TransformSync_S.h"
+#include "Modules/Physics/ECS/PhysicsSync_System.h"
 #include "Engine.h"
 
 
@@ -16,7 +16,7 @@ void Physics_Module::initialize(Engine* engine) noexcept
 	m_world->setGravity(btVector3(0, btScalar(-9.8), 0));
 
 	// Physics Systems
-	m_physicsSystems.makeSystem<TransformSync_Phys_System>(engine, m_world);
+	m_physicsSystems.makeSystem<PhysicsSync_System>(engine, m_world);
 }
 
 void Physics_Module::deinitialize() noexcept
@@ -37,5 +37,10 @@ void Physics_Module::frameTick(ecsWorld& world, const float& deltaTime) noexcept
 {
 	// To Do: disable physics per object if object isn't fully initialized
 	m_world->stepSimulation(deltaTime);
+	updateSystems(world, deltaTime);
+}
+
+void Physics_Module::updateSystems(ecsWorld& world, const float& deltaTime) noexcept
+{
 	world.updateSystems(m_physicsSystems, deltaTime);
 }

@@ -30,6 +30,7 @@ public:
 
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
+		ImGui::PushID(this);
 		const auto text = std::string(Transform_Component::Name) + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
@@ -183,6 +184,7 @@ public:
 				m_editor->doReversableAction(std::make_shared<Scale_Command>(m_editor->getWorld(), getUUIDS(), sclInput));
 			}
 		}
+		ImGui::PopID();
 	}
 
 

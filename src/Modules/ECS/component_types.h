@@ -64,6 +64,65 @@ struct [[deprecated]] BoundingBox_Component final : public ecsComponent<Bounding
 	} m_cameraCollision = CameraCollision::OUTSIDE;
 };
 
+constexpr static const char colliderName[] = "Collider_Component";
+struct Collider_Component final : public ecsComponent<Collider_Component, colliderName> {
+	// Serialized Attributes
+	std::string m_modelName;
+	float m_restitution = 1.0f;
+	float m_friction = 1.0f;
+	btScalar m_mass = btScalar(0);
+
+	// Derived Attributes
+	Transform m_worldTransform;
+	Shared_Collider m_collider;
+	btDefaultMotionState* m_motionState = nullptr;
+	btRigidBody* m_rigidBody = nullptr;
+	btCollisionShape* m_shape = nullptr;
+
+	inline std::vector<char> serialize() noexcept {
+		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
+			sizeof(float) + sizeof(float) + sizeof(btScalar);
+		std::vector<char> data(propSize);
+		void* ptr = &data[0];
+
+		const auto nameCount = (int)m_modelName.size();
+		std::memcpy(ptr, &nameCount, sizeof(int));
+		ptr = static_cast<char*>(ptr) + sizeof(int);
+		std::memcpy(ptr, m_modelName.data(), m_modelName.size());
+		ptr = static_cast<char*>(ptr) + m_modelName.size();
+
+		std::memcpy(ptr, &m_restitution, sizeof(float));
+		ptr = static_cast<char*>(ptr) + sizeof(float);
+		std::memcpy(ptr, &m_friction, sizeof(float));
+		ptr = static_cast<char*>(ptr) + sizeof(float);
+		std::memcpy(ptr, &m_mass, sizeof(btScalar));
+		ptr = static_cast<char*>(ptr) + sizeof(btScalar);
+
+		return data;
+	}
+	inline void deserialize(const char* data) noexcept {
+		// Want a pointer that I can increment, promise to not change underlying data
+		auto ptr = const_cast<char*>(&data[0]);
+
+		int nameCount(0ull);
+		std::memcpy(&nameCount, ptr, sizeof(int));
+		ptr = static_cast<char*>(ptr) + sizeof(int);
+		char* modelName = new char[size_t(nameCount) + 1ull];
+		std::fill(&modelName[0], &modelName[nameCount + 1], '\0');
+		std::memcpy(&modelName[0], ptr, nameCount);
+		ptr = static_cast<char*>(ptr) + (size_t)nameCount;
+		m_modelName = std::string(modelName);
+		delete[] modelName;
+
+		std::memcpy(&m_restitution, ptr, sizeof(float));
+		ptr = static_cast<char*>(ptr) + sizeof(float);
+		std::memcpy(&m_friction, ptr, sizeof(float));
+		ptr = static_cast<char*>(ptr) + sizeof(float);
+		std::memcpy(&m_mass, ptr, sizeof(btScalar));
+		ptr = static_cast<char*>(ptr) + sizeof(btScalar);
+	}
+};
+
 constexpr static const char propName[] = "Prop_Component";
 struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 	// Serialized Attributes
@@ -72,15 +131,13 @@ struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 
 	// Derived Attributes
 	Shared_Model m_model;
-	float m_radius = 1.0f;
-	glm::vec3 m_position = glm::vec3(0.0f);
 	bool m_uploadModel = false, m_uploadMaterial = false;
 	size_t m_offset = 0ull, m_count = 0ull;
 	GLuint m_materialID = 0u;
 
 	inline std::vector<char> serialize() noexcept {
 		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
-			sizeof(unsigned int) + sizeof(float) + sizeof(glm::vec3);
+			sizeof(unsigned int);
 		std::vector<char> data(propSize);
 		void* ptr = &data[0];
 
@@ -92,10 +149,6 @@ struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 
 		std::memcpy(ptr, &m_skin, sizeof(unsigned int));
 		ptr = static_cast<char*>(ptr) + sizeof(unsigned int);
-		std::memcpy(ptr, &m_radius, sizeof(float));
-		ptr = static_cast<char*>(ptr) + sizeof(float);
-		std::memcpy(ptr, &m_position, sizeof(glm::vec3));
-		ptr = static_cast<char*>(ptr) + sizeof(glm::vec3);
 
 		return data;
 	}
@@ -115,10 +168,6 @@ struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 
 		std::memcpy(&m_skin, ptr, sizeof(unsigned int));
 		ptr = static_cast<char*>(ptr) + sizeof(unsigned int);
-		std::memcpy(&m_radius, ptr, sizeof(float));
-		ptr = static_cast<char*>(ptr) + sizeof(float);
-		std::memcpy(&m_position, ptr, sizeof(glm::vec3));
-		ptr = static_cast<char*>(ptr) + sizeof(glm::vec3);
 	}
 };
 
@@ -211,24 +260,6 @@ struct Reflector_Component final : public ecsComponent<Reflector_Component, refl
 	}
 	inline void deserialize(const char*) noexcept {
 		m_cameras = {};
-	}
-};
-
-constexpr static const char colliderName[] = "Collider_Component";
-struct Collider_Component final : public ecsComponent<Collider_Component, colliderName> {
-	float m_restitution = 1.0f;
-	float m_friction = 1.0f;
-	btScalar m_mass = btScalar(0);
-	Shared_Collider m_collider;
-	btDefaultMotionState* m_motionState = nullptr;
-	btRigidBody* m_rigidBody = nullptr;
-	btConvexHullShape* m_shape = nullptr;
-	Transform m_worldTransform;
-
-	inline static std::vector<char> serialize() noexcept {
-		return {};
-	}
-	inline static void deserialize(const char*) noexcept {
 	}
 };
 
