@@ -3,36 +3,82 @@
 #define SERIALIZER_H
 
 #include <algorithm>
-#include <array>
-#include <any>
 #include <optional>
 #include <map>
 #include <string>
-#include <tuple>
+#include <type_traits>
 #include <vector>
 
 
-/***/
+/** A utility class for serializing labeled values. */
 class Serializer {
 public:
-	/***/
+	/** Serialize a set of labeled value pairs to a char buffer.
+	@note Input values must be a std::pair<std::string, X> where X is the value to be serialized!
+	@param	<FirstMember, ...RemainingMembers>	variadic list of any value to serialized (auto-deducible).
+	@param	first			the first value to serialize.
+	@param	...rest			the rest of the values to serialize.
+	@return					a char buffer containing serialized data. */
 	template <typename FirstMember, typename ...RemainingMembers>
-	static std::vector<char> Serialize_Members(const FirstMember& first, const RemainingMembers& ...rest) {
+	inline static std::vector<char> Serialize_Set(const FirstMember& first, const RemainingMembers& ...rest) {
 		// Retrieve the first member's serialized data
 		const auto& [MemberName, MemberContainer] = first;
-		auto memberData = Serialize_Data(MemberName, MemberContainer);
+		auto memberData = Serialize_Value(MemberName, MemberContainer);
 
 		// For each remaining member of the parameter pack, recursively call this function, appending the results
 		if constexpr (sizeof...(rest) > 0) {
-			const auto nextMemberData = Serialize_Members(rest...);
+			const auto nextMemberData = Serialize_Set(rest...);
 			memberData.insert(memberData.end(), nextMemberData.begin(), nextMemberData.end());
 		}
 
 		return memberData;
 	}
-	/***/
+	/** De-serialize a char buffer into a set of labeled value pairs.
+	@note Input values must be a std::pair<std::string, *X> where X is a pointer to the value to be assigned!
+	@param	<...Members>	variadic list of all value pairs to updated (auto-deducible).
+	@param	memberData		a char buffer containing serialized data.
+	@param	...members		the list of value pairs to update. */
+	template <typename ...Members>
+	inline static void Deserialize_Set(const std::vector<char>& memberData, Members& ...members) {
+		// Ensure the data buffer is valid
+		if (memberData.size()) {
+			std::map<std::string, std::vector<char>> memberMap;
+
+			// Populate map with member info from buffer data
+			constexpr static auto Fill_Member_Map = [](auto& memberMap, const auto& memberData) {
+				size_t index(0ULL), prevIndex(0ULL);
+				while (index < memberData.size()) {
+					// Get the memory structure
+					struct Memory_Structure {
+						int struct_size;
+						char payload_name[MAX_NAME_CHARS]{ '\0' };
+						int payload_size;
+					};
+					const auto& memStruct = *reinterpret_cast<Memory_Structure*>(const_cast<char*>(&memberData[index]));
+					const std::string memory_payload_string(memStruct.payload_name, MAX_NAME_CHARS);
+
+					// Get the memory payload's data
+					char* memory_payload_data = const_cast<char*>(&memberData[index + sizeof(Memory_Structure)]);
+					index += memStruct.struct_size;
+
+					// Insert clamped string with memory data into map
+					memberMap.insert({ memory_payload_string.c_str(), std::vector<char>(memberData.begin() + prevIndex, memberData.begin() + index) });
+					prevIndex = index;
+				}
+			};
+			Fill_Member_Map(memberMap, memberData);
+
+			// Iterate through the expected member names
+			Search_And_Assign_Members(memberMap, members...);
+		}
+	}
+	/** Serialize a labeled pair of data into a char buffer.
+	@param	<T>				the data type to serialize (auto-deducible).
+	@param	name			the label for the data (i.e. the variable name).
+	@param	data			the value to serialize.
+	@return					a char buffer containing serialized data. */
 	template <class T>
-	static std::vector<char> Serialize_Data(const std::string& name, const T& data) {
+	inline static std::vector<char> Serialize_Value(const std::string& name, const T& data) {
 		// For convenience sake, wrap our output data into a memory-copyable struct
 		struct Memory_Structure {
 			const int struct_size = (int)sizeof(Memory_Structure);
@@ -54,8 +100,12 @@ public:
 		std::memcpy(&dataBuffer[0], &outputData, sizeof(Memory_Structure));
 		return dataBuffer;
 	}
+	/** Serialize a labeled pair of data into a char buffer.
+	@param	name			the label for the data (i.e. the variable name).
+	@param	data			the value to serialize.
+	@return					a char buffer containing serialized data. */
 	template <>
-	static std::vector<char> Serialize_Data(const std::string& name, const std::string& data) {
+	inline static std::vector<char> Serialize_Value(const std::string& name, const std::string& data) {
 		// For convenience sake, wrap our output data into a memory-copyable struct
 		struct Memory_Structure {
 			int struct_size = (int)sizeof(Memory_Structure);
@@ -79,49 +129,13 @@ public:
 		std::memcpy(&dataBuffer[sizeof(Memory_Structure)], &data[0], sizeof(char) * data.size());
 		return dataBuffer;
 	}
-	/***/
-	template <typename ...Members>
-	static void Deserialize_Members(const std::vector<char>& memberData, Members& ...members) {
-		if (memberData.size()) {
-			std::map<std::string, std::vector<char>> memberMap;
 
-			// Populate map with member info from buffer data
-			constexpr static auto Fill_Member_Map = [](auto& memberMap, const auto& memberData) {
-				size_t index(0ULL), prevIndex(0ULL);
-
-				while (index < memberData.size()) {
-					// Get the memory structure size
-					const int& memory_struct_size = *reinterpret_cast<int*>(const_cast<char*>(&memberData[index]));
-					index += sizeof(int);
-
-					// Get the memory payload's name
-					char memory_payload_name[MAX_NAME_CHARS]{ '\0' };
-					std::memcpy(&memory_payload_name[0], &memberData[index], (size_t)MAX_NAME_CHARS);
-					const std::string memory_payload_string(memory_payload_name, MAX_NAME_CHARS);
-					index += sizeof(char) * (size_t)MAX_NAME_CHARS;
-
-					// Get the memory payload's size
-					const int& memory_payload_size = *reinterpret_cast<int*>(const_cast<char*>(&memberData[index]));
-					index += sizeof(int);
-
-					// Get the memory payload's data
-					char* memory_payload_data = const_cast<char*>(&memberData[index]);
-					index += sizeof(char) * (size_t)memory_payload_size;
-
-					// Insert clamped string with memory data into map
-					memberMap.insert({ memory_payload_string.c_str(), std::vector<char>(memberData.begin() + prevIndex, memberData.begin() + index) });
-					prevIndex = index;
-				}
-			};
-			Fill_Member_Map(memberMap, memberData);
-
-			// Iterate through the expected member names
-			Search_And_Assign_Members(memberMap, members...);
-		}
-	}
-	/***/
+	/** De-serialize a char buffer into a labeled pair of data.
+	@param	<T>				the data type to de-serialize.
+	@param	dataBuffer		a char buffer containing serialized data.
+	@return					an optional pair containing a label and value <T> if successful. */
 	template <class T>
-	static std::optional<std::pair<std::string, T>> Deserialize_Data(const std::vector<char>& dataBuffer) {
+	static std::optional<std::pair<std::string, T>> Deserialize_Value(const std::vector<char>& dataBuffer) {
 		// The expected structure of the input data
 		struct Memory_Structure {
 			const int struct_size = (int)sizeof(Memory_Structure);
@@ -143,9 +157,11 @@ public:
 		}
 		return {};
 	}
-	/***/
+	/** De-serialize a char buffer into a labeled pair of data.
+	@param	dataBuffer		a char buffer containing serialized data.
+	@return					an optional pair containing a label and value <T> if successful. */
 	template <>
-	static std::optional<std::pair<std::string, std::string>> Deserialize_Data(const std::vector<char>& dataBuffer) {
+	inline static std::optional<std::pair<std::string, std::string>> Deserialize_Value(const std::vector<char>& dataBuffer) {
 		// The expected structure of the input data
 		struct Memory_Structure {
 			int struct_size = (int)sizeof(Memory_Structure);
@@ -170,18 +186,23 @@ public:
 
 private:
 	// Private Methods
-	/***/
+	/** Given a filled member-map, search for the input label and assign the mapped value.
+	@param	<FirstMember, ...RemainingMembers>	variadic list of any value to de-serialized (auto-deducible).
+	@param	memberMap		a map of labels to serialized data.
+	@param	first			the first value to de-serialize.
+	@param	...rest			the rest of the values to de-serialize. */
 	template <typename FirstMember, typename ...RemainingMembers>
-	static void Search_And_Assign_Members(const std::map<std::string, std::vector<char>>& memberMap, FirstMember& first, RemainingMembers& ...rest) {
+	inline static void Search_And_Assign_Members(const std::map<std::string, std::vector<char>>& memberMap, FirstMember& first, RemainingMembers& ...rest) {
 		// Try to find the first member of this parameter pack in the member map
 		auto& [MemberName, MemberPointer] = first;
 		const auto memberNameSpot = memberMap.find(std::string(MemberName));
 		if (memberNameSpot != memberMap.end()) {
 			// Found member, de-serialize data
-			if (const auto qwe = Deserialize_Data<std::remove_pointer<decltype(MemberPointer)>::type>(memberMap.at(MemberName)))
-				*MemberPointer = qwe->second;
+			if (const auto qwe = Deserialize_Value<std::remove_pointer<decltype(MemberPointer)>::type>(memberMap.at(MemberName)))
+				*MemberPointer = qwe->second; // assign it
 		}
 
+		// Repeat for remaining members
 		if constexpr (sizeof...(rest) > 0)
 			Search_And_Assign_Members(memberMap, rest...);
 	}
