@@ -17,7 +17,7 @@ ecsWorld::ecsWorld(const std::vector<char>& data) noexcept
 	if (!data.empty()) {
 		size_t dataRead(0ULL);
 		while (dataRead < data.size())
-			deserializeEntity(data.data(), data.size(), dataRead);
+			deserializeEntity(data, data.size(), dataRead);
 	}
 }
 
@@ -420,7 +420,7 @@ std::vector<char> ecsWorld::serializeEntity(const ecsEntity& entity) const noexc
 	return data;
 }
 
-std::pair<EntityHandle, ecsEntity*> ecsWorld::deserializeEntity(const char* data, const size_t& dataSize, size_t& dataRead, const EntityHandle& parentHandle, const EntityHandle& desiredHandle) noexcept
+std::pair<EntityHandle, ecsEntity*> ecsWorld::deserializeEntity(const std::vector<char>& data, const size_t& dataSize, size_t& dataRead, const EntityHandle& parentHandle, const EntityHandle& desiredHandle) noexcept
 {
 	/* ENTITY DATA STRUCTURE {
 		name char count

@@ -157,8 +157,8 @@ public:
 			m_preferences->setValue((unsigned int)targetKey, castValue);
 
 			// Call callbacks
-			size_t index(0ull);
-			if (m_callbacks.find(targetKey) != m_callbacks.end())
+			if (m_callbacks.find(targetKey) != m_callbacks.end()) {
+				size_t index(0ull);
 				for (const auto& pair : m_callbacks[targetKey]) {
 					if (pair.first)
 						pair.second(castValue);
@@ -166,6 +166,7 @@ public:
 						m_callbacks[targetKey].erase(m_callbacks[targetKey].begin() + index);
 					index++;
 				}
+			}
 		}
 	}
 	/** Attaches a callback method to be triggered when the supplied preference updates.

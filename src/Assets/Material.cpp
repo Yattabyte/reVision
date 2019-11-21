@@ -171,7 +171,7 @@ void Material::initialize() noexcept
 
 [[nodiscard]] std::vector<std::string> Material::Get_Material_Textures(const std::string& filename) noexcept
 {
-	std::vector<std::string> textures;
+	std::vector<std::string> dstTextures;
 	std::ifstream file_stream(Engine::Get_Current_Dir() + filename);
 	int bracketCount = 0;
 	for (std::string line; std::getline(file_stream, line); ) {
@@ -185,9 +185,10 @@ void Material::initialize() noexcept
 				break;
 			continue;
 		}
-		if (find(line, "PBR"))
-			for (const auto& texture : parse_pbr(file_stream))
-				textures.push_back(texture);
+		if (find(line, "PBR")) {
+			const auto srcTextures = parse_pbr(file_stream);
+			dstTextures.insert(dstTextures.end(), srcTextures.begin(), srcTextures.end());
+		}
 	}
-	return textures;
+	return dstTextures;
 }

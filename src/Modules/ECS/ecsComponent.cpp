@@ -14,7 +14,7 @@ ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& create
 	return componentID;
 }
 
-std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const char* data, size_t& dataRead) noexcept
+std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const std::vector<char>& data, size_t& dataRead) noexcept
 {
 	// Read Name
 	int charCount(0);
@@ -34,7 +34,7 @@ std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const char* data
 	if (const auto& componentID = _nameRegistry.search(componentTypeName.c_str())) {
 		const auto& [createFn, freeFn, newFn, size] = _componentRegistry[*componentID];
 		const auto& clone = newFn();
-		clone->recover_data(&data[dataRead]);
+		clone->recover_data(std::vector(data.begin() + dataRead, data.begin() + dataRead + classDataSize));
 		dataRead += classDataSize;
 		return clone;
 	}

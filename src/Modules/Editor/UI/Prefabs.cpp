@@ -101,7 +101,7 @@ void Prefabs::addPrefab(const std::vector<char>& entityData) noexcept
 	size_t dataRead(0ull);
 	while (dataRead < entityData.size())
 		newPrefab.entityHandles.push_back(
-			std::get<0>(m_previewWorld.deserializeEntity(&entityData[0], entityData.size(), dataRead))
+			std::get<0>(m_previewWorld.deserializeEntity(entityData, entityData.size(), dataRead))
 		);
 	addPrefab(newPrefab);
 	m_selectedIndex = (int)(m_prefabs.size()) - 1;
@@ -193,7 +193,7 @@ void Prefabs::populatePrefabs(const std::string& directory) noexcept
 				size_t dataRead(0ull);
 				while (dataRead < data.size())
 					newPrefab.entityHandles.push_back(
-						std::get<0>(m_previewWorld.deserializeEntity(&data[0], size, dataRead))
+						std::get<0>(m_previewWorld.deserializeEntity(data, size, dataRead))
 					);
 			}
 			prefabFile.close();

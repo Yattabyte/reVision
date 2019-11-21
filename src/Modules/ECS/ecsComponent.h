@@ -39,7 +39,7 @@ struct ecsBaseComponent {
 	@param	data		serialized version of component.
 	@param	dataRead	reference updated with the number of bytes read.
 	@return				if successful a shared pointer to a new component, nullptr otherwise. */
-	static std::shared_ptr<ecsBaseComponent> from_buffer(const char* data, size_t& dataRead) noexcept;
+	static std::shared_ptr<ecsBaseComponent> from_buffer(const std::vector<char>& data, size_t& dataRead) noexcept;
 
 
 	// Public Attributes
@@ -67,7 +67,7 @@ protected:
 	static ComponentID registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string) noexcept;
 	/** Recover and load component data into this component from a char buffer.
 	@param	data		serialized component data. */
-	virtual void recover_data(const char* data) noexcept = 0;
+	virtual void recover_data(const std::vector<char>& data) noexcept = 0;
 
 
 	// Protected Attributes
@@ -90,17 +90,10 @@ struct ecsComponent : public ecsBaseComponent {
 
 
 	// Public Methods
-	/** Default serialization method.
-	@return				serialized component data. */
-	inline std::vector<char> serialize() noexcept {
-		std::vector<char> data(sizeof(C));
-		(*reinterpret_cast<C*>(&data[0])) = (*static_cast<C*>(this));
-		return data;
+	inline static std::vector<char> serialize() noexcept {
+		return {};
 	}
-	/** Default deserialization method.
-	@param	data		serialized component data. */
-	inline void deserialize(const char* data) noexcept {
-		(*static_cast<C*>(this)) = (*(C*)(&data[0]));
+	inline static void deserialize(const std::vector<char>&) noexcept {
 	}
 	/** Save this component to a char buffer.
 	@return				serialized version of self. */
@@ -134,7 +127,7 @@ struct ecsComponent : public ecsBaseComponent {
 
 protected:
 	// Protected Interface Implementation
-	inline virtual void recover_data(const char* data) noexcept override final {
+	inline virtual void recover_data(const std::vector<char>& data) noexcept override final {
 		// Previously recovered type name, created this class
 		// Next recover data
 		static_cast<C*>(this)->deserialize(data);

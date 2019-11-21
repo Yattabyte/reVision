@@ -10,6 +10,7 @@
 #include "Modules/Graphics/Common/Camera.h"
 #include "Utilities/Transform.h"
 #include "Utilities/GL/GL_Vector.h"
+#include "Utilities/IO/Serializer.h"
 #include "glm/glm.hpp"
 #include <memory>
 
@@ -21,6 +22,13 @@ struct Selected_Component final : public ecsComponent<Selected_Component, select
 constexpr static const char transformName[] = "Transform_Component";
 struct Transform_Component final : public ecsComponent<Transform_Component, transformName> {
 	Transform m_localTransform, m_worldTransform;
+
+	inline std::vector<char> serialize() noexcept {
+		return Serializer::Serialize_Members(std::make_pair("m_localTransform", m_localTransform), std::make_pair("m_worldTransform", m_worldTransform));
+	}
+	inline void deserialize(const std::vector<char>& data) noexcept {
+		Serializer::Deserialize_Members(data, std::make_pair("m_localTransform", &m_localTransform), std::make_pair("m_worldTransform", &m_worldTransform));
+	}
 };
 
 constexpr static const char playerSpawnName[] = "PlayerSpawn_Component";
@@ -30,6 +38,13 @@ struct PlayerSpawn_Component final : public ecsComponent<PlayerSpawn_Component, 
 constexpr static const char player3DName[] = "Player3D_Component";
 struct Player3D_Component final : public ecsComponent<Player3D_Component, player3DName> {
 	glm::vec3 m_rotation = glm::vec3(0.0f);
+
+	inline std::vector<char> serialize() noexcept {
+		return Serializer::Serialize_Members(std::make_pair("m_rotation", m_rotation));
+	}
+	inline void deserialize(const std::vector<char>& data) noexcept {
+		Serializer::Deserialize_Members(data, std::make_pair("m_rotation", &m_rotation));
+	}
 };
 
 constexpr static const char cameraName[] = "Camera_Component";
@@ -38,12 +53,10 @@ struct Camera_Component final : public ecsComponent<Camera_Component, cameraName
 	float m_updateTime = 0.0f;
 
 	inline std::vector<char> serialize() noexcept {
-		std::vector<char> data(sizeof(Camera));
-		std::memcpy(&data[0], &m_camera, sizeof(Camera));
-		return data;
+		return Serializer::Serialize_Members(std::make_pair("m_camera", m_camera));
 	}
-	inline void deserialize(const char* data) noexcept {
-		std::memcpy(&m_camera, &data[0], sizeof(Camera));
+	inline void deserialize(const std::vector<char>& data) noexcept {
+		Serializer::Deserialize_Members(data, std::make_pair("m_camera", &m_camera));
 	}
 };
 
@@ -54,6 +67,21 @@ struct [[deprecated]] BoundingSphere_Component final : public ecsComponent<Bound
 	enum class CameraCollision {
 		OUTSIDE, INSIDE
 	} m_cameraCollision = CameraCollision::OUTSIDE;
+
+	inline std::vector<char> serialize() noexcept {
+		return Serializer::Serialize_Members(
+			std::make_pair("m_positionOffset", m_positionOffset), 
+			std::make_pair("m_radius", m_radius), 
+			std::make_pair("m_cameraCollision", m_cameraCollision)
+		);
+	}
+	inline void deserialize(const std::vector<char>& data) noexcept {
+		Serializer::Deserialize_Members(data, 
+			std::make_pair("m_positionOffset", &m_positionOffset),
+			std::make_pair("m_radius", &m_radius),
+			std::make_pair("m_cameraCollision", &m_cameraCollision)
+		);
+	}
 };
 
 constexpr static const char boundingBoxName[] = "BoundingBox_Component";
@@ -62,6 +90,25 @@ struct [[deprecated]] BoundingBox_Component final : public ecsComponent<Bounding
 	enum class CameraCollision {
 		OUTSIDE, INSIDE
 	} m_cameraCollision = CameraCollision::OUTSIDE;
+
+	inline std::vector<char> serialize() noexcept {
+		return Serializer::Serialize_Members(
+			std::make_pair("m_positionOffset", m_positionOffset),
+			std::make_pair("m_extent", m_extent),
+			std::make_pair("m_min", m_min),
+			std::make_pair("m_max", m_max),
+			std::make_pair("m_cameraCollision", m_cameraCollision)
+		);
+	}
+	inline void deserialize(const std::vector<char>& data) noexcept {
+		Serializer::Deserialize_Members(data,
+			std::make_pair("m_positionOffset", &m_positionOffset),
+			std::make_pair("m_extent", &m_extent),
+			std::make_pair("m_min", &m_min),
+			std::make_pair("m_max", &m_max),
+			std::make_pair("m_cameraCollision", &m_cameraCollision)
+		);
+	}
 };
 
 constexpr static const char colliderName[] = "Collider_Component";
@@ -80,46 +127,20 @@ struct Collider_Component final : public ecsComponent<Collider_Component, collid
 	btCollisionShape* m_shape = nullptr;
 
 	inline std::vector<char> serialize() noexcept {
-		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
-			sizeof(float) + sizeof(float) + sizeof(btScalar);
-		std::vector<char> data(propSize);
-		void* ptr = &data[0];
-
-		const auto nameCount = (int)m_modelName.size();
-		std::memcpy(ptr, &nameCount, sizeof(int));
-		ptr = static_cast<char*>(ptr) + sizeof(int);
-		std::memcpy(ptr, m_modelName.data(), m_modelName.size());
-		ptr = static_cast<char*>(ptr) + m_modelName.size();
-
-		std::memcpy(ptr, &m_restitution, sizeof(float));
-		ptr = static_cast<char*>(ptr) + sizeof(float);
-		std::memcpy(ptr, &m_friction, sizeof(float));
-		ptr = static_cast<char*>(ptr) + sizeof(float);
-		std::memcpy(ptr, &m_mass, sizeof(btScalar));
-		ptr = static_cast<char*>(ptr) + sizeof(btScalar);
-
-		return data;
+		return Serializer::Serialize_Members(
+			std::make_pair("m_modelName", m_modelName),
+			std::make_pair("m_restitution", m_restitution),
+			std::make_pair("m_friction", m_friction),
+			std::make_pair("m_mass", m_mass)
+		);
 	}
-	inline void deserialize(const char* data) noexcept {
-		// Want a pointer that I can increment, promise to not change underlying data
-		auto ptr = const_cast<char*>(&data[0]);
-
-		int nameCount(0ull);
-		std::memcpy(&nameCount, ptr, sizeof(int));
-		ptr = static_cast<char*>(ptr) + sizeof(int);
-		char* modelName = new char[size_t(nameCount) + 1ull];
-		std::fill(&modelName[0], &modelName[nameCount + 1], '\0');
-		std::memcpy(&modelName[0], ptr, nameCount);
-		ptr = static_cast<char*>(ptr) + (size_t)nameCount;
-		m_modelName = std::string(modelName);
-		delete[] modelName;
-
-		std::memcpy(&m_restitution, ptr, sizeof(float));
-		ptr = static_cast<char*>(ptr) + sizeof(float);
-		std::memcpy(&m_friction, ptr, sizeof(float));
-		ptr = static_cast<char*>(ptr) + sizeof(float);
-		std::memcpy(&m_mass, ptr, sizeof(btScalar));
-		ptr = static_cast<char*>(ptr) + sizeof(btScalar);
+	inline void deserialize(const std::vector<char>& data) noexcept {
+		Serializer::Deserialize_Members(data,
+			std::make_pair("m_modelName", &m_modelName),
+			std::make_pair("m_restitution", &m_restitution),
+			std::make_pair("m_friction", &m_friction),
+			std::make_pair("m_mass", &m_mass)
+		);
 	}
 };
 
@@ -136,38 +157,16 @@ struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 	GLuint m_materialID = 0u;
 
 	inline std::vector<char> serialize() noexcept {
-		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
-			sizeof(unsigned int);
-		std::vector<char> data(propSize);
-		void* ptr = &data[0];
-
-		const auto nameCount = (int)m_modelName.size();
-		std::memcpy(ptr, &nameCount, sizeof(int));
-		ptr = static_cast<char*>(ptr) + sizeof(int);
-		std::memcpy(ptr, m_modelName.data(), m_modelName.size());
-		ptr = static_cast<char*>(ptr) + m_modelName.size();
-
-		std::memcpy(ptr, &m_skin, sizeof(unsigned int));
-		ptr = static_cast<char*>(ptr) + sizeof(unsigned int);
-
-		return data;
+		return Serializer::Serialize_Members(
+			std::make_pair("m_modelName", m_modelName),
+			std::make_pair("m_skin", m_skin)
+		);
 	}
-	inline void deserialize(const char* data) noexcept {
-		// Want a pointer that I can increment, promise to not change underlying data
-		auto ptr = const_cast<char*>(&data[0]);
-
-		int nameCount(0ull);
-		std::memcpy(&nameCount, ptr, sizeof(int));
-		ptr = static_cast<char*>(ptr) + sizeof(int);
-		char* modelName = new char[size_t(nameCount) + 1ull];
-		std::fill(&modelName[0], &modelName[nameCount + 1], '\0');
-		std::memcpy(&modelName[0], ptr, nameCount);
-		ptr = static_cast<char*>(ptr) + (size_t)nameCount;
-		m_modelName = std::string(modelName);
-		delete[] modelName;
-
-		std::memcpy(&m_skin, ptr, sizeof(unsigned int));
-		ptr = static_cast<char*>(ptr) + sizeof(unsigned int);
+	inline void deserialize(const std::vector<char>& data) noexcept {
+		Serializer::Deserialize_Members(data,
+			std::make_pair("m_modelName", &m_modelName),
+			std::make_pair("m_skin", &m_skin)
+		);
 	}
 };
 
@@ -184,42 +183,18 @@ struct Skeleton_Component final : public ecsComponent<Skeleton_Component, skelet
 	std::vector<glm::mat4> m_transforms;
 
 	inline std::vector<char> serialize() noexcept {
-		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
-			sizeof(int) + sizeof(bool);
-		std::vector<char> data(propSize);
-		void* ptr = &data[0];
-
-		const auto nameCount = (int)m_modelName.size();
-		std::memcpy(ptr, &nameCount, sizeof(unsigned int));
-		ptr = static_cast<char*>(ptr) + sizeof(unsigned int);
-		std::memcpy(ptr, m_modelName.data(), m_modelName.size());
-		ptr = static_cast<char*>(ptr) + m_modelName.size();
-
-		std::memcpy(ptr, &m_animation, sizeof(int));
-		ptr = static_cast<char*>(ptr) + sizeof(int);
-		std::memcpy(ptr, &m_playAnim, sizeof(bool));
-		ptr = static_cast<char*>(ptr) + sizeof(bool);
-
-		return data;
+		return Serializer::Serialize_Members(
+			std::make_pair("m_modelName", m_modelName),
+			std::make_pair("m_animation", m_animation),
+			std::make_pair("m_playAnim", m_playAnim)
+		);
 	}
-	inline void deserialize(const char* data) noexcept {
-		// Want a pointer that I can increment, promise to not change underlying data
-		auto ptr = const_cast<char*>(&data[0]);
-
-		int nameCount(0ull);
-		std::memcpy(&nameCount, ptr, sizeof(int));
-		ptr = static_cast<char*>(ptr) + sizeof(int);
-		char* modelName = new char[size_t(nameCount) + 1ull];
-		std::fill(&modelName[0], &modelName[nameCount + 1], '\0');
-		std::memcpy(&modelName[0], ptr, nameCount);
-		ptr = static_cast<char*>(ptr) + (size_t)nameCount;
-		m_modelName = std::string(modelName);
-		delete[] modelName;
-
-		std::memcpy(&m_animation, ptr, sizeof(int));
-		ptr = static_cast<char*>(ptr) + sizeof(int);
-		std::memcpy(&m_playAnim, ptr, sizeof(bool));
-		ptr = static_cast<char*>(ptr) + sizeof(bool);
+	inline void deserialize(const std::vector<char>& data) noexcept {
+		Serializer::Deserialize_Members(data,
+			std::make_pair("m_modelName", &m_modelName),
+			std::make_pair("m_animation", &m_animation),
+			std::make_pair("m_playAnim", &m_playAnim)
+		);
 	}
 };
 
@@ -228,13 +203,6 @@ struct Shadow_Component final : public ecsComponent<Shadow_Component, shadowName
 	int m_shadowSpot = -1;
 	std::vector<Camera> m_cameras;
 	std::vector<float> m_updateTimes;
-
-	inline static std::vector<char> serialize() noexcept {
-		return {};
-	}
-	inline void deserialize(const char*) noexcept {
-		m_cameras = {};
-	}
 };
 
 constexpr static const char lightName[] = "Light_Component";
@@ -246,6 +214,25 @@ struct Light_Component final : public ecsComponent<Light_Component, lightName> {
 	float m_intensity = 1.0f;
 	float m_radius = 1.0f;
 	float m_cutoff = 45.0f;
+
+	inline std::vector<char> serialize() noexcept {
+		return Serializer::Serialize_Members(
+			std::make_pair("m_type", m_type),
+			std::make_pair("m_color", m_color),
+			std::make_pair("m_intensity", m_intensity),
+			std::make_pair("m_radius", m_radius),
+			std::make_pair("m_cutoff", m_cutoff)
+		);
+	}
+	inline void deserialize(const std::vector<char>& data) noexcept {
+		Serializer::Deserialize_Members(data,
+			std::make_pair("m_type", &m_type),
+			std::make_pair("m_color", &m_color),
+			std::make_pair("m_intensity", &m_intensity),
+			std::make_pair("m_radius", &m_radius),
+			std::make_pair("m_cutoff", &m_cutoff)
+		);
+	}
 };
 
 constexpr static const char reflectorName[] = "Reflector_Component";
@@ -254,13 +241,6 @@ struct Reflector_Component final : public ecsComponent<Reflector_Component, refl
 	std::vector<float> m_updateTimes;
 	float m_updateTime = 0.0f;
 	int m_cubeSpot = -1;
-
-	inline static std::vector<char> serialize() noexcept {
-		return {};
-	}
-	inline void deserialize(const char*) noexcept {
-		m_cameras = {};
-	}
 };
 
 #endif // ECS_COMPONENT_TYPES_H

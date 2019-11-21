@@ -769,7 +769,7 @@ void LevelEditor_Module::deleteSelection() noexcept
 			auto& ecsWorld = m_editor->getWorld();
 			size_t dataRead(0ull), uuidIndex(0ull);
 			while (dataRead < m_data.size() && uuidIndex < m_uuids.size())
-				ecsWorld.deserializeEntity(m_data.data(), m_data.size(), dataRead, EntityHandle(), m_uuids[uuidIndex]);
+				ecsWorld.deserializeEntity(m_data, m_data.size(), dataRead, EntityHandle(), m_uuids[uuidIndex]);
 		}
 	};
 
@@ -831,7 +831,7 @@ void LevelEditor_Module::deleteComponent(const EntityHandle& entityHandle, const
 		virtual void undo() noexcept override final {
 			if (m_componentData.size()) {
 				size_t dataRead(0ull);
-				const auto& copy = ecsBaseComponent::from_buffer(m_componentData.data(), dataRead);
+				const auto& copy = ecsBaseComponent::from_buffer(m_componentData, dataRead);
 				m_editor->getWorld().makeComponent(m_entityHandle, copy.get(), m_componentHandle);
 			}
 		}
@@ -861,7 +861,7 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const En
 				// Ensure we have a vector large enough to hold all UUIDs, but maintain previous data
 				m_uuids.resize(std::max<size_t>(m_uuids.size(), handleCount + 1ull));
 				const auto desiredHandle = m_uuids[handleCount].isValid() ? m_uuids[handleCount] : (EntityHandle)(ecsWorld.generateUUID());
-				const auto& [entityHandle, entity] = ecsWorld.deserializeEntity(m_data.data(), m_data.size(), dataRead, m_parentUUID, desiredHandle);
+				const auto& [entityHandle, entity] = ecsWorld.deserializeEntity(m_data, m_data.size(), dataRead, m_parentUUID, desiredHandle);
 				if (entityHandle.isValid() && entity) {
 					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);

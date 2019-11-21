@@ -163,7 +163,7 @@ public:
 	@param	parentHandle		optional handle to parent entity, designed to be called recursively if entity has children.
 	@param	desiredHandle		optional specific handle to use, if empty will use handle held in data stream.
 	@return						a handle and a pointer pair to the entity created. */
-	[[maybe_unused]] std::pair<EntityHandle, ecsEntity*> deserializeEntity(const char* data, const size_t& dataSize, size_t& dataRead, const EntityHandle& parentHandle = EntityHandle(), const EntityHandle& desiredHandle = EntityHandle()) noexcept;
+	[[maybe_unused]] std::pair<EntityHandle, ecsEntity*> deserializeEntity(const std::vector<char>& data, const size_t& dataSize, size_t& dataRead, const EntityHandle& parentHandle = EntityHandle(), const EntityHandle& desiredHandle = EntityHandle()) noexcept;
 	/** Try to find a component ID based on the component ID.
 	@param	name				the component class name to search for.
 	@return						optional component ID on success, nullptr on failure. */
