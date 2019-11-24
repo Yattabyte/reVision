@@ -13,12 +13,13 @@ public:
 	// Public (De)Constructors
 	/** Destroy this ECS module. */
 	inline ~ECS_Module() = default;
-	/** Construct a ECS module. */
-	inline ECS_Module() = default;
+	/** Construct a ECS module.
+	@param	engine		the currently active engine. */
+	inline explicit ECS_Module(Engine* engine) : Engine_Module(engine) {}
 
 
 	// Public Interface Implementations
-	virtual void initialize(Engine* engine) noexcept override final;
+	virtual void initialize() noexcept override final;
 	virtual void deinitialize() noexcept override final;
 
 

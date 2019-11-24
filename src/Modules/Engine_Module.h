@@ -11,13 +11,14 @@ public:
 	// Public (De)Constructors
 	/** Destroy this engine module. */
 	inline virtual ~Engine_Module() = default;
-	/** Construct an engine module. */
-	inline Engine_Module() = default;
+	/** Construct an engine module.
+	@param	engine		the currently active engine. */
+	inline explicit Engine_Module(Engine* engine) { m_engine = engine; }
 
 
 	// Public Interface Declarations
 	/** Initialize the module. */
-	inline virtual void initialize(Engine* engine) noexcept { m_engine = engine; };
+	inline virtual void initialize() noexcept {};
 	/** De-initialize the module. */
 	inline virtual void deinitialize() noexcept {}
 

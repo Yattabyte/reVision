@@ -1,7 +1,7 @@
 #include "Modules/ECS/ECS_M.h"
 
 
-void ECS_Module::initialize(Engine* /*unused*/) noexcept
+void ECS_Module::initialize() noexcept
 {
 }
 

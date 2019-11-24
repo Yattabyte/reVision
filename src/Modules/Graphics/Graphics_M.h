@@ -22,12 +22,13 @@ public:
 	// Public (De)Constructors
 	/** Destroy this graphics rendering module. */
 	inline ~Graphics_Module() = default;
-	/** Construct a graphics rendering module. */
-	inline Graphics_Module() = default;
+	/** Construct a graphics rendering module.
+	@param	engine		the currently active engine. */
+	inline explicit Graphics_Module(Engine* engine) : Engine_Module(engine) {}
 
 
 	// Public Interface Implementation
-	virtual void initialize(Engine* engine) noexcept override final;
+	virtual void initialize() noexcept override final;
 	virtual void deinitialize() noexcept override final;
 
 

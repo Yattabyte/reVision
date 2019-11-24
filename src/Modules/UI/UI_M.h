@@ -12,19 +12,19 @@
 #include <vector>
 
 
-
 /** A module responsible for the overall user interface. */
 class UI_Module final : public Engine_Module {
 public:
 	// Public (De)Constructors
 	/** Destroy the UI module. */
 	inline ~UI_Module() = default;
-	/** Construct a UI module. */
-	inline UI_Module() = default;
+	/** Construct a UI module.  
+	@param	engine		the currently active engine. */
+	inline explicit UI_Module(Engine* engine) : Engine_Module(engine) {}
 
 
 	// Public Interface Implementations
-	virtual void initialize(Engine* engine) noexcept override final;
+	virtual void initialize() noexcept override final;
 	virtual void deinitialize() noexcept override final;
 
 

@@ -3,9 +3,9 @@
 #include "Engine.h"
 
 
-void UI_Module::initialize(Engine* engine) noexcept
+void UI_Module::initialize() noexcept
 {
-	Engine_Module::initialize(engine);
+	Engine_Module::initialize();
 	m_engine->getManager_Messages().statement("Loading Module: User Interface...");
 
 	// Preferences

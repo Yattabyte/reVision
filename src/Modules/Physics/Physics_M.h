@@ -13,12 +13,15 @@
 class Physics_Module final : public Engine_Module {
 public:
 	// Public (De)Constructors
+	/** Destroy this physics module. */
 	inline ~Physics_Module() = default;
-	inline Physics_Module() = default;
+	/** Construct a physics module. 
+	@param	engine		the currently active engine. */
+	inline explicit Physics_Module(Engine* engine) : Engine_Module(engine) {}
 
 
 	// Public Interface Implementations
-	virtual void initialize(Engine* engine) noexcept override final;
+	virtual void initialize() noexcept override final;
 	virtual void deinitialize() noexcept override final;
 
 

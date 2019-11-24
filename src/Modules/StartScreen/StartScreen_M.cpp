@@ -4,9 +4,9 @@
 #include "Engine.h"
 
 
-void StartScreen_Module::initialize(Engine* engine) noexcept
+void StartScreen_Module::initialize() noexcept
 {
-	Engine_Module::initialize(engine);
+	Engine_Module::initialize();
 	m_engine->getManager_Messages().statement("Loading Module: Starting Screen...");
 
 	// Create Main Menu

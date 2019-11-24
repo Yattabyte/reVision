@@ -15,12 +15,13 @@ public:
 	// Public (De)Constructors
 	/** Destroy this start screen module. */
 	inline ~StartScreen_Module() = default;
-	/** Construct a start screen module. */
-	inline StartScreen_Module() = default;
+	/** Construct a start screen module. 
+	@param	engine		the currently active engine. */
+	inline explicit StartScreen_Module(Engine* engine) : Engine_Module(engine) {}
 
 
 	// Public Interface Implementation
-	virtual void initialize(Engine* engine) noexcept override final;
+	virtual void initialize() noexcept override final;
 	virtual void deinitialize() noexcept override final;
 
 

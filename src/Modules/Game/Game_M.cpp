@@ -9,21 +9,21 @@
 #include "Engine.h"
 
 
-void Game_Module::initialize(Engine* engine) noexcept
+void Game_Module::initialize() noexcept
 {
-	Engine_Module::initialize(engine);
+	Engine_Module::initialize();
 	m_engine->getManager_Messages().statement("Loading Module: Game...");
 
 	// Initialize ECS Systems
-	m_Systems.makeSystem<PlayerSpawn_System>(engine, this);
-	m_Systems.makeSystem<PlayerFreeLook_System>(engine);
+	m_Systems.makeSystem<PlayerSpawn_System>(m_engine, this);
+	m_Systems.makeSystem<PlayerFreeLook_System>(m_engine);
 
 	// Create Overlay Effects
-	m_loadingRing = std::make_shared<LoadingIndicator>(engine);
-	m_frameTime = std::make_shared<Frametime_Counter>(engine);
+	m_loadingRing = std::make_shared<LoadingIndicator>(m_engine);
+	m_frameTime = std::make_shared<Frametime_Counter>(m_engine);
 
 	// Create Pause Menu
-	auto pauseMenu = std::make_shared<PauseMenu>(engine);
+	auto pauseMenu = std::make_shared<PauseMenu>(m_engine);
 	m_pauseMenu = pauseMenu;
 	pauseMenu->addCallback((int)PauseMenu::Interact::on_resume_game, [&]() {
 		showPauseMenu(false);

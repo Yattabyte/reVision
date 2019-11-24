@@ -16,33 +16,33 @@
 #include <fstream>
 
 
-void LevelEditor_Module::initialize(Engine* engine) noexcept
+void LevelEditor_Module::initialize() noexcept
 {
-	Engine_Module::initialize(engine);
+	Engine_Module::initialize();
 	m_engine->getManager_Messages().statement("Loading Module: Level Editor...");
 
 	// Update indicator
 	*m_aliveIndicator = true;
 
 	// UI
-	m_editorInterface = std::make_shared<Editor_Interface>(engine, this);
+	m_editorInterface = std::make_shared<Editor_Interface>(m_engine, this);
 
 	// Gizmos
-	m_mouseGizmo = std::make_shared<Mouse_Gizmo>(engine, this);
+	m_mouseGizmo = std::make_shared<Mouse_Gizmo>(m_engine, this);
 
 	// Systems
-	m_systemOutline = std::make_shared<Outline_System>(engine, this);
-	m_systemSelClearer = std::make_shared<ClearSelection_System>(engine, this);
+	m_systemOutline = std::make_shared<Outline_System>(m_engine, this);
+	m_systemSelClearer = std::make_shared<ClearSelection_System>(m_engine, this);
 
 	// Assets
-	m_shader = Shared_Shader(engine, "Editor\\editorCopy");
-	m_shapeQuad = Shared_Auto_Model(engine, "quad");
+	m_shader = Shared_Shader(m_engine, "Editor\\editorCopy");
+	m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 		m_indirectQuad = IndirectDraw<1>((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 
 	// Preferences
-	auto& preferences = engine->getPreferenceState();
+	auto& preferences = m_engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {

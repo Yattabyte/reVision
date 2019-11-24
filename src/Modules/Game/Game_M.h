@@ -22,12 +22,13 @@ public:
 	// Public (De)Constructors
 	/** Destroy this game module. */
 	inline ~Game_Module() = default;
-	/** Construct a game module. */
-	inline Game_Module() = default;
+	/** Construct a game module.
+	@param	engine		the currently active engine. */
+	inline explicit Game_Module(Engine* engine) : Engine_Module(engine) {}
 
 
 	// Public Interface Implementation
-	virtual void initialize(Engine* engine) noexcept override final;
+	virtual void initialize() noexcept override final;
 	virtual void deinitialize() noexcept override final;
 
 
