@@ -24,7 +24,7 @@ public:
 	inline ~Graphics_Module() = default;
 	/** Construct a graphics rendering module.
 	@param	engine		the currently active engine. */
-	inline explicit Graphics_Module(Engine* engine) : Engine_Module(engine) {}
+	inline explicit Graphics_Module(Engine& engine) : Engine_Module(engine) {}
 
 
 	// Public Interface Implementation

@@ -17,7 +17,7 @@ public:
 	inline ~StartScreen_Module() = default;
 	/** Construct a start screen module. 
 	@param	engine		the currently active engine. */
-	inline explicit StartScreen_Module(Engine* engine) : Engine_Module(engine) {}
+	inline explicit StartScreen_Module(Engine& engine) : Engine_Module(engine) {}
 
 
 	// Public Interface Implementation

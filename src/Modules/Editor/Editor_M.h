@@ -26,7 +26,7 @@ public:
 	inline ~LevelEditor_Module() = default;
 	/** Construct a game module.
 	@param	engine		the currently active engine. */
-	inline explicit LevelEditor_Module(Engine* engine) : Engine_Module(engine) {}
+	inline explicit LevelEditor_Module(Engine& engine) : Engine_Module(engine) {}
 
 
 	// Public Interface Implementation

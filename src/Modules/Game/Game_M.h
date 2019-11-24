@@ -24,7 +24,7 @@ public:
 	inline ~Game_Module() = default;
 	/** Construct a game module.
 	@param	engine		the currently active engine. */
-	inline explicit Game_Module(Engine* engine) : Engine_Module(engine) {}
+	inline explicit Game_Module(Engine& engine) : Engine_Module(engine) {}
 
 
 	// Public Interface Implementation

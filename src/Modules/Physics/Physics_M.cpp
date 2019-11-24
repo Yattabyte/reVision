@@ -6,7 +6,7 @@
 void Physics_Module::initialize() noexcept
 {
 	Engine_Module::initialize();
-	m_engine->getManager_Messages().statement("Loading Module: Physics...");
+	m_engine.getManager_Messages().statement("Loading Module: Physics...");
 
 	m_broadphase = new btDbvtBroadphase();
 	m_collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -16,13 +16,13 @@ void Physics_Module::initialize() noexcept
 	m_world->setGravity(btVector3(0, btScalar(-9.8), 0));
 
 	// Physics Systems
-	m_physicsSystems.makeSystem<PhysicsSync_System>(m_engine, m_world);
+	m_physicsSystems.makeSystem<PhysicsSync_System>(&m_engine, m_world);
 }
 
 void Physics_Module::deinitialize() noexcept
 {
 	// Update indicator
-	m_engine->getManager_Messages().statement("Unloading Module: Physics...");
+	m_engine.getManager_Messages().statement("Unloading Module: Physics...");
 	*m_aliveIndicator = false;
 
 	// Delete Bullet Physics simulation

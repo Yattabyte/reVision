@@ -34,15 +34,15 @@ Engine::~Engine()
 
 Engine::Engine() :
 	// Initialize engine-dependent members first
-	m_preferenceState(this),
-	m_inputBindings(this),
-	m_moduleECS(this),
-	m_moduleStartScreen(this),
-	m_moduleGame(this),
-	m_moduleEditor(this),
-	m_moduleGraphics(this),
-	m_moduleUI(this),
-	m_modulePhysics(this)
+	m_preferenceState(*this),
+	m_inputBindings(*this),
+	m_moduleECS(*this),
+	m_moduleStartScreen(*this),
+	m_moduleGame(*this),
+	m_moduleEditor(*this),
+	m_moduleGraphics(*this),
+	m_moduleUI(*this),
+	m_modulePhysics(*this)
 {
 	// Initialize aN OGL context
 	initWindow();

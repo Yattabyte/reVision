@@ -8,6 +8,7 @@
 #include "Engine.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
+#include "glm/gtx/rotate_vector.hpp"
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
 /** An ECS system allowing the user to ray-pick entities by selecting against their components. */
@@ -66,11 +67,14 @@ public:
 		m_engine->getModule_Physics().getWorld()->rayTest(origin, direction, closestResults);
 		void* closestPhysicsShape = nullptr;
 		float closetstPhysicsHit = FLT_MAX;
+		glm::vec3 intersectionNormal(0, 1, 0);
 		if (closestResults.hasHit()) {
 			const auto p = origin.lerp(direction, closestResults.m_closestHitFraction);
 			closetstPhysicsHit = glm::distance(ray_origin, glm::vec3(p.x(), p.y(), p.z()));
 			// We won't change this at all, we just need the pointer address
 			closestPhysicsShape = const_cast<btCollisionShape*>(closestResults.m_collisionObject->getCollisionShape());
+			intersectionNormal = glm::vec3(closestResults.m_hitNormalWorld.x(), closestResults.m_hitNormalWorld.y(), closestResults.m_hitNormalWorld.z());
+			intersectionNormal = glm::vec3(1, 0, 0);
 		}
 
 		float closestDistance = FLT_MAX;
@@ -101,7 +105,7 @@ public:
 			}
 			else if (prop && ((hasBoundingShape && result) || (!hasBoundingShape))) {
 				distanceFromScreen = FLT_MAX;
-				result = RayProp(transformComponent, prop, ray_origin, ray_direction, distanceFromScreen, confidence);
+				result = RayProp(transformComponent, prop, ray_origin, ray_direction, intersectionNormal, distanceFromScreen, confidence);
 			}
 
 			// Find the closest best match
@@ -115,6 +119,7 @@ public:
 		}
 		if (found) {
 			m_intersectionTransform.m_position = ray_origin + closestDistance * ray_direction;
+			m_intersectionTransform.m_orientation = glm::orientation(intersectionNormal, glm::vec3(0, 1, 0));
 			m_intersectionTransform.update();
 		}
 	}
@@ -134,10 +139,11 @@ private:
 	@param	prop					the prop component of interest.
 	@param	ray_origin				the mouse ray's origin.
 	@param	ray_direction			the mouse ray's direction.
+	@param	normal					reference updated with the intersection normal.
 	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
 	@param	confidence				reference updated with the confidence level for this function.
 	@return							true on successful intersection, false if disjoint. */
-	static bool RayProp(Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept {
+	static bool RayProp(Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence) noexcept {
 		bool intersection = false;
 		if (prop->m_model && prop->m_model->existsYet()) {
 			float distance = FLT_MAX;
@@ -151,7 +157,7 @@ private:
 				glm::vec2 unused;
 				if (RayTriangleIntersection(
 					ray_origin, ray_direction,
-					glm::vec3(v0), glm::vec3(v1), glm::vec3(v2), unused,
+					glm::vec3(v0), glm::vec3(v1), glm::vec3(v2), normal, unused,
 					distance
 				)) {
 					distanceFromScreen = distance;

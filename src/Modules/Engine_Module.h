@@ -13,7 +13,7 @@ public:
 	inline virtual ~Engine_Module() = default;
 	/** Construct an engine module.
 	@param	engine		the currently active engine. */
-	inline explicit Engine_Module(Engine* engine) { m_engine = engine; }
+	inline explicit Engine_Module(Engine& engine) : m_engine(engine) {}
 
 
 	// Public Interface Declarations
@@ -24,7 +24,7 @@ public:
 
 
 protected:
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 };
 
 #endif // ENGINE_MODULE_H

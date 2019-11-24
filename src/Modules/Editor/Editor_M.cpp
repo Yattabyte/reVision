@@ -19,30 +19,30 @@
 void LevelEditor_Module::initialize() noexcept
 {
 	Engine_Module::initialize();
-	m_engine->getManager_Messages().statement("Loading Module: Level Editor...");
+	m_engine.getManager_Messages().statement("Loading Module: Level Editor...");
 
 	// Update indicator
 	*m_aliveIndicator = true;
 
 	// UI
-	m_editorInterface = std::make_shared<Editor_Interface>(m_engine, this);
+	m_editorInterface = std::make_shared<Editor_Interface>(&m_engine, this);
 
 	// Gizmos
-	m_mouseGizmo = std::make_shared<Mouse_Gizmo>(m_engine, this);
+	m_mouseGizmo = std::make_shared<Mouse_Gizmo>(&m_engine, this);
 
 	// Systems
-	m_systemOutline = std::make_shared<Outline_System>(m_engine, this);
-	m_systemSelClearer = std::make_shared<ClearSelection_System>(m_engine, this);
+	m_systemOutline = std::make_shared<Outline_System>(&m_engine, this);
+	m_systemSelClearer = std::make_shared<ClearSelection_System>(&m_engine, this);
 
 	// Assets
-	m_shader = Shared_Shader(m_engine, "Editor\\editorCopy");
-	m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
+	m_shader = Shared_Shader(&m_engine, "Editor\\editorCopy");
+	m_shapeQuad = Shared_Auto_Model(&m_engine, "quad");
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 		m_indirectQuad = IndirectDraw<1>((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 
 	// Preferences
-	auto& preferences = m_engine->getPreferenceState();
+	auto& preferences = m_engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
@@ -87,7 +87,7 @@ void LevelEditor_Module::initialize() noexcept
 
 void LevelEditor_Module::deinitialize() noexcept
 {
-	m_engine->getManager_Messages().statement("Unloading Module: Level Editor...");
+	m_engine.getManager_Messages().statement("Unloading Module: Level Editor...");
 
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -123,10 +123,10 @@ void LevelEditor_Module::frameTick(const float& deltaTime) noexcept
 		m_editorInterface->tick(deltaTime);
 
 		// Just apply physics systems, don't update simulation
-		m_engine->getModule_Physics().updateSystems(m_world, deltaTime);
+		m_engine.getModule_Physics().updateSystems(m_world, deltaTime);
 
 		// Render world into default FBO
-		m_engine->getModule_Graphics().renderWorld(m_world, deltaTime);
+		m_engine.getModule_Graphics().renderWorld(m_world, deltaTime);
 
 		// Overlay editor interface over default FBO
 		if (m_shapeQuad->existsYet() && m_shader->existsYet()) {
@@ -151,7 +151,7 @@ void LevelEditor_Module::frameTick(const float& deltaTime) noexcept
 			m_autoSaveCounter += deltaTime;
 			if (m_autoSaveCounter > m_autosaveInterval) {
 				m_autoSaveCounter -= m_autosaveInterval;
-				m_engine->getManager_Messages().statement("Autosaving Map...");
+				m_engine.getManager_Messages().statement("Autosaving Map...");
 				std::filesystem::path currentPath(m_currentLevelName);
 				currentPath.replace_extension(".autosave");
 				saveLevel_Internal(currentPath.string());
@@ -179,7 +179,7 @@ Transform LevelEditor_Module::getSpawnTransform() const noexcept
 
 const glm::vec3& LevelEditor_Module::getCameraPosition() const noexcept
 {
-	return m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition;
+	return m_engine.getModule_Graphics().getClientCamera()->get()->EyePosition;
 }
 
 void LevelEditor_Module::toggleAddToSelection(const EntityHandle& entityHandle) noexcept
@@ -235,7 +235,7 @@ void LevelEditor_Module::showEditor() noexcept
 void LevelEditor_Module::exit() noexcept
 {
 	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() {
-		m_engine->goToMainMenu();
+		m_engine.goToMainMenu();
 		m_currentLevelName = "My Map.bmap";
 		m_unsavedChanges = false;
 		m_undoStack = {};
@@ -295,7 +295,7 @@ void LevelEditor_Module::openLevel(const std::string& name) noexcept
 			addToRecentList(name);
 		}
 		else
-			m_engine->getManager_Messages().error("Cannot open the level: " + name);
+			m_engine.getManager_Messages().error("Cannot open the level: " + name);
 	}
 }
 
@@ -332,9 +332,9 @@ void LevelEditor_Module::saveLevel(const std::string& name) noexcept
 void LevelEditor_Module::saveLevel_Internal(const std::string& name) noexcept
 {
 	if (Level_IO::Export_BMap(name, m_world)) 
-		m_engine->getManager_Messages().statement("Level saved successfully.");
+		m_engine.getManager_Messages().statement("Level saved successfully.");
 	else
-		m_engine->getManager_Messages().error("Cannot save the level: " + name);	
+		m_engine.getManager_Messages().error("Cannot save the level: " + name);	
 }
 
 void LevelEditor_Module::saveLevel() noexcept
@@ -422,7 +422,7 @@ void LevelEditor_Module::addToRecentList(const std::string& name) noexcept
 	// Dump recent-list data to disk
 	std::ofstream file(Engine::Get_Current_Dir() + "\\Maps\\recent.editor", std::ios::beg);
 	if (!file.is_open())
-		m_engine->getManager_Messages().error("Cannot write the recent level list to disk!");
+		m_engine.getManager_Messages().error("Cannot write the recent level list to disk!");
 	else
 		for (const auto& level : m_recentLevels)
 			file << level << "\n";
@@ -435,7 +435,7 @@ void LevelEditor_Module::populateRecentList() noexcept
 	m_recentLevels.clear();
 	std::ifstream file(Engine::Get_Current_Dir() + "\\Maps\\recent.editor", std::ios::beg);
 	if (!file.is_open())
-		m_engine->getManager_Messages().error("Cannot read the recent level list from disk!");
+		m_engine.getManager_Messages().error("Cannot read the recent level list from disk!");
 	else {
 		std::string level;
 		while (std::getline(file, level))
@@ -521,7 +521,7 @@ void LevelEditor_Module::clearSelection() noexcept
 	};
 
 	if (getSelection().size())
-		doReversableAction(std::make_shared<Clear_Selection_Command>(m_engine, this));
+		doReversableAction(std::make_shared<Clear_Selection_Command>(&m_engine, this));
 }
 
 void LevelEditor_Module::selectAll() noexcept
@@ -583,7 +583,7 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles) 
 	};
 
 	if (handles.size())
-		doReversableAction(std::make_shared<Set_Selection_Command>(m_engine, this, handles));
+		doReversableAction(std::make_shared<Set_Selection_Command>(&m_engine, this, handles));
 }
 
 const std::vector<EntityHandle>& LevelEditor_Module::getSelection() const noexcept
@@ -636,7 +636,7 @@ void LevelEditor_Module::mergeSelection() noexcept
 	};
 
 	if (m_mouseGizmo->getSelection().size())
-		doReversableAction(std::make_shared<Merge_Selection_Command>(m_engine, this));
+		doReversableAction(std::make_shared<Merge_Selection_Command>(&m_engine, this));
 }
 
 void LevelEditor_Module::groupSelection() noexcept
@@ -685,7 +685,7 @@ void LevelEditor_Module::groupSelection() noexcept
 	};
 
 	if (m_mouseGizmo->getSelection().size())
-		doReversableAction(std::make_shared<Group_Selection_Command>(m_engine, this));
+		doReversableAction(std::make_shared<Group_Selection_Command>(&m_engine, this));
 }
 
 void LevelEditor_Module::ungroupSelection() noexcept
@@ -721,7 +721,7 @@ void LevelEditor_Module::ungroupSelection() noexcept
 	};
 
 	if (m_mouseGizmo->getSelection().size())
-		doReversableAction(std::make_shared<Ungroup_Selection_Command>(m_engine, this));
+		doReversableAction(std::make_shared<Ungroup_Selection_Command>(&m_engine, this));
 }
 
 void LevelEditor_Module::makePrefab() noexcept
@@ -775,7 +775,7 @@ void LevelEditor_Module::deleteSelection() noexcept
 
 	auto& selection = m_mouseGizmo->getSelection();
 	if (selection.size())
-		doReversableAction(std::make_shared<Delete_Selection_Command>(m_engine, this, selection));
+		doReversableAction(std::make_shared<Delete_Selection_Command>(&m_engine, this, selection));
 }
 
 void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const char* name) noexcept
@@ -807,7 +807,7 @@ void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const c
 		}
 	};
 
-	doReversableAction(std::make_shared<Spawn_Component_Command>(m_engine, this, entityHandle, name));
+	doReversableAction(std::make_shared<Spawn_Component_Command>(&m_engine, this, entityHandle, name));
 }
 
 void LevelEditor_Module::deleteComponent(const EntityHandle& entityHandle, const int& componentID) noexcept
@@ -838,7 +838,7 @@ void LevelEditor_Module::deleteComponent(const EntityHandle& entityHandle, const
 	};
 
 	if (const auto* component = getWorld().getComponent(entityHandle, componentID))
-		doReversableAction(std::make_shared<Delete_Component_Command>(m_engine, this, entityHandle, component->m_handle, componentID));
+		doReversableAction(std::make_shared<Delete_Component_Command>(&m_engine, this, entityHandle, component->m_handle, componentID));
 }
 
 void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const EntityHandle& parentUUID) noexcept
@@ -887,7 +887,7 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const En
 	};
 
 	if (entityData.size())
-		doReversableAction(std::make_shared<Spawn_Command>(m_engine, this, entityData, parentUUID));
+		doReversableAction(std::make_shared<Spawn_Command>(&m_engine, this, entityData, parentUUID));
 }
 
 void LevelEditor_Module::bindFBO() noexcept

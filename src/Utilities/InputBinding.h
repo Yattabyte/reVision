@@ -17,7 +17,7 @@ public:
 	~InputBinding() noexcept;
 	/** Construct a key-binding.
 	@param	engine		the engine */
-	explicit InputBinding(Engine* engine) noexcept;
+	inline explicit InputBinding(Engine& engine) noexcept : m_engine(engine) {}
 
 
 	// Public Methods
@@ -33,7 +33,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	Shared_Config m_config;
 };
 

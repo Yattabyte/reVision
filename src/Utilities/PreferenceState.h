@@ -23,7 +23,7 @@ public:
 	/** Construct the preference state.
 	@param	engine		the engine
 	@param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
-	inline explicit PreferenceState(Engine* engine, const std::string& filename = "preferences") noexcept : m_engine(engine) {
+	inline explicit PreferenceState(Engine& engine, const std::string& filename = "preferences") noexcept : m_engine(engine) {
 		loadFile(filename);
 	}
 
@@ -124,7 +124,7 @@ public:
 	/** Loads a preference file from disk.
 	@param	filename	the relative path to the preference file to load */
 	inline void loadFile(const std::string& filename) noexcept {
-		m_preferences = Shared_Config(m_engine, filename, PreferenceState::Preference_Strings(), false);
+		m_preferences = Shared_Config(&m_engine, filename, PreferenceState::Preference_Strings(), false);
 	}
 	/** Saves the preference file to disk, using the same filename as when loaded. */
 	inline void save() noexcept {
@@ -179,7 +179,7 @@ public:
 
 
 private:
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	Shared_Config m_preferences;
 	std::map<Preference, std::vector<std::pair<std::shared_ptr<bool>, std::function<void(float)>>>> m_callbacks;
 };

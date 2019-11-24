@@ -4,6 +4,7 @@
 
 #include "glm/glm.hpp"
 #include "glm/gtx/intersect.hpp"
+#include "glm/gtx/normal.hpp"
 
 
 static bool RayPlaneIntersection(
@@ -22,10 +23,16 @@ static bool RayTriangleIntersection(
 	const glm::vec3& v0,
 	const glm::vec3& v1,
 	const glm::vec3& v2,
+	glm::vec3& normal,
 	glm::vec2& baryPos,
 	float& intersectionDistance
 ) noexcept {
-	return glm::intersectRayTriangle(ray_origin, ray_direction, v0, v1, v2, baryPos, intersectionDistance);
+	const bool result = glm::intersectRayTriangle(ray_origin, ray_direction, v0, v1, v2, baryPos, intersectionDistance);
+	if (result) {
+		normal = -glm::triangleNormal(v0, v1, v2);
+		return true;
+	}
+	return false;
 }
 
 static bool RayOOBBIntersection(

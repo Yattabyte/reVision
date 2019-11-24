@@ -17,7 +17,7 @@ public:
 	inline ~Physics_Module() = default;
 	/** Construct a physics module. 
 	@param	engine		the currently active engine. */
-	inline explicit Physics_Module(Engine* engine) : Engine_Module(engine) {}
+	inline explicit Physics_Module(Engine& engine) : Engine_Module(engine) {}
 
 
 	// Public Interface Implementations

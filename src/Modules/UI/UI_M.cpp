@@ -6,10 +6,10 @@
 void UI_Module::initialize() noexcept
 {
 	Engine_Module::initialize();
-	m_engine->getManager_Messages().statement("Loading Module: User Interface...");
+	m_engine.getManager_Messages().statement("Loading Module: User Interface...");
 
 	// Preferences
-	auto& preferences = m_engine->getPreferenceState();
+	auto& preferences = m_engine.getPreferenceState();
 	constexpr static auto calcOthoProj = [](const glm::ivec2& renderSize, StaticBuffer& projectionBuffer) {
 		const glm::mat4 proj = glm::ortho<float>(0.0f, (float)renderSize.x, 0.0f, (float)renderSize.y, -1.0f, 1.0f);
 		projectionBuffer.write(0, sizeof(glm::mat4), &proj[0][0]);
@@ -34,7 +34,7 @@ void UI_Module::initialize() noexcept
 
 void UI_Module::deinitialize() noexcept
 {
-	m_engine->getManager_Messages().statement("Unloading Module: User Interface...");
+	m_engine.getManager_Messages().statement("Unloading Module: User Interface...");
 
 	// Update indicator
 	*m_aliveIndicator = false;
