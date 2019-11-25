@@ -20,14 +20,14 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit HDR(Engine* engine) noexcept :
+	inline explicit HDR(Engine& engine) noexcept :
 		Graphics_Technique(Technique_Category::POST_PROCESSING),
 		m_engine(engine),
 		m_shaderHDR(Shared_Shader(engine, "Effects\\HDR")),
 		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
 	{
 		// Preferences
-		auto& preferences = m_engine->getPreferenceState();
+		auto& preferences = engine.getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::Preference::C_GAMMA, m_gamma);
 		preferences.addCallback(PreferenceState::Preference::C_GAMMA, m_aliveIndicator, [&](const float& f) { m_gamma = f; });
 	}
@@ -76,7 +76,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	float m_gamma = 1.0f;
 	Shared_Shader m_shaderHDR;
 	Shared_Auto_Model m_shapeQuad;

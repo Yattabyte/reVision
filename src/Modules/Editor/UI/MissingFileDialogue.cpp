@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 
-MissingFileDialogue::MissingFileDialogue(Engine* engine, LevelEditor_Module* editor) noexcept :
+MissingFileDialogue::MissingFileDialogue(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_engine(engine),
 	m_editor(editor)
 {

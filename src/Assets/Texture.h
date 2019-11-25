@@ -24,7 +24,7 @@ public:
 	@param	anisotropy		use 16x anisotropic filtering.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Texture(Engine* engine, const std::string& filename, const GLuint& type = GL_TEXTURE_2D, const bool& mipmap = false, const bool& anisotropy = false, const bool& threaded = true) noexcept;
+	explicit Shared_Texture(Engine& engine, const std::string& filename, const GLuint& type = GL_TEXTURE_2D, const bool& mipmap = false, const bool& anisotropy = false, const bool& threaded = true) noexcept;
 };
 
 /** An encapsulation of an OpenGL texture object.
@@ -39,14 +39,14 @@ public:
 	/** Construct the Texture.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Texture(Engine* engine, const std::string& filename) noexcept;
+	Texture(Engine& engine, const std::string& filename) noexcept;
 	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory).
 	@param	type			the texture type (2D, 3D, CUBEMAP, etc).
 	@param	mipmap			use mipmaps.
 	@param	anisotropy		use 16x anisotropic filtering. */
-	Texture(Engine* engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy) noexcept;
+	Texture(Engine& engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy) noexcept;
 
 
 	// Public Methods

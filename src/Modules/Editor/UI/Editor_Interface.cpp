@@ -28,7 +28,7 @@ Editor_Interface::~Editor_Interface() noexcept
 	ImGui::DestroyContext();
 }
 
-Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor) noexcept :
+Editor_Interface::Editor_Interface(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_uiHotkeys(std::make_shared<Hotkeys>(engine, editor)),
 	m_uiCamController(std::make_shared<CameraController>(engine)),
 	m_uiRotIndicator(std::make_shared<RotationIndicator>(engine)),
@@ -46,7 +46,7 @@ Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor) n
 	m_editor(editor)
 {
 	// Preferences
-	auto& preferences = engine->getPreferenceState();
+	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
@@ -72,7 +72,7 @@ Editor_Interface::Editor_Interface(Engine* engine, LevelEditor_Module* editor) n
 	ImGui::StyleColorsDark();
 
 	// Setup Platform/Renderer bindings
-	ImGui_ImplGlfw_InitForOpenGL(engine->getContext(), true);
+	ImGui_ImplGlfw_InitForOpenGL(engine.getContext(), true);
 	ImGui_ImplOpenGL3_Init("#version 150");
 }
 

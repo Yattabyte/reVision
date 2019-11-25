@@ -20,14 +20,14 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit Frametime_Counter(Engine* engine) noexcept :
+	inline explicit Frametime_Counter(Engine& engine) noexcept :
 		m_engine(engine),
 		m_shader(Shared_Shader(engine, "Utilities\\numberPrint")),
 		m_numberTexture(Shared_Texture(engine, "numbers.png", GL_TEXTURE_2D, false, false)),
 		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
 	{
 		// Preferences
-		auto& preferences = m_engine->getPreferenceState();
+		auto& preferences = m_engine.getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 		preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 		preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) { resize(glm::vec2(f, m_renderSize.y)); });
@@ -85,7 +85,7 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	Shared_Shader m_shader;
 	Shared_Texture m_numberTexture;
 	Shared_Auto_Model m_shapeQuad;

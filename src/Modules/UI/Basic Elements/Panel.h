@@ -19,7 +19,7 @@ public:
 	}
 	/** Construct a panel.
 	@param	engine		the engine to use. */
-	inline explicit Panel(Engine* engine) noexcept :
+	inline explicit Panel(Engine& engine) noexcept :
 		UI_Element(engine),
 		m_shader(Shared_Shader(engine, "UI\\Panel"))
 	{

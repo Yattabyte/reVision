@@ -17,7 +17,7 @@ public:
 	inline ~Transform_System() = default;
 	/** Construct this system.
 	@param	engine		the currently active engine. */
-	inline explicit Transform_System(Engine* engine) noexcept :
+	inline explicit Transform_System(Engine& engine) noexcept :
 		m_engine(engine)
 	{
 		addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
@@ -49,7 +49,7 @@ public:
 
 
 	// Public Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	ecsWorld* m_world = nullptr;
 };
 

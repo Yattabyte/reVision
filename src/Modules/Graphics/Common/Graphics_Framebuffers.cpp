@@ -13,7 +13,7 @@ Graphics_Framebuffers::~Graphics_Framebuffers() noexcept
 	}
 }
 
-Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2& size, Engine* engine) noexcept :
+Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2& size, Engine& engine) noexcept :
 	m_renderSize(size),
 	m_rhVolume(engine)
 {

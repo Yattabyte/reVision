@@ -26,7 +26,7 @@ public:
 	@param	category		the category of image, if available.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded = true, const Fill_Policy& policyFill = Fill_Policy::CHECKERED, const Resize_Policy& policyResize = Resize_Policy::LINEAR) noexcept;
+	explicit Shared_Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded = true, const Fill_Policy& policyFill = Fill_Policy::CHECKERED, const Resize_Policy& policyResize = Resize_Policy::LINEAR) noexcept;
 };
 
 /** Contains image data and related attributes.
@@ -42,7 +42,7 @@ public:
 	@param	specificSize	an optional size to force the image to.
 	@param	policyFill		the pixel fill policy.
 	@param	policyResize	the image resize policy. */
-	Image(Engine* engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize) noexcept;
+	Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize) noexcept;
 
 
 	// Public Attributes

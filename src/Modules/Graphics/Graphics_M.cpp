@@ -14,8 +14,8 @@ void Graphics_Module::initialize() noexcept
 	m_engine.getManager_Messages().statement("Loading Module: Graphics...");
 
 	// Asset Loading
-	m_shader = Shared_Shader(&m_engine, "Effects\\Copy Texture");
-	m_shapeQuad = Shared_Auto_Model(&m_engine, "quad");
+	m_shader = Shared_Shader(m_engine, "Effects\\Copy Texture");
+	m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
 
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
@@ -58,7 +58,7 @@ void Graphics_Module::initialize() noexcept
 		});
 
 	// Camera Setup
-	m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_renderSize, &m_engine);
+	m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_renderSize, m_engine);
 	m_clientCamera = std::make_shared<Camera>();
 	m_clientCamera->setEnabled(true);
 	m_clientCamera->get()->Dimensions = glm::vec2(m_renderSize);
@@ -67,7 +67,7 @@ void Graphics_Module::initialize() noexcept
 	genPerspectiveMatrix();
 
 	// Rendering Effects & systems
-	m_pipeline = std::make_unique<Graphics_Pipeline>(&m_engine, m_clientCamera);
+	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, m_clientCamera);
 }
 
 void Graphics_Module::deinitialize() noexcept

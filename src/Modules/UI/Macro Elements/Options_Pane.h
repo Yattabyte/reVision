@@ -20,7 +20,7 @@ public:
 	inline ~Options_Pane() = default;
 	/** Construct a options pane.
 	@param	engine		the engine to use. */
-	inline explicit Options_Pane(Engine* engine) noexcept :
+	inline explicit Options_Pane(Engine& engine) noexcept :
 		UI_Element(engine),
 		m_title(std::make_shared<Label>(engine)),
 		m_description(std::make_shared<Label>(engine)),
@@ -85,7 +85,7 @@ public:
 		// Options menu doesn't implement any custom controls, focus is on the list
 		m_layout->userAction(actionState);
 		if (actionState.isAction(ActionState::Action::UI_ESCAPE) == ActionState::State::PRESS)
-			m_engine->getModule_UI().getFocusMap()->back();
+			m_engine.getModule_UI().getFocusMap()->back();
 	}
 
 
@@ -96,7 +96,7 @@ protected:
 	@param	element		the element to add to the options menu.
 	@param	text		the text to title the option.
 	@param	description	the text to describe the option. */
-	inline void addOption(Engine* engine, std::shared_ptr<UI_Element> element, const float& ratio, const std::string& text, const std::string& description, const int& eventType, const std::function<void()>& callback) noexcept {
+	inline void addOption(Engine& engine, std::shared_ptr<UI_Element> element, const float& ratio, const std::string& text, const std::string& description, const int& eventType, const std::function<void()>& callback) noexcept {
 		auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
 		auto label = std::make_shared<Label>(engine, text);
 		label->setColor(glm::vec3(0.75f));

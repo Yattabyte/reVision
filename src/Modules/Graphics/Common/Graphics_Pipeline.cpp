@@ -22,14 +22,14 @@
 #include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
 
 
-Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camera>& clientCamera) noexcept :
+Graphics_Pipeline::Graphics_Pipeline(Engine& engine, const std::shared_ptr<Camera>& clientCamera) noexcept :
 	m_engine(engine),
 	m_sceneCameras(std::make_shared<std::vector<Camera*>>())
 {
 	// Create Systems
-	m_transHierachy = m_worldSystems.makeSystem<Transform_System>(m_engine);
+	m_transHierachy = m_worldSystems.makeSystem<Transform_System>(engine);
 	m_worldSystems.makeSystem<FrustumCull_System>(m_sceneCameras);
-	m_worldSystems.makeSystem<Skeletal_Animation_System>(m_engine);
+	m_worldSystems.makeSystem<Skeletal_Animation_System>(engine);
 	m_cameraSystems.makeSystem<CameraPerspective_System>(m_sceneCameras);
 	m_cameraSystems.makeSystem<ShadowPerspective_System>(m_sceneCameras);
 	m_cameraSystems.makeSystem<ReflectorPerspective_System>(m_sceneCameras);
@@ -40,13 +40,13 @@ Graphics_Pipeline::Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camer
 	auto directLighting = new Direct_Technique(engine, shadowing->getShadowData(), clientCamera, m_sceneCameras);
 	auto indirectLighting = new Indirect_Technique(engine, shadowing->getShadowData(), clientCamera, m_sceneCameras);
 	auto reflectorLighting = new Reflector_Technique(engine, m_sceneCameras);
-	auto skybox = new Skybox(m_engine);
-	auto ssao = new SSAO(m_engine);
-	auto ssr = new SSR(m_engine);
-	auto joinReflections = new Join_Reflections(m_engine);
-	auto bloom = new Bloom(m_engine);
-	auto hdr = new HDR(m_engine);
-	auto fxaa = new FXAA(m_engine);
+	auto skybox = new Skybox(engine);
+	auto ssao = new SSAO(engine);
+	auto ssr = new SSR(engine);
+	auto joinReflections = new Join_Reflections(engine);
+	auto bloom = new Bloom(engine);
+	auto hdr = new HDR(engine);
+	auto fxaa = new FXAA(engine);
 
 	// Filter Techniques
 	m_geometryTechniques = {

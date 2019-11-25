@@ -23,7 +23,7 @@ public:
 	/** Construct a toggle switch with a given on/off state.
 	@param	engine		the engine to use.
 	@param	state		the on/off state to use. */
-	inline explicit Toggle(Engine* engine, const bool& state = true) noexcept :
+	inline explicit Toggle(Engine& engine, const bool& state = true) noexcept :
 		UI_Element(engine)
 	{
 		// Make a background panel for cosmetic purposes

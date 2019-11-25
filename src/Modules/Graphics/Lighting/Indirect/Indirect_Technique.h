@@ -24,7 +24,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Indirect_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
+	inline Indirect_Technique(Engine& engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_shader_Bounce(Shared_Shader(engine, "Core\\Light\\Bounce")),
@@ -56,7 +56,7 @@ public:
 		glTextureParameteri(m_textureNoise32, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 		// Preferences
-		auto& preferences = engine->getPreferenceState();
+		auto& preferences = engine.getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_bounceSize);
 		preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) { m_bounceSize = (GLuint)f; });
 	}
@@ -209,7 +209,7 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	Shared_Shader m_shader_Bounce, m_shader_Recon, m_shader_Rebounce;
 	Shared_Auto_Model m_shapeQuad;
 	GLuint m_textureNoise32 = 0;

@@ -5,13 +5,13 @@
 
 constexpr const char* DIRECTORY_SOUNDS = "Sounds\\";
 
-Shared_Sound::Shared_Sound(Engine* engine, const std::string& filename, const bool& threaded) noexcept
+Shared_Sound::Shared_Sound(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Sound>*)(this)) = std::dynamic_pointer_cast<Sound>(
-		engine->getManager_Assets().shareAsset(
+		engine.getManager_Assets().shareAsset(
 			typeid(Sound).name(),
 			filename,
-			[engine, filename]() { return std::make_shared<Sound>(engine, filename); },
+			[&engine, filename]() { return std::make_shared<Sound>(engine, filename); },
 			threaded
 		));
 }
@@ -22,13 +22,13 @@ Sound::~Sound() noexcept
 		delete reinterpret_cast<SoLoud::Wav*>(m_soundObj);
 }
 
-Sound::Sound(Engine* engine, const std::string& filename) noexcept : Asset(engine, filename) {}
+Sound::Sound(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
 void Sound::initialize() noexcept
 {
 	// Forward asset creation
 	auto* wave = new SoLoud::Wav();
-	auto& msgMgr = m_engine->getManager_Messages();
+	auto& msgMgr = m_engine.getManager_Messages();
 	const auto path = DIRECTORY_SOUNDS + getFileName();
 	switch (wave->load(path.c_str())) {
 	case SoLoud::SO_NO_ERROR:

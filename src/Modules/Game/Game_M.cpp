@@ -15,15 +15,15 @@ void Game_Module::initialize() noexcept
 	m_engine.getManager_Messages().statement("Loading Module: Game...");
 
 	// Initialize ECS Systems
-	m_Systems.makeSystem<PlayerSpawn_System>(&m_engine, this);
-	m_Systems.makeSystem<PlayerFreeLook_System>(&m_engine);
+	m_Systems.makeSystem<PlayerSpawn_System>(m_engine, *this);
+	m_Systems.makeSystem<PlayerFreeLook_System>(m_engine);
 
 	// Create Overlay Effects
-	m_loadingRing = std::make_shared<LoadingIndicator>(&m_engine);
-	m_frameTime = std::make_shared<Frametime_Counter>(&m_engine);
+	m_loadingRing = std::make_shared<LoadingIndicator>(m_engine);
+	m_frameTime = std::make_shared<Frametime_Counter>(m_engine);
 
 	// Create Pause Menu
-	auto pauseMenu = std::make_shared<PauseMenu>(&m_engine);
+	auto pauseMenu = std::make_shared<PauseMenu>(m_engine);
 	m_pauseMenu = pauseMenu;
 	pauseMenu->addCallback((int)PauseMenu::Interact::on_resume_game, [&]() {
 		showPauseMenu(false);
@@ -81,7 +81,7 @@ void Game_Module::showGame() noexcept
 {
 	m_gameState = Game_State::in_game;
 	m_engine.setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
-	if (!Level_IO::Import_BMap("Phys Test.bmap", m_world)) 
+	if (!Level_IO::Import_BMap("Phys Test.bmap", m_world))
 		m_engine.getManager_Messages().error("Cannot open the level: Phys Test.bmap");
 }
 

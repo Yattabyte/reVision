@@ -22,7 +22,7 @@ public:
 	}
 	/** Construct this system.
 	@param	engine		the currently active engine. */
-	inline explicit MousePicker_System(Engine* engine)  noexcept :
+	inline explicit MousePicker_System(Engine& engine)  noexcept :
 		m_engine(engine)
 	{
 		// Declare component types used
@@ -33,7 +33,7 @@ public:
 		addComponentType(Prop_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 
 		// Preferences
-		auto& preferences = m_engine->getPreferenceState();
+		auto& preferences = m_engine.getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 		preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 		preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
@@ -47,8 +47,8 @@ public:
 
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
-		const auto& actionState = m_engine->getActionState();
-		const auto& clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
+		const auto& actionState = m_engine.getActionState();
+		const auto& clientCamera = *m_engine.getModule_Graphics().getClientCamera()->get();
 		const auto ray_origin = clientCamera.EyePosition;
 		const auto ray_nds = glm::vec2(2.0f * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
 		const auto ray_eye = glm::vec4(glm::vec2(clientCamera.pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
@@ -64,7 +64,7 @@ public:
 		const btVector3 direction(ray_end_far.x, ray_end_far.y, ray_end_far.z);
 		btCollisionWorld::ClosestRayResultCallback closestResults(origin, direction);
 		closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
-		m_engine->getModule_Physics().getWorld()->rayTest(origin, direction, closestResults);
+		m_engine.getModule_Physics().getWorld()->rayTest(origin, direction, closestResults);
 		void* closestPhysicsShape = nullptr;
 		float closetstPhysicsHit = FLT_MAX;
 		glm::vec3 intersectionNormal(0, 1, 0);
@@ -177,7 +177,7 @@ private:
 	@param	confidence				reference updated with the confidence level for this function.
 	@return							true on successful intersection, false if disjoint. */
 	static bool RayCollider(Collider_Component* collider, const void* const closestPhysicsShape, const float& closetstPhysicsHit, float& distanceFromScreen, int& confidence) noexcept {
-		if (collider->m_shape && collider->m_shape == closestPhysicsShape) {			
+		if (collider->m_shape && collider->m_shape == closestPhysicsShape) {
 			distanceFromScreen = closetstPhysicsHit;
 			confidence = 3;
 			return true;
@@ -234,9 +234,9 @@ private:
 	@param	confidence				reference updated with the confidence level for this function.
 	@param	engine					the currently active engine
 	@return							true on successful intersection, false if disjoint. */
-	static bool RayOrigin(Transform_Component* transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine* engine) noexcept {
+	static bool RayOrigin(Transform_Component* transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine) noexcept {
 		// Create scaling factor to keep all origins same screen size
-		const auto radius = glm::distance(transformComponent->m_worldTransform.m_position, engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.033f;
+		const auto radius = glm::distance(transformComponent->m_worldTransform.m_position, engine.getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.033f;
 
 		// Check if the distance is closer than the last entity found, so we can find the 'best' selection
 		if (auto distance = RaySphereIntersection(ray_origin, ray_direction, transformComponent->m_worldTransform.m_position, radius); distance >= 0.0f) {
@@ -249,7 +249,7 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	EntityHandle m_selection;
 	Transform m_selectionTransform, m_intersectionTransform;
 	glm::ivec2 m_renderSize = glm::ivec2(1);

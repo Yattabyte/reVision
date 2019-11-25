@@ -12,11 +12,11 @@ RH_Volume::~RH_Volume() noexcept
 	glDeleteTextures(RH_TEXTURE_COUNT, m_textureIDS[1]);
 }
 
-RH_Volume::RH_Volume(Engine* engine) noexcept :
+RH_Volume::RH_Volume(Engine& engine) noexcept :
 	m_engine(engine)
 {
 	// Preferences
-	auto& preferences = m_engine->getPreferenceState();
+	auto& preferences = m_engine.getPreferenceState();
 	m_resolution = 16;
 	preferences.getOrSetValue(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_resolution);
 	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) { resize(f); });

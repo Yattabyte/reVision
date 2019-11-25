@@ -16,7 +16,7 @@ public:
 	/** Destroy this free-look system. */
 	inline ~PlayerFreeLook_System() = default;
 	/** Construct a free-look system. */
-	inline explicit PlayerFreeLook_System(Engine* engine) noexcept
+	inline explicit PlayerFreeLook_System(Engine& engine) noexcept
 		: m_engine(engine) {
 		// Declare component types used
 		addComponentType(Transform_Component::Runtime_ID);
@@ -24,7 +24,7 @@ public:
 
 		// Error Reporting
 		if (!isValid())
-			engine->getManager_Messages().error("Invalid ECS System: PlayerFreeLook_System");
+			engine.getManager_Messages().error("Invalid ECS System: PlayerFreeLook_System");
 	}
 
 
@@ -34,7 +34,7 @@ public:
 			auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
 			auto* playerComponent = static_cast<Player3D_Component*>(componentParam[1]);
 
-			auto& actionState = m_engine->getActionState();
+			auto& actionState = m_engine.getActionState();
 			auto& rotation = playerComponent->m_rotation;
 			auto& transform = transformComponent->m_localTransform;
 			// Determine how much the camera should rotate
@@ -61,7 +61,7 @@ public:
 				deltaPosition += glm::vec3(moveAmount, 0, 0);
 
 			// Integrate rotation and translation into a new set of matrices
-			auto cam = m_engine->getModule_Graphics().getClientCamera();
+			auto cam = m_engine.getModule_Graphics().getClientCamera();
 			const auto rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.y), glm::vec3(1.0f, 0, 0)) * glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(0, 1.0f, 0));
 			// Make the translation amount be relative to the camera's orientation
 			const auto rotatedPosition = glm::inverse(rotationMatrix) * glm::vec4(deltaPosition, 1.0f);
@@ -77,7 +77,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 };
 
 #endif // PLAYERFREELOOK_SYSTEM_H

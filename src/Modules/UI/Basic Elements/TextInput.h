@@ -28,7 +28,7 @@ public:
 	}
 	/** Construct a text input.
 	@param	engine		the engine to use. */
-	inline TextInput(Engine* engine) noexcept :
+	inline TextInput(Engine& engine) noexcept :
 		UI_Element(engine)
 	{
 		// Asset Loading

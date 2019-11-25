@@ -20,7 +20,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Shadow_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
+	inline Shadow_Technique(Engine& engine, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_frameData(std::make_shared<ShadowData>()),
@@ -29,7 +29,7 @@ public:
 		m_auxilliarySystems.makeSystem<ShadowScheduler_System>(engine, m_frameData);
 
 		// Preferences
-		auto& preferences = m_engine->getPreferenceState();
+		auto& preferences = engine.getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::Preference::C_SHADOW_SIZE, m_frameData->shadowSize);
 		preferences.addCallback(PreferenceState::Preference::C_SHADOW_SIZE, m_aliveIndicator, [&](const float& f) {
 			m_frameData->shadowSize = std::max(1.0f, f);
@@ -64,7 +64,7 @@ private:
 	/** Render all the geometry from each light.
 	@param	deltaTime	the amount of time passed since last frame. */
 	inline void updateShadows(const float& deltaTime) noexcept {
-		auto clientTime = m_engine->getTime();
+		auto clientTime = m_engine.getTime();
 		if (m_frameData->shadowsToUpdate.size()) {
 			// Prepare Viewport
 			glViewport(0, 0, (GLsizei)m_frameData->shadowSize, (GLsizei)m_frameData->shadowSize);
@@ -83,7 +83,7 @@ private:
 			}
 
 			// Perform shadow culling
-			auto pipeline = m_engine->getModule_Graphics().getPipeline();
+			auto pipeline = m_engine.getModule_Graphics().getPipeline();
 			pipeline->cullShadows(deltaTime, perspectives);
 			for (auto& [importance, time, shadowSpot, camera] : m_frameData->shadowsToUpdate)
 				m_frameData->shadowFBO.clear(shadowSpot, 1);
@@ -96,7 +96,7 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	std::shared_ptr<ShadowData> m_frameData;
 	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
 	ecsSystemList m_auxilliarySystems;

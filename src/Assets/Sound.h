@@ -21,7 +21,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Sound(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
+	explicit Shared_Sound(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** A sound byte object.
@@ -35,7 +35,7 @@ public:
 	/** Construct the Sound.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Sound(Engine* engine, const std::string& filename) noexcept;
+	Sound(Engine& engine, const std::string& filename) noexcept;
 
 
 	// Public Attributes

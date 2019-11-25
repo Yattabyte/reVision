@@ -15,7 +15,7 @@ public:
 	/** Creates a button with specific text inside.
 	@param	engine		the engine.
 	@param	text		the button text. */
-	inline explicit Button(Engine* engine, const std::string& text = "Button") noexcept :
+	inline explicit Button(Engine& engine, const std::string& text = "Button") noexcept :
 		UI_Element(engine),
 		m_label(std::make_shared<Label>(engine, text))
 	{

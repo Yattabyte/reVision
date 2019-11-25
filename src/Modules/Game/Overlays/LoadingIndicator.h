@@ -20,14 +20,14 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit LoadingIndicator(Engine* engine) noexcept :
+	inline explicit LoadingIndicator(Engine& engine) noexcept :
 		m_engine(engine),
 		m_shader(Shared_Shader(engine, "Effects\\LoadingIndicator")),
 		m_texture(Shared_Texture(engine, "spinner.png", GL_TEXTURE_2D)),
 		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
 	{
 		// Preferences
-		auto& preferences = m_engine->getPreferenceState();
+		auto& preferences = m_engine.getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 		preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 		preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) { resize(glm::vec2(f, m_renderSize.y)); });
@@ -81,7 +81,7 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	Shared_Shader m_shader;
 	Shared_Texture m_texture;
 	Shared_Auto_Model m_shapeQuad;

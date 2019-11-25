@@ -20,7 +20,7 @@ public:
 	/** Construct a component inspector.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	EntityInspector(Engine* engine, LevelEditor_Module* editor) noexcept;
+	EntityInspector(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 
 	// Public Interface Implementation
@@ -29,8 +29,8 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
+	Engine& m_engine;
+	LevelEditor_Module& m_editor;
 	ecsSystemList m_inspectorSystems;
 };
 

@@ -22,7 +22,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit SSAO(Engine* engine) noexcept :
+	inline explicit SSAO(Engine& engine) noexcept :
 		Graphics_Technique(Technique_Category::SECONDARY_LIGHTING),
 		m_engine(engine),
 		m_shader(Shared_Shader(engine, "Effects\\SSAO")),
@@ -31,7 +31,7 @@ public:
 		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
 	{
 		// Preferences
-		auto& preferences = m_engine->getPreferenceState();
+		auto& preferences = engine.getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::Preference::C_SSAO, m_enabled);
 		preferences.addCallback(PreferenceState::Preference::C_SSAO, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
 		preferences.getOrSetValue(PreferenceState::Preference::C_SSAO_RADIUS, m_radius);
@@ -79,7 +79,7 @@ public:
 			});
 
 		// Error Reporting
-		auto& msgMgr = m_engine->getManager_Messages();
+		auto& msgMgr = m_engine.getManager_Messages();
 		if (!glIsTexture(m_noiseID))
 			msgMgr.error("SSAO Noise Texture is incomplete.");
 	}
@@ -167,7 +167,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	Shared_Shader m_shader, m_shaderCopyAO, m_shaderGB_A;
 	Shared_Auto_Model m_shapeQuad;
 	float m_radius = 1.0f;

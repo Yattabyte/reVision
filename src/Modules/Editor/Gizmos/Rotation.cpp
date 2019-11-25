@@ -19,7 +19,7 @@ Rotation_Gizmo::~Rotation_Gizmo() noexcept
 	glDeleteVertexArrays(1, &m_axisVAO);
 }
 
-Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor) noexcept :
+Rotation_Gizmo::Rotation_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_engine(engine),
 	m_editor(editor),
 	m_model(Shared_Auto_Model(engine, "Editor\\rotate")),
@@ -35,7 +35,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor) noexc
 		});
 
 	// Preferences
-	auto& preferences = m_engine->getPreferenceState();
+	auto& preferences = m_engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
@@ -92,18 +92,18 @@ bool Rotation_Gizmo::checkMouseInput(const float&) noexcept
 void Rotation_Gizmo::render(const float&) noexcept
 {
 	// Safety check first
-	if (m_model->existsYet() && m_gizmoShader->existsYet() && m_editor->getSelection().size()) {
+	if (m_model->existsYet() && m_gizmoShader->existsYet() && m_editor.getSelection().size()) {
 		// Set up state
-		m_editor->bindFBO();
+		m_editor.bindFBO();
 
 		// Get camera matrices
 		const auto& position = m_transform.m_position;
-		const auto& pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
-		const auto& vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
+		const auto& pMatrix = m_engine.getModule_Graphics().getClientCamera()->get()->pMatrix;
+		const auto& vMatrix = m_engine.getModule_Graphics().getClientCamera()->get()->vMatrix;
 
 		const auto trans = glm::translate(glm::mat4(1.0f), position);
-		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * m_renderScale));
-		const auto aScale = glm::scale(glm::mat4(1.0f), glm::vec3(m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f));
+		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, m_engine.getModule_Graphics().getClientCamera()->get()->EyePosition) * m_renderScale));
+		const auto aScale = glm::scale(glm::mat4(1.0f), glm::vec3(m_engine.getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f));
 
 		// Render Gizmo Model
 		m_model->bind();
@@ -119,7 +119,7 @@ void Rotation_Gizmo::render(const float&) noexcept
 			m_indirectDisk.beginWriting();
 			updateDisk();
 			m_indirectDisk.endWriting();
-			const auto diskScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * m_renderScale)) * glm::scale(glm::mat4(1.0f), glm::vec3(m_selectedAxes == ALL_AXES ? 1.15f : 1.0F));
+			const auto diskScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, m_engine.getModule_Graphics().getClientCamera()->get()->EyePosition) * m_renderScale)) * glm::scale(glm::mat4(1.0f), glm::vec3(m_selectedAxes == ALL_AXES ? 1.15f : 1.0F));
 			m_axisShader->bind();
 			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * diskScale);
 			m_axisShader->setUniform(4, glm::vec3(1, 0.8, 0));
@@ -160,15 +160,15 @@ void Rotation_Gizmo::setTransform(const Transform& transform) noexcept
 
 void Rotation_Gizmo::checkMouseHover() noexcept
 {
-	const auto& actionState = m_engine->getActionState();
+	const auto& actionState = m_engine.getActionState();
 	const auto& position = m_transform.m_position;
-	const auto& clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
+	const auto& clientCamera = *m_engine.getModule_Graphics().getClientCamera()->get();
 	const auto ray_origin = clientCamera.EyePosition;
 	const auto ray_nds = glm::vec2(2.0f * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
 	const auto ray_eye = glm::vec4(glm::vec2(clientCamera.pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
 	const auto ray_world = glm::normalize(glm::vec3(clientCamera.vMatrixInverse * ray_eye));
 
-	const auto scalingFactor = glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * m_renderScale;
+	const auto scalingFactor = glm::distance(position, m_engine.getModule_Graphics().getClientCamera()->get()->EyePosition) * m_renderScale;
 	const auto fourthAxisMat = glm::inverse(glm::mat4_cast(glm::quat_cast(clientCamera.vMatrix)));
 	const auto fourthAxisNormal = fourthAxisMat * glm::vec4(0, 0, 1, 1);
 
@@ -227,7 +227,7 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 	// An axis is now selected, perform dragging operation
 	else if ((m_selectedAxes != NONE) && ImGui::IsMouseDragging(0)) {
 		const auto index = (m_selectedAxes & X_AXIS) ? 0 : (m_selectedAxes & Y_AXIS) ? 1 : (m_selectedAxes & Z_AXIS) ? 2 : 3;
-		const auto fourthAxisMat = glm::inverse(glm::mat4_cast(glm::quat_cast(m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix)));
+		const auto fourthAxisMat = glm::inverse(glm::mat4_cast(glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->get()->vMatrix)));
 		const auto fourthAxisNormal = fourthAxisMat * glm::vec4(0, 0, 1, 1);
 		const glm::vec3 normals[4] = { glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::normalize(glm::vec3(fourthAxisNormal / fourthAxisNormal.w)) };
 		const auto endPoint = m_hoveredEnds[index];
@@ -253,15 +253,15 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 		m_deltaAngle = glm::degrees(gridSnappedAngle);
 
 		struct Rotate_Selection_Command final : Editor_Command {
-			Engine* const m_engine = nullptr;
-			LevelEditor_Module* const m_editor = nullptr;
+			Engine& m_engine;
+			LevelEditor_Module& m_editor;
 			glm::quat m_oldRotation, m_newRotation;
 			const unsigned int m_axis = NONE;
 			const std::vector<EntityHandle> m_uuids;
-			Rotate_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::quat& oldRotation, const glm::quat& newRotation, const unsigned int& axis) noexcept
-				: m_engine(engine), m_editor(editor), m_oldRotation(oldRotation), m_newRotation(newRotation), m_axis(axis), m_uuids(m_editor->getSelection()) {}
+			Rotate_Selection_Command(Engine& engine, LevelEditor_Module& editor, const glm::quat& oldRotation, const glm::quat& newRotation, const unsigned int& axis) noexcept
+				: m_engine(engine), m_editor(editor), m_oldRotation(oldRotation), m_newRotation(newRotation), m_axis(axis), m_uuids(m_editor.getSelection()) {}
 			void rotate(const glm::quat& rotation) noexcept {
-				auto& ecsWorld = m_editor->getWorld();
+				auto& ecsWorld = m_editor.getWorld();
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
 				for (const auto& entityHandle : m_uuids)
@@ -279,10 +279,10 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 					transform->m_localTransform.update();
 				}
 
-				auto gizmoTransform = m_editor->getGizmoTransform();
+				auto gizmoTransform = m_editor.getGizmoTransform();
 				gizmoTransform.m_orientation = rotation;
 				gizmoTransform.update();
-				m_editor->setGizmoTransform(gizmoTransform);
+				m_editor.setGizmoTransform(gizmoTransform);
 			}
 			virtual void execute() noexcept override final {
 				rotate(m_newRotation * glm::inverse(m_oldRotation));
@@ -300,7 +300,7 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 				return false;
 			}
 		};
-		m_editor->doReversableAction(std::make_shared<Rotate_Selection_Command>(m_engine, m_editor, m_prevRot, newQuat, m_selectedAxes));
+		m_editor.doReversableAction(std::make_shared<Rotate_Selection_Command>(m_engine, m_editor, m_prevRot, newQuat, m_selectedAxes));
 		m_prevRot = newQuat;
 		return true;
 	}
@@ -310,7 +310,7 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 
 void Rotation_Gizmo::updateDisk() noexcept
 {
-	const auto fourthAxisMat = glm::inverse(glm::mat4_cast(glm::quat_cast(m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix)));
+	const auto fourthAxisMat = glm::inverse(glm::mat4_cast(glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->get()->vMatrix)));
 	int steps = (int)ceilf((abs(m_deltaAngle) / 360.0f) * DISK_VERTICES);
 	std::vector<glm::vec3> points(size_t(steps) * 6ull, glm::vec3(0.0f));
 	for (size_t n = 0ull, v = 0ull; n < steps; ++n, v += 6ull) {

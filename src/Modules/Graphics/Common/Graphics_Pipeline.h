@@ -24,7 +24,7 @@ public:
 	@param	clientCamera	the main camera.
 	@param	cameras			all the cameras active in the scene.
 	@param	auxSystems		container to add extra render-related ecsSystem's to. */
-	Graphics_Pipeline(Engine* engine, const std::shared_ptr<Camera>& clientCamera) noexcept;
+	Graphics_Pipeline(Engine& engine, const std::shared_ptr<Camera>& clientCamera) noexcept;
 
 
 	// Public Methods
@@ -54,7 +54,7 @@ public:
 
 protected:
 	// Protected Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
 	GL_Vector<Camera::GPUData> m_cameraBuffer;
 	ecsSystemList m_worldSystems, m_cameraSystems;

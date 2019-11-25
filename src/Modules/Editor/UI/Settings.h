@@ -18,7 +18,7 @@ public:
 	/** Construct a settings dialogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
-	Settings(Engine* engine, LevelEditor_Module* editor) noexcept;
+	Settings(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 
 	// Public Interface Implementation
@@ -32,8 +32,8 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
+	Engine& m_engine;
+	LevelEditor_Module& m_editor;
 };
 
 #endif // SETTINGS_H

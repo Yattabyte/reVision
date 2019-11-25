@@ -27,7 +27,7 @@ public:
 	}
 	/** Constructs a list_Horizontal.
 	@param	engine		the engine. */
-	inline List_Horizontal(Engine* engine) noexcept :
+	inline List_Horizontal(Engine& engine) noexcept :
 		UI_Element(engine)
 	{
 		// Asset Loading

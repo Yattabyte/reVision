@@ -21,7 +21,7 @@ public:
 	/** Construct a rotation indicator.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	explicit RotationIndicator(Engine* engine) noexcept;
+	explicit RotationIndicator(Engine& engine) noexcept;
 
 
 	// Public Interface Implementation
@@ -30,7 +30,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	GLuint m_fboID, m_texID, m_depthID;
 	Shared_Texture m_colorPalette;
 	Shared_Auto_Model m_3dIndicator;

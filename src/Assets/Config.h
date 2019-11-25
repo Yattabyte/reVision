@@ -23,7 +23,7 @@ public:
 	@param	cfg_strings		the configuration strings to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	Shared_Config(Engine* engine, const std::string& filename, const std::vector<std::string>& cfg_strings, const bool& threaded = true) noexcept;
+	Shared_Config(Engine& engine, const std::string& filename, const std::vector<std::string>& cfg_strings, const bool& threaded = true) noexcept;
 };
 
 /** A map for configuration name-value pairs.
@@ -37,7 +37,7 @@ public:
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory).
 	@param	strings		the configuration strings to use. */
-	Config(Engine* engine, const std::string& filename, const std::vector<std::string>& strings) noexcept;
+	Config(Engine& engine, const std::string& filename, const std::vector<std::string>& strings) noexcept;
 
 
 	// Public Methods

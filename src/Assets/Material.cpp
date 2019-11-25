@@ -7,13 +7,13 @@
 
 constexpr const char* MATERIAL_EXTENSION = ".mat";
 
-Shared_Material::Shared_Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded) noexcept
+Shared_Material::Shared_Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Material>*)(this)) = std::dynamic_pointer_cast<Material>(
-		engine->getManager_Assets().shareAsset(
+		engine.getManager_Assets().shareAsset(
 			typeid(Material).name(),
 			filename,
-			[engine, filename, textures]() { return std::make_shared<Material>(engine, filename, textures); },
+			[&engine, filename, textures]() { return std::make_shared<Material>(engine, filename, textures); },
 			threaded
 		));
 }
@@ -24,7 +24,7 @@ Material::~Material() noexcept
 		delete m_materialData;
 }
 
-Material::Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures) noexcept
+Material::Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures) noexcept
 	: Asset(engine, filename), m_textures(textures)
 {
 	// We need to reserve a region of GPU memory for all the textures
@@ -64,7 +64,7 @@ void Material::initialize() noexcept
 
 	// Load all images
 	float materialSize = 512.0F;
-	m_engine->getPreferenceState().getOrSetValue(PreferenceState::Preference::C_MATERIAL_SIZE, materialSize);
+	m_engine.getPreferenceState().getOrSetValue(PreferenceState::Preference::C_MATERIAL_SIZE, materialSize);
 	m_images.resize(textureCount);
 	m_size = glm::ivec2((int)materialSize);
 	constexpr Fill_Policy fillPolicies[MAX_PHYSICAL_IMAGES] = {

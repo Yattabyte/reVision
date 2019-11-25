@@ -16,7 +16,7 @@ public:
 	inline ~CameraController() = default;
 	/** Construct a camera controller.
 	@param	engine		the currently active engine. */
-	explicit CameraController(Engine* engine) noexcept;
+	explicit CameraController(Engine& engine) noexcept;
 
 
 	// Public Interface Implementation
@@ -25,7 +25,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	bool m_beginPress = false;
 	glm::vec2 m_startPos = glm::vec2(0.0f), m_rotation = glm::vec2(0), m_lastRotation = glm::vec2(0);
 };

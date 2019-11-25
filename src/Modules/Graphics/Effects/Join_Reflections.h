@@ -21,7 +21,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit Join_Reflections(Engine* engine) noexcept :
+	inline explicit Join_Reflections(Engine& engine) noexcept :
 		Graphics_Technique(Technique_Category::SECONDARY_LIGHTING),
 		m_engine(engine),
 		m_shader(Shared_Shader(engine, "Effects\\Join Reflections")),
@@ -77,7 +77,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	Shared_Shader m_shader;
 	Shared_Texture m_brdfMap;
 	Shared_Auto_Model m_shapeQuad;

@@ -14,7 +14,6 @@
 
 constexpr unsigned int ASSETMANAGER_MAX_THREADS = 8u;
 using Asset_Work_Order = std::function<void(void)>;
-class Engine;
 
 /** Manages the storage and retrieval of assets. */
 class AssetManager {

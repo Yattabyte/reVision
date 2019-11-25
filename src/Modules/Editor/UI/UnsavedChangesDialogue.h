@@ -21,7 +21,7 @@ public:
 	/** Construct a Unsaved Changes dialogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
-	UnsavedChangesDialogue(Engine* engine, LevelEditor_Module* editor) noexcept;
+	UnsavedChangesDialogue(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 
 	// Public Interface Implementation
@@ -40,8 +40,8 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
+	Engine& m_engine;
+	LevelEditor_Module& m_editor;
 	std::function<void()> m_func;
 };
 

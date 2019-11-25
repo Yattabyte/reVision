@@ -25,7 +25,7 @@ public:
 	@param	textures		the textures to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded = true) noexcept;
+	explicit Shared_Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded = true) noexcept;
 };
 
 /** A collection of textures which together form 1 or more PBR surfaces.
@@ -49,7 +49,7 @@ public:
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory).
 	@param	textures		the textures to use. */
-	Material(Engine* engine, const std::string& filename, const std::vector<std::string>& textures) noexcept;
+	Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures) noexcept;
 
 
 	// Public Methods

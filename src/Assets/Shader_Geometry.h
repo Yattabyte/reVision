@@ -24,7 +24,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	Shared_Shader_Geometry(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
+	Shared_Shader_Geometry(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** An entire OpenGL vertex/geometry/fragment shader program.
@@ -40,7 +40,7 @@ public:
 	/** Construct the Shader.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Shader_Geometry(Engine* engine, const std::string& filename) noexcept;
+	Shader_Geometry(Engine& engine, const std::string& filename) noexcept;
 
 
 	// Public Attributes

@@ -20,7 +20,7 @@ public:
 	inline ~Menu() = default;
 	/** Construct a menu.
 	@param	engine		the engine to use. */
-	inline explicit Menu(Engine* engine) noexcept :
+	inline explicit Menu(Engine& engine) noexcept :
 		UI_Element(engine),
 		m_backPanel(std::make_shared<Panel>(engine)),
 		m_layout(std::make_shared<List>(engine)),
@@ -85,7 +85,7 @@ protected:
 	@param	engine		the engine to use.
 	@param	buttonText	the text to label the button with.
 	@param	callback	the callback to use when the button is pressed. */
-	inline void addButton(Engine* engine, const char* buttonText, const std::function<void()>& callback) noexcept {
+	inline void addButton(Engine& engine, const char* buttonText, const std::function<void()>& callback) noexcept {
 		auto button = std::make_shared<Button>(engine, buttonText);
 		button->setScale({ 120, 20 });
 		button->addCallback((int)Button::Interact::on_clicked, callback);

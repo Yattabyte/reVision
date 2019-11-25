@@ -7,13 +7,13 @@
 constexpr const char* EXT_SHADER_GEOMETRY = ".gsh";
 constexpr const char* DIRECTORY_SHADER = "\\Shaders\\";
 
-Shared_Shader_Geometry::Shared_Shader_Geometry(Engine* engine, const std::string& filename, const bool& threaded) noexcept
+Shared_Shader_Geometry::Shared_Shader_Geometry(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Shader_Geometry>*)(this)) = std::dynamic_pointer_cast<Shader_Geometry>(
-		engine->getManager_Assets().shareAsset(
+		engine.getManager_Assets().shareAsset(
 			typeid(Shader_Geometry).name(),
 			filename,
-			[engine, filename]() { return std::make_shared<Shader_Geometry>(engine, filename); },
+			[&engine, filename]() { return std::make_shared<Shader_Geometry>(engine, filename); },
 			threaded
 		));
 }
@@ -24,7 +24,7 @@ Shader_Geometry::~Shader_Geometry() noexcept
 		glDeleteProgram(m_glProgramID);
 }
 
-Shader_Geometry::Shader_Geometry(Engine* engine, const std::string& filename) noexcept : Shader(engine, filename) {}
+Shader_Geometry::Shader_Geometry(Engine& engine, const std::string& filename) noexcept : Shader(engine, filename) {}
 
 void Shader_Geometry::initialize() noexcept
 {
@@ -44,7 +44,7 @@ void Shader_Geometry::initialize() noexcept
 		if (!success) {
 			// Initialize default
 			const std::vector<GLchar> infoLog = getErrorLog();
-			m_engine->getManager_Messages().error("Shader_Geometry \"" + m_filename + "\" failed to initialize. Reason: \n" + std::string(infoLog.data(), infoLog.size()));
+			m_engine.getManager_Messages().error("Shader_Geometry \"" + m_filename + "\" failed to initialize. Reason: \n" + std::string(infoLog.data(), infoLog.size()));
 		}
 	}
 

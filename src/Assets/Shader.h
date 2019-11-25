@@ -23,7 +23,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	Shared_Shader(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
+	Shared_Shader(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** A single shader object, like a fragment shader or a vertex shader, not a whole shader program. */
@@ -44,12 +44,12 @@ struct ShaderObj {
 	@param		engine			the active engine to use.
 	@param		filePath		the relative path to the file to read.
 	@return						true on success, false otherwise. */
-	bool loadDocument(Engine* engine, const std::string& filePath) noexcept;
+	bool loadDocument(Engine& engine, const std::string& filePath) noexcept;
 	/** Create an OpenGL shader object from this class, using the document string loaded.
 	@param		engine			the active engine to use.
 	@param		filename		the shader file name (for reporting purposes).
 	@return						true on success, false otherwise. */
-	bool createGLShader(Engine* engine, const std::string& filename) noexcept;
+	bool createGLShader(Engine& engine, const std::string& filename) noexcept;
 
 
 	// Attributes
@@ -71,7 +71,7 @@ public:
 	/** Construct the Shader.
 	@param	engine				the engine to use.
 	@param	filename			the asset file name (relative to engine directory). */
-	Shader(Engine* engine, const std::string& filename) noexcept;
+	Shader(Engine& engine, const std::string& filename) noexcept;
 
 
 public:

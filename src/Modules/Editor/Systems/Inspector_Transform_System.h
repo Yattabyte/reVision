@@ -18,7 +18,7 @@ public:
 	inline ~Inspector_Transform_System() = default;
 	/** Construct this system.
 	@param	editor		the level editor. */
-	inline Inspector_Transform_System(Engine* engine, LevelEditor_Module* editor) noexcept :
+	inline Inspector_Transform_System(Engine& engine, LevelEditor_Module& editor) noexcept :
 		m_engine(engine),
 		m_editor(editor)
 	{
@@ -91,7 +91,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Move_Command>(m_editor->getWorld(), *m_editor, getUUIDS(), posInput));
+				m_editor.doReversableAction(std::make_shared<Move_Command>(m_editor.getWorld(), m_editor, getUUIDS(), posInput));
 			}
 
 			// Rotation
@@ -135,7 +135,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Rotate_Command>(m_editor->getWorld(), getUUIDS(), glm::quat(glm::radians(rotInput))));
+				m_editor.doReversableAction(std::make_shared<Rotate_Command>(m_editor.getWorld(), getUUIDS(), glm::quat(glm::radians(rotInput))));
 			}
 
 			// Scaling
@@ -181,7 +181,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Scale_Command>(m_editor->getWorld(), getUUIDS(), sclInput));
+				m_editor.doReversableAction(std::make_shared<Scale_Command>(m_editor.getWorld(), getUUIDS(), sclInput));
 			}
 		}
 		ImGui::PopID();
@@ -190,8 +190,8 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
+	Engine& m_engine;
+	LevelEditor_Module& m_editor;
 };
 
 #endif // INSPECTOR_TRANSFORM_SYSTEM_H

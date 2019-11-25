@@ -20,7 +20,7 @@ public:
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Construct this system. */
-	inline PropUpload_System(Engine* engine, const std::shared_ptr<PropData>& frameData) noexcept :
+	inline PropUpload_System(Engine& engine, const std::shared_ptr<PropData>& frameData) noexcept :
 		m_engine(engine),
 		m_frameData(frameData)
 	{
@@ -52,7 +52,7 @@ public:
 		frameData->m_geometryVAOID = m_vaoID;
 
 		// Preference Values
-		m_engine->getPreferenceState().getOrSetValue(PreferenceState::Preference::C_MATERIAL_SIZE, m_materialSize);
+		engine.getPreferenceState().getOrSetValue(PreferenceState::Preference::C_MATERIAL_SIZE, m_materialSize);
 
 		// Size-dependent variable set up
 		m_maxMips = GLsizei(floor(log2f(float(m_materialSize)) + 1.0f));
@@ -173,7 +173,7 @@ private:
 			auto materialID = (GLuint)m_matCount;
 			m_matCount += imageCount;
 			if (m_matCount >= m_maxTextureLayers)
-				m_engine->getManager_Messages().error("Out of room for more materials!");
+				m_engine.getManager_Messages().error("Out of room for more materials!");
 
 			// Upload material data
 			GLuint pboID = 0;
@@ -214,7 +214,7 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	GLuint m_vaoID = 0, m_vboID = 0, m_matID;
 	size_t m_currentSize = 0ull, m_maxCapacity = 256ull, m_matCount = 0ull;
 	GLsizei m_materialSize = 512u;

@@ -124,7 +124,7 @@ public:
 	/** Loads a preference file from disk.
 	@param	filename	the relative path to the preference file to load */
 	inline void loadFile(const std::string& filename) noexcept {
-		m_preferences = Shared_Config(&m_engine, filename, PreferenceState::Preference_Strings(), false);
+		m_preferences = Shared_Config(m_engine, filename, PreferenceState::Preference_Strings(), false);
 	}
 	/** Saves the preference file to disk, using the same filename as when loaded. */
 	inline void save() noexcept {

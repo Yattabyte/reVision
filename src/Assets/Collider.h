@@ -21,7 +21,7 @@ public:
 	@param	filename		the filename to use
 	@param	threaded		create in a separate thread
 	@return					the desired asset */
-	Shared_Collider(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
+	Shared_Collider(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** A collision shape asset used in physics.
@@ -35,7 +35,7 @@ public:
 	/** Construct the Collider.
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
-	Collider(Engine* engine, const std::string& filename) noexcept;
+	Collider(Engine& engine, const std::string& filename) noexcept;
 
 
 	// Public Attributes

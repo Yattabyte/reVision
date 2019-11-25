@@ -39,18 +39,18 @@ inline int find_CFG_Property(const std::string& s, const std::vector<std::string
 	return -1;
 }
 
-Shared_Config::Shared_Config(Engine* engine, const std::string& filename, const std::vector<std::string>& cfg_strings, const bool& threaded) noexcept
+Shared_Config::Shared_Config(Engine& engine, const std::string& filename, const std::vector<std::string>& cfg_strings, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Config>*)(this)) = std::dynamic_pointer_cast<Config>(
-		engine->getManager_Assets().shareAsset(
+		engine.getManager_Assets().shareAsset(
 			typeid(Config).name(),
 			filename,
-			[engine, filename, cfg_strings]() { return std::make_shared<Config>(engine, filename, cfg_strings); },
+			[&engine, filename, cfg_strings]() { return std::make_shared<Config>(engine, filename, cfg_strings); },
 			threaded
 		));
 }
 
-Config::Config(Engine* engine, const std::string& filename, const std::vector<std::string>& strings) noexcept : Asset(engine, filename), m_strings(strings) {}
+Config::Config(Engine& engine, const std::string& filename, const std::vector<std::string>& strings) noexcept : Asset(engine, filename), m_strings(strings) {}
 
 void Config::initialize() noexcept
 {
@@ -68,7 +68,7 @@ void Config::initialize() noexcept
 		}
 	}
 	catch (const std::ifstream::failure&) {
-		m_engine->getManager_Messages().error("Config \"" + m_filename + "\" failed to initialize.");
+		m_engine.getManager_Messages().error("Config \"" + m_filename + "\" failed to initialize.");
 	}
 
 	Asset::finalize();

@@ -24,7 +24,7 @@ public:
 		glDeleteTextures(1, &m_bayerID);
 	}
 	/** Constructor. */
-	inline explicit SSR(Engine* engine) noexcept :
+	inline explicit SSR(Engine& engine) noexcept :
 		Graphics_Technique(Technique_Category::SECONDARY_LIGHTING),
 		m_engine(engine),
 		m_shaderSSR1(Shared_Shader(engine, "Effects\\SSR part 1")),
@@ -34,7 +34,7 @@ public:
 		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
 	{
 		// Preferences
-		auto& preferences = m_engine->getPreferenceState();
+		auto& preferences = m_engine.getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::Preference::C_SSR, m_enabled);
 		preferences.addCallback(PreferenceState::Preference::C_SSR, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
 
@@ -49,7 +49,7 @@ public:
 		glTextureParameteri(m_bayerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 		// Error Reporting
-		auto& msgMgr = m_engine->getManager_Messages();
+		auto& msgMgr = m_engine.getManager_Messages();
 		if (!glIsTexture(m_bayerID))
 			msgMgr.error("SSR Bayer Matrix Texture is incomplete.");
 	}
@@ -164,7 +164,7 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	Shared_Shader m_shaderSSR1, m_shaderSSR2, m_shaderCopy, m_shaderConvMips;
 	Shared_Auto_Model m_shapeQuad;
 	GLuint m_bayerID = 0;

@@ -13,7 +13,7 @@ public:
 	inline ~UI_Decorator() = default;
 	/** Construct a decorator, decorating the supplied component.
 	@param	component		the component to decorate. */
-	inline UI_Decorator(Engine* engine, const std::shared_ptr<UI_Element>& component) noexcept
+	inline UI_Decorator(Engine& engine, const std::shared_ptr<UI_Element>& component) noexcept
 		: UI_Element(engine), m_component(component) {}
 
 

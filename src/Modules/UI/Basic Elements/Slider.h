@@ -23,7 +23,7 @@ public:
 	@param	engine		the engine to use.
 	@param	value		the starting value to use.
 	@param	range		the starting range to use. */
-	inline explicit Slider(Engine* engine, const float& value = 0.0f, const glm::vec2& range = { 0.0f, 1.0f }) noexcept :
+	inline explicit Slider(Engine& engine, const float& value = 0.0f, const glm::vec2& range = { 0.0f, 1.0f }) noexcept :
 		UI_Element(engine), m_value(value), m_lowerRange(range.x), m_upperRange(range.y)
 	{
 		// Make a background panel for cosmetic purposes

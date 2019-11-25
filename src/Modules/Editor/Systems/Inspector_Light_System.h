@@ -17,7 +17,7 @@ public:
 	/** Destroy this system. */
 	inline ~Inspector_Light_System() = default;
 	/** Construct this system. */
-	inline Inspector_Light_System(Engine* engine, LevelEditor_Module* editor) noexcept :
+	inline Inspector_Light_System(Engine& engine, LevelEditor_Module& editor) noexcept :
 		m_engine(engine),
 		m_editor(editor)
 	{
@@ -86,7 +86,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Type_Command>(m_editor->getWorld(), getUUIDS(), static_cast<Light_Component::Light_Type>(item_current)));
+				m_editor.doReversableAction(std::make_shared<Type_Command>(m_editor.getWorld(), getUUIDS(), static_cast<Light_Component::Light_Type>(item_current)));
 			}
 
 			auto colorInput = lightComponent->m_color;
@@ -128,7 +128,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Color_Command>(m_editor->getWorld(), getUUIDS(), colorInput));
+				m_editor.doReversableAction(std::make_shared<Color_Command>(m_editor.getWorld(), getUUIDS(), colorInput));
 			}
 
 			auto intensityInput = lightComponent->m_intensity;
@@ -171,7 +171,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Intensity_Command>(m_editor->getWorld(), getUUIDS(), intensityInput));
+				m_editor.doReversableAction(std::make_shared<Intensity_Command>(m_editor.getWorld(), getUUIDS(), intensityInput));
 			}
 
 			auto radiusInput = lightComponent->m_radius;
@@ -214,7 +214,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Radius_Command>(m_editor->getWorld(), getUUIDS(), radiusInput));
+				m_editor.doReversableAction(std::make_shared<Radius_Command>(m_editor.getWorld(), getUUIDS(), radiusInput));
 			}
 
 			auto cutoffInput = lightComponent->m_cutoff;
@@ -257,7 +257,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Cutoff_Command>(m_editor->getWorld(), getUUIDS(), cutoffInput));
+				m_editor.doReversableAction(std::make_shared<Cutoff_Command>(m_editor.getWorld(), getUUIDS(), cutoffInput));
 			}
 		}
 		ImGui::PopID();
@@ -266,8 +266,8 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
+	Engine& m_engine;
+	LevelEditor_Module& m_editor;
 };
 
 #endif // INSPECTOR_LIGHT_SYSTEM_H

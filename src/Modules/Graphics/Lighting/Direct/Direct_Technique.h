@@ -31,7 +31,7 @@ public:
 		}
 	}
 	/** Constructor. */
-	inline Direct_Technique(Engine* engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
+	inline Direct_Technique(Engine& engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_shader_Lighting(Shared_Shader(engine, "Core\\Light\\Direct")),
@@ -190,7 +190,7 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	Shared_Shader m_shader_Lighting, m_shader_Stencil;
 	Shared_Mesh m_shapeCube, m_shapeSphere, m_shapeHemisphere;
 	std::pair<GLuint, GLuint> m_cubeParams, m_sphereParams, m_hemisphereParams;

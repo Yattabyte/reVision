@@ -5,13 +5,13 @@
 constexpr const char* DIRECTORY_CUBEMAP = R"(\Textures\Cubemaps\)";
 constexpr const auto CUBEMAP_SIDE_COUNT = 6;
 
-Shared_Cubemap::Shared_Cubemap(Engine* engine, const std::string& filename, const bool& threaded) noexcept
+Shared_Cubemap::Shared_Cubemap(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Cubemap>*)(this)) = std::dynamic_pointer_cast<Cubemap>(
-		engine->getManager_Assets().shareAsset(
+		engine.getManager_Assets().shareAsset(
 			typeid(Cubemap).name(),
 			filename,
-			[engine, filename]() { return std::make_shared<Cubemap>(engine, filename); },
+			[&engine, filename]() { return std::make_shared<Cubemap>(engine, filename); },
 			threaded
 		));
 }
@@ -24,7 +24,7 @@ Cubemap::~Cubemap() noexcept
 	}
 }
 
-Cubemap::Cubemap(Engine* engine, const std::string& filename) noexcept : Asset(engine, filename) {}
+Cubemap::Cubemap(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
 void Cubemap::initialize() noexcept
 {
@@ -70,7 +70,7 @@ void Cubemap::initialize() noexcept
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	if (!glIsTexture(m_glTexID))
-		m_engine->getManager_Messages().error("Texture \"" + m_filename + "\" failed to initialize.");
+		m_engine.getManager_Messages().error("Texture \"" + m_filename + "\" failed to initialize.");
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);

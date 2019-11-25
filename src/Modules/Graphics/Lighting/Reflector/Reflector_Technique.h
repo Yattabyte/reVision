@@ -25,7 +25,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Reflector_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
+	inline Reflector_Technique(Engine& engine, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_shaderLighting(Shared_Shader(engine, "Core\\Reflector\\IBL_Parallax")),
@@ -43,7 +43,7 @@ public:
 		m_auxilliarySystems.makeSystem<ReflectorSync_System>(m_frameData);
 
 		// Preferences
-		auto& preferences = m_engine->getPreferenceState();
+		auto& preferences = engine.getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::Preference::C_ENVMAP_SIZE, m_frameData->envmapSize.x);
 		preferences.addCallback(PreferenceState::Preference::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float& f) {
 			m_frameData->envmapSize = glm::ivec2(std::max(1u, (unsigned int)f));
@@ -131,7 +131,7 @@ private:
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
 	inline void updateReflectors(const float& deltaTime) noexcept {
-		auto clientTime = m_engine->getTime();
+		auto clientTime = m_engine.getTime();
 		if (m_frameData->reflectorsToUpdate.size()) {
 			m_viewport->resize(m_frameData->envmapSize, (int)m_frameData->reflectorLayers);
 			m_viewport->bind();
@@ -165,7 +165,7 @@ private:
 
 			// Update all reflectors at once
 			constexpr unsigned int categories = (unsigned int)Graphics_Technique::Technique_Category::GEOMETRY | (unsigned int)Graphics_Technique::Technique_Category::PRIMARY_LIGHTING | (unsigned int)Graphics_Technique::Technique_Category::SECONDARY_LIGHTING;
-			m_engine->getModule_Graphics().getPipeline()->render(deltaTime, m_viewport, perspectives, categories);
+			m_engine.getModule_Graphics().getPipeline()->render(deltaTime, m_viewport, perspectives, categories);
 
 			// Copy all lighting results into cube faces, generating cubemap's
 			m_viewport->m_gfxFBOS->bindForReading("LIGHTING", 0);
@@ -251,7 +251,7 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
 	Shared_Auto_Model m_shapeCube, m_shapeQuad;

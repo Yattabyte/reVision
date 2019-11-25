@@ -9,7 +9,7 @@
 #include <time.h>
 
 
-SaveDialogue::SaveDialogue(Engine* engine, LevelEditor_Module* editor) noexcept :
+SaveDialogue::SaveDialogue(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_engine(engine),
 	m_editor(editor),
 	m_iconFile(Shared_Texture(engine, "Editor//iconFile.png")),
@@ -248,13 +248,13 @@ void SaveDialogue::tryToSave(const std::string& chosenName) noexcept
 
 	// Check if the map already exists, prompt for overwrite
 	for (const auto& level : m_levels)
-		if (compareNCase(level.path, m_chosen) && !compareNCase(level.path, m_editor->getMapName())) {
+		if (compareNCase(level.path, m_chosen) && !compareNCase(level.path, m_editor.getMapName())) {
 			ImGui::OpenPopup("Overwrite Level");
 			return;
 		}
 
 	// Otherwise we're safe, save the level
-	m_editor->saveLevel(m_chosen);
+	m_editor.saveLevel(m_chosen);
 	populateLevels();
 	m_open = false;
 }
@@ -270,7 +270,7 @@ void SaveDialogue::tickOverwriteDialogue() noexcept
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f));
 		if (ImGui::Button("Overwrite", { 75, 20 })) {
-			m_editor->saveLevel(m_chosen + ".bmap");
+			m_editor.saveLevel(m_chosen + ".bmap");
 			populateLevels();
 			ImGui::CloseCurrentPopup();
 			m_open = false;

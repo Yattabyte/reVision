@@ -24,7 +24,7 @@ public:
 	inline ~PauseMenu() = default;
 	/** Construct a start menu.
 	@param	engine		the engine to use. */
-	inline explicit PauseMenu(Engine* engine) noexcept
+	inline explicit PauseMenu(Engine& engine) noexcept
 		: Menu(engine) {
 		// Title
 		m_title->setText("PAUSE MENU");
@@ -49,7 +49,7 @@ public:
 		// Populate Focus Map
 		m_focusMap = std::make_shared<FocusMap>();
 		m_focusMap->addElement(m_layout);
-		m_engine->getModule_UI().setFocusMap(getFocusMap());
+		engine.getModule_UI().setFocusMap(getFocusMap());
 	}
 
 
@@ -62,7 +62,7 @@ protected:
 	/** Choose 'options' from the main menu. */
 	inline void goToOptions() noexcept {
 		// Transfer appearance and control to options menu
-		auto& ui = m_engine->getModule_UI();
+		auto& ui = m_engine.getModule_UI();
 		ui.pushRootElement(m_optionsMenu);
 		ui.setFocusMap(m_optionsMenu->getFocusMap());
 		m_layout->setSelectionIndex(-1);
@@ -71,11 +71,11 @@ protected:
 	/** Chosen when control is returned from the options menu. */
 	inline void returnFromOptions() noexcept {
 		// Transfer control back to this menu
-		m_engine->getModule_UI().setFocusMap(getFocusMap());
+		m_engine.getModule_UI().setFocusMap(getFocusMap());
 	}
 	/** Choose 'quit' from the pause menu. */
 	inline void quit() noexcept {
-		m_engine->getModule_UI().clear();
+		m_engine.getModule_UI().clear();
 		enactCallback((int)PauseMenu::Interact::on_end);
 	}
 

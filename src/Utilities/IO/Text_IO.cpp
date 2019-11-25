@@ -3,10 +3,10 @@
 #include <fstream>
 
 
-bool Text_IO::Import_Text(Engine* engine, const std::string& relativePath, std::string& importedData, const std::ios_base::openmode& mode) noexcept
+bool Text_IO::Import_Text(Engine& engine, const std::string& relativePath, std::string& importedData, const std::ios_base::openmode& mode) noexcept
 {
 	if (!Engine::File_Exists(relativePath)) {
-		engine->getManager_Messages().error("The file \"" + relativePath + "\" does not exist.");
+		engine.getManager_Messages().error("The file \"" + relativePath + "\" does not exist.");
 		return false;
 	}
 

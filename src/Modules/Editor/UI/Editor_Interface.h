@@ -20,7 +20,7 @@ public:
 	/** Creates the level editor UI.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	Editor_Interface(Engine* engine, LevelEditor_Module* editor) noexcept;
+	Editor_Interface(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 
 	// Public Methods
@@ -46,8 +46,8 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
+	Engine& m_engine;
+	LevelEditor_Module& m_editor;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

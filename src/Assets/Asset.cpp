@@ -3,7 +3,7 @@
 #include <algorithm>
 
 
-Asset::Asset(Engine* engine, const std::string& filename) noexcept : m_engine(engine), m_filename(filename) {}
+Asset::Asset(Engine& engine, const std::string& filename) noexcept : m_engine(engine), m_filename(filename) {}
 
 std::string Asset::getFileName() const noexcept
 {
@@ -54,7 +54,7 @@ void Asset::finalize() noexcept
 	const auto copyCallbacks = m_callbacks;
 	m_callbacks.clear();
 
-	AssetManager& assetManager = m_engine->getManager_Assets();
+	AssetManager& assetManager = m_engine.getManager_Assets();
 	for (const auto qwe : copyCallbacks)
 		assetManager.submitNotifyee(qwe);
 }

@@ -20,7 +20,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Construct a free-look system. */
-	inline PlayerSpawn_System(Engine* engine, Game_Module* game) noexcept
+	inline PlayerSpawn_System(Engine& engine, Game_Module& game) noexcept
 		: m_engine(engine), m_game(game) {
 		// Declare component types used
 		addComponentType(PlayerSpawn_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
@@ -28,7 +28,7 @@ public:
 
 		// Error Reporting
 		if (!isValid())
-			engine->getManager_Messages().error("Invalid ECS System: PlayerSpawn_System");
+			engine.getManager_Messages().error("Invalid ECS System: PlayerSpawn_System");
 	}
 
 
@@ -44,7 +44,7 @@ public:
 				trans.m_localTransform = transformComponent->m_worldTransform;
 
 				ecsBaseComponent* entityComponents[] = { &player, &trans };
-				m_game->getWorld().makeEntity(entityComponents, 2ull, "Player");
+				m_game.getWorld().makeEntity(entityComponents, 2ull, "Player");
 				m_playerCount++;
 			}
 		}
@@ -53,8 +53,8 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	Game_Module* m_game = nullptr;
+	Engine& m_engine;
+	Game_Module& m_game;
 	size_t m_playerCount = 0ull;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

@@ -23,7 +23,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	Shared_Auto_Model(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
+	Shared_Auto_Model(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** A basic 3D model used in visual processing.
@@ -38,7 +38,7 @@ public:
 	/** Construct the Auto_Model.
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
-	Auto_Model(Engine* engine, const std::string& filename) noexcept;
+	Auto_Model(Engine& engine, const std::string& filename) noexcept;
 
 
 	// Public Methods

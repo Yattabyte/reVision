@@ -19,7 +19,7 @@ public:
 	/** Construct a border, decorating the supplied component.
 	@param	engine		the engine to use.
 	@param	component	the component to decorate. */
-	inline Border(Engine* engine, const std::shared_ptr<UI_Element>& component) noexcept :
+	inline Border(Engine& engine, const std::shared_ptr<UI_Element>& component) noexcept :
 		UI_Decorator(engine, component),
 		m_shader(Shared_Shader(engine, "UI\\Border")) {
 		// Generate vertex array

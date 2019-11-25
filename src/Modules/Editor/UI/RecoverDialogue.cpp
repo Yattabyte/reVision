@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-RecoverDialogue::RecoverDialogue(Engine* engine, LevelEditor_Module* editor) noexcept :
+RecoverDialogue::RecoverDialogue(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_engine(engine),
 	m_editor(editor)
 {
@@ -40,7 +40,7 @@ void RecoverDialogue::tickMainDialogue() noexcept
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f));
 			if (ImGui::Button("Open", { 75, 20 })) {
 				const auto relative = std::filesystem::relative(m_recoveredPath, Engine::Get_Current_Dir() + "\\Maps\\").filename().string();
-				m_editor->openLevel(relative);
+				m_editor.openLevel(relative);
 				ImGui::CloseCurrentPopup();
 				m_open = false;
 			}

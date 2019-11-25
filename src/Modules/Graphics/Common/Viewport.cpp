@@ -4,7 +4,7 @@
 #include <algorithm>
 
 
-Viewport::Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions, Engine* engine) noexcept :
+Viewport::Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions, Engine& engine) noexcept :
 	m_screenPosition(screenPosition),
 	m_dimensions(dimensions),
 	m_gfxFBOS(std::make_shared<Graphics_Framebuffers>(dimensions, engine))

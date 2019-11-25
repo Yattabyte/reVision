@@ -35,7 +35,7 @@ public:
 	inline virtual ~UI_Element() = default;
 	/** Construct a UI element.
 	@param	engine		the engine to use. */
-	explicit UI_Element(Engine* engine) noexcept;
+	explicit UI_Element(Engine& engine) noexcept;
 
 
 	// Public Interface Declaration
@@ -152,7 +152,7 @@ protected:
 
 
 	// Protected Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	glm::vec2
 		m_position = glm::vec2(0.0f),
 		m_scale = glm::vec2(1.0f),

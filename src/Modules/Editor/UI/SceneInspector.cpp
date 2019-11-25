@@ -5,7 +5,7 @@
 #include "Engine.h"
 
 
-SceneInspector::SceneInspector(Engine* engine, LevelEditor_Module* editor) noexcept :
+SceneInspector::SceneInspector(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_engine(engine),
 	m_editor(editor)
 {
@@ -15,8 +15,8 @@ SceneInspector::SceneInspector(Engine* engine, LevelEditor_Module* editor) noexc
 void SceneInspector::tick(const float&) noexcept
 {
 	if (m_open) {
-		auto& ecsWorld = m_editor->getWorld();
-		const auto& selectedEntities = m_editor->getSelection();
+		auto& ecsWorld = m_editor.getWorld();
+		const auto& selectedEntities = m_editor.getSelection();
 		if (ImGui::Begin("Scene Inspector", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
 			static ImGuiTextFilter filter;
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
@@ -47,9 +47,9 @@ void SceneInspector::tick(const float&) noexcept
 						auto tryLeftClickElement = [&]() {
 							if (ImGui::IsItemClicked())
 								if (ImGui::GetIO().KeyCtrl)
-									m_editor->toggleAddToSelection(entityHandle);
+									m_editor.toggleAddToSelection(entityHandle);
 								else
-									m_editor->setSelection({ entityHandle });
+									m_editor.setSelection({ entityHandle });
 						};
 						auto tryRightClickElement = [&]() {
 							if (ImGui::BeginPopupContextItem("Entity Controls")) {
@@ -65,22 +65,22 @@ void SceneInspector::tick(const float&) noexcept
 								if (const auto selectionSize = selectedEntities.size()) {
 									if (selectionSize >= 2ull) {
 										const auto text = "Join to \"" + ecsWorld.getEntity(selectedEntities[0])->m_name + "\"";
-										if (ImGui::MenuItem(text.c_str())) { m_editor->mergeSelection(); }
-										if (ImGui::MenuItem("Group Selection")) { m_editor->groupSelection(); }
+										if (ImGui::MenuItem(text.c_str())) { m_editor.mergeSelection(); }
+										if (ImGui::MenuItem("Group Selection")) { m_editor.groupSelection(); }
 										ImGui::Separator();
 									}
-									if (ImGui::MenuItem("Make Prefab", "CTRL+G", nullptr, selectedEntities.size())) { m_editor->makePrefab(); }
+									if (ImGui::MenuItem("Make Prefab", "CTRL+G", nullptr, selectedEntities.size())) { m_editor.makePrefab(); }
 									for (const auto& entityHandle : selectedEntities)
 										if (ecsWorld.getEntity(entityHandle)->m_children.size()) {
-											if (ImGui::MenuItem("Ungroup")) { m_editor->ungroupSelection(); }
+											if (ImGui::MenuItem("Ungroup")) { m_editor.ungroupSelection(); }
 											ImGui::Separator();
 											break;
 										}
-									if (ImGui::MenuItem("Cut")) { m_editor->cutSelection(); }
-									if (ImGui::MenuItem("Copy")) { m_editor->copySelection(); }
-									if (ImGui::MenuItem("Paste")) { m_editor->paste(); }
+									if (ImGui::MenuItem("Cut")) { m_editor.cutSelection(); }
+									if (ImGui::MenuItem("Copy")) { m_editor.copySelection(); }
+									if (ImGui::MenuItem("Paste")) { m_editor.paste(); }
 									ImGui::Separator();
-									if (ImGui::MenuItem("Delete")) { m_editor->deleteSelection(); }
+									if (ImGui::MenuItem("Delete")) { m_editor.deleteSelection(); }
 									ImGui::EndPopup();
 								}
 							}
@@ -95,9 +95,9 @@ void SceneInspector::tick(const float&) noexcept
 							if (ImGui::BeginDragDropTarget()) {
 								if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
 									IM_ASSERT(payload->DataSize == sizeof(EntityHandle*));
-									m_editor->setSelection({ entityHandle, (*reinterpret_cast<EntityHandle*>(payload->Data)) });
-									m_editor->mergeSelection();
-									m_editor->setSelection({ entityHandle });
+									m_editor.setSelection({ entityHandle, (*reinterpret_cast<EntityHandle*>(payload->Data)) });
+									m_editor.mergeSelection();
+									m_editor.setSelection({ entityHandle });
 								}
 								ImGui::EndDragDropTarget();
 							}
@@ -124,7 +124,7 @@ void SceneInspector::tick(const float&) noexcept
 								ImGui::Text(ecsWorld.getComponent(entityHandle, componentID)->m_name);
 								ImGui::PopID();
 								if (buttonPressed)
-									m_editor->deleteComponent(entityHandle, componentID);
+									m_editor.deleteComponent(entityHandle, componentID);
 							}
 							ImGui::AlignTextToFramePadding();
 							ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f));
@@ -162,7 +162,7 @@ void SceneInspector::tick(const float&) noexcept
 								if (ImGui::Button("Cancel"))
 									ImGui::CloseCurrentPopup();
 								if (isOk) {
-									m_editor->makeComponent(entityHandle, items[item_current]);
+									m_editor.makeComponent(entityHandle, items[item_current]);
 									ImGui::CloseCurrentPopup();
 								}
 								ImGui::EndPopup();
@@ -190,9 +190,9 @@ void SceneInspector::tick(const float&) noexcept
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
 					IM_ASSERT(payload->DataSize == sizeof(EntityHandle*));
-					m_editor->setSelection({ EntityHandle(), (*reinterpret_cast<EntityHandle*>(payload->Data)) });
-					m_editor->mergeSelection();
-					m_editor->clearSelection();
+					m_editor.setSelection({ EntityHandle(), (*reinterpret_cast<EntityHandle*>(payload->Data)) });
+					m_editor.mergeSelection();
+					m_editor.clearSelection();
 				}
 				ImGui::EndDragDropTarget();
 			}

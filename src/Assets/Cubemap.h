@@ -21,7 +21,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	Shared_Cubemap(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
+	Shared_Cubemap(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** A cubemap texture object.
@@ -35,7 +35,7 @@ public:
 	/** Construct the Cubemap.
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
-	Cubemap(Engine* engine, const std::string& filename) noexcept;
+	Cubemap(Engine& engine, const std::string& filename) noexcept;
 
 
 	// Public Methods

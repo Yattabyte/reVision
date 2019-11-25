@@ -20,7 +20,7 @@ public:
 	/** Destroy this system. */
 	inline ~Inspector_Prop_System() = default;
 	/** Construct this system. */
-	inline Inspector_Prop_System(Engine* engine, LevelEditor_Module* editor) noexcept :
+	inline Inspector_Prop_System(Engine& engine, LevelEditor_Module& editor) noexcept :
 		m_engine(engine),
 		m_editor(editor)
 	{
@@ -114,9 +114,9 @@ public:
 					}
 				};
 				item_current = std::clamp(item_current, 0, (int)m_entries.size());
-				m_editor->doReversableAction(std::make_shared<Name_Command>(m_editor->getWorld(), getUUIDS(), m_entries[item_current]));
+				m_editor.doReversableAction(std::make_shared<Name_Command>(m_editor.getWorld(), getUUIDS(), m_entries[item_current]));
 			}
-			
+
 			auto skinInput = (int)(propComponent->m_skin);
 			if (ImGui::DragInt("Skin", &skinInput)) {
 				struct Skin_Command final : Editor_Command {
@@ -157,7 +157,7 @@ public:
 						return false;
 					}
 				};
-				m_editor->doReversableAction(std::make_shared<Skin_Command>(m_editor->getWorld(), getUUIDS(), skinInput));
+				m_editor.doReversableAction(std::make_shared<Skin_Command>(m_editor.getWorld(), getUUIDS(), skinInput));
 			}
 			for (const auto& componentParam : components)
 				static_cast<Prop_Component*>(componentParam[1])->m_skin = (unsigned int)skinInput;
@@ -176,17 +176,17 @@ private:
 		const auto rootPath = Engine::Get_Current_Dir() + "\\Models\\";
 		const auto path = std::filesystem::path(rootPath);
 		const auto types = Mesh_IO::Get_Supported_Types();
-		
+
 		// Cycle through each entry on disk, making prefab entries
-		for (auto& entry : std::filesystem::recursive_directory_iterator(path)) 
+		for (auto& entry : std::filesystem::recursive_directory_iterator(path))
 			if (entry.is_regular_file() && entry.path().has_extension() && std::any_of(types.cbegin(), types.cend(), [&](const auto& s) {return entry.path().extension().string() == s;}))
 				m_entries.push_back(std::filesystem::relative(entry, rootPath).string());
 	}
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
+	Engine& m_engine;
+	LevelEditor_Module& m_editor;
 	std::vector<std::string> m_entries;
 };
 

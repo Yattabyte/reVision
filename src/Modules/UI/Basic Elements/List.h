@@ -27,7 +27,7 @@ public:
 	}
 	/** Constructs a list.
 	@param	engine		the engine. */
-	inline explicit List(Engine* engine) noexcept :
+	inline explicit List(Engine& engine) noexcept :
 		UI_Element(engine),
 		m_shader(Shared_Shader(engine, "UI\\List"))
 	{

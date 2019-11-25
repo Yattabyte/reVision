@@ -58,7 +58,7 @@ public:
 					glm::mat4 matTrans = glm::translate(glm::mat4(1.0f), bboxCenter);
 					glm::mat4 matScale = glm::scale(glm::mat4(1.0f), bboxScale);
 					glm::mat4 matFinal = (matTrans * matRot * matScale);
-					m_frameData->modelBuffer[index].bBoxMatrix = matFinal;					
+					m_frameData->modelBuffer[index].bBoxMatrix = matFinal;
 				}
 				if (bboxComponent) {
 					bboxComponent->m_extent = propComponent->m_model->m_bboxScale;

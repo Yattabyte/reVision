@@ -20,14 +20,14 @@ public:
 	/** Construct this system.
 	@param	engine		the engine to use.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline ShadowScheduler_System(Engine* engine, const std::shared_ptr<ShadowData>& frameData) noexcept :
+	inline ShadowScheduler_System(Engine& engine, const std::shared_ptr<ShadowData>& frameData) noexcept :
 		m_engine(engine),
 		m_frameData(frameData)
 	{
 		addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 		addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 
-		auto& preferences = engine->getPreferenceState();
+		auto& preferences = engine.getPreferenceState();
 		m_maxShadowsCasters = 1u;
 		preferences.getOrSetValue(PreferenceState::Preference::C_SHADOW_MAX_PER_FRAME, m_maxShadowsCasters);
 		preferences.addCallback(PreferenceState::Preference::C_SHADOW_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) { m_maxShadowsCasters = (unsigned int)f; });
@@ -40,9 +40,9 @@ public:
 		// Technique will clear list when ready
 		auto& shadows = m_frameData->shadowsToUpdate;
 		auto& maxShadows = m_maxShadowsCasters;
-		auto clientPosition = m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition;
-		auto clientFarPlane = m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane;
-		const auto clientTime = m_engine->getTime();
+		auto clientPosition = m_engine.getModule_Graphics().getClientCamera()->get()->EyePosition;
+		auto clientFarPlane = m_engine.getModule_Graphics().getClientCamera()->get()->FarPlane;
+		const auto clientTime = m_engine.getTime();
 		if (int availableRoom = (int)m_maxShadowsCasters - (int)m_frameData->shadowsToUpdate.size()) {
 			int cameraCount = 0;
 			for (const auto& componentParam : components) {
@@ -102,7 +102,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	GLuint m_maxShadowsCasters = 1u;
 	std::shared_ptr<ShadowData> m_frameData;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

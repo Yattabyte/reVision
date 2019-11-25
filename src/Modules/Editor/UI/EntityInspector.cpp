@@ -10,7 +10,7 @@
 #include "Modules/Editor/Systems/Inspector_Light_System.h"
 
 
-EntityInspector::EntityInspector(Engine* engine, LevelEditor_Module* editor) noexcept :
+EntityInspector::EntityInspector(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_engine(engine),
 	m_editor(editor)
 {
@@ -24,12 +24,12 @@ EntityInspector::EntityInspector(Engine* engine, LevelEditor_Module* editor) noe
 void EntityInspector::tick(const float& deltaTime) noexcept
 {
 	if (m_open) {
-		const auto& selectedEntities = m_editor->getSelection();
+		const auto& selectedEntities = m_editor.getSelection();
 		if (ImGui::Begin("Entity Inspector", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
 			// Render the selected component attributes that we have widgets for
 			const auto text = std::string("Entities Selected: (" + std::to_string(selectedEntities.size()) + ")");
 			ImGui::Text(text.c_str());
-			m_editor->getWorld().updateSystems(m_inspectorSystems, deltaTime);
+			m_editor.getWorld().updateSystems(m_inspectorSystems, deltaTime);
 		}
 		ImGui::End();
 	}

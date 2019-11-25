@@ -16,7 +16,7 @@ void Physics_Module::initialize() noexcept
 	m_world->setGravity(btVector3(0, btScalar(-9.8), 0));
 
 	// Physics Systems
-	m_physicsSystems.makeSystem<PhysicsSync_System>(&m_engine, m_world);
+	m_physicsSystems.makeSystem<PhysicsSync_System>(m_engine, m_world);
 }
 
 void Physics_Module::deinitialize() noexcept

@@ -26,7 +26,7 @@ public:
 	inline ~OptionsMenu() = default;
 	/** Construct an options menu.
 	@param	engine		the engine to use. */
-	inline explicit OptionsMenu(Engine* engine) noexcept
+	inline explicit OptionsMenu(Engine& engine) noexcept
 		: Menu(engine) {
 		// Title
 		m_title->setText("OPTIONS");
@@ -101,10 +101,10 @@ protected:
 		m_videoMenu->setVisible(false);
 		m_gfxMenu->setVisible(false);
 		m_focusMap->clear();
-		m_engine->getPreferenceState().save();
+		m_engine.getPreferenceState().save();
 
 		// Revert appearance and control back to previous element (start menu, pause menu, etc)
-		m_engine->getModule_UI().popRootElement();
+		m_engine.getModule_UI().popRootElement();
 		m_layout->setSelectionIndex(-1);
 		enactCallback((int)OptionsMenu::Interact::on_back);
 	}

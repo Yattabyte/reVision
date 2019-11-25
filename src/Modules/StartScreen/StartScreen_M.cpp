@@ -10,7 +10,7 @@ void StartScreen_Module::initialize() noexcept
 	m_engine.getManager_Messages().statement("Loading Module: Starting Screen...");
 
 	// Create Main Menu
-	auto startMenu = std::make_shared<StartMenu>(&m_engine);
+	auto startMenu = std::make_shared<StartMenu>(m_engine);
 	m_startMenu = startMenu;
 	startMenu->addCallback((int)StartMenu::Interact::on_start_game, [&]() {
 		m_engine.goToGame();

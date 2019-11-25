@@ -22,7 +22,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	Shared_Shader_Pkg(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
+	Shared_Shader_Pkg(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** An accessory asset for loading shader code chunks.
@@ -36,7 +36,7 @@ public:
 	/** Construct the Shader Package.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Shader_Pkg(Engine* engine, const std::string& filename) noexcept;
+	Shader_Pkg(Engine& engine, const std::string& filename) noexcept;
 
 
 	// Public Methods

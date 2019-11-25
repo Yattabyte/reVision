@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 
-UnsavedChangesDialogue::UnsavedChangesDialogue(Engine* engine, LevelEditor_Module* editor) noexcept :
+UnsavedChangesDialogue::UnsavedChangesDialogue(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_engine(engine),
 	m_editor(editor)
 {
@@ -39,7 +39,7 @@ void UnsavedChangesDialogue::tick(const float&) noexcept
 			if (ImGui::Button("Save", { 90, 20 })) {
 				m_open = false;
 				ImGui::CloseCurrentPopup();
-				m_editor->saveLevel();
+				m_editor.saveLevel();
 				executeFunction();
 			}
 			ImGui::EndPopup();
@@ -49,7 +49,7 @@ void UnsavedChangesDialogue::tick(const float&) noexcept
 
 void UnsavedChangesDialogue::tryPrompt(const std::function<void()>& funcAfterPrompt) noexcept
 {
-	m_open = m_editor->hasUnsavedChanges();
+	m_open = m_editor.hasUnsavedChanges();
 	m_func = funcAfterPrompt;
 
 	if (!m_open)

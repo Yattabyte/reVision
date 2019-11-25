@@ -25,7 +25,7 @@ public:
 	/** Construct a collection of PBR frame-buffers at a specific size.
 	@param	size			the size to use.
 	@param	engine			the active engine. */
-	Graphics_Framebuffers(const glm::ivec2& size, Engine* engine) noexcept;
+	Graphics_Framebuffers(const glm::ivec2& size, Engine& engine) noexcept;
 
 
 	// Public Methods

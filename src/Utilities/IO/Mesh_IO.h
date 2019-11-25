@@ -99,11 +99,11 @@ public:
 	@param	relativePath	the path to the file
 	@param	importedData	the container to place the imported data within
 	@return					true on successful import, false otherwise (error reported to engine) */
-	static bool Import_Model(Engine* engine, const std::string& relativePath, Mesh_Geometry& importedData) noexcept;
+	static bool Import_Model(Engine& engine, const std::string& relativePath, Mesh_Geometry& importedData) noexcept;
 	/** Get the plugin version.
 	@return					the plugin version */
 	static std::string Get_Version() noexcept;
-	/** Get a list of all supported model extensions. 
+	/** Get a list of all supported model extensions.
 	@return					list of supported file types. */
 	static std::vector<std::string> Get_Supported_Types() noexcept;
 };

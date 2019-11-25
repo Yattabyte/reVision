@@ -16,7 +16,7 @@ Prefabs::~Prefabs() noexcept
 	*m_aliveIndicator = false;
 }
 
-Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor) noexcept :
+Prefabs::Prefabs(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_engine(engine),
 	m_editor(editor)
 {
@@ -30,7 +30,7 @@ Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor) noexcept :
 	m_texIconRefresh = Shared_Texture(engine, "Editor//iconRefresh.png");
 
 	// Preferences
-	auto& preferences = engine->getPreferenceState();
+	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) { m_renderSize.x = (int)f; });
@@ -109,7 +109,7 @@ void Prefabs::addPrefab(const std::vector<char>& entityData) noexcept
 	// Save Prefab to disk
 	std::ofstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path, std::ios::binary | std::ios::out);
 	if (!mapFile.is_open())
-		m_engine->getManager_Messages().error("Cannot write the binary map file to disk!");
+		m_engine.getManager_Messages().error("Cannot write the binary map file to disk!");
 	else
 		mapFile.write(entityData.data(), (std::streamsize)entityData.size());
 	mapFile.close();
@@ -227,12 +227,12 @@ void Prefabs::openPrefabEntry() noexcept
 	}
 	else
 		for (const auto& handle : selectedPrefab.entityHandles)
-			m_editor->addEntity(m_previewWorld.serializeEntity(handle));
+			m_editor.addEntity(m_previewWorld.serializeEntity(handle));
 }
 
 void Prefabs::tickThumbnails(const float& deltaTime) noexcept
 {
-	auto rotation = glm::quat_cast(m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix);
+	auto rotation = glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->get()->vMatrix);
 	const auto rotMat = glm::mat4_cast(rotation);
 	auto& trans = *m_previewWorld.getComponent<Transform_Component>(m_sunHandle);
 	trans.m_localTransform.m_orientation = glm::inverse(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(45.0f), glm::vec3(1, 0, 0)) * rotation);
@@ -271,7 +271,7 @@ void Prefabs::tickThumbnails(const float& deltaTime) noexcept
 	GLint previousFBO(0);
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFBO);
 	m_viewport->resize(glm::vec2((float)m_thumbSize), (int)m_prefabs.size());
-	m_engine->getModule_Graphics().renderWorld(m_previewWorld, deltaTime, m_viewport, m_prefabCameras);
+	m_engine.getModule_Graphics().renderWorld(m_previewWorld, deltaTime, m_viewport, m_prefabCameras);
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
 

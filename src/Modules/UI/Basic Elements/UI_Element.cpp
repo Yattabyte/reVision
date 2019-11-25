@@ -6,7 +6,7 @@
 
 // Public (De)Constructors
 
-UI_Element::UI_Element(Engine* engine) noexcept
+UI_Element::UI_Element(Engine& engine) noexcept
 	: m_engine(engine)
 {
 }
@@ -293,5 +293,5 @@ void UI_Element::enactCallback(const int& interactionEventID) noexcept
 	// This is a safety net in case the callback drastically alters the overall engine state, like deleting the calling UI element
 	if (m_callbacks.find(interactionEventID) != m_callbacks.end())
 		for (const auto& func : m_callbacks.at(interactionEventID))
-			m_engine->getModule_UI().pushCallback(func);
+			m_engine.getModule_UI().pushCallback(func);
 }

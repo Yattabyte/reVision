@@ -13,10 +13,10 @@ Mouse_Gizmo::~Mouse_Gizmo() noexcept
 	*m_aliveIndicator = false;
 }
 
-Mouse_Gizmo::Mouse_Gizmo(Engine* engine, LevelEditor_Module* editor) noexcept :
+Mouse_Gizmo::Mouse_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_engine(engine),
 	m_editor(editor),
-	m_pickerSystem(std::make_shared<MousePicker_System>(m_engine)),
+	m_pickerSystem(std::make_shared<MousePicker_System>(engine)),
 	m_translationGizmo(std::make_shared<Translation_Gizmo>(engine, editor)),
 	m_scalingGizmo(std::make_shared<Scaling_Gizmo>(engine, editor)),
 	m_rotationGizmo(std::make_shared<Rotation_Gizmo>(engine, editor)),
@@ -57,23 +57,23 @@ bool Mouse_Gizmo::checkInput(const float& deltaTime) noexcept
 
 		// Set selection LAST, allow attempts at other gizmo's first
 		if (ImGui::IsMouseClicked(0)) {
-			m_editor->getWorld().updateSystem(m_pickerSystem.get(), deltaTime);
+			m_editor.getWorld().updateSystem(m_pickerSystem.get(), deltaTime);
 			const auto& [entityHandle, selectionTransform, intersectionTransform] = (std::dynamic_pointer_cast<MousePicker_System>(m_pickerSystem))->getSelection();
 
 			// Set selection to all tools that need it
 			if (ImGui::GetIO().KeyCtrl)
-				m_editor->toggleAddToSelection(entityHandle);
+				m_editor.toggleAddToSelection(entityHandle);
 			else
 				if (!entityHandle.isValid()) {
-					m_editor->setSelection({});
+					m_editor.setSelection({});
 					setTransform(selectionTransform);
 				}
 				else
-					m_editor->setSelection({ entityHandle });
-			return m_editor->getSelection().size();
+					m_editor.setSelection({ entityHandle });
+			return m_editor.getSelection().size();
 		}
 		else if (ImGui::IsMouseClicked(2)) {
-			m_editor->getWorld().updateSystem(m_pickerSystem.get(), deltaTime);
+			m_editor.getWorld().updateSystem(m_pickerSystem.get(), deltaTime);
 			const auto& [entityHandle, selectionTransform, intersectionTransform] = (std::dynamic_pointer_cast<MousePicker_System>(m_pickerSystem))->getSelection();
 			m_spawnTransform = intersectionTransform;
 			return true;
@@ -93,10 +93,10 @@ void Mouse_Gizmo::render(const float& deltaTime) noexcept
 
 	if (m_spawnModel->existsYet() && m_spawnShader->existsYet()) {
 		// Get camera matrices
-		const auto pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
-		const auto vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
+		const auto pMatrix = m_engine.getModule_Graphics().getClientCamera()->get()->pMatrix;
+		const auto vMatrix = m_engine.getModule_Graphics().getClientCamera()->get()->vMatrix;
 		const auto trans = m_spawnTransform.m_modelMatrix;
-		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(m_spawnTransform.m_position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f));
+		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(m_spawnTransform.m_position, m_engine.getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f));
 
 		// Render Gizmo Model
 		m_spawnModel->bind();

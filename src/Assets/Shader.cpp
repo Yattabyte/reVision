@@ -17,13 +17,13 @@ struct ShaderHeader {
 	GLsizei length;
 };
 
-Shared_Shader::Shared_Shader(Engine* engine, const std::string& filename, const bool& threaded) noexcept
+Shared_Shader::Shared_Shader(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
 	(*(std::shared_ptr<Shader>*)(this)) = std::dynamic_pointer_cast<Shader>(
-		engine->getManager_Assets().shareAsset(
+		engine.getManager_Assets().shareAsset(
 			typeid(Shader).name(),
 			filename,
-			[engine, filename]() { return std::make_shared<Shader>(engine, filename); },
+			[&engine, filename]() { return std::make_shared<Shader>(engine, filename); },
 			threaded
 		));
 }
@@ -34,7 +34,7 @@ Shader::~Shader() noexcept
 		glDeleteProgram(m_glProgramID);
 }
 
-Shader::Shader(Engine* engine, const std::string& filename) noexcept : Asset(engine, filename) {}
+Shader::Shader(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
 void Shader::initialize() noexcept
 {
@@ -58,7 +58,7 @@ void Shader::initialize() noexcept
 		// If we ever failed, initialize default shader
 		if (!success) {
 			const std::vector<GLchar> infoLog = getErrorLog();
-			m_engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to initialize. Reason: " + std::string(infoLog.data(), infoLog.size()));
+			m_engine.getManager_Messages().error("Shader \"" + m_filename + "\" failed to initialize. Reason: " + std::string(infoLog.data(), infoLog.size()));
 
 			// Create hard-coded alternative
 			const std::string filename = getFileName();
@@ -130,10 +130,10 @@ bool Shader::loadCachedBinary(const std::string& relativePath) noexcept
 				return true;
 			}
 			const std::vector<GLchar> infoLog = getErrorLog();
-			m_engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to use binary cache. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
+			m_engine.getManager_Messages().error("Shader \"" + m_filename + "\" failed to use binary cache. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
 			return false;
 		}
-		m_engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to open binary cache.");
+		m_engine.getManager_Messages().error("Shader \"" + m_filename + "\" failed to open binary cache.");
 		return false;
 	}
 	// Safe, binary file simply doesn't exist. Don't error report.
@@ -156,7 +156,7 @@ bool Shader::saveCachedBinary(const std::string& relativePath) noexcept
 		file.close();
 		return true;
 	}
-	m_engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to write to binary cache.");
+	m_engine.getManager_Messages().error("Shader \"" + m_filename + "\" failed to write to binary cache.");
 	return false;
 }
 
@@ -206,7 +206,7 @@ GLint ShaderObj::getShaderiv(const GLenum& parameterName) const noexcept
 	return param;
 }
 
-bool ShaderObj::loadDocument(Engine* engine, const std::string& filePath) noexcept
+bool ShaderObj::loadDocument(Engine& engine, const std::string& filePath) noexcept
 {
 	// Exit early if document not found or no text is found in the document
 	if (!Text_IO::Import_Text(engine, filePath, m_shaderText) || m_shaderText.empty())
@@ -233,7 +233,7 @@ bool ShaderObj::loadDocument(Engine* engine, const std::string& filePath) noexce
 	return true;
 }
 
-bool ShaderObj::createGLShader(Engine* engine, const std::string& filename) noexcept
+bool ShaderObj::createGLShader(Engine& engine, const std::string& filename) noexcept
 {
 	// Create shader object
 	const char* source = m_shaderText.c_str();
@@ -249,6 +249,6 @@ bool ShaderObj::createGLShader(Engine* engine, const std::string& filename) noex
 	// Report any errors
 	std::vector<GLchar> infoLog(getShaderiv(GL_INFO_LOG_LENGTH));
 	glGetShaderInfoLog(m_shaderID, (GLsizei)infoLog.size(), nullptr, &infoLog[0]);
-	engine->getManager_Messages().error("ShaderObj \"" + filename + "\" failed to compile. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
+	engine.getManager_Messages().error("ShaderObj \"" + filename + "\" failed to compile. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
 	return false;
 }

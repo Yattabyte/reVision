@@ -66,11 +66,11 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d) noexcept
 	return newNode;
 }
 
-bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh_Geometry& importedData) noexcept
+bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh_Geometry& importedData) noexcept
 {
 	// Check if the file exists
 	if (!Engine::File_Exists(relativePath)) {
-		engine->getManager_Messages().error("The file \"" + relativePath + "\" does not exist.");
+		engine.getManager_Messages().error("The file \"" + relativePath + "\" does not exist.");
 		return false;
 	}
 
@@ -90,7 +90,7 @@ bool Mesh_IO::Import_Model(Engine* engine, const std::string& relativePath, Mesh
 
 	// Check if scene imported successfully
 	if (scene == nullptr) {
-		engine->getManager_Messages().error("The file \"" + relativePath + "\" exists, but is corrupted.");
+		engine.getManager_Messages().error("The file \"" + relativePath + "\" exists, but is corrupted.");
 		return false;
 	}
 

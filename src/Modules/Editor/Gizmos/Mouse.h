@@ -30,7 +30,7 @@ public:
 	/** Construct this gizmo.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	Mouse_Gizmo(Engine* engine, LevelEditor_Module* editor) noexcept;
+	Mouse_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 
 	// Public Methods
@@ -62,8 +62,8 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
+	Engine& m_engine;
+	LevelEditor_Module& m_editor;
 	Transform m_selectionTransform, m_spawnTransform;
 	std::vector<EntityHandle> m_selection;
 	std::shared_ptr<ecsBaseSystem> m_pickerSystem;

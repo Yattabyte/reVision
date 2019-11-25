@@ -22,7 +22,7 @@ public:
 	/** Construct a prefab UI element.
 	@param	engine			the currently active engine.
 	@param	editor			the level editor. */
-	Prefabs(Engine* engine, LevelEditor_Module* editor) noexcept;
+	Prefabs(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 
 	// Public Interface Implementation
@@ -54,8 +54,8 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
+	Engine& m_engine;
+	LevelEditor_Module& m_editor;
 	Shared_Texture m_texBack, m_texFolder, m_texMissingThumb, m_texIconRefresh;
 	std::string m_prefabSubDirectory = "";
 	glm::ivec2 m_renderSize;

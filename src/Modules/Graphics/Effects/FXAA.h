@@ -20,14 +20,14 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit FXAA(Engine* engine) noexcept :
+	inline explicit FXAA(Engine& engine) noexcept :
 		Graphics_Technique(Technique_Category::POST_PROCESSING),
 		m_engine(engine),
 		m_shaderFXAA(Shared_Shader(engine, "Effects\\FXAA")),
 		m_shapeQuad(Shared_Auto_Model(engine, "quad"))
 	{
 		// Preferences
-		auto& preferences = m_engine->getPreferenceState();
+		auto& preferences = engine.getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::Preference::C_FXAA, m_enabled);
 		preferences.addCallback(PreferenceState::Preference::C_FXAA, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
 	}
@@ -74,7 +74,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	Shared_Shader m_shaderFXAA;
 	Shared_Auto_Model m_shapeQuad;
 	struct DrawData {

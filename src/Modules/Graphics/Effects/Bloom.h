@@ -22,7 +22,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit Bloom(Engine* engine) noexcept :
+	inline explicit Bloom(Engine& engine) noexcept :
 		Graphics_Technique(Technique_Category::POST_PROCESSING),
 		m_engine(engine),
 		m_shaderBloomExtract(Shared_Shader(engine, "Effects\\Bloom Extraction")),
@@ -30,7 +30,7 @@ public:
 		m_shaderGB(Shared_Shader(engine, "Effects\\Gaussian Blur")),
 		m_shapeQuad(Shared_Auto_Model(engine, "quad")) {
 		// Preference Callbacks
-		auto& preferences = m_engine->getPreferenceState();
+		auto& preferences = engine.getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::Preference::C_BLOOM, m_enabled);
 		preferences.addCallback(PreferenceState::Preference::C_BLOOM, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
 		preferences.getOrSetValue(PreferenceState::Preference::C_BLOOM_STRENGTH, m_bloomStrength);
@@ -117,7 +117,7 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	Shared_Shader m_shaderBloomExtract, m_shaderCopy, m_shaderGB;
 	Shared_Auto_Model m_shapeQuad;
 	int m_bloomStrength = 5;

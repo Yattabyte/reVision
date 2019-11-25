@@ -15,7 +15,7 @@ GLubyte* RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size) noexcept
 	return newPixels;
 }
 
-FIBITMAP* Image_IO::Import_Bitmap(Engine* engine, const std::string& relativePath) noexcept
+FIBITMAP* Image_IO::Import_Bitmap(Engine& engine, const std::string& relativePath) noexcept
 {
 	FIBITMAP* bitmap = nullptr;
 	if (!relativePath.empty()) {
@@ -23,7 +23,7 @@ FIBITMAP* Image_IO::Import_Bitmap(Engine* engine, const std::string& relativePat
 		const char* file = fullPath.c_str();
 		FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
 
-		auto& messageManager = engine->getManager_Messages();
+		auto& messageManager = engine.getManager_Messages();
 		if (format == -1)
 			messageManager.error("The file \"" + relativePath + "\" does not exist.");
 		else if (format == FIF_UNKNOWN) {
@@ -56,7 +56,7 @@ void Image_IO::Deinitialize() noexcept
 	FreeImage_DeInitialise();
 }
 
-bool Image_IO::Import_Image(Engine* engine, const std::string& relativePath, Image_Data& importedData, const Resize_Policy& resizePolicy) noexcept
+bool Image_IO::Import_Image(Engine& engine, const std::string& relativePath, Image_Data& importedData, const Resize_Policy& resizePolicy) noexcept
 {
 	const glm::ivec2 containerSize = importedData.dimensions;
 	FIBITMAP* bitmap = Import_Bitmap(engine, relativePath);

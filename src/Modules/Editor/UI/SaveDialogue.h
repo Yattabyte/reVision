@@ -21,7 +21,7 @@ public:
 	/** Construct a level save dialogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
-	SaveDialogue(Engine* engine, LevelEditor_Module* editor) noexcept;
+	SaveDialogue(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 
 	// Public Interface Implementation
@@ -47,8 +47,8 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
+	Engine& m_engine;
+	LevelEditor_Module& m_editor;
 	std::string m_chosen = "", m_subDirectory = "";
 	struct LevelEntry {
 		std::string name = "", path = "", extension = "", extType = "", date = "", size = "";

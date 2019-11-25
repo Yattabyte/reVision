@@ -9,7 +9,7 @@
 #include <time.h>
 
 
-OpenDialogue::OpenDialogue(Engine* engine, LevelEditor_Module* editor) noexcept :
+OpenDialogue::OpenDialogue(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_engine(engine),
 	m_editor(editor),
 	m_iconFile(Shared_Texture(engine, "Editor//iconFile.png")),
@@ -179,7 +179,7 @@ void OpenDialogue::tickMainDialogue() noexcept
 				m_selected = -1;
 			}
 			else {
-				m_editor->openLevel(selectedLevel.path);
+				m_editor.openLevel(selectedLevel.path);
 				m_selected = -1;
 				m_open = false;
 			}

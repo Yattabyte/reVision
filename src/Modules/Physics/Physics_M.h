@@ -15,7 +15,7 @@ public:
 	// Public (De)Constructors
 	/** Destroy this physics module. */
 	inline ~Physics_Module() = default;
-	/** Construct a physics module. 
+	/** Construct a physics module.
 	@param	engine		the currently active engine. */
 	inline explicit Physics_Module(Engine& engine) : Engine_Module(engine) {}
 

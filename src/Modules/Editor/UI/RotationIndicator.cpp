@@ -15,12 +15,12 @@ RotationIndicator::~RotationIndicator() noexcept
 	glDeleteTextures(1, &m_depthID);
 }
 
-RotationIndicator::RotationIndicator(Engine* engine) noexcept :
+RotationIndicator::RotationIndicator(Engine& engine) noexcept :
 	m_engine(engine)
 {
 	m_open = true;
 
-	auto& preferences = engine->getPreferenceState();
+	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
@@ -80,7 +80,7 @@ void RotationIndicator::tick(const float&) noexcept
 
 		// Generate matrices
 		const auto pMatrix = glm::ortho(-4.2f, 4.2f, -4.2f, 4.2f, -10.0f, 10.0f);
-		const auto camMatrix = glm::mat4_cast(glm::quat_cast(m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix));
+		const auto camMatrix = glm::mat4_cast(glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->get()->vMatrix));
 		const auto vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -5.0f)) * camMatrix;
 		m_shader->setUniform(0, pMatrix * vMatrix);
 

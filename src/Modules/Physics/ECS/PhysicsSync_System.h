@@ -17,9 +17,9 @@ public:
 	/** Destroy this physics sync system. */
 	inline ~PhysicsSync_System() = default;
 	/** Construct a physics sync system. */
-	inline PhysicsSync_System(Engine* engine, btDiscreteDynamicsWorld* world) noexcept :
-		ecsBaseSystem(), 
-		m_engine(engine), 
+	inline PhysicsSync_System(Engine& engine, btDiscreteDynamicsWorld* world) noexcept :
+		ecsBaseSystem(),
+		m_engine(engine),
 		m_world(world)
 	{
 		// Declare component types used
@@ -39,7 +39,7 @@ public:
 			const auto& scale = transformComponent->m_worldTransform.m_scale;
 
 			if (colliderComponent) {
-				if (!colliderComponent->m_collider) 
+				if (!colliderComponent->m_collider)
 					colliderComponent->m_collider = Shared_Collider(m_engine, colliderComponent->m_modelName);
 				else if (colliderComponent->m_collider->existsYet()) {
 					// If the collider's transformation is out of date
@@ -94,7 +94,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	btDiscreteDynamicsWorld* m_world = nullptr;
 };
 

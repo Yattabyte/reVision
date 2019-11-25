@@ -21,7 +21,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline explicit Skybox(Engine* engine) noexcept :
+	inline explicit Skybox(Engine& engine) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_cubemapSky(Shared_Cubemap(engine, "sky\\")),
@@ -56,9 +56,9 @@ public:
 
 			// Error Reporting
 			if (glCheckNamedFramebufferStatus(m_cubeFBO, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-				m_engine->getManager_Messages().error("Skybox Framebuffer has encountered an error.");
+				m_engine.getManager_Messages().error("Skybox Framebuffer has encountered an error.");
 			if (!glIsTexture(m_cubemapMipped))
-				m_engine->getManager_Messages().error("Skybox Texture is incomplete.");
+				m_engine.getManager_Messages().error("Skybox Texture is incomplete.");
 			});
 	}
 
@@ -167,7 +167,7 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	GLuint m_cubeFBO = 0, m_cubemapMipped = 0;
 	Shared_Cubemap m_cubemapSky;
 	Shared_Shader m_shaderSky, m_shaderSkyReflect, m_shaderConvolute;

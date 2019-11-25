@@ -48,7 +48,7 @@ public:
 protected:
 	// Protected Constructors
 	/** Create asset that uses the specified file-path. */
-	Asset(Engine* engine, const std::string& filename) noexcept;
+	Asset(Engine& engine, const std::string& filename) noexcept;
 
 
 	// Protected Interface
@@ -63,7 +63,7 @@ protected:
 
 
 	// Protected Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	std::atomic_bool m_finalized = false;
 	mutable GLsync m_fence = nullptr;
 	std::string m_filename = "";

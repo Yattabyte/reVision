@@ -18,7 +18,7 @@ public:
 	/** Construct this element.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	Hotkeys(Engine* engine, LevelEditor_Module* editor) noexcept;
+	Hotkeys(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 
 	// Public Interface Implementation
@@ -27,8 +27,8 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
+	Engine& m_engine;
+	LevelEditor_Module& m_editor;
 };
 
 #endif // HOTKEYS_H

@@ -28,7 +28,7 @@ public:
 	}
 	/** Construct the side list.
 	@param	engine		the engine to use. */
-	inline explicit SideList(Engine* engine) noexcept :
+	inline explicit SideList(Engine& engine) noexcept :
 		UI_Element(engine),
 		m_shader(Shared_Shader(engine, "UI\\SideList")),
 		m_label(std::make_shared<Label>(engine, ""))

@@ -18,7 +18,7 @@ public:
 	// Public (De)Constructors
 	/** Destroy the UI module. */
 	inline ~UI_Module() = default;
-	/** Construct a UI module.  
+	/** Construct a UI module.
 	@param	engine		the currently active engine. */
 	inline explicit UI_Module(Engine& engine) : Engine_Module(engine) {}
 

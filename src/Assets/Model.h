@@ -26,7 +26,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Model(Engine* engine, const std::string& filename, const bool& threaded = true) noexcept;
+	explicit Shared_Model(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 
 /** A 3D mesh formated for model rendering.
@@ -41,7 +41,7 @@ public:
 	/** Construct the Model.
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
-	Model(Engine* engine, const std::string& filename) noexcept;
+	Model(Engine& engine, const std::string& filename) noexcept;
 
 
 	// Public Attributes

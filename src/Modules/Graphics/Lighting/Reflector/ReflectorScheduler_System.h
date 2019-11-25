@@ -20,13 +20,13 @@ public:
 	/** Construct this system.
 	@param	engine		the engine to use.
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline ReflectorScheduler_System(Engine* engine, const std::shared_ptr<ReflectorData>& frameData) noexcept :
+	inline ReflectorScheduler_System(Engine& engine, const std::shared_ptr<ReflectorData>& frameData) noexcept :
 		m_engine(engine),
 		m_frameData(frameData)
 	{
 		addComponentType(Reflector_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 
-		auto& preferences = engine->getPreferenceState();
+		auto& preferences = engine.getPreferenceState();
 		m_maxReflectionCasters = 1u;
 		preferences.getOrSetValue(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_maxReflectionCasters);
 		preferences.addCallback(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) { m_maxReflectionCasters = (unsigned int)f; });
@@ -39,9 +39,9 @@ public:
 		// Technique will clear list when ready
 		auto& reflectors = m_frameData->reflectorsToUpdate;
 		auto& maxReflectors = m_maxReflectionCasters;
-		auto clientPosition = m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition;
-		auto clientFarPlane = m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane;
-		const auto clientTime = m_engine->getTime();
+		auto clientPosition = m_engine.getModule_Graphics().getClientCamera()->get()->EyePosition;
+		auto clientFarPlane = m_engine.getModule_Graphics().getClientCamera()->get()->FarPlane;
+		const auto clientTime = m_engine.getTime();
 		if (int availableRoom = (int)m_maxReflectionCasters - (int)m_frameData->reflectorsToUpdate.size()) {
 			int cameraCount = 0;
 			for (const auto& componentParam : components) {
@@ -101,7 +101,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	GLuint m_maxReflectionCasters = 1u;
 	std::shared_ptr<ReflectorData> m_frameData;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

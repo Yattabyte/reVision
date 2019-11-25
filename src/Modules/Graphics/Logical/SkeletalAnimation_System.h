@@ -14,7 +14,7 @@ public:
 	/** Destroy the skeletal animation system. */
 	inline ~Skeletal_Animation_System() = default;
 	/** Construct a skeletal animation system. */
-	inline explicit Skeletal_Animation_System(Engine* engine) noexcept :
+	inline explicit Skeletal_Animation_System(Engine& engine) noexcept :
 		m_engine(engine)
 	{
 		// Declare component types used
@@ -139,7 +139,7 @@ protected:
 
 private:
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 };
 
 #endif // SKELETALANIMATION_SYSTEM_H

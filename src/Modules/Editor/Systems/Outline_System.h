@@ -29,7 +29,7 @@ public:
 	/** Construct this system.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	inline Outline_System(Engine* engine, LevelEditor_Module* editor) noexcept :
+	inline Outline_System(Engine& engine, LevelEditor_Module& editor) noexcept :
 		m_engine(engine),
 		m_editor(editor)
 	{
@@ -40,7 +40,7 @@ public:
 		addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 
 		// Preferences
-		auto& preferences = m_engine->getPreferenceState();
+		auto& preferences = m_engine.getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::Preference::E_OUTLINE_SCALE, m_renderScale);
 		preferences.addCallback(PreferenceState::Preference::E_OUTLINE_SCALE, m_aliveIndicator, [&](const float& f) {
 			m_renderScale = f;
@@ -72,7 +72,7 @@ public:
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		if (m_shader->existsYet()) {
 			// Collate all component data to generate a draw call
-			const auto& camera = m_engine->getModule_Graphics().getClientCamera()->get();
+			const auto& camera = m_engine.getModule_Graphics().getClientCamera()->get();
 			const auto& pMatrix = camera->pMatrix;
 			const auto& vMatrix = camera->vMatrix;
 			std::vector<glm::mat4> baseTransforms;
@@ -115,7 +115,7 @@ public:
 			m_indirectGeometry.endWriting();
 
 			// Stencil-out the shapes themselves
-			m_editor->bindFBO();
+			m_editor.bindFBO();
 			m_shader->bind();
 			m_shader->setUniform(0, 0.0f);
 			m_shader->setUniform(1, camera->EyePosition);
@@ -228,8 +228,8 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
+	Engine& m_engine;
+	LevelEditor_Module& m_editor;
 	float m_renderScale = 0.02f;
 	Shared_Mesh m_cube, m_sphere, m_hemisphere;
 	Shared_Shader m_shader;

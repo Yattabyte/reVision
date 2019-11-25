@@ -41,7 +41,7 @@ public:
 	@param	importedData	the container to place the imported data within.
 	@param	resizePolicy	the resize policy to use, such as nearest neighbor or linear interpolation.
 	@return					true on successful import, false otherwise (error reported to engine). */
-	static bool Import_Image(Engine* engine, const std::string& relativePath, Image_Data& importedData, const Resize_Policy& resizePolicy = Resize_Policy::LINEAR) noexcept;
+	static bool Import_Image(Engine& engine, const std::string& relativePath, Image_Data& importedData, const Resize_Policy& resizePolicy = Resize_Policy::LINEAR) noexcept;
 	/** Load pixel data from a bitmap object.
 	@param	bitmap			the FreeImage bitmap to read from.
 	@param	importedData	the container to place the imported data within. */
@@ -61,7 +61,7 @@ private:
 	@param	engine			the engine to import to.
 	@param	relativePath	the path to the file.
 	@return					the free image bitmap object. */
-	static FIBITMAP* Import_Bitmap(Engine* engine, const std::string& relativePath) noexcept;
+	static FIBITMAP* Import_Bitmap(Engine& engine, const std::string& relativePath) noexcept;
 };
 
 #endif // IMAGE_IO_H

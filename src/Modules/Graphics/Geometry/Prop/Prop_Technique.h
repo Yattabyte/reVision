@@ -21,7 +21,7 @@ public:
 	/** Destructor. */
 	inline ~Prop_Technique() = default;
 	/** Constructor. */
-	inline Prop_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& viewports) noexcept :
+	inline Prop_Technique(Engine& engine, const std::shared_ptr<std::vector<Camera*>>& viewports) noexcept :
 		m_engine(engine),
 		m_shaderCull(Shared_Shader(engine, "Core\\Props\\culling")),
 		m_shaderGeometry(Shared_Shader(engine, "Core\\Props\\geometry")),
@@ -267,7 +267,7 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
+	Engine& m_engine;
 	Shared_Shader m_shaderCull, m_shaderGeometry, m_shaderShadowCull, m_shaderShadowGeometry;
 	Shared_Auto_Model m_shapeCube;
 	struct DrawData {

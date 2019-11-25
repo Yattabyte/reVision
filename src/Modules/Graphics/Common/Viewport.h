@@ -19,7 +19,7 @@ public:
 	@param	screenPosition	the offset relative to the bottom left of the screen.
 	@param	dimensions		the size of the viewport.
 	@param	engine			the active engine. */
-	Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions, Engine* engine) noexcept;
+	Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions, Engine& engine) noexcept;
 
 
 	// Public Methods

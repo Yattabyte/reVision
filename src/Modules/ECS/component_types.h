@@ -70,13 +70,13 @@ struct [[deprecated]] BoundingSphere_Component final : public ecsComponent<Bound
 
 	inline std::vector<char> serialize() noexcept {
 		return Serializer::Serialize_Set(
-			std::make_pair("m_positionOffset", m_positionOffset), 
-			std::make_pair("m_radius", m_radius), 
+			std::make_pair("m_positionOffset", m_positionOffset),
+			std::make_pair("m_radius", m_radius),
 			std::make_pair("m_cameraCollision", m_cameraCollision)
 		);
 	}
 	inline void deserialize(const std::vector<char>& data) noexcept {
-		Serializer::Deserialize_Set(data, 
+		Serializer::Deserialize_Set(data,
 			std::make_pair("m_positionOffset", &m_positionOffset),
 			std::make_pair("m_radius", &m_radius),
 			std::make_pair("m_cameraCollision", &m_cameraCollision)

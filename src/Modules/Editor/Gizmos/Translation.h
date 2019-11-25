@@ -24,7 +24,7 @@ public:
 	/** Construct this gizmo.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	Translation_Gizmo(Engine* engine, LevelEditor_Module* editor) noexcept;
+	Translation_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 
 	// Public Methods
@@ -48,8 +48,8 @@ private:
 
 
 	// Private Attributes
-	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
+	Engine& m_engine;
+	LevelEditor_Module& m_editor;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	Transform m_transform;
 	enum SelectedAxes : unsigned int {

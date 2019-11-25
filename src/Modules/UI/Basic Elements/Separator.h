@@ -19,7 +19,7 @@ public:
 	}
 	/** Construct a separator.
 	@param	engine		the engine to use. */
-	inline explicit Separator(Engine* engine) noexcept :
+	inline explicit Separator(Engine& engine) noexcept :
 		UI_Element(engine),
 		m_shader(Shared_Shader(engine, "UI\\Separator"))
 	{

@@ -25,7 +25,7 @@ public:
 	inline ~StartMenu() = default;
 	/** Construct a start menu.
 	@param	engine		the engine to use. */
-	inline explicit StartMenu(Engine* engine) noexcept
+	inline explicit StartMenu(Engine& engine) noexcept
 		: Menu(engine) {
 		// Title
 		m_title->setText("MAIN MENU");
@@ -54,7 +54,7 @@ public:
 		m_focusMap = std::make_shared<FocusMap>();
 		m_focusMap->addElement(m_layout);
 		m_focusMap->focusElement(m_layout);
-		m_engine->getModule_UI().setFocusMap(getFocusMap());
+		engine.getModule_UI().setFocusMap(getFocusMap());
 	}
 
 
@@ -62,18 +62,18 @@ protected:
 	// Protected Methods
 	/** Choose 'start game' from the main menu. */
 	inline void startGame() noexcept {
-		m_engine->getModule_UI().clear();
+		m_engine.getModule_UI().clear();
 		enactCallback((int)StartMenu::Interact::on_start_game);
 	}
 	/** Choose 'level editor' from the main menu. */
 	inline void startEditor() noexcept {
-		m_engine->getModule_UI().clear();
+		m_engine.getModule_UI().clear();
 		enactCallback((int)StartMenu::Interact::on_level_editor);
 	}
 	/** Choose 'options' from the main menu. */
 	inline void goToOptions() noexcept {
 		// Transfer appearance and control to options menu
-		auto& ui = m_engine->getModule_UI();
+		auto& ui = m_engine.getModule_UI();
 		ui.pushRootElement(m_optionsMenu);
 		ui.setFocusMap(m_optionsMenu->getFocusMap());
 		m_layout->setSelectionIndex(-1);
@@ -82,12 +82,12 @@ protected:
 	/** Chosen when control is returned from the options menu. */
 	inline void returnFromOptions() noexcept {
 		// Transfer control back to this menu
-		m_engine->getModule_UI().setFocusMap(getFocusMap());
+		m_engine.getModule_UI().setFocusMap(getFocusMap());
 	}
 	/** Choose 'quit' from the main menu. */
 	inline void quit() noexcept {
-		m_engine->getModule_UI().clear();
-		m_engine->shutDown();
+		m_engine.getModule_UI().clear();
+		m_engine.shutDown();
 		enactCallback((int)StartMenu::Interact::on_quit);
 	}
 
