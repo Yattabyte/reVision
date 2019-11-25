@@ -8,7 +8,7 @@ constexpr auto LevelPrefix = "\\Maps\\";
 
 inline static auto Get_Full_Path(const std::string& relativePath) noexcept
 {
-	return Engine::Get_Current_Dir() + "\\Maps\\" + relativePath;
+	return Engine::Get_Current_Dir() + LevelPrefix + relativePath;
 }
 
 bool Level_IO::Level_Exists(const std::string& relativePath) noexcept

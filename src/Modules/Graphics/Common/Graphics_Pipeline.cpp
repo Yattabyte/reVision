@@ -75,7 +75,7 @@ std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime
 	for (auto& camera : cameras) {
 		camera->updateFrustum();
 		m_sceneCameras->push_back(camera.get());
-		perspectives.push_back({ count, count });
+		perspectives.emplace_back( count, count );
 		count++;
 	}
 
@@ -93,7 +93,7 @@ std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime
 	// Write camera data to camera GPU buffer
 	m_cameraBuffer.beginWriting();
 	m_cameraBuffer.resize(m_sceneCameras->size());
-	for (size_t x = 0ull; x < m_sceneCameras->size(); ++x)
+	for (size_t x = 0ULL; x < m_sceneCameras->size(); ++x)
 		m_cameraBuffer[x] = *(*m_sceneCameras)[x]->get();
 	m_cameraBuffer.endWriting();
 
@@ -116,7 +116,7 @@ void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Vie
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for (auto* tech : m_allTechniques)
-		if ((unsigned int)categories & (unsigned int)tech->getCategory())
+		if (((unsigned int)categories & (unsigned int)tech->getCategory()) != 0u)
 			tech->renderTechnique(deltaTime, viewport, perspectives);
 }
 

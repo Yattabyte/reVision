@@ -354,7 +354,7 @@ std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsEntity*>& ent
 {
 	std::vector<char> data;
 	for (const auto& entity : entities) {
-		if (entity) {
+		if (entity != nullptr) {
 			const auto entData = serializeEntity(*entity);
 			data.insert(data.end(), entData.begin(), entData.end());
 		}

@@ -10,7 +10,6 @@ constexpr const char* EXT_SHADER_VERTEX = ".vsh";
 constexpr const char* EXT_SHADER_FRAGMENT = ".fsh";
 constexpr const char* EXT_SHADER_BINARY = ".shader";
 constexpr const char* DIRECTORY_SHADER = "\\Shaders\\";
-constexpr const char* DIRECTORY_SHADER_CACHE = R"(\cache\shaders\)";
 
 struct ShaderHeader {
 	GLenum format;
@@ -42,6 +41,7 @@ void Shader::initialize() noexcept
 	m_glProgramID = glCreateProgram();
 
 #ifdef NDEBUG
+	constexpr const char* DIRECTORY_SHADER_CACHE = R"(\cache\shaders\)";
 	//if (!loadCachedBinary(DIRECTORY_SHADER_CACHE + getFileName()))
 #endif
 	{
@@ -51,6 +51,7 @@ void Shader::initialize() noexcept
 			glLinkProgram(m_glProgramID);
 			success = validateProgram();
 #ifdef NDEBUG
+			constexpr const char* DIRECTORY_SHADER_CACHE = R"(\cache\shaders\)";
 			if (success)
 				saveCachedBinary(DIRECTORY_SHADER_CACHE + getFileName());
 #endif
