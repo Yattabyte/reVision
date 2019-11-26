@@ -16,7 +16,6 @@
 class Editor_Interface;
 class Mouse_Gizmo;
 struct Editor_Command;
-class Graphics_Pipeline;
 
 /** A level editor module. */
 class LevelEditor_Module final : public Engine_Module {

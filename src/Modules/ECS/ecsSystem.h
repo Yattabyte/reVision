@@ -72,20 +72,18 @@ public:
 	@param	<T>		the system class type.
 	@param	...Args	variadic arguments to forward to the system constructor. */
 	template <typename T, class...Args>
-	[[maybe_unused]] inline std::shared_ptr<T> makeSystem(Args & ...args) noexcept {
-		const auto& system = std::make_shared<T>(args...);
-		if (!system->isValid())
-			return {};
-		m_systems.push_back(system);
-		return system;
+	inline void makeSystem(Args & ...args) noexcept {
+		if (const auto& system = std::make_shared<T>(args...); system->isValid())
+			m_systems.push_back(system);
 	}
 	/** Adds a system to the list.
 	@param	system	the system to add. */
 	inline const bool addSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept {
-		if (!system->isValid())
-			return false;
-		m_systems.push_back(system);
-		return true;
+		if (system->isValid()) {
+			m_systems.push_back(system);
+			return true;
+		}
+		return false;
 	}
 	/** Removes a system from the list.
 	@param	system	the system to remove. */

@@ -24,19 +24,16 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Indirect_Technique(Engine& engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
+	inline Indirect_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_shader_Bounce(Shared_Shader(engine, "Core\\Light\\Bounce")),
 		m_shader_Recon(Shared_Shader(engine, "Core\\Light\\Reconstruction")),
 		m_shader_Rebounce(Shared_Shader(engine, "Core\\Light\\Rebounce")),
 		m_shapeQuad(Shared_Auto_Model(engine, "quad")),
-		m_frameData(std::make_shared<Indirect_Light_Data>()),
-		m_cameras(cameras)
+		m_frameData(shadowData, clientCamera),
+		m_sceneCameras(sceneCameras)
 	{
-		m_frameData->clientCamera = clientCamera;
-		m_frameData->shadowData = shadowData;
-
 		// Auxiliary Systems
 		m_auxilliarySystems.makeSystem<IndirectVisibility_System>(m_frameData);
 		m_auxilliarySystems.makeSystem<IndirectSync_System>(m_frameData);
@@ -64,18 +61,18 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void clearCache(const float& deltaTime) noexcept override final {
-		m_frameData->lightBuffer.endReading();
-		m_frameData->viewInfo.clear();
+		m_frameData.lightBuffer.endReading();
+		m_frameData.viewInfo.clear();
 		m_drawIndex = 0;
 	}
 	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept override final {
 		// Link together the dimensions of view info to that of the viewport vectors
-		m_frameData->viewInfo.resize(m_cameras->size());
+		m_frameData.viewInfo.resize(m_sceneCameras.size());
 		world.updateSystems(m_auxilliarySystems, deltaTime);
 	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		// Update light-bounce volume
-		if (m_enabled && m_frameData->viewInfo.size() && m_shapeQuad->existsYet() && m_shader_Bounce->existsYet() && m_shader_Recon->existsYet() && m_shader_Rebounce->existsYet()) {
+		if (m_enabled && m_frameData.viewInfo.size() && m_shapeQuad->existsYet() && m_shader_Bounce->existsYet() && m_shader_Recon->existsYet() && m_shader_Rebounce->existsYet()) {
 			// Light bounce using client camera
 			if (m_drawIndex >= m_drawData.size())
 				m_drawData.resize(size_t(m_drawIndex) + 1ull);
@@ -85,9 +82,9 @@ public:
 			std::vector<glm::ivec2> camIndicesGen, camIndiciesRebounce, camIndiciesRecon;
 			std::vector<GLint> lightIndices;
 			for (auto& [camIndex, layer] : perspectives) {
-				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
+				const std::vector<glm::ivec2> tempIndices(m_frameData.viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
 				camIndicesGen.insert(camIndicesGen.end(), tempIndices.begin(), tempIndices.end());
-				lightIndices.insert(lightIndices.end(), m_frameData->viewInfo[camIndex].lightIndices.begin(), m_frameData->viewInfo[camIndex].lightIndices.end());
+				lightIndices.insert(lightIndices.end(), m_frameData.viewInfo[camIndex].lightIndices.begin(), m_frameData.viewInfo[camIndex].lightIndices.end());
 				const std::vector<glm::ivec2> tempIndices2(m_bounceSize, { camIndex, layer });
 				camIndiciesRebounce.insert(camIndiciesRebounce.end(), tempIndices2.begin(), tempIndices2.end());
 				camIndiciesRecon.push_back({ camIndex, layer });
@@ -96,8 +93,8 @@ public:
 
 			if (lightIndices.size()) {
 				updateDrawParams(camBufferIndex, camBufferRebounce, camBufferRecon, visLights, indirectBounce, indirectQuad, indirectQuadRecon, camIndicesGen, camIndiciesRebounce, camIndiciesRecon, lightIndices, shadowCount, perspectives);
-				fillBounceVolume(shadowCount, viewport->m_gfxFBOS->m_rhVolume);
-				rebounceVolume(viewport->m_gfxFBOS->m_rhVolume, camBufferRebounce, indirectQuad);
+				fillBounceVolume(shadowCount, viewport->m_gfxFBOS.m_rhVolume);
+				rebounceVolume(viewport->m_gfxFBOS.m_rhVolume, camBufferRebounce, indirectQuad);
 				reconstructVolume(viewport, camBufferRecon, indirectQuadRecon);
 				camBufferIndex.endReading();
 				camBufferRebounce.endReading();
@@ -158,13 +155,13 @@ private:
 		glViewport(0, 0, (GLsizei)rhVolume.m_resolution, (GLsizei)rhVolume.m_resolution);
 		m_shader_Bounce->bind();
 		rhVolume.writePrimary();
-		glBindTextureUnit(0, m_frameData->shadowData->shadowFBO.m_texNormal);
-		glBindTextureUnit(1, m_frameData->shadowData->shadowFBO.m_texColor);
-		glBindTextureUnit(2, m_frameData->shadowData->shadowFBO.m_texDepth);
+		glBindTextureUnit(0, m_frameData.shadowData.shadowFBO.m_texNormal);
+		glBindTextureUnit(1, m_frameData.shadowData.shadowFBO.m_texColor);
+		glBindTextureUnit(2, m_frameData.shadowData.shadowFBO.m_texDepth);
 		glBindTextureUnit(4, m_textureNoise32);
 		m_drawData[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_drawData[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
-		m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+		m_frameData.lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 		m_drawData[m_drawIndex].indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
@@ -199,9 +196,9 @@ private:
 		// Reconstruct indirect radiance
 		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 		m_shader_Recon->bind();
-		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
-		viewport->m_gfxFBOS->m_rhVolume.readSecondary(4);
-		viewport->m_gfxFBOS->bindForWriting("BOUNCE");
+		viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);
+		viewport->m_gfxFBOS.m_rhVolume.readSecondary(4);
+		viewport->m_gfxFBOS.bindForWriting("BOUNCE");
 		camBufferRecon.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		indirectQuadRecon.drawCall();
 		glEnable(GL_DEPTH_TEST);
@@ -224,8 +221,8 @@ private:
 	ecsSystemList m_auxilliarySystems;
 
 	// Shared Attributes
-	std::shared_ptr<Indirect_Light_Data> m_frameData;
-	std::shared_ptr<std::vector<Camera*>> m_cameras;
+	Indirect_Light_Data m_frameData;
+	std::vector<Camera*>& m_sceneCameras;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

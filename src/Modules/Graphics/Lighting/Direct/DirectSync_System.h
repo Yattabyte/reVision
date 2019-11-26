@@ -15,8 +15,8 @@ public:
 	/** Destroy this system. */
 	inline ~DirectSync_System() = default;
 	/** Construct this system.
-	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline explicit DirectSync_System(const std::shared_ptr<Direct_Light_Data>& frameData) noexcept :
+	@param	frameData	reference to common data that changes frame-to-frame. */
+	inline explicit DirectSync_System(Direct_Light_Data& frameData) noexcept :
 		m_frameData(frameData)
 	{
 		addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
@@ -28,8 +28,8 @@ public:
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		// Resize light buffers to match number of entities this frame
-		m_frameData->lightBuffer.resize(components.size());
-		m_frameData->lightBuffer.beginWriting();
+		m_frameData.lightBuffer.resize(components.size());
+		m_frameData.lightBuffer.beginWriting();
 		int index = 0;
 		for (const auto& componentParam : components) {
 			auto* trans = static_cast<Transform_Component*>(componentParam[0]);
@@ -44,15 +44,15 @@ public:
 			const auto sclM = glm::scale(glm::mat4(1.0f), glm::vec3(radiusSquared * 1.1f));
 			trans->m_localTransform.m_scale = glm::vec3(radiusSquared * 1.1f);
 			trans->m_localTransform.update();
-			m_frameData->lightBuffer[index].mMatrix = transM * rotM * sclM;
-			m_frameData->lightBuffer[index].LightColor = light->m_color;
-			m_frameData->lightBuffer[index].LightPosition = trans->m_worldTransform.m_position;
-			m_frameData->lightBuffer[index].LightDirection = glm::normalize(rotM * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
-			m_frameData->lightBuffer[index].LightIntensity = light->m_intensity;
-			m_frameData->lightBuffer[index].LightRadius = light->m_radius;
-			m_frameData->lightBuffer[index].LightCutoff = cosf(glm::radians(light->m_cutoff / 2.0f));
-			m_frameData->lightBuffer[index].Shadow_Spot = shadow ? shadow->m_shadowSpot : -1;
-			m_frameData->lightBuffer[index].Light_Type = static_cast<int>(light->m_type);
+			m_frameData.lightBuffer[index].mMatrix = transM * rotM * sclM;
+			m_frameData.lightBuffer[index].LightColor = light->m_color;
+			m_frameData.lightBuffer[index].LightPosition = trans->m_worldTransform.m_position;
+			m_frameData.lightBuffer[index].LightDirection = glm::normalize(rotM * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
+			m_frameData.lightBuffer[index].LightIntensity = light->m_intensity;
+			m_frameData.lightBuffer[index].LightRadius = light->m_radius;
+			m_frameData.lightBuffer[index].LightCutoff = cosf(glm::radians(light->m_cutoff / 2.0f));
+			m_frameData.lightBuffer[index].Shadow_Spot = shadow ? shadow->m_shadowSpot : -1;
+			m_frameData.lightBuffer[index].Light_Type = static_cast<int>(light->m_type);
 
 			// Sync Shadow Attributes
 			if (shadow) {
@@ -64,7 +64,7 @@ public:
 					camData.vMatrixInverse = glm::inverse(vMatrix);
 					camData.pvMatrix = pMatrix * vMatrix;
 					camData.EyePosition = position;
-					camData.Dimensions = glm::ivec2((int)m_frameData->shadowData->shadowSize);
+					camData.Dimensions = glm::ivec2((int)m_frameData.shadowData.shadowSize);
 					camData.NearPlane = nearPlane;
 					camData.FarPlane = farPlane;
 					camData.FOV = fov;
@@ -73,7 +73,7 @@ public:
 				if (light->m_type == Light_Component::Light_Type::DIRECTIONAL) {
 					constexpr auto NUM_CASCADES = 4;
 					shadow->m_cameras.resize(NUM_CASCADES);
-					const auto& ClientCamera = *m_frameData->clientCamera->get();
+					const auto& ClientCamera = *m_frameData.clientCamera.get();
 					const auto& CamInv = ClientCamera.vMatrixInverse;
 					const auto& CamP = ClientCamera.pMatrix;
 					const auto& size = ClientCamera.Dimensions;
@@ -108,7 +108,7 @@ public:
 						const auto aabb = glm::vec3(glm::distance(glm::vec3(maxCoord), middle));
 
 						// Calculate orthographic projection variables
-						const auto volumeUnitSize = (aabb - -aabb) / m_frameData->shadowData->shadowSize;
+						const auto volumeUnitSize = (aabb - -aabb) / m_frameData.shadowData.shadowSize;
 						const auto frustumpos = glm::vec3(sunModelMatrix * CamInv * glm::vec4(middle, 1.0f));
 						const auto clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
 						const auto newMin = -aabb + clampedPos;
@@ -121,8 +121,8 @@ public:
 
 						updateCamera(shadow->m_cameras[x], pMatrix, sunModelMatrix, glm::vec3(pos / pos.w), v_near.z, v_far.z, 180.0f);
 						if (shadow->m_cameras[x].getEnabled()) {
-							m_frameData->lightBuffer[index].lightVP[x] = shadow->m_cameras[x].get()->pvMatrix;
-							m_frameData->lightBuffer[index].CascadeEndClipSpace[x] = v_far.z;
+							m_frameData.lightBuffer[index].lightVP[x] = shadow->m_cameras[x].get()->pvMatrix;
+							m_frameData.lightBuffer[index].CascadeEndClipSpace[x] = v_far.z;
 						}
 					}
 				}
@@ -140,7 +140,7 @@ public:
 					for (int x = 0; x < 6; ++x) {
 						updateCamera(shadow->m_cameras[x], pMatrix, vMatrices[x], position, -Camera::ConstNearPlane, radiusSquared, 90.0f);
 						if (shadow->m_cameras[x].getEnabled())
-							m_frameData->lightBuffer[index].lightVP[x] = shadow->m_cameras[x].get()->pvMatrix;
+							m_frameData.lightBuffer[index].lightVP[x] = shadow->m_cameras[x].get()->pvMatrix;
 					}
 				}
 				else if (light->m_type == Light_Component::Light_Type::SPOT) {
@@ -149,19 +149,19 @@ public:
 					const auto vMatrix = glm::inverse(transM * rotM);
 					updateCamera(shadow->m_cameras[0], pMatrix, vMatrix, position, -Camera::ConstNearPlane, radiusSquared, light->m_cutoff);
 					if (shadow->m_cameras[0].getEnabled())
-						m_frameData->lightBuffer[index].lightVP[0] = shadow->m_cameras[0].get()->pvMatrix;
+						m_frameData.lightBuffer[index].lightVP[0] = shadow->m_cameras[0].get()->pvMatrix;
 				}
 				shadow->m_updateTimes.resize(shadow->m_cameras.size());
 			}
 			index++;
 		}
-		m_frameData->lightBuffer.endWriting();
+		m_frameData.lightBuffer.endWriting();
 	}
 
 
 private:
 	// Private Attributes
-	std::shared_ptr<Direct_Light_Data> m_frameData;
+	Direct_Light_Data& m_frameData;
 };
 
 #endif // DIRECTSYNC_SYSTEM_H

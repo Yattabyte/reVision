@@ -31,7 +31,7 @@ public:
 		}
 	}
 	/** Constructor. */
-	inline Direct_Technique(Engine& engine, const std::shared_ptr<ShadowData>& shadowData, const std::shared_ptr<Camera>& clientCamera, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
+	inline Direct_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_shader_Lighting(Shared_Shader(engine, "Core\\Light\\Direct")),
@@ -39,12 +39,9 @@ public:
 		m_shapeCube(Shared_Mesh(engine, "//Models//cube.obj")),
 		m_shapeSphere(Shared_Mesh(engine, "//Models//sphere.obj")),
 		m_shapeHemisphere(Shared_Mesh(engine, "//Models//hemisphere.obj")),
-		m_frameData(std::make_shared<Direct_Light_Data>()),
-		m_cameras(cameras)
+		m_frameData(shadowData, clientCamera),
+		m_sceneCameras(sceneCameras)
 	{
-		m_frameData->clientCamera = clientCamera;
-		m_frameData->shadowData = shadowData;
-
 		// Auxiliary Systems
 		m_auxilliarySystems.makeSystem<DirectVisibility_System>(m_frameData);
 		m_auxilliarySystems.makeSystem<DirectSync_System>(m_frameData);
@@ -58,18 +55,18 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void clearCache(const float& deltaTime) noexcept override final {
-		m_frameData->lightBuffer.endReading();
-		m_frameData->viewInfo.clear();
+		m_frameData.lightBuffer.endReading();
+		m_frameData.viewInfo.clear();
 		m_drawIndex = 0;
 	}
 	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept override final {
 		// Link together the dimensions of view info to that of the viewport vectors
-		m_frameData->viewInfo.resize(m_cameras->size());
+		m_frameData.viewInfo.resize(m_sceneCameras.size());
 		world.updateSystems(m_auxilliarySystems, deltaTime);
 	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		// Exit Early
-		if (m_enabled && m_geometryReady && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shader_Lighting->existsYet()) {
+		if (m_enabled && m_geometryReady && m_frameData.viewInfo.size() && m_shapeCube->existsYet() && m_shader_Lighting->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
 				m_drawData.resize(size_t(m_drawIndex) + 1ull);
 			// Accumulate all visibility info for the cameras passed in
@@ -77,10 +74,10 @@ public:
 			std::vector<GLint> lightIndices;
 			std::vector<glm::ivec4> drawData;
 			for (auto& [camIndex, layer] : perspectives) {
-				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
+				const std::vector<glm::ivec2> tempIndices(m_frameData.viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
 				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
-				lightIndices.insert(lightIndices.end(), m_frameData->viewInfo[camIndex].lightIndices.begin(), m_frameData->viewInfo[camIndex].lightIndices.end());
-				for (const auto& type : m_frameData->viewInfo[camIndex].lightTypes) {
+				lightIndices.insert(lightIndices.end(), m_frameData.viewInfo[camIndex].lightIndices.begin(), m_frameData.viewInfo[camIndex].lightIndices.end());
+				for (const auto& type : m_frameData.viewInfo[camIndex].lightTypes) {
 					if (type == Light_Component::Light_Type::DIRECTIONAL)
 						drawData.push_back({ m_cubeParams.second, 1, m_cubeParams.first, 0 });
 					else if (type == Light_Component::Light_Type::POINT)
@@ -115,12 +112,12 @@ public:
 
 				// Draw only into depth-stencil buffer
 				m_shader_Stencil->bind();															// Shader (point)
-				viewport->m_gfxFBOS->bindForWriting("LIGHTING");									// Ensure writing to lighting FBO
-				viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);									// Read from Geometry FBO
-				glBindTextureUnit(4, m_frameData->shadowData->shadowFBO.m_texDepth);				// Shadow map(linear depth texture)
+				viewport->m_gfxFBOS.bindForWriting("LIGHTING");									// Ensure writing to lighting FBO
+				viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);									// Read from Geometry FBO
+				glBindTextureUnit(4, m_frameData.shadowData.shadowFBO.m_texDepth);				// Shadow map(linear depth texture)
 				m_drawData[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 				m_drawData[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);		// SSBO visible light indices
-				m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+				m_frameData.lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 				m_drawData[m_drawIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);			// Draw call buffer
 				glBindVertexArray(m_vaoID);
 				glDepthMask(GL_FALSE);
@@ -132,7 +129,7 @@ public:
 
 				// Now draw into color buffers
 				m_shader_Lighting->bind();
-				m_shader_Lighting->setUniform(0, m_frameData->shadowData->shadowSizeRCP);
+				m_shader_Lighting->setUniform(0, m_frameData.shadowData.shadowSizeRCP);
 				glDisable(GL_DEPTH_TEST);
 				glEnable(GL_CULL_FACE);
 				glCullFace(GL_FRONT);
@@ -204,8 +201,8 @@ private:
 	ecsSystemList m_auxilliarySystems;
 
 	// Shared Attributes
-	std::shared_ptr<Direct_Light_Data> m_frameData;
-	std::shared_ptr<std::vector<Camera*>> m_cameras;
+	Direct_Light_Data m_frameData;
+	std::vector<Camera*>& m_sceneCameras;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

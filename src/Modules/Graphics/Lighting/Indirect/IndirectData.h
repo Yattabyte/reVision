@@ -29,11 +29,13 @@ struct Indirect_Light_Data {
 	struct Indirect_Light_ViewInfo {
 		std::vector<GLint> lightIndices;
 	};
+	/** Construct this structure. */
+	Indirect_Light_Data(ShadowData& sd, Camera& c) : shadowData(sd), clientCamera(c) {}
 
+	ShadowData& shadowData;
+	Camera& clientCamera;
 	GL_Vector<Indirect_Light_Buffer> lightBuffer;
 	std::vector<Indirect_Light_ViewInfo> viewInfo;
-	std::shared_ptr<Camera> clientCamera;
-	std::shared_ptr<ShadowData> shadowData;
 };
 
 #endif INDIRECTDATA_H

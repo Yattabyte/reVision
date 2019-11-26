@@ -14,11 +14,6 @@ Shared_Image::Shared_Image(Engine& engine, const std::string& filename, const st
 		));
 }
 
-Image::~Image() noexcept
-{
-	delete m_pixelData;
-}
-
 Image::Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize) noexcept : Asset(engine, filename), m_policyFill(policyFill), m_policyResize(policyResize)
 {
 	if (specificSize)
@@ -46,13 +41,13 @@ void Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondaryColor)
 		m_size = glm::ivec2(256);
 	const size_t pixelCount = size_t(m_size.x) * size_t(m_size.x);
 	const size_t componentCount = pixelCount * 4;
-	m_pixelData = new GLubyte[componentCount];
+	m_pixelData.resize(componentCount);
 	m_pitch = m_size.x * 4;
 	m_bpp = 32;
 	switch (m_policyFill) {
 	case Fill_Policy::SOLID: {
 		size_t pxComponent = 0;
-		std::generate(m_pixelData, m_pixelData + componentCount, [&]()->GLubyte {
+		std::generate(m_pixelData.begin(), m_pixelData.begin() + componentCount, [&]()->GLubyte {
 			const unsigned int ID = (pxComponent++) % 4;
 			const auto component = GLubyte(primaryColor[ID]);
 			return component;
@@ -79,7 +74,7 @@ void Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondaryColor)
 					cFlip = !cFlip;
 			}
 			// Copy color info into pixel spot
-			std::memcpy(&m_pixelData[pixel * 4], colors[cFlip], sizeof(GLubyte) * 4);
+			std::copy(&colors[cFlip][0], &colors[cFlip][4], &m_pixelData[pixel * 4]);
 		}
 		break;
 	}

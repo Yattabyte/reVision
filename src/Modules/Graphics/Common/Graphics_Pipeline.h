@@ -24,7 +24,7 @@ public:
 	@param	clientCamera	the main camera.
 	@param	cameras			all the cameras active in the scene.
 	@param	auxSystems		container to add extra render-related ecsSystem's to. */
-	Graphics_Pipeline(Engine& engine, const std::shared_ptr<Camera>& clientCamera) noexcept;
+	Graphics_Pipeline(Engine& engine, Camera& clientCamera) noexcept;
 
 
 	// Public Methods
@@ -33,7 +33,7 @@ public:
 	@param	world			the ecsWorld to source data from.
 	@param	cameras			the cameras to render from.
 	@return					camera and layer indices to render with. */
-	std::vector<std::pair<int, int>> begin(const float& deltaTime, ecsWorld& world, const std::vector<std::shared_ptr<Camera>>& cameras = {}) noexcept;
+	std::vector<std::pair<int, int>> begin(const float& deltaTime, ecsWorld& world, std::vector<Camera>& cameras = std::vector<Camera>()) noexcept;
 	/** Flush the pipeline after rendering.
 	@param	deltaTime		the amount of time passed since last frame. */
 	void end(const float& deltaTime) noexcept;
@@ -55,7 +55,7 @@ public:
 protected:
 	// Protected Attributes
 	Engine& m_engine;
-	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
+	std::vector<Camera*> m_sceneCameras;
 	GL_Vector<Camera::GPUData> m_cameraBuffer;
 	ecsSystemList m_worldSystems, m_cameraSystems;
 	std::shared_ptr<ecsBaseSystem> m_transHierachy;

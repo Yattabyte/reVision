@@ -16,7 +16,7 @@ public:
 	inline ~FrustumCull_System() = default;
 	/** Construct this system.
 	@param	cameras		list of all the active cameras in the scene, updated per frame. */
-	inline explicit FrustumCull_System(const std::shared_ptr<std::vector<Camera*>>& sceneCameras) noexcept :
+	inline explicit FrustumCull_System(std::vector<Camera*>& sceneCameras) noexcept :
 		m_sceneCameras(sceneCameras)
 	{
 		addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
@@ -33,8 +33,8 @@ public:
 			auto* bsphereComponent = static_cast<BoundingSphere_Component*>(componentParam[2]);
 
 			// Update the visibility status for each camera this entity is visible in
-			for (int x = 0; x < m_sceneCameras->size(); ++x) {
-				const auto& camera = m_sceneCameras->at(x);
+			for (int x = 0; x < m_sceneCameras.size(); ++x) {
+				const auto& camera = m_sceneCameras.at(x);
 
 				// Err on the side of caution and say its visible by default
 				// Our visibility tests will try to EXCLUDE, not INCLUDE
@@ -72,7 +72,7 @@ public:
 
 private:
 	// Private Attributes
-	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
+	std::vector<Camera*>& m_sceneCameras;
 };
 
 #endif // FRUSTUMCULL_SYSTEM_H

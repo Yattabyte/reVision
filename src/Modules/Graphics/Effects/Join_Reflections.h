@@ -58,10 +58,10 @@ public:
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
-		viewport->m_gfxFBOS->bindForWriting("LIGHTING");
-		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
-		viewport->m_gfxFBOS->bindForReading("BOUNCE", 4);
-		viewport->m_gfxFBOS->bindForReading("REFLECTION", 5);
+		viewport->m_gfxFBOS.bindForWriting("LIGHTING");
+		viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);
+		viewport->m_gfxFBOS.bindForReading("BOUNCE", 4);
+		viewport->m_gfxFBOS.bindForReading("REFLECTION", 5);
 		m_brdfMap->bind(6);
 		m_shader->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);

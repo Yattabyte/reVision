@@ -14,8 +14,8 @@ public:
 	/** Destroy this system. */
 	inline ~ReflectorSync_System() = default;
 	/** Construct this system.
-	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline explicit ReflectorSync_System(const std::shared_ptr<ReflectorData>& frameData) noexcept :
+	@param	frameData	reference to common data that changes frame-to-frame. */
+	inline explicit ReflectorSync_System(ReflectorData& frameData) noexcept :
 		m_frameData(frameData)
 	{
 		addComponentType(Reflector_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
@@ -26,8 +26,8 @@ public:
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		// Resize light buffers to match number of entities this frame
-		m_frameData->lightBuffer.resize(components.size());
-		m_frameData->lightBuffer.beginWriting();
+		m_frameData.lightBuffer.resize(components.size());
+		m_frameData.lightBuffer.beginWriting();
 		int index = 0;
 		for (const auto& componentParam : components) {
 			auto* reflectorComponent = static_cast<Reflector_Component*>(componentParam[0]);
@@ -39,10 +39,10 @@ public:
 			const auto& modelMatrix = transformComponent->m_worldTransform.m_modelMatrix;
 			const auto matRot = glm::mat4_cast(orientation);
 			const float largest = pow(std::max(std::max(scale.x, scale.y), scale.z), 2.0f);
-			m_frameData->lightBuffer[index].mMatrix = modelMatrix;
-			m_frameData->lightBuffer[index].rotMatrix = glm::inverse(matRot);
-			m_frameData->lightBuffer[index].BoxCamPos = position;
-			m_frameData->lightBuffer[index].BoxScale = scale;
+			m_frameData.lightBuffer[index].mMatrix = modelMatrix;
+			m_frameData.lightBuffer[index].rotMatrix = glm::inverse(matRot);
+			m_frameData.lightBuffer[index].BoxCamPos = position;
+			m_frameData.lightBuffer[index].BoxScale = scale;
 			const glm::mat4 pMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, largest);
 			const glm::mat4 pMatrixInverse = glm::inverse(pMatrix);
 			const glm::mat4 vMatrices[6] = {
@@ -57,7 +57,7 @@ public:
 			reflectorComponent->m_updateTimes.resize(6);
 			for (int x = 0; x < 6; ++x) {
 				auto& camData = *reflectorComponent->m_cameras[x].get();
-				camData.Dimensions = m_frameData->envmapSize;
+				camData.Dimensions = m_frameData.envmapSize;
 				camData.FOV = 90.0f;
 				camData.FarPlane = largest;
 				camData.EyePosition = position;
@@ -70,16 +70,16 @@ public:
 			}
 
 			// Sync Buffer Attributes
-			m_frameData->lightBuffer[index].CubeSpot = reflectorComponent->m_cubeSpot;
+			m_frameData.lightBuffer[index].CubeSpot = reflectorComponent->m_cubeSpot;
 			index++;
 		}
-		m_frameData->lightBuffer.endWriting();
+		m_frameData.lightBuffer.endWriting();
 	}
 
 
 private:
 	// Private Attributes
-	std::shared_ptr<ReflectorData> m_frameData;
+	ReflectorData& m_frameData;
 };
 
 #endif // REFLECTORSYNC_SYSTEM_H

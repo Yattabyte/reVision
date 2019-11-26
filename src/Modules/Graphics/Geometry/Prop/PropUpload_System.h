@@ -20,7 +20,7 @@ public:
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Construct this system. */
-	inline PropUpload_System(Engine& engine, const std::shared_ptr<PropData>& frameData) noexcept :
+	inline PropUpload_System(Engine& engine, PropData& frameData) noexcept :
 		m_engine(engine),
 		m_frameData(frameData)
 	{
@@ -49,7 +49,7 @@ public:
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(SingleVertex));
 
 		// Share VAO for rendering purposes
-		frameData->m_geometryVAOID = m_vaoID;
+		frameData.m_geometryVAOID = m_vaoID;
 
 		// Preference Values
 		engine.getPreferenceState().getOrSetValue(PreferenceState::Preference::C_MATERIAL_SIZE, m_materialSize);
@@ -67,7 +67,7 @@ public:
 		glTextureStorage3D(m_matID, m_maxMips, GL_RGBA16F, m_materialSize, m_materialSize, m_maxTextureLayers);
 
 		// Share material array for rendering purposes
-		frameData->m_materialArrayID = m_matID;
+		frameData.m_materialArrayID = m_matID;
 	}
 
 
@@ -179,7 +179,7 @@ private:
 			GLuint pboID = 0;
 			glCreateBuffers(1, &pboID);
 			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
-			glNamedBufferStorage(pboID, size_t(m_materialSize) * size_t(m_materialSize) * size_t(imageCount) * 4ull, material->m_materialData, GL_DYNAMIC_STORAGE_BIT);
+			glNamedBufferStorage(pboID, size_t(m_materialSize) * size_t(m_materialSize) * size_t(imageCount) * 4ull, &material->m_materialData[0], GL_DYNAMIC_STORAGE_BIT);
 			for (int x = 0; x < m_maxMips; ++x) {
 				const GLsizei mipsize = (GLsizei)std::max(1.0f, (floor(m_materialSize / pow(2.0f, (float)x))));
 				glTexturePageCommitmentEXT(m_matID, x, 0, 0, materialID, mipsize, mipsize, imageCount, GL_TRUE);
@@ -215,6 +215,7 @@ private:
 
 	// Private Attributes
 	Engine& m_engine;
+	PropData& m_frameData;
 	GLuint m_vaoID = 0, m_vboID = 0, m_matID;
 	size_t m_currentSize = 0ull, m_maxCapacity = 256ull, m_matCount = 0ull;
 	GLsizei m_materialSize = 512u;
@@ -222,7 +223,6 @@ private:
 	GLsync m_fence = nullptr;
 	std::map<Shared_Model, std::pair<GLuint, GLuint>> m_modelMap;
 	std::map<Shared_Material, GLuint> m_materialMap;
-	std::shared_ptr<PropData> m_frameData;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

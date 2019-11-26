@@ -20,28 +20,27 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Shadow_Technique(Engine& engine, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
+	inline Shadow_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
-		m_frameData(std::make_shared<ShadowData>()),
-		m_sceneCameras(cameras)
+		m_sceneCameras(sceneCameras)
 	{
 		m_auxilliarySystems.makeSystem<ShadowScheduler_System>(engine, m_frameData);
 
 		// Preferences
 		auto& preferences = engine.getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::Preference::C_SHADOW_SIZE, m_frameData->shadowSize);
+		preferences.getOrSetValue(PreferenceState::Preference::C_SHADOW_SIZE, m_frameData.shadowSize);
 		preferences.addCallback(PreferenceState::Preference::C_SHADOW_SIZE, m_aliveIndicator, [&](const float& f) {
-			m_frameData->shadowSize = std::max(1.0f, f);
-			m_frameData->shadowSizeRCP = 1.0f / m_frameData->shadowSize;
+			m_frameData.shadowSize = std::max(1.0f, f);
+			m_frameData.shadowSizeRCP = 1.0f / m_frameData.shadowSize;
 			});
-		m_frameData->shadowSize = std::max(1.0f, m_frameData->shadowSize);
-		m_frameData->shadowSizeRCP = 1.0f / m_frameData->shadowSize;
+		m_frameData.shadowSize = std::max(1.0f, m_frameData.shadowSize);
+		m_frameData.shadowSizeRCP = 1.0f / m_frameData.shadowSize;
 	}
 
 	// Public Interface Implementations
 	inline virtual void clearCache(const float& deltaTime) noexcept override final {
-		m_frameData->shadowsToUpdate.clear();
+		m_frameData.shadowsToUpdate.clear();
 	}
 	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept override final {
 		world.updateSystems(m_auxilliarySystems, deltaTime);
@@ -54,7 +53,7 @@ public:
 
 
 	// Public Methods
-	inline std::shared_ptr<ShadowData> getShadowData() const noexcept {
+	inline ShadowData& getShadowData() noexcept {
 		return m_frameData;
 	}
 
@@ -65,17 +64,17 @@ private:
 	@param	deltaTime	the amount of time passed since last frame. */
 	inline void updateShadows(const float& deltaTime) noexcept {
 		auto clientTime = m_engine.getTime();
-		if (m_frameData->shadowsToUpdate.size()) {
+		if (m_frameData.shadowsToUpdate.size()) {
 			// Prepare Viewport
-			glViewport(0, 0, (GLsizei)m_frameData->shadowSize, (GLsizei)m_frameData->shadowSize);
-			m_frameData->shadowFBO.bindForWriting();
+			glViewport(0, 0, (GLsizei)m_frameData.shadowSize, (GLsizei)m_frameData.shadowSize);
+			m_frameData.shadowFBO.bindForWriting();
 
 			// Accumulate Perspective Data
 			std::vector<std::pair<int, int>> perspectives;
-			perspectives.reserve(m_frameData->shadowsToUpdate.size());
-			for (auto& [importance, time, shadowSpot, camera] : m_frameData->shadowsToUpdate) {
-				for (int y = 0; y < m_sceneCameras->size(); ++y)
-					if (m_sceneCameras->at(y) == camera) {
+			perspectives.reserve(m_frameData.shadowsToUpdate.size());
+			for (auto& [importance, time, shadowSpot, camera] : m_frameData.shadowsToUpdate) {
+				for (int y = 0; y < m_sceneCameras.size(); ++y)
+					if (m_sceneCameras.at(y) == camera) {
 						perspectives.push_back({ y, shadowSpot });
 						break;
 					}
@@ -85,20 +84,20 @@ private:
 			// Perform shadow culling
 			auto pipeline = m_engine.getModule_Graphics().getPipeline();
 			pipeline->cullShadows(deltaTime, perspectives);
-			for (auto& [importance, time, shadowSpot, camera] : m_frameData->shadowsToUpdate)
-				m_frameData->shadowFBO.clear(shadowSpot, 1);
+			for (auto& [importance, time, shadowSpot, camera] : m_frameData.shadowsToUpdate)
+				m_frameData.shadowFBO.clear(shadowSpot, 1);
 
 			// Render remaining shadows with populated buffers
 			pipeline->renderShadows(deltaTime);
-			m_frameData->shadowsToUpdate.clear();
+			m_frameData.shadowsToUpdate.clear();
 		}
 	}
 
 
 	// Private Attributes
 	Engine& m_engine;
-	std::shared_ptr<ShadowData> m_frameData;
-	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
+	ShadowData m_frameData;
+	std::vector<Camera*>& m_sceneCameras;
 	ecsSystemList m_auxilliarySystems;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

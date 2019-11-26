@@ -74,7 +74,7 @@ private:
 		GLuint texID = 0;
 	};
 	std::vector<Entry> m_prefabs;
-	std::vector<std::shared_ptr<Camera>> m_prefabCameras;
+	std::vector<Camera> m_prefabCameras;
 	ecsWorld m_previewWorld;
 	std::shared_ptr<Viewport> m_viewport;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

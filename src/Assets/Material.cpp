@@ -18,12 +18,6 @@ Shared_Material::Shared_Material(Engine& engine, const std::string& filename, co
 		));
 }
 
-Material::~Material() noexcept
-{
-	if (m_materialData != nullptr)
-		delete m_materialData;
-}
-
 Material::Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures) noexcept
 	: Asset(engine, filename), m_textures(textures)
 {
@@ -80,7 +74,7 @@ void Material::initialize() noexcept
 
 	// Merge data into single array
 	const size_t pixelsPerImage = size_t(m_size.x) * size_t(m_size.y) * 4ULL;
-	m_materialData = new GLubyte[(pixelsPerImage)*MAX_DIGITAL_IMAGES * materialCount]();
+	m_materialData.resize((pixelsPerImage)*MAX_DIGITAL_IMAGES * materialCount);
 	size_t arrayIndex = 0;
 	for (size_t tx = 0; tx < textureCount; tx += MAX_PHYSICAL_IMAGES) {
 		for (size_t x = 0; x < pixelsPerImage; ++x, ++arrayIndex)

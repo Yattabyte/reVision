@@ -14,11 +14,11 @@ struct ecsHandle {
 	inline ecsHandle() = default;
 	/** Explicit Constructor. */
 	inline explicit ecsHandle(const char id[32]) noexcept {
-		std::memcpy(uuid, id, size_t(sizeof(char) * 32));
+		std::copy(&id[0], &id[32], &uuid[0]);
 	}
 	/** Copy Constructor. */
 	inline ecsHandle(const ecsHandle& other) noexcept {
-		std::memcpy(uuid, other.uuid, size_t(sizeof(char) * 32));
+		std::copy(&other.uuid[0], &other.uuid[32], &uuid[0]);
 	}
 	/** Move Constructor. */
 	inline ecsHandle(ecsHandle&& other) noexcept {
@@ -26,7 +26,7 @@ struct ecsHandle {
 	}
 	// Copy from another handle
 	inline ecsHandle& operator=(const ecsHandle& other) noexcept {
-		std::memcpy(uuid, other.uuid, size_t(sizeof(char) * 32));
+		std::copy(&other.uuid[0], &other.uuid[32], &uuid[0]);
 		return *this;
 	}
 	// Compare against another handle

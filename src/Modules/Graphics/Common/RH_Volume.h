@@ -21,8 +21,8 @@ public:
 
 	// Public Methods
 	/** Update the volume's attributes based on the input camera.
-	@param	cameraBuffer	the camera to use the frustum of. */
-	void updateVolume(const Camera* camera) noexcept;
+	@param	camera			the camera to use the frustum of. */
+	void updateVolume(const Camera& camera) noexcept;
 	/** Resize this volume's 3D texture.
 	@param	resolution		the new size to use. */
 	void resize(const float& resolution = 16.0f) noexcept;
@@ -48,7 +48,7 @@ public:
 private:
 	// Private Attributes
 	Engine& m_engine;
-	GLuint m_fboIDS[2] = { 0,0 }, m_textureIDS[2][RH_TEXTURE_COUNT] = { { 0,0,0,0 }, { 0,0,0,0 } };
+	GLuint m_fboIDS[2]{}, m_textureIDS[2][RH_TEXTURE_COUNT] = { {}, {} };
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

@@ -81,23 +81,23 @@ public:
 	inline static std::vector<char> Serialize_Value(const std::string& name, const T& data) {
 		// For convenience sake, wrap our output data into a memory-copyable struct
 		struct Memory_Structure {
-			const int struct_size = (int)sizeof(Memory_Structure);
+			int struct_size = (int)sizeof(Memory_Structure);
 			char payload_name[MAX_NAME_CHARS]{ '\0' };
-			const int payload_size = (int)sizeof(T);
+			int payload_size = (int)sizeof(T);
 			char payload_data[sizeof(T)];
 
 			/** Fill this memory structure. */
 			Memory_Structure(const std::string& name, const T& data) {
 				// Copy-in the variable name, clamped to a max of MAX_NAME_CHARS)
-				std::memcpy(&payload_name[0], name.c_str(), std::min(name.size(), (size_t)MAX_NAME_CHARS));
+				std::copy(&name[0], &name[std::min(name.size(), (size_t)MAX_NAME_CHARS)], &payload_name[0]);
 				// Copy-in the variable data
-				std::memcpy(&payload_data[0], &data, payload_size);
+				*reinterpret_cast<T*>(&payload_data[0]) = data;
 			}
 		} const outputData(name, data);
 
 		// Allocate a buffer for our data, copy into it, and write pass it back
 		std::vector<char> dataBuffer(sizeof(Memory_Structure));
-		std::memcpy(&dataBuffer[0], &outputData, sizeof(Memory_Structure));
+		*reinterpret_cast<Memory_Structure*>(&dataBuffer[0]) = outputData;
 		return dataBuffer;
 	}
 	/** Serialize a labeled pair of data into a char buffer.
@@ -117,16 +117,17 @@ public:
 				// Update size variables with data size
 				payload_size = (int)(sizeof(char) * data.size());
 				struct_size += payload_size;
+
 				// Copy-in the variable name, clamped to a max of MAX_NAME_CHARS)
-				std::memcpy(&payload_name[0], name.c_str(), std::min(name.size(), (size_t)MAX_NAME_CHARS));
+				std::copy(&name[0], &name[std::min(name.size(), (size_t)MAX_NAME_CHARS)], &payload_name[0]);
 			}
 		} const outputData(name, data);
 
 		// Allocate a buffer for our data, copy into it, and write pass it back
 		std::vector<char> dataBuffer(outputData.struct_size);
-		std::memcpy(&dataBuffer[0], &outputData, sizeof(Memory_Structure));
+		*reinterpret_cast<Memory_Structure*>(&dataBuffer[0]) = outputData;
 		// Copy-in the variable data
-		std::memcpy(&dataBuffer[sizeof(Memory_Structure)], &data[0], sizeof(char) * data.size());
+		std::copy(&data[0], &data[data.size()], &dataBuffer[sizeof(Memory_Structure)]);
 		return dataBuffer;
 	}
 

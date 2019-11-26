@@ -21,38 +21,37 @@ public:
 	/** Destructor. */
 	inline ~Prop_Technique() = default;
 	/** Constructor. */
-	inline Prop_Technique(Engine& engine, const std::shared_ptr<std::vector<Camera*>>& viewports) noexcept :
+	inline Prop_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept :
 		m_engine(engine),
 		m_shaderCull(Shared_Shader(engine, "Core\\Props\\culling")),
 		m_shaderGeometry(Shared_Shader(engine, "Core\\Props\\geometry")),
 		m_shaderShadowCull(Shared_Shader(engine, "Core\\Props\\shadow culling")),
 		m_shaderShadowGeometry(Shared_Shader(engine, "Core\\Props\\shadow")),
 		m_shapeCube(Shared_Auto_Model(engine, "cube")),
-		m_frameData(std::make_shared<PropData>()),
-		m_cameras(viewports)
+		m_sceneCameras(sceneCameras)
 	{
 		// Auxiliary Systems
 		m_auxilliarySystems.makeSystem<PropUpload_System>(engine, m_frameData);
-		m_auxilliarySystems.makeSystem<PropVisibility_System>(m_frameData, viewports);
+		m_auxilliarySystems.makeSystem<PropVisibility_System>(m_frameData);
 		m_auxilliarySystems.makeSystem<PropSync_System>(m_frameData);
 	}
 
 
 	// Public Interface Implementations
 	inline virtual void clearCache(const float& deltaTime) noexcept override final {
-		m_frameData->modelBuffer.endReading();
-		m_frameData->skeletonBuffer.endReading();
+		m_frameData.modelBuffer.endReading();
+		m_frameData.skeletonBuffer.endReading();
 		m_drawIndex = 0;
 		clear();
 	}
 	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept override final {
 		// Link together the dimensions of view info to that of the viewport vectors
-		m_frameData->viewInfo.resize(m_cameras->size());
+		m_frameData.viewInfo.resize(m_sceneCameras.size());
 		world.updateSystems(m_auxilliarySystems, deltaTime);
 	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		// Exit Early
-		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderCull->existsYet() && m_shaderGeometry->existsYet()) {
+		if (m_enabled && m_frameData.viewInfo.size() && m_shapeCube->existsYet() && m_shaderCull->existsYet() && m_shaderGeometry->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
 				m_drawData.resize(size_t(m_drawIndex) + 1ull);
 
@@ -62,12 +61,12 @@ public:
 			std::vector<GLuint> visibleIndices;
 			std::vector<int> skeletonData;
 			for (auto& [camIndex, layer] : perspectives) {
-				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].visibleIndices.size(), { camIndex, layer });
+				const std::vector<glm::ivec2> tempIndices(m_frameData.viewInfo[camIndex].visibleIndices.size(), { camIndex, layer });
 				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
-				visibleIndices.insert(visibleIndices.end(), m_frameData->viewInfo[camIndex].visibleIndices.begin(), m_frameData->viewInfo[camIndex].visibleIndices.end());
-				cullingDrawData.insert(cullingDrawData.end(), m_frameData->viewInfo[camIndex].cullingDrawData.begin(), m_frameData->viewInfo[camIndex].cullingDrawData.end());
-				renderingDrawData.insert(renderingDrawData.end(), m_frameData->viewInfo[camIndex].renderingDrawData.begin(), m_frameData->viewInfo[camIndex].renderingDrawData.end());
-				skeletonData.insert(skeletonData.end(), m_frameData->viewInfo[camIndex].skeletonData.begin(), m_frameData->viewInfo[camIndex].skeletonData.end());
+				visibleIndices.insert(visibleIndices.end(), m_frameData.viewInfo[camIndex].visibleIndices.begin(), m_frameData.viewInfo[camIndex].visibleIndices.end());
+				cullingDrawData.insert(cullingDrawData.end(), m_frameData.viewInfo[camIndex].cullingDrawData.begin(), m_frameData.viewInfo[camIndex].cullingDrawData.end());
+				renderingDrawData.insert(renderingDrawData.end(), m_frameData.viewInfo[camIndex].renderingDrawData.begin(), m_frameData.viewInfo[camIndex].renderingDrawData.end());
+				skeletonData.insert(skeletonData.end(), m_frameData.viewInfo[camIndex].skeletonData.begin(), m_frameData.viewInfo[camIndex].skeletonData.end());
 			}
 
 			// Write all visibility info to a set of buffers
@@ -102,9 +101,9 @@ public:
 
 				// Apply occlusion culling and render props
 				camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-				m_frameData->modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
+				m_frameData.modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 				propIndexBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
-				m_frameData->skeletonBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+				m_frameData.skeletonBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 				propSkeletonBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
 
 				// Draw bounding boxes for each model, filling render buffer on successful rasterization
@@ -115,7 +114,7 @@ public:
 				glDepthMask(GL_FALSE);
 				glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 				m_shaderCull->bind();
-				viewport->m_gfxFBOS->bindForWriting("DEPTH-ONLY"); // use previous frame's depth
+				viewport->m_gfxFBOS.bindForWriting("DEPTH-ONLY"); // use previous frame's depth
 				glBindVertexArray(m_shapeCube->m_vaoID);
 				propCullingBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				propRenderBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
@@ -128,16 +127,16 @@ public:
 				glDepthMask(GL_TRUE);
 				glEnable(GL_CULL_FACE);
 				glCullFace(GL_BACK);
-				viewport->m_gfxFBOS->bindForWriting("GEOMETRY"); // fill current frame's depth
+				viewport->m_gfxFBOS.bindForWriting("GEOMETRY"); // fill current frame's depth
 				m_shaderGeometry->bind();
-				glBindVertexArray(m_frameData->m_geometryVAOID);
-				glBindTextureUnit(0, m_frameData->m_materialArrayID);
+				glBindVertexArray(m_frameData.m_geometryVAOID);
+				glBindTextureUnit(0, m_frameData.m_materialArrayID);
 				propRenderBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, (GLsizei)visibleIndices.size(), 0);
 
 				// Copy depth for next frame
-				viewport->m_gfxFBOS->bindForWriting("DEPTH-ONLY");
-				const auto& [sourceID, destinationID] = std::make_pair(viewport->m_gfxFBOS->getFboID("GEOMETRY"), viewport->m_gfxFBOS->getFboID("DEPTH-ONLY"));
+				viewport->m_gfxFBOS.bindForWriting("DEPTH-ONLY");
+				const auto& [sourceID, destinationID] = std::make_pair(viewport->m_gfxFBOS.getFboID("GEOMETRY"), viewport->m_gfxFBOS.getFboID("DEPTH-ONLY"));
 				const auto& size = viewport->m_dimensions;
 				glBlitNamedFramebuffer(sourceID, destinationID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
@@ -153,7 +152,7 @@ public:
 	}
 	inline virtual void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		// Exit Early
-		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {
+		if (m_enabled && m_frameData.viewInfo.size() && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
 				m_drawData.resize(size_t(m_drawIndex) + 1ull);
 
@@ -163,12 +162,12 @@ public:
 			std::vector<GLuint> visibleIndices;
 			std::vector<int> skeletonData;
 			for (auto& [camIndex, layer] : perspectives) {
-				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].visibleIndices.size(), { camIndex, layer });
+				const std::vector<glm::ivec2> tempIndices(m_frameData.viewInfo[camIndex].visibleIndices.size(), { camIndex, layer });
 				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
-				visibleIndices.insert(visibleIndices.end(), m_frameData->viewInfo[camIndex].visibleIndices.begin(), m_frameData->viewInfo[camIndex].visibleIndices.end());
-				cullingDrawData.insert(cullingDrawData.end(), m_frameData->viewInfo[camIndex].cullingDrawData.begin(), m_frameData->viewInfo[camIndex].cullingDrawData.end());
-				renderingDrawData.insert(renderingDrawData.end(), m_frameData->viewInfo[camIndex].renderingDrawData.begin(), m_frameData->viewInfo[camIndex].renderingDrawData.end());
-				skeletonData.insert(skeletonData.end(), m_frameData->viewInfo[camIndex].skeletonData.begin(), m_frameData->viewInfo[camIndex].skeletonData.end());
+				visibleIndices.insert(visibleIndices.end(), m_frameData.viewInfo[camIndex].visibleIndices.begin(), m_frameData.viewInfo[camIndex].visibleIndices.end());
+				cullingDrawData.insert(cullingDrawData.end(), m_frameData.viewInfo[camIndex].cullingDrawData.begin(), m_frameData.viewInfo[camIndex].cullingDrawData.end());
+				renderingDrawData.insert(renderingDrawData.end(), m_frameData.viewInfo[camIndex].renderingDrawData.begin(), m_frameData.viewInfo[camIndex].renderingDrawData.end());
+				skeletonData.insert(skeletonData.end(), m_frameData.viewInfo[camIndex].skeletonData.begin(), m_frameData.viewInfo[camIndex].skeletonData.end());
 			}
 
 			// Write all visibility info to a set of buffers
@@ -203,9 +202,9 @@ public:
 
 				// Apply occlusion culling and render props
 				camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-				m_frameData->modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
+				m_frameData.modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 				propIndexBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
-				m_frameData->skeletonBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+				m_frameData.skeletonBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 				propSkeletonBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
 
 				// Draw bounding boxes for each model, filling render buffer on successful rasterization
@@ -239,8 +238,8 @@ public:
 				glCullFace(GL_FRONT);
 				glFrontFace(GL_CW);
 				m_shaderShadowGeometry->bind();
-				glBindVertexArray(m_frameData->m_geometryVAOID);
-				glBindTextureUnit(0, m_frameData->m_materialArrayID);
+				glBindVertexArray(m_frameData.m_geometryVAOID);
+				glBindTextureUnit(0, m_frameData.m_materialArrayID);
 				m_drawData[m_drawIndex].bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, (GLsizei)m_count, 0);
 				glFrontFace(GL_CCW);
@@ -262,7 +261,7 @@ private:
 	// Private Methods
 	/** Clear out the props queued up for rendering. */
 	inline void clear() noexcept {
-		m_frameData->viewInfo.clear();
+		m_frameData.viewInfo.clear();
 	}
 
 
@@ -280,8 +279,8 @@ private:
 
 
 	// Shared Attributes
-	std::shared_ptr<PropData> m_frameData;
-	std::shared_ptr<std::vector<Camera*>> m_cameras;
+	PropData m_frameData;
+	std::vector<Camera*>& m_sceneCameras;
 };
 
 #endif // PROP_TECHNIQUE_H

@@ -83,12 +83,13 @@ void Scaling_Gizmo::render(const float&) noexcept
 		m_editor.bindFBO();
 
 		// Get camera matrices
+		const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
 		const auto& position = m_transform.m_position;
-		const auto& pMatrix = m_engine.getModule_Graphics().getClientCamera()->get()->pMatrix;
-		const auto& vMatrix = m_engine.getModule_Graphics().getClientCamera()->get()->vMatrix;
+		const auto& pMatrix = clientCamera->pMatrix;
+		const auto& vMatrix = clientCamera->vMatrix;
 		const auto trans = glm::translate(glm::mat4(1.0f), position);
-		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, m_engine.getModule_Graphics().getClientCamera()->get()->EyePosition) * m_renderScale));
-		const auto aScale = glm::scale(glm::mat4(1.0f), glm::vec3(m_engine.getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f));
+		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, clientCamera->EyePosition) * m_renderScale));
+		const auto aScale = glm::scale(glm::mat4(1.0f), glm::vec3(clientCamera->FarPlane * 2.0f));
 
 		// Render Gizmo Model
 		m_model->bind();
@@ -133,13 +134,13 @@ void Scaling_Gizmo::checkMouseHover() noexcept
 {
 	const auto& actionState = m_engine.getActionState();
 	const auto& position = m_transform.m_position;
-	const auto& clientCamera = *m_engine.getModule_Graphics().getClientCamera()->get();
-	const auto ray_origin = clientCamera.EyePosition;
+	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
+	const auto ray_origin = clientCamera->EyePosition;
 	const auto ray_nds = glm::vec2(2.0f * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
-	const auto ray_eye = glm::vec4(glm::vec2(clientCamera.pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
-	const auto ray_world = glm::normalize(glm::vec3(clientCamera.vMatrixInverse * ray_eye));
+	const auto ray_eye = glm::vec4(glm::vec2(clientCamera->pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
+	const auto ray_world = glm::normalize(glm::vec3(clientCamera->vMatrixInverse * ray_eye));
 
-	const auto scalingFactor = glm::distance(position, m_engine.getModule_Graphics().getClientCamera()->get()->EyePosition) * m_renderScale;
+	const auto scalingFactor = glm::distance(position, clientCamera->EyePosition) * m_renderScale;
 	const auto mMatrix = glm::translate(glm::mat4(1.0f), position);
 	glm::vec3 arrowAxes_min[3], arrowAxes_max[3], doubleAxes_min[3], doubleAxes_max[3], plane_normals[3];
 	arrowAxes_min[0] = glm::vec3(2, -0.5, -0.5) * scalingFactor;
@@ -201,8 +202,8 @@ void Scaling_Gizmo::checkMouseHover() noexcept
 bool Scaling_Gizmo::checkMousePress() noexcept
 {
 	const auto& position = m_transform.m_position;
-	const auto& clientCamera = *m_engine.getModule_Graphics().getClientCamera()->get();
-	const auto ray_origin = clientCamera.EyePosition;
+	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
+	const auto ray_origin = clientCamera->EyePosition;
 
 	// Check if the user selected an axis
 	if (m_selectedAxes == NONE && !ImGui::IsMouseDragging(0)) {

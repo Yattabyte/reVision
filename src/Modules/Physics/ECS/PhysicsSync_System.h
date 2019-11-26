@@ -17,7 +17,7 @@ public:
 	/** Destroy this physics sync system. */
 	inline ~PhysicsSync_System() = default;
 	/** Construct a physics sync system. */
-	inline PhysicsSync_System(Engine& engine, btDiscreteDynamicsWorld* world) noexcept :
+	inline PhysicsSync_System(Engine& engine, btDiscreteDynamicsWorld& world) noexcept :
 		ecsBaseSystem(),
 		m_engine(engine),
 		m_world(world)
@@ -46,7 +46,7 @@ public:
 					if (colliderComponent->m_worldTransform != transformComponent->m_localTransform) {
 						// Remove from the physics simulation
 						if (colliderComponent->m_rigidBody) {
-							m_world->removeRigidBody(colliderComponent->m_rigidBody);
+							m_world.removeRigidBody(colliderComponent->m_rigidBody);
 							delete colliderComponent->m_rigidBody;
 						}
 
@@ -70,7 +70,7 @@ public:
 						bodyCI.m_restitution = colliderComponent->m_restitution;
 						bodyCI.m_friction = colliderComponent->m_friction;
 						colliderComponent->m_rigidBody = new btRigidBody(bodyCI);
-						m_world->addRigidBody(colliderComponent->m_rigidBody);
+						m_world.addRigidBody(colliderComponent->m_rigidBody);
 
 						// Update the transform
 						colliderComponent->m_worldTransform = transformComponent->m_worldTransform;
@@ -95,7 +95,7 @@ public:
 private:
 	// Private Attributes
 	Engine& m_engine;
-	btDiscreteDynamicsWorld* m_world = nullptr;
+	btDiscreteDynamicsWorld& m_world;
 };
 
 #endif // PHYSICSSYNC_SYSTEM_H

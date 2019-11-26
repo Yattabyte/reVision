@@ -19,8 +19,8 @@ public:
 	}
 	/** Construct this system.
 	@param	engine		the engine to use.
-	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline ShadowScheduler_System(Engine& engine, const std::shared_ptr<ShadowData>& frameData) noexcept :
+	@param	frameData	reference to common data that changes frame-to-frame. */
+	inline ShadowScheduler_System(Engine& engine, ShadowData& frameData) noexcept :
 		m_engine(engine),
 		m_frameData(frameData)
 	{
@@ -38,12 +38,13 @@ public:
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		// Maintain list of shadows, update with oldest within range
 		// Technique will clear list when ready
-		auto& shadows = m_frameData->shadowsToUpdate;
+		auto& shadows = m_frameData.shadowsToUpdate;
 		auto& maxShadows = m_maxShadowsCasters;
-		auto clientPosition = m_engine.getModule_Graphics().getClientCamera()->get()->EyePosition;
-		auto clientFarPlane = m_engine.getModule_Graphics().getClientCamera()->get()->FarPlane;
+		const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
+		const auto& clientPosition = clientCamera->EyePosition;
+		const auto& clientFarPlane = clientCamera->FarPlane;
 		const auto clientTime = m_engine.getTime();
-		if (int availableRoom = (int)m_maxShadowsCasters - (int)m_frameData->shadowsToUpdate.size()) {
+		if (int availableRoom = (int)m_maxShadowsCasters - (int)m_frameData.shadowsToUpdate.size()) {
 			int cameraCount = 0;
 			for (const auto& componentParam : components) {
 				auto* shadow = static_cast<Shadow_Component*>(componentParam[0]);
@@ -91,11 +92,11 @@ public:
 			}
 
 			// Enable cameras in final set
-			for (auto& [importance, time, shadowSpot, camera] : m_frameData->shadowsToUpdate)
+			for (auto& [importance, time, shadowSpot, camera] : m_frameData.shadowsToUpdate)
 				camera->setEnabled(true);
 
 			// Resize the shadow map to fit number of entities this frame
-			m_frameData->shadowFBO.resize(glm::ivec2((int)m_frameData->shadowSize), (unsigned int)(cameraCount));
+			m_frameData.shadowFBO.resize(glm::ivec2((int)m_frameData.shadowSize), (unsigned int)(cameraCount));
 		}
 	}
 
@@ -103,8 +104,8 @@ public:
 private:
 	// Private Attributes
 	Engine& m_engine;
+	ShadowData& m_frameData;
 	GLuint m_maxShadowsCasters = 1u;
-	std::shared_ptr<ShadowData> m_frameData;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

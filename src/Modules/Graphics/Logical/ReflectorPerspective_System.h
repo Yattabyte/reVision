@@ -16,7 +16,7 @@ public:
 	inline ~ReflectorPerspective_System() = default;
 	/** Construct this system.
 	@param	cameras		shared list of scene cameras. */
-	inline explicit ReflectorPerspective_System(const std::shared_ptr<std::vector<Camera*>>& sceneCameras) noexcept :
+	inline explicit ReflectorPerspective_System(std::vector<Camera*>& sceneCameras) noexcept :
 		m_sceneCameras(sceneCameras)
 	{
 		addComponentType(Reflector_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
@@ -28,14 +28,14 @@ public:
 		for (const auto& componentParam : components) {
 			auto* cameraComponent = static_cast<Reflector_Component*>(componentParam[0]);
 			for (auto& camera : cameraComponent->m_cameras)
-				m_sceneCameras->push_back(&camera);
+				m_sceneCameras.push_back(&camera);
 		}
 	}
 
 
 private:
 	// Private Attributes
-	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
+	std::vector<Camera*>& m_sceneCameras;
 };
 
 #endif // REFLECTORPERSPECTIVE_SYSTEM_H

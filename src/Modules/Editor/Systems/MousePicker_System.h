@@ -11,6 +11,7 @@
 #include "glm/gtx/rotate_vector.hpp"
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
+
 /** An ECS system allowing the user to ray-pick entities by selecting against their components. */
 class MousePicker_System final : public ecsBaseSystem {
 public:
@@ -48,15 +49,15 @@ public:
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		const auto& actionState = m_engine.getActionState();
-		const auto& clientCamera = *m_engine.getModule_Graphics().getClientCamera()->get();
-		const auto ray_origin = clientCamera.EyePosition;
+		const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
+		const auto ray_origin = clientCamera->EyePosition;
 		const auto ray_nds = glm::vec2(2.0f * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
-		const auto ray_eye = glm::vec4(glm::vec2(clientCamera.pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
-		const auto ray_direction = glm::normalize(glm::vec3(clientCamera.vMatrixInverse * ray_eye));
+		const auto ray_eye = glm::vec4(glm::vec2(clientCamera->pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
+		const auto ray_direction = glm::normalize(glm::vec3(clientCamera->vMatrixInverse * ray_eye));
 
 		// Set the selection position for the worst-case scenario
 		const auto ray_end = ray_origin + (ray_direction * glm::vec3(50.0f));
-		const auto ray_end_far = ray_origin + (ray_direction * clientCamera.FarPlane);
+		const auto ray_end_far = ray_origin + (ray_direction * clientCamera->FarPlane);
 		m_selectionTransform.m_position = ray_end;
 		m_intersectionTransform.m_position = ray_end;
 
@@ -64,7 +65,7 @@ public:
 		const btVector3 direction(ray_end_far.x, ray_end_far.y, ray_end_far.z);
 		btCollisionWorld::ClosestRayResultCallback closestResults(origin, direction);
 		closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
-		m_engine.getModule_Physics().getWorld()->rayTest(origin, direction, closestResults);
+		m_engine.getModule_Physics().getWorld().rayTest(origin, direction, closestResults);
 		void* closestPhysicsShape = nullptr;
 		float closetstPhysicsHit = FLT_MAX;
 		glm::vec3 intersectionNormal(0, 1, 0);
@@ -236,7 +237,7 @@ private:
 	@return							true on successful intersection, false if disjoint. */
 	static bool RayOrigin(Transform_Component* transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine) noexcept {
 		// Create scaling factor to keep all origins same screen size
-		const auto radius = glm::distance(transformComponent->m_worldTransform.m_position, engine.getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.033f;
+		const auto radius = glm::distance(transformComponent->m_worldTransform.m_position, engine.getModule_Graphics().getClientCamera()->EyePosition) * 0.033f;
 
 		// Check if the distance is closer than the last entity found, so we can find the 'best' selection
 		if (auto distance = RaySphereIntersection(ray_origin, ray_direction, transformComponent->m_worldTransform.m_position, radius); distance >= 0.0f) {

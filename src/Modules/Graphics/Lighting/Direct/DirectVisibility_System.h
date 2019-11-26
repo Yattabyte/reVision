@@ -14,8 +14,8 @@ public:
 	/** Destroy this system. */
 	inline ~DirectVisibility_System() = default;
 	/** Construct this system.
-	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline explicit DirectVisibility_System(const std::shared_ptr<Direct_Light_Data>& frameData) noexcept :
+	@param	frameData	reference to common data that changes frame-to-frame. */
+	inline explicit DirectVisibility_System(Direct_Light_Data& frameData) noexcept :
 		m_frameData(frameData)
 	{
 		addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
@@ -25,7 +25,7 @@ public:
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		// Compile results PER viewport
-		for (auto& viewInfo : m_frameData->viewInfo) {
+		for (auto& viewInfo : m_frameData.viewInfo) {
 			// Clear previous cached data
 			viewInfo.lightIndices.clear();
 			viewInfo.lightTypes.clear();
@@ -43,7 +43,7 @@ public:
 
 private:
 	// Private Attributes
-	std::shared_ptr<Direct_Light_Data> m_frameData;
+	Direct_Light_Data& m_frameData;
 };
 
 #endif // DIRECTVISIBILITY_SYSTEM_H

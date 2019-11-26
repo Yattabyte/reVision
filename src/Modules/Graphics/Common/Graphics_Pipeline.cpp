@@ -22,12 +22,12 @@
 #include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
 
 
-Graphics_Pipeline::Graphics_Pipeline(Engine& engine, const std::shared_ptr<Camera>& clientCamera) noexcept :
-	m_engine(engine),
-	m_sceneCameras(std::make_shared<std::vector<Camera*>>())
+Graphics_Pipeline::Graphics_Pipeline(Engine& engine, Camera& clientCamera) noexcept :
+	m_engine(engine)
 {
 	// Create Systems
-	m_transHierachy = m_worldSystems.makeSystem<Transform_System>(engine);
+	m_transHierachy = std::make_shared<Transform_System>(engine);
+	m_worldSystems.addSystem(m_transHierachy);
 	m_worldSystems.makeSystem<FrustumCull_System>(m_sceneCameras);
 	m_worldSystems.makeSystem<Skeletal_Animation_System>(engine);
 	m_cameraSystems.makeSystem<CameraPerspective_System>(m_sceneCameras);
@@ -65,16 +65,16 @@ Graphics_Pipeline::Graphics_Pipeline(Engine& engine, const std::shared_ptr<Camer
 	};
 }
 
-std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime, ecsWorld& world, const std::vector<std::shared_ptr<Camera>>& cameras) noexcept
+std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime, ecsWorld& world, std::vector<Camera>& cameras) noexcept
 {
 	// Add input cameras to shared list
-	m_sceneCameras->clear();
-	m_sceneCameras->reserve(cameras.size());
+	m_sceneCameras.clear();
+	m_sceneCameras.reserve(cameras.size());
 	std::vector<std::pair<int, int>> perspectives;
 	int count(0);
 	for (auto& camera : cameras) {
-		camera->updateFrustum();
-		m_sceneCameras->push_back(camera.get());
+		camera.updateFrustum();
+		m_sceneCameras.push_back(&camera);
 		perspectives.emplace_back( count, count );
 		count++;
 	}
@@ -92,9 +92,9 @@ std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime
 
 	// Write camera data to camera GPU buffer
 	m_cameraBuffer.beginWriting();
-	m_cameraBuffer.resize(m_sceneCameras->size());
-	for (size_t x = 0ULL; x < m_sceneCameras->size(); ++x)
-		m_cameraBuffer[x] = *(*m_sceneCameras)[x]->get();
+	m_cameraBuffer.resize(m_sceneCameras.size());
+	for (size_t x = 0ULL; x < m_sceneCameras.size(); ++x)
+		m_cameraBuffer[x] = *m_sceneCameras[x]->get();
 	m_cameraBuffer.endWriting();
 
 	// Apply pre-rendering passes

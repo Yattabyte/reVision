@@ -245,7 +245,7 @@ ecsHandle ecsWorld::generateUUID() noexcept
 	}
 	const auto& string = ss.str();
 	ecsHandle handle;
-	std::memcpy(handle.uuid, string.c_str(), size_t(sizeof(char) * 32));
+	std::copy(&string[0], &string[32], &handle.uuid[0]);
 	return handle;
 }
 
@@ -460,6 +460,8 @@ std::pair<EntityHandle, ecsEntity*> ecsWorld::deserializeEntity(const std::vecto
 	// Make the entity
 	auto thisEntityHandle = makeEntity(components.data(), components.size(), std::string(entityNameChars, nameSize), desiredHandle, parentHandle);
 	auto* thisEntity = getEntity(thisEntityHandle);
+	pointers.clear();
+	components.clear();
 
 	// Make all child entities
 	unsigned int childEntitiesRead(0ULL);

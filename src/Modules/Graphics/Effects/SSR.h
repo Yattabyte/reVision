@@ -85,8 +85,8 @@ public:
 		updateMIPChain(viewport);
 
 		glDisable(GL_BLEND);
-		viewport->m_gfxFBOS->bindForWriting("SSR");
-		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
+		viewport->m_gfxFBOS.bindForWriting("SSR");
+		viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);
 		m_shaderSSR1->bind();
 		glBindTextureUnit(6, m_bayerID);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -94,9 +94,9 @@ public:
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		viewport->m_gfxFBOS->bindForWriting("REFLECTION");
-		glBindTextureUnit(5, viewport->m_gfxFBOS->getTexID("SSR", 0));
-		glBindTextureUnit(6, viewport->m_gfxFBOS->getTexID("SSR_MIP", 0));
+		viewport->m_gfxFBOS.bindForWriting("REFLECTION");
+		glBindTextureUnit(5, viewport->m_gfxFBOS.getTexID("SSR", 0));
+		glBindTextureUnit(6, viewport->m_gfxFBOS.getTexID("SSR_MIP", 0));
 		m_shaderSSR2->bind();
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
@@ -114,8 +114,8 @@ private:
 	/** Convolute the lighting buffer into each of its MIP levels.
 	@param	viewport	the viewport to render from. */
 	inline void updateMIPChain(const std::shared_ptr<Viewport>& viewport) noexcept {
-		const auto mipFboID = viewport->m_gfxFBOS->getFboID("SSR_MIP");
-		const auto mipTexID = viewport->m_gfxFBOS->getTexID("SSR_MIP", 0);
+		const auto mipFboID = viewport->m_gfxFBOS.getFboID("SSR_MIP");
+		const auto mipTexID = viewport->m_gfxFBOS.getTexID("SSR_MIP", 0);
 		const auto dimensions = glm::vec2(viewport->m_dimensions);
 
 		glDisable(GL_DEPTH_TEST);
@@ -123,8 +123,8 @@ private:
 
 		// Copy lighting texture to one with a MIP chain
 		m_shaderCopy->bind();
-		viewport->m_gfxFBOS->bindForReading("LIGHTING", 0);
-		viewport->m_gfxFBOS->bindForWriting("SSR_MIP");
+		viewport->m_gfxFBOS.bindForReading("LIGHTING", 0);
+		viewport->m_gfxFBOS.bindForWriting("SSR_MIP");
 		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		glClearNamedFramebufferfv(mipFboID, GL_COLOR, 0, clearColor);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);

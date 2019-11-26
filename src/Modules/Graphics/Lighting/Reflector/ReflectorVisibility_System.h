@@ -14,8 +14,8 @@ public:
 	/** Destroy this system. */
 	inline ~ReflectorVisibility_System() = default;
 	/** Construct this system.
-	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline explicit ReflectorVisibility_System(const std::shared_ptr<ReflectorData>& visibility) noexcept :
+	@param	frameData	reference to common data that changes frame-to-frame. */
+	inline explicit ReflectorVisibility_System(ReflectorData& visibility) noexcept :
 		m_frameData(visibility)
 	{
 		addComponentType(Reflector_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
@@ -26,8 +26,8 @@ public:
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		// Compile results PER viewport
-		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
-			auto& viewInfo = m_frameData->viewInfo[x];
+		for (int x = 0; x < m_frameData.viewInfo.size(); ++x) {
+			auto& viewInfo = m_frameData.viewInfo[x];
 
 			viewInfo.lightIndices.clear();
 			int index = 0;
@@ -45,7 +45,7 @@ public:
 
 private:
 	// Private Attributes
-	std::shared_ptr<ReflectorData> m_frameData;
+	ReflectorData& m_frameData;
 };
 
 #endif // REFLECTORVISIBILITY_SYSTEM_H

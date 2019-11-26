@@ -72,7 +72,7 @@ public:
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		if (m_shader->existsYet()) {
 			// Collate all component data to generate a draw call
-			const auto& camera = m_engine.getModule_Graphics().getClientCamera()->get();
+			const auto& camera = m_engine.getModule_Graphics().getClientCamera();
 			const auto& pMatrix = camera->pMatrix;
 			const auto& vMatrix = camera->vMatrix;
 			std::vector<glm::mat4> baseTransforms;

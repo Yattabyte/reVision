@@ -16,8 +16,8 @@ public:
 	/** Destroy this system. */
 	inline ~PropSync_System() = default;
 	/** Construct this system.
-	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline explicit PropSync_System(const std::shared_ptr<PropData>& frameData) noexcept :
+	@param	frameData	reference to of common data that changes frame-to-frame. */
+	inline explicit PropSync_System(PropData& frameData) noexcept :
 		m_frameData(frameData) {
 		addComponentType(Prop_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 		addComponentType(Skeleton_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
@@ -29,10 +29,10 @@ public:
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		// Resize BOTH buffers to match number of entities this frame, even though not all models have skeletons
-		m_frameData->modelBuffer.resize(components.size());
-		m_frameData->skeletonBuffer.resize(components.size());
-		m_frameData->modelBuffer.beginWriting();
-		m_frameData->skeletonBuffer.beginWriting();
+		m_frameData.modelBuffer.resize(components.size());
+		m_frameData.skeletonBuffer.resize(components.size());
+		m_frameData.modelBuffer.beginWriting();
+		m_frameData.skeletonBuffer.beginWriting();
 		int index = 0;
 		for (const auto& componentParam : components) {
 			auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
@@ -48,7 +48,7 @@ public:
 					const auto& orientation = transformComponent->m_worldTransform.m_orientation;
 					const auto& scale = transformComponent->m_worldTransform.m_scale;
 					const auto matRot = glm::mat4_cast(orientation);
-					m_frameData->modelBuffer[index].mMatrix = transformComponent->m_worldTransform.m_modelMatrix;
+					m_frameData.modelBuffer[index].mMatrix = transformComponent->m_worldTransform.m_modelMatrix;
 
 					// Update bounding sphere
 					const glm::vec3 bboxMax_World = (propComponent->m_model->m_bboxMax * scale) + position;
@@ -58,7 +58,7 @@ public:
 					glm::mat4 matTrans = glm::translate(glm::mat4(1.0f), bboxCenter);
 					glm::mat4 matScale = glm::scale(glm::mat4(1.0f), bboxScale);
 					glm::mat4 matFinal = (matTrans * matRot * matScale);
-					m_frameData->modelBuffer[index].bBoxMatrix = matFinal;
+					m_frameData.modelBuffer[index].bBoxMatrix = matFinal;
 				}
 				if (bboxComponent) {
 					bboxComponent->m_extent = propComponent->m_model->m_bboxScale;
@@ -69,25 +69,25 @@ public:
 
 				// Sync Animation Attributes
 				if (skeletonComponent) {
-					auto& bones = m_frameData->skeletonBuffer[index].bones;
+					auto& bones = m_frameData.skeletonBuffer[index].bones;
 					for (size_t i = 0, total = std::min(skeletonComponent->m_transforms.size(), size_t(NUM_MAX_BONES)); i < total; ++i)
 						bones[i] = skeletonComponent->m_transforms[i];
 				}
 
 				// Sync Prop Attributes
-				m_frameData->modelBuffer[index].materialID = propComponent->m_materialID;
-				m_frameData->modelBuffer[index].skinID = propComponent->m_skin;
+				m_frameData.modelBuffer[index].materialID = propComponent->m_materialID;
+				m_frameData.modelBuffer[index].skinID = propComponent->m_skin;
 			}
 			index++;
 		}
-		m_frameData->modelBuffer.endWriting();
-		m_frameData->skeletonBuffer.endWriting();
+		m_frameData.modelBuffer.endWriting();
+		m_frameData.skeletonBuffer.endWriting();
 	}
 
 
 private:
 	// Private Attributes
-	std::shared_ptr<PropData> m_frameData;
+	PropData& m_frameData;
 };
 
 #endif // PROPSYNC_SYSTEM_H

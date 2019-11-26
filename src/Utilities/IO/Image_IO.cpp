@@ -75,18 +75,17 @@ void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData) noexc
 	const unsigned int size_mult = (unsigned int)(dimensions.x) * (unsigned int)(dimensions.y);
 
 	// Always create RGBA format
-	auto* textureData = new GLubyte[size_t(size_mult) * 4ULL];
+	importedData.pixelData.resize(size_t(size_mult) * 4ULL);
 	const GLubyte* pixels = (GLubyte*)FreeImage_GetBits(bitmap);
 
 	for (unsigned int i = 0; i < size_mult; ++i) {
-		textureData[i * 4 + 2] = pixels[i * 4 + 0];
-		textureData[i * 4 + 1] = pixels[i * 4 + 1];
-		textureData[i * 4 + 0] = pixels[i * 4 + 2];
-		textureData[i * 4 + 3] = pixels[i * 4 + 3];
+		importedData.pixelData[i * 4 + 2] = pixels[i * 4 + 0];
+		importedData.pixelData[i * 4 + 1] = pixels[i * 4 + 1];
+		importedData.pixelData[i * 4 + 0] = pixels[i * 4 + 2];
+		importedData.pixelData[i * 4 + 3] = pixels[i * 4 + 3];
 	}
 
 	importedData.dimensions = dimensions;
-	importedData.pixelData = textureData;
 	importedData.pitch = (int)FreeImage_GetPitch(bitmap);
 	importedData.bpp = FreeImage_GetBPP(bitmap);
 }
@@ -98,8 +97,8 @@ void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, 
 		// Proceed if dimensions aren't the same
 		if (newSize != importedData.dimensions) {
 			// Create FreeImage bitmap from data provided
-			GLubyte* BGRA_Pixels = RGBA_to_BGRA(importedData.pixelData, importedData.dimensions.x * importedData.dimensions.y);
-			delete importedData.pixelData;
+			GLubyte* BGRA_Pixels = RGBA_to_BGRA(&importedData.pixelData[0], importedData.dimensions.x * importedData.dimensions.y);
+			importedData.pixelData.clear();
 			FIBITMAP* bitmap = FreeImage_ConvertFromRawBits(BGRA_Pixels, importedData.dimensions.x, importedData.dimensions.y, importedData.pitch, importedData.bpp, 0, 0, 0);
 			delete BGRA_Pixels;
 

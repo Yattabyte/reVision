@@ -57,14 +57,14 @@ public:
 
 		// Apply FXAA effect
 		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		viewport->m_gfxFBOS->bindForWriting("FXAA");
-		viewport->m_gfxFBOS->bindForReading("HDR", 0);
+		viewport->m_gfxFBOS.bindForWriting("FXAA");
+		viewport->m_gfxFBOS.bindForReading("HDR", 0);
 		m_shaderFXAA->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		indirectQuad.drawCall();
 
 		// Bind for reading by next effect
-		glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("FXAA", 0));
+		glBindTextureUnit(0, viewport->m_gfxFBOS.getTexID("FXAA", 0));
 		camBufferIndex.endReading();
 		indirectQuad.endReading();
 		Shader::Release();

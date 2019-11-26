@@ -80,7 +80,7 @@ void RotationIndicator::tick(const float&) noexcept
 
 		// Generate matrices
 		const auto pMatrix = glm::ortho(-4.2f, 4.2f, -4.2f, 4.2f, -10.0f, 10.0f);
-		const auto camMatrix = glm::mat4_cast(glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->get()->vMatrix));
+		const auto camMatrix = glm::mat4_cast(glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->vMatrix));
 		const auto vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -5.0f)) * camMatrix;
 		m_shader->setUniform(0, pMatrix * vMatrix);
 

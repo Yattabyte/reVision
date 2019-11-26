@@ -59,7 +59,7 @@ void Cubemap::initialize() noexcept
 	// Load the final texture
 	glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_images[0]->m_size.x, m_images[0]->m_size.x);
 	for (int x = 0; x < CUBEMAP_SIDE_COUNT; ++x) {
-		glNamedBufferStorage(m_pboIDs[x], GLsizeiptr(m_images[x]->m_size.x) * GLsizeiptr(m_images[x]->m_size.x) * 4LL, m_images[x]->m_pixelData, 0);
+		glNamedBufferStorage(m_pboIDs[x], GLsizeiptr(m_images[x]->m_size.x) * GLsizeiptr(m_images[x]->m_size.x) * 4LL, &m_images[x]->m_pixelData[0], 0);
 		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboIDs[x]);
 		glTextureSubImage3D(m_glTexID, 0, 0, 0, x, m_images[x]->m_size.x, m_images[x]->m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, (void*)nullptr);
 	}

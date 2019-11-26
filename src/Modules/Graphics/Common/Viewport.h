@@ -37,7 +37,7 @@ public:
 	glm::ivec2 m_screenPosition = glm::vec2(0);
 	glm::ivec2 m_dimensions = glm::vec2(1);
 	int m_layerFaces = 1;
-	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
+	Graphics_Framebuffers m_gfxFBOS;
 };
 
 #endif // VIEWPORT_H

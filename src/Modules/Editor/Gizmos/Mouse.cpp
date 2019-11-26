@@ -1,7 +1,4 @@
 #include "Modules/Editor/Gizmos/Mouse.h"
-#include "Modules/Editor/Gizmos/Translation.h"
-#include "Modules/Editor/Gizmos/Scaling.h"
-#include "Modules/Editor/Gizmos/Rotation.h"
 #include "Modules/Editor/Systems/MousePicker_System.h"
 #include "imgui.h"
 #include "Engine.h"
@@ -17,9 +14,9 @@ Mouse_Gizmo::Mouse_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_engine(engine),
 	m_editor(editor),
 	m_pickerSystem(std::make_shared<MousePicker_System>(engine)),
-	m_translationGizmo(std::make_shared<Translation_Gizmo>(engine, editor)),
-	m_scalingGizmo(std::make_shared<Scaling_Gizmo>(engine, editor)),
-	m_rotationGizmo(std::make_shared<Rotation_Gizmo>(engine, editor)),
+	m_translationGizmo(engine, editor),
+	m_scalingGizmo(engine, editor),
+	m_rotationGizmo(engine, editor),
 	m_spawnModel(Shared_Auto_Model(engine, "Editor\\spawn")),
 	m_spawnShader(Shared_Shader(engine, "Editor\\spawnShader"))
 {
@@ -48,11 +45,11 @@ bool Mouse_Gizmo::checkInput(const float& deltaTime) noexcept
 		else if (ImGui::IsKeyPressed('e') || ImGui::IsKeyPressed('E'))
 			m_inputMode = 2;
 
-		if (m_inputMode == 0 && m_translationGizmo->checkMouseInput(deltaTime))
+		if (m_inputMode == 0 && m_translationGizmo.checkMouseInput(deltaTime))
 			return true;
-		else if (m_inputMode == 1 && m_rotationGizmo->checkMouseInput(deltaTime))
+		else if (m_inputMode == 1 && m_rotationGizmo.checkMouseInput(deltaTime))
 			return true;
-		else if (m_inputMode == 2 && m_scalingGizmo->checkMouseInput(deltaTime))
+		else if (m_inputMode == 2 && m_scalingGizmo.checkMouseInput(deltaTime))
 			return true;
 
 		// Set selection LAST, allow attempts at other gizmo's first
@@ -85,18 +82,19 @@ bool Mouse_Gizmo::checkInput(const float& deltaTime) noexcept
 void Mouse_Gizmo::render(const float& deltaTime) noexcept
 {
 	if (m_inputMode == 0)
-		m_translationGizmo->render(deltaTime);
+		m_translationGizmo.render(deltaTime);
 	else if (m_inputMode == 1)
-		m_rotationGizmo->render(deltaTime);
+		m_rotationGizmo.render(deltaTime);
 	else if (m_inputMode == 2)
-		m_scalingGizmo->render(deltaTime);
+		m_scalingGizmo.render(deltaTime);
 
 	if (m_spawnModel->existsYet() && m_spawnShader->existsYet()) {
 		// Get camera matrices
-		const auto pMatrix = m_engine.getModule_Graphics().getClientCamera()->get()->pMatrix;
-		const auto vMatrix = m_engine.getModule_Graphics().getClientCamera()->get()->vMatrix;
+		const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
+		const auto pMatrix = clientCamera->pMatrix;
+		const auto vMatrix = clientCamera->vMatrix;
 		const auto trans = m_spawnTransform.m_modelMatrix;
-		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(m_spawnTransform.m_position, m_engine.getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f));
+		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(m_spawnTransform.m_position, clientCamera->EyePosition) * 0.02f));
 
 		// Render Gizmo Model
 		m_spawnModel->bind();
@@ -111,9 +109,9 @@ void Mouse_Gizmo::render(const float& deltaTime) noexcept
 void Mouse_Gizmo::setTransform(const Transform& transform) noexcept
 {
 	m_selectionTransform = transform;
-	m_translationGizmo->setTransform(transform);
-	m_rotationGizmo->setTransform(transform);
-	m_scalingGizmo->setTransform(transform);
+	m_translationGizmo.setTransform(transform);
+	m_rotationGizmo.setTransform(transform);
+	m_scalingGizmo.setTransform(transform);
 }
 
 Transform Mouse_Gizmo::getSelectionTransform() const noexcept

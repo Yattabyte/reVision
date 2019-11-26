@@ -4,6 +4,9 @@
 
 #include "Assets/Auto_Model.h"
 #include "Assets/Shader.h"
+#include "Modules/Editor/Gizmos/Translation.h"
+#include "Modules/Editor/Gizmos/Scaling.h"
+#include "Modules/Editor/Gizmos/Rotation.h"
 #include "Modules/ECS/ecsComponent.h"
 #include "Modules/ECS/ecsEntity.h"
 #include "Modules/ECS/ecsSystem.h"
@@ -16,9 +19,6 @@
 // Forward Declarations
 class Engine;
 class LevelEditor_Module;
-class Translation_Gizmo;
-class Scaling_Gizmo;
-class Rotation_Gizmo;
 
 
 /** A 3D tool allowing the user to select entities in a level. */
@@ -68,9 +68,9 @@ private:
 	std::vector<EntityHandle> m_selection;
 	std::shared_ptr<ecsBaseSystem> m_pickerSystem;
 	unsigned int m_inputMode = 0;
-	std::shared_ptr<Translation_Gizmo> m_translationGizmo;
-	std::shared_ptr<Scaling_Gizmo> m_scalingGizmo;
-	std::shared_ptr<Rotation_Gizmo> m_rotationGizmo;
+	Translation_Gizmo m_translationGizmo;
+	Scaling_Gizmo m_scalingGizmo;
+	Rotation_Gizmo m_rotationGizmo;
 	Shared_Auto_Model m_spawnModel;
 	Shared_Shader m_spawnShader;
 	IndirectDraw<1> m_spawnIndirect;

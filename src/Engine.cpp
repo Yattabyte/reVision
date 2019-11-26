@@ -44,7 +44,7 @@ Engine::Engine() :
 	m_moduleUI(*this),
 	m_modulePhysics(*this)
 {
-	// Initialize aN OGL context
+	// Initialize an OGL context
 	initWindow();
 	Image_IO::Initialize();
 	m_inputBindings.loadFile("binds");

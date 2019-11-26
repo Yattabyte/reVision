@@ -14,10 +14,9 @@ public:
 	/** Destroy this system. */
 	inline ~PropVisibility_System() = default;
 	/** Construct this system.
-	@param	frameData	shared pointer of common data that changes frame-to-frame. */
-	inline PropVisibility_System(const std::shared_ptr<PropData>& frameData, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
-		m_frameData(frameData),
-		m_cameras(cameras)
+	@param	frameData	reference to of common data that changes frame-to-frame. */
+	inline PropVisibility_System(PropData& frameData) noexcept :
+		m_frameData(frameData)
 	{
 		addComponentType(Prop_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 		addComponentType(Skeleton_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
@@ -28,8 +27,8 @@ public:
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
 		// Compile results PER viewport
-		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
-			auto& viewInfo = m_frameData->viewInfo[x];
+		for (int x = 0; x < m_frameData.viewInfo.size(); ++x) {
+			auto& viewInfo = m_frameData.viewInfo[x];
 			viewInfo.cullingDrawData.clear();
 			viewInfo.renderingDrawData.clear();
 			viewInfo.visibleIndices.clear();
@@ -66,8 +65,7 @@ public:
 
 private:
 	// Private Attributes
-	std::shared_ptr<PropData> m_frameData;
-	std::shared_ptr<std::vector<Camera*>> m_cameras;
+	PropData& m_frameData;
 };
 
 #endif // PROPVISIBILITY_SYSTEM_H

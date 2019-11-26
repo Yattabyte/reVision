@@ -112,8 +112,8 @@ public:
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		m_shader->bind();
-		viewport->m_gfxFBOS->bindForWriting("SSAO");
-		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
+		viewport->m_gfxFBOS.bindForWriting("SSAO");
+		viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);
 		glBindTextureUnit(6, m_noiseID);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -125,12 +125,12 @@ public:
 		if (m_blurStrength > 0) {
 			// Clear the second attachment
 			GLfloat clearRed = 0.0f;
-			glClearTexImage(viewport->m_gfxFBOS->getTexID("SSAO", 1), 0, GL_RED, GL_FLOAT, &clearRed);
+			glClearTexImage(viewport->m_gfxFBOS.getTexID("SSAO", 1), 0, GL_RED, GL_FLOAT, &clearRed);
 
 			// Read from desired texture, blur into this frame buffer
 			bool horizontal = false;
-			glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("SSAO", 0));
-			glBindTextureUnit(1, viewport->m_gfxFBOS->getTexID("SSAO", 1));
+			glBindTextureUnit(0, viewport->m_gfxFBOS.getTexID("SSAO", 0));
+			glBindTextureUnit(1, viewport->m_gfxFBOS.getTexID("SSAO", 1));
 			glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
 			m_shaderGB_A->bind();
 			m_shaderGB_A->setUniform(0, horizontal);
@@ -150,9 +150,9 @@ public:
 		glEnable(GL_BLEND);
 		glBlendFuncSeparate(GL_ONE, GL_ONE, GL_DST_ALPHA, GL_ZERO);
 		m_shaderCopyAO->bind();
-		viewport->m_gfxFBOS->bindForWriting("GEOMETRY");
+		viewport->m_gfxFBOS.bindForWriting("GEOMETRY");
 		glDrawBuffer(GL_COLOR_ATTACHMENT2);
-		glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("SSAO", aoSpot));
+		glBindTextureUnit(0, viewport->m_gfxFBOS.getTexID("SSAO", aoSpot));
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };

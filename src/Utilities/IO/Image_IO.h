@@ -5,13 +5,14 @@
 #include <glad/glad.h>
 #include "glm/glm.hpp"
 #include <string>
+#include <vector>
 
 
 class Engine;
 struct FIBITMAP;
 
 struct Image_Data {
-	GLubyte* pixelData = nullptr;
+	std::vector<GLubyte> pixelData;
 	glm::ivec2 dimensions = glm::ivec2(0);
 	int pitch = 0;
 	unsigned int bpp = 0;

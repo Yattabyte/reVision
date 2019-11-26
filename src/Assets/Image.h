@@ -5,8 +5,8 @@
 #include "Assets/Asset.h"
 #include "Utilities/IO/Image_IO.h"
 #include "glm/glm.hpp"
-#include <any>
 #include <optional>
+#include <vector>
 
 
 class Engine;
@@ -35,7 +35,7 @@ class Image final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Image. */
-	~Image() noexcept;
+	inline ~Image() noexcept = default;
 	/** Construct the Image.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory).
@@ -47,7 +47,7 @@ public:
 
 	// Public Attributes
 	glm::ivec2 m_size = glm::ivec2(0);
-	GLubyte* m_pixelData = nullptr;
+	std::vector<GLubyte> m_pixelData;
 	GLint m_pitch = 0;
 	GLuint m_bpp = 0;
 	Fill_Policy m_policyFill = Fill_Policy::CHECKERED;

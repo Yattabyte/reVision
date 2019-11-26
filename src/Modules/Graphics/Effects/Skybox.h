@@ -103,13 +103,13 @@ public:
 
 		// Render skybox to reflection buffer
 		m_shaderSkyReflect->bind();
-		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
-		viewport->m_gfxFBOS->bindForWriting("REFLECTION");
+		viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);
+		viewport->m_gfxFBOS.bindForWriting("REFLECTION");
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Render skybox to lighting buffer
 		m_shaderSky->bind();
-		viewport->m_gfxFBOS->bindForWriting("LIGHTING");
+		viewport->m_gfxFBOS.bindForWriting("LIGHTING");
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		glDisable(GL_DEPTH_TEST);

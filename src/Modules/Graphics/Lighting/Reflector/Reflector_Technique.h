@@ -25,7 +25,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Reflector_Technique(Engine& engine, const std::shared_ptr<std::vector<Camera*>>& cameras) noexcept :
+	inline Reflector_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
 		m_shaderLighting(Shared_Shader(engine, "Core\\Reflector\\IBL_Parallax")),
@@ -34,8 +34,7 @@ public:
 		m_shaderConvolute(Shared_Shader(engine, "Core\\Reflector\\Cube_Convolution")),
 		m_shapeCube(Shared_Auto_Model(engine, "cube")),
 		m_shapeQuad(Shared_Auto_Model(engine, "quad")),
-		m_frameData(std::make_shared<ReflectorData>()),
-		m_sceneCameras(cameras)
+		m_sceneCameras(sceneCameras)
 	{
 		// Auxiliary Systems
 		m_auxilliarySystems.makeSystem<ReflectorScheduler_System>(engine, m_frameData);
@@ -44,14 +43,14 @@ public:
 
 		// Preferences
 		auto& preferences = engine.getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::Preference::C_ENVMAP_SIZE, m_frameData->envmapSize.x);
+		preferences.getOrSetValue(PreferenceState::Preference::C_ENVMAP_SIZE, m_frameData.envmapSize.x);
 		preferences.addCallback(PreferenceState::Preference::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float& f) {
-			m_frameData->envmapSize = glm::ivec2(std::max(1u, (unsigned int)f));
-			m_viewport->resize(glm::ivec2(m_frameData->envmapSize), (int)m_frameData->reflectorLayers);
+			m_frameData.envmapSize = glm::ivec2(std::max(1u, (unsigned int)f));
+			m_viewport->resize(glm::ivec2(m_frameData.envmapSize), (int)m_frameData.reflectorLayers);
 			});
 		// Environment Map
-		m_frameData->envmapSize = glm::ivec2(std::max(1u, (unsigned int)m_frameData->envmapSize.x));
-		m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_frameData->envmapSize, engine);
+		m_frameData.envmapSize = glm::ivec2(std::max(1u, (unsigned int)m_frameData.envmapSize.x));
+		m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_frameData.envmapSize, engine);
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
@@ -65,15 +64,15 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void clearCache(const float& deltaTime) noexcept override final {
-		m_frameData->lightBuffer.endReading();
-		m_frameData->viewInfo.clear();
-		m_frameData->reflectorsToUpdate.clear();
+		m_frameData.lightBuffer.endReading();
+		m_frameData.viewInfo.clear();
+		m_frameData.reflectorsToUpdate.clear();
 		m_drawIndex = 0;
 		m_drawData.clear();
 	}
 	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept override final {
 		// Link together the dimensions of view info to that of the viewport vectors
-		m_frameData->viewInfo.resize(m_sceneCameras->size());
+		m_frameData.viewInfo.resize(m_sceneCameras.size());
 		world.updateSystems(m_auxilliarySystems, deltaTime);
 	}
 	inline virtual void updatePass(const float& deltaTime) noexcept override final {
@@ -83,7 +82,7 @@ public:
 	}
 	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
 		// Exit Early
-		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderLighting->existsYet() && m_shaderStencil->existsYet()) {
+		if (m_enabled && m_frameData.viewInfo.size() && m_shapeCube->existsYet() && m_shaderLighting->existsYet() && m_shaderStencil->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
 				m_drawData.resize(size_t(m_drawIndex) + 1ull);
 
@@ -91,9 +90,9 @@ public:
 			std::vector<glm::ivec2> camIndices;
 			std::vector<GLint> lightIndices;
 			for (auto& [camIndex, layer] : perspectives) {
-				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
+				const std::vector<glm::ivec2> tempIndices(m_frameData.viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
 				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
-				lightIndices.insert(lightIndices.end(), m_frameData->viewInfo[camIndex].lightIndices.begin(), m_frameData->viewInfo[camIndex].lightIndices.end());
+				lightIndices.insert(lightIndices.end(), m_frameData.viewInfo[camIndex].lightIndices.begin(), m_frameData.viewInfo[camIndex].lightIndices.end());
 			}
 
 			if (lightIndices.size()) {
@@ -132,20 +131,20 @@ private:
 	@param	viewport	the viewport to render from. */
 	inline void updateReflectors(const float& deltaTime) noexcept {
 		auto clientTime = m_engine.getTime();
-		if (m_frameData->reflectorsToUpdate.size()) {
-			m_viewport->resize(m_frameData->envmapSize, (int)m_frameData->reflectorLayers);
+		if (m_frameData.reflectorsToUpdate.size()) {
+			m_viewport->resize(m_frameData.envmapSize, (int)m_frameData.reflectorLayers);
 			m_viewport->bind();
 			m_viewport->clear();
 
 			// Accumulate Perspective Data
 			std::vector<std::pair<int, int>> perspectives;
-			perspectives.reserve(m_frameData->reflectorsToUpdate.size());
-			for (auto& [importance, time, reflectorSpot, camera] : m_frameData->reflectorsToUpdate) {
+			perspectives.reserve(m_frameData.reflectorsToUpdate.size());
+			for (auto& [importance, time, reflectorSpot, camera] : m_frameData.reflectorsToUpdate) {
 				// Accumulate all visibility info for the cameras passed in
 				int visibilityIndex = 0;
 				bool found = false;
-				for (int y = 0; y < m_sceneCameras->size(); ++y)
-					if (m_sceneCameras->at(y) == camera) {
+				for (int y = 0; y < m_sceneCameras.size(); ++y)
+					if (m_sceneCameras.at(y) == camera) {
 						visibilityIndex = y;
 						found = true;
 						break;
@@ -157,7 +156,7 @@ private:
 			}
 			m_indirectQuad.beginWriting();
 			m_indirectQuadConvolute.beginWriting();
-			const auto instanceCount = (GLuint)perspectives.size(), convoluteCount = (GLuint)m_frameData->reflectorLayers;
+			const auto instanceCount = (GLuint)perspectives.size(), convoluteCount = (GLuint)m_frameData.reflectorLayers;
 			m_indirectQuad.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
 			m_indirectQuadConvolute.write(sizeof(GLuint), sizeof(GLuint), &convoluteCount);
 			m_indirectQuad.endWriting();
@@ -168,8 +167,8 @@ private:
 			m_engine.getModule_Graphics().getPipeline()->render(deltaTime, m_viewport, perspectives, categories);
 
 			// Copy all lighting results into cube faces, generating cubemap's
-			m_viewport->m_gfxFBOS->bindForReading("LIGHTING", 0);
-			m_frameData->envmapFBO.bindForWriting(0);
+			m_viewport->m_gfxFBOS.bindForReading("LIGHTING", 0);
+			m_frameData.envmapFBO.bindForWriting(0);
 			m_shaderCopy->bind();
 			m_indirectQuad.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDisable(GL_DEPTH_TEST);
@@ -182,13 +181,13 @@ private:
 			// Convolute all completed cubemap's, not just what was done this frame
 			m_shaderConvolute->bind();
 			m_indirectQuadConvolute.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			m_frameData->envmapFBO.bindForReading(0);
+			m_frameData.envmapFBO.bindForReading(0);
 			for (unsigned int r = 1; r < 6; ++r) {
 				// Ensure we are writing to MIP level r
-				const unsigned int write_size = (unsigned int)std::max(1.0f, (floor((float)m_frameData->envmapSize.x / pow(2.0f, (float)r))));
+				const unsigned int write_size = (unsigned int)std::max(1.0f, (floor((float)m_frameData.envmapSize.x / pow(2.0f, (float)r))));
 				glViewport(0, 0, write_size, write_size);
 				m_shaderConvolute->setUniform(1, (float)r / 5.0f);
-				m_frameData->envmapFBO.bindForWriting(r);
+				m_frameData.envmapFBO.bindForWriting(r);
 
 				// Convolute the 6 faces for this roughness level
 				glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -196,7 +195,7 @@ private:
 
 			m_indirectQuadConvolute.endReading();
 			Shader::Release();
-			m_frameData->reflectorsToUpdate.clear();
+			m_frameData.reflectorsToUpdate.clear();
 		}
 	}
 	/** Render all the lights
@@ -213,12 +212,12 @@ private:
 
 		// Draw only into depth-stencil buffer
 		m_shaderStencil->bind();										// Shader (reflector)
-		viewport->m_gfxFBOS->bindForWriting("REFLECTION");				// Ensure writing to reflection FBO
-		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);				// Read from Geometry FBO
-		m_frameData->envmapFBO.bindForReading(4);						// Reflection map (environment texture)
+		viewport->m_gfxFBOS.bindForWriting("REFLECTION");				// Ensure writing to reflection FBO
+		viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);				// Read from Geometry FBO
+		m_frameData.envmapFBO.bindForReading(4);						// Reflection map (environment texture)
 		m_drawData[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_drawData[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible light indices
-		m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer
+		m_frameData.lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer
 		m_drawData[m_drawIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);				// Draw call buffer
 		glBindVertexArray(m_shapeCube->m_vaoID);						// Quad VAO
 		glEnable(GL_DEPTH_TEST);
@@ -268,8 +267,8 @@ private:
 
 
 	// Shared Attributes
-	std::shared_ptr<ReflectorData> m_frameData;
-	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
+	ReflectorData m_frameData;
+	std::vector<Camera*>& m_sceneCameras;
 };
 
 #endif // REFLECTOR_TECHNIQUE_H

@@ -63,8 +63,8 @@ public:
 		// Extract bright regions from lighting buffer
 		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_shaderBloomExtract->bind();
-		viewport->m_gfxFBOS->bindForWriting("BLOOM");
-		viewport->m_gfxFBOS->bindForReading("LIGHTING", 0);
+		viewport->m_gfxFBOS.bindForWriting("BLOOM");
+		viewport->m_gfxFBOS.bindForReading("LIGHTING", 0);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		indirectQuad.bind();
@@ -74,8 +74,8 @@ public:
 		if (m_bloomStrength > 0) {
 			// Read from desired texture, blur into this frame buffer
 			bool horizontal = false;
-			glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("BLOOM", 0));
-			glBindTextureUnit(1, viewport->m_gfxFBOS->getTexID("BLOOM", 1));
+			glBindTextureUnit(0, viewport->m_gfxFBOS.getTexID("BLOOM", 0));
+			glBindTextureUnit(1, viewport->m_gfxFBOS.getTexID("BLOOM", 1));
 			glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
 			m_shaderGB->bind();
 			m_shaderGB->setUniform(0, horizontal);
@@ -95,8 +95,8 @@ public:
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
-		viewport->m_gfxFBOS->bindForWriting("LIGHTING");
-		glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("BLOOM", bloomSpot));
+		viewport->m_gfxFBOS.bindForWriting("LIGHTING");
+		glBindTextureUnit(0, viewport->m_gfxFBOS.getTexID("BLOOM", bloomSpot));
 		m_shaderCopy->bind();
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glDisable(GL_BLEND);

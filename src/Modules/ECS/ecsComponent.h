@@ -104,7 +104,7 @@ struct ecsComponent : public ecsBaseComponent {
 		std::memcpy(&nameData[0], &charCount, sizeof(int));
 		std::memcpy(&nameData[sizeof(int)], chars, charCount);
 		// Get serial data
-		auto classData = static_cast<C*>(this)->serialize();
+		auto classData = static_cast<C&>(*this).serialize();
 		const auto& classDataSize = classData.size();
 		std::vector<char> classDataSizeData(sizeof(size_t));
 		std::memcpy(&classDataSizeData[0], &classDataSize, sizeof(size_t));
@@ -130,7 +130,7 @@ protected:
 	inline virtual void recover_data(const std::vector<char>& data) noexcept override final {
 		// Previously recovered type name, created this class
 		// Next recover data
-		static_cast<C*>(this)->deserialize(data);
+		static_cast<C&>(*this).deserialize(data);
 
 		// Enforce runtime variables
 		ecsBaseComponent::m_runtimeID = ecsComponent::Runtime_ID;

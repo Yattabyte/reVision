@@ -15,7 +15,7 @@ public:
 	inline ~ShadowPerspective_System() = default;
 	/** Construct this system.
 	@param	cameras		shared list of scene cameras. */
-	inline explicit ShadowPerspective_System(const std::shared_ptr<std::vector<Camera*>>& sceneCameras) noexcept :
+	inline explicit ShadowPerspective_System(std::vector<Camera*>& sceneCameras) noexcept :
 		m_sceneCameras(sceneCameras)
 	{
 		addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
@@ -27,14 +27,14 @@ public:
 		for (const auto& componentParam : components) {
 			auto* shadow = static_cast<Shadow_Component*>(componentParam[0]);
 			for (auto& camera : shadow->m_cameras)
-				m_sceneCameras->push_back(&camera);
+				m_sceneCameras.push_back(&camera);
 		}
 	}
 
 
 private:
 	// Private Attributes
-	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
+	std::vector<Camera*>& m_sceneCameras;
 };
 
 #endif // SHADOWPERSPECTIVE_SYSTEM_H

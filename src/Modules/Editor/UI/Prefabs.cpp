@@ -72,17 +72,17 @@ void Prefabs::addPrefab(Prefabs::Entry& prefab) noexcept
 	prefab.spawnPoint = cursorPos;
 
 	// Create the camera and move it to where the entity is located
-	auto camera = std::make_shared<Camera>();
-	(*camera)->Dimensions = glm::vec2((float)m_thumbSize);
-	(*camera)->FarPlane = 250.0f;
-	(*camera)->FOV = 90.0F;
-	(*camera)->vMatrix = glm::translate(glm::mat4(1.0f), cursorPos);
-	(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
-	(*camera)->EyePosition = glm::vec3(0, 0, -25.0f);
+	Camera camera;
+	camera->Dimensions = glm::vec2((float)m_thumbSize);
+	camera->FarPlane = 250.0f;
+	camera->FOV = 90.0F;
+	camera->vMatrix = glm::translate(glm::mat4(1.0f), cursorPos);
+	camera->vMatrixInverse = glm::inverse(camera->vMatrix);
+	camera->EyePosition = glm::vec3(0, 0, -25.0f);
 	const float verticalRad = 2.0f * atanf(tanf(glm::radians(90.0f) / 2.0f) / 1.0F);
-	(*camera)->pMatrix = glm::perspective(verticalRad, 1.0f, Camera::ConstNearPlane, (*camera)->FarPlane);
-	(*camera)->pMatrixInverse = glm::inverse((*camera)->pMatrix);
-	(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
+	camera->pMatrix = glm::perspective(verticalRad, 1.0f, Camera::ConstNearPlane, camera->FarPlane);
+	camera->pMatrixInverse = glm::inverse(camera->pMatrix);
+	camera->pvMatrix = camera->pMatrix * camera->vMatrix;
 	m_prefabCameras.push_back(camera);
 
 	// Create the thumbnail texture
@@ -232,7 +232,7 @@ void Prefabs::openPrefabEntry() noexcept
 
 void Prefabs::tickThumbnails(const float& deltaTime) noexcept
 {
-	auto rotation = glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->get()->vMatrix);
+	auto rotation = glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->vMatrix);
 	const auto rotMat = glm::mat4_cast(rotation);
 	auto& trans = *m_previewWorld.getComponent<Transform_Component>(m_sunHandle);
 	trans.m_localTransform.m_orientation = glm::inverse(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(45.0f), glm::vec3(1, 0, 0)) * rotation);
@@ -261,10 +261,10 @@ void Prefabs::tickThumbnails(const float& deltaTime) noexcept
 		// Rotate distance based on editor camera rotation
 		const auto rotatedPosition = glm::inverse(rotMat) * glm::vec4(0, 0, distance, 1);
 		const auto newPosition = prefab.spawnPoint + center + glm::vec3(rotatedPosition);
-		(*camera)->EyePosition = newPosition;
-		(*camera)->vMatrix = rotMat * glm::translate(glm::mat4(1.0f), -glm::vec3(newPosition));
-		(*camera)->vMatrixInverse = glm::inverse((*camera)->vMatrix);
-		(*camera)->pvMatrix = (*camera)->pMatrix * (*camera)->vMatrix;
+		camera->EyePosition = newPosition;
+		camera->vMatrix = rotMat * glm::translate(glm::mat4(1.0f), -glm::vec3(newPosition));
+		camera->vMatrixInverse = glm::inverse(camera->vMatrix);
+		camera->pvMatrix = camera->pMatrix * camera->vMatrix;
 		count++;
 	}
 
@@ -278,7 +278,7 @@ void Prefabs::tickThumbnails(const float& deltaTime) noexcept
 	// Copy viewport layers into prefab textures
 	count = 0;
 	for (const auto& prefab : m_prefabs)
-		glCopyImageSubData(m_viewport->m_gfxFBOS->getTexID("FXAA", 0), GL_TEXTURE_2D_ARRAY, 0, 0, 0, count++, prefab.texID, GL_TEXTURE_2D, 0, 0, 0, 0, m_thumbSize, m_thumbSize, 1);
+		glCopyImageSubData(m_viewport->m_gfxFBOS.getTexID("FXAA", 0), GL_TEXTURE_2D_ARRAY, 0, 0, 0, count++, prefab.texID, GL_TEXTURE_2D, 0, 0, 0, 0, m_thumbSize, m_thumbSize, 1);
 }
 
 void Prefabs::tickWindow(const float&) noexcept

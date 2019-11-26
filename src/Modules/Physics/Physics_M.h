@@ -17,7 +17,7 @@ public:
 	inline ~Physics_Module() = default;
 	/** Construct a physics module.
 	@param	engine		the currently active engine. */
-	inline explicit Physics_Module(Engine& engine) : Engine_Module(engine) {}
+	explicit Physics_Module(Engine& engine);
 
 
 	// Public Interface Implementations
@@ -33,16 +33,16 @@ public:
 	void updateSystems(ecsWorld& world, const float& deltaTime) noexcept;
 	/** Returns a pointer to the physics-world.
 	@return					the physics world. */
-	inline btDiscreteDynamicsWorld* getWorld() noexcept { return m_world; }
+	inline btDiscreteDynamicsWorld& getWorld() noexcept { return m_world; }
 
 
 private:
 	// Private Attributes
-	btBroadphaseInterface* m_broadphase = nullptr;
-	btDefaultCollisionConfiguration* m_collisionConfiguration = nullptr;
-	btCollisionDispatcher* m_dispatcher = nullptr;
-	btSequentialImpulseConstraintSolver* m_solver = nullptr;
-	btDiscreteDynamicsWorld* m_world = nullptr;
+	btDbvtBroadphase m_broadphase;
+	btDefaultCollisionConfiguration m_collisionConfiguration;
+	btCollisionDispatcher m_dispatcher;
+	btSequentialImpulseConstraintSolver m_solver;
+	btDiscreteDynamicsWorld m_world;
 	ecsSystemList m_physicsSystems;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

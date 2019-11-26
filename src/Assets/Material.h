@@ -44,7 +44,7 @@ class Material final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Material. */
-	~Material() noexcept;
+	inline ~Material() noexcept = default;
 	/** Construct the Material.
 	@param	engine			the engine to use.
 	@param	filename		the asset file name (relative to engine directory).
@@ -61,7 +61,7 @@ public:
 
 
 	// Public Attributes
-	GLubyte* m_materialData = nullptr;
+	std::vector<GLubyte> m_materialData;
 	glm::ivec2 m_size = glm::ivec2(1);
 	std::vector<std::string> m_textures;
 	std::vector<Shared_Image> m_images;

@@ -48,12 +48,12 @@ public:
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	viewport		the viewport to render into.
 	@param	cameras			the cameras to render from. */
-	void renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::shared_ptr<Camera>>& cameras) noexcept;
+	void renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, std::vector<Camera>& cameras) noexcept;
 	/** Generates a perspective matrix for the client camera. */
 	void genPerspectiveMatrix() noexcept;
 	/** Returns a shared pointer to the primary camera.
 	@return					the primary camera. */
-	inline std::shared_ptr<Camera> getClientCamera() const noexcept {
+	inline Camera& getClientCamera() noexcept {
 		return m_clientCamera;
 	}
 
@@ -68,7 +68,7 @@ private:
 	glm::ivec2										m_renderSize = glm::ivec2(1);
 	std::shared_ptr<Graphics_Pipeline>				m_pipeline;
 	std::shared_ptr<Viewport>						m_viewport;
-	std::shared_ptr<Camera>							m_clientCamera;
+	Camera											m_clientCamera;
 	Shared_Shader									m_shader;
 	Shared_Auto_Model								m_shapeQuad;
 	IndirectDraw<1>									m_indirectQuad;
