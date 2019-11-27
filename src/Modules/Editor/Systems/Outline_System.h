@@ -76,6 +76,7 @@ public:
 			const auto& pMatrix = camera->pMatrix;
 			const auto& vMatrix = camera->vMatrix;
 			std::vector<glm::mat4> baseTransforms;
+			std::vector<glm::vec4> baseScales;
 			std::vector<glm::ivec4> drawData;
 			for (const auto& componentParam : components) {
 				//auto* selectedComponent = static_cast<Selected_Component*>(componentParam[0]);
@@ -92,6 +93,7 @@ public:
 					const auto& [offset, count] = m_geometryParams[prop->m_handle];
 					drawData.push_back({ count, 1, offset, 1 });
 					baseTransforms.push_back(pMatrix * vMatrix * trans->m_worldTransform.m_modelMatrix);
+					baseScales.push_back(glm::vec4(trans->m_worldTransform.m_scale, 1));
 				}
 				if (light) {
 					if (light->m_type == Light_Component::Light_Type::DIRECTIONAL)
@@ -103,15 +105,19 @@ public:
 					const auto& [offset, count] = m_geometryParams[light->m_handle];
 					drawData.push_back({ count, 1, offset, 1 });
 					baseTransforms.push_back(pMatrix * vMatrix * trans->m_worldTransform.m_modelMatrix);
+					baseScales.push_back(glm::vec4(trans->m_worldTransform.m_scale, 1));
 				}
 			}
 
 			// Write data
 			m_ssboTransforms.beginWriting();
+			m_ssboScales.beginWriting();
 			m_indirectGeometry.beginWriting();
 			m_ssboTransforms.write(0, sizeof(glm::mat4) * baseTransforms.size(), baseTransforms.data());
+			m_ssboScales.write(0, sizeof(glm::vec4) * baseScales.size(), baseScales.data());
 			m_indirectGeometry.write(0, sizeof(glm::ivec4) * drawData.size(), drawData.data());
 			m_ssboTransforms.endWriting();
+			m_ssboScales.endWriting();
 			m_indirectGeometry.endWriting();
 
 			// Stencil-out the shapes themselves
@@ -122,6 +128,7 @@ public:
 			m_shader->setUniform(2, camera->pMatrixInverse);
 			m_shader->setUniform(3, glm::vec4(0.33, 0.66, 0.99, 0.125));
 			m_ssboTransforms.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+			m_ssboScales.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 			m_indirectGeometry.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glBindVertexArray(m_vaoID);
 			glEnable(GL_DEPTH_TEST);
@@ -137,7 +144,7 @@ public:
 			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, GLsizei(drawData.size()), 0);
 
 			// Render the shapes larger, cutting out previous region
-			m_shader->setUniform(0, 0.01f * m_renderScale);
+			m_shader->setUniform(0, 0.1f * m_renderScale);
 			m_shader->setUniform(3, glm::vec4(1, 0.8, 0.1, 1.0));
 			glStencilMask(0x00);
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
@@ -149,6 +156,7 @@ public:
 			glDisable(GL_STENCIL_TEST);
 			glEnable(GL_CULL_FACE);
 			m_ssboTransforms.endReading();
+			m_ssboScales.endReading();
 			m_indirectGeometry.endReading();
 			Shader::Release();
 		}
@@ -233,7 +241,7 @@ private:
 	float m_renderScale = 0.02f;
 	Shared_Mesh m_cube, m_sphere, m_hemisphere;
 	Shared_Shader m_shader;
-	DynamicBuffer<> m_indirectGeometry, m_ssboTransforms;
+	DynamicBuffer<> m_indirectGeometry, m_ssboTransforms, m_ssboScales;
 	GLuint m_vaoID = 0, m_vboID = 0;
 	size_t m_currentSize = 0ull, m_maxCapacity = 256ull;
 	GLsync m_fence = nullptr;

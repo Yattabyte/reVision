@@ -86,7 +86,8 @@ public:
 		return false;
 	}
 	/** Removes a system from the list.
-	@param	system	the system to remove. */
+	@param	system	the system to remove.
+	@return			true if successfully removed, false otherwise. */
 	inline const bool removeSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept {
 		for (size_t i = 0; i < m_systems.size(); ++i)
 			if (system.get() == m_systems[i].get()) {
@@ -101,7 +102,8 @@ public:
 		return m_systems.size();
 	}
 	/** Retrieve a specific system at a given index.
-	@param	index	the index to fetch the system from. */
+	@param	index	the index to fetch the system from.
+	@return			the system found at the index specified. */
 	inline auto operator[](const size_t& index) const noexcept {
 		return m_systems[index];
 	}
