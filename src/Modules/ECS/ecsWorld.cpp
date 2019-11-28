@@ -99,13 +99,15 @@ bool ecsWorld::removeEntity(const EntityHandle& entityHandle) noexcept
 
 bool ecsWorld::removeComponent(const ComponentHandle& componentHandle) noexcept
 {
-	// TO DO
-	return getComponent(componentHandle) != nullptr;
+	// Check if the component handle is valid
+	if (const auto& component = getComponent(componentHandle))
+		return removeEntityComponent(component->m_entity, component->m_runtimeID);
+	return false;
 }
 
 bool ecsWorld::removeEntityComponent(const EntityHandle& entityHandle, const ComponentID& componentID) noexcept
 {
-	// Check if entity is valid
+	// Check if entity handle is valid
 	if (auto* entity = getEntity(entityHandle)) {
 		auto& entityComponents = entity->m_components;
 		for (size_t i = 0ULL; i < entityComponents.size(); ++i) {

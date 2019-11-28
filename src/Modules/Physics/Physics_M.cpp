@@ -29,7 +29,6 @@ void Physics_Module::deinitialize() noexcept
 
 void Physics_Module::frameTick(ecsWorld& world, const float& deltaTime) noexcept
 {
-	// To Do: disable physics per object if object isn't fully initialized
 	m_world.stepSimulation(deltaTime);
 	updateSystems(world, deltaTime);
 }

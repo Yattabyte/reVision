@@ -101,16 +101,17 @@ void Rotation_Gizmo::render(const float&) noexcept
 		const auto& position = m_transform.m_position;
 		const auto& pMatrix = clientCamera->pMatrix;
 		const auto& vMatrix = clientCamera->vMatrix;
+		const auto camRotation = vMatrix * glm::translate(clientCamera->EyePosition);
 
-		const auto trans = glm::translate(glm::mat4(1.0f), position);
-		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, clientCamera->EyePosition) * m_renderScale));
-		const auto aScale = glm::scale(glm::mat4(1.0f), glm::vec3(clientCamera->FarPlane * 2.0f));
+		const auto trans = glm::translate(position);
+		const auto mScale = glm::scale(glm::vec3(glm::distance(position, clientCamera->EyePosition) * m_renderScale));
+		const auto aScale = glm::scale(glm::vec3(clientCamera->FarPlane * 2.0f));
 
 		// Render Gizmo Model
 		m_model->bind();
 		m_gizmoShader->bind();
 		m_gizmoShader->setUniform(0, pMatrix * vMatrix * trans * mScale);
-		m_gizmoShader->setUniform(4, pMatrix * vMatrix * glm::inverse(glm::mat4_cast(glm::quat_cast(vMatrix))) * trans * mScale * glm::scale(glm::mat4(1.0f), glm::vec3(1.15f)));
+		m_gizmoShader->setUniform(4, pMatrix * vMatrix * (trans * glm::inverse(camRotation)) * mScale * glm::scale(glm::mat4(1.0f), glm::vec3(1.15f)));
 		m_gizmoShader->setUniform(8, GLuint(m_selectedAxes));
 		m_gizmoShader->setUniform(9, GLuint(m_hoveredAxes));
 		m_indirectIndicator.drawCall();

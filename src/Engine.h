@@ -25,7 +25,7 @@
 // Other
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "4.17.9";
+constexpr char ENGINE_VERSION[] = "4.17.10";
 struct GLFWwindow;
 
 
@@ -139,8 +139,8 @@ private:
 		in_game,
 		in_editor
 	} m_engineState = Engine_State::in_startMenu;
-	float m_lastTime = 0;
-	float m_frameAccumulator = 0;
+	float m_lastTime = 0.0f;
+	float m_frameAccumulator = 0.0f;
 	float m_refreshRate = 120.0f;
 	float m_useFullscreen = 1.0f;
 	float m_vsync = 1.0f;
