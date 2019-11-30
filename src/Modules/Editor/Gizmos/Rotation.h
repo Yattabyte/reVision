@@ -64,7 +64,7 @@ private:
 	float m_renderScale = 0.02f, m_angleSnapping = 12.5f;
 	unsigned int m_selectedAxes = NONE, m_hoveredAxes = NONE;
 	glm::vec3 m_hoveredPoint = glm::vec3(0.0f), m_hoveredEnds[4], m_startPoint = glm::vec3(0.0f);
-	glm::quat m_prevRot = glm::quat(1, 0, 0, 0);
+	glm::quat m_startingOrientation = glm::quat(1, 0, 0, 0);
 	float m_startingAngle = 0.0f, m_deltaAngle = 0.0f;
 	Shared_Auto_Model m_model;
 	Shared_Shader m_gizmoShader, m_axisShader;

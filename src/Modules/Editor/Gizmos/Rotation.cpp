@@ -214,7 +214,6 @@ void Rotation_Gizmo::checkMouseHover() noexcept
 bool Rotation_Gizmo::checkMousePress() noexcept
 {
 	const auto& position = m_transform.m_position;
-	const auto& rotation = m_transform.m_orientation;
 	m_startingAngle = 0.0f;
 	m_deltaAngle = 0.0f;
 
@@ -222,7 +221,7 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 	if ((m_selectedAxes == NONE) && !ImGui::IsMouseDragging(0)) {
 		m_startPoint = m_hoveredPoint;
 		m_selectedAxes = m_hoveredAxes;
-		m_prevRot = rotation;
+		m_startingOrientation = glm::quat(1,0,0,0);
 		return (m_selectedAxes != NONE);
 	}
 
@@ -257,11 +256,12 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 		struct Rotate_Selection_Command final : Editor_Command {
 			Engine& m_engine;
 			LevelEditor_Module& m_editor;
+			glm::quat& m_startingOrientation;
 			glm::quat m_oldRotation, m_newRotation;
 			const unsigned int m_axis = NONE;
 			const std::vector<EntityHandle> m_uuids;
-			Rotate_Selection_Command(Engine& engine, LevelEditor_Module& editor, const glm::quat& oldRotation, const glm::quat& newRotation, const unsigned int& axis) noexcept
-				: m_engine(engine), m_editor(editor), m_oldRotation(oldRotation), m_newRotation(newRotation), m_axis(axis), m_uuids(m_editor.getSelection()) {}
+			Rotate_Selection_Command(Engine& engine, LevelEditor_Module& editor, glm::quat& oldRotation, const glm::quat& newRotation, const unsigned int& axis) noexcept
+				: m_engine(engine), m_editor(editor), m_startingOrientation(oldRotation),  m_oldRotation(oldRotation), m_newRotation(newRotation), m_axis(axis), m_uuids(m_editor.getSelection()) {}
 			void rotate(const glm::quat& rotation) noexcept {
 				auto& ecsWorld = m_editor.getWorld();
 				std::vector<Transform_Component*> transformComponents;
@@ -280,17 +280,14 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 					transform->m_localTransform.m_orientation = rotation * transform->m_localTransform.m_orientation;
 					transform->m_localTransform.update();
 				}
-
-				auto gizmoTransform = m_editor.getGizmoTransform();
-				gizmoTransform.m_orientation = rotation;
-				gizmoTransform.update();
-				m_editor.setGizmoTransform(gizmoTransform);
 			}
 			virtual void execute() noexcept override final {
 				rotate(m_newRotation * glm::inverse(m_oldRotation));
+				m_startingOrientation = m_newRotation;
 			}
 			virtual void undo() noexcept override final {
 				rotate(glm::inverse(m_newRotation) * m_oldRotation);
+				m_startingOrientation = m_oldRotation;
 			}
 			virtual bool join(Editor_Command* other) noexcept override final {
 				if (auto newCommand = dynamic_cast<Rotate_Selection_Command*>(other)) {
@@ -302,8 +299,7 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 				return false;
 			}
 		};
-		m_editor.doReversableAction(std::make_shared<Rotate_Selection_Command>(m_engine, m_editor, m_prevRot, newQuat, m_selectedAxes));
-		m_prevRot = newQuat;
+		m_editor.doReversableAction(std::make_shared<Rotate_Selection_Command>(m_engine, m_editor, m_startingOrientation, newQuat, m_selectedAxes));
 		return true;
 	}
 

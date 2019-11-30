@@ -1,0 +1,24 @@
+3d model of three oil barrels with PBR compatible materials available for free download.
+It is actually a single barrel model with three different textures.
+
+Poly Count   - 902
+Tris Count      -1856
+Verts Count -  930 
+
+Renderer   -   Maya Hardware 2.0
+
+
+Files included = Autodesk FBX,  Maya 2016 - Binary .mb and OBJ 
+
+Texture resolution = JPG 2048x2048.
+Total  15 Images - JPG.
+Maps: base color, metallic, normal, roughness & ambient occlusion maps.
+
+Textured in Substance painter and photoshop
+--------------------------------------
+
+LICENSE:-
+
+Can be used Commercially WITH CREDITS ! 
+
+Thank you :) 
