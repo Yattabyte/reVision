@@ -185,7 +185,7 @@ void Prefabs::populatePrefabs(const std::string& directory) noexcept
 		Prefabs::Entry newPrefab{ entry.path().filename().string(), std::filesystem::relative(entry, rootPath).string() };
 		if (entry.is_regular_file()) {
 			newPrefab.type = Entry::Type::FILE;
-			std::ifstream prefabFile(entry, std::ios::beg);
+			std::ifstream prefabFile(entry, std::ios::binary | std::ios::in | std::ios::beg);
 			if (prefabFile.is_open()) {
 				const auto size = std::filesystem::file_size(entry);
 				std::vector<char> data(size);

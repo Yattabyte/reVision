@@ -20,7 +20,7 @@ bool Level_IO::Import_BMap(const std::string& relativePath, ecsWorld& world) noe
 {
 	// Try to get file first
 	const auto path = Get_Full_Path(relativePath);
-	std::ifstream mapFile(path, std::ios::beg);
+	std::ifstream mapFile(path, std::ios::binary | std::ios::in | std::ios::beg);
 	if (!mapFile.is_open())
 		return false;
 

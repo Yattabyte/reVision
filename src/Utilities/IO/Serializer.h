@@ -56,6 +56,8 @@ public:
 					};
 					const auto& memStruct = *reinterpret_cast<Memory_Structure*>(const_cast<char*>(&memberData[index]));
 					const std::string memory_payload_string(memStruct.payload_name, MAX_NAME_CHARS);
+					if (memStruct.struct_size == 0 || memory_payload_string.empty())
+						break;
 
 					// Get the memory payload's data
 					char* memory_payload_data = const_cast<char*>(&memberData[index + sizeof(Memory_Structure)]);
