@@ -35,7 +35,7 @@ public:
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Construct a label, giving it the desired text.
-	@param	engine		the engine.
+	@param	engine		reference to the engine to use. 
 	@param	text		the label text. */
 	inline explicit Label(Engine& engine, const std::string& text = "Label") noexcept :
 		UI_Element(engine),

@@ -14,7 +14,11 @@ public:
 	inline ~IndirectDraw() = default;
 	/** Default Constructor. */
 	inline IndirectDraw() = default;
-	/** Construct an Indirect Draw Object. */
+	/** Construct an Indirect Draw Object.
+	@param	count			the number of vertices to draw.
+	@param	primitiveCount	the number of times to draw this object.
+	@param	first			offset to the first vertex.
+	@param	storageFlags	storage type flag. */
 	inline IndirectDraw(
 		const GLuint& count,
 		const GLuint& primitiveCount,
@@ -25,18 +29,22 @@ public:
 		const GLuint data[4] = { count, primitiveCount, first, 0 };
 		m_buffer = StaticMultiBuffer<BufferCount>(sizeof(GLuint) * 4, data, storageFlags);
 	}
-	/** Copy an Indirect Draw Object. */
+	/** Copy an Indirect Draw Object. 
+	@param	other			another buffer to copy from. */
 	inline IndirectDraw(const IndirectDraw& other) noexcept :
 		m_count(other.m_count),
 		m_primitiveCount(other.m_primitiveCount),
 		m_first(other.m_first),
 		m_storageFlags(other.m_storageFlags),
 		m_buffer(other.m_buffer) {}
-	/** Move an Indirect Draw Object. */
+	/** Move an Indirect Draw Object. 
+	@param	other			another buffer to move from. */
 	inline IndirectDraw(IndirectDraw&& other) noexcept {
 		*this = std::move(other);
 	}
-	/** Move an Indirect Draw Object. */
+	/** Move an Indirect Draw Object. 
+	@param	other			another buffer to copy from. 
+	@return					reference to this. */
 	inline IndirectDraw& operator=(IndirectDraw&& other) noexcept {
 		if (this != &other) {
 			m_count = other.m_count;
@@ -54,7 +62,8 @@ public:
 	inline void bind() noexcept {
 		m_buffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	}
-	/** Bind this buffer and also perform an indirect draw call. */
+	/** Bind this buffer and also perform an indirect draw call. 
+	@param	indirect		an indirect pointer. */
 	inline void drawCall(const void* indirect = 0) noexcept {
 		bind();
 		glDrawArraysIndirect(GL_TRIANGLES, indirect);

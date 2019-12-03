@@ -3,7 +3,7 @@
 #include "FreeImagePlus.h"
 
 
-GLubyte* RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size) noexcept
+inline GLubyte* RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size) noexcept
 {
 	auto* newPixels = new GLubyte[size_t(size) * 4ULL];
 	for (unsigned int x = 0; x < size; ++x) {

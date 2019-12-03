@@ -16,7 +16,7 @@ public:
 	/** Destroy the graphics panel. */
 	inline ~Options_Graphics() = default;
 	/** Construct a graphics panel.
-	@param	engine		the engine to use. */
+	@param	engine		reference to the engine to use. */
 	inline explicit Options_Graphics(Engine& engine) noexcept :
 		Options_Pane(engine) {
 		// Title

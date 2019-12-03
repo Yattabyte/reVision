@@ -27,7 +27,7 @@ public:
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Construct a text input.
-	@param	engine		the engine to use. */
+	@param	engine		reference to the engine to use. */
 	inline TextInput(Engine& engine) noexcept :
 		UI_Element(engine)
 	{

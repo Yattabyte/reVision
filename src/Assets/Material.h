@@ -20,7 +20,7 @@ public:
 	/** Constructs an empty asset. */
 	inline Shared_Material() noexcept = default;
 	/** Begins the creation process for this asset.
-	@param	engine			the engine being used.
+	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
 	@param	textures		the textures to use.
 	@param	threaded		create in a separate thread.
@@ -46,7 +46,7 @@ public:
 	/** Destroy the Material. */
 	inline ~Material() noexcept = default;
 	/** Construct the Material.
-	@param	engine			the engine to use.
+	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory).
 	@param	textures		the textures to use. */
 	Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures) noexcept;

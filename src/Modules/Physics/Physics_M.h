@@ -16,7 +16,7 @@ public:
 	/** Destroy this physics module. */
 	inline ~Physics_Module() = default;
 	/** Construct a physics module.
-	@param	engine		the currently active engine. */
+	@param	engine		reference to the engine to use. */
 	explicit Physics_Module(Engine& engine);
 
 
@@ -29,7 +29,7 @@ public:
 	/** Tick this module by a specific amount of delta time.
 	@param	deltaTime		the amount of time since last frame. */
 	void frameTick(ecsWorld& world, const float& deltaTime) noexcept;
-	/***/
+	/** Update generic physics based ECS systems using a specific ECS world. */
 	void updateSystems(ecsWorld& world, const float& deltaTime) noexcept;
 	/** Returns a pointer to the physics-world.
 	@return					the physics world. */

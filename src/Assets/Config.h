@@ -18,7 +18,7 @@ public:
 	/** Constructs an empty asset. */
 	inline Shared_Config() noexcept = default;
 	/** Begins the creation process for this asset.
-	@param	engine			the engine being used.
+	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
 	@param	cfg_strings		the configuration strings to use.
 	@param	threaded		create in a separate thread.
@@ -34,7 +34,7 @@ public:
 	/** Destroy the Config. */
 	inline ~Config() noexcept = default;
 	/** Construct the config with a particular set of variable names.
-	@param	engine		the engine to use.
+	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory).
 	@param	strings		the configuration strings to use. */
 	Config(Engine& engine, const std::string& filename, const std::vector<std::string>& strings) noexcept;

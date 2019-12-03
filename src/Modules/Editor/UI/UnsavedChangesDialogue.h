@@ -19,7 +19,7 @@ public:
 	/** Destroy this Unsaved Changes dialogue. */
 	inline ~UnsavedChangesDialogue() = default;
 	/** Construct a Unsaved Changes dialogue.
-	@param	engine		the currently active engine.
+	@param	engine		reference to the engine to use. 
 	@param	editor		the currently active level editor. */
 	UnsavedChangesDialogue(Engine& engine, LevelEditor_Module& editor) noexcept;
 
@@ -29,7 +29,7 @@ public:
 
 
 	// Public Methods
-	/** Checks if the editor has unsaved changes, otherwise executes the supplied function. Prompts user to save.  */
+	/** Checks if the editor has unsaved changes, otherwise executes the supplied function. Prompts user to save. */
 	void tryPrompt(const std::function<void()>& funcAfterPrompt) noexcept;
 
 

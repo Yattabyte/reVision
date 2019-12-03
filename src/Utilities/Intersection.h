@@ -7,6 +7,13 @@
 #include "glm/gtx/normal.hpp"
 
 
+/** Test if a ray intersects a plane.
+@param	ray_origin				the ray origin point.
+@param	ray_direction			the ray direction vector.
+@param	plane_origin			the plane origin point.
+@param	plane_normal			the plane normal vector.
+@param	intersectionDistance	reference updated with the intersection distance from the ray origin.
+@return							true on intersection, false otherwise. */
 static bool RayPlaneIntersection(
 	const glm::vec3& ray_origin,
 	const glm::vec3& ray_direction,
@@ -17,6 +24,16 @@ static bool RayPlaneIntersection(
 	return glm::intersectRayPlane(ray_origin, ray_direction, plane_origin, plane_normal, intersectionDistance);
 }
 
+/** Test if a ray intersects a triangle.
+@param	ray_origin				the ray origin point.
+@param	ray_direction			the ray direction vector.
+@param	v0						the first triangle vertex point.
+@param	v1						the second triangle vertex point.
+@param	v2						the third triangle vertex point.
+@param	normal					reference updated with the triangle vector.
+@param	baryPos					reference updated with the barometric position of the intersection.
+@param	intersectionDistance	reference updated with the intersection distance from the ray origin.
+@return							true on intersection, false otherwise. */
 static bool RayTriangleIntersection(
 	const glm::vec3& ray_origin,
 	const glm::vec3& ray_direction,
@@ -35,6 +52,14 @@ static bool RayTriangleIntersection(
 	return false;
 }
 
+/** Test if a ray intersects an Object Oriented Bounding Box.
+@param	ray_origin				the ray origin point.
+@param	ray_direction			the ray direction vector.
+@param	aabb_min				the minimum bounds of the box.
+@param	aabb_max				the maximum bounds of the box.
+@param	ModelMatrix				the transformation matrix for the OOBB.
+@param	intersectionDistance	reference updated with the intersection distance from the ray origin.
+@return							true on intersection, false otherwise. */
 static bool RayOOBBIntersection(
 	const glm::vec3& ray_origin,
 	const glm::vec3& ray_direction,
@@ -149,6 +174,12 @@ static bool RayOOBBIntersection(
 	return true;
 }
 
+/** Test if a ray intersects a sphere.
+@param	ray_origin				the ray origin point.
+@param	ray_direction			the ray direction vector.
+@param	center					the center position of the sphere.
+@param	radius					the radius of the sphere.
+@return							true on intersection, false otherwise. */
 static float RaySphereIntersection(
 	const glm::vec3& ray_origin,
 	const glm::vec3& ray_direction,

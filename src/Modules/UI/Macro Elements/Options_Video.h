@@ -17,7 +17,7 @@ public:
 	/** Destroy the video pane. */
 	inline ~Options_Video() = default;
 	/** Construct a video pane.
-	@param	engine		the engine to use. */
+	@param	engine		reference to the engine to use. */
 	inline explicit Options_Video(Engine& engine) noexcept
 		: Options_Pane(engine) {
 		// Title

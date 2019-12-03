@@ -15,7 +15,7 @@ public:
 	/** Destroy the camera controller. */
 	inline ~CameraController() = default;
 	/** Construct a camera controller.
-	@param	engine		the currently active engine. */
+	@param	engine		reference to the engine to use. */
 	explicit CameraController(Engine& engine) noexcept;
 
 

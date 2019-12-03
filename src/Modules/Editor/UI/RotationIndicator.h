@@ -19,7 +19,7 @@ public:
 	/** Destroy the rotation indicator. */
 	~RotationIndicator() noexcept;
 	/** Construct a rotation indicator.
-	@param	engine		the currently active engine.
+	@param	engine		reference to the engine to use. 
 	@param	editor		the level editor. */
 	explicit RotationIndicator(Engine& engine) noexcept;
 

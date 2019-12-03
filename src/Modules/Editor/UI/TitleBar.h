@@ -17,7 +17,7 @@ public:
 	/** Destroy this title bar. */
 	inline ~TitleBar() = default;
 	/** Construct a title bar.
-	@param	engine		the currently active engine.
+	@param	engine		reference to the engine to use. 
 	@param	editor		the level editor. */
 	TitleBar(Engine& engine, LevelEditor_Module& editor) noexcept;
 

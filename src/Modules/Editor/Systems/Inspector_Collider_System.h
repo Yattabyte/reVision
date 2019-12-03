@@ -13,7 +13,7 @@
 #include <filesystem>
 
 
-/***/
+/** An ECS system allowing the user to inspect selected collider components.*/
 class Inspector_Collider_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors

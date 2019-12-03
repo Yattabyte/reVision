@@ -22,7 +22,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Construct this system.
-	@param	engine		the currently active engine. */
+	@param	engine		reference to the engine to use. */
 	inline explicit MousePicker_System(Engine& engine)  noexcept :
 		m_engine(engine)
 	{
@@ -233,7 +233,7 @@ private:
 	@param	ray_direction			the mouse ray's direction.
 	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
 	@param	confidence				reference updated with the confidence level for this function.
-	@param	engine					the currently active engine
+	@param	engine					reference to the engine to use. 
 	@return							true on successful intersection, false if disjoint. */
 	static bool RayOrigin(Transform_Component* transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine) noexcept {
 		// Create scaling factor to keep all origins same screen size

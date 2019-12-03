@@ -18,7 +18,7 @@ public:
 	/** Destroy the level editor UI. */
 	~Editor_Interface() noexcept;
 	/** Creates the level editor UI.
-	@param	engine		the currently active engine.
+	@param	engine		reference to the engine to use. 
 	@param	editor		the level editor. */
 	Editor_Interface(Engine& engine, LevelEditor_Module& editor) noexcept;
 

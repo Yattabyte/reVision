@@ -20,7 +20,7 @@ public:
 	/** Destroy this prefab UI element. */
 	~Prefabs() noexcept;
 	/** Construct a prefab UI element.
-	@param	engine			the currently active engine.
+	@param	engine			reference to the engine to use. 
 	@param	editor			the level editor. */
 	Prefabs(Engine& engine, LevelEditor_Module& editor) noexcept;
 

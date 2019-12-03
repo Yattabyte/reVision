@@ -88,10 +88,10 @@ public:
 
 
 	// Public Methods
-	/** Write the supplied data to GPU memory
-	@param	offset			byte offset from the beginning
-	@param	size			the size of the data to write
-	@param	data			the data to write */
+	/** Write the supplied data to GPU memory.
+	@param	offset			byte offset from the beginning.
+	@param	size			the size of the data to write.
+	@param	data			the data to write. */
 	inline void write(const GLsizeiptr& offset, const GLsizeiptr& size, const void* data) noexcept {
 		std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr[m_index]) + offset, data, size);
 	}

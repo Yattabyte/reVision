@@ -21,7 +21,7 @@ public:
 		save();
 	}
 	/** Construct the preference state.
-	@param	engine		the engine
+	@param	engine		reference to the engine to use. 
 	@param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
 	inline explicit PreferenceState(Engine& engine, const std::string& filename = "preferences") noexcept : m_engine(engine) {
 		loadFile(filename);
@@ -74,7 +74,7 @@ public:
 
 	// Public Static Methods
 	/* Retrieve a static list of all user-preferences.
-	@return	std::vector of preference names as strings */
+	@return	std::vector of preference names as strings. */
 	static const std::vector<std::string> Preference_Strings() {
 		static const std::vector<std::string> preferenceStrings = {
 			// Window Options
@@ -122,7 +122,7 @@ public:
 
 	// Public Methods
 	/** Loads a preference file from disk.
-	@param	filename	the relative path to the preference file to load */
+	@param	filename	the relative path to the preference file to load. */
 	inline void loadFile(const std::string& filename) noexcept {
 		m_preferences = Shared_Config(m_engine, filename, PreferenceState::Preference_Strings(), false);
 	}
@@ -132,8 +132,9 @@ public:
 			m_preferences->saveConfig();
 	}
 	/** Tries to update the container with the value associated with the target key. If key doesn't exist, creates the key-value pair from the value given.
-	@param	targetKey	the preference key to look up
-	@param	container	the object to update */
+	@param	<T>			the value class type to cast to (auto-deduced).
+	@param	targetKey	the preference key to look up.
+	@param	container	the object to update. */
 	template <typename T>
 	inline void getOrSetValue(const Preference& targetKey, T& container) noexcept {
 		if (m_preferences->existsYet()) {
@@ -147,9 +148,9 @@ public:
 		}
 	}
 	/** Sets a value for a preference with the given ID.
-	@param	targetKey	the preference key to set the value to
-	@param	targetValue	the value to tie to the key supplied
-	@param	<T>			the value type to use */
+	@param	<T>			the value class type to cast to (auto-deduced).
+	@param	targetKey	the preference key to set the value to.
+	@param	targetValue	the value to tie to the key supplied. */
 	template <typename T>
 	inline void setValue(const Preference& targetKey, const T& targetValue) noexcept {
 		const float castValue = (float)targetValue;
@@ -170,9 +171,9 @@ public:
 		}
 	}
 	/** Attaches a callback method to be triggered when the supplied preference updates.
-	@param	targetKey	the preference-ID to which this callback will be attached
-	@param	alive		the
-	@param	callback	the method to be triggered on value update */
+	@param	targetKey	the preference-ID to which this callback will be attached.
+	@param	alive		the shared pointer indicating if the target is still alive and valid.
+	@param	callback	the method to be triggered on value update. */
 	inline void addCallback(const Preference& targetKey, const std::shared_ptr<bool>& alive, const std::function<void(float)>& callback) noexcept {
 		m_callbacks[targetKey].emplace_back(std::make_pair(alive, callback));
 	}

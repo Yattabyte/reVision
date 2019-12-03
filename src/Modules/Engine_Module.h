@@ -12,7 +12,7 @@ public:
 	/** Destroy this engine module. */
 	inline virtual ~Engine_Module() = default;
 	/** Construct an engine module.
-	@param	engine		the currently active engine. */
+	@param	engine	reference to the engine to use. */
 	inline explicit Engine_Module(Engine& engine) : m_engine(engine) {}
 
 

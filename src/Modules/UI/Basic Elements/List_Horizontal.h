@@ -26,7 +26,7 @@ public:
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Constructs a list_Horizontal.
-	@param	engine		the engine. */
+	@param	engine		reference to the engine to use. */
 	inline List_Horizontal(Engine& engine) noexcept :
 		UI_Element(engine)
 	{

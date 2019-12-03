@@ -25,9 +25,9 @@
 // Other
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "4.17.12";
-struct GLFWwindow;
 
+constexpr char ENGINE_VERSION[] = "4.17.13";
+struct GLFWwindow;
 
 /** The main game engine object. Encapsulates the entire engine state. */
 class Engine {
@@ -40,97 +40,115 @@ public:
 	};
 
 
-	// Public (De)Constructors
-	/** Destroys the engine. */
-	~Engine();
-	/** Zero-initialize the engine. */
-	Engine();
+		// Public (De)Constructors
+	/** Destroys the game engine. */
+	~Engine() noexcept;
+	/** Construct the game engine. */
+	Engine() noexcept;
 
 
 private:
 	// Private Initialization Methods
 	/** Initialize the window for this application. */
-	void initWindow();
+	void initWindow() noexcept;
 	/** Initialize the auxiliary processing threads. */
-	void initThreads();
+	void initThreads() noexcept;
 	/** Print the engine boiler-plate text to the message manager. */
-	void printBoilerPlate();
+	void printBoilerPlate() noexcept;
 
 
 public:
 	// Public Methods
 	/** Ticks the engine's overall simulation by a frame from the main thread. */
-	void tick();
+	void tick() noexcept;
 	/** Ticks the engine's overall simulation by a frame from a secondary thread.
-	@param	exitObject	object signaling when to close the thread */
-	void tickThreaded(std::future<void> exitObject, GLFWwindow* const window);
+	@param	exitObject	object signaling when to close the thread.
+	@param	window		pointer to the window object. */
+	void tickThreaded(std::future<void> exitObject, GLFWwindow* const window) noexcept;
 	/** Checks if the engine wants to shut down.
 	@return	true if engine should shut down. */
-	bool shouldClose();
+	bool shouldClose() noexcept;
 	/** Tells the engine to shut down. */
-	void shutDown();
+	void shutDown() noexcept;
 	/** Set the input mode for the mouse, useful for changing between 2D and 3D views.
 	@param	mode		the new mouse input mode to use. */
-	void setMouseInputMode(const MouseInputMode& mode);
+	void setMouseInputMode(const MouseInputMode& mode) noexcept;
 	/** Switch the UI over to the main menu. */
-	void goToMainMenu();
+	void goToMainMenu() noexcept;
 	/** Switch the UI over to the game. */
-	void goToGame();
+	void goToGame() noexcept;
 	/** Switch the UI over to the level editor. */
-	void goToEditor();
+	void goToEditor() noexcept;
 
 
 	// Public Accessors
-	/** Set the mouse input mode, such as free-look or normal cursor. */
-	inline MouseInputMode getMouseInputMode() const { return m_mouseInputMode; };
-	/** Retrieve the current time. */
-	static float getTime();
-	/** Return a list of available resolutions. */
-	static std::vector<glm::ivec3> getResolutions();
-	/** Returns this engine's action state. */
-	ActionState& getActionState() { return m_actionState; }
-	/** Returns this engine's preference state. */
-	PreferenceState& getPreferenceState() { return m_preferenceState; }
-	/** Returns this engine's rendering context. */
-	GLFWwindow* getContext() const { return m_window; }
+	/** Retrieve the mouse input mode.
+	@return				the mouse input mode, such as free-look or normal cursor. */
+	inline MouseInputMode getMouseInputMode() const noexcept { return m_mouseInputMode; };
+	/** Retrieve the current time. 
+	@return				the current time. */
+	static float getTime() noexcept;
+	/** Retrieve a list of available resolutions. 
+	@return				vector of supported resolutions. */
+	static std::vector<glm::ivec3> getResolutions() noexcept;
+	/** Retrieve this engine's action state.
+	@return				the engine's action state. */
+	inline ActionState& getActionState() noexcept { return m_actionState; }
+	/** Retrieve this engine's preference state. 
+	@return				this engine's preference state. */
+	inline PreferenceState& getPreferenceState() noexcept { return m_preferenceState; }
+	/** Retrieve this engine's rendering context. 
+	@return				this engine's rendering context. */
+	inline GLFWwindow* getContext() const noexcept { return m_window; }
+
 
 	// Manager Accessors
-	/** Returns this engine's asset manager. */
-	AssetManager& getManager_Assets() { return m_assetManager; }
-	/** Returns this engine's message manager. */
-	MessageManager& getManager_Messages() { return m_messageManager; }
-	/** Returns this engine's sound manager. */
-	SoundManager& getManager_Sounds() { return m_soundManager; }
+	/** Retrieve this engine's asset manager. 
+	@return				this engine's asset manager. */
+	inline AssetManager& getManager_Assets() noexcept { return m_assetManager; }
+	/** Retrieve this engine's message manager. 
+	@return				this engine's message manager. */
+	inline MessageManager& getManager_Messages() noexcept { return m_messageManager; }
+	/** Retrieve this engine's sound manager. 
+	@return				this engine's sound manager. */
+	inline SoundManager& getManager_Sounds() noexcept { return m_soundManager; }
+
 
 	// Module Accessors
-	/** Returns this engine's ECS module. */
-	ECS_Module& getModule_ECS() { return m_moduleECS; }
-	/** Returns this engine's game module. */
-	Game_Module& getModule_Game() { return m_moduleGame; }
-	/** Returns this engine's editor module. */
-	LevelEditor_Module& getModule_LevelEditor() { return m_moduleEditor; }
-	/** Returns this engine's graphics module. */
-	Graphics_Module& getModule_Graphics() { return m_moduleGraphics; }
-	/** Returns this engine's user-interface module. */
-	UI_Module& getModule_UI() { return m_moduleUI; }
-	/** Returns this engine's physics module. */
-	Physics_Module& getModule_Physics() { return m_modulePhysics; }
+	/** Retrieve this engine's ECS module.
+	@return				this engine's ECS module. */
+	inline ECS_Module& getModule_ECS() noexcept { return m_moduleECS; }
+	/** Retrieve this engine's game module.
+	@return				this engine's game module. */
+	inline Game_Module& getModule_Game() noexcept { return m_moduleGame; }
+	/** Retrieve this engine's editor module.
+	@return				this engine's level editor module. */
+	inline LevelEditor_Module& getModule_LevelEditor() noexcept { return m_moduleEditor; }
+	/** Retrieve this engine's graphics module.
+	@return				this engine's graphics module. */
+	inline Graphics_Module& getModule_Graphics() noexcept { return m_moduleGraphics; }
+	/** Retrieve this engine's user-interface module.
+	@return				this engine's UI module. */
+	inline UI_Module& getModule_UI() noexcept { return m_moduleUI; }
+	/** Retrieve this engine's physics module.
+	@return				this engine's physics module. */
+	inline Physics_Module& getModule_Physics() noexcept { return m_modulePhysics; }
 
 
 	// Static Methods
 	/** Retrieves the application's running directory.
 	@return					std::string of the absolute directory that this executable ran from */
-	static std::string Get_Current_Dir();
+	static std::string Get_Current_Dir() noexcept;
 	/** Check if a given file exists, relative to the application directory.
 	@param	name			the full file path
 	@return					true if the file exists, false otherwise */
-	static bool File_Exists(const std::string& name);
+	static bool File_Exists(const std::string& name) noexcept;
 
 
 private:
 	// Private Methods
 	/** Updates the window attributes. */
-	void configureWindow();
+	void configureWindow() noexcept;
 
 
 	// Private Attributes

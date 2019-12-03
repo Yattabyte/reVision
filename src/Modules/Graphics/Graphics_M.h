@@ -23,7 +23,7 @@ public:
 	/** Destroy this graphics rendering module. */
 	inline ~Graphics_Module() = default;
 	/** Construct a graphics rendering module.
-	@param	engine		the currently active engine. */
+	@param	engine		reference to the engine to use. */
 	inline explicit Graphics_Module(Engine& engine) : Engine_Module(engine) {}
 
 

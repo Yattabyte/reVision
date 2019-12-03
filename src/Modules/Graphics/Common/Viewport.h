@@ -18,7 +18,7 @@ public:
 	/** Construct a viewport, given an offset and size.
 	@param	screenPosition	the offset relative to the bottom left of the screen.
 	@param	dimensions		the size of the viewport.
-	@param	engine			the active engine. */
+	@param	engine			reference to the engine to use. */
 	Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions, Engine& engine) noexcept;
 
 

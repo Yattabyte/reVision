@@ -16,7 +16,7 @@ public:
 	/** Destroy this system. */
 	inline ~Transform_System() = default;
 	/** Construct this system.
-	@param	engine		the currently active engine. */
+	@param	engine		reference to the engine to use. */
 	inline explicit Transform_System(Engine& engine) noexcept :
 		m_engine(engine)
 	{

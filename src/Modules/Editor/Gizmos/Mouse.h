@@ -28,8 +28,8 @@ public:
 	/** Destroy this gizmo. */
 	~Mouse_Gizmo() noexcept;
 	/** Construct this gizmo.
-	@param	engine		the currently active engine.
-	@param	editor		the level editor. */
+	@param	engine		reference to the engine to use. 
+	@param	editor		reference to the level editor. */
 	Mouse_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 

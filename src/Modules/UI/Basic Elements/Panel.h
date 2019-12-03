@@ -18,7 +18,7 @@ public:
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Construct a panel.
-	@param	engine		the engine to use. */
+	@param	engine		reference to the engine to use. */
 	inline explicit Panel(Engine& engine) noexcept :
 		UI_Element(engine),
 		m_shader(Shared_Shader(engine, "UI\\Panel"))

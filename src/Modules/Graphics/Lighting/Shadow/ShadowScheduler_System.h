@@ -18,7 +18,7 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Construct this system.
-	@param	engine		the engine to use.
+	@param	engine		reference to the engine to use. 
 	@param	frameData	reference to common data that changes frame-to-frame. */
 	inline ShadowScheduler_System(Engine& engine, ShadowData& frameData) noexcept :
 		m_engine(engine),

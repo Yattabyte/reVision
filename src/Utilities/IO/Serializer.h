@@ -103,6 +103,7 @@ public:
 		return dataBuffer;
 	}
 	/** Serialize a labeled pair of data into a char buffer.
+	@param	<>				template specialization for std::string.
 	@param	name			the label for the data (i.e. the variable name).
 	@param	data			the value to serialize.
 	@return					a char buffer containing serialized data. */
@@ -161,6 +162,7 @@ public:
 		return {};
 	}
 	/** De-serialize a char buffer into a labeled pair of data.
+	@param	<>				template specialization for std::string.
 	@param	dataBuffer		a char buffer containing serialized data.
 	@return					an optional pair containing a label and value <T> if successful. */
 	template <>

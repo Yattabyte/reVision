@@ -19,7 +19,7 @@ public:
 	/** Destroy the options pane. */
 	inline ~Options_Pane() = default;
 	/** Construct a options pane.
-	@param	engine		the engine to use. */
+	@param	engine		reference to the engine to use. */
 	inline explicit Options_Pane(Engine& engine) noexcept :
 		UI_Element(engine),
 		m_title(std::make_shared<Label>(engine)),
@@ -92,7 +92,7 @@ public:
 protected:
 	// Protected Methods
 	/** Add an option to the options menu.
-	@param	engine		the engine to use.
+	@param	engine		reference to the engine to use. 
 	@param	element		the element to add to the options menu.
 	@param	text		the text to title the option.
 	@param	description	the text to describe the option. */

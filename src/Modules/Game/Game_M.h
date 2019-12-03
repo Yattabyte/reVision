@@ -23,7 +23,7 @@ public:
 	/** Destroy this game module. */
 	inline ~Game_Module() = default;
 	/** Construct a game module.
-	@param	engine		the currently active engine. */
+	@param	engine		reference to the engine to use. */
 	inline explicit Game_Module(Engine& engine) : Engine_Module(engine) {}
 
 

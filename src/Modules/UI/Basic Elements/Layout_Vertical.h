@@ -12,7 +12,7 @@ public:
 	/** Destroy the layout. */
 	inline ~Layout_Vertical() = default;
 	/** Construct the layout.
-	@param	engine		the engine to use. */
+	@param	engine		reference to the engine to use. */
 	inline Layout_Vertical(Engine& engine) noexcept :
 		UI_Element(engine)
 	{

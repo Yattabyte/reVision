@@ -15,7 +15,7 @@
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
-Engine::~Engine()
+Engine::~Engine() noexcept
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -32,7 +32,7 @@ Engine::~Engine()
 	m_messageManager.statement("Shutting down...");
 }
 
-Engine::Engine() :
+Engine::Engine() noexcept :
 	// Initialize engine-dependent members first
 	m_preferenceState(*this),
 	m_inputBindings(*this),
@@ -62,7 +62,7 @@ Engine::Engine() :
 	goToMainMenu();
 }
 
-void Engine::initWindow()
+void Engine::initWindow() noexcept
 {
 	// Initialize GLFW
 	if (!glfwInit()) {
@@ -246,7 +246,7 @@ void Engine::initWindow()
 #endif
 }
 
-void Engine::initThreads()
+void Engine::initThreads() noexcept
 {
 	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());
 	for (unsigned int x = 0; x < maxThreads; ++x) {
@@ -274,7 +274,7 @@ void Engine::initThreads()
 	}
 }
 
-void Engine::printBoilerPlate()
+void Engine::printBoilerPlate() noexcept
 {
 	m_messageManager.statement("+~-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-~\\");
 	m_messageManager.statement("  > reVision Engine:");
@@ -305,7 +305,7 @@ void Engine::printBoilerPlate()
 	m_messageManager.statement("+~-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-~/");
 }
 
-void Engine::tick()
+void Engine::tick() noexcept
 {
 	///*----------------------------------------------------BEGIN FRAME----------------------------------------------------*///
 	const float thisTime = (float)glfwGetTime(), deltaTime = thisTime - m_lastTime;
@@ -348,7 +348,7 @@ void Engine::tick()
 	///*-----------------------------------------------------END FRAME-----------------------------------------------------*///
 }
 
-void Engine::tickThreaded(std::future<void> exitObject, GLFWwindow* const window)
+void Engine::tickThreaded(std::future<void> exitObject, GLFWwindow* const window) noexcept
 {
 	glfwMakeContextCurrent(window);
 
@@ -357,17 +357,17 @@ void Engine::tickThreaded(std::future<void> exitObject, GLFWwindow* const window
 		m_assetManager.beginWorkOrder();
 }
 
-bool Engine::shouldClose()
+bool Engine::shouldClose() noexcept
 {
 	return glfwWindowShouldClose(m_window);
 }
 
-void Engine::shutDown()
+void Engine::shutDown() noexcept
 {
 	glfwSetWindowShouldClose(m_window, GLFW_TRUE);
 }
 
-void Engine::setMouseInputMode(const MouseInputMode& mode)
+void Engine::setMouseInputMode(const MouseInputMode& mode) noexcept
 {
 	m_mouseInputMode = mode;
 	switch (mode) {
@@ -383,30 +383,30 @@ void Engine::setMouseInputMode(const MouseInputMode& mode)
 	}
 }
 
-void Engine::goToMainMenu()
+void Engine::goToMainMenu() noexcept
 {
 	m_engineState = Engine_State::in_startMenu;
 	m_moduleStartScreen.showStartMenu();
 }
 
-void Engine::goToGame()
+void Engine::goToGame() noexcept
 {
 	m_engineState = Engine_State::in_game;
 	m_moduleGame.showGame();
 }
 
-void Engine::goToEditor()
+void Engine::goToEditor() noexcept
 {
 	m_engineState = Engine_State::in_editor;
 	m_moduleEditor.showEditor();
 }
 
-float Engine::getTime()
+float Engine::getTime() noexcept
 {
 	return (float)glfwGetTime();
 }
 
-std::vector<glm::ivec3> Engine::getResolutions()
+std::vector<glm::ivec3> Engine::getResolutions() noexcept
 {
 	int count(0);
 	const GLFWvidmode* modes = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);
@@ -416,7 +416,7 @@ std::vector<glm::ivec3> Engine::getResolutions()
 	return resolutions;
 }
 
-std::string Engine::Get_Current_Dir()
+std::string Engine::Get_Current_Dir() noexcept
 {
 	// Technique to return the running directory of the application
 	char cCurrentPath[FILENAME_MAX];
@@ -425,14 +425,14 @@ std::string Engine::Get_Current_Dir()
 	return std::string(cCurrentPath);
 }
 
-bool Engine::File_Exists(const std::string& name)
+bool Engine::File_Exists(const std::string& name) noexcept
 {
 	// Technique to return whether or not a given file or folder exists
 	struct stat buffer;
 	return (stat((Engine::Get_Current_Dir() + name).c_str(), &buffer) == 0);
 }
 
-void Engine::configureWindow()
+void Engine::configureWindow() noexcept
 {
 	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	const int maxWidth = mainMode->width, maxHeight = mainMode->height;

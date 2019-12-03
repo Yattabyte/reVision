@@ -25,7 +25,7 @@ public:
 	/** Destroy the options menu. */
 	inline ~OptionsMenu() = default;
 	/** Construct an options menu.
-	@param	engine		the engine to use. */
+	@param	engine		reference to the engine to use. */
 	inline explicit OptionsMenu(Engine& engine) noexcept
 		: Menu(engine) {
 		// Title

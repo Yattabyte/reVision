@@ -16,7 +16,7 @@ public:
 	/** Destroy this start screen module. */
 	inline ~StartScreen_Module() = default;
 	/** Construct a start screen module.
-	@param	engine		the currently active engine. */
+	@param	engine		reference to the engine to use. */
 	inline explicit StartScreen_Module(Engine& engine) : Engine_Module(engine) {}
 
 

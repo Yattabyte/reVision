@@ -42,13 +42,14 @@ public:
 			m_bufferPtr[x] = glMapNamedBufferRange(m_bufferID[x], 0, m_maxCapacity, m_mapFlags);
 		}
 	}
-	/** Construct a new Dynamic buffer, from another buffer. */
+	/** Construct a new Dynamic buffer, from another buffer.
+	@param	other		another buffer to copy from. */
 	inline DynamicBuffer(const DynamicBuffer& other) noexcept : DynamicBuffer(other.m_maxCapacity, 0, other.m_mapFlags) {
 		for (int x = 0; x < BufferCount; ++x)
 			glCopyNamedBufferSubData(other.m_bufferID[x], m_bufferID[x], 0, 0, m_maxCapacity);
 	}
 	/** Assignment constructor.
-	@param	other			another buffer to move the data from, to here. */
+	@param	other			another buffer to move from. */
 	inline DynamicBuffer(DynamicBuffer&& other) noexcept {
 		(*this) = std::move(other);
 	}
@@ -69,7 +70,7 @@ public:
 
 	// Public Methods
 	/** Expand this buffer to fit the size provided.
-	@param	size		the size to expand up to (if not already larger) */
+	@param	size		the size to expand up to (if not already larger). */
 	inline void setMaxSize(const GLsizeiptr& size) noexcept {
 		expandToFit(0, size);
 	}
@@ -91,10 +92,10 @@ public:
 		for (const auto& buffer : m_bufferID)
 			glNamedBufferSubData(buffer, offset, size, data);
 	}
-	/** Expands this buffer's container if it can't fit the specified range to write into
-	@note Technically creates a new a new buffer to replace the old one and copies the old data
-	@param	offset	byte offset from the beginning
-	@param	size	the size of the data to write */
+	/** Expands this buffer's container if it can't fit the specified range to write into.
+	@note Technically creates a new a new buffer to replace the old one and copies the old data.
+	@param	offset	byte offset from the beginning.
+	@param	size	the size of the data to write. */
 	inline void expandToFit(const GLsizeiptr& offset, const GLsizeiptr& size) noexcept {
 		if (offset + size > m_maxCapacity) {
 			// Create new buffer large enough to fit old data + new data

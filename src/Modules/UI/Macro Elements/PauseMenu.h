@@ -23,7 +23,7 @@ public:
 	/** Destroy the start menu. */
 	inline ~PauseMenu() = default;
 	/** Construct a start menu.
-	@param	engine		the engine to use. */
+	@param	engine		reference to the engine to use. */
 	inline explicit PauseMenu(Engine& engine) noexcept
 		: Menu(engine) {
 		// Title

@@ -24,7 +24,7 @@ public:
 	/** Destroy this game module. */
 	inline ~LevelEditor_Module() = default;
 	/** Construct a game module.
-	@param	engine		the currently active engine. */
+	@param	engine		reference to the engine to use. */
 	inline explicit LevelEditor_Module(Engine& engine) : Engine_Module(engine) {}
 
 

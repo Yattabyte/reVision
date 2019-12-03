@@ -13,7 +13,7 @@ public:
 	/** Destroy the button. */
 	inline ~Button() = default;
 	/** Creates a button with specific text inside.
-	@param	engine		the engine.
+	@param	engine		reference to the engine to use. 
 	@param	text		the button text. */
 	inline explicit Button(Engine& engine, const std::string& text = "Button") noexcept :
 		UI_Element(engine),

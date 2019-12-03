@@ -26,7 +26,7 @@ public:
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Constructs a list.
-	@param	engine		the engine. */
+	@param	engine		reference to the engine to use. */
 	inline explicit List(Engine& engine) noexcept :
 		UI_Element(engine),
 		m_shader(Shared_Shader(engine, "UI\\List"))

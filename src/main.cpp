@@ -5,7 +5,7 @@ int main()
 {
 	Engine engine;
 
-	while (!(engine.shouldClose()))
+	while (!engine.shouldClose())
 		engine.tick();
 
 	return 1;

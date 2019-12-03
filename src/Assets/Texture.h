@@ -17,7 +17,7 @@ public:
 	/** Constructs an empty asset. */
 	inline Shared_Texture() noexcept = default;
 	/** Begins the creation process for this asset.
-	@param	engine			the engine being used.
+	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
 	@param	type			the texture type (2D, 3D, CUBEMAP, etc).
 	@param	mipmap			use mipmaps.
@@ -37,11 +37,11 @@ public:
 	/** Destroy the Texture. */
 	~Texture() noexcept;
 	/** Construct the Texture.
-	@param	engine			the engine to use.
+	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory). */
 	Texture(Engine& engine, const std::string& filename) noexcept;
 	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering.
-	@param	engine			the engine to use.
+	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory).
 	@param	type			the texture type (2D, 3D, CUBEMAP, etc).
 	@param	mipmap			use mipmaps.

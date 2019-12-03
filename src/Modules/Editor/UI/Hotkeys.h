@@ -16,7 +16,7 @@ public:
 	/** Destroy this element. */
 	inline ~Hotkeys() = default;
 	/** Construct this element.
-	@param	engine		the currently active engine.
+	@param	engine		reference to the engine to use. 
 	@param	editor		the level editor. */
 	Hotkeys(Engine& engine, LevelEditor_Module& editor) noexcept;
 

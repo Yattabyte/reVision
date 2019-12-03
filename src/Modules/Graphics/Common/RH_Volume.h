@@ -15,7 +15,7 @@ public:
 	/** Destroy the radiance hint volume. */
 	~RH_Volume() noexcept;
 	/** Construct a radiance hint volume.
-	@param	engine			the engine to use. */
+	@param	engine			reference to the engine to use. */
 	explicit RH_Volume(Engine& engine) noexcept;
 
 

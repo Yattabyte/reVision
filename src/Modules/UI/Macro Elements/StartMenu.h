@@ -24,7 +24,7 @@ public:
 	/** Destroy the start menu. */
 	inline ~StartMenu() = default;
 	/** Construct a start menu.
-	@param	engine		the engine to use. */
+	@param	engine		reference to the engine to use. */
 	inline explicit StartMenu(Engine& engine) noexcept
 		: Menu(engine) {
 		// Title

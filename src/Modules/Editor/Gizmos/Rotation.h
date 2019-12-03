@@ -22,7 +22,7 @@ public:
 	/** Destroy this gizmo. */
 	~Rotation_Gizmo() noexcept;
 	/** Construct this gizmo.
-	@param	engine		the currently active engine.
+	@param	engine		reference to the engine to use. 
 	@param	editor		the level editor. */
 	Rotation_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept;
 

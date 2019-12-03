@@ -16,7 +16,7 @@ public:
 	/** Destroy this settings dialogue. */
 	inline ~Settings() = default;
 	/** Construct a settings dialogue.
-	@param	engine		the currently active engine.
+	@param	engine		reference to the engine to use. 
 	@param	editor		the currently active level editor. */
 	Settings(Engine& engine, LevelEditor_Module& editor) noexcept;
 

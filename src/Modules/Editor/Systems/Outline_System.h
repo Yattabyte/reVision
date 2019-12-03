@@ -27,7 +27,7 @@ public:
 		}
 	}
 	/** Construct this system.
-	@param	engine		the currently active engine.
+	@param	engine		reference to the engine to use. 
 	@param	editor		the level editor. */
 	inline Outline_System(Engine& engine, LevelEditor_Module& editor) noexcept :
 		m_engine(engine),

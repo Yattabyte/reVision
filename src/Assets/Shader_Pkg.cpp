@@ -8,7 +8,7 @@ constexpr const char* EXT_PACKAGE = ".pkg";
 constexpr const char* DIRECTORY_SHADER_PKG = "\\Shaders\\";
 
 /** Parse the shader snippet, looking for any directives that require us to modify the document.
-@param	engine			the engine being used
+@param	engine			reference to the engine to use. 
 @param	userAsset		the asset we are loading from */
 inline static void parse(Engine& engine, Shader_Pkg& userAsset) noexcept
 {

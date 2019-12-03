@@ -14,7 +14,7 @@ public:
 	/** Destroy this ECS module. */
 	inline ~ECS_Module() = default;
 	/** Construct a ECS module.
-	@param	engine		the currently active engine. */
+	@param	engine		reference to the engine to use. */
 	inline explicit ECS_Module(Engine& engine) : Engine_Module(engine) {}
 
 

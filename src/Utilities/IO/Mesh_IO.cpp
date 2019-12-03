@@ -46,8 +46,8 @@ private:
 static Importer_Pool importer_pool;
 
 /** Convert an aiMatrix to glm::mat4.
-@param	d	the aiMatrix to convert from
-@return		the glm::mat4 converted to */
+@param	d	the aiMatrix to convert from.
+@return		the glm::mat4 converted to. */
 inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d) noexcept
 {
 	return glm::mat4(d.a1, d.b1, d.c1, d.d1,
@@ -56,6 +56,9 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d) noexcept
 		d.a4, d.b4, d.c4, d.d4);
 }
 
+/** Copy a node into a new node. 
+@param	oldNode		the old node to copy from.
+@return				the new node. */
 [[nodiscard]] inline Node* copy_node(const aiNode* oldNode) noexcept
 {
 	Node* newNode = new Node(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));

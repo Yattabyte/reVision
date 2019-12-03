@@ -34,7 +34,7 @@ public:
 	/** Destroy this UI element. */
 	inline virtual ~UI_Element() = default;
 	/** Construct a UI element.
-	@param	engine		the engine to use. */
+	@param	engine		reference to the engine to use. */
 	explicit UI_Element(Engine& engine) noexcept;
 
 

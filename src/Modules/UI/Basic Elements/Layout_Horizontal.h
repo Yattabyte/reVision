@@ -12,7 +12,7 @@ public:
 	/** Destroy the layout. */
 	inline ~Layout_Horizontal() = default;
 	/** Construct the layout.
-	@param	engine		the engine to use. */
+	@param	engine		reference to the engine to use. */
 	inline explicit Layout_Horizontal(Engine& engine) noexcept :
 		UI_Element(engine)
 	{

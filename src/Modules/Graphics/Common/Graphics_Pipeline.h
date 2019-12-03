@@ -20,7 +20,7 @@ public:
 	/** Destroy this rendering pipeline. */
 	inline ~Graphics_Pipeline() = default;
 	/** Construct a PBR rendering pipeline.
-	@param	engine			the engine to use.
+	@param	engine			reference to the engine to use. 
 	@param	clientCamera	the main camera.
 	@param	cameras			all the cameras active in the scene.
 	@param	auxSystems		container to add extra render-related ecsSystem's to. */

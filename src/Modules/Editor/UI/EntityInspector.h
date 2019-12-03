@@ -18,7 +18,7 @@ public:
 	/** Destroy this inspector. */
 	inline ~EntityInspector() = default;
 	/** Construct a component inspector.
-	@param	engine		the currently active engine.
+	@param	engine		reference to the engine to use. 
 	@param	editor		the level editor. */
 	EntityInspector(Engine& engine, LevelEditor_Module& editor) noexcept;
 

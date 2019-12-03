@@ -27,7 +27,7 @@ public:
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	/** Construct the side list.
-	@param	engine		the engine to use. */
+	@param	engine		reference to the engine to use. */
 	inline explicit SideList(Engine& engine) noexcept :
 		UI_Element(engine),
 		m_shader(Shared_Shader(engine, "UI\\SideList")),

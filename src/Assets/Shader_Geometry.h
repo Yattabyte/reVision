@@ -20,7 +20,7 @@ public:
 	/** Constructs an empty asset. */
 	inline Shared_Shader_Geometry() noexcept = default;
 	/** Begins the creation process for this asset.
-	@param	engine			the engine being used.
+	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
@@ -38,7 +38,7 @@ public:
 	/** Destroy the Shader. */
 	~Shader_Geometry() noexcept;
 	/** Construct the Shader.
-	@param	engine			the engine to use.
+	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory). */
 	Shader_Geometry(Engine& engine, const std::string& filename) noexcept;
 
