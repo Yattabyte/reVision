@@ -20,7 +20,7 @@ public:
 
 
 	// Public (De)Constructors
-	/** Destroy the text input. */
+	/** Destroy this text input. */
 	inline ~TextInput() noexcept {
 		// Delete geometry
 		glDeleteBuffers(2, m_vboID);
@@ -142,7 +142,7 @@ public:
 		m_text = text;
 		m_label->setText(text);
 	}
-	/** Get the text displayed in this field.
+	/** Retrieve the text displayed in this field.
 	@return					the text displayed in this field. */
 	inline std::string getText() const noexcept {
 		return m_text;

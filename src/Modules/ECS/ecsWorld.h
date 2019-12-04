@@ -15,9 +15,11 @@ public:
 	~ecsWorld();
 	/** Construct an empty ECS World. */
 	inline ecsWorld() = default;
-	/** Construct an ECS world from a serial data buffer. */
+	/** Construct an ECS world from a serial data buffer. 
+	@param	data				serialized world data. */
 	explicit ecsWorld(const std::vector<char>& data) noexcept;
-	/** Move an ECS world. */
+	/** Move an ECS world. 
+	@param	other				another ecsWorld to move to here. */
 	ecsWorld(ecsWorld&& other) noexcept;
 
 
@@ -36,14 +38,14 @@ public:
 	@param	entityHandle		handle to the entity to add the component to.
 	@param	component			the component being added.
 	@param	UUID				optional component UUID, if empty will auto-generate.
-	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
+	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity). */
 	[[maybe_unused]] ComponentHandle makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* component, const ComponentHandle& UUID = ComponentHandle()) noexcept;
 	/** Adds a component to an entity.
 	@param	entityHandle		handle to the entity to add the component to.
 	@param	componentID			the runtime component class.
 	@param	component			the component being added.
 	@param	UUID				optional component UUID, if empty will auto-generate.
-	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
+	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity). */
 	[[maybe_unused]] ComponentHandle makeComponent(const EntityHandle& entityHandle, const ComponentID& componentID, const ecsBaseComponent* component = nullptr, const ComponentHandle& UUID = ComponentHandle()) noexcept;
 
 
@@ -73,16 +75,16 @@ public:
 	@return						pointer to the found entity on success, nullptr on failure. */
 	ecsEntity* getEntity(const EntityHandle& UUID) const noexcept;
 	/** Try to find a list of entities matching the UUID's provided.
-	@param	UUIDs				list of target entity UUID's
-	@return						list of pointers to the found entities. Dimensions may not match input list (nullptr's omitted) */
+	@param	UUIDs				list of target entity UUID's.
+	@return						list of pointers to the found entities. Dimensions may not match input list (nullptr's omitted). */
 	std::vector<ecsEntity*> getEntities(const std::vector<EntityHandle>& uuids) const noexcept;
 	/** Retrieve a list of entity handles, given a root node.
-	@param	rootHandle			an optional root element to start fetching at (empty == map root)
+	@param	rootHandle			an optional root element to start fetching at (empty == map root).
 	@return						a vector of all level entities. */
 	std::vector<EntityHandle> getEntityHandles(const EntityHandle& rootHandle = EntityHandle()) const noexcept;
 	/** Try to retrieve a component of a specific type from an entity matching the handle supplied.
-	@param	entityHandle		handle to the entity to retrieve from.
 	@param	<T>					the category of component being retrieved.
+	@param	entityHandle		handle to the entity to retrieve from.
 	@return						the specific component of the type requested on success, nullptr otherwise. */
 	template <typename T>
 	inline T* getComponent(const EntityHandle& entityHandle) const noexcept {
@@ -100,8 +102,8 @@ public:
 		return nullptr;
 	}
 	/** Try to retrieve a component of a specific type matching the UUID provided.
-	@param	componentHandle		the target component's handle.
 	@param	<T>					the category of component being retrieved.
+	@param	componentHandle		the target component's handle.
 	@return						the specific component of the type requested on success, nullptr otherwise. */
 	template <typename T>
 	inline T* getComponent(const ComponentHandle& componentHandle) const noexcept {
@@ -205,7 +207,8 @@ private:
 	@param	componentTypes		list of component types to retrieve. */
 	[[nodiscard]] std::vector<std::vector<ecsBaseComponent*>> getRelevantComponents(const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes) noexcept;
 	/** Find the least common component.
-	@param	componentTypes		the component types. */
+	@param	componentTypes		the component types.
+	@return						the byte-size of the least common component. */
 	size_t findLeastCommonComponent(const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes) noexcept;
 
 

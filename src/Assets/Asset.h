@@ -30,7 +30,7 @@ public:
 
 
 	// Public Methods
-	/** Gets the file name of this asset.
+	/** Retrieves the file name of this asset.
 	@return				the file name belonging to this asset. */
 	std::string getFileName() const noexcept;
 	/** Sets the file name of this asset.
@@ -40,7 +40,7 @@ public:
 	@param	alive		a shared pointer indicating whether the caller is still alive or not.
 	@param	callback	the method to be triggered. */
 	void addCallback(const std::shared_ptr<bool>& alive, const AssetFinalizedCallback& callback) noexcept;
-	/** Returns whether or not this asset has completed finalizing.
+	/** Retrieves whether or not this asset has completed finalizing.
 	@return				true if this asset has finished finalizing, false otherwise. */
 	bool existsYet() const noexcept;
 

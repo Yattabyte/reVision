@@ -38,7 +38,7 @@ public:
 	/** Destroy the Shader. */
 	~Shader_Geometry() noexcept;
 	/** Construct the Shader.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
 	Shader_Geometry(Engine& engine, const std::string& filename) noexcept;
 

@@ -18,12 +18,10 @@ class Graphics_Pipeline {
 public:
 	// Public (De)Constructors
 	/** Destroy this rendering pipeline. */
-	inline ~Graphics_Pipeline() = default;
+	~Graphics_Pipeline();
 	/** Construct a PBR rendering pipeline.
 	@param	engine			reference to the engine to use. 
-	@param	clientCamera	the main camera.
-	@param	cameras			all the cameras active in the scene.
-	@param	auxSystems		container to add extra render-related ecsSystem's to. */
+	@param	clientCamera	the main camera. */
 	Graphics_Pipeline(Engine& engine, Camera& clientCamera) noexcept;
 
 

@@ -27,12 +27,12 @@ public:
 
 	// Public Methods
 	/** Tick this module by a specific amount of delta time.
-	@param	deltaTime		the amount of time since last frame. */
+	@param	deltaTime	the amount of time since last frame. */
 	void frameTick(ecsWorld& world, const float& deltaTime) noexcept;
 	/** Update generic physics based ECS systems using a specific ECS world. */
 	void updateSystems(ecsWorld& world, const float& deltaTime) noexcept;
-	/** Returns a pointer to the physics-world.
-	@return					the physics world. */
+	/** Retrieves a pointer to the physics-world.
+	@return				the physics world. */
 	inline btDiscreteDynamicsWorld& getWorld() noexcept { return m_world; }
 
 

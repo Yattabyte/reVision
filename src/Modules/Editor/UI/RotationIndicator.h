@@ -20,7 +20,7 @@ public:
 	~RotationIndicator() noexcept;
 	/** Construct a rotation indicator.
 	@param	engine		reference to the engine to use. 
-	@param	editor		the level editor. */
+	@param	editor		reference to the level-editor to use. */
 	explicit RotationIndicator(Engine& engine) noexcept;
 
 

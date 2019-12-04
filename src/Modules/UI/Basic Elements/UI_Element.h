@@ -35,7 +35,7 @@ public:
 	inline virtual ~UI_Element() = default;
 	/** Construct a UI element.
 	@param	engine		reference to the engine to use. */
-	explicit UI_Element(Engine& engine) noexcept;
+	inline explicit UI_Element(Engine& engine) noexcept : m_engine(engine) {}
 
 
 	// Public Interface Declaration
@@ -70,20 +70,20 @@ public:
 	/** Sets this elements' position.
 	@param	position			the new position to use. */
 	void setPosition(const glm::vec2& position) noexcept;
-	/** Gets this elements' position.
-	@return	this elements' position. */
+	/** Retrieves this elements' position.
+	@return						this elements' position. */
 	glm::vec2 getPosition() const noexcept;
 	/** Sets this elements' scale.
 	@param	scale				the new scale to use. */
 	void setScale(const glm::vec2& scale) noexcept;
-	/** Gets this elements' scale.
-	@return	this elements' scale. */
+	/** Retrieves this elements' scale.
+	@return						this elements' scale. */
 	glm::vec2 getScale() const noexcept;
 	/** Sets this elements' maximum scale.
 	@param	scale				the new maximum scale to use. */
 	void setMaxScale(const glm::vec2& scale) noexcept;
-	/** Gets this elements' maximum scale.
-	@return	this elements' maximum scale. */
+	/** Retrieves this elements' maximum scale.
+	@return						this elements' maximum scale. */
 	glm::vec2 getMaxScale() const noexcept;
 	/** Set the max width of this element.
 	@param	width				the maximum width to use. */
@@ -94,8 +94,8 @@ public:
 	/** Sets this elements' minimum scale.
 	@param	scale				the new minimum scale to use. */
 	void setMinScale(const glm::vec2& scale) noexcept;
-	/** Gets this elements' minimum scale.
-	@return	this elements' minimum scale. */
+	/** Retrieves this elements' minimum scale.
+	@return						this elements' minimum scale. */
 	glm::vec2 getMinScale() const noexcept;
 	/** Set the minimum width of this element.
 	@param	width				the minimum width to use. */
@@ -106,14 +106,14 @@ public:
 	/** Set this element as visible or not.
 	@param	visible				whether or not this element should be visible. */
 	void setVisible(const bool& visible) noexcept;
-	/** Gets this elements' visibility.
-	@return	if this element is visible. */
+	/** Retrieves this elements' visibility.
+	@return						if this element is visible. */
 	bool getVisible() const noexcept;
 	/** Set this element as enabled or not.
 	@param	visible				whether or not this element should be enabled. */
 	void setEnabled(const bool& enabled) noexcept;
-	/** Get the enabled state of this element.
-	@return	if this element is enabled. */
+	/** Retrieve the enabled state of this element.
+	@return						if this element is enabled. */
 	bool getEnabled() const noexcept;
 	/** Set this element as hovered, enacting its callback. */
 	void setHovered() noexcept;
@@ -137,17 +137,17 @@ public:
 	static bool getClicked() noexcept;
 	/** Reset this element, releasing, un-pressing, un-hovering this element and all its children. */
 	void clearFocus() noexcept;
-	/** Get whether or not the mouse is within this element.
+	/** Retrieve whether or not the mouse is within this element.
 	@return						true if the mouse is within this element. */
 	bool mouseWithin(const MouseEvent& mouseEvent) const noexcept;
-	/** Returns whether or not a point is within the BBox specified. */
+	/** Retrieves whether or not a point is within the BBox specified. */
 	static bool withinBBox(const glm::vec2& box_p1, const glm::vec2& box_p2, const glm::vec2& point) noexcept;
 
 
 protected:
 	// Protected Methods
 	/** Triggers all callback functions identified by the event ID specified.
-	@param		interactionEventID	the event type. */
+	@param	interactionEventID	the event type. */
 	void enactCallback(const int& interactionEventID) noexcept;
 
 

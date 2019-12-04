@@ -89,7 +89,7 @@ public:
 		engine.getPreferenceState().getOrSetValue<bool>(PreferenceState::Preference::C_VSYNC, element_sync_state);
 		auto element_sync = std::make_shared<Toggle>(engine, element_sync_state);
 		addOption(engine, element_sync, 0.5f, "VSync:", "Lock the game's frame-rate to the monitor's refresh rate.", (int)Toggle::Interact::on_toggle, [&, element_sync]() {
-			m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_VSYNC, element_sync->getToggled() ? 1.0f : 0.0f);
+			m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_VSYNC, element_sync->isToggled() ? 1.0f : 0.0f);
 			});
 
 		// Full Screen Option
@@ -97,7 +97,7 @@ public:
 		engine.getPreferenceState().getOrSetValue<bool>(PreferenceState::Preference::C_WINDOW_FULLSCREEN, element_fs_state);
 		auto element_fs = std::make_shared<Toggle>(engine, element_fs_state);
 		addOption(engine, element_fs, 0.5f, "Full-screen:", "Render the game full-screen instead of as a window.", (int)Toggle::Interact::on_toggle, [&, element_fs]() {
-			m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_WINDOW_FULLSCREEN, element_fs->getToggled() ? 1.0f : 0.0f);
+			m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_WINDOW_FULLSCREEN, element_fs->isToggled() ? 1.0f : 0.0f);
 			});
 	}
 

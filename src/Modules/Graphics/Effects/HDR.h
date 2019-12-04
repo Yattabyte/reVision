@@ -14,12 +14,13 @@
 class HDR final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
-	/** Virtual Destructor. */
+	/** Destroy this effect. */
 	inline ~HDR() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
-	/** Constructor. */
+	/** Construct a HDR effect.
+	@param	engine			reference to the engine to use. */
 	inline explicit HDR(Engine& engine) noexcept :
 		Graphics_Technique(Technique_Category::POST_PROCESSING),
 		m_engine(engine),

@@ -107,7 +107,7 @@ public:
 		updateElementPosition();
 		enactCallback((int)Scrollbar_V::Interact::on_scroll_change);
 	}
-	/** Get the linear value for this scrollbar.
+	/** Retrieve the linear value for this scrollbar.
 	@return				the linear value for this scroll bar. */
 	inline float getLinear() const noexcept {
 		return m_linear;

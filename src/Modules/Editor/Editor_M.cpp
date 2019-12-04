@@ -177,7 +177,7 @@ Transform LevelEditor_Module::getSpawnTransform() const noexcept
 	return m_mouseGizmo->getSpawnTransform();
 }
 
-const glm::vec3& LevelEditor_Module::getCameraPosition() const noexcept
+glm::vec3 LevelEditor_Module::getCameraPosition() const noexcept
 {
 	return m_engine.getModule_Graphics().getClientCamera()->EyePosition;
 }

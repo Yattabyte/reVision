@@ -14,12 +14,13 @@
 class LoadingIndicator final : public Overlay {
 public:
 	// Public (De)Constructors
-	/** Virtual Destructor. */
+	/** Destroy this overlay. */
 	inline ~LoadingIndicator() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
-	/** Constructor. */
+	/** Construct a loading indicator.
+	@param	engine		reference to the engine to use. */
 	inline explicit LoadingIndicator(Engine& engine) noexcept :
 		m_engine(engine),
 		m_shader(Shared_Shader(engine, "Effects\\LoadingIndicator")),
@@ -74,9 +75,11 @@ public:
 
 private:
 	// Private Methods
-	inline void resize(const glm::ivec2& s) noexcept {
-		m_renderSize = s;
-		m_projMatrix = glm::ortho(0.0f, (float)s.x, 0.0f, (float)s.y);
+	/** Resize this indicator. 
+	@param	size		the new size to use. */
+	inline void resize(const glm::ivec2& size) noexcept {
+		m_renderSize = size;
+		m_projMatrix = glm::ortho(0.0f, (float)size.x, 0.0f, (float)size.y);
 	}
 
 

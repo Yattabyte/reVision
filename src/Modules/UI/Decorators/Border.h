@@ -71,7 +71,7 @@ public:
 		return m_borderSize;
 	}
 	/** Set the border color.
-	@param		size		the new border color to use. */
+	@param		color		the new border color to use. */
 	inline void setBorderColor(const glm::vec3& color) noexcept {
 		m_borderColor = color;
 	}

@@ -19,7 +19,7 @@ public:
 	~Editor_Interface() noexcept;
 	/** Creates the level editor UI.
 	@param	engine		reference to the engine to use. 
-	@param	editor		the level editor. */
+	@param	editor		reference to the level-editor to use. */
 	Editor_Interface(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 

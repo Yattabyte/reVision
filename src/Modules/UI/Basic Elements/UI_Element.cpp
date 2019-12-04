@@ -4,14 +4,6 @@
 #include <algorithm>
 
 
-// Public (De)Constructors
-
-UI_Element::UI_Element(Engine& engine) noexcept
-	: m_engine(engine)
-{
-}
-
-
 // Public Interface Declaration
 
 void UI_Element::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept

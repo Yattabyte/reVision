@@ -18,19 +18,21 @@ public:
 
 
 	// Public (De)Constructors
+	/** Virtual system destructor. */
 	inline virtual ~ecsBaseSystem() = default;
+	/** Construct a base ecsSystem. */
 	inline ecsBaseSystem() = default;
 
 
 	// Public Methods
-	/** Returns the component types supported by this system.
+	/** Retrieves the component types supported by this system.
 	@return		the component types supported by this system. */
-	inline const std::vector<std::pair<ComponentID, RequirementsFlag>>& getComponentTypes() const {
+	inline std::vector<std::pair<ComponentID, RequirementsFlag>> getComponentTypes() const {
 		return m_componentTypes;
 	};
-	/** Returns whether or not this system is valid (has at least 1 non-optional component type)
+	/** Retrieves whether or not this system is valid (has at least 1 non-optional component type).
 	@return		true if the system is valid, false otherwise. */
-	inline const bool isValid() const noexcept {
+	inline bool isValid() const noexcept {
 		for (const auto& [componentID, componentFlag] : m_componentTypes)
 			if (((unsigned int)componentFlag & (unsigned int)RequirementsFlag::FLAG_OPTIONAL) == 0)
 				return true;
@@ -42,7 +44,7 @@ public:
 	/** Tick this system by deltaTime, passing in all the components matching this system's requirements.
 	@param	deltaTime		the amount of time which passed since last update
 	@param	components		the components to update. */
-	virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) noexcept = 0;
+	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept = 0;
 
 
 protected:
@@ -78,7 +80,7 @@ public:
 	}
 	/** Adds a system to the list.
 	@param	system	the system to add. */
-	inline const bool addSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept {
+	inline bool addSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept {
 		if (system->isValid()) {
 			m_systems.push_back(system);
 			return true;
@@ -88,7 +90,7 @@ public:
 	/** Removes a system from the list.
 	@param	system	the system to remove.
 	@return			true if successfully removed, false otherwise. */
-	inline const bool removeSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept {
+	inline bool removeSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept {
 		for (size_t i = 0; i < m_systems.size(); ++i)
 			if (system.get() == m_systems[i].get()) {
 				m_systems.erase(m_systems.begin() + i);
@@ -96,9 +98,9 @@ public:
 			}
 		return false;
 	}
-	/** Get the number of systems in the list.
+	/** Retrieve the number of systems in the list.
 	@return			the size of the list. */
-	inline const size_t size() const noexcept {
+	inline size_t size() const noexcept {
 		return m_systems.size();
 	}
 	/** Retrieve a specific system at a given index.

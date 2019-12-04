@@ -18,7 +18,7 @@ public:
 
 
 	// Public (De)Constructors
-	/** Destroy the toggle switch. */
+	/** Destroy this toggle switch. */
 	inline ~Toggle() = default;
 	/** Construct a toggle switch with a given on/off state.
 	@param	engine		reference to the engine to use. 
@@ -95,9 +95,9 @@ public:
 		updateGeometry();
 		enactCallback((int)Toggle::Interact::on_toggle);
 	}
-	/** Return the toggle state of this button.
+	/** Retrieve the toggle state of this button.
 	@return			whether or not this toggle is on or off. */
-	inline bool getToggled() const noexcept {
+	inline bool isToggled() const noexcept {
 		return m_toggledOn;
 	}
 

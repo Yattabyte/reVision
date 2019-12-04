@@ -10,7 +10,7 @@
 class Button : public UI_Element {
 public:
 	// Public (De)Constructors
-	/** Destroy the button. */
+	/** Destroy this button. */
 	inline ~Button() = default;
 	/** Creates a button with specific text inside.
 	@param	engine		reference to the engine to use. 
@@ -71,7 +71,7 @@ public:
 	}
 
 	/** Retrieve this label's text scaling factor.
-	@return	the text scaling factor. */
+	@return			the text scaling factor. */
 	inline float getTextScale() const noexcept {
 		return m_label->getTextScale();
 	}
@@ -80,7 +80,7 @@ public:
 	inline void setBevelRadius(const float& radius) noexcept {
 		m_bevelRadius = radius;
 	}
-	/** Get the bevel radius from this button.
+	/** Retrieve the bevel radius from this button.
 	@return			this buttons' bevel radius. */
 	inline float getBevelRadius() const noexcept {
 		return m_bevelRadius;

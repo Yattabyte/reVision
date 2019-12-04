@@ -9,7 +9,7 @@
 class Layout_Horizontal : public UI_Element {
 public:
 	// Public (De)Constructors
-	/** Destroy the layout. */
+	/** Destroy this layout. */
 	inline ~Layout_Horizontal() = default;
 	/** Construct the layout.
 	@param	engine		reference to the engine to use. */
@@ -36,7 +36,7 @@ public:
 		m_margin = margin;
 		alignChildren();
 	}
-	/** Get the margin distance between elements and the edge of this layout.
+	/** Retrieve the margin distance between elements and the edge of this layout.
 	@return				the margin for this layout. */
 	inline float getMargin() const noexcept {
 		return m_margin;
@@ -47,7 +47,7 @@ public:
 		m_spacing = spacing;
 		alignChildren();
 	}
-	/** Get the spacing distance between elements in this layout.
+	/** Retrieve the spacing distance between elements in this layout.
 	@return				the spacing distance between elements. */
 	inline float getSpacing() const noexcept {
 		return m_spacing;

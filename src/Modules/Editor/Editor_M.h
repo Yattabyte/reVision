@@ -69,9 +69,11 @@ public:
 	void saveLevelDialogue() noexcept;
 	/** Display the 'settings' dialogue for the level editor. */
 	void openSettingsDialogue() noexcept;
-	/** Retrieve if we have any undo-able actions. */
+	/** Retrieve if we have any undo-able actions. 
+	@return					true if able to undo, false otherwise. */
 	bool canUndo() const noexcept;
-	/** Retrieve if we have any redo-able actions. */
+	/** Retrieve if we have any redo-able actions. 
+	@return					true if able to redo, false otherwise. */
 	bool canRedo() const noexcept;
 	/** Undo the previous action in the undo stack. */
 	void undo() noexcept;
@@ -131,7 +133,7 @@ public:
 	Transform getSpawnTransform() const noexcept;
 	/** Retrieve the editor's camera position.
 	@return					the current camera's position. */
-	const glm::vec3& getCameraPosition() const noexcept;
+	glm::vec3 getCameraPosition() const noexcept;
 	/** Try to add an entity to the selection, removing it if it's already present.
 	@param	entityHandle	the entity to attempt to (de)select. */
 	void toggleAddToSelection(const EntityHandle& entityHandle) noexcept;

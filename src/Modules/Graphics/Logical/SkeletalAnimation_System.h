@@ -11,9 +11,10 @@
 class Skeletal_Animation_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
-	/** Destroy the skeletal animation system. */
+	/** Destroy this skeletal animation system. */
 	inline ~Skeletal_Animation_System() = default;
-	/** Construct a skeletal animation system. */
+	/** Construct a skeletal animation system.
+	@param	engine		reference to the engine to use. */
 	inline explicit Skeletal_Animation_System(Engine& engine) noexcept :
 		m_engine(engine)
 	{
@@ -50,11 +51,6 @@ public:
 			}
 		}
 	};
-
-
-	// Public functions
-	template <typename T> inline static T valueMix(const T& t1, const T& t2, const float& f) noexcept { return glm::mix(t1, t2, f); }
-	template <> inline static glm::quat valueMix(const glm::quat& t1, const glm::quat& t2, const float& f) noexcept { return glm::slerp(t1, t2, f); }
 
 
 protected:
@@ -97,7 +93,9 @@ protected:
 			const auto& NextKey = keyVector[NextIndex];
 			const float DeltaTime = (float)(NextKey.time - Key.time);
 			const float Factor = glm::clamp((AnimationTime - (float)Key.time) / DeltaTime, 0.0f, 1.0f);
-			return Skeletal_Animation_System::valueMix(Key.value, NextKey.value, Factor);
+			if constexpr (std::is_same<decltype(Key.value), glm::quat>::value)
+				return glm::slerp(Key.value, NextKey.value, Factor); 
+			return glm::mix(Key.value, NextKey.value, Factor);
 		}
 		return Result;
 	};
@@ -132,8 +130,8 @@ protected:
 			transforms.at(BoneIndex) = GlobalInverseTransform * GlobalTransformation * model->m_geometry.boneTransforms.at(BoneIndex);
 		}
 
-		for (unsigned int i = 0; i < parentNode->children.size(); ++i)
-			ReadNodeHeirarchy(transforms, AnimationTime, animation_ID, parentNode->children[i], model, GlobalTransformation);
+		for (auto& childNode : parentNode->children)
+			ReadNodeHeirarchy(transforms, AnimationTime, animation_ID, childNode, model, GlobalTransformation);
 	}
 
 

@@ -39,11 +39,11 @@ public:
 	void submitNotifyee(const std::pair<std::shared_ptr<bool>, std::function<void()>>& callBack) noexcept;
 	/** From the main thread, calls all notification calls (for completed asset loading). */
 	void notifyObservers() noexcept;
-	/** Returns whether or not this manager is ready to use.
-	@return					true if all work is finished, false otherwise. */
+	/** Retrieves whether or not this manager is ready to use.
+	@return						true if all work is finished, false otherwise. */
 	bool readyToUse() noexcept;
-	/** Returns whether or not any changes have occurred to this manager since the last check
-	@return					true if any changes occurred, false otherwise */
+	/** Retrieves whether or not any changes have occurred to this manager since the last check.
+	@return						true if any changes occurred, false otherwise. */
 	bool hasChanged() noexcept;
 
 

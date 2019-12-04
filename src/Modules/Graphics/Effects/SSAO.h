@@ -16,12 +16,13 @@
 class SSAO final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
-	/** Virtual Destructor. */
+	/** Destroy this effect. */
 	inline ~SSAO() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
-	/** Constructor. */
+	/** Construct a screen-space ambient occlusion effect.
+	@param	engine			reference to the engine to use. */
 	inline explicit SSAO(Engine& engine) noexcept :
 		Graphics_Technique(Technique_Category::SECONDARY_LIGHTING),
 		m_engine(engine),

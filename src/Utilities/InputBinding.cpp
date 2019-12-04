@@ -37,7 +37,7 @@ void InputBinding::save() noexcept
 		m_config->saveConfig();
 }
 
-const Shared_Config& InputBinding::getBindings() const noexcept
+Shared_Config InputBinding::getBindings() const noexcept
 {
 	return m_config;
 }

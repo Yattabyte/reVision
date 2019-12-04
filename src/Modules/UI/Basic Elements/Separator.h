@@ -11,7 +11,7 @@
 class Separator : public UI_Element {
 public:
 	// Public (De)Constructors
-	/** Destroy the separator. */
+	/** Destroy this separator. */
 	inline ~Separator() noexcept {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);

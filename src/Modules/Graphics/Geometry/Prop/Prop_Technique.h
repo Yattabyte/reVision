@@ -18,9 +18,11 @@
 class Prop_Technique final : public Geometry_Technique {
 public:
 	// Public (De)Constructors
-	/** Destructor. */
+	/** Destroy this technique. */
 	inline ~Prop_Technique() = default;
-	/** Constructor. */
+	/** Construct a prop rendering technique.
+	@param	engine			reference to the engine to use.
+	@param	sceneCameras	reference to the scene cameras to use. */
 	inline Prop_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept :
 		m_engine(engine),
 		m_shaderCull(Shared_Shader(engine, "Core\\Props\\culling")),

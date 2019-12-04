@@ -83,7 +83,7 @@ void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const
 {
 	std::vector<Camera> cameras = { m_clientCamera };
 	renderWorld(world, deltaTime, m_viewport, cameras);
-	copyToScreen(fboID);
+	copyToFramebuffer(fboID);
 }
 
 void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, std::vector<Camera>& cameras) noexcept
@@ -112,7 +112,7 @@ void Graphics_Module::genPerspectiveMatrix() noexcept
 	m_clientCamera->pvMatrix = m_clientCamera->pMatrix * m_clientCamera->vMatrix;
 }
 
-void Graphics_Module::copyToScreen(const GLuint& fboID) noexcept
+void Graphics_Module::copyToFramebuffer(const GLuint& fboID) noexcept
 {
 	if (m_shapeQuad->existsYet() && m_shader->existsYet()) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID);

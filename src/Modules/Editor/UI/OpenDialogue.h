@@ -20,7 +20,7 @@ public:
 	inline ~OpenDialogue() = default;
 	/** Construct a level opening dialogue.
 	@param	engine		reference to the engine to use. 
-	@param	editor		the currently active level editor. */
+	@param	editor		reference to the level-editor to use. */
 	OpenDialogue(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 

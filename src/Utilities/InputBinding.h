@@ -28,7 +28,7 @@ public:
 	void save() noexcept;
 	/** Retrieve the key-bindings.
 	@return	the configuration asset used. */
-	const Shared_Config& getBindings() const noexcept;
+	Shared_Config getBindings() const noexcept;
 
 
 private:

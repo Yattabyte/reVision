@@ -18,7 +18,7 @@ public:
 	inline ~MissingFileDialogue() = default;
 	/** Construct a missing file dialogue.
 	@param	engine		reference to the engine to use. 
-	@param	editor		the currently active level editor. */
+	@param	editor		reference to the level-editor to use. */
 	MissingFileDialogue(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 
@@ -27,7 +27,8 @@ public:
 
 
 	// Public Methods
-	/** Notify the user that a file is missing. */
+	/** Notify the user that a file is missing. 
+	@param	filename	the file name of the missing file. */
 	void notifyMissing(const std::string& filename) noexcept;
 
 

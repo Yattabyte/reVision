@@ -11,7 +11,7 @@
 class Panel : public UI_Element {
 public:
 	// Public (De)Constructors
-	/** Destroy the panel. */
+	/** Destroy this panel. */
 	inline ~Panel() noexcept {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
@@ -61,12 +61,12 @@ public:
 
 	// Public Methods
 	/** Set this panel's color.
-	@param	text	the new color to render with. */
+	@param	color	the new color to render with. */
 	inline void setColor(const glm::vec4& color) noexcept {
 		m_color = color;
 	}
 	/** Retrieve this panel's color.
-	@return	the color used by this element. */
+	@return			the color used by this element. */
 	inline glm::vec4 getColor() const noexcept {
 		return m_color;
 	}

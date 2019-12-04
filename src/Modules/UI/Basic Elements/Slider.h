@@ -92,7 +92,7 @@ public:
 		updatePaddle();
 		enactCallback((int)Slider::Interact::on_value_change);
 	}
-	/** Get the percentage value for this scrollbar.
+	/** Retrieve the percentage value for this scrollbar.
 	@return				the percentage value for this slider. */
 	inline float getValue() const noexcept {
 		return m_value;
@@ -109,12 +109,12 @@ public:
 		updatePaddle();
 	}
 	/** Set this slider's text.
-	@param	text	the text to use. */
+	@param	text		the text to use. */
 	inline void setText(const std::string& text) noexcept {
 		m_label->setText(text);
 	}
 	/** Retrieve this slider's text.
-	@return			the text this label uses. */
+	@return				the text this label uses. */
 	inline std::string getText() const noexcept {
 		return m_label->getText();
 	}

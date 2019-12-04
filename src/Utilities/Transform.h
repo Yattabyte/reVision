@@ -53,13 +53,13 @@ struct Transform {
 		glm::decompose(n.m_modelMatrix, n.m_scale, n.m_orientation, n.m_position, skew, perspective);
 		return n;
 	}
-	/** Return if this transform is equal to another transform.
+	/** Retrieve if this transform is equal to another transform.
 	@param	other		the other transform to compare against.
 	@return				true if this transform equals the other transform, false otherwise. */
 	inline bool operator==(const Transform& other) const noexcept {
 		return (m_position == other.m_position && m_orientation == other.m_orientation && m_scale == other.m_scale);
 	}
-	/** Return if this transform is not equal to another transform.
+	/** Retrieve if this transform is not equal to another transform.
 	@param	other		the other transform to compare against.
 	@return				true if this transform is not equal the other transform, false otherwise. */
 	inline bool operator!=(const Transform& other) const noexcept {

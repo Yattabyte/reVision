@@ -15,12 +15,13 @@
 class Skybox final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
-	/** Virtual Destructor. */
+	/** Destroy this effect. */
 	inline ~Skybox() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
-	/** Constructor. */
+	/** Construct a screen-space skybox effect.
+	@param	engine			reference to the engine to use. */
 	inline explicit Skybox(Engine& engine) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),

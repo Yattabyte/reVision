@@ -61,15 +61,13 @@ private:
 	@param	maxOut		output reference containing the maximum extents of the AABB.
 	@param	scaleOut	output reference containing the scale of the AABB.
 	@param	centerOut	output reference containing the center of the AABB.
-	@param	radius		output reference containing the radius of the AABB converted to a sphere. */
+	@param	radiusOut	output reference containing the radius of the AABB converted to a sphere. */
 	void static calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minOut, glm::vec3& maxOut, glm::vec3& scaleOut, glm::vec3& centerOut, float& radiusOut) noexcept;
 	/** Create a mesh material, loading the textures as defined by the mesh file itself.
 	@note	Used as a failsafe. Mesh importer may not succeed in fetching the directories, and the mesh may not store usable directories.
-	@param	engine			reference to the engine to use. 
 	@param	relativePath	the model's filename to use as a guide.
 	@param	modelMaterial	the material asset to load into.
-	@param	meshMaterial	the material asset to load into.
-	@param	sceneMaterial	the scene material to use as a guide. */
+	@param	materials		the scene material to use as a guide. */
 	void loadMaterial(const std::string& relativePath, Shared_Material& modelMaterial, const std::vector<Material_Strings>& materials) noexcept;
 
 

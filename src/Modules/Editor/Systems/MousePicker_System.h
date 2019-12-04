@@ -127,7 +127,8 @@ public:
 
 
 	// Public Methods
-	/** Retrieve this system's last selection result. */
+	/** Retrieve this system's last selection result.
+	@return							the last selection result. */
 	std::tuple<EntityHandle, Transform, Transform> getSelection() const noexcept {
 		return { m_selection, m_selectionTransform, m_intersectionTransform };
 	}

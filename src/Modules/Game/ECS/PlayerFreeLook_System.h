@@ -15,7 +15,8 @@ public:
 	// Public (De)Constructors
 	/** Destroy this free-look system. */
 	inline ~PlayerFreeLook_System() = default;
-	/** Construct a free-look system. */
+	/** Construct a free-look system.
+	@param	engine		reference to the engine to use. */
 	inline explicit PlayerFreeLook_System(Engine& engine) noexcept
 		: m_engine(engine) {
 		// Declare component types used

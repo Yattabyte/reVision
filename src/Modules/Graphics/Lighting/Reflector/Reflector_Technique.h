@@ -19,12 +19,14 @@
 class Reflector_Technique final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
-	/** Destructor. */
+	/** Destroy this reflector technique. */
 	inline ~Reflector_Technique() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
-	/** Constructor. */
+	/** Construct a reflector technique.
+	@param	engine			reference to the engine to use. 
+	@param	sceneCameras	reference to the scene cameras to use. */
 	inline Reflector_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
@@ -127,8 +129,7 @@ public:
 private:
 	// Private Methods
 	/** Render all the geometry for each reflector.
-	@param	deltaTime	the amount of time passed since last frame.
-	@param	viewport	the viewport to render from. */
+	@param	deltaTime	the amount of time passed since last frame. */
 	inline void updateReflectors(const float& deltaTime) noexcept {
 		auto clientTime = m_engine.getTime();
 		if (m_frameData.reflectorsToUpdate.size()) {

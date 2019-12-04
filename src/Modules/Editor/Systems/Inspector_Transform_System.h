@@ -17,7 +17,8 @@ public:
 	/** Destroy this system. */
 	inline ~Inspector_Transform_System() = default;
 	/** Construct this system.
-	@param	editor		the level editor. */
+	@param	engine		reference to the engine to use. 
+	@param	editor		reference to the level-editor to use. */
 	inline Inspector_Transform_System(Engine& engine, LevelEditor_Module& editor) noexcept :
 		m_engine(engine),
 		m_editor(editor)

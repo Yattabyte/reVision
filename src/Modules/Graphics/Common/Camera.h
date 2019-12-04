@@ -55,19 +55,23 @@ public:
 	inline glm::vec3 getFrustumCenter() const noexcept {
 		return m_frustumCenter;
 	}
-	/** Retrieve a const pointer to the underlying data structure. */
+	/** Retrieve a const pointer to the underlying data structure. 
+	@return				const pointer to camera data. */
 	inline const GPUData* operator-> () const noexcept {
 		return &m_localData;
 	}
-	/** Retrieve a pointer to the underlying data structure. */
+	/** Retrieve a pointer to the underlying data structure.
+	@return				pointer to camera data. */
 	inline GPUData* operator-> () noexcept {
 		return &m_localData;
 	}
-	/** Retrieve a const pointer to the underlying data structure. */
+	/** Retrieve a const pointer to the underlying data structure.
+	@return				const pointer to camera data. */
 	inline const GPUData* get() const noexcept {
 		return &m_localData;
 	}
-	/** Retrieve a pointer to the underlying data structure. */
+	/** Retrieve a pointer to the underlying data structure.
+	@return				pointer to camera data. */
 	inline GPUData* get() noexcept {
 		return &m_localData;
 	}

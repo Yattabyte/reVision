@@ -15,7 +15,7 @@ public:
 	/** Destroy this system. */
 	inline ~ReflectorPerspective_System() = default;
 	/** Construct this system.
-	@param	cameras		shared list of scene cameras. */
+	@param	sceneCameras	reference to the scene cameras to use. */
 	inline explicit ReflectorPerspective_System(std::vector<Camera*>& sceneCameras) noexcept :
 		m_sceneCameras(sceneCameras)
 	{

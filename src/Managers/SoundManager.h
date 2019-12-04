@@ -14,12 +14,12 @@ public:
 	// Public (De)Constructors
 	/** Destroy the sound manager. */
 	~SoundManager() noexcept;
-	/** Construct the sound manager*/
+	/** Construct the sound manager. */
 	SoundManager() noexcept;
 
 
 	// Public Methods
-	/** Get the current version of the sound engine used.
+	/** Retrieve the current version of the sound engine used.
 	@return					numeric version number. */
 	static int GetVersion() noexcept;
 	/** Play a sound wave file.

@@ -14,12 +14,14 @@
 class Shadow_Technique final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
-	/** Destructor. */
+	/** Destroy this shadow technique. */
 	inline ~Shadow_Technique() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
-	/** Constructor. */
+	/** Construct a shadow technique.
+	@param	engine			reference to the engine to use. 
+	@param	sceneCameras	reference to the scene cameras to use. */
 	inline Shadow_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
@@ -53,6 +55,8 @@ public:
 
 
 	// Public Methods
+	/** Retrieve this technique's shadow data. 
+	@return			the shadow data for this frame. */
 	inline ShadowData& getShadowData() noexcept {
 		return m_frameData;
 	}

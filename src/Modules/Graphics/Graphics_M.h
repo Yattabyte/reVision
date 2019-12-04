@@ -51,7 +51,7 @@ public:
 	void renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, std::vector<Camera>& cameras) noexcept;
 	/** Generates a perspective matrix for the client camera. */
 	void genPerspectiveMatrix() noexcept;
-	/** Returns a shared pointer to the primary camera.
+	/** Retrieves a shared pointer to the primary camera.
 	@return					the primary camera. */
 	inline Camera& getClientCamera() noexcept {
 		return m_clientCamera;
@@ -60,8 +60,9 @@ public:
 
 private:
 	// Private Methods
-	/** Copy the client camera's final color buffer to the screen. */
-	void copyToScreen(const GLuint& fboID) noexcept;
+	/** Copy the client camera's final color buffer to a specific framebuffer.
+	@param	fboID			the framebuffer ID. */
+	void copyToFramebuffer(const GLuint& fboID) noexcept;
 
 
 	// Private Attributes

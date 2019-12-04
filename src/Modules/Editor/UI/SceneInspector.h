@@ -19,7 +19,7 @@ public:
 	inline ~SceneInspector() = default;
 	/** Construct a scene inspector.
 	@param	engine		reference to the engine to use. 
-	@param	editor		the level editor. */
+	@param	editor		reference to the level-editor to use. */
 	SceneInspector(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 

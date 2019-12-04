@@ -15,7 +15,7 @@
 class SSR final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
-	/** Virtual Destructor. */
+	/** Destroy this Effect. */
 	inline ~SSR() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
@@ -23,7 +23,8 @@ public:
 		// Destroy OpenGL objects
 		glDeleteTextures(1, &m_bayerID);
 	}
-	/** Constructor. */
+	/** Construct a screen-space reflection effect.
+	@param	engine			reference to the engine to use. */
 	inline explicit SSR(Engine& engine) noexcept :
 		Graphics_Technique(Technique_Category::SECONDARY_LIGHTING),
 		m_engine(engine),

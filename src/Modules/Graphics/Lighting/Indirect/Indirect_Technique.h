@@ -23,7 +23,11 @@ public:
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
-	/** Constructor. */
+	/** Construct an indirect lighting technique.
+	@param	engine			reference to the engine to use. 
+	@param	shadowData		reference to the shadow data to use. 
+	@param	clientCamera	reference to the client camera to use. 
+	@param	sceneCameras	reference to the scene cameras to use. */
 	inline Indirect_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),
@@ -92,7 +96,7 @@ public:
 			const auto shadowCount = camIndicesGen.size();
 
 			if (lightIndices.size()) {
-				updateDrawParams(camBufferIndex, camBufferRebounce, camBufferRecon, visLights, indirectBounce, indirectQuad, indirectQuadRecon, camIndicesGen, camIndiciesRebounce, camIndiciesRecon, lightIndices, shadowCount, perspectives);
+				updateDrawParams(camIndicesGen, camIndiciesRebounce, camIndiciesRecon, lightIndices, shadowCount, perspectives.size());
 				fillBounceVolume(shadowCount, viewport->m_gfxFBOS.m_rhVolume);
 				rebounceVolume(viewport->m_gfxFBOS.m_rhVolume, camBufferRebounce, indirectQuad);
 				reconstructVolume(viewport, camBufferRecon, indirectQuadRecon);
@@ -113,9 +117,16 @@ public:
 
 private:
 	// Private Methods
-	/** Update the draw parameters for a draw call.	*/
-	inline void updateDrawParams(DynamicBuffer<>& camBufferIndex, DynamicBuffer<>& camBufferRebounce, DynamicBuffer<>& camBufferRecon, DynamicBuffer<>& visLights, StaticMultiBuffer<>& indirectBounce, IndirectDraw<>& indirectQuad, IndirectDraw<>& indirectQuadRecon, std::vector<glm::ivec2>& camIndicesGen, std::vector<glm::ivec2>& camIndiciesRebounce, std::vector<glm::ivec2>& camIndiciesRecon, std::vector<int>& lightIndices, const size_t& shadowCount, const std::vector<std::pair<int, int>>& perspectives) noexcept {
+	/** Update the draw parameters for a draw call.	
+	@param	camIndicesGen			the camera indexes for GI generation.
+	@param	camIndiciesRebounce		the camera indexes for GI re-bounce.
+	@param	camIndiciesRecon		the camera indexes for GI reconstruction.
+	@param	lightIndices			the light indexes for GI.
+	@param	shadowCount				the number of shadows to render for GI.
+	@param	perspectivesSize		the number of viewing perspectives. */
+	inline void updateDrawParams(std::vector<glm::ivec2>& camIndicesGen, std::vector<glm::ivec2>& camIndiciesRebounce, std::vector<glm::ivec2>& camIndiciesRecon, std::vector<int>& lightIndices, const size_t& shadowCount, const size_t& perspectivesSize) noexcept {
 		// Write accumulated data
+		auto& [camBufferIndex, camBufferRebounce, camBufferRecon, visLights, indirectBounce, indirectQuad, indirectQuadRecon] = m_drawData[m_drawIndex];
 		camBufferIndex.beginWriting();
 		camBufferRebounce.beginWriting();
 		camBufferRecon.beginWriting();
@@ -130,7 +141,7 @@ private:
 		const GLuint dataBounce[] = { (GLuint)m_shapeQuad->getSize(), (GLuint)(shadowCount * m_bounceSize), 0, 0 };
 		indirectBounce.write(0, sizeof(GLuint) * 4, &dataBounce);
 		indirectQuad.setPrimitiveCount(m_bounceSize);
-		indirectQuadRecon.setPrimitiveCount((GLuint)perspectives.size());
+		indirectQuadRecon.setPrimitiveCount((GLuint)perspectivesSize);
 		camBufferIndex.endWriting();
 		camBufferRebounce.endWriting();
 		camBufferRecon.endWriting();
@@ -166,7 +177,9 @@ private:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 	/** Re-bounce the light in the volume a second time.
-	@param	rhVolume			reference to the RH volume. */
+	@param	rhVolume			reference to the RH volume.
+	@param	camBufferRebounce	reference to the buffer for re-bouncing GI.
+	@param	indirectQuad		reference to the indirect quad draw call. */
 	inline void rebounceVolume(RH_Volume& rhVolume, DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) noexcept {
 		// Bind common data
 		glDepthMask(GL_TRUE);
@@ -191,7 +204,10 @@ private:
 		camBufferRebounce.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		indirectQuad.drawCall();
 	}
-	/** Reconstruct GI from the RH volume. */
+	/** Reconstruct GI from the RH volume. 
+	@param	viewport			reference to the active viewport.
+	@param	camBufferRecon		reference to the buffer for reconstructing GI.
+	@param	indirectQuadRecon	reference to the indirect GI reconstruction draw call. */
 	inline void reconstructVolume(const std::shared_ptr<Viewport>& viewport, DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept {
 		// Reconstruct indirect radiance
 		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));

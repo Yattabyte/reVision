@@ -44,10 +44,10 @@ public:
 	/** Set the size of this framebuffer.
 	@param	newSize		the new size to use.
 	@param	depth		the new depth to use. */
-	inline void resize(const glm::ivec2& newSize, const int& layerFaces) noexcept {
-		if (m_size != newSize || m_layerFaces != layerFaces) {
+	inline void resize(const glm::ivec2& newSize, const int& depth) noexcept {
+		if (m_size != newSize || m_layerFaces != depth) {
 			m_size = glm::max(glm::ivec2(1), newSize);
-			m_layerFaces = std::max<int>(1, layerFaces);
+			m_layerFaces = std::max<int>(1, depth);
 			constexpr float clearDepth(1.0f);
 			constexpr glm::vec3 clearColor(0.0f);
 			glTextureImage3DEXT(m_textureIDS[0], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, m_layerFaces, 0, GL_RGB, GL_FLOAT, nullptr);

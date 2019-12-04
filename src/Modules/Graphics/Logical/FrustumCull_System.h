@@ -15,7 +15,7 @@ public:
 	/** Destroy this system. */
 	inline ~FrustumCull_System() = default;
 	/** Construct this system.
-	@param	cameras		list of all the active cameras in the scene, updated per frame. */
+	@param	sceneCameras	reference to the scene cameras to use. */
 	inline explicit FrustumCull_System(std::vector<Camera*>& sceneCameras) noexcept :
 		m_sceneCameras(sceneCameras)
 	{

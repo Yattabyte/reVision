@@ -18,9 +18,9 @@ public:
 	inline Shared_Collider() noexcept = default;
 	/** Begins the creation process for this asset.
 	@param	engine			reference to the engine to use. 
-	@param	filename		the filename to use
-	@param	threaded		create in a separate thread
-	@return					the desired asset */
+	@param	filename		the filename to use.
+	@param	threaded		create in a separate thread.
+	@return					the desired asset. */
 	Shared_Collider(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
 };
 

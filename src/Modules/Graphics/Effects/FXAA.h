@@ -14,12 +14,13 @@
 class FXAA final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
-	/** Virtual Destructor. */
+	/** Destroy this effect. */
 	inline ~FXAA() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
-	/** Constructor. */
+	/** Construct a FXAA effect.
+	@param	engine			reference to the engine to use. */
 	inline explicit FXAA(Engine& engine) noexcept :
 		Graphics_Technique(Technique_Category::POST_PROCESSING),
 		m_engine(engine),

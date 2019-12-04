@@ -15,8 +15,8 @@ public:
 	inline ~ReflectorVisibility_System() = default;
 	/** Construct this system.
 	@param	frameData	reference to common data that changes frame-to-frame. */
-	inline explicit ReflectorVisibility_System(ReflectorData& visibility) noexcept :
-		m_frameData(visibility)
+	inline explicit ReflectorVisibility_System(ReflectorData& frameData) noexcept :
+		m_frameData(frameData)
 	{
 		addComponentType(Reflector_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 		addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

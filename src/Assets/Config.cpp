@@ -7,7 +7,7 @@ constexpr const char* EXT_CONFIG = ".cfg";
 constexpr const char* DIRECTORY_CONFIG = "\\Configs\\";
 
 /** Attempts to retrieve a std::string between quotation marks "<std::string>".
-@return	the std::string between quotation marks */
+@return	the std::string between quotation marks. */
 inline std::string get_between_quotes(std::string& s)
 {
 	std::string output = s;
@@ -25,9 +25,9 @@ inline std::string get_between_quotes(std::string& s)
 }
 
 /** Checks if the supplied value is a parameter in the CFG_STRING list.
-@param	s			the std::string to check for in the list
-@param	m_strings	the list of strings to check for an occurrence of our value within
-@return				the index of the value in the list if found, otherwise -1 */
+@param	s			the std::string to check for in the list.
+@param	m_strings	the list of strings to check for an occurrence of our value within.
+@return				the index of the value in the list if found, otherwise -1. */
 inline int find_CFG_Property(const std::string& s, const std::vector<std::string>& m_strings)
 {
 	std::string upperCase(s);

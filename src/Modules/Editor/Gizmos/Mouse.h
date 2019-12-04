@@ -29,7 +29,7 @@ public:
 	~Mouse_Gizmo() noexcept;
 	/** Construct this gizmo.
 	@param	engine		reference to the engine to use. 
-	@param	editor		reference to the level editor. */
+	@param	editor		reference to the level-editor to use. */
 	Mouse_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 

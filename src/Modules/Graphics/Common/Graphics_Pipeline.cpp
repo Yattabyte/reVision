@@ -22,6 +22,12 @@
 #include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
 
 
+Graphics_Pipeline::~Graphics_Pipeline()
+{
+	for (auto& technique : m_allTechniques)
+		delete technique;
+}
+
 Graphics_Pipeline::Graphics_Pipeline(Engine& engine, Camera& clientCamera) noexcept :
 	m_engine(engine)
 {

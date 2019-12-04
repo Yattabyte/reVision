@@ -10,18 +10,17 @@
 #include "Engine.h"
 
 
-class Lighting_FBO;
-
 /** A post-processing technique for generating bloom from a lighting buffer. */
 class Bloom final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
-	/** Virtual Destructor. */
+	/** Destroy this effect. */
 	inline ~Bloom() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
-	/** Constructor. */
+	/** Construct a bloom effect.
+	@param	engine			reference to the engine to use. */
 	inline explicit Bloom(Engine& engine) noexcept :
 		Graphics_Technique(Technique_Category::POST_PROCESSING),
 		m_engine(engine),

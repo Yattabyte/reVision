@@ -14,7 +14,7 @@ public:
 		glDeleteFramebuffers(6, m_fboID);
 		glDeleteTextures(1, &m_textureID);
 	}
-	/** Construct this framebuffer. */
+	/** Construct a framebuffer. */
 	inline FBO_Env_Reflector() noexcept {
 		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_textureID);
 		glTextureParameteri(m_textureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -58,10 +58,11 @@ public:
 	/** Clear the data out of a specific layer in the framebuffer.
 	@param	zOffset		the layer to clear out of. */
 	inline void clear(const GLint& zOffset) noexcept {
-		const glm::vec3 clear(0.0f);
+		constexpr static const glm::vec3 clear(0.0f);
 		glClearTexSubImage(m_textureID, 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_RGB, GL_FLOAT, &clear);
 	}
-	/** Bind this framebuffer for writing, at the specific mipmap index. */
+	/** Bind this framebuffer for writing, at the specific mipmap index. 
+	@param	index		the FBO index to bind. */
 	inline void bindForWriting(const int& index) noexcept {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID[index]);
 	}

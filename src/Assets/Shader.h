@@ -37,17 +37,17 @@ struct ShaderObj {
 
 	// Functions
 	/** Retrieve a shader parameter by the name specified.
-	@param		parameterName	the program parameter name.
+	@param	parameterName		the program parameter name.
 	@return						the parameter value matching the name specified. */
 	GLint getShaderiv(const GLenum& parameterName) const noexcept;
 	/** Load a shader document from the file path specified.
-	@param		engine			the active engine to use.
-	@param		filePath		the relative path to the file to read.
+	@param	engine				the active engine to use.
+	@param	filePath			the relative path to the file to read.
 	@return						true on success, false otherwise. */
 	bool loadDocument(Engine& engine, const std::string& filePath) noexcept;
 	/** Create an OpenGL shader object from this class, using the document string loaded.
-	@param		engine			the active engine to use.
-	@param		filename		the shader file name (for reporting purposes).
+	@param	engine				the active engine to use.
+	@param	filename			the shader file name (for reporting purposes).
 	@return						true on success, false otherwise. */
 	bool createGLShader(Engine& engine, const std::string& filename) noexcept;
 
@@ -140,22 +140,22 @@ public:
 protected:
 	// Protected Methods
 	/** Retrieve a program parameter by the name specified.
-	@param		parameterName			the program parameter name.
+	@param	parameterName		the program parameter name.
 	@return						the parameter value matching the name specified. */
 	GLint getProgramiv(const GLenum& pname) const noexcept;
 	/** Retrieve an error log corresponding to this shader program.
 	@return						an error log for this shader program. */
 	[[nodiscard]] std::vector<GLchar> getErrorLog() const noexcept;
 	/** Attempt to load a shader program from a cached binary file.
-	@param		relativePath	the relative path of the binary file.
+	@param	relativePath		the relative path of the binary file.
 	@return						true on success, false otherwise. */
 	bool loadCachedBinary(const std::string& relativePath) noexcept;
 	/** Attempt to save a shader program to a cached binary file.
-	@param		relativePath	the relative path of the binary file.
+	@param	relativePath		the relative path of the binary file.
 	@return						true on success, false otherwise. */
 	bool saveCachedBinary(const std::string& relativePath) noexcept;
 	/** Attempt to load a shader program from separate shader files.
-	@param		relativePath	the relative path of the shader files.
+	@param	relativePath		the relative path of the shader files.
 	@return						true on success, false otherwise. */
 	virtual bool initShaders(const std::string& relativePath) noexcept;
 	/** Use to validate this shader program after linking.

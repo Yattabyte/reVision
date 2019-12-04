@@ -19,7 +19,9 @@ public:
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
-	/** Construct a free-look system. */
+	/** Construct a free-look system.
+	@param	engine		reference to the engine to use. 
+	@param	game		reference to the game module to use. */
 	inline PlayerSpawn_System(Engine& engine, Game_Module& game) noexcept
 		: m_engine(engine), m_game(game) {
 		// Declare component types used

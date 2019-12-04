@@ -20,7 +20,7 @@ public:
 
 
 	// Public (De)Constructors
-	/** Destroy the side list. */
+	/** Destroy this side list. */
 	inline ~SideList() noexcept {
 		// Delete geometry
 		glDeleteBuffers(2, m_vboID);
@@ -134,7 +134,7 @@ public:
 
 	// Public Methods
 	/** Set the index to display as selected in the list.
-	@param		index		the new integer index to use. */
+	@param	index		the new integer index to use. */
 	inline void setIndex(const int& index) noexcept {
 		if (m_index != index) {
 			m_index = std::clamp<int>(index, 0, int(m_strings.size()) - 1);
@@ -145,19 +145,19 @@ public:
 			enactCallback((int)SideList::Interact::on_index_changed);
 		}
 	}
-	/** Get the index currently used in this list.
-	@return		currently active index. */
+	/** Retrieve the index currently used in this list.
+	@return	currently	active index. */
 	inline int getIndex() const noexcept {
 		return m_index;
 	}
 	/** Set the strings to display in this list.
-	@param		strings		the new strings to use in this list. */
+	@param	strings		the new strings to use in this list. */
 	inline void setStrings(const std::vector<std::string>& strings) noexcept {
 		m_strings = strings;
 		setIndex(getIndex());
 	}
 	/** Retrieve the strings this list uses for each item in this list.
-	@return					the list of strings describing each item. */
+	@return				the list of strings describing each item. */
 	inline std::vector<std::string> getStrings() const noexcept {
 		return m_strings;
 	}

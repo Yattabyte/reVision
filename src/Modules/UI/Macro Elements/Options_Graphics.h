@@ -105,25 +105,25 @@ public:
 		bool element_bloom_state = true;
 		engine.getPreferenceState().getOrSetValue<bool>(PreferenceState::Preference::C_BLOOM, element_bloom_state);
 		auto element_bloom = std::make_shared<Toggle>(engine, element_bloom_state);
-		addOption(engine, element_bloom, 0.5f, "Bloom:", "Turns the bloom effect on or off.", (int)Toggle::Interact::on_toggle, [&, element_bloom]() { setBloom(element_bloom->getToggled()); });
+		addOption(engine, element_bloom, 0.5f, "Bloom:", "Turns the bloom effect on or off.", (int)Toggle::Interact::on_toggle, [&, element_bloom]() { setBloom(element_bloom->isToggled()); });
 
 		// SSAO Option
 		bool element_ssao_state = true;
 		engine.getPreferenceState().getOrSetValue<bool>(PreferenceState::Preference::C_SSAO, element_ssao_state);
 		auto element_ssao = std::make_shared<Toggle>(engine, element_ssao_state);
-		addOption(engine, element_ssao, 0.5f, "SSAO:", "Turns screen-space ambient occlusion effect on or off. Works with baked AO.", (int)Toggle::Interact::on_toggle, [&, element_ssao]() { setSSAO(element_ssao->getToggled()); });;
+		addOption(engine, element_ssao, 0.5f, "SSAO:", "Turns screen-space ambient occlusion effect on or off. Works with baked AO.", (int)Toggle::Interact::on_toggle, [&, element_ssao]() { setSSAO(element_ssao->isToggled()); });;
 
 		// SSR Option
 		bool element_ssr_state = true;
 		engine.getPreferenceState().getOrSetValue<bool>(PreferenceState::Preference::C_SSR, element_ssr_state);
 		auto element_ssr = std::make_shared<Toggle>(engine, element_ssr_state);
-		addOption(engine, element_ssr, 0.5f, "SSR:", "Turns screen-space reflections on or off. Works with baked reflections.", (int)Toggle::Interact::on_toggle, [&, element_ssr]() { setSSR(element_ssr->getToggled()); });
+		addOption(engine, element_ssr, 0.5f, "SSR:", "Turns screen-space reflections on or off. Works with baked reflections.", (int)Toggle::Interact::on_toggle, [&, element_ssr]() { setSSR(element_ssr->isToggled()); });
 
 		// FXAA Option
 		bool element_fxaa_state = true;
 		engine.getPreferenceState().getOrSetValue<bool>(PreferenceState::Preference::C_FXAA, element_fxaa_state);
 		auto element_fxaa = std::make_shared<Toggle>(engine, element_fxaa_state);
-		addOption(engine, element_fxaa, 0.5f, "FXAA:", "Turns fast approximate anti-aliasing on or off.", (int)Toggle::Interact::on_toggle, [&, element_fxaa]() { setFXAA(element_fxaa->getToggled()); });
+		addOption(engine, element_fxaa, 0.5f, "FXAA:", "Turns fast approximate anti-aliasing on or off.", (int)Toggle::Interact::on_toggle, [&, element_fxaa]() { setFXAA(element_fxaa->isToggled()); });
 	}
 
 

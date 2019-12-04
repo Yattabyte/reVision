@@ -19,7 +19,7 @@ public:
 
 
 	// Public (De)Constructors
-	/** Destroy the list_Horizontal. */
+	/** Destroy this list_Horizontal. */
 	inline ~List_Horizontal() noexcept {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
@@ -178,7 +178,7 @@ public:
 		m_margin = margin;
 		alignChildren();
 	}
-	/** Get the margin distance between elements and the edge of this layout.
+	/** Retrieve the margin distance between elements and the edge of this layout.
 	@return				the margin for this layout. */
 	inline float getMargin() const noexcept {
 		return m_margin;
@@ -190,18 +190,18 @@ public:
 		alignChildren();
 		updateSelectionGeometry();
 	}
-	/** Get the spacing distance between elements in this layout.
+	/** Retrieve the spacing distance between elements in this layout.
 	@return				the spacing distance between elements. */
 	inline float getSpacing() const noexcept {
 		return m_spacing;
 	}
 	/** Set the border size.
-	@param		size		the new border size to use. */
+	@param	size		the new border size to use. */
 	inline void setBorderSize(const float& size) noexcept {
 		m_borderSize = size;
 		updateSelectionGeometry();
 	}
-	/** Get the border size.
+	/** Retrieve the border size.
 	@return				border size. */
 	inline float getBorderSize() const noexcept {
 		return m_borderSize;

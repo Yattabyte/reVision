@@ -16,7 +16,9 @@ public:
 	// Public (De)Constructors
 	/** Destroy this system. */
 	inline ~Inspector_Light_System() = default;
-	/** Construct this system. */
+	/** Construct this system. 
+	@param	engine		reference to the engine to use. 
+	@param	editor		reference to the level-editor to use. */
 	inline Inspector_Light_System(Engine& engine, LevelEditor_Module& editor) noexcept :
 		m_engine(engine),
 		m_editor(editor)

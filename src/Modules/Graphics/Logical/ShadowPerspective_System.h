@@ -14,7 +14,7 @@ public:
 	/** Destroy this system. */
 	inline ~ShadowPerspective_System() = default;
 	/** Construct this system.
-	@param	cameras		shared list of scene cameras. */
+	@param	sceneCameras	reference to the scene cameras to use. */
 	inline explicit ShadowPerspective_System(std::vector<Camera*>& sceneCameras) noexcept :
 		m_sceneCameras(sceneCameras)
 	{

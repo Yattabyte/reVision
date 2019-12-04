@@ -19,7 +19,7 @@ public:
 	inline ~EntityInspector() = default;
 	/** Construct a component inspector.
 	@param	engine		reference to the engine to use. 
-	@param	editor		the level editor. */
+	@param	editor		reference to the level-editor to use. */
 	EntityInspector(Engine& engine, LevelEditor_Module& editor) noexcept;
 
 

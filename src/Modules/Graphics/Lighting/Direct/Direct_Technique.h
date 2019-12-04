@@ -19,7 +19,7 @@
 class Direct_Technique final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
-	/** Destructor. */
+	/** Destroy this direct lighting technique. */
 	inline ~Direct_Technique() noexcept {
 		// Update indicator
 		*m_aliveIndicator = false;
@@ -30,7 +30,11 @@ public:
 			glDeleteVertexArrays(1, &m_vaoID);
 		}
 	}
-	/** Constructor. */
+	/** Construct a direct lighting technique.
+	@param	engine			reference to the engine to use. 
+	@param	shadowData		reference to the shadow data to use. 
+	@param	clientCamera	reference to the client camera to use. 
+	@param	sceneCameras	reference to the scene cameras to use. */
 	inline Direct_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras) noexcept :
 		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 		m_engine(engine),

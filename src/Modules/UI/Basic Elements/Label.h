@@ -28,7 +28,7 @@ public:
 
 
 	// Public (De)Constructors
-	/** Destroy the label. */
+	/** Destroy this label. */
 	inline ~Label() noexcept {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);

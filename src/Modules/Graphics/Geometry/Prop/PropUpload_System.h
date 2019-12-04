@@ -19,7 +19,9 @@ public:
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	/** Construct this system. */
+	/** Construct this system.
+	@param	engine			reference to the engine to use.
+	@param	frameData		reference to of common data that changes frame-to-frame. */
 	inline PropUpload_System(Engine& engine, PropData& frameData) noexcept :
 		m_engine(engine),
 		m_frameData(frameData)
