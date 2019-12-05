@@ -11,6 +11,7 @@
 #include <vector>
 
 
+// Forward Declarations
 class Engine;
 
 /** Interface for UI elements, like buttons, labels, panels, etc. */

@@ -3,8 +3,7 @@
 #define GL_VECTOR_H
 
 #include "Utilities/GL/Buffer_Interface.h"
-#include <memory>
-#include <vector>
+#include <algorithm>
 
 
 /** A multi-buffered STL vector like class, storing its data on the GPU using persistently mapped coherent buffers.

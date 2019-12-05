@@ -4,6 +4,7 @@
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 #include "assimp/version.h"
+#include "glm/gtc/matrix_transform.hpp"
 #include <atomic>
 #include <algorithm>
 #include <string>

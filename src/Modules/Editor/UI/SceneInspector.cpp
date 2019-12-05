@@ -2,7 +2,6 @@
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/ECS/component_types.h"
 #include "imgui.h"
-#include "Engine.h"
 
 
 SceneInspector::SceneInspector(Engine& engine, LevelEditor_Module& editor) noexcept :

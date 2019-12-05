@@ -6,8 +6,7 @@
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
 #include "Assets/Texture.h"
-#include "Utilities/GL/StaticBuffer.h"
-#include "Engine.h"
+#include "glm/glm.hpp"
 
 
 /** A post-processing technique for writing the frame time to the screen. */

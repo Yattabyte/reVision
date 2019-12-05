@@ -1,4 +1,6 @@
 #include "Modules/Graphics/Lighting/Reflector/ReflectorSync_System.h"
+#include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
+#include "Modules/ECS/component_types.h"
 
 
 ReflectorSync_System::ReflectorSync_System(ReflectorData& frameData) noexcept :

@@ -5,9 +5,6 @@
 #include "Modules/Editor/UI/Editor_Interface.h"
 
 
-// Forward declarations
-class Engine;
-
 /** Allows the user to control the camera whenever not interacting with other UI elements. */
 class CameraController final : public ImGUI_Element {
 public:

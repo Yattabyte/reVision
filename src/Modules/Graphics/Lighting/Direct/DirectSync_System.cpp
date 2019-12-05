@@ -1,4 +1,8 @@
 #include "Modules/Graphics/Lighting/Direct/DirectSync_System.h"
+#include "Modules/Graphics/Lighting/Direct/DirectData.h"
+#include "Modules/ECS/component_types.h"
+#include "glm/gtx/component_wise.hpp"
+#include <algorithm>
 
 
 DirectSync_System::DirectSync_System(Direct_Light_Data& frameData) noexcept :

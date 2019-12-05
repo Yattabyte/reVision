@@ -1,4 +1,6 @@
 #include "Modules/UI/Macro Elements/Options_Pane.h"
+#include "Modules/UI/Basic Elements/Layout_Horizontal.h"
+#include "Engine.h"
 
 
 Options_Pane::Options_Pane(Engine& engine) noexcept :

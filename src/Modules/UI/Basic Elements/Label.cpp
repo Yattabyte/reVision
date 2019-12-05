@@ -1,4 +1,5 @@
 #include "Modules/UI/Basic Elements/Label.h"
+#include <algorithm>
 
 
 Label::~Label() noexcept 

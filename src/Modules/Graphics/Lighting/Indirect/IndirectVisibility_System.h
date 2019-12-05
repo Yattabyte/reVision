@@ -3,9 +3,10 @@
 #define INDIRECTVISIBILITY_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Graphics/Lighting/Indirect/IndirectData.h"
 
+
+// Forward Declarations
+struct Indirect_Light_Data;
 
 /** An ECS system responsible for populating render lists PER active perspective in a given frame, for all indirect light related entities. */
 class IndirectVisibility_System final : public ecsBaseSystem {

@@ -60,7 +60,7 @@ struct ImGUI_Element {
 	inline ImGUI_Element() = default;
 	void open() noexcept;
 	void close() noexcept;
-	virtual void tick(const float& deltaTime) noexcept;;
+	virtual void tick(const float& deltaTime) noexcept;
 };
 
 #endif // EDITOR_INTERFACE_H

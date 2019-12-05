@@ -4,11 +4,7 @@
 
 #include "Modules/Graphics/Common/Camera.h"
 #include "Modules/Graphics/Lighting/Shadow/ShadowMap.h"
-#include "Modules/ECS/ecsComponent.h"
-#include "Utilities/GL/GL_Vector.h"
 #include "glm/glm.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include <memory>
 #include <vector>
 
 

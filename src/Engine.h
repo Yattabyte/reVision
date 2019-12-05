@@ -23,10 +23,11 @@
 #include "Utilities/MappedChar.h"
 
 // Other
+#include <future>
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "4.18.0";
+constexpr char ENGINE_VERSION[] = "4.19.0";
 struct GLFWwindow;
 
 /** The main game engine object. Encapsulates the entire engine state. */
@@ -84,7 +85,7 @@ public:
 	// Public Accessors
 	/** Retrieve the mouse input mode.
 	@return				the mouse input mode, such as free-look or normal cursor. */
-	MouseInputMode getMouseInputMode() const noexcept;;
+	MouseInputMode getMouseInputMode() const noexcept;
 	/** Retrieve the current time. 
 	@return				the current time. */
 	static float getTime() noexcept;

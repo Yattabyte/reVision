@@ -8,8 +8,6 @@
 #include "Assets/Auto_Model.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/IndirectDraw.h"
-#include "Engine.h"
-#include <random>
 
 
 /** A core-rendering technique for deriving an ambient occlusion factor from the viewport itself. */

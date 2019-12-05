@@ -3,10 +3,10 @@
 #define CAMERAPERSPECTIVE_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "glm/gtc/type_ptr.hpp"
-#include <memory>
 
+
+// Forward Declarations
+class Camera;
 
 /** An ECS system responsible for updating a shared pointer with a list of all active cameras in the scene. */
 class CameraPerspective_System final : public ecsBaseSystem {

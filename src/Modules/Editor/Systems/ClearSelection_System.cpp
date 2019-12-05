@@ -1,4 +1,6 @@
 #include "Modules/Editor/Systems/ClearSelection_System.h"
+#include "Modules/Editor/Editor_M.h"
+#include "Modules/ECS/component_types.h"
 
 
 ClearSelection_System::ClearSelection_System(Engine& engine, LevelEditor_Module& editor) noexcept :

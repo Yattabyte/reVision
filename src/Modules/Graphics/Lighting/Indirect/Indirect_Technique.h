@@ -4,15 +4,16 @@
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Lighting/Indirect/IndirectData.h"
-#include "Modules/Graphics/Lighting/Indirect/IndirectVisibility_System.h"
-#include "Modules/Graphics/Lighting/Indirect/IndirectSync_System.h"
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
 #include "Utilities/GL/StaticMultiBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/IndirectDraw.h"
-#include "Engine.h"
 
+
+// Forward Declarations
+class RH_Volume;
+struct Viewport;
 
 /** A core lighting technique responsible for indirect-diffuse lighting. */
 class Indirect_Technique final : public Graphics_Technique {

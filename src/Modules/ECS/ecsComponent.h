@@ -7,7 +7,6 @@
 #include <functional>
 #include <map>
 #include <string>
-#include <sstream>
 #include <tuple>
 #include <vector>
 
@@ -75,9 +74,9 @@ protected:
 
 	// Protected Attributes
 	/** Runtime container mapping indices to creation/destruction functions for components. */
-	static std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>> _componentRegistry;
+	static std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>> m_componentRegistry;
 	/** A map between component class name's and it's runtime variables like ID and size. */
-	static MappedChar<ComponentID> _nameRegistry;
+	static MappedChar<ComponentID> m_nameRegistry;
 	/** Allow the ecsWorld to interact with these members. */
 	friend class ecsWorld;
 };

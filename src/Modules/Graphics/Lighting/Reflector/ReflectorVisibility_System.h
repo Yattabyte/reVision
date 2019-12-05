@@ -3,9 +3,10 @@
 #define REFLECTORVISIBILITY_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
 
+
+// Forward Declarations
+struct ReflectorData;
 
 /** An ECS system responsible for populating render lists PER active perspective in a given frame, for all reflector related entities. */
 class ReflectorVisibility_System final : public ecsBaseSystem {

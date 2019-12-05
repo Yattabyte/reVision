@@ -3,11 +3,10 @@
 #define PROPSYNC_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Graphics/Geometry/Prop/PropData.h"
-#include <glad/glad.h>
-#include "glm/gtx/component_wise.hpp"
 
+
+// Forward Declarations
+struct PropData;
 
 /** An ECS system responsible for synchronizing prop components and sending data to the GPU. */
 class PropSync_System final : public ecsBaseSystem {

@@ -7,7 +7,7 @@
 #include "Assets/Auto_Model.h"
 #include "Assets/Texture.h"
 #include "Utilities/GL/IndirectDraw.h"
-#include "Engine.h"
+#include "glm/glm.hpp"
 
 
 /** Graphics effect responsible for showing a loading spinner ring while the engine is loading. */

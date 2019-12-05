@@ -3,7 +3,6 @@
 #define GRAPHICS_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
 #include "Modules/ECS/ecsWorld.h"
 #include "Assets/Shader.h"

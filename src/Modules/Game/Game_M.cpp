@@ -9,10 +9,6 @@
 #include "Engine.h"
 
 
-
-/** Construct a game module.
-@param	engine		reference to the engine to use. */
-
 Game_Module::Game_Module(Engine& engine) 
 	: Engine_Module(engine)
 {

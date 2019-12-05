@@ -3,12 +3,14 @@
 #define PROPUPLOAD_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Graphics/Geometry/Prop/PropData.h"
-#include "Engine.h"
+#include "Assets/Model.h"
 
 #define NUM_VERTEX_ATTRIBUTES 8
 
+
+// Forward Declarations
+class Engine;
+struct PropData;
 
 /** An ECS system responsible for uploading prop data to the GPU, such as geometrical data and material textures. */
 class PropUpload_System final : public ecsBaseSystem {

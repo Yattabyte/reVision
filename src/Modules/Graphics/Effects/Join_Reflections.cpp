@@ -1,4 +1,5 @@
 #include "Modules/Graphics/Effects/Join_Reflections.h"
+#include "Modules/Graphics/Common/Viewport.h"
 
 
 Join_Reflections::~Join_Reflections() noexcept 

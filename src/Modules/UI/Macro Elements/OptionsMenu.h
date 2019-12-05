@@ -6,7 +6,6 @@
 #include "Modules/UI/Macro Elements/Options_Video.h"
 #include "Modules/UI/Macro Elements/Options_Graphics.h"
 #include "Modules/UI/FocusMap.h"
-#include "Engine.h"
 
 
 /** A UI element serving as an options menu. */

@@ -6,12 +6,11 @@
 #include "Utilities/MappedChar.h"
 #include <glad/glad.h>
 #include "glm/glm.hpp"
-#include <functional>
-#include <memory>
 #include <tuple>
 #include <vector>
 
 
+// Forward Declarations
 class Engine;
 
 /** Creates, stores, and manages the size of all the frame-buffers needed for our PBR rendering pipeline.

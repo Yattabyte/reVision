@@ -4,11 +4,11 @@
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
-#include "Modules/Graphics/Lighting/Shadow/ShadowScheduler_System.h"
-#include "Assets/Shader.h"
-#include "Assets/Auto_Model.h"
-#include "Engine.h"
 
+
+// Forward Declarations
+class Engine;
+class Camera;
 
 /** A rendering technique responsible for rendering/updating shadow casters in the scene. */
 class Shadow_Technique final : public Graphics_Technique {

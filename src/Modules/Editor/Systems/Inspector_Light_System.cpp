@@ -1,4 +1,7 @@
 #include "Modules/Editor/Systems/Inspector_Light_System.h"
+#include "Modules/Editor/Editor_M.h"
+#include "Modules/ECS/component_types.h"
+#include "imgui.h"
 
 
 Inspector_Light_System::Inspector_Light_System(Engine& engine, LevelEditor_Module& editor) noexcept :

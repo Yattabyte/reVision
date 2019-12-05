@@ -1,4 +1,10 @@
 #include "Modules/Editor/Systems/Inspector_Prop_System.h"
+#include "Modules/Editor/Editor_M.h"
+#include "Modules/ECS/component_types.h"
+#include "Utilities/IO/Mesh_IO.h"
+#include "Engine.h"
+#include "imgui.h"
+#include <filesystem>
 
 
 Inspector_Prop_System::Inspector_Prop_System(Engine& engine, LevelEditor_Module& editor) noexcept :

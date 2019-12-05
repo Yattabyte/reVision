@@ -1,4 +1,7 @@
 #include "Modules/Graphics/Geometry/Prop/PropUpload_System.h"
+#include "Modules/Graphics/Geometry/Prop/PropData.h"
+#include "Modules/ECS/component_types.h"
+#include "Engine.h"
 
 
 PropUpload_System::~PropUpload_System() noexcept 

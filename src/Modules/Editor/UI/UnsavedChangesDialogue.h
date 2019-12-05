@@ -4,13 +4,7 @@
 
 #include "Modules/Editor/UI/Editor_Interface.h"
 #include <functional>
-#include <string>
-#include <vector>
 
-
-// Forward declarations
-class Engine;
-class LevelEditor_Module;
 
 /** A level editor UI element which prompts the user to save or ignore unsaved changes in a level. */
 class UnsavedChangesDialogue final : public ImGUI_Element {

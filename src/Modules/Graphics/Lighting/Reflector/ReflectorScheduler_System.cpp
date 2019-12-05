@@ -1,4 +1,7 @@
 #include "Modules/Graphics/Lighting/Reflector/ReflectorScheduler_System.h"
+#include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
+#include "Modules/ECS/component_types.h"
+#include "Engine.h"
 
 
 ReflectorScheduler_System::~ReflectorScheduler_System() noexcept

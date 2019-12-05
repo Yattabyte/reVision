@@ -6,13 +6,11 @@
 #include "Assets/Model.h"
 #include "Assets/Collider.h"
 #include "Modules/ECS/ecsComponent.h"
-#include "Modules/Graphics/Common/Viewport.h"
 #include "Modules/Graphics/Common/Camera.h"
 #include "Utilities/Transform.h"
-#include "Utilities/GL/GL_Vector.h"
 #include "Utilities/IO/Serializer.h"
 #include "glm/glm.hpp"
-#include <memory>
+#include <btBulletDynamicsCommon.h>
 
 
 constexpr static const char selectedComponentName[] = "Selected_Component";

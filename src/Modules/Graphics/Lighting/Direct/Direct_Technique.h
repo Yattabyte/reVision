@@ -4,15 +4,10 @@
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Lighting/Direct/DirectData.h"
-#include "Modules/Graphics/Lighting/Direct/DirectVisibility_System.h"
-#include "Modules/Graphics/Lighting/Direct/DirectSync_System.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Mesh.h"
-#include "Utilities/GL/StaticMultiBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Engine.h"
-#include <random>
 
 
 /** A core lighting technique responsible for direct-diffuse and direct-specular lighting. */

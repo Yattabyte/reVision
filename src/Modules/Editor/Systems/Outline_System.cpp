@@ -1,4 +1,7 @@
 #include "Modules/Editor/Systems/Outline_System.h"
+#include "Modules/Editor/Editor_M.h"
+#include "Modules/ECS/component_types.h"
+#include "Engine.h"
 
 
 Outline_System::~Outline_System() noexcept 

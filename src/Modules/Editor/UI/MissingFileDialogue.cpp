@@ -1,7 +1,6 @@
 #include "Modules/Editor/UI/MissingFileDialogue.h"
 #include "Modules/Editor/Editor_M.h"
 #include "imgui.h"
-#include "Engine.h"
 
 
 MissingFileDialogue::MissingFileDialogue(Engine& engine, LevelEditor_Module& editor) noexcept :

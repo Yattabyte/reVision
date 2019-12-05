@@ -1,4 +1,6 @@
 #include "Modules/Graphics/Effects/SSAO.h"
+#include "Engine.h"
+#include <random>
 
 
 SSAO::~SSAO() noexcept

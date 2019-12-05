@@ -1,4 +1,9 @@
 #include "Modules/UI/Macro Elements/Options_Video.h"
+#include "Modules/UI/Basic Elements/SideList.h"
+#include "Modules/UI/Basic Elements/Slider.h"
+#include "Modules/UI/Basic Elements/Toggle.h"
+#include "Engine.h"
+#include <sstream>
 
 
 Options_Video::Options_Video(Engine& engine) noexcept : 

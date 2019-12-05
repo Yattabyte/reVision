@@ -3,10 +3,10 @@
 #define DIRECTSYNC_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Graphics/Lighting/Direct/DirectData.h"
-#include <algorithm>
 
+
+// Forward Declarations
+struct Direct_Light_Data;
 
 /** An ECS system responsible for synchronizing light components and sending data to the GPU. */
 class DirectSync_System final : public ecsBaseSystem {

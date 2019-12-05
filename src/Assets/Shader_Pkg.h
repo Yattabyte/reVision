@@ -3,11 +3,9 @@
 #define	SHADER_PKG_H
 
 #include "Assets/Asset.h"
-#include "glm/glm.hpp"
-#include <string>
 
 
-class Engine;
+// Forward Declarations
 class Shader_Pkg;
 
 /** Shared version of a Shader_Pkg asset.

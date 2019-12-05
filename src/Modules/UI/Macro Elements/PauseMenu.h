@@ -4,8 +4,6 @@
 
 #include "Modules/UI/Macro Elements/Menu.h"
 #include "Modules/UI/Macro Elements/OptionsMenu.h"
-#include "Modules/UI/Basic Elements/Button.h"
-#include "Engine.h"
 
 
 /** A UI element serving as a pause menu. */

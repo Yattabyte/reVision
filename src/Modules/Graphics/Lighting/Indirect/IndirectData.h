@@ -7,8 +7,6 @@
 #include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
 #include "Utilities/GL/GL_Vector.h"
 #include "glm/glm.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include <memory>
 #include <vector>
 
 

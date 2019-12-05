@@ -1,4 +1,5 @@
 #include "Modules/ECS/ecsHandle.h"
+#include <algorithm>
 
 
 ecsHandle::ecsHandle(const char id[32]) noexcept

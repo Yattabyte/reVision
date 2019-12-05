@@ -5,8 +5,6 @@
 #include "Modules/UI/Basic Elements/Button.h"
 #include "Modules/UI/Decorators/UI_Decorator.h"
 #include "Utilities/GL/IndirectDraw.h"
-#include <algorithm>
-#include <string>
 
 
 /** Scrollbar decorator object. */

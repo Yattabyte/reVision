@@ -4,12 +4,8 @@
 
 #include "Assets/Asset.h"
 #include "Utilities/MappedChar.h"
-#include <chrono>
 #include <deque>
-#include <functional>
-#include <future>
 #include <shared_mutex>
-#include <thread>
 
 
 constexpr unsigned int ASSETMANAGER_MAX_THREADS = 8u;

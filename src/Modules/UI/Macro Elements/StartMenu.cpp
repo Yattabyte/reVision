@@ -1,4 +1,6 @@
 #include "Modules/UI/Macro Elements/StartMenu.h"
+#include "Modules/UI/FocusMap.h"
+#include "Engine.h"
 
 
 StartMenu::StartMenu(Engine& engine) noexcept : Menu(engine)

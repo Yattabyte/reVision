@@ -1,4 +1,7 @@
 #include "Modules/Graphics/Lighting/Direct/Direct_Technique.h"
+#include "Modules/Graphics/Lighting/Direct/DirectVisibility_System.h"
+#include "Modules/Graphics/Lighting/Direct/DirectSync_System.h"
+#include "Modules/Graphics/Common/Viewport.h"
 
 
 Direct_Technique::~Direct_Technique() noexcept 

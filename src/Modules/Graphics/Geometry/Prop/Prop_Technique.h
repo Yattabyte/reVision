@@ -4,14 +4,11 @@
 
 #include "Modules/Graphics/Geometry/Geometry_Technique.h"
 #include "Modules/Graphics/Geometry/Prop/PropData.h"
-#include "Modules/Graphics/Geometry/Prop/PropUpload_System.h"
-#include "Modules/Graphics/Geometry/Prop/PropVisibility_System.h"
-#include "Modules/Graphics/Geometry/Prop/PropSync_System.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
-#include "Engine.h"
 
 
 /** A core rendering technique for rendering props from a given viewing perspective. */

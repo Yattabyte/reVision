@@ -6,7 +6,6 @@
 #include "Modules/UI/Basic Elements/Label.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/IndirectDraw.h"
-#include <algorithm>
 #include <string>
 
 

@@ -3,10 +3,10 @@
 #define SYSTEM_INPUT_BINDING_H
 
 #include "Assets/Config.h"
-#include "Utilities/ActionState.h"
 #include <string>
 
 
+// Forward Declarations
 class Engine;
 
 /** Responsible for loading a particular key-binding configuration. */

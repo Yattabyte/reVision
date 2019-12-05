@@ -6,10 +6,9 @@
 #include "Utilities/IO/Image_IO.h"
 #include "glm/glm.hpp"
 #include <optional>
-#include <vector>
 
 
-class Engine;
+// Forward Declarations
 class Image;
 
 /** Shared version of an Image asset.

@@ -1,4 +1,8 @@
 #include "Modules/Graphics/Geometry/Prop/Prop_Technique.h"
+#include "Modules/Graphics/Geometry/Prop/PropUpload_System.h"
+#include "Modules/Graphics/Geometry/Prop/PropVisibility_System.h"
+#include "Modules/Graphics/Geometry/Prop/PropSync_System.h"
+#include "Modules/Graphics/Common/Viewport.h"
 
 
 Prop_Technique::Prop_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept :

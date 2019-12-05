@@ -1,4 +1,6 @@
 #include "Modules/Graphics/Lighting/Direct/DirectVisibility_System.h"
+#include "Modules/Graphics/Lighting/Direct/DirectData.h"
+#include "Modules/ECS/component_types.h"
 
 
 DirectVisibility_System::DirectVisibility_System(Direct_Light_Data& frameData) noexcept :

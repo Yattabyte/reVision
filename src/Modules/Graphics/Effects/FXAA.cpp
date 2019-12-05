@@ -1,4 +1,5 @@
 #include "Modules/Graphics/Effects/FXAA.h"
+#include "Engine.h"
 
 
 FXAA::~FXAA() noexcept 

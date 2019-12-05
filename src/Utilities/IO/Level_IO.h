@@ -3,11 +3,8 @@
 #define	LEVEL_IO_H
 
 #include "Modules/ECS/ecsWorld.h"
-#include "glm/glm.hpp"
 #include <string>
 
-
-class Engine;
 
 /** A static helper class used for reading/writing levels. */
 class Level_IO {

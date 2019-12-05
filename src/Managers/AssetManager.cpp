@@ -1,4 +1,7 @@
 #include "Managers/AssetManager.h"
+#include <algorithm>
+#include <chrono>
+#include <thread>
 
 
 Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& filename, const std::function<Shared_Asset(void)>& constructor, const bool& threaded) noexcept

@@ -4,11 +4,11 @@
 #define PLAYERSPAWNER_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Game/Game_M.h"
-#include "Engine.h"
-#include "glm/glm.hpp"
 
+
+// Forward Declarations
+class Engine;
+class Game_Module;
 
 /** A system responsible for spawning players at a specific spawn point. */
 class PlayerSpawn_System final : public ecsBaseSystem {

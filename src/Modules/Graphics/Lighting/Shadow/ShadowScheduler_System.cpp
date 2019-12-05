@@ -1,4 +1,7 @@
 #include "Modules/Graphics/Lighting/Shadow/ShadowScheduler_System.h"
+#include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
+#include "Modules/ECS/component_types.h"
+#include "Engine.h"
 
 
 ShadowScheduler_System::~ShadowScheduler_System() noexcept 

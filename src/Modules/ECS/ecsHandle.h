@@ -2,10 +2,6 @@
 #ifndef ECS_HANDLE_H
 #define ECS_HANDLE_H
 
-#include <cstring>
-#include <iterator>
-#include <utility>
-
 
 /** A structure used to uniquely identify elements in the engine's ECS 'system'. */
 struct ecsHandle {

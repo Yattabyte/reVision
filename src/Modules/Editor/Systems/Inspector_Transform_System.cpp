@@ -1,4 +1,8 @@
 #include "Modules/Editor/Systems/Inspector_Transform_System.h"
+#include "Modules/Editor/Editor_M.h"
+#include "Modules/ECS/component_types.h"
+#include "Engine.h"
+#include "imgui.h"
 
 
 Inspector_Transform_System::Inspector_Transform_System(Engine& engine, LevelEditor_Module& editor) noexcept :

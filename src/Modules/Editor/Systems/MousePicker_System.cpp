@@ -1,5 +1,18 @@
 #include "Modules/Editor/Systems/MousePicker_System.h"
+#include "Modules/ECS/component_types.h"
+#include "Utilities/Intersection.h"
+#include "Engine.h"
+#include "glm/gtc/quaternion.hpp"
+#include "glm/gtx/rotate_vector.hpp"
+#include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
+
+// Forward Declarations
+static bool RayProp(Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence) noexcept;
+static bool RayCollider(Collider_Component* collider, const void* const closestPhysicsShape, const float& closetstPhysicsHit, float& distanceFromScreen, int& confidence) noexcept;
+static bool RayBBox(Transform_Component* transformComponent, BoundingBox_Component* bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept;
+static bool RayBSphere(Transform_Component* transformComponent, BoundingSphere_Component* bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept;
+static bool RayOrigin(Transform_Component* transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine) noexcept;
 
 MousePicker_System::~MousePicker_System() noexcept 
 {
@@ -113,7 +126,16 @@ std::tuple<EntityHandle, Transform, Transform> MousePicker_System::getSelection(
 	return { m_selection, m_selectionTransform, m_intersectionTransform };
 }
 
-bool MousePicker_System::RayProp(Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence) noexcept 
+/** Perform a ray-prop intersection test.
+@param	transformComponent		the transform component of interest.
+@param	prop					the prop component of interest.
+@param	ray_origin				the mouse ray's origin.
+@param	ray_direction			the mouse ray's direction.
+@param	normal					reference updated with the intersection normal.
+@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
+@param	confidence				reference updated with the confidence level for this function.
+@return							true on successful intersection, false if disjoint. */
+static bool RayProp(Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence) noexcept 
 {
 	bool intersection = false;
 	if (prop->m_model && prop->m_model->existsYet()) {
@@ -140,7 +162,15 @@ bool MousePicker_System::RayProp(Transform_Component* transformComponent, Prop_C
 	return intersection;
 }
 
-bool MousePicker_System::RayCollider(Collider_Component* collider, const void* const closestPhysicsShape, const float& closetstPhysicsHit, float& distanceFromScreen, int& confidence) noexcept 
+/** Perform a ray-collider intersection test.
+@param	transformComponent		the transform component of interest.
+@param	collider				the collider component of interest.
+@param	ray_origin				the mouse ray's origin.
+@param	ray_direction			the mouse ray's direction.
+@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
+@param	confidence				reference updated with the confidence level for this function.
+@return							true on successful intersection, false if disjoint. */
+static bool RayCollider(Collider_Component* collider, const void* const closestPhysicsShape, const float& closetstPhysicsHit, float& distanceFromScreen, int& confidence) noexcept
 {
 	if (collider->m_shape && collider->m_shape == closestPhysicsShape) {
 		distanceFromScreen = closetstPhysicsHit;
@@ -150,7 +180,15 @@ bool MousePicker_System::RayCollider(Collider_Component* collider, const void* c
 	return false;
 }
 
-bool MousePicker_System::RayBBox(Transform_Component* transformComponent, BoundingBox_Component* bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept 
+/** Perform a ray-bounding-box intersection test.
+@param	transformComponent		the transform component of interest.
+@param	bBox					the bounding box component of interest.
+@param	ray_origin				the mouse ray's origin.
+@param	ray_direction			the mouse ray's direction.
+@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
+@param	confidence				reference updated with the confidence level for this function.
+@return							true on successful intersection, false if disjoint. */
+static bool RayBBox(Transform_Component* transformComponent, BoundingBox_Component* bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept
 {
 	float distance;
 	const auto& scale = transformComponent->m_worldTransform.m_scale;
@@ -169,7 +207,15 @@ bool MousePicker_System::RayBBox(Transform_Component* transformComponent, Boundi
 	return false;
 }
 
-bool MousePicker_System::RayBSphere(Transform_Component* transformComponent, BoundingSphere_Component* bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept 
+/** Perform a ray-bounding-sphere intersection test.
+@param	transformComponent		the transform component of interest.
+@param	bSphere					the bounding sphere component of interest.
+@param	ray_origin				the mouse ray's origin.
+@param	ray_direction			the mouse ray's direction.
+@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
+@param	confidence				reference updated with the confidence level for this function.
+@return							true on successful intersection, false if disjoint. */
+static bool RayBSphere(Transform_Component* transformComponent, BoundingSphere_Component* bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept
 {
 	// Check if the distance is closer than the last entity found, so we can find the 'best' selection
 	if (auto distance = RaySphereIntersection(ray_origin, ray_direction, transformComponent->m_worldTransform.m_position + bSphere->m_positionOffset, bSphere->m_radius); distance >= 0.0f) {
@@ -180,7 +226,15 @@ bool MousePicker_System::RayBSphere(Transform_Component* transformComponent, Bou
 	return false;
 }
 
-bool MousePicker_System::RayOrigin(Transform_Component* transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine) noexcept 
+/** Perform a ray-origin intersection test.
+@param	transformComponent		the transform component of interest.
+@param	ray_origin				the mouse ray's origin.
+@param	ray_direction			the mouse ray's direction.
+@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
+@param	confidence				reference updated with the confidence level for this function.
+@param	engine					reference to the engine to use.
+@return							true on successful intersection, false if disjoint. */
+static bool RayOrigin(Transform_Component* transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine) noexcept
 {
 	// Create scaling factor to keep all origins same screen size
 	const auto radius = glm::distance(transformComponent->m_worldTransform.m_position, engine.getModule_Graphics().getClientCamera()->EyePosition) * 0.033f;

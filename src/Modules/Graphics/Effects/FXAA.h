@@ -7,7 +7,6 @@
 #include "Assets/Auto_Model.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/IndirectDraw.h"
-#include "Engine.h"
 
 
 /** A post-processing technique for applying FXAA to the currently bound 2D image. */

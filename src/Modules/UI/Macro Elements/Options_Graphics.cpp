@@ -1,5 +1,8 @@
 #include "Modules/UI/Macro Elements/Options_Graphics.h"
 #include "Modules/UI/Basic Elements/Slider.h"
+#include "Modules/UI/Basic Elements/SideList.h"
+#include "Modules/UI/Basic Elements/Toggle.h"
+#include "Engine.h"
 
 
 Options_Graphics::Options_Graphics(Engine& engine) noexcept :
@@ -97,7 +100,7 @@ Options_Graphics::Options_Graphics(Engine& engine) noexcept :
 	bool element_ssao_state = true;
 	engine.getPreferenceState().getOrSetValue<bool>(PreferenceState::Preference::C_SSAO, element_ssao_state);
 	auto element_ssao = std::make_shared<Toggle>(engine, element_ssao_state);
-	addOption(engine, element_ssao, 0.5f, "SSAO:", "Turns screen-space ambient occlusion effect on or off. Works with baked AO.", (int)Toggle::Interact::on_toggle, [&, element_ssao]() { setSSAO(element_ssao->isToggled()); });;
+	addOption(engine, element_ssao, 0.5f, "SSAO:", "Turns screen-space ambient occlusion effect on or off. Works with baked AO.", (int)Toggle::Interact::on_toggle, [&, element_ssao]() { setSSAO(element_ssao->isToggled()); });
 
 	// SSR Option
 	bool element_ssr_state = true;

@@ -1,4 +1,5 @@
 #include "Modules/Graphics/Effects/SSR.h"
+#include "Engine.h"
 
 
 SSR::~SSR() noexcept 
@@ -20,7 +21,7 @@ SSR::SSR(Engine& engine) noexcept :
 	m_shapeQuad(Shared_Auto_Model(engine, "quad"))
 {
 	// Preferences
-	auto& preferences = m_engine.getPreferenceState();
+	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_SSR, m_enabled);
 	preferences.addCallback(PreferenceState::Preference::C_SSR, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
 

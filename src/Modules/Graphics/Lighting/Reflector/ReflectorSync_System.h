@@ -3,9 +3,10 @@
 #define REFLECTORSYNC_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
 
+
+// Forward Declarations
+struct ReflectorData;
 
 /** An ECS system responsible for synchronizing reflector components and sending data to the GPU. */
 class ReflectorSync_System final : public ecsBaseSystem {

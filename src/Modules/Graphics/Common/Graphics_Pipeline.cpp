@@ -1,5 +1,4 @@
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
-#include "Engine.h"
 
 /* Rendering Techniques Used */
 #include "Modules/Graphics/Geometry/Prop/Prop_Technique.h"

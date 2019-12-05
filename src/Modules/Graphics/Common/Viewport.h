@@ -4,9 +4,9 @@
 
 #include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "glm/glm.hpp"
-#include <memory>
 
 
+// Forward Declarations
 class Engine;
 
 /** Representation of the data backing a unique viewing perspective. Not a camera, but the buffers one would render into and with. */

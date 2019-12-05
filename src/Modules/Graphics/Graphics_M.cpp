@@ -1,11 +1,7 @@
 #include "Modules/Graphics/Graphics_M.h"
 #include "Modules/Graphics/Common/Camera.h"
-#include "Modules/Graphics/Common/Graphics_Pipeline.h"
 #include "Modules/Graphics/Common/Viewport.h"
 #include "Engine.h"
-#include <memory>
-#include <random>
-#include <typeinfo>
 
 
 Graphics_Module::Graphics_Module(Engine& engine) : 

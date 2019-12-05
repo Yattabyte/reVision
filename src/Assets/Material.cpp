@@ -1,8 +1,6 @@
 #include "Assets/Material.h"
 #include "Engine.h"
-#include <cmath>
 #include <fstream>
-#include <sstream>
 
 
 constexpr const char* MATERIAL_EXTENSION = ".mat";

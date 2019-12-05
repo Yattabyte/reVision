@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include <fstream>
 
+
 constexpr const char* EXT_CONFIG = ".cfg";
 constexpr const char* DIRECTORY_CONFIG = "\\Configs\\";
 

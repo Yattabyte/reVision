@@ -9,7 +9,6 @@
 #include "Modules/Editor/Systems/Outline_System.h"
 #include "Modules/ECS/component_types.h"
 #include "Utilities/IO/Level_IO.h"
-#include "imgui.h"
 #include "Engine.h"
 #include <algorithm>
 #include <filesystem>
@@ -584,7 +583,7 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles) 
 			if (auto newCommand = dynamic_cast<Set_Selection_Command*>(other)) {
 				// Join the 2 'new' sets together, make sure it's unique
 				m_uuids_new.insert(m_uuids_new.begin(), newCommand->m_uuids_new.cbegin(), newCommand->m_uuids_new.cend());
-				m_uuids_new.erase(std::unique(m_uuids_new.begin(), m_uuids_new.end()), m_uuids_new.end());;
+				m_uuids_new.erase(std::unique(m_uuids_new.begin(), m_uuids_new.end()), m_uuids_new.end());
 				return true;
 			}
 			return false;

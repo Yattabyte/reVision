@@ -1,4 +1,8 @@
 #include "Modules/Graphics/Lighting/Reflector/Reflector_Technique.h"
+#include "Modules/Graphics/Lighting/Reflector/ReflectorVisibility_System.h"
+#include "Modules/Graphics/Lighting/Reflector/ReflectorScheduler_System.h"
+#include "Modules/Graphics/Lighting/Reflector/ReflectorSync_System.h"
+#include "Engine.h"
 
 
 Reflector_Technique::~Reflector_Technique() noexcept 

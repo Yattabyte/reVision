@@ -3,10 +3,10 @@
 #define INDIRECTSYNC_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Graphics/Lighting/Indirect/IndirectData.h"
-#include <algorithm>
 
+
+// Forward Declarations
+struct Indirect_Light_Data;
 
 /** An ECS system responsible for synchronizing indirect light components and sending data to the GPU. */
 class IndirectSync_System final : public ecsBaseSystem {

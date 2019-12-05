@@ -1,4 +1,5 @@
 #include "Modules/UI/Macro Elements/PauseMenu.h"
+#include "Engine.h"
 
 
 PauseMenu::PauseMenu(Engine& engine) noexcept :

@@ -1,4 +1,5 @@
 #include "Modules/Game/Overlays/LoadingIndicator.h"
+#include "Engine.h"
 
 
 LoadingIndicator::~LoadingIndicator() noexcept

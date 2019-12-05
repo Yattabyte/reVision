@@ -2,13 +2,8 @@
 #ifndef PROPDATA_H
 #define PROPDATA_H
 
-#include "Modules/Graphics/Common/Camera.h"
-#include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/GL_Vector.h"
-#include "Utilities/IO/Mesh_IO.h"
 #include "glm/glm.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include <memory>
 #include <vector>
 
 #define NUM_MAX_BONES 100

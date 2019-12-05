@@ -2,14 +2,14 @@
 #include "ecsComponent.h"
 
 
-std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>> ecsBaseComponent::_componentRegistry = std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>>();
-MappedChar<ComponentID> ecsBaseComponent::_nameRegistry = MappedChar<ComponentID>();
+std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>> ecsBaseComponent::m_componentRegistry = std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>>();
+MappedChar<ComponentID> ecsBaseComponent::m_nameRegistry = MappedChar<ComponentID>();
 
 ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string) noexcept
 {
-	const auto componentID = static_cast<ComponentID>(_componentRegistry.size());
-	_componentRegistry.emplace_back(createFn, freeFn, newFn, size);
-	_nameRegistry.insertOrAssign(string, componentID);
+	const auto componentID = static_cast<ComponentID>(m_componentRegistry.size());
+	m_componentRegistry.emplace_back(createFn, freeFn, newFn, size);
+	m_nameRegistry.insertOrAssign(string, componentID);
 
 	return componentID;
 }
@@ -36,8 +36,8 @@ std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const std::vecto
 	dataRead += sizeof(size_t);
 
 	// Create new component of class matching the name
-	if (const auto& componentID = _nameRegistry.search(componentTypeName.c_str())) {
-		const auto& [createFn, freeFn, newFn, size] = _componentRegistry[*componentID];
+	if (const auto& componentID = m_nameRegistry.search(componentTypeName.c_str())) {
+		const auto& [createFn, freeFn, newFn, size] = m_componentRegistry[*componentID];
 		const auto& clone = newFn();
 		clone->recover_data(std::vector(data.begin() + dataRead, data.begin() + dataRead + classDataSize));
 		dataRead += classDataSize;

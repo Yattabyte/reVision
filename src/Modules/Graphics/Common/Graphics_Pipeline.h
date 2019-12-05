@@ -4,6 +4,7 @@
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Geometry/Geometry_Technique.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include "Modules/Graphics/Common/Viewport.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/ecsWorld.h"
@@ -11,6 +12,7 @@
 #include <vector>
 
 
+// Forward Declarations
 class Engine;
 
 /** Represents a series of graphics rendering techniques to apply serially. */

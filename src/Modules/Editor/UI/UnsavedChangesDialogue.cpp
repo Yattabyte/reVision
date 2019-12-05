@@ -1,7 +1,6 @@
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
 #include "Modules/Editor/Editor_M.h"
 #include "imgui.h"
-#include "Engine.h"
 
 
 UnsavedChangesDialogue::UnsavedChangesDialogue(Engine& engine, LevelEditor_Module& editor) noexcept :

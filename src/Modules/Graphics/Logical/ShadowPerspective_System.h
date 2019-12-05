@@ -3,9 +3,10 @@
 #define SHADOWPERSPECTIVE_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include <memory>
 
+
+// Forward Declarations
+class Camera;
 
 /** An ECS system responsible for collecting cameras from entities with shadow components. */
 class ShadowPerspective_System final : public ecsBaseSystem {

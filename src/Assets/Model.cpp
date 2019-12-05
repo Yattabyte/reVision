@@ -1,5 +1,6 @@
 #include "Assets/Model.h"
 #include "Engine.h"
+#include "glm/geometric.hpp"
 
 
 constexpr const char* DIRECTORY_MODEL = "\\Models\\";

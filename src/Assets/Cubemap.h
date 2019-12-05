@@ -3,10 +3,9 @@
 #define	CUBEMAP_H
 
 #include "Assets/Image.h"
-#include "glm/glm.hpp"
 
 
-class Engine;
+// Forward Declarations
 class Cubemap;
 
 /** Shared version of a Cubemap asset.

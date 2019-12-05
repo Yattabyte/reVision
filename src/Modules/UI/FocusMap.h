@@ -4,7 +4,6 @@
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Utilities/ActionState.h"
-#include <map>
 #include <vector>
 
 
@@ -51,7 +50,7 @@ private:
 	/** Shorthand method returning if we can tab/switch to an element.
 	@param	element		the element to check.
 	@return				true if focusable, false otherwise. */
-	bool static elementFocusable(const std::shared_ptr<UI_Element>& element) noexcept;;
+	bool static elementFocusable(const std::shared_ptr<UI_Element>& element) noexcept;
 
 
 	// Private Attributes

@@ -1,4 +1,5 @@
 #include "Modules/UI/Basic Elements/Slider.h"
+#include <algorithm>
 
 
 Slider::Slider(Engine& engine, const float& value, const glm::vec2& range) noexcept :

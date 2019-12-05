@@ -3,7 +3,7 @@
 #define ECS_SYSTEM_H
 
 #include "Modules/ECS/ecsComponent.h"
-#include <memory>
+#include <vector>
 
 
 /** An interface for an ecsSystem. */

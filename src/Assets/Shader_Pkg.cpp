@@ -1,7 +1,6 @@
 #include "Assets/Shader_Pkg.h"
 #include "Utilities/IO/Text_IO.h"
 #include "Engine.h"
-#include "glm/gtc/type_ptr.hpp"
 
 
 constexpr const char* EXT_PACKAGE = ".pkg";

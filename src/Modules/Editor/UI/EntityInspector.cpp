@@ -1,7 +1,6 @@
 #include "Modules/Editor/UI/EntityInspector.h"
 #include "Modules/Editor/Editor_M.h"
 #include "imgui.h"
-#include "Engine.h"
 
 // Component Inspectors
 #include "Modules/Editor/Systems/Inspector_Transform_System.h"

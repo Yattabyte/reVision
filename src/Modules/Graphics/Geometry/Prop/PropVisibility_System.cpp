@@ -1,4 +1,6 @@
 #include "Modules/Graphics/Geometry/Prop/PropVisibility_System.h"
+#include "Modules/Graphics/Geometry/Prop/PropData.h"
+#include "Modules/ECS/component_types.h"
 
 
 PropVisibility_System::PropVisibility_System(PropData& frameData) noexcept :

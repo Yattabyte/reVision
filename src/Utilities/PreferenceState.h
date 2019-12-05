@@ -3,13 +3,11 @@
 #define PREFERENCE_STATE_H
 
 #include "Assets/Config.h"
-#include <algorithm>
-#include <functional>
 #include <map>
 #include <vector>
-#include <utility>
 
 
+// Forward Declarations
 class Engine;
 
 /** A container class that holds the preference state for the engine, such as window size and graphics options. */

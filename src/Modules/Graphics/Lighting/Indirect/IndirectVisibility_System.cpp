@@ -1,4 +1,6 @@
 #include "Modules/Graphics/Lighting/Indirect/IndirectVisibility_System.h"
+#include "Modules/Graphics/Lighting/Indirect/IndirectData.h"
+#include "Modules/ECS/component_types.h"
 
 
 IndirectVisibility_System::IndirectVisibility_System(Indirect_Light_Data& frameData) noexcept :

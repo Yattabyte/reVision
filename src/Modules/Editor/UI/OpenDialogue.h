@@ -8,10 +8,6 @@
 #include <vector>
 
 
-// Forward declarations
-class Engine;
-class LevelEditor_Module;
-
 /** A level editor UI element allowing the user to open levels in the maps folder. */
 class OpenDialogue final : public ImGUI_Element {
 public:

@@ -1,4 +1,5 @@
 #include "Modules/Graphics/Logical/ReflectorPerspective_System.h"
+#include "Modules/ECS/component_types.h"
 
 
 ReflectorPerspective_System::ReflectorPerspective_System(std::vector<Camera*>& sceneCameras) noexcept :

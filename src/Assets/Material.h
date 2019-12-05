@@ -1,15 +1,15 @@
 #pragma once
 #ifndef	MATERIAL_H
 #define	MATERIAL_H
-#define MAX_PHYSICAL_IMAGES 6
-#define MAX_DIGITAL_IMAGES 3
 
 #include "Assets/Image.h"
 #include "glm/glm.hpp"
-#include <vector>
+
+#define MAX_PHYSICAL_IMAGES 6
+#define MAX_DIGITAL_IMAGES 3
 
 
-class Engine;
+// Forward Declarations
 class Material;
 
 /** Shared version of a Material asset.

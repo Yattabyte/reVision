@@ -1,6 +1,7 @@
 #include "Assets/Auto_Model.h"
 #include "Utilities/IO/Mesh_IO.h"
 #include "Engine.h"
+#include "glm/glm.hpp"
 
 
 constexpr const char* EXT_PRIMITIVE = ".obj";

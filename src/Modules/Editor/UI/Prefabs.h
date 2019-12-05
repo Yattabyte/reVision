@@ -5,11 +5,11 @@
 #include "Modules/Editor/UI/Editor_Interface.h"
 #include "Modules/ECS/ecsWorld.h"
 #include "Assets/Texture.h"
+#include <string>
+#include <vector>
 
 
 // Forward declarations
-class Engine;
-class LevelEditor_Module;
 struct Viewport;
 class Camera;
 

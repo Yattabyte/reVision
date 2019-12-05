@@ -1,4 +1,5 @@
 #include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
+#include "Modules/ECS/component_types.h"
 
 
 Skeletal_Animation_System::Skeletal_Animation_System(Engine& engine) noexcept :
@@ -36,6 +37,53 @@ void Skeletal_Animation_System::updateComponents(const float& deltaTime, const s
 		}
 	}
 }
+
+/** Search for a node in the animation system matching the name specified.
+	@param	pAnimation		the animation system to search through.
+	@param	NodeName		the name of the node to find.
+	@return					pointer to the node matching the name specified if found, nullptr otherwise. */
+inline static constexpr auto FindNodeAnim = [](const Animation& pAnimation, const std::string& NodeName) -> const Node_Animation* {
+	for (unsigned int i = 0; i < pAnimation.numChannels; i++) {
+		const Node_Animation* pNodeAnim = pAnimation.channels[i];
+		if (pNodeAnim->nodeName == NodeName)
+			return pNodeAnim;
+	}
+	return nullptr;
+};
+
+/** Search for a key-frame appropriate for the current animation time.
+@param	AnimationTime	the current time in the animation.
+@param	count			the number of key frames.
+@param	keyVector		array of key frames.
+@return					an appropriate key-frame, 0 otherwise. */
+inline static constexpr auto FindKey = [](const float& AnimationTime, const size_t& count, const auto& keyVector) -> const size_t {
+	for (size_t i = 0; i < count; i++)
+		if (AnimationTime < (float)(keyVector[i + 1]).time)
+			return i;
+	return size_t(0);
+};
+
+/** Interpolate between this key-frame, and the next one, based on the animation time.
+@param	AnimationTime	the current time in the animation.
+@param	keyVector		array of key frames.
+@return					a new key-frame value. */
+inline static constexpr auto InterpolateKeys = [](const float& AnimationTime, const auto& keyVector) {
+	const size_t& keyCount = keyVector.size();
+	assert(keyCount > 0);
+	const auto& Result = keyVector[0].value;
+	if (keyCount > 1) { // Ensure we have 2 values to interpolate between
+		const size_t Index = FindKey(AnimationTime, keyCount - 1, keyVector);
+		const size_t NextIndex = (Index + 1) > keyCount ? 0 : (Index + 1);
+		const auto& Key = keyVector[Index];
+		const auto& NextKey = keyVector[NextIndex];
+		const float DeltaTime = (float)(NextKey.time - Key.time);
+		const float Factor = glm::clamp((AnimationTime - (float)Key.time) / DeltaTime, 0.0f, 1.0f);
+		if constexpr (std::is_same<decltype(Key.value), glm::quat>::value)
+			return glm::slerp(Key.value, NextKey.value, Factor);
+		return glm::mix(Key.value, NextKey.value, Factor);
+	}
+	return Result;
+};
 
 void Skeletal_Animation_System::ReadNodeHeirarchy(std::vector<glm::mat4>& transforms, const float& AnimationTime, const int& animation_ID, const Node* parentNode, const Shared_Mesh& model, const glm::mat4& ParentTransform) noexcept 
 {

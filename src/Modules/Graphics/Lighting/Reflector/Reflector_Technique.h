@@ -4,15 +4,11 @@
 
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
 #include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
-#include "Modules/Graphics/Lighting/Reflector/ReflectorVisibility_System.h"
-#include "Modules/Graphics/Lighting/Reflector/ReflectorScheduler_System.h"
-#include "Modules/Graphics/Lighting/Reflector/ReflectorSync_System.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
 #include "Utilities/GL/StaticMultiBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Engine.h"
 
 
 /** A core lighting technique responsible for all parallax reflectors. */

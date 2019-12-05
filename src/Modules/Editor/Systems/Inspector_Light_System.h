@@ -2,13 +2,12 @@
 #ifndef INSPECTOR_LIGHT_SYSTEM_H
 #define INSPECTOR_LIGHT_SYSTEM_H
 
-#include "Modules/Editor/Editor_M.h"
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "imgui.h"
-#include "glm/gtc/type_ptr.hpp"
-#include "Engine.h"
 
+
+// Forward Declarations
+class Engine;
+class LevelEditor_Module;
 
 /** An ECS system allowing the user to inspect selected light components. */
 class Inspector_Light_System final : public ecsBaseSystem {

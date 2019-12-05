@@ -2,16 +2,12 @@
 #ifndef INSPECTOR_COLLIDER_SYSTEM_H
 #define INSPECTOR_COLLIDER_SYSTEM_H
 
-#include "Modules/Editor/Editor_M.h"
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Utilities/IO/Mesh_IO.h"
-#include "imgui.h"
-#include "glm/gtc/type_ptr.hpp"
-#include "Engine.h"
-#include <algorithm>
-#include <filesystem>
 
+
+// Forward Declarations
+class Engine;
+class LevelEditor_Module;
 
 /** An ECS system allowing the user to inspect selected collider components.*/
 class Inspector_Collider_System final : public ecsBaseSystem {

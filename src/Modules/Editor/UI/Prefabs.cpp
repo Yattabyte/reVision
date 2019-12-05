@@ -4,8 +4,9 @@
 #include "Modules/Graphics/Common/Viewport.h"
 #include "Modules/Graphics/Graphics_M.h"
 #include "Modules/ECS/component_types.h"
-#include "imgui.h"
 #include "Engine.h"
+#include "imgui.h"
+#include "glm/gtx/component_wise.hpp"
 #include <fstream>
 #include <filesystem>
 

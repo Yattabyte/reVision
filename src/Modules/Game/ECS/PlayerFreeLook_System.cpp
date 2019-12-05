@@ -1,4 +1,7 @@
 #include "Modules/Game/ECS/PlayerFreeLook_System.h"
+#include "Modules/ECS/component_types.h"
+#include "glm/glm.hpp"
+#include "Engine.h"
 
 
 PlayerFreeLook_System::PlayerFreeLook_System(Engine& engine) noexcept

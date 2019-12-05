@@ -1,4 +1,6 @@
 #include "Modules/Graphics/Lighting/Reflector/ReflectorVisibility_System.h"
+#include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
+#include "Modules/ECS/component_types.h"
 
 
 ReflectorVisibility_System::ReflectorVisibility_System(ReflectorData& frameData) noexcept :

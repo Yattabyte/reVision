@@ -1,4 +1,7 @@
 #include "Modules/Game/ECS/PlayerSpawner_System.h"
+#include "Modules/Game/Game_M.h"
+#include "Modules/ECS/component_types.h"
+#include "Engine.h"
 
 
 PlayerSpawn_System::PlayerSpawn_System(Engine& engine, Game_Module& game) noexcept

@@ -1,4 +1,5 @@
 #include "Modules/Graphics/Effects/HDR.h"
+#include "Engine.h"
 
 
 HDR::~HDR() noexcept 

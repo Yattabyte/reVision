@@ -1,4 +1,6 @@
 #include "Modules/Physics/ECS/PhysicsSync_System.h"
+#include "Modules/ECS/component_types.h"
+#include "glm/glm.hpp"
 
 
 PhysicsSync_System::PhysicsSync_System(Engine& engine, btDiscreteDynamicsWorld& world) noexcept :

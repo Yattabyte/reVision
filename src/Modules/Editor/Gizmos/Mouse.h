@@ -7,19 +7,16 @@
 #include "Modules/Editor/Gizmos/Translation.h"
 #include "Modules/Editor/Gizmos/Scaling.h"
 #include "Modules/Editor/Gizmos/Rotation.h"
-#include "Modules/ECS/ecsComponent.h"
 #include "Modules/ECS/ecsEntity.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Utilities/Transform.h"
 #include "Utilities/GL/IndirectDraw.h"
-#include <memory>
 #include <vector>
 
 
 // Forward Declarations
 class Engine;
 class LevelEditor_Module;
-
 
 /** A 3D tool allowing the user to select entities in a level. */
 class Mouse_Gizmo {

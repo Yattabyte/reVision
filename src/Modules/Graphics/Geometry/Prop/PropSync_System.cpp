@@ -1,4 +1,6 @@
 #include "Modules/Graphics/Geometry/Prop/PropSync_System.h"
+#include "Modules/Graphics/Geometry/Prop/PropData.h"
+#include "Modules/ECS/component_types.h"
 
 
 PropSync_System::PropSync_System(PropData& frameData) noexcept :

@@ -1,4 +1,6 @@
 #include "Modules/Graphics/Lighting/Indirect/IndirectSync_System.h"
+#include "Modules/Graphics/Lighting/Indirect/IndirectData.h"
+#include "Modules/ECS/component_types.h"
 
 
 IndirectSync_System::IndirectSync_System(Indirect_Light_Data& frameData) noexcept :

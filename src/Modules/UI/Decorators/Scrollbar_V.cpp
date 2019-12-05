@@ -1,4 +1,5 @@
 #include "Modules/UI/Decorators/Scrollbar_V.h"
+#include <algorithm>
 
 
 Scrollbar_V::~Scrollbar_V() noexcept

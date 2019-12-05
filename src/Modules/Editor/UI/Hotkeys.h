@@ -5,10 +5,6 @@
 #include "Modules/Editor/UI/Editor_Interface.h"
 
 
-// Forward declarations
-class Engine;
-class LevelEditor_Module;
-
 /** An invisible level editor UI element responsible for handling hotkeys. */
 class Hotkeys final : public ImGUI_Element {
 public:

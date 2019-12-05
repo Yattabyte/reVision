@@ -3,10 +3,10 @@
 #define FRUSTUMCULL_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "glm/gtc/type_ptr.hpp"
-#include <memory>
 
+
+// Forward Declarations
+class Camera;
 
 /** An ECS system responsible for frustum culling all render-able components with a bounding sphere and a position. */
 class FrustumCull_System final : public ecsBaseSystem {

@@ -5,13 +5,9 @@
 #include "Assets/Mesh.h"
 #include "Assets/Material.h"
 #include "glm/glm.hpp"
-#include "glm/geometric.hpp"
-#include <map>
-#include <string>
-#include <vector>
 
 
-class Engine;
+// Forward Declarations
 class Model;
 
 /** Shared version of a Model asset.

@@ -6,7 +6,6 @@ PreferenceState::~PreferenceState() noexcept
 	save();
 }
 
-
 PreferenceState::PreferenceState(Engine& engine, const std::string& filename) noexcept : 
 	m_engine(engine)
 {

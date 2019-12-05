@@ -3,7 +3,6 @@
 #define STATICBUFFER_H
 
 #include "Utilities/GL/Buffer_Interface.h"
-#include <utility>
 
 
 /** Encapsulates an OpenGL buffer that is fixed in size. */

@@ -1,4 +1,6 @@
 #include "Modules/Graphics/Logical/Transform_System.h"
+#include "Modules/ECS/component_types.h"
+#include "Modules/ECS/ecsWorld.h"
 
 
 Transform_System::Transform_System(Engine& engine) noexcept :

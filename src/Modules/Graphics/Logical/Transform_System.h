@@ -3,11 +3,11 @@
 #define TRANSFORM_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "glm/gtc/type_ptr.hpp"
-#include "Engine.h"
-#include <memory>
 
+
+// Forward Declarations
+class Engine;
+class ecsWorld;
 
 /** An ECS system responsible for applying a transformation hierarchy between parent and child entities. */
 class Transform_System final : public ecsBaseSystem {

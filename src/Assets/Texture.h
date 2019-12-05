@@ -3,10 +3,9 @@
 #define	TEXTURE_H
 
 #include "Assets/Image.h"
-#include "glm/glm.hpp"
 
 
-class Engine;
+// Forward Declarations
 class Texture;
 
 /** Shared version of a Texture asset.

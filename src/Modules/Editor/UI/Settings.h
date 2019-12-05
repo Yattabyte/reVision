@@ -5,10 +5,6 @@
 #include "Modules/Editor/UI/Editor_Interface.h"
 
 
-// Forward declarations
-class Engine;
-class LevelEditor_Module;
-
 /** A level editor dialogue allowing the user to modify level editor settings. */
 class Settings final : public ImGUI_Element {
 public:

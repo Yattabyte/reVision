@@ -3,14 +3,14 @@
 #define OUTLINE_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Editor/Editor_M.h"
 #include "Assets/Mesh.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/StaticBuffer.h"
-#include "Engine.h"
 
+
+// Forward Declarations
+class Engine;
+class LevelEditor_Module;
 
 /** An ECS system responsible for rendering outlines of selected entities bounding objects. */
 class Outline_System final : public ecsBaseSystem {

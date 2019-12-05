@@ -4,10 +4,9 @@
 
 #include "Assets/Asset.h"
 #include <map>
-#include <vector>
 
 
-class Engine;
+// Forward Declarations
 class Config;
 
 /** Shared version of a Config asset.

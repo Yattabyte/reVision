@@ -3,10 +3,12 @@
 #define REFLECTORSCHEDULER_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
-#include "Engine.h"
+#include <glad/glad.h>
 
+
+// Forward Declarations
+class Engine;
+struct ReflectorData;
 
 /** An ECS system responsible for scheduling when reflector related entities should be updated. */
 class ReflectorScheduler_System final : public ecsBaseSystem {

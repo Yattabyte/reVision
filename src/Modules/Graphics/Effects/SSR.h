@@ -5,10 +5,8 @@
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
-#include "Assets/Texture.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/IndirectDraw.h"
-#include "Engine.h"
 
 
 /** A core-rendering technique for deriving extra reflection information from the viewport itself. */

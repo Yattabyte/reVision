@@ -1,4 +1,5 @@
 #include "Modules/Graphics/Common/RH_Volume.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include "Engine.h"
 #include <algorithm>
 

@@ -3,11 +3,10 @@
 #define PLAYERFREELOOK_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Engine.h"
-#include "glm/glm.hpp"
-#include "glm/matrix.hpp"
 
+
+// Forward Declarations
+class Engine;
 
 /** A system responsible for updating player components based on keyboard/mouse. */
 class PlayerFreeLook_System final : public ecsBaseSystem {
@@ -21,7 +20,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final;;
+	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final;
 
 
 private:

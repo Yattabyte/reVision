@@ -3,11 +3,7 @@
 #define OPTIONS_VIDEO_H
 
 #include "Modules/UI/Macro Elements/Options_Pane.h"
-#include "Modules/UI/Basic Elements/SideList.h"
-#include "Modules/UI/Basic Elements/Slider.h"
-#include "Modules/UI/Basic Elements/Toggle.h"
-#include "Engine.h"
-#include <sstream>
+#include "glm/glm.hpp"
 
 
 /** A UI element serving as a video options menu. */

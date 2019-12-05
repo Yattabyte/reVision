@@ -3,10 +3,6 @@
 #define OPTIONS_GRAPICS_H
 
 #include "Modules/UI/Macro Elements/Options_Pane.h"
-#include "Modules/UI/Basic Elements/Button.h"
-#include "Modules/UI/Basic Elements/SideList.h"
-#include "Modules/UI/Basic Elements/Toggle.h"
-#include "Engine.h"
 
 
 /** A UI element serving as a graphics options menu. */

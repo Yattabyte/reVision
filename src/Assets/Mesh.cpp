@@ -1,6 +1,8 @@
 #include "Assets/Mesh.h"
 #include "Utilities/IO/Mesh_IO.h"
 #include "Engine.h"
+#include "glm/glm.hpp"
+#include "glm/geometric.hpp"
 
 
 Shared_Mesh::Shared_Mesh(Engine& engine, const std::string& filename, const bool& threaded) noexcept

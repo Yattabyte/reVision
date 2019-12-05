@@ -2,11 +2,11 @@
 #ifndef	TEXT_IO_H
 #define	TEXT_IO_H
 
-#include "glm/glm.hpp"
 #include <ios>
 #include <string>
 
 
+// Forward Declarations
 class Engine;
 
 /** A static helper class used for reading/writing text. */

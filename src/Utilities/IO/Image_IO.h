@@ -8,6 +8,7 @@
 #include <vector>
 
 
+// Forward Declarations
 class Engine;
 struct FIBITMAP;
 

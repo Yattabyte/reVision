@@ -1,4 +1,6 @@
 #include "Modules/Graphics/Lighting/Shadow/Shadow_Technique.h"
+#include "Modules/Graphics/Lighting/Shadow/ShadowScheduler_System.h"
+#include "Engine.h"
 
 
 Shadow_Technique::~Shadow_Technique() noexcept 

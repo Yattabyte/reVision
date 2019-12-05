@@ -3,9 +3,10 @@
 #define PROPVISIBILITY_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Graphics/Geometry/Prop/PropData.h"
 
+
+// Forward Declarations
+struct PropData;
 
 /** An ECS system responsible for populating render lists PER active perspective in a given frame, for all prop related entities. */
 class PropVisibility_System final : public ecsBaseSystem {

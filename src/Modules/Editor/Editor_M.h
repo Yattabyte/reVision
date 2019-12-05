@@ -2,11 +2,10 @@
 #ifndef EDITOR_MODULE_H
 #define EDITOR_MODULE_H
 
-#include "Modules/UI/UI_M.h"
-#include "Assets/Auto_Model.h"
-#include "Assets/Shader.h"
 #include "Modules/Engine_Module.h"
 #include "Modules/ECS/ecsWorld.h"
+#include "Assets/Auto_Model.h"
+#include "Assets/Shader.h"
 #include "Utilities/Transform.h"
 #include "Utilities/GL/IndirectDraw.h"
 #include <deque>

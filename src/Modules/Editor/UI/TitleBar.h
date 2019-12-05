@@ -6,10 +6,6 @@
 #include "Assets/Texture.h"
 
 
-// Forward declarations
-class Engine;
-class LevelEditor_Module;
-
 /** A level editor UI element acting as a title-bar with File, Edit, menus. */
 class TitleBar final : public ImGUI_Element {
 public:

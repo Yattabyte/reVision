@@ -4,11 +4,11 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Engine.h"
-#include "glm/glm.hpp"
-#include "glm/gtx/component_wise.hpp"
 
+
+// Forward Declarations
+class Engine;
+class btDiscreteDynamicsWorld;
 
 /** A system responsible for updating physics components that share a common transformation. */
 class PhysicsSync_System final : public ecsBaseSystem {

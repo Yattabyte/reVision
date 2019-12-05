@@ -1,5 +1,6 @@
 #include "Modules/UI/Basic Elements/SideList.h"
 #include "Modules/UI/Basic Elements/Panel.h"
+#include <algorithm>
 
 
 SideList::~SideList() noexcept 

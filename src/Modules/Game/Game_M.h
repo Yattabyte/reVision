@@ -6,7 +6,6 @@
 #include "Modules/ECS/ecsWorld.h"
 #include "Modules/Game/Overlays/Overlay.h"
 #include "Modules/UI/Basic Elements/UI_Element.h"
-#include <memory>
 
 
 /** A module responsible for Game Logic. */

@@ -6,10 +6,6 @@
 #include <string>
 
 
-// Forward declarations
-class Engine;
-class LevelEditor_Module;
-
 /** A level editor UI element which notifies the user that a file they've requested is missing. */
 class MissingFileDialogue final : public ImGUI_Element {
 public:

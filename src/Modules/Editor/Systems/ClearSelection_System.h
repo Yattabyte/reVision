@@ -3,10 +3,11 @@
 #define CLEARSELECTION_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Editor/Editor_M.h"
-#include "Engine.h"
 
+
+// Forward Declarations
+class Engine;
+class LevelEditor_Module;
 
 /** An ECS system responsible for deleting all Selected Components from entities. */
 class ClearSelection_System final : public ecsBaseSystem {

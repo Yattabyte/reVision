@@ -2,6 +2,7 @@
 #include "Utilities/IO/Text_IO.h"
 #include "Utilities/IO/Mesh_IO.h"
 #include "Engine.h"
+#include <btBulletDynamicsCommon.h>
 
 
 constexpr const char* DIRECTORY_COLLIDER = "\\Models\\";
@@ -17,7 +18,10 @@ Shared_Collider::Shared_Collider(Engine& engine, const std::string& filename, co
 		));
 }
 
-Collider::Collider(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
+Collider::Collider(Engine& engine, const std::string& filename) noexcept : 
+	Asset(engine, filename) 
+{
+}
 
 void Collider::initialize() noexcept
 {

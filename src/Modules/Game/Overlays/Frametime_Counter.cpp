@@ -1,4 +1,5 @@
 #include "Modules/Game/Overlays/Frametime_Counter.h"
+#include "Engine.h"
 
 
 Frametime_Counter::~Frametime_Counter() noexcept 

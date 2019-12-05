@@ -4,12 +4,9 @@
 
 #include "Assets/Asset.h"
 #include "Assets/Shader.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include <string>
 
 
-class Engine;
+// Forward Declarations
 class Shader_Geometry;
 
 /** Shared version of a Shader_Geometry asset.

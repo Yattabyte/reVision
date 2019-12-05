@@ -2,11 +2,14 @@
 #define RH_VOLUME_H
 #define RH_TEXTURE_COUNT 4
 
-#include "Modules/Graphics/Common/Camera.h"
+#include "glm/glm.hpp"
+#include "glad/glad.h"
 #include <memory>
 
 
+// Forward Declarations
 class Engine;
+class Camera;
 
 /** Represents a data-structure containing radiance-hints volume data. */
 class RH_Volume {

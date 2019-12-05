@@ -3,11 +3,9 @@
 #define	PRIMITIVE_H
 
 #include "Assets/Mesh.h"
-#include "glm/glm.hpp"
-#include <vector>
 
 
-class Engine;
+// Forward Declarations
 class Auto_Model;
 struct Single_Primitive_Vertex;
 

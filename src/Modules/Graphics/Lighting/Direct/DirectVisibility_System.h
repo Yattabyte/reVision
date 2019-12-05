@@ -3,9 +3,10 @@
 #define DIRECTVISIBILITY_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Graphics/Lighting/Direct/DirectData.h"
 
+
+// Forward Declarations
+struct Direct_Light_Data;
 
 /** An ECS system responsible for populating render lists PER active perspective in a given frame, for all light related entities. */
 class DirectVisibility_System final : public ecsBaseSystem {

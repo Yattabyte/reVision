@@ -3,7 +3,6 @@
 #define GRAPHICS_TECHNIQUE_H
 
 #include "Modules/ECS/ecsWorld.h"
-#include <memory>
 #include <vector>
 
 
@@ -34,7 +33,7 @@ public:
 	Technique_Category getCategory() const noexcept;
 	/** Turn this technique  on or off.
 	@param	state			whether this technique should be on or off. */
-	void setEnabled(const bool& state) noexcept;;
+	void setEnabled(const bool& state) noexcept;
 
 
 	// Public Interface

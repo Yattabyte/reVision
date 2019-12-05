@@ -4,15 +4,13 @@
 
 #include <atomic>
 #include <functional>
-#include <map>
-#include <stdio.h>
 #include <string>
-#include <utility>
 #include <vector>
 #include <glad/glad.h>
 #undef APIENTRY
 
 
+// Forward Declarations
 class Asset;
 class Engine;
 using Shared_Asset = std::shared_ptr<Asset>;

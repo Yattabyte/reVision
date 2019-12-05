@@ -3,12 +3,10 @@
 #define MENU_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
-#include "Modules/UI/Basic Elements/Button.h"
 #include "Modules/UI/Basic Elements/Label.h"
 #include "Modules/UI/Basic Elements/List.h"
 #include "Modules/UI/Basic Elements/Panel.h"
 #include "Modules/UI/Basic Elements/Separator.h"
-#include "Engine.h"
 
 
 /** A UI element serving as a menu.
@@ -39,7 +37,7 @@ protected:
 	@param	engine		reference to the engine to use. 
 	@param	buttonText	the text to label the button with.
 	@param	callback	the callback to use when the button is pressed. */
-	void addButton(Engine& engine, const char* buttonText, const std::function<void()>& callback) noexcept;;
+	void addButton(Engine& engine, const char* buttonText, const std::function<void()>& callback) noexcept;
 
 
 	// Protected Attributes

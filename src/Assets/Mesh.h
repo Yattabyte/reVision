@@ -4,14 +4,9 @@
 
 #include "Assets/Asset.h"
 #include "Utilities/IO/Mesh_IO.h"
-#include "glm/glm.hpp"
-#include "glm/geometric.hpp"
-#include <map>
-#include <string>
-#include <vector>
 
 
-class Engine;
+// Forward Declarations
 class Mesh;
 
 /** Shared version of a Mesh asset.

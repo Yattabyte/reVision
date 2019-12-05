@@ -1,4 +1,5 @@
 #include "Modules/Graphics/Logical/ShadowPerspective_System.h"
+#include "Modules/ECS/component_types.h"
 
 
 ShadowPerspective_System::ShadowPerspective_System(std::vector<Camera*>& sceneCameras) noexcept :

@@ -1,4 +1,5 @@
 #include "Modules/Graphics/Logical/FrustumCull_System.h"
+#include "Modules/ECS/component_types.h"
 
 
 FrustumCull_System::FrustumCull_System(std::vector<Camera*>& sceneCameras) noexcept :

@@ -1,4 +1,5 @@
 #include "Modules/Graphics/Effects/Bloom.h"
+#include "Engine.h"
 
 
 Bloom::~Bloom() noexcept

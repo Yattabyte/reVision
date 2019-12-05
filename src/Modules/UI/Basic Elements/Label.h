@@ -7,9 +7,7 @@
 #include "Assets/Texture.h"
 #include "Utilities/GL/IndirectDraw.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include <algorithm>
 #include <string>
-#include "Engine.h"
 
 
 /** UI text label class, affords displaying text on the screen. */

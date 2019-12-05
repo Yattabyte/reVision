@@ -9,9 +9,6 @@
 #include "Utilities/GL/IndirectDraw.h"
 
 
-// Forward declarations
-class Engine;
-
 /** A level editor UI element displaying which direction the camera is rotated towards. */
 class RotationIndicator final : public ImGUI_Element {
 public:

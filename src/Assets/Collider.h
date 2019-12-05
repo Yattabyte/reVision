@@ -3,11 +3,11 @@
 #define	COLLIDER_H
 
 #include "Assets/Mesh.h"
-#include <btBulletDynamicsCommon.h>
 
 
-class Engine;
+// Forward Declarations
 class Collider;
+class btCollisionShape;
 
 /** Shared version of a Collider asset.
 Responsible for the creation, containing, and sharing of assets. */

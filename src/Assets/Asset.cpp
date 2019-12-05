@@ -1,9 +1,12 @@
 #include "Assets/Asset.h"
 #include "Engine.h"
-#include <algorithm>
 
 
-Asset::Asset(Engine& engine, const std::string& filename) noexcept : m_engine(engine), m_filename(filename) {}
+Asset::Asset(Engine& engine, const std::string& filename) noexcept : 
+	m_engine(engine), 
+	m_filename(filename)
+{
+}
 
 std::string Asset::getFileName() const noexcept
 {
@@ -29,7 +32,7 @@ bool Asset::existsYet() const noexcept
 	if (this == nullptr)
 		return false;
 
-		// Check if we're finalized
+	// Check if we're finalized
 	if (!(m_finalized.load()))
 		return false;
 

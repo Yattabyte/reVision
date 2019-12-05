@@ -4,7 +4,6 @@
 
 #include <glad/glad.h>
 #include "glm/glm.hpp"
-#include "glm/gtc/type_ptr.hpp"
 
 
 /** Contains the data for a single point of view. */

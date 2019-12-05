@@ -3,10 +3,12 @@
 #define SHADOWSCHEDULER_SYSTEM_H
 
 #include "Modules/ECS/ecsSystem.h"
-#include "Modules/ECS/component_types.h"
-#include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
-#include "Engine.h"
+#include <glad/glad.h>
 
+
+// Forward Declarations
+class Engine;
+struct ShadowData;
 
 /** An ECS system responsible for scheduling when light & shadow related entities should be updated. */
 class ShadowScheduler_System final : public ecsBaseSystem {

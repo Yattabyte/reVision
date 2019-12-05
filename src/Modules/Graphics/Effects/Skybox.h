@@ -8,7 +8,6 @@
 #include "Assets/Auto_Model.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/IndirectDraw.h"
-#include "Engine.h"
 
 
 /** A core-rendering technique for writing the frame time to the screen. */

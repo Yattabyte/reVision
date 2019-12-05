@@ -1,5 +1,6 @@
 #include "Assets/Cubemap.h"
 #include "Engine.h"
+#include "glm/glm.hpp"
 
 
 constexpr const char* DIRECTORY_CUBEMAP = R"(\Textures\Cubemaps\)";

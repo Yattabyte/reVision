@@ -5,11 +5,10 @@
 #include "Assets/Asset.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include <string>
 
-class Engine;
+
+// Forward Declarations
 class Shader;
-
 
 /** Shared version of a Shader asset.
 Responsible for the creation, containing, and sharing of assets. */

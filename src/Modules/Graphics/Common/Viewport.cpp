@@ -1,7 +1,4 @@
 #include "Modules/Graphics/Common/Viewport.h"
-#include "glm/gtc/matrix_transform.hpp"
-#include "Engine.h"
-#include <algorithm>
 
 
 Viewport::Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions, Engine& engine) noexcept :

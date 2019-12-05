@@ -1,7 +1,6 @@
 #include "Modules\UI\Basic Elements\UI_Element.h"
 #include <glad/glad.h>
 #include "Engine.h"
-#include <algorithm>
 
 
 UI_Element::UI_Element(Engine& engine) noexcept : 

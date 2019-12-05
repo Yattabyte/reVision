@@ -1,4 +1,7 @@
 #include "Modules/Graphics/Lighting/Indirect/Indirect_Technique.h"
+#include "Modules/Graphics/Lighting/Indirect/IndirectVisibility_System.h"
+#include "Modules/Graphics/Lighting/Indirect/IndirectSync_System.h"
+#include "Engine.h"
 #include <random>
 
 

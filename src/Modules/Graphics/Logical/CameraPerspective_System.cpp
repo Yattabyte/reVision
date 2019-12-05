@@ -1,4 +1,5 @@
 #include "Modules/Graphics/Logical/CameraPerspective_System.h"
+#include "Modules/ECS/component_types.h"
 
 
 CameraPerspective_System::CameraPerspective_System(std::vector<Camera*>& sceneCameras) noexcept :

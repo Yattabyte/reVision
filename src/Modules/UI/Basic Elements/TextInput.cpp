@@ -1,4 +1,5 @@
 #include "Modules/UI/Basic Elements/TextInput.h"
+#include <algorithm>
 
 
 TextInput::~TextInput() noexcept
