@@ -3,6 +3,11 @@
 #include "Engine.h"
 
 
+UI_Module::UI_Module(Engine& engine) : 
+	Engine_Module(engine)
+{
+}
+
 void UI_Module::initialize() noexcept
 {
 	Engine_Module::initialize();

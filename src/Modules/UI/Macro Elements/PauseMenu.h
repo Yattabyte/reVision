@@ -24,60 +24,19 @@ public:
 	inline ~PauseMenu() = default;
 	/** Construct a start menu.
 	@param	engine		reference to the engine to use. */
-	inline explicit PauseMenu(Engine& engine) noexcept
-		: Menu(engine) {
-		// Title
-		m_title->setText("PAUSE MENU");
-
-		// Add 'Start Game' button
-		addButton(engine, "RESUME", [&]() { resume(); });
-
-		// Add 'Options' button
-		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
-		addButton(engine, "  OPTIONS >", [&]() { goToOptions(); });
-		m_optionsMenu->addCallback((int)OptionsMenu::Interact::on_back, [&]() { returnFromOptions(); });
-
-		// Add 'Quit' button
-		addButton(engine, "END GAME", [&]() { quit(); });
-
-		// Callbacks
-		addCallback((int)UI_Element::Interact::on_resize, [&]() {
-			const auto scale = getScale();
-			m_optionsMenu->setScale(scale);
-			});
-
-		// Populate Focus Map
-		m_focusMap = std::make_shared<FocusMap>();
-		m_focusMap->addElement(m_layout);
-		engine.getModule_UI().setFocusMap(getFocusMap());
-	}
+	explicit PauseMenu(Engine& engine) noexcept;
 
 
 protected:
 	// Protected Methods
 	/** Choose 'resume' from the pause menu. */
-	inline void resume() noexcept {
-		enactCallback((int)PauseMenu::Interact::on_resume_game);
-	}
+	void resume() noexcept;
 	/** Choose 'options' from the main menu. */
-	inline void goToOptions() noexcept {
-		// Transfer appearance and control to options menu
-		auto& ui = m_engine.getModule_UI();
-		ui.pushRootElement(m_optionsMenu);
-		ui.setFocusMap(m_optionsMenu->getFocusMap());
-		m_layout->setSelectionIndex(-1);
-		enactCallback((int)PauseMenu::Interact::on_options);
-	}
+	void goToOptions() noexcept;
 	/** Chosen when control is returned from the options menu. */
-	inline void returnFromOptions() noexcept {
-		// Transfer control back to this menu
-		m_engine.getModule_UI().setFocusMap(getFocusMap());
-	}
+	void returnFromOptions() noexcept;
 	/** Choose 'quit' from the pause menu. */
-	inline void quit() noexcept {
-		m_engine.getModule_UI().clear();
-		enactCallback((int)PauseMenu::Interact::on_end);
-	}
+	void quit() noexcept;
 
 
 	// Protected Attributes

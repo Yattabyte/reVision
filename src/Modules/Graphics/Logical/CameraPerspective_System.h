@@ -16,20 +16,11 @@ public:
 	inline ~CameraPerspective_System() = default;
 	/** Construct this system.
 	@param	sceneCameras	reference to the scene cameras to use. */
-	inline explicit CameraPerspective_System(std::vector<Camera*>& sceneCameras) noexcept :
-		m_sceneCameras(sceneCameras)
-	{
-		addComponentType(Camera_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
-	}
+	explicit CameraPerspective_System(std::vector<Camera*>& sceneCameras) noexcept;
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
-		for (const auto& componentParam : components) {
-			auto* cameraComponent = static_cast<Camera_Component*>(componentParam[0]);
-			m_sceneCameras.push_back(&cameraComponent->m_camera);
-		}
-	}
+	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final;
 
 
 private:

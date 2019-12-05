@@ -55,12 +55,12 @@ private:
 
 /** UI element representing an ImGUI element. */
 struct ImGUI_Element {
+	bool m_open = true;
 	inline virtual ~ImGUI_Element() = default;
 	inline ImGUI_Element() = default;
-	bool m_open = true;
-	inline void open() noexcept { m_open = true; }
-	inline void close() noexcept { m_open = false; }
-	inline virtual void tick(const float& deltaTime) noexcept {};
+	void open() noexcept;
+	void close() noexcept;
+	virtual void tick(const float& deltaTime) noexcept;;
 };
 
 #endif // EDITOR_INTERFACE_H

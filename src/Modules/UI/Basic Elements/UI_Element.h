@@ -35,7 +35,7 @@ public:
 	inline virtual ~UI_Element() = default;
 	/** Construct a UI element.
 	@param	engine		reference to the engine to use. */
-	inline explicit UI_Element(Engine& engine) noexcept : m_engine(engine) {}
+	explicit UI_Element(Engine& engine) noexcept;
 
 
 	// Public Interface Declaration

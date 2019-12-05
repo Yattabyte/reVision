@@ -25,7 +25,7 @@ public:
 	inline ~LevelEditor_Module() = default;
 	/** Construct a game module.
 	@param	engine		reference to the engine to use. */
-	inline explicit LevelEditor_Module(Engine& engine) : Engine_Module(engine) {}
+	explicit LevelEditor_Module(Engine& engine);
 
 
 	// Public Interface Implementation
@@ -195,7 +195,7 @@ struct Editor_Command {
 	/** Join into this command the data found in another newer command.
 	@param	newerCommand	the newer of the two commands, to take data from.
 	@return					true if this command supports & successfully joined with a newer command, false otherwise. */
-	inline virtual bool join(Editor_Command* newerCommand) noexcept { return false; }
+	virtual bool join(Editor_Command* newerCommand) noexcept;
 };
 
 #endif // EDITOR_MODULE_H

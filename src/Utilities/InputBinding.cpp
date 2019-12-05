@@ -8,6 +8,11 @@ InputBinding::~InputBinding() noexcept
 	save();
 }
 
+InputBinding::InputBinding(Engine& engine) noexcept : 
+	m_engine(engine) 
+{
+}
+
 void InputBinding::loadFile(const std::string& filename) noexcept
 {
 	m_config = Shared_Config(m_engine, filename, ActionState::Action_Strings(), false);

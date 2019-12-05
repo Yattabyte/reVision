@@ -15,7 +15,7 @@ public:
 	inline ~ECS_Module() = default;
 	/** Construct a ECS module.
 	@param	engine		reference to the engine to use. */
-	inline explicit ECS_Module(Engine& engine) : Engine_Module(engine) {}
+	explicit ECS_Module(Engine& engine);
 
 
 	// Public Interface Implementations

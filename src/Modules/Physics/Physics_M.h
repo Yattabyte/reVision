@@ -32,8 +32,8 @@ public:
 	/** Update generic physics based ECS systems using a specific ECS world. */
 	void updateSystems(ecsWorld& world, const float& deltaTime) noexcept;
 	/** Retrieves a pointer to the physics-world.
-	@return				the physics world. */
-	inline btDiscreteDynamicsWorld& getWorld() noexcept { return m_world; }
+	@return				reference to the physics world. */
+	btDiscreteDynamicsWorld& getWorld() noexcept;
 
 
 private:

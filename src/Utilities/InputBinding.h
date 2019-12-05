@@ -17,7 +17,7 @@ public:
 	~InputBinding() noexcept;
 	/** Construct a key-binding.
 	@param	engine		reference to the engine to use. */
-	inline explicit InputBinding(Engine& engine) noexcept : m_engine(engine) {}
+	explicit InputBinding(Engine& engine) noexcept;
 
 
 	// Public Methods

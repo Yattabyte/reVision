@@ -47,6 +47,11 @@ Shared_Shader_Pkg::Shared_Shader_Pkg(Engine& engine, const std::string& filename
 
 Shader_Pkg::Shader_Pkg(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
+std::string Shader_Pkg::getPackageText() const noexcept
+{
+	return m_packageText;
+}
+
 void Shader_Pkg::initialize() noexcept
 {
 	const bool found = Text_IO::Import_Text(m_engine, DIRECTORY_SHADER_PKG + getFileName() + EXT_PACKAGE, m_packageText);

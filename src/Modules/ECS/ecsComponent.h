@@ -31,8 +31,7 @@ struct ecsBaseComponent {
 	@param	ID			the runtime ID for this component.
 	@param	size		the byte-size of this component.
 	@param	name		the char array name of this component. */
-	inline ecsBaseComponent(const ComponentID& ID, const size_t& size, const char* name) noexcept
-		: m_runtimeID(ID), m_size(size), m_name(name) { }
+	ecsBaseComponent(const ComponentID& ID, const size_t& size, const char* name) noexcept;
 
 
 	// Public Methods
@@ -101,8 +100,7 @@ struct ecsComponent : public ecsBaseComponent {
 		return {};
 	}
 	/** Default de-serialization method, doing nothing. */
-	inline static void deserialize(const std::vector<char>&) noexcept {
-	}
+	inline static void deserialize(const std::vector<char>&) noexcept {}
 	/** Save this component to a char buffer.
 	@return				serialized version of self. */
 	inline virtual std::vector<char> to_buffer() noexcept override {

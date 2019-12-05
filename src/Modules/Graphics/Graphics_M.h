@@ -24,7 +24,7 @@ public:
 	inline ~Graphics_Module() = default;
 	/** Construct a graphics rendering module.
 	@param	engine		reference to the engine to use. */
-	inline explicit Graphics_Module(Engine& engine) : Engine_Module(engine) {}
+	explicit Graphics_Module(Engine& engine);
 
 
 	// Public Interface Implementation
@@ -35,9 +35,7 @@ public:
 	// Public Methods
 	/** Retrieve a shared pointer to the rendering pipeline.
 	@return					shared pointer to the rendering pipeline. */
-	inline auto getPipeline() const noexcept {
-		return m_pipeline;
-	}
+	std::shared_ptr<Graphics_Pipeline> getPipeline() const noexcept;
 	/** Convenience function for rendering a given ecsWorld to a given FBO.
 	@param	world			the ecsWorld to source data from.
 	@param	deltaTime		the amount of time passed since last frame.
@@ -53,9 +51,7 @@ public:
 	void genPerspectiveMatrix() noexcept;
 	/** Retrieves a shared pointer to the primary camera.
 	@return					the primary camera. */
-	inline Camera& getClientCamera() noexcept {
-		return m_clientCamera;
-	}
+	Camera& getClientCamera() noexcept;
 
 
 private:

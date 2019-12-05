@@ -25,71 +25,21 @@ public:
 	inline ~StartMenu() = default;
 	/** Construct a start menu.
 	@param	engine		reference to the engine to use. */
-	inline explicit StartMenu(Engine& engine) noexcept
-		: Menu(engine) {
-		// Title
-		m_title->setText("MAIN MENU");
-
-		// Add 'Start Game' button
-		addButton(engine, "START GAME", [&]() { startGame(); });
-
-		// Add 'Level Editor' button
-		addButton(engine, "LEVEL EDITOR", [&]() { startEditor(); });
-
-		// Add 'Options' button
-		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
-		addButton(engine, "  OPTIONS >", [&]() { goToOptions(); });
-		m_optionsMenu->addCallback((int)OptionsMenu::Interact::on_back, [&]() { returnFromOptions(); });
-
-		// Add 'Quit' button
-		addButton(engine, "QUIT", [&]() { quit(); });
-
-		// Callbacks
-		addCallback((int)UI_Element::Interact::on_resize, [&]() {
-			const auto scale = getScale();
-			m_optionsMenu->setScale(scale);
-			});
-
-		// Populate Focus Map
-		m_focusMap = std::make_shared<FocusMap>();
-		m_focusMap->addElement(m_layout);
-		m_focusMap->focusElement(m_layout);
-		engine.getModule_UI().setFocusMap(getFocusMap());
-	}
+	explicit StartMenu(Engine& engine) noexcept;
 
 
 protected:
 	// Protected Methods
 	/** Choose 'start game' from the main menu. */
-	inline void startGame() noexcept {
-		m_engine.getModule_UI().clear();
-		enactCallback((int)StartMenu::Interact::on_start_game);
-	}
+	void startGame() noexcept;
 	/** Choose 'level editor' from the main menu. */
-	inline void startEditor() noexcept {
-		m_engine.getModule_UI().clear();
-		enactCallback((int)StartMenu::Interact::on_level_editor);
-	}
+	void startEditor() noexcept;
 	/** Choose 'options' from the main menu. */
-	inline void goToOptions() noexcept {
-		// Transfer appearance and control to options menu
-		auto& ui = m_engine.getModule_UI();
-		ui.pushRootElement(m_optionsMenu);
-		ui.setFocusMap(m_optionsMenu->getFocusMap());
-		m_layout->setSelectionIndex(-1);
-		enactCallback((int)StartMenu::Interact::on_options);
-	}
+	void goToOptions() noexcept;
 	/** Chosen when control is returned from the options menu. */
-	inline void returnFromOptions() noexcept {
-		// Transfer control back to this menu
-		m_engine.getModule_UI().setFocusMap(getFocusMap());
-	}
+	void returnFromOptions() noexcept;
 	/** Choose 'quit' from the main menu. */
-	inline void quit() noexcept {
-		m_engine.getModule_UI().clear();
-		m_engine.shutDown();
-		enactCallback((int)StartMenu::Interact::on_quit);
-	}
+	void quit() noexcept;
 
 
 	// Protected Attributes

@@ -37,3 +37,8 @@ void Physics_Module::updateSystems(ecsWorld& world, const float& deltaTime) noex
 {
 	world.updateSystems(m_physicsSystems, deltaTime);
 }
+
+btDiscreteDynamicsWorld& Physics_Module::getWorld() noexcept 
+{ 
+	return m_world; 
+}

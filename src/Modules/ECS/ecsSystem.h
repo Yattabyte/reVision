@@ -27,17 +27,10 @@ public:
 	// Public Methods
 	/** Retrieves the component types supported by this system.
 	@return		the component types supported by this system. */
-	inline std::vector<std::pair<ComponentID, RequirementsFlag>> getComponentTypes() const {
-		return m_componentTypes;
-	};
+	std::vector<std::pair<ComponentID, RequirementsFlag>> getComponentTypes() const;
 	/** Retrieves whether or not this system is valid (has at least 1 non-optional component type).
 	@return		true if the system is valid, false otherwise. */
-	inline bool isValid() const noexcept {
-		for (const auto& [componentID, componentFlag] : m_componentTypes)
-			if (((unsigned int)componentFlag & (unsigned int)RequirementsFlag::FLAG_OPTIONAL) == 0)
-				return true;
-		return false;
-	}
+	bool isValid() const noexcept;
 
 
 	// Public Interface
@@ -52,13 +45,11 @@ protected:
 	/** Add a component type to be used by this system.
 	@param	componentType	the type of component to use
 	@param	componentFlag	flag indicating required/optional */
-	inline void addComponentType(const ComponentID& componentType, const RequirementsFlag& componentFlag = RequirementsFlag::FLAG_REQUIRED) noexcept {
-		m_componentTypes.push_back({ componentType, componentFlag });
-	}
+	void addComponentType(const ComponentID& componentType, const RequirementsFlag& componentFlag = RequirementsFlag::FLAG_REQUIRED) noexcept;
 
 
 private:
-	//private attributes
+	// Private attributes
 	std::vector<std::pair<ComponentID, RequirementsFlag>> m_componentTypes;
 };
 
@@ -80,55 +71,30 @@ public:
 	}
 	/** Adds a system to the list.
 	@param	system	the system to add. */
-	inline bool addSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept {
-		if (system->isValid()) {
-			m_systems.push_back(system);
-			return true;
-		}
-		return false;
-	}
+	bool addSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept;
 	/** Removes a system from the list.
 	@param	system	the system to remove.
 	@return			true if successfully removed, false otherwise. */
-	inline bool removeSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept {
-		for (size_t i = 0; i < m_systems.size(); ++i)
-			if (system.get() == m_systems[i].get()) {
-				m_systems.erase(m_systems.begin() + i);
-				return true;
-			}
-		return false;
-	}
+	bool removeSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept;
 	/** Retrieve the number of systems in the list.
 	@return			the size of the list. */
-	inline size_t size() const noexcept {
-		return m_systems.size();
-	}
+	size_t size() const noexcept;
 	/** Retrieve a specific system at a given index.
 	@param	index	the index to fetch the system from.
 	@return			the system found at the index specified. */
-	inline auto operator[](const size_t& index) const noexcept {
-		return m_systems[index];
-	}
+	std::shared_ptr<ecsBaseSystem> operator[](const size_t& index) const noexcept;
 	/** Retrieve an iterator to the beginning of this system list.
 	@return			 an iterator to the beginning of this system list. */
-	inline auto begin() noexcept {
-		return m_systems.begin();
-	}
+	std::vector<std::shared_ptr<ecsBaseSystem>>::iterator begin() noexcept;
 	/** Retrieve a const iterator to the beginning of this system list.
 	@return			a const iterator to the beginning of this system list. */
-	inline auto begin() const noexcept {
-		return m_systems.cbegin();
-	}
+	std::vector<std::shared_ptr<ecsBaseSystem>>::const_iterator begin() const noexcept;
 	/** Retrieve an iterator to the end of this system list.
 	@return			an iterator to the end of this system list. */
-	inline auto end() noexcept {
-		return m_systems.end();
-	}
+	std::vector<std::shared_ptr<ecsBaseSystem>>::iterator end() noexcept;
 	/** Retrieve a const iterator to the end of this system list.
 	@return			a const iterator to the end of this system list. */
-	inline auto end() const noexcept {
-		return m_systems.cend();
-	}
+	std::vector<std::shared_ptr<ecsBaseSystem>>::const_iterator end() const noexcept;
 
 
 private:

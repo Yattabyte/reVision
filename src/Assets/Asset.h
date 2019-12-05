@@ -75,7 +75,7 @@ private:
 	/** Disallow asset assignment. */
 	inline Asset(const Asset&) noexcept = delete;
 	/** Disallow asset assignment. */
-	inline const Asset& operator =(const Asset&)  noexcept = delete;
+	inline const Asset& operator =(const Asset&) noexcept = delete;
 };
 
 #endif // ASSET_H

@@ -57,4 +57,5 @@ private:
 	// Private Attributes
 	friend class Shared_Cubemap;
 };
+
 #endif // CUBEMAP_H

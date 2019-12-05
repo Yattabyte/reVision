@@ -13,36 +13,14 @@ public:
 	inline ~UI_Decorator() = default;
 	/** Construct a decorator, decorating the supplied component.
 	@param	component		the component to decorate. */
-	inline UI_Decorator(Engine& engine, const std::shared_ptr<UI_Element>& component) noexcept
-		: UI_Element(engine), m_component(component) {}
+	UI_Decorator(Engine& engine, const std::shared_ptr<UI_Element>& component) noexcept;
 
 
 	// Public Interface Implementations
-	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position = glm::vec2(0.0f), const glm::vec2& scale = glm::vec2(1.0f)) noexcept override {
-		UI_Element::renderElement(deltaTime, position, scale);
-		const glm::vec2 newPosition = position + m_position;
-		const glm::vec2 newScale = glm::min(m_scale, scale);
-		m_component->renderElement(deltaTime, newPosition, newScale);
-	}
-	inline virtual void mouseAction(const MouseEvent& mouseEvent) noexcept override {
-		UI_Element::mouseAction(mouseEvent);
-		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
-			MouseEvent subEvent = mouseEvent;
-			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
-			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-			m_component->mouseAction(subEvent);
-		}
-		else
-			m_component->clearFocus();
-	}
-	inline virtual void keyboardAction(const KeyboardEvent& keyboardEvent) noexcept override {
-		m_component->keyboardAction(keyboardEvent);
-		UI_Element::keyboardAction(keyboardEvent);
-	}
-	inline virtual void userAction(ActionState& actionState) noexcept override {
-		m_component->userAction(actionState);
-		UI_Element::userAction(actionState);
-	}
+	virtual void renderElement(const float& deltaTime, const glm::vec2& position = glm::vec2(0.0f), const glm::vec2& scale = glm::vec2(1.0f)) noexcept override;
+	virtual void mouseAction(const MouseEvent& mouseEvent) noexcept override;
+	virtual void keyboardAction(const KeyboardEvent& keyboardEvent) noexcept override;
+	virtual void userAction(ActionState& actionState) noexcept override;
 
 
 protected:

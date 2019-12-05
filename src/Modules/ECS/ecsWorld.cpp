@@ -167,6 +167,13 @@ std::vector<EntityHandle> ecsWorld::getEntityHandles(const EntityHandle& rootHan
 	return entityHandles;
 }
 
+ecsBaseComponent* ecsWorld::getComponent(const EntityHandle& entityHandle, const ComponentID& componentID) const noexcept 
+{
+	if (auto* entity = getEntity(entityHandle))
+		return getComponent(entity->m_components, m_components.at(componentID), componentID);
+	return nullptr;
+}
+
 ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle) const noexcept
 {
 	std::function<ecsBaseComponent * (const EntityMap&, const ComponentHandle&)> find_component = [&](const EntityMap& entities, const ComponentHandle& componentHandle) -> ecsBaseComponent* {
@@ -247,7 +254,7 @@ ecsHandle ecsWorld::generateUUID() noexcept
 	}
 	const auto& string = ss.str();
 	ecsHandle handle;
-	std::copy(&string[0], &string[32], &handle.uuid[0]);
+	std::copy(&string[0], &string[32], &handle.m_uuid[0]);
 	return handle;
 }
 

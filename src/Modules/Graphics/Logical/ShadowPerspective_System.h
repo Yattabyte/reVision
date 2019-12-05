@@ -15,21 +15,11 @@ public:
 	inline ~ShadowPerspective_System() = default;
 	/** Construct this system.
 	@param	sceneCameras	reference to the scene cameras to use. */
-	inline explicit ShadowPerspective_System(std::vector<Camera*>& sceneCameras) noexcept :
-		m_sceneCameras(sceneCameras)
-	{
-		addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
-	}
+	explicit ShadowPerspective_System(std::vector<Camera*>& sceneCameras) noexcept;
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
-		for (const auto& componentParam : components) {
-			auto* shadow = static_cast<Shadow_Component*>(componentParam[0]);
-			for (auto& camera : shadow->m_cameras)
-				m_sceneCameras.push_back(&camera);
-		}
-	}
+	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final;
 
 
 private:

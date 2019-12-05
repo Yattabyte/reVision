@@ -29,130 +29,42 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy this label. */
-	inline ~Label() noexcept {
-		// Delete geometry
-		glDeleteBuffers(1, &m_vboID);
-		glDeleteVertexArrays(1, &m_vaoID);
-	}
+	~Label() noexcept;
 	/** Construct a label, giving it the desired text.
 	@param	engine		reference to the engine to use. 
 	@param	text		the label text. */
-	inline explicit Label(Engine& engine, const std::string& text = "Label") noexcept :
-		UI_Element(engine),
-		m_shader(Shared_Shader(engine, "UI\\Label")),
-		m_textureFont(Shared_Texture(engine, "font.tga", GL_TEXTURE_2D, true, true))
-	{
-		// Generate vertex array
-		glCreateVertexArrays(1, &m_vaoID);
-		glEnableVertexArrayAttrib(m_vaoID, 0);
-		glVertexArrayAttribBinding(m_vaoID, 0, 0);
-		glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
-		glCreateBuffers(1, &m_vboID);
-		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
-		constexpr auto num_data = 2 * 3;
-		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
-		std::vector<glm::vec3> data(num_data);
-		data[0] = { -1, -1, 0 };
-		data[1] = { 1, -1, 0 };
-		data[2] = { 1,  1, 0 };
-		data[3] = { 1,  1, 0 };
-		data[4] = { -1,  1, 0 };
-		data[5] = { -1, -1, 0 };
-		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &data[0]);
-		m_indirect = IndirectDraw<>((GLuint)num_data, 1, 0, GL_DYNAMIC_STORAGE_BIT);
-
-		// Configure THIS element
-		setText(text);
-		setTextScale(m_textScale);
-	}
+	explicit Label(Engine& engine, const std::string& text = "Label") noexcept;
 
 
 	// Public Interface Implementation
-	inline virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override {
-		// Exit Early
-		if (!getVisible() || !m_shader->existsYet() || !m_textureFont->existsYet()) return;
-
-		// Update indirect draw call
-		m_indirect.beginWriting();
-		m_indirect.setPrimitiveCount(m_charCount);
-		m_indirect.endWriting();
-
-		// Render
-		const glm::vec2 newPosition = position + m_position;
-		const glm::vec2 newScale = glm::min(m_scale, scale);
-		m_shader->bind();
-		m_shader->setUniform(0, newPosition);
-		m_shader->setUniform(1, newScale);
-		m_shader->setUniform(2, std::clamp<float>((getScale().x / getText().size()) * 2.0f, 5.0f, m_textScale));
-		m_shader->setUniform(3, (int)m_textAlignment);
-		m_shader->setUniform(4, m_enabled);
-		m_shader->setUniform(5, m_color);
-		m_textureFont->bind(0);
-		m_bufferString.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-		glBindVertexArray(m_vaoID);
-		m_indirect.drawCall();
-		m_indirect.endReading();
-		Shader::Release();
-
-		// Render Children
-		UI_Element::renderElement(deltaTime, position, scale);
-	}
+	virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override;
 
 
 	// Public Methods
 	/** Set this label element's text.
 	@param	text	the text to use. */
-	inline void setText(const std::string& text) noexcept {
-		m_text = text;
-
-		// Write letters to a buffer
-		const GLuint count = (GLuint)m_text.size();
-		std::vector<int> data(size_t(count) + 1ull);
-		data[0] = (int)count;
-		for (size_t x = 0; x < (size_t)count; ++x)
-			data[x + 1ull] = (int)(m_text[x]) - 32;
-		m_bufferString.write_immediate(0, sizeof(int) * (size_t(count) + 1ull), data.data());
-		m_charCount = count;
-
-		// Notify text changed
-		enactCallback((int)Label::Interact::on_textChanged);
-	}
+	void setText(const std::string& text) noexcept;
 	/** Retrieve this label's text.
 	@return	the text this label uses. */
-	inline std::string getText() const noexcept {
-		return m_text;
-	}
+	std::string getText() const noexcept;
 	/** Set this label element's text scaling factor.
 	@param	text	the new scaling factor to use. */
-	inline void setTextScale(const float& textScale) noexcept {
-		m_textScale = textScale;
-		m_maxScale.y = textScale;
-	}
+	void setTextScale(const float& textScale) noexcept;
 	/** Retrieve this label's text scaling factor.
 	@return	the text scaling factor. */
-	inline float getTextScale() const noexcept {
-		return m_textScale;
-	}
+	float getTextScale() const noexcept;
 	/** Set this label's color.
 	@param	text	the new color to render with. */
-	inline void setColor(const glm::vec3& color) noexcept {
-		m_color = color;
-	}
+	void setColor(const glm::vec3& color) noexcept;
 	/** Retrieve this label's color.
 	@return	the color used by this element. */
-	inline glm::vec3 getColor() const noexcept {
-		return m_color;
-	}
+	glm::vec3 getColor() const noexcept;
 	/** Set this label element's alignment.
 	@param	text	the alignment (left, center, right). */
-	inline void setAlignment(const Alignment& alignment) noexcept {
-		m_textAlignment = alignment;
-	}
+	void setAlignment(const Alignment& alignment) noexcept;
 	/** Retrieve this label's alignment.
 	@return	the alignment. */
-	inline Alignment getAlignment() const noexcept {
-		return m_textAlignment;
-	}
+	Alignment getAlignment() const noexcept;
 
 
 protected:

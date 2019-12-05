@@ -8,6 +8,11 @@
 #include <typeinfo>
 
 
+Graphics_Module::Graphics_Module(Engine& engine) : 
+	Engine_Module(engine) 
+{
+}
+
 void Graphics_Module::initialize() noexcept
 {
 	Engine_Module::initialize();
@@ -79,6 +84,11 @@ void Graphics_Module::deinitialize() noexcept
 	m_viewport.reset();
 }
 
+std::shared_ptr<Graphics_Pipeline> Graphics_Module::getPipeline() const noexcept 
+{
+	return m_pipeline;
+}
+
 void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID) noexcept
 {
 	std::vector<Camera> cameras = { m_clientCamera };
@@ -110,6 +120,11 @@ void Graphics_Module::genPerspectiveMatrix() noexcept
 	m_clientCamera->pMatrix = glm::perspective(verticalRad, ar, Camera::ConstNearPlane, m_clientCamera->FarPlane);
 	m_clientCamera->pMatrixInverse = glm::inverse(m_clientCamera->pMatrix);
 	m_clientCamera->pvMatrix = m_clientCamera->pMatrix * m_clientCamera->vMatrix;
+}
+
+Camera& Graphics_Module::getClientCamera() noexcept 
+{
+	return m_clientCamera;
 }
 
 void Graphics_Module::copyToFramebuffer(const GLuint& fboID) noexcept

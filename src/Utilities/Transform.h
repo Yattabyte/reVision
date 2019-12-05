@@ -23,68 +23,34 @@ struct Transform {
 	@param position			the desired position
 	@param orientation		the desired orientation
 	@param scale			the desired scale */
-	inline Transform(const glm::vec3& position, const glm::quat& orientation, const glm::vec3& scale) noexcept
-		: m_position(position), m_orientation(orientation), m_scale(scale) {
-		update();
-	}
+	Transform(const glm::vec3& position, const glm::quat& orientation, const glm::vec3& scale) noexcept;
 	/** Constructs a transformation object with only orientation.
 	@param orientation	the desired orientation	*/
-	inline explicit Transform(const glm::quat& orientation) noexcept
-		: Transform(glm::vec3(0.0f), orientation, glm::vec3(1.0f)) {
-	}
+	explicit Transform(const glm::quat& orientation) noexcept;
 
 
 	// Public Methods
 	/** Recalculates the transformation matrix (and inverse) using this transformations current data. */
-	inline void update() noexcept {
-		m_modelMatrix = glm::translate(glm::mat4(1.0f), m_position) *
-			glm::mat4_cast(m_orientation) *
-			glm::scale(glm::mat4(1.0f), m_scale);
-		m_inverseModelMatrix = glm::inverse(m_modelMatrix);
-	}
+	void update() noexcept;
 	/** Calculate and return an inverse transform.
 	@return				an inverse version of this transform. */
-	inline Transform inverse() noexcept {
-		Transform n(*this);
-		n.m_modelMatrix = m_inverseModelMatrix;
-		n.m_inverseModelMatrix = m_modelMatrix;
-		glm::vec3 skew;
-		glm::vec4 perspective;
-		glm::decompose(n.m_modelMatrix, n.m_scale, n.m_orientation, n.m_position, skew, perspective);
-		return n;
-	}
+	Transform inverse() noexcept;
 	/** Retrieve if this transform is equal to another transform.
 	@param	other		the other transform to compare against.
 	@return				true if this transform equals the other transform, false otherwise. */
-	inline bool operator==(const Transform& other) const noexcept {
-		return (m_position == other.m_position && m_orientation == other.m_orientation && m_scale == other.m_scale);
-	}
+	bool operator==(const Transform& other) const noexcept;
 	/** Retrieve if this transform is not equal to another transform.
 	@param	other		the other transform to compare against.
 	@return				true if this transform is not equal the other transform, false otherwise. */
-	inline bool operator!=(const Transform& other) const noexcept {
-		return !((*this) == other);
-	}
+	bool operator!=(const Transform& other) const noexcept;
 	/** Concatenate this transform with another transform.
 	@param	other		the other transform to apply to this transform. 
 	@return				reference to this transform. */
-	inline Transform& operator*=(const Transform& other) noexcept {
-		m_position += other.m_position;
-		m_orientation *= other.m_orientation;
-		m_scale *= other.m_scale;
-		m_modelMatrix = m_modelMatrix * other.m_modelMatrix;
-		m_inverseModelMatrix = glm::inverse(m_modelMatrix);
-		return *this;
-	}
+	Transform& operator*=(const Transform& other) noexcept;
 	/** Concatenate this transform with another transform, returning its product.
 	@param	other		the other transform to apply to this transform.
 	@return				a new transform based on this transform. */
-	inline Transform operator*(const Transform& o) const noexcept {
-		Transform n(m_position + o.m_position, m_orientation * o.m_orientation, m_scale * o.m_scale);
-		n.m_modelMatrix = m_modelMatrix * o.m_modelMatrix;
-		n.m_inverseModelMatrix = glm::inverse(n.m_modelMatrix);
-		return n;
-	}
+	Transform operator*(const Transform& o) const noexcept;
 
 
 	// Public Attributes

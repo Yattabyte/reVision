@@ -16,6 +16,15 @@
 #include <fstream>
 
 
+
+/** Construct a game module.
+@param	engine		reference to the engine to use. */
+
+LevelEditor_Module::LevelEditor_Module(Engine& engine) 
+	: Engine_Module(engine) 
+{
+}
+
 void LevelEditor_Module::initialize() noexcept
 {
 	Engine_Module::initialize();
@@ -898,4 +907,9 @@ void LevelEditor_Module::bindFBO() noexcept
 void LevelEditor_Module::bindTexture(const GLuint& offset) noexcept
 {
 	glBindTextureUnit(offset, m_texID);
+}
+
+bool Editor_Command::join(Editor_Command* newerCommand) noexcept 
+{
+	return false;
 }

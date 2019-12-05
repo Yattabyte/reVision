@@ -19,100 +19,19 @@ class Indirect_Technique final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destructor. */
-	inline ~Indirect_Technique() noexcept {
-		// Update indicator
-		*m_aliveIndicator = false;
-	}
+	~Indirect_Technique() noexcept;
 	/** Construct an indirect lighting technique.
 	@param	engine			reference to the engine to use. 
 	@param	shadowData		reference to the shadow data to use. 
 	@param	clientCamera	reference to the client camera to use. 
 	@param	sceneCameras	reference to the scene cameras to use. */
-	inline Indirect_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras) noexcept :
-		Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
-		m_engine(engine),
-		m_shader_Bounce(Shared_Shader(engine, "Core\\Light\\Bounce")),
-		m_shader_Recon(Shared_Shader(engine, "Core\\Light\\Reconstruction")),
-		m_shader_Rebounce(Shared_Shader(engine, "Core\\Light\\Rebounce")),
-		m_shapeQuad(Shared_Auto_Model(engine, "quad")),
-		m_frameData(shadowData, clientCamera),
-		m_sceneCameras(sceneCameras)
-	{
-		// Auxiliary Systems
-		m_auxilliarySystems.makeSystem<IndirectVisibility_System>(m_frameData);
-		m_auxilliarySystems.makeSystem<IndirectSync_System>(m_frameData);
-
-		// Noise Texture
-		std::uniform_real_distribution<float> randomFloats(0.0, 1.0);
-		std::default_random_engine generator;
-		glm::vec3 texData[32 * 32 * 32];
-		for (int x = 0, total = (32 * 32 * 32); x < total; ++x)
-			texData[x] = glm::vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator));
-		glCreateTextures(GL_TEXTURE_3D, 1, &m_textureNoise32);
-		glTextureImage3DEXT(m_textureNoise32, GL_TEXTURE_3D, 0, GL_RGB16F, 32, 32, 32, 0, GL_RGB, GL_FLOAT, &texData);
-		glTextureParameteri(m_textureNoise32, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-		glTextureParameteri(m_textureNoise32, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-		glTextureParameteri(m_textureNoise32, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
-		glTextureParameteri(m_textureNoise32, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTextureParameteri(m_textureNoise32, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		// Preferences
-		auto& preferences = engine.getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_bounceSize);
-		preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) { m_bounceSize = (GLuint)f; });
-	}
+	Indirect_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras) noexcept;
 
 
 	// Public Interface Implementations
-	inline virtual void clearCache(const float& deltaTime) noexcept override final {
-		m_frameData.lightBuffer.endReading();
-		m_frameData.viewInfo.clear();
-		m_drawIndex = 0;
-	}
-	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept override final {
-		// Link together the dimensions of view info to that of the viewport vectors
-		m_frameData.viewInfo.resize(m_sceneCameras.size());
-		world.updateSystems(m_auxilliarySystems, deltaTime);
-	}
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final {
-		// Update light-bounce volume
-		if (m_enabled && m_frameData.viewInfo.size() && m_shapeQuad->existsYet() && m_shader_Bounce->existsYet() && m_shader_Recon->existsYet() && m_shader_Rebounce->existsYet()) {
-			// Light bounce using client camera
-			if (m_drawIndex >= m_drawData.size())
-				m_drawData.resize(size_t(m_drawIndex) + 1ull);
-			auto& [camBufferIndex, camBufferRebounce, camBufferRecon, visLights, indirectBounce, indirectQuad, indirectQuadRecon] = m_drawData[m_drawIndex];
-
-			// Accumulate all visibility info for the cameras passed in
-			std::vector<glm::ivec2> camIndicesGen, camIndiciesRebounce, camIndiciesRecon;
-			std::vector<GLint> lightIndices;
-			for (auto& [camIndex, layer] : perspectives) {
-				const std::vector<glm::ivec2> tempIndices(m_frameData.viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
-				camIndicesGen.insert(camIndicesGen.end(), tempIndices.begin(), tempIndices.end());
-				lightIndices.insert(lightIndices.end(), m_frameData.viewInfo[camIndex].lightIndices.begin(), m_frameData.viewInfo[camIndex].lightIndices.end());
-				const std::vector<glm::ivec2> tempIndices2(m_bounceSize, { camIndex, layer });
-				camIndiciesRebounce.insert(camIndiciesRebounce.end(), tempIndices2.begin(), tempIndices2.end());
-				camIndiciesRecon.push_back({ camIndex, layer });
-			}
-			const auto shadowCount = camIndicesGen.size();
-
-			if (lightIndices.size()) {
-				updateDrawParams(camIndicesGen, camIndiciesRebounce, camIndiciesRecon, lightIndices, shadowCount, perspectives.size());
-				fillBounceVolume(shadowCount, viewport->m_gfxFBOS.m_rhVolume);
-				rebounceVolume(viewport->m_gfxFBOS.m_rhVolume, camBufferRebounce, indirectQuad);
-				reconstructVolume(viewport, camBufferRecon, indirectQuadRecon);
-				camBufferIndex.endReading();
-				camBufferRebounce.endReading();
-				camBufferRecon.endReading();
-				visLights.endReading();
-				indirectBounce.endReading();
-				indirectQuad.endReading();
-				indirectQuadRecon.endReading();
-				Shader::Release();
-
-				m_drawIndex++;
-			}
-		}
-	}
+	virtual void clearCache(const float& deltaTime) noexcept override final;
+	virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept override final;
+	virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final;
 
 
 private:
@@ -124,101 +43,21 @@ private:
 	@param	lightIndices			the light indexes for GI.
 	@param	shadowCount				the number of shadows to render for GI.
 	@param	perspectivesSize		the number of viewing perspectives. */
-	inline void updateDrawParams(std::vector<glm::ivec2>& camIndicesGen, std::vector<glm::ivec2>& camIndiciesRebounce, std::vector<glm::ivec2>& camIndiciesRecon, std::vector<int>& lightIndices, const size_t& shadowCount, const size_t& perspectivesSize) noexcept {
-		// Write accumulated data
-		auto& [camBufferIndex, camBufferRebounce, camBufferRecon, visLights, indirectBounce, indirectQuad, indirectQuadRecon] = m_drawData[m_drawIndex];
-		camBufferIndex.beginWriting();
-		camBufferRebounce.beginWriting();
-		camBufferRecon.beginWriting();
-		visLights.beginWriting();
-		indirectBounce.beginWriting();
-		indirectQuad.beginWriting();
-		indirectQuadRecon.beginWriting();
-		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndicesGen.size(), camIndicesGen.data());
-		camBufferRebounce.write(0, sizeof(glm::ivec2) * camIndiciesRebounce.size(), camIndiciesRebounce.data());
-		camBufferRecon.write(0, sizeof(glm::ivec2) * camIndiciesRecon.size(), camIndiciesRecon.data());
-		visLights.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
-		const GLuint dataBounce[] = { (GLuint)m_shapeQuad->getSize(), (GLuint)(shadowCount * m_bounceSize), 0, 0 };
-		indirectBounce.write(0, sizeof(GLuint) * 4, &dataBounce);
-		indirectQuad.setPrimitiveCount(m_bounceSize);
-		indirectQuadRecon.setPrimitiveCount((GLuint)perspectivesSize);
-		camBufferIndex.endWriting();
-		camBufferRebounce.endWriting();
-		camBufferRecon.endWriting();
-		visLights.endWriting();
-		indirectBounce.endWriting();
-		indirectQuad.endWriting();
-		indirectQuadRecon.endWriting();
-	}
+	void updateDrawParams(std::vector<glm::ivec2>& camIndicesGen, std::vector<glm::ivec2>& camIndiciesRebounce, std::vector<glm::ivec2>& camIndiciesRecon, std::vector<int>& lightIndices, const size_t& shadowCount, const size_t& perspectivesSize) noexcept;
 	/** Populate the radiance hints volume with the first light bounce.
 	@param	shadowCount			the number of light casters with shadow maps.
 	@param	rhVolume			reference to the RH volume. */
-	inline void fillBounceVolume(const size_t& shadowCount, RH_Volume& rhVolume) noexcept {
-		// Prepare rendering state
-		glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
-		glBindVertexArray(m_shapeQuad->m_vaoID);
-		m_shader_Bounce->setUniform(0, (GLint)(shadowCount));
-		m_shader_Bounce->setUniform(1, rhVolume.m_max);
-		m_shader_Bounce->setUniform(2, rhVolume.m_min);
-		m_shader_Bounce->setUniform(4, rhVolume.m_resolution);
-		m_shader_Bounce->setUniform(6, rhVolume.m_unitSize);
-
-		glViewport(0, 0, (GLsizei)rhVolume.m_resolution, (GLsizei)rhVolume.m_resolution);
-		m_shader_Bounce->bind();
-		rhVolume.writePrimary();
-		glBindTextureUnit(0, m_frameData.shadowData.shadowFBO.m_texNormal);
-		glBindTextureUnit(1, m_frameData.shadowData.shadowFBO.m_texColor);
-		glBindTextureUnit(2, m_frameData.shadowData.shadowFBO.m_texDepth);
-		glBindTextureUnit(4, m_textureNoise32);
-		m_drawData[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		m_drawData[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
-		m_frameData.lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-		m_drawData[m_drawIndex].indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
-	}
+	void fillBounceVolume(const size_t& shadowCount, RH_Volume& rhVolume) noexcept;
 	/** Re-bounce the light in the volume a second time.
 	@param	rhVolume			reference to the RH volume.
 	@param	camBufferRebounce	reference to the buffer for re-bouncing GI.
 	@param	indirectQuad		reference to the indirect quad draw call. */
-	inline void rebounceVolume(RH_Volume& rhVolume, DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) noexcept {
-		// Bind common data
-		glDepthMask(GL_TRUE);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_ONE, GL_ZERO);
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
-		m_shader_Rebounce->setUniform(1, rhVolume.m_max);
-		m_shader_Rebounce->setUniform(2, rhVolume.m_min);
-		m_shader_Rebounce->setUniform(4, rhVolume.m_resolution);
-		m_shader_Rebounce->setUniform(5, rhVolume.m_unitSize);
-		m_shader_Recon->setUniform(1, rhVolume.m_max);
-		m_shader_Recon->setUniform(2, rhVolume.m_min);
-		m_shader_Recon->setUniform(3, rhVolume.m_resolution);
-		glBindVertexArray(m_shapeQuad->m_vaoID);
-
-		// Bounce light a second time
-		m_shader_Rebounce->bind();
-		rhVolume.readPrimary(0);
-		rhVolume.writeSecondary();
-		glViewport(0, 0, (GLsizei)rhVolume.m_resolution, (GLsizei)rhVolume.m_resolution);
-		camBufferRebounce.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		indirectQuad.drawCall();
-	}
+	void rebounceVolume(RH_Volume& rhVolume, DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) noexcept;
 	/** Reconstruct GI from the RH volume. 
 	@param	viewport			reference to the active viewport.
 	@param	camBufferRecon		reference to the buffer for reconstructing GI.
 	@param	indirectQuadRecon	reference to the indirect GI reconstruction draw call. */
-	inline void reconstructVolume(const std::shared_ptr<Viewport>& viewport, DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept {
-		// Reconstruct indirect radiance
-		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
-		m_shader_Recon->bind();
-		viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);
-		viewport->m_gfxFBOS.m_rhVolume.readSecondary(4);
-		viewport->m_gfxFBOS.bindForWriting("BOUNCE");
-		camBufferRecon.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		indirectQuadRecon.drawCall();
-		glEnable(GL_DEPTH_TEST);
-	}
+	void reconstructVolume(const std::shared_ptr<Viewport>& viewport, DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept;
 
 
 	// Private Attributes

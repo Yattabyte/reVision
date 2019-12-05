@@ -20,7 +20,7 @@ public:
 	inline ~UI_Module() = default;
 	/** Construct a UI module.
 	@param	engine				reference to the engine to use. */
-	inline explicit UI_Module(Engine& engine) : Engine_Module(engine) {}
+	explicit UI_Module(Engine& engine);
 
 
 	// Public Interface Implementations

@@ -9,66 +9,51 @@
 
 /** A structure used to uniquely identify elements in the engine's ECS 'system'. */
 struct ecsHandle {
-	char uuid[32] = { '\0' };
+public:
+	/** The UUID container. */
+	char m_uuid[32] = { '\0' };
 	/** Destroy this handle. */
 	inline virtual ~ecsHandle() = default;
 	/** Construct an empty handle. */
 	inline ecsHandle() = default;
 	/** Construct a specific handle.
 	@param	id[32]		specific handle name as char array of size 32. */
-	inline explicit ecsHandle(const char id[32]) noexcept {
-		std::copy(&id[0], &id[32], &uuid[0]);
-	}
+	explicit ecsHandle(const char id[32]) noexcept;
 	/** Copy Constructor. 
 	@param	other		an other handle to copy from. */
-	inline ecsHandle(const ecsHandle& other) noexcept {
-		std::copy(&other.uuid[0], &other.uuid[32], &uuid[0]);
-	}
+	ecsHandle(const ecsHandle& other) noexcept;
 	/** Move Constructor. 
 	@param	other		an other handle to move from. */
-	inline ecsHandle(ecsHandle&& other) noexcept {
-		std::move(std::begin(other.uuid), std::end(other.uuid), uuid);
-	}
+	ecsHandle(ecsHandle&& other) noexcept;
 	/** Copy from another handle.
 	@param	other		an other handle to copy from. 
 	@return				reference to this. */
-	inline ecsHandle& operator=(const ecsHandle& other) noexcept {
-		std::copy(&other.uuid[0], &other.uuid[32], &uuid[0]);
-		return *this;
-	}
+	ecsHandle& operator=(const ecsHandle& other) noexcept;
 	/** Compare against another handle.
 	@param	other		an other handle to compare against.
 	@return				true if this handle is the same as the other handle, false otherwise. */
-	inline bool operator==(const ecsHandle& other) const noexcept {
-		return bool(std::strncmp(uuid, other.uuid, 32ull) == 0);
-	}
+	bool operator==(const ecsHandle& other) const noexcept;
 	/** Compare if this should be ordered before another handle. 
 	@param	other		an other handle to compare against.
 	@return				true if this handle is the less than the other handle, false otherwise. */
-	inline bool operator<(const ecsHandle& other) const noexcept {
-		return bool(std::strncmp(uuid, other.uuid, 32ull) < 0);
-	}
+	bool operator<(const ecsHandle& other) const noexcept;
 	/** Conversion to bool operator.
 	@return				true if this handle is valid, false otherwise. */
-	inline operator bool() const noexcept {
-		static const ecsHandle empty;
-		return !bool((*this) == empty);
-	}
+	operator bool() const noexcept;
 	/** Retrieve if this handle is valid.
 	@return				true if this handle is valid, false otherwise. */
-	inline bool isValid() const noexcept {
-		static const ecsHandle empty;
-		return !bool((*this) == empty);
-	}
+	bool isValid() const noexcept;
 };
 
 struct EntityHandle final : ecsHandle {
+	inline ~EntityHandle() = default;
 	inline EntityHandle() = default;
-	inline explicit EntityHandle(const ecsHandle& handle) noexcept : ecsHandle(handle) {}
+	explicit EntityHandle(const ecsHandle& handle) noexcept;
 };
 struct ComponentHandle final : ecsHandle {
+	inline ~ComponentHandle() = default;
 	inline ComponentHandle() = default;
-	explicit ComponentHandle(const ecsHandle& handle) noexcept : ecsHandle(handle) {}
+	explicit ComponentHandle(const ecsHandle& handle) noexcept;
 };
 
 #endif // ECS_HANDLE_H

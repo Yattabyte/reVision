@@ -14,6 +14,11 @@ ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& create
 	return componentID;
 }
 
+ecsBaseComponent::ecsBaseComponent(const ComponentID& ID, const size_t& size, const char* name) noexcept
+	: m_runtimeID(ID), m_size(size), m_name(name) 
+{
+}
+
 std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const std::vector<char>& data, size_t& dataRead) noexcept
 {
 	// Read Name

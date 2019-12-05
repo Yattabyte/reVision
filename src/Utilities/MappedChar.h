@@ -15,9 +15,7 @@ template <typename T>
 class MappedChar {
 private:
 	// Nested Private Members
-	struct compare_string { bool operator()(const char* a, const char* b) const noexcept { return strcmp(a, b) < 0; } };
-	typedef typename std::map<const char*, T>::iterator iterator;
-	typedef typename std::map<const char*, T>::const_iterator const_iterator;
+	struct compare_string { inline bool operator()(const char* a, const char* b) const noexcept { return strcmp(a, b) < 0; } };
 
 
 	// Private Attributes
@@ -85,22 +83,22 @@ public:
 	// Navigation
 	/** The beginning iterator.
 	@return			the beginning iterator. */
-	inline iterator begin() noexcept {
+	inline auto begin() noexcept {
 		return m_map.begin();
 	}
 	/** The beginning constant iterator.
 	@return			the beginning constant iterator. */
-	inline const_iterator begin() const noexcept {
+	inline auto begin() const noexcept {
 		return m_map.cbegin();
 	}
 	/** The ending iterator.
 	@return			the ending iterator. */
-	inline iterator end() noexcept {
+	inline auto end() noexcept {
 		return m_map.end();
 	}
 	/** The ending constant iterator.
 	@return			the ending constant iterator. */
-	inline const_iterator end() const noexcept {
+	inline auto end() const noexcept {
 		return m_map.cend();
 	}
 	/** Check if the given key exists in the map, and optionally return its value.
@@ -117,12 +115,12 @@ public:
 	}
 	/** Retrieves an iterator of the element associated with the key given.
 	@return			the iterator to the element desired, or the terminating iterator ('end()') if not found. */
-	inline iterator	find_I(const char* key) noexcept {
+	inline auto	find_I(const char* key) noexcept {
 		return m_map.find(key);
 	}
 	/** Retrieves a constant iterator of the element associated with the key given.
 	@return			the constant iterator to the element desired, or the terminating constant iterator ('end()') if not found. */
-	inline const_iterator find_I(const char* key) const noexcept {
+	inline auto find_I(const char* key) const noexcept {
 		return m_map.find(key);
 	}
 };

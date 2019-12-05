@@ -14,7 +14,7 @@
 @param	plane_normal			the plane normal vector.
 @param	intersectionDistance	reference updated with the intersection distance from the ray origin.
 @return							true on intersection, false otherwise. */
-static bool RayPlaneIntersection(
+inline static bool RayPlaneIntersection(
 	const glm::vec3& ray_origin,
 	const glm::vec3& ray_direction,
 	const glm::vec3& plane_origin,
@@ -34,7 +34,7 @@ static bool RayPlaneIntersection(
 @param	baryPos					reference updated with the barometric position of the intersection.
 @param	intersectionDistance	reference updated with the intersection distance from the ray origin.
 @return							true on intersection, false otherwise. */
-static bool RayTriangleIntersection(
+inline static bool RayTriangleIntersection(
 	const glm::vec3& ray_origin,
 	const glm::vec3& ray_direction,
 	const glm::vec3& v0,
@@ -60,7 +60,7 @@ static bool RayTriangleIntersection(
 @param	ModelMatrix				the transformation matrix for the OOBB.
 @param	intersectionDistance	reference updated with the intersection distance from the ray origin.
 @return							true on intersection, false otherwise. */
-static bool RayOOBBIntersection(
+inline static bool RayOOBBIntersection(
 	const glm::vec3& ray_origin,
 	const glm::vec3& ray_direction,
 	const glm::vec3& aabb_min,
@@ -180,7 +180,7 @@ static bool RayOOBBIntersection(
 @param	center					the center position of the sphere.
 @param	radius					the radius of the sphere.
 @return							true on intersection, false otherwise. */
-static float RaySphereIntersection(
+inline static float RaySphereIntersection(
 	const glm::vec3& ray_origin,
 	const glm::vec3& ray_direction,
 	const glm::vec3& center,

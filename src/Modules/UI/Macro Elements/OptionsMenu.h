@@ -26,88 +26,19 @@ public:
 	inline ~OptionsMenu() = default;
 	/** Construct an options menu.
 	@param	engine		reference to the engine to use. */
-	inline explicit OptionsMenu(Engine& engine) noexcept
-		: Menu(engine) {
-		// Title
-		m_title->setText("OPTIONS");
-
-		// Add 'Video' button
-		m_videoMenu = std::make_shared<Options_Video>(engine);
-		m_videoMenu->setVisible(false);
-		addButton(engine, "VIDEO", [&]() { video(); });
-		addElement(m_videoMenu);
-
-		// Add 'Graphics' button
-		m_gfxMenu = std::make_shared<Options_Graphics>(engine);
-		m_gfxMenu->setVisible(false);
-		addButton(engine, "GRAPHICS", [&]() { graphics(); });
-		addElement(m_gfxMenu);
-
-		// Add 'Controls' button
-		addButton(engine, "CONTROLS", [&]() { controls(); });
-
-		// Add 'Back' button
-		addButton(engine, "< BACK  ", [&]() { back(); });
-
-		// Callbacks
-		addCallback((int)UI_Element::Interact::on_resize, [&]() {
-			const auto scale = getScale();
-			m_videoMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f });
-			m_gfxMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f });
-			m_videoMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
-			m_gfxMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
-			});
-
-		m_focusMap = std::make_shared<FocusMap>();
-		m_focusMap->addElement(m_layout);
-		m_focusMap->focusElement(m_layout);
-	}
+	explicit OptionsMenu(Engine& engine) noexcept;
 
 
 protected:
 	// Protected Methods
 	/** Choose 'video' from the options menu. */
-	inline void video() noexcept {
-		// Remove control from the graphics menu
-		m_gfxMenu->setVisible(false);
-		m_focusMap->clear();
-
-		// Transfer control to the video menu
-		m_videoMenu->setVisible(true);
-		m_focusMap->addElement(m_layout);
-		m_focusMap->addElement(m_videoMenu);
-		m_focusMap->focusElement(m_videoMenu);
-		enactCallback((int)OptionsMenu::Interact::on_video);
-	}
+	void video() noexcept;
 	/** Choose 'graphics' from the options menu. */
-	inline void graphics() noexcept {
-		// Remove control from the video menu
-		m_videoMenu->setVisible(false);
-		m_focusMap->clear();
-
-		// Transfer control to the graphics menu
-		m_gfxMenu->setVisible(true);
-		m_focusMap->addElement(m_layout);
-		m_focusMap->addElement(m_gfxMenu);
-		m_focusMap->focusElement(m_gfxMenu);
-		enactCallback((int)OptionsMenu::Interact::on_graphics);
-	}
+	void graphics() noexcept;
 	/** Choose 'controls' from the options menu. */
-	inline void controls() noexcept {
-		enactCallback((int)OptionsMenu::Interact::on_controls);
-	}
+	void controls() noexcept;
 	/** Choose 'back' from the options menu. */
-	inline void back() noexcept {
-		m_videoMenu->setVisible(false);
-		m_gfxMenu->setVisible(false);
-		m_focusMap->clear();
-		m_engine.getPreferenceState().save();
-
-		// Revert appearance and control back to previous element (start menu, pause menu, etc)
-		m_engine.getModule_UI().popRootElement();
-		m_layout->setSelectionIndex(-1);
-		enactCallback((int)OptionsMenu::Interact::on_back);
-	}
+	void back() noexcept;
 
 
 	// Protected Attributes

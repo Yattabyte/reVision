@@ -36,45 +36,27 @@ public:
 	// Public Methods
 	/** Set the enabled state for this camera.
 	@param	enabled		whether this camera should be enabled or not. */
-	inline void setEnabled(const bool& enabled) noexcept {
-		m_enabled = enabled;
-	}
+	void setEnabled(const bool& enabled) noexcept;
 	/** Retrieve if this camera is enabled or not.
 	@return				true if enabled, false otherwise. */
-	inline bool getEnabled() const noexcept {
-		return m_enabled;
-	}
+	bool getEnabled() const noexcept;
 	/** Recalculate frustum data for this camera. */
-	inline void updateFrustum() noexcept {
-		glm::vec4 posB = m_localData.vMatrixInverse * glm::vec4(0, 0, -m_localData.FarPlane / 2.0f, 1.0f);
-		posB /= posB.w;
-		m_frustumCenter = glm::vec3(posB) + m_localData.EyePosition;
-	}
+	void updateFrustum() noexcept;
 	/** Retrieve the center of this camera's frustum.
 	@return				the center of this frustum. */
-	inline glm::vec3 getFrustumCenter() const noexcept {
-		return m_frustumCenter;
-	}
+	glm::vec3 getFrustumCenter() const noexcept;
 	/** Retrieve a const pointer to the underlying data structure. 
 	@return				const pointer to camera data. */
-	inline const GPUData* operator-> () const noexcept {
-		return &m_localData;
-	}
+	const GPUData* operator-> () const noexcept;
 	/** Retrieve a pointer to the underlying data structure.
 	@return				pointer to camera data. */
-	inline GPUData* operator-> () noexcept {
-		return &m_localData;
-	}
+	GPUData* operator-> () noexcept;
 	/** Retrieve a const pointer to the underlying data structure.
 	@return				const pointer to camera data. */
-	inline const GPUData* get() const noexcept {
-		return &m_localData;
-	}
+	const GPUData* get() const noexcept;
 	/** Retrieve a pointer to the underlying data structure.
 	@return				pointer to camera data. */
-	inline GPUData* get() noexcept {
-		return &m_localData;
-	}
+	GPUData* get() noexcept;
 
 
 	// Public Attributes

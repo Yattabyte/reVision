@@ -4,7 +4,10 @@
 #include <algorithm>
 
 
-// Public Interface Declaration
+UI_Element::UI_Element(Engine& engine) noexcept : 
+	m_engine(engine) 
+{
+}
 
 void UI_Element::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept
 {

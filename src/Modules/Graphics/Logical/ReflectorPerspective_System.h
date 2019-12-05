@@ -16,21 +16,11 @@ public:
 	inline ~ReflectorPerspective_System() = default;
 	/** Construct this system.
 	@param	sceneCameras	reference to the scene cameras to use. */
-	inline explicit ReflectorPerspective_System(std::vector<Camera*>& sceneCameras) noexcept :
-		m_sceneCameras(sceneCameras)
-	{
-		addComponentType(Reflector_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
-	}
+	explicit ReflectorPerspective_System(std::vector<Camera*>& sceneCameras) noexcept;
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
-		for (const auto& componentParam : components) {
-			auto* cameraComponent = static_cast<Reflector_Component*>(componentParam[0]);
-			for (auto& camera : cameraComponent->m_cameras)
-				m_sceneCameras.push_back(&camera);
-		}
-	}
+	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final;
 
 
 private:

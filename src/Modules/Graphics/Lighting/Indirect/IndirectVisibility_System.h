@@ -15,26 +15,11 @@ public:
 	inline ~IndirectVisibility_System() = default;
 	/** Construct this system.
 	@param	frameData	reference to common data that changes frame-to-frame. */
-	inline explicit IndirectVisibility_System(Indirect_Light_Data& frameData) noexcept :
-		m_frameData(frameData)
-	{
-		addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
-		addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
-	}
+	explicit IndirectVisibility_System(Indirect_Light_Data& frameData) noexcept;
 
 
 	// Public Interface Implementations
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final {
-		// Compile results PER viewport
-		for (auto& viewInfo : m_frameData.viewInfo) {
-			// Clear previous cached data
-			viewInfo.lightIndices.clear();
-
-			int index = 0;
-			for (const auto& componentParam : components)
-				viewInfo.lightIndices.push_back((GLuint)index++);
-		}
-	}
+	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final;
 
 
 private:

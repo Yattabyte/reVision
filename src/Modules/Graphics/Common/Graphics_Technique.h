@@ -26,37 +26,33 @@ public:
 	/** Virtual Destructor. */
 	inline virtual ~Graphics_Technique() = default;
 	/** Constructor. */
-	inline explicit Graphics_Technique(const Technique_Category& category) noexcept : m_category(category) {}
+	explicit Graphics_Technique(const Technique_Category& category) noexcept;
 
 
 	// Public Methods
 	/** Retrieve the category this technique belongs to. */
-	inline Technique_Category getCategory() const noexcept {
-		return m_category;
-	}
+	Technique_Category getCategory() const noexcept;
 	/** Turn this technique  on or off.
 	@param	state			whether this technique should be on or off. */
-	inline void setEnabled(const bool& state) noexcept {
-		m_enabled = state;
-	};
+	void setEnabled(const bool& state) noexcept;;
 
 
 	// Public Interface
 	/** Prepare this technique for the next frame, swapping any of its buffers.
 	@param	deltaTime		the amount of time passed since last frame. */
-	inline virtual void clearCache(const float& deltaTime) noexcept {}
+	virtual void clearCache(const float& deltaTime) noexcept;
 	/** Update any data needed before rendering this frame.
 	@param	deltaTime		the amount of time passed since last frame. 
 	@param	world			the ecsWorld to source data from. */
-	inline virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept {}
+	virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept;
 	/** Perform any pre-requisite rendering passes.
 	@param	deltaTime		the amount of time passed since last frame. */
-	inline virtual void updatePass(const float& deltaTime) noexcept {}
+	virtual void updatePass(const float& deltaTime) noexcept;
 	/** Apply this lighting technique.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	viewport		the viewport to render from.
 	@param	perspectives	the viewing perspectives to render from. */
-	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept {}
+	virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept;
 
 
 protected:

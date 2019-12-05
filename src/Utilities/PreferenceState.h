@@ -17,15 +17,11 @@ class PreferenceState {
 public:
 	// (De)Constructors
 	/** Destroy the preference state. */
-	inline ~PreferenceState() noexcept {
-		save();
-	}
+	~PreferenceState() noexcept;
 	/** Construct the preference state.
 	@param	engine		reference to the engine to use. 
 	@param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
-	inline explicit PreferenceState(Engine& engine, const std::string& filename = "preferences") noexcept : m_engine(engine) {
-		loadFile(filename);
-	}
+	explicit PreferenceState(Engine& engine, const std::string& filename = "preferences") noexcept;
 
 
 	// Public Static Enumerations
@@ -123,14 +119,9 @@ public:
 	// Public Methods
 	/** Loads a preference file from disk.
 	@param	filename	the relative path to the preference file to load. */
-	inline void loadFile(const std::string& filename) noexcept {
-		m_preferences = Shared_Config(m_engine, filename, PreferenceState::Preference_Strings(), false);
-	}
+	void loadFile(const std::string& filename) noexcept;
 	/** Saves the preference file to disk, using the same filename as when loaded. */
-	inline void save() noexcept {
-		if (m_preferences->existsYet())
-			m_preferences->saveConfig();
-	}
+	void save() noexcept;
 	/** Tries to update the container with the value associated with the target key. If key doesn't exist, creates the key-value pair from the value given.
 	@param	<T>			the value class type to cast to (auto-deduced).
 	@param	targetKey	the preference key to look up.
@@ -174,9 +165,7 @@ public:
 	@param	targetKey	the preference-ID to which this callback will be attached.
 	@param	alive		the shared pointer indicating if the target is still alive and valid.
 	@param	callback	the method to be triggered on value update. */
-	inline void addCallback(const Preference& targetKey, const std::shared_ptr<bool>& alive, const std::function<void(float)>& callback) noexcept {
-		m_callbacks[targetKey].emplace_back(std::make_pair(alive, callback));
-	}
+	void addCallback(const Preference& targetKey, const std::shared_ptr<bool>& alive, const std::function<void(float)>& callback) noexcept;
 
 
 private:

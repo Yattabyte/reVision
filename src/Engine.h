@@ -26,7 +26,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "4.17.14";
+constexpr char ENGINE_VERSION[] = "4.18.0";
 struct GLFWwindow;
 
 /** The main game engine object. Encapsulates the entire engine state. */
@@ -40,7 +40,7 @@ public:
 	};
 
 
-		// Public (De)Constructors
+	// Public (De)Constructors
 	/** Destroys the game engine. */
 	~Engine() noexcept;
 	/** Construct the game engine. */
@@ -84,7 +84,7 @@ public:
 	// Public Accessors
 	/** Retrieve the mouse input mode.
 	@return				the mouse input mode, such as free-look or normal cursor. */
-	inline MouseInputMode getMouseInputMode() const noexcept { return m_mouseInputMode; };
+	MouseInputMode getMouseInputMode() const noexcept;;
 	/** Retrieve the current time. 
 	@return				the current time. */
 	static float getTime() noexcept;
@@ -93,46 +93,46 @@ public:
 	static std::vector<glm::ivec3> getResolutions() noexcept;
 	/** Retrieve this engine's action state.
 	@return				the engine's action state. */
-	inline ActionState& getActionState() noexcept { return m_actionState; }
+	ActionState& getActionState() noexcept;
 	/** Retrieve this engine's preference state. 
 	@return				this engine's preference state. */
-	inline PreferenceState& getPreferenceState() noexcept { return m_preferenceState; }
+	PreferenceState& getPreferenceState() noexcept;
 	/** Retrieve this engine's rendering context. 
 	@return				this engine's rendering context. */
-	inline GLFWwindow* getContext() const noexcept { return m_window; }
+	GLFWwindow* getContext() const noexcept;
 
 
 	// Manager Accessors
 	/** Retrieve this engine's asset manager. 
 	@return				this engine's asset manager. */
-	inline AssetManager& getManager_Assets() noexcept { return m_assetManager; }
+	AssetManager& getManager_Assets() noexcept;
 	/** Retrieve this engine's message manager. 
 	@return				this engine's message manager. */
-	inline MessageManager& getManager_Messages() noexcept { return m_messageManager; }
+	MessageManager& getManager_Messages() noexcept;
 	/** Retrieve this engine's sound manager. 
 	@return				this engine's sound manager. */
-	inline SoundManager& getManager_Sounds() noexcept { return m_soundManager; }
+	SoundManager& getManager_Sounds() noexcept;
 
 
 	// Module Accessors
 	/** Retrieve this engine's ECS module.
 	@return				this engine's ECS module. */
-	inline ECS_Module& getModule_ECS() noexcept { return m_moduleECS; }
+	ECS_Module& getModule_ECS() noexcept;
 	/** Retrieve this engine's game module.
 	@return				this engine's game module. */
-	inline Game_Module& getModule_Game() noexcept { return m_moduleGame; }
+	Game_Module& getModule_Game() noexcept;
 	/** Retrieve this engine's editor module.
 	@return				this engine's level editor module. */
-	inline LevelEditor_Module& getModule_LevelEditor() noexcept { return m_moduleEditor; }
+	LevelEditor_Module& getModule_LevelEditor() noexcept;
 	/** Retrieve this engine's graphics module.
 	@return				this engine's graphics module. */
-	inline Graphics_Module& getModule_Graphics() noexcept { return m_moduleGraphics; }
+	Graphics_Module& getModule_Graphics() noexcept;
 	/** Retrieve this engine's user-interface module.
 	@return				this engine's UI module. */
-	inline UI_Module& getModule_UI() noexcept { return m_moduleUI; }
+	UI_Module& getModule_UI() noexcept;
 	/** Retrieve this engine's physics module.
 	@return				this engine's physics module. */
-	inline Physics_Module& getModule_Physics() noexcept { return m_modulePhysics; }
+	Physics_Module& getModule_Physics() noexcept;
 
 
 	// Static Methods

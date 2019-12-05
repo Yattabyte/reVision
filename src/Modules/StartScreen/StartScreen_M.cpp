@@ -4,6 +4,11 @@
 #include "Engine.h"
 
 
+StartScreen_Module::StartScreen_Module(Engine& engine) : 
+	Engine_Module(engine) 
+{
+}
+
 void StartScreen_Module::initialize() noexcept
 {
 	Engine_Module::initialize();

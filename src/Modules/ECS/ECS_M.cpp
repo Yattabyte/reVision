@@ -1,6 +1,11 @@
 #include "Modules/ECS/ECS_M.h"
 
 
+ECS_Module::ECS_Module(Engine& engine) 
+	: Engine_Module(engine) 
+{
+}
+
 void ECS_Module::initialize() noexcept
 {
 }

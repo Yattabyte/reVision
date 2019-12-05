@@ -401,6 +401,11 @@ void Engine::goToEditor() noexcept
 	m_moduleEditor.showEditor();
 }
 
+Engine::MouseInputMode Engine::getMouseInputMode() const noexcept 
+{ 
+	return m_mouseInputMode;
+}
+
 float Engine::getTime() noexcept
 {
 	return (float)glfwGetTime();
@@ -414,6 +419,66 @@ std::vector<glm::ivec3> Engine::getResolutions() noexcept
 	for (int x = 0; x < count; ++x)
 		resolutions[x] = { modes[x].width, modes[x].height, modes[x].refreshRate };
 	return resolutions;
+}
+
+ActionState& Engine::getActionState() noexcept 
+{
+	return m_actionState; 
+}
+
+PreferenceState& Engine::getPreferenceState() noexcept 
+{ 
+	return m_preferenceState; 
+}
+
+GLFWwindow* Engine::getContext() const noexcept 
+{ 
+	return m_window; 
+}
+
+AssetManager& Engine::getManager_Assets() noexcept 
+{ 
+	return m_assetManager;
+}
+
+MessageManager& Engine::getManager_Messages() noexcept
+{
+	return m_messageManager; 
+}
+
+SoundManager& Engine::getManager_Sounds() noexcept 
+{
+	return m_soundManager;
+}
+
+ECS_Module& Engine::getModule_ECS() noexcept 
+{
+	return m_moduleECS;
+}
+
+Game_Module& Engine::getModule_Game() noexcept 
+{
+	return m_moduleGame; 
+}
+
+LevelEditor_Module& Engine::getModule_LevelEditor() noexcept
+{ 
+	return m_moduleEditor;
+}
+
+Graphics_Module& Engine::getModule_Graphics() noexcept
+{ 
+	return m_moduleGraphics; 
+}
+
+UI_Module& Engine::getModule_UI() noexcept 
+{ 
+	return m_moduleUI;
+}
+
+Physics_Module& Engine::getModule_Physics() noexcept 
+{
+	return m_modulePhysics; 
 }
 
 std::string Engine::Get_Current_Dir() noexcept

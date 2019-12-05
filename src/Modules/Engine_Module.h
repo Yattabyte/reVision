@@ -13,14 +13,14 @@ public:
 	inline virtual ~Engine_Module() = default;
 	/** Construct an engine module.
 	@param	engine	reference to the engine to use. */
-	inline explicit Engine_Module(Engine& engine) : m_engine(engine) {}
+	explicit Engine_Module(Engine& engine);
 
 
 	// Public Interface Declarations
 	/** Initialize the module. */
-	inline virtual void initialize() noexcept {};
+	virtual void initialize() noexcept;;
 	/** De-initialize the module. */
-	inline virtual void deinitialize() noexcept {}
+	virtual void deinitialize() noexcept;
 
 
 protected:

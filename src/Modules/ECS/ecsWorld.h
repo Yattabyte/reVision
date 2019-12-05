@@ -96,11 +96,7 @@ public:
 	@param	entityHandle		handle to the entity to retrieve from.
 	@param	componentID			the runtime ID identifying the component class.
 	@return						the specific component on success, nullptr otherwise. */
-	inline ecsBaseComponent* getComponent(const EntityHandle& entityHandle, const ComponentID& componentID) const noexcept {
-		if (auto* entity = getEntity(entityHandle))
-			return getComponent(entity->m_components, m_components.at(componentID), componentID);
-		return nullptr;
-	}
+	ecsBaseComponent* getComponent(const EntityHandle& entityHandle, const ComponentID& componentID) const noexcept;
 	/** Try to retrieve a component of a specific type matching the UUID provided.
 	@param	<T>					the category of component being retrieved.
 	@param	componentHandle		the target component's handle.
