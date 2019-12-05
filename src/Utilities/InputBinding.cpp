@@ -38,7 +38,7 @@ void InputBinding::loadFile(const std::string& filename) noexcept
 
 void InputBinding::save() noexcept
 {
-	if (m_config->existsYet())
+	if (m_config->ready())
 		m_config->saveConfig();
 }
 

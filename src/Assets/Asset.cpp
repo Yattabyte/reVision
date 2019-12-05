@@ -20,15 +20,16 @@ void Asset::setFileName(const std::string& filename) noexcept
 
 void Asset::addCallback(const std::shared_ptr<bool>& alive, const AssetFinalizedCallback& callback) noexcept
 {
-	if (!existsYet())
+	if (!ready())
 		m_callbacks.emplace_back(std::make_pair(alive, callback));
 	else
 		callback();
 }
 
-bool Asset::existsYet() const noexcept
+bool Asset::ready() const noexcept
 {
 	// Exit early if this points to nothing
+	// We are owned by shared_ptr, this MAY be null!
 	if (this == nullptr)
 		return false;
 

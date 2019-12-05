@@ -5,6 +5,7 @@
 #include <atomic>
 #include <functional>
 #include <string>
+#include <type_traits>
 #include <vector>
 #include <glad/glad.h>
 #undef APIENTRY
@@ -40,7 +41,27 @@ public:
 	void addCallback(const std::shared_ptr<bool>& alive, const AssetFinalizedCallback& callback) noexcept;
 	/** Retrieves whether or not this asset has completed finalizing.
 	@return				true if this asset has finished finalizing, false otherwise. */
-	bool existsYet() const noexcept;
+	bool ready() const noexcept;
+	/** Check if an input variadic list of shared assets have all completed finalizing. 
+	@param	<>			variadic list of assets to check (auto-deducible).
+	@param	firstAsset	the first value to check.
+	@param	...rest		the rest of the values to check.
+	@return				true if all the assets have finished finalizing, false otherwise. */
+	template <typename FirstAsset, typename ...RemainingAssets>
+	inline static bool All_Ready(const FirstAsset& firstAsset, const RemainingAssets& ...rest) {
+		// Ensure all inputs are shared assets
+		static_assert(!std::is_base_of<std::shared_ptr<Asset>, FirstAsset>::value, "Asset::All_Ready(...) parameter is not a Shared_Asset!");
+
+		// Proceed only if the first asset is ready, recursively
+		if (firstAsset->ready()) {
+			// For each remaining member of the parameter pack, recursively call this function
+			if constexpr (sizeof...(rest) > 0)
+				return All_Ready(rest...);
+			return true;
+		}
+
+		return false;
+	}
 
 
 protected:

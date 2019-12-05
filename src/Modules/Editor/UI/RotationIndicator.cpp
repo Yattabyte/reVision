@@ -60,7 +60,7 @@ RotationIndicator::RotationIndicator(Engine& engine) noexcept :
 
 void RotationIndicator::tick(const float&) noexcept
 {
-	if (m_open && m_3dIndicator->existsYet() && m_colorPalette->existsYet() && m_shader->existsYet()) {
+	if (m_open && Asset::All_Ready(m_3dIndicator, m_colorPalette, m_shader)) {
 		// Set up state
 		m_shader->bind();
 		m_3dIndicator->bind();

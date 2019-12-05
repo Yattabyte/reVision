@@ -27,7 +27,7 @@ void FXAA::clearCache(const float& deltaTime) noexcept
 
 void FXAA::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
-	if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderFXAA->existsYet())
+	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderFXAA))
 		return;
 
 	// Prepare camera index

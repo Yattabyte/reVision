@@ -27,7 +27,7 @@ void HDR::clearCache(const float& deltaTime) noexcept
 
 void HDR::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
-	if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderHDR->existsYet())
+	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderHDR))
 		return;
 
 	// Prepare camera index

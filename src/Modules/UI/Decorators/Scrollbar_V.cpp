@@ -66,7 +66,9 @@ void Scrollbar_V::mouseAction(const MouseEvent& mouseEvent) noexcept
 void Scrollbar_V::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept
 {
 	// Quit Early
-	if (!getVisible() || !m_shader->existsYet()) return;
+	if (!getVisible() || !m_shader->ready()) 
+		return;
+
 	const auto newPosition = position + m_position;
 	const auto newScale = glm::min(m_scale, scale);
 

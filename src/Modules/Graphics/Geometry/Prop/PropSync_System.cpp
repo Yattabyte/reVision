@@ -27,7 +27,7 @@ void PropSync_System::updateComponents(const float& deltaTime, const std::vector
 		auto* bboxComponent = static_cast<BoundingBox_Component*>(componentParam[3]);
 
 		// Synchronize the component if it is visible
-		if (propComponent->m_model->existsYet()) {
+		if (propComponent->m_model->ready()) {
 			// Sync Transform Attributes
 			if (transformComponent) {
 				const auto& position = transformComponent->m_worldTransform.m_position;

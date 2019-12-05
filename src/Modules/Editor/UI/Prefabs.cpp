@@ -247,9 +247,9 @@ void Prefabs::tickThumbnails(const float& deltaTime) noexcept
 			if (auto* trans = m_previewWorld.getComponent<Transform_Component>(entityHandle))
 				scale = trans->m_worldTransform.m_scale;
 			if (auto* prop = m_previewWorld.getComponent<Prop_Component>(entityHandle))
-				if (const auto& model = prop->m_model; model->existsYet()) {
-					minExtents = glm::min(minExtents, model->m_bboxMin * scale);
-					maxExtents = glm::max(maxExtents, model->m_bboxMax * scale);
+				if (prop->m_model->ready()) {
+					minExtents = glm::min(minExtents, prop->m_model->m_bboxMin * scale);
+					maxExtents = glm::max(maxExtents, prop->m_model->m_bboxMax * scale);
 				}
 		}
 		const auto extents = (maxExtents - minExtents) / 2.0f, center = ((maxExtents - minExtents) / 2.0f) + minExtents;
@@ -300,7 +300,7 @@ void Prefabs::tickWindow(const float&) noexcept
 		auto alignOffset = ImGui::GetWindowContentRegionMax().x - 19.0f;
 		alignOffset = alignOffset < 0.0f ? 0.0f : alignOffset;
 		ImGui::SameLine(alignOffset);
-		if (ImGui::ImageButton((ImTextureID)static_cast<uintptr_t>(m_texIconRefresh->existsYet() ? m_texIconRefresh->m_glTexID : 0), { 15, 15 }, { 0.0f, 1.0f }, { 1.0f, 0.0f }))
+		if (ImGui::ImageButton((ImTextureID)static_cast<uintptr_t>(m_texIconRefresh->ready() ? m_texIconRefresh->m_glTexID : 0), { 15, 15 }, { 0.0f, 1.0f }, { 1.0f, 0.0f }))
 			populatePrefabs(m_prefabSubDirectory);
 		ImGui::PopStyleVar();
 		ImGui::Separator();
@@ -318,11 +318,11 @@ void Prefabs::tickWindow(const float&) noexcept
 			if (filter.PassFilter(prefab.name.c_str())) {
 				ImGui::PushID(&prefab);
 				GLuint textureID = prefab.texID;
-				if (prefab.type == Entry::Type::BACK && m_texBack->existsYet())
+				if (prefab.type == Entry::Type::BACK && m_texBack->ready())
 					textureID = m_texBack->m_glTexID;
-				else if (prefab.type == Entry::Type::FOLDER && m_texFolder->existsYet())
+				else if (prefab.type == Entry::Type::FOLDER && m_texFolder->ready())
 					textureID = m_texFolder->m_glTexID;
-				/*else if ((prefab.type == Entry::file) && m_texMissingThumb->existsYet())
+				/*else if ((prefab.type == Entry::file) && m_texMissingThumb->ready())
 					textureID = m_texMissingThumb->m_glTexID;*/
 
 				ImGui::BeginGroup();

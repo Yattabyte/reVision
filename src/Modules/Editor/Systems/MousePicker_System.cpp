@@ -138,7 +138,7 @@ std::tuple<EntityHandle, Transform, Transform> MousePicker_System::getSelection(
 static bool RayProp(Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence) noexcept 
 {
 	bool intersection = false;
-	if (prop->m_model && prop->m_model->existsYet()) {
+	if (prop->m_model->ready()) {
 		float distance = FLT_MAX;
 		for (size_t x = 0; x < prop->m_model->m_data.m_vertices.size(); x += 3) {
 			auto v0 = transformComponent->m_worldTransform.m_modelMatrix * glm::vec4(prop->m_model->m_data.m_vertices[x].vertex, 1);

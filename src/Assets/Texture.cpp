@@ -18,7 +18,7 @@ Shared_Texture::Shared_Texture(Engine& engine, const std::string& filename, cons
 
 Texture::~Texture() noexcept
 {
-	if (existsYet()) {
+	if (ready()) {
 		glDeleteBuffers(1, &m_pboID);
 		glDeleteTextures(1, &m_glTexID);
 	}

@@ -22,9 +22,9 @@ SSAO::SSAO(Engine& engine) noexcept :
 	preferences.getOrSetValue(PreferenceState::Preference::C_SSAO, m_enabled);
 	preferences.addCallback(PreferenceState::Preference::C_SSAO, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
 	preferences.getOrSetValue(PreferenceState::Preference::C_SSAO_RADIUS, m_radius);
-	preferences.addCallback(PreferenceState::Preference::C_SSAO_RADIUS, m_aliveIndicator, [&](const float& f) { m_radius = f; if (m_shader->existsYet()) m_shader->setUniform(0, m_radius); });
+	preferences.addCallback(PreferenceState::Preference::C_SSAO_RADIUS, m_aliveIndicator, [&](const float& f) { m_radius = f; if (m_shader->ready()) m_shader->setUniform(0, m_radius); });
 	preferences.getOrSetValue(PreferenceState::Preference::C_SSAO_QUALITY, m_quality);
-	preferences.addCallback(PreferenceState::Preference::C_SSAO_QUALITY, m_aliveIndicator, [&](const float& f) { m_quality = (int)f; if (m_shader->existsYet()) m_shader->setUniform(1, m_quality); });
+	preferences.addCallback(PreferenceState::Preference::C_SSAO_QUALITY, m_aliveIndicator, [&](const float& f) { m_quality = (int)f; if (m_shader->ready()) m_shader->setUniform(1, m_quality); });
 	preferences.getOrSetValue(PreferenceState::Preference::C_SSAO_BLUR_STRENGTH, m_blurStrength);
 	preferences.addCallback(PreferenceState::Preference::C_SSAO_BLUR_STRENGTH, m_aliveIndicator, [&](const float& f) { m_blurStrength = (int)f; });
 
@@ -78,7 +78,7 @@ void SSAO::clearCache(const float& deltaTime) noexcept
 
 void SSAO::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
-	if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_shaderCopyAO->existsYet() && m_shaderGB_A->existsYet())
+	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shader, m_shaderCopyAO, m_shaderGB_A))
 		return;
 
 	// Prepare camera index

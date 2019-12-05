@@ -55,7 +55,7 @@ Outline_System::Outline_System(Engine& engine, LevelEditor_Module& editor) noexc
 
 void Outline_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
 {
-	if (m_shader->existsYet()) {
+	if (m_shader->ready()) {
 		// Collate all component data to generate a draw call
 		const auto& camera = m_engine.getModule_Graphics().getClientCamera();
 		const auto& pMatrix = camera->pMatrix;
@@ -73,7 +73,7 @@ void Outline_System::updateComponents(const float& deltaTime, const std::vector<
 				tryInsertModel(mesh);
 				m_geometryParams.insert_or_assign(componentHandle, m_meshMap[mesh]);
 			};
-			if (prop && prop->m_model && prop->m_model->existsYet()) {
+			if (prop && prop->m_model->ready()) {
 				tryRegisterComponentModel(prop->m_handle, prop->m_model->m_mesh);
 				const auto& [offset, count] = m_geometryParams[prop->m_handle];
 				drawData.push_back({ count, 1, offset, 1 });

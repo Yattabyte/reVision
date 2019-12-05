@@ -56,7 +56,7 @@ void Skybox::clearCache(const float& deltaTime) noexcept
 
 void Skybox::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
-	if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
+	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderSky, m_shaderSkyReflect, m_shaderConvolute, m_cubemapSky))
 		return;
 
 	// Prepare camera index

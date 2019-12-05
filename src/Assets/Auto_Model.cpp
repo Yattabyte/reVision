@@ -28,7 +28,7 @@ Shared_Auto_Model::Shared_Auto_Model(Engine& engine, const std::string& filename
 
 Auto_Model::~Auto_Model() noexcept
 {
-	if (existsYet())
+	if (ready())
 		glDeleteBuffers(1, &m_vboID);
 }
 

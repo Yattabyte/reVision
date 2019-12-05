@@ -137,7 +137,7 @@ void LevelEditor_Module::frameTick(const float& deltaTime) noexcept
 		m_engine.getModule_Graphics().renderWorld(m_world, deltaTime);
 
 		// Overlay editor interface over default FBO
-		if (m_shapeQuad->existsYet() && m_shader->existsYet()) {
+		if (Asset::All_Ready(m_shapeQuad, m_shader)) {
 			// Set up state
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 			bindTexture();

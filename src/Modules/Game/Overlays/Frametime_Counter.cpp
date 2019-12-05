@@ -25,7 +25,7 @@ Frametime_Counter::Frametime_Counter(Engine& engine) noexcept :
 
 void Frametime_Counter::applyEffect(const float& deltaTime) noexcept 
 {
-	if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_numberTexture->existsYet())
+	if (!Asset::All_Ready(m_shapeQuad, m_shader, m_numberTexture))
 		return;
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);

@@ -19,7 +19,7 @@ void Skeletal_Animation_System::updateComponents(const float& deltaTime, const s
 			skeletonComponent->m_mesh = Shared_Mesh(m_engine, "\\Models\\" + skeletonComponent->m_modelName);
 
 		// Animate if the mesh has finished loading
-		if (skeletonComponent->m_mesh->existsYet()) {
+		if (skeletonComponent->m_mesh->ready()) {
 			// Animate if there exists an animation & bones
 			if (skeletonComponent->m_animation != -1 && skeletonComponent->m_mesh->m_geometry.boneTransforms.size() > 0 && skeletonComponent->m_animation < skeletonComponent->m_mesh->m_geometry.animations.size()) {
 				skeletonComponent->m_transforms.resize(skeletonComponent->m_mesh->m_geometry.boneTransforms.size());

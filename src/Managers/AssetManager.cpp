@@ -15,7 +15,7 @@ Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& 
 			// Check if we need to wait for initialization
 			if (!threaded)
 				// Stay here until asset finalizes
-				while (!asset->existsYet())
+				while (!asset->ready())
 					std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			return asset;
 		}
@@ -86,7 +86,7 @@ bool AssetManager::readyToUse() noexcept
 		std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Assets);
 		return std::all_of(m_AssetMap.begin(), m_AssetMap.end(), [](const auto& assetCategory) {
 			return std::all_of(assetCategory.second.cbegin(), assetCategory.second.cend(), [](const auto& asset) {
-				return asset->existsYet();
+				return asset->ready();
 				});
 			});
 	}

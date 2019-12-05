@@ -88,7 +88,7 @@ void Mouse_Gizmo::render(const float& deltaTime) noexcept
 	else if (m_inputMode == 2)
 		m_scalingGizmo.render(deltaTime);
 
-	if (m_spawnModel->existsYet() && m_spawnShader->existsYet()) {
+	if (Asset::All_Ready(m_spawnModel, m_spawnShader)) {
 		// Get camera matrices
 		const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
 		const auto pMatrix = clientCamera->pMatrix;

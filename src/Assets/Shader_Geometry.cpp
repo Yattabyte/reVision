@@ -20,7 +20,7 @@ Shared_Shader_Geometry::Shared_Shader_Geometry(Engine& engine, const std::string
 
 Shader_Geometry::~Shader_Geometry() noexcept
 {
-	if (existsYet())
+	if (ready())
 		glDeleteProgram(m_glProgramID);
 }
 

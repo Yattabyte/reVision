@@ -125,7 +125,7 @@ Camera& Graphics_Module::getClientCamera() noexcept
 
 void Graphics_Module::copyToFramebuffer(const GLuint& fboID) noexcept
 {
-	if (m_shapeQuad->existsYet() && m_shader->existsYet()) {
+	if (Asset::All_Ready(m_shapeQuad, m_shader)) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID);
 		m_shader->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);

@@ -19,7 +19,7 @@ Shared_Cubemap::Shared_Cubemap(Engine& engine, const std::string& filename, cons
 
 Cubemap::~Cubemap() noexcept
 {
-	if (existsYet()) {
+	if (ready()) {
 		glDeleteBuffers(CUBEMAP_SIDE_COUNT, m_pboIDs);
 		glDeleteTextures(1, &m_glTexID);
 	}

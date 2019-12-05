@@ -29,7 +29,7 @@ Shared_Shader::Shared_Shader(Engine& engine, const std::string& filename, const 
 
 Shader::~Shader() noexcept
 {
-	if (existsYet())
+	if (ready())
 		glDeleteProgram(m_glProgramID);
 }
 

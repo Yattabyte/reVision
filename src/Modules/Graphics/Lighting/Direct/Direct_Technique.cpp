@@ -54,7 +54,7 @@ void Direct_Technique::updateCache(const float& deltaTime, ecsWorld& world) noex
 void Direct_Technique::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
 	// Exit Early
-	if (m_enabled && m_geometryReady && m_frameData.viewInfo.size() && m_shapeCube->existsYet() && m_shader_Lighting->existsYet()) {
+	if (m_enabled && m_geometryReady && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shader_Lighting)) {
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);
 		// Accumulate all visibility info for the cameras passed in
@@ -143,7 +143,7 @@ void Direct_Technique::renderTechnique(const float& deltaTime, const std::shared
 
 void Direct_Technique::registerLightShapes() noexcept 
 {
-	if (m_shapeCube && m_shapeCube->existsYet() && m_shapeSphere && m_shapeSphere->existsYet() && m_shapeHemisphere && m_shapeHemisphere->existsYet()) {
+	if (Asset::All_Ready(m_shapeCube, m_shapeSphere, m_shapeHemisphere)) {
 		// Create a container to store all vertices
 		std::vector<glm::vec3> combinedData;
 		combinedData.reserve(m_shapeCube->m_geometry.vertices.size() + m_shapeSphere->m_geometry.vertices.size() + m_shapeHemisphere->m_geometry.vertices.size());

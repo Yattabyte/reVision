@@ -62,7 +62,7 @@ void Indirect_Technique::updateCache(const float& deltaTime, ecsWorld& world) no
 void Indirect_Technique::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
 	// Update light-bounce volume
-	if (m_enabled && m_frameData.viewInfo.size() && m_shapeQuad->existsYet() && m_shader_Bounce->existsYet() && m_shader_Recon->existsYet() && m_shader_Rebounce->existsYet()) {
+	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeQuad, m_shader_Bounce, m_shader_Recon, m_shader_Rebounce)) {
 		// Light bounce using client camera
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);

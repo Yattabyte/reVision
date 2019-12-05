@@ -30,7 +30,9 @@ Border::Border(Engine& engine, const std::shared_ptr<UI_Element>& component) noe
 void Border::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
 {
 	// Exit Early
-	if (!getVisible() || !m_shader->existsYet()) return;
+	if (!getVisible() || !m_shader->ready())
+		return;
+
 	const glm::vec2 newPosition = position + m_position;
 	const glm::vec2 newScale = glm::min(m_scale, scale);
 

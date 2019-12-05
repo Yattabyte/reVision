@@ -24,7 +24,7 @@ void Join_Reflections::clearCache(const float& deltaTime) noexcept
 
 void Join_Reflections::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
-	if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet())
+	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shader))
 		return;
 
 	// Prepare camera index

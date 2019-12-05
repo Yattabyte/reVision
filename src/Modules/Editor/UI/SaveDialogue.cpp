@@ -109,7 +109,7 @@ void SaveDialogue::tickMainDialogue() noexcept
 			// Header
 			ImGui::Text("Choose a name to save the level as...");
 			ImGui::SameLine(std::max(ImGui::GetWindowContentRegionMax().x - 28.0f, 0.0f));
-			if (ImGui::ImageButton((ImTextureID)static_cast<uintptr_t>(m_iconRefresh->existsYet() ? m_iconRefresh->m_glTexID : 0), { 15, 15 }, { 0.0f, 1.0f }, { 1.0f, 0.0f }))
+			if (ImGui::ImageButton((ImTextureID)static_cast<uintptr_t>(m_iconRefresh->ready() ? m_iconRefresh->m_glTexID : 0), { 15, 15 }, { 0.0f, 1.0f }, { 1.0f, 0.0f }))
 				populateLevels(m_subDirectory);
 			ImGui::Spacing();
 
@@ -125,9 +125,9 @@ void SaveDialogue::tickMainDialogue() noexcept
 			ImGui::Separator();
 			int index = 0;
 			for (const auto& level : m_levels) {
-				GLuint icon = (level.type == LevelEntry::Type::FILE && m_iconFile->existsYet()) ? m_iconFile->m_glTexID :
-					(level.type == LevelEntry::Type::FOLDER && m_iconFolder->existsYet()) ? m_iconFolder->m_glTexID :
-					(level.type == LevelEntry::Type::BACK && m_iconBack->existsYet()) ? m_iconBack->m_glTexID : 0;
+				GLuint icon = (level.type == LevelEntry::Type::FILE && m_iconFile->ready()) ? m_iconFile->m_glTexID :
+					(level.type == LevelEntry::Type::FOLDER && m_iconFolder->ready()) ? m_iconFolder->m_glTexID :
+					(level.type == LevelEntry::Type::BACK && m_iconBack->ready()) ? m_iconBack->m_glTexID : 0;
 				ImGui::PushID(index);
 				ImGui::Image((ImTextureID)static_cast<uintptr_t>(icon), ImVec2(15, 15), { 0.0f, 1.0f }, { 1.0f, 0.0f });
 				ImGui::SameLine(0);

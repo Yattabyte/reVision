@@ -37,7 +37,8 @@ List_Horizontal::List_Horizontal(Engine& engine) noexcept :
 void List_Horizontal::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
 {
 	// Exit Early
-	if (!getVisible() || !m_children.size() || !m_shader->existsYet()) return;
+	if (!getVisible() || !m_children.size() || !m_shader->ready())
+		return;
 
 	// Render
 	m_shader->bind();

@@ -66,14 +66,14 @@ void Reflector_Technique::updateCache(const float& deltaTime, ecsWorld& world) n
 void Reflector_Technique::updatePass(const float& deltaTime) noexcept 
 {
 	// Exit Early
-	if (m_enabled && m_shapeQuad->existsYet() && m_shaderCopy->existsYet() && m_shaderConvolute->existsYet())
+	if (m_enabled && Asset::All_Ready(m_shapeQuad, m_shaderCopy, m_shaderConvolute))
 		updateReflectors(deltaTime);
 }
 
 void Reflector_Technique::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
 	// Exit Early
-	if (m_enabled && m_frameData.viewInfo.size() && m_shapeCube->existsYet() && m_shaderLighting->existsYet() && m_shaderStencil->existsYet()) {
+	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shaderLighting, m_shaderStencil)) {
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);
 

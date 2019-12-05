@@ -30,7 +30,7 @@ LoadingIndicator::LoadingIndicator(Engine& engine) noexcept :
 
 void LoadingIndicator::applyEffect(const float& deltaTime) noexcept 
 {
-	if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_texture->existsYet())
+	if (!Asset::All_Ready(m_shapeQuad, m_shader, m_texture))
 		return;
 	if (m_show)
 		m_blendAmt += deltaTime;

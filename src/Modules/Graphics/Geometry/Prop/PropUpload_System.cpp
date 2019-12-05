@@ -69,7 +69,7 @@ void PropUpload_System::updateComponents(const float& deltaTime, const std::vect
 		// Try to upload model data
 		if (!model)
 			model = Shared_Model(m_engine, propComponent->m_modelName);
-		if (!propComponent->m_uploadModel && model->existsYet()) {
+		if (!propComponent->m_uploadModel && model->ready()) {
 			tryInsertModel(model);
 			propComponent->m_offset = m_modelMap[model].first;
 			propComponent->m_count = m_modelMap[model].second;
@@ -77,7 +77,7 @@ void PropUpload_System::updateComponents(const float& deltaTime, const std::vect
 		}
 
 		// Try to upload material data
-		if (!propComponent->m_uploadMaterial && model->existsYet() && model->m_materialArray->existsYet()) {
+		if (!propComponent->m_uploadMaterial && Asset::All_Ready(model, model->m_materialArray)) {
 			// Get spot in the material array
 			tryInsertMaterial(model->m_materialArray);
 			propComponent->m_materialID = m_materialMap[model->m_materialArray];

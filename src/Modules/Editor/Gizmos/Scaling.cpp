@@ -78,7 +78,7 @@ bool Scaling_Gizmo::checkMouseInput(const float&) noexcept
 void Scaling_Gizmo::render(const float&) noexcept
 {
 	// Safety check first
-	if (m_model->existsYet() && m_gizmoShader->existsYet() && m_editor.getSelection().size()) {
+	if (Asset::All_Ready(m_model, m_gizmoShader) && m_editor.getSelection().size()) {
 		// Set up state
 		m_editor.bindFBO();
 

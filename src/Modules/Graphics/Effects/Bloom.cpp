@@ -31,7 +31,7 @@ void Bloom::clearCache(const float& deltaTime) noexcept
 
 void Bloom::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
-	if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet() || !m_shaderGB->existsYet())
+	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderBloomExtract, m_shaderCopy, m_shaderGB))
 		return;
 
 	// Prepare camera index

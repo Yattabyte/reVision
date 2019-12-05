@@ -326,7 +326,7 @@ void Engine::tick() noexcept
 
 	// Update key binding states, manually
 	if (const auto& bindings = m_inputBindings.getBindings())
-		if (bindings->existsYet())
+		if (bindings->ready())
 			for (const auto& pair : bindings.get()->m_configuration)
 				m_actionState[ActionState::Action(pair.first)] = glfwGetKey(m_window, (int)pair.second) ? 1.0f : 0.0f;
 

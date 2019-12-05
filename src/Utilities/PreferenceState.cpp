@@ -19,7 +19,7 @@ void PreferenceState::loadFile(const std::string& filename) noexcept
 
 void PreferenceState::save() noexcept 
 {
-	if (m_preferences->existsYet())
+	if (m_preferences->ready())
 		m_preferences->saveConfig();
 }
 

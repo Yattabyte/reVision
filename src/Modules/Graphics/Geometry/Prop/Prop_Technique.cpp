@@ -38,7 +38,7 @@ void Prop_Technique::updateCache(const float& deltaTime, ecsWorld& world) noexce
 void Prop_Technique::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	// Exit Early
-	if (m_enabled && m_frameData.viewInfo.size() && m_shapeCube->existsYet() && m_shaderCull->existsYet() && m_shaderGeometry->existsYet()) {
+	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shaderCull, m_shaderGeometry)) {
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);
 
@@ -141,7 +141,7 @@ void Prop_Technique::renderTechnique(const float& deltaTime, const std::shared_p
 void Prop_Technique::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
 	// Exit Early
-	if (m_enabled && m_frameData.viewInfo.size() && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {
+	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shaderShadowCull, m_shaderShadowGeometry)) {
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);
 
@@ -220,7 +220,7 @@ void Prop_Technique::cullShadows(const float& deltaTime, const std::vector<std::
 void Prop_Technique::renderShadows(const float& deltaTime) noexcept 
 {
 	// Exit Early
-	if (m_enabled && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {
+	if (m_enabled && Asset::All_Ready(m_shapeCube, m_shaderShadowCull, m_shaderShadowGeometry)) {
 		if (m_count) {
 			// Draw geometry using the populated render buffer
 			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);

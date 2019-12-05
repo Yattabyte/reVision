@@ -26,7 +26,7 @@ void PhysicsSync_System::updateComponents(const float& deltaTime, const std::vec
 		if (colliderComponent) {
 			if (!colliderComponent->m_collider)
 				colliderComponent->m_collider = Shared_Collider(m_engine, colliderComponent->m_modelName);
-			else if (colliderComponent->m_collider->existsYet()) {
+			else if (colliderComponent->m_collider->ready()) {
 				// If the collider's transformation is out of date
 				if (colliderComponent->m_worldTransform != transformComponent->m_localTransform) {
 					// Remove from the physics simulation

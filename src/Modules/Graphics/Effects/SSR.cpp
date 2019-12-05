@@ -48,7 +48,7 @@ void SSR::clearCache(const float& deltaTime) noexcept
 
 void SSR::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
-	if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet())
+	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderCopy, m_shaderConvMips, m_shaderSSR1, m_shaderSSR2))
 		return;
 
 	// Prepare camera index

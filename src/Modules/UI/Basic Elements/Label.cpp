@@ -41,7 +41,8 @@ Label::Label(Engine& engine, const std::string& text) noexcept :
 void Label::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
 {
 	// Exit Early
-	if (!getVisible() || !m_shader->existsYet() || !m_textureFont->existsYet()) return;
+	if (!getVisible() || !Asset::All_Ready(m_shader, m_textureFont)) 
+		return;
 
 	// Update indirect draw call
 	m_indirect.beginWriting();

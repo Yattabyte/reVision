@@ -126,7 +126,7 @@ public:
 	@param	container	the object to update. */
 	template <typename T>
 	inline void getOrSetValue(const Preference& targetKey, T& container) noexcept {
-		if (m_preferences->existsYet()) {
+		if (m_preferences->ready()) {
 			const float value = m_preferences->getValue((unsigned int)targetKey);
 
 			// Only modify if the value exists
