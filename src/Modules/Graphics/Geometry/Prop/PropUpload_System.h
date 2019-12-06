@@ -4,6 +4,7 @@
 
 #include "Modules/ECS/ecsSystem.h"
 #include "Assets/Model.h"
+#include <array>
 
 #define NUM_VERTEX_ATTRIBUTES 8
 
@@ -41,6 +42,8 @@ private:
 	/** Attempt to insert the material supplied into the material map, failing only if it is already present.
 	@param	material	the material to insert only 1 copy of. */
 	void tryInsertMaterial(const Shared_Material& material) noexcept;
+	/***/
+	std::pair<GLuint*, GLsync*> getFreePBO() noexcept;
 	/** Clear all data held by this system. */
 	void clear() noexcept;
 
@@ -55,6 +58,7 @@ private:
 	GLsync m_fence = nullptr;
 	std::map<Shared_Model, std::pair<GLuint, GLuint>> m_modelMap;
 	std::map<Shared_Material, GLuint> m_materialMap;
+	std::array<std::pair<GLuint, GLsync>, 3> m_pixelBuffers;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

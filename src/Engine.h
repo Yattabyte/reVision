@@ -27,7 +27,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "4.19.1";
+constexpr char ENGINE_VERSION[] = "4.19.2";
 struct GLFWwindow;
 
 /** The main game engine object. Encapsulates the entire engine state. */

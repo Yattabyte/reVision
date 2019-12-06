@@ -8,6 +8,8 @@ PropUpload_System::~PropUpload_System() noexcept
 {
 	glDeleteBuffers(1, &m_vboID);
 	glDeleteVertexArrays(1, &m_vaoID);
+	for (auto& [pboID, fence] : m_pixelBuffers)
+		glDeleteBuffers(1, &pboID);
 }
 
 PropUpload_System::PropUpload_System(Engine& engine, PropData& frameData) noexcept :
@@ -58,6 +60,14 @@ PropUpload_System::PropUpload_System(Engine& engine, PropData& frameData) noexce
 
 	// Share material array for rendering purposes
 	frameData.m_materialArrayID = m_matID;
+
+	// Initialize all our pixel buffers
+	for (auto& [pboID, fence] : m_pixelBuffers) {
+		pboID = 0ull;
+		fence = nullptr;
+		glCreateBuffers(1, &pboID); 
+		glNamedBufferStorage(pboID, size_t(m_materialSize) * size_t(m_materialSize) * MAX_DIGITAL_IMAGES * 4ull, nullptr, GL_DYNAMIC_STORAGE_BIT);
+	}
 }
 
 void PropUpload_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept
@@ -96,8 +106,8 @@ void PropUpload_System::tryInsertModel(const Shared_Model& model) noexcept
 		// Check if we can fit the desired data
 		waitOnFence();
 		tryToExpand(arraySize);
-		auto offset = (GLuint)(m_currentSize / sizeof(SingleVertex));
-		auto count = (GLuint)(arraySize / sizeof(SingleVertex));
+		const auto offset = (GLuint)(m_currentSize / sizeof(SingleVertex));
+		const auto count = (GLuint)(arraySize / sizeof(SingleVertex));
 
 		// Upload vertex data
 		glNamedBufferSubData(m_vboID, m_currentSize, arraySize, &model->m_data.m_vertices[0]);
@@ -156,26 +166,52 @@ void PropUpload_System::tryInsertMaterial(const Shared_Material& material) noexc
 	if (m_materialMap.find(material) == m_materialMap.end()) {
 		// Get spot in the material array
 		const auto imageCount = (GLsizei)((material->m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES);
-		auto materialID = (GLuint)m_matCount;
+		const auto materialID = (GLuint)m_matCount;
+		m_materialMap[material] = materialID;
 		m_matCount += imageCount;
 		if (m_matCount >= m_maxTextureLayers)
 			m_engine.getManager_Messages().error("Out of room for more materials!");
 
-		// Upload material data
-		GLuint pboID = 0;
-		glCreateBuffers(1, &pboID);
-		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
-		glNamedBufferStorage(pboID, size_t(m_materialSize) * size_t(m_materialSize) * size_t(imageCount) * 4ull, &material->m_materialData[0], GL_DYNAMIC_STORAGE_BIT);
-		for (int x = 0; x < m_maxMips; ++x) {
-			const GLsizei mipsize = (GLsizei)std::max(1.0f, (floor(m_materialSize / pow(2.0f, (float)x))));
-			glTexturePageCommitmentEXT(m_matID, x, 0, 0, materialID, mipsize, mipsize, imageCount, GL_TRUE);
+		// Try to upload the images piece-meal
+		size_t offset(0ull);
+		for (int x = 0; x < int(material->m_textures.size() / MAX_PHYSICAL_IMAGES); ++x) {
+			// Find a free pixel buffer
+			auto& [pboID, fence] = getFreePBO();
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, *pboID);
+			glNamedBufferSubData(*pboID, 0, size_t(m_materialSize) * size_t(m_materialSize) * MAX_DIGITAL_IMAGES * 4ull, &material->m_materialData[offset]);
+
+			// Upload material data
+			for (int x = 0; x < m_maxMips; ++x) {
+				const GLsizei mipsize = (GLsizei)std::max(1.0f, (floor(m_materialSize / pow(2.0f, (float)x))));
+				glTexturePageCommitmentEXT(m_matID, x, 0, 0, materialID, mipsize, mipsize, imageCount, GL_TRUE);
+			}
+			glTextureSubImage3D(m_matID, 0, 0, 0, materialID + (x * MAX_DIGITAL_IMAGES), m_materialSize, m_materialSize, MAX_DIGITAL_IMAGES, GL_RGBA, GL_UNSIGNED_BYTE, (void*)nullptr);
+			offset += size_t(m_materialSize) * size_t(m_materialSize) * MAX_DIGITAL_IMAGES * 4ull;
+
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+			*fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		}
-		glTextureSubImage3D(m_matID, 0, 0, 0, materialID, m_materialSize, m_materialSize, imageCount, GL_RGBA, GL_UNSIGNED_BYTE, (void*)0);
 		glGenerateTextureMipmap(m_matID);
-		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-		glDeleteBuffers(1, &pboID);
-		m_materialMap[material] = materialID;
 	}
+}
+std::pair<GLuint*, GLsync*> PropUpload_System::getFreePBO() noexcept
+{
+	GLenum state = GL_UNSIGNALED;
+	while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED) {
+		for (auto& [pboID, fence] : m_pixelBuffers) {
+			// Check if fence is free
+			if (fence == nullptr)
+				return { &pboID, &fence };
+			// Check if fence has passed
+			state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 1);
+			if (state == GL_SIGNALED || state == GL_ALREADY_SIGNALED || state == GL_CONDITION_SATISFIED) {
+				glDeleteSync(fence);
+				fence = nullptr;
+				return { &pboID, &fence };
+			}
+		}
+	}
+	return { nullptr, nullptr };
 }
 
 void PropUpload_System::clear() noexcept 
