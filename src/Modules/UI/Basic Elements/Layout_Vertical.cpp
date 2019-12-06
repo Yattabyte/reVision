@@ -12,7 +12,7 @@ Layout_Vertical::Layout_Vertical(Engine& engine) noexcept :
 void Layout_Vertical::addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio) noexcept 
 {
 	UI_Element::addElement(child);
-	m_sizedChildren.push_back(std::make_pair(child, sizeRatio));
+	m_sizedChildren.push_back(std::pair(child, sizeRatio));
 }
 
 void Layout_Vertical::setMargin(const float& margin) noexcept

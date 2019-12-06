@@ -270,7 +270,7 @@ void Engine::initThreads() noexcept
 		std::future<void> exitObject = exitSignal.get_future();
 		std::thread workerThread(&Engine::tickThreaded, this, std::move(exitObject), std::move(glfwCreateWindow(1, 1, "", nullptr, m_window)));
 		workerThread.detach();
-		m_threads.push_back(std::move(std::make_pair(std::move(workerThread), std::move(exitSignal))));
+		m_threads.push_back(std::move(std::pair(std::move(workerThread), std::move(exitSignal))));
 	}
 }
 

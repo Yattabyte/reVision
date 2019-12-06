@@ -46,12 +46,12 @@ Skybox::Skybox(Engine& engine) noexcept :
 		});
 }
 
-void Skybox::clearCache(const float& deltaTime) noexcept 
+void Skybox::clearCache(const float&) noexcept 
 {
 	m_drawIndex = 0;
 }
 
-void Skybox::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void Skybox::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderSky, m_shaderSkyReflect, m_shaderConvolute, m_cubemapSky))
 		return;

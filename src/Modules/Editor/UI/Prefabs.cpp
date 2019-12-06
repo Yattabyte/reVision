@@ -244,8 +244,8 @@ void Prefabs::tickThumbnails(const float& deltaTime) noexcept
 		glm::vec3 minExtents(FLT_MAX), maxExtents(FLT_MIN);
 		for (const auto& entityHandle : prefab.entityHandles) {
 			glm::vec3 scale(1.0f);
-			if (auto* trans = m_previewWorld.getComponent<Transform_Component>(entityHandle))
-				scale = trans->m_worldTransform.m_scale;
+			if (auto* transComponent = m_previewWorld.getComponent<Transform_Component>(entityHandle))
+				scale = transComponent->m_worldTransform.m_scale;
 			if (auto* prop = m_previewWorld.getComponent<Prop_Component>(entityHandle))
 				if (prop->m_model->ready()) {
 					minExtents = glm::min(minExtents, prop->m_model->m_bboxMin * scale);

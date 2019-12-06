@@ -41,12 +41,12 @@ SSR::SSR(Engine& engine) noexcept :
 		msgMgr.error("SSR Bayer Matrix Texture is incomplete.");
 }
 
-void SSR::clearCache(const float& deltaTime) noexcept 
+void SSR::clearCache(const float&) noexcept 
 {
 	m_drawIndex = 0;
 }
 
-void SSR::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void SSR::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderCopy, m_shaderConvMips, m_shaderSSR1, m_shaderSSR2))
 		return;

@@ -33,7 +33,7 @@ public:
 	@param	world			the ecsWorld to source data from.
 	@param	cameras			the cameras to render from.
 	@return					camera and layer indices to render with. */
-	std::vector<std::pair<int, int>> begin(const float& deltaTime, ecsWorld& world, std::vector<Camera>& cameras = std::vector<Camera>()) noexcept;
+	std::vector<std::pair<int, int>> begin(const float& deltaTime, ecsWorld& world, std::vector<Camera>& cameras) noexcept;
 	/** Flush the pipeline after rendering.
 	@param	deltaTime		the amount of time passed since last frame. */
 	void end(const float& deltaTime) noexcept;

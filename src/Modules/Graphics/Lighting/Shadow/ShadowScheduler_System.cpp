@@ -23,7 +23,7 @@ ShadowScheduler_System::ShadowScheduler_System(Engine& engine, ShadowData& frame
 	preferences.addCallback(PreferenceState::Preference::C_SHADOW_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) { m_maxShadowsCasters = (unsigned int)f; });
 }
 
-void ShadowScheduler_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void ShadowScheduler_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
 {
 	// Maintain list of shadows, update with oldest within range
 	// Technique will clear list when ready

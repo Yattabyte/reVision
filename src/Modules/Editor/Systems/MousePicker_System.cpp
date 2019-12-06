@@ -42,7 +42,7 @@ MousePicker_System::MousePicker_System(Engine& engine) noexcept :
 		});
 }
 
-void MousePicker_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void MousePicker_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
 {
 	const auto& actionState = m_engine.getActionState();
 	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();

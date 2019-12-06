@@ -71,12 +71,12 @@ SSAO::SSAO(Engine& engine) noexcept :
 		msgMgr.error("SSAO Noise Texture is incomplete.");
 }
 
-void SSAO::clearCache(const float& deltaTime) noexcept
+void SSAO::clearCache(const float&) noexcept
 {
 	m_drawIndex = 0;
 }
 
-void SSAO::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void SSAO::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shader, m_shaderCopyAO, m_shaderGB_A))
 		return;

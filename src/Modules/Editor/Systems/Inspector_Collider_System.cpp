@@ -18,7 +18,7 @@ Inspector_Collider_System::Inspector_Collider_System(Engine& engine, LevelEditor
 	populateModels();
 }
 
-void Inspector_Collider_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept
+void Inspector_Collider_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept
 {
 	ImGui::PushID(this);
 	const auto text = std::string(Collider_Component::Name) + ": (" + std::to_string(components.size()) + ")";

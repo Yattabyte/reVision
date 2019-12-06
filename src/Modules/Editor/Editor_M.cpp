@@ -904,7 +904,7 @@ void LevelEditor_Module::bindTexture(const GLuint& offset) noexcept
 	glBindTextureUnit(offset, m_texID);
 }
 
-bool Editor_Command::join(Editor_Command* newerCommand) noexcept 
+bool Editor_Command::join(Editor_Command*) noexcept 
 {
 	return false;
 }

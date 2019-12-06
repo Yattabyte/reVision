@@ -45,7 +45,7 @@ Indirect_Technique::Indirect_Technique(Engine& engine, ShadowData& shadowData, C
 	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) { m_bounceSize = (GLuint)f; });
 }
 
-void Indirect_Technique::clearCache(const float& deltaTime) noexcept 
+void Indirect_Technique::clearCache(const float&) noexcept 
 {
 	m_frameData.lightBuffer.endReading();
 	m_frameData.viewInfo.clear();
@@ -59,7 +59,7 @@ void Indirect_Technique::updateCache(const float& deltaTime, ecsWorld& world) no
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Indirect_Technique::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void Indirect_Technique::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
 	// Update light-bounce volume
 	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeQuad, m_shader_Bounce, m_shader_Recon, m_shader_Rebounce)) {

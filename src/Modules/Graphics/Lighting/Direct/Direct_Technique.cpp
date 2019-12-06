@@ -37,7 +37,7 @@ Direct_Technique::Direct_Technique(Engine& engine, ShadowData& shadowData, Camer
 	m_shapeHemisphere->addCallback(m_aliveIndicator, [&]() { registerLightShapes(); });
 }
 
-void Direct_Technique::clearCache(const float& deltaTime) noexcept
+void Direct_Technique::clearCache(const float&) noexcept
 {
 	m_frameData.lightBuffer.endReading();
 	m_frameData.viewInfo.clear();
@@ -51,7 +51,7 @@ void Direct_Technique::updateCache(const float& deltaTime, ecsWorld& world) noex
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Direct_Technique::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void Direct_Technique::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
 	// Exit Early
 	if (m_enabled && m_geometryReady && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shader_Lighting)) {

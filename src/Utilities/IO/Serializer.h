@@ -38,7 +38,7 @@ public:
 	@param	memberData		a char buffer containing serialized data.
 	@param	...members		the list of value pairs to update. */
 	template <typename ...Members>
-	inline static void Deserialize_Set(const std::vector<char>& memberData, Members& ...members) {
+	inline static void Deserialize_Set(const std::vector<char>& memberData, const Members& ...members) {
 		// Ensure the data buffer is valid
 		if (memberData.size()) {
 			std::map<std::string, std::vector<char>> memberMap;
@@ -58,8 +58,8 @@ public:
 					if (memStruct.struct_size == 0 || memory_payload_string.empty())
 						break;
 
-					// Get the memory payload's data
-					char* memory_payload_data = const_cast<char*>(&memberData[index + sizeof(Memory_Structure)]);
+					// Skip getting the memory payload's data
+					// char* memory_payload_data = const_cast<char*>(&memberData[index + sizeof(Memory_Structure)]);
 					index += memStruct.struct_size;
 
 					// Insert clamped string with memory data into map

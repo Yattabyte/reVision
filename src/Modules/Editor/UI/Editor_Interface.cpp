@@ -161,6 +161,6 @@ void ImGUI_Element::close() noexcept
 	m_open = false;
 }
 
-void ImGUI_Element::tick(const float& deltaTime) noexcept
+void ImGUI_Element::tick(const float&) noexcept
 {
 }

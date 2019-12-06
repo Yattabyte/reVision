@@ -22,10 +22,10 @@ struct Transform_Component final : public ecsComponent<Transform_Component, tran
 	Transform m_localTransform, m_worldTransform;
 
 	inline std::vector<char> serialize() noexcept {
-		return Serializer::Serialize_Set(std::make_pair("m_localTransform", m_localTransform), std::make_pair("m_worldTransform", m_worldTransform));
+		return Serializer::Serialize_Set(std::pair("m_localTransform", m_localTransform), std::pair("m_worldTransform", m_worldTransform));
 	}
 	inline void deserialize(const std::vector<char>& data) noexcept {
-		Serializer::Deserialize_Set(data, std::make_pair("m_localTransform", &m_localTransform), std::make_pair("m_worldTransform", &m_worldTransform));
+		Serializer::Deserialize_Set(data, std::pair("m_localTransform", &m_localTransform), std::pair("m_worldTransform", &m_worldTransform));
 	}
 };
 
@@ -38,10 +38,10 @@ struct Player3D_Component final : public ecsComponent<Player3D_Component, player
 	glm::vec3 m_rotation = glm::vec3(0.0f);
 
 	inline std::vector<char> serialize() noexcept {
-		return Serializer::Serialize_Set(std::make_pair("m_rotation", m_rotation));
+		return Serializer::Serialize_Set(std::pair("m_rotation", m_rotation));
 	}
 	inline void deserialize(const std::vector<char>& data) noexcept {
-		Serializer::Deserialize_Set(data, std::make_pair("m_rotation", &m_rotation));
+		Serializer::Deserialize_Set(data, std::pair("m_rotation", &m_rotation));
 	}
 };
 
@@ -51,10 +51,10 @@ struct Camera_Component final : public ecsComponent<Camera_Component, cameraName
 	float m_updateTime = 0.0f;
 
 	inline std::vector<char> serialize() noexcept {
-		return Serializer::Serialize_Set(std::make_pair("m_camera", m_camera));
+		return Serializer::Serialize_Set(std::pair("m_camera", m_camera));
 	}
 	inline void deserialize(const std::vector<char>& data) noexcept {
-		Serializer::Deserialize_Set(data, std::make_pair("m_camera", &m_camera));
+		Serializer::Deserialize_Set(data, std::pair("m_camera", &m_camera));
 	}
 };
 
@@ -68,16 +68,16 @@ struct [[deprecated]] BoundingSphere_Component final : public ecsComponent<Bound
 
 	inline std::vector<char> serialize() noexcept {
 		return Serializer::Serialize_Set(
-			std::make_pair("m_positionOffset", m_positionOffset),
-			std::make_pair("m_radius", m_radius),
-			std::make_pair("m_cameraCollision", m_cameraCollision)
+			std::pair("m_positionOffset", m_positionOffset),
+			std::pair("m_radius", m_radius),
+			std::pair("m_cameraCollision", m_cameraCollision)
 		);
 	}
 	inline void deserialize(const std::vector<char>& data) noexcept {
 		Serializer::Deserialize_Set(data,
-			std::make_pair("m_positionOffset", &m_positionOffset),
-			std::make_pair("m_radius", &m_radius),
-			std::make_pair("m_cameraCollision", &m_cameraCollision)
+			std::pair("m_positionOffset", &m_positionOffset),
+			std::pair("m_radius", &m_radius),
+			std::pair("m_cameraCollision", &m_cameraCollision)
 		);
 	}
 };
@@ -91,20 +91,20 @@ struct [[deprecated]] BoundingBox_Component final : public ecsComponent<Bounding
 
 	inline std::vector<char> serialize() noexcept {
 		return Serializer::Serialize_Set(
-			std::make_pair("m_positionOffset", m_positionOffset),
-			std::make_pair("m_extent", m_extent),
-			std::make_pair("m_min", m_min),
-			std::make_pair("m_max", m_max),
-			std::make_pair("m_cameraCollision", m_cameraCollision)
+			std::pair("m_positionOffset", m_positionOffset),
+			std::pair("m_extent", m_extent),
+			std::pair("m_min", m_min),
+			std::pair("m_max", m_max),
+			std::pair("m_cameraCollision", m_cameraCollision)
 		);
 	}
 	inline void deserialize(const std::vector<char>& data) noexcept {
 		Serializer::Deserialize_Set(data,
-			std::make_pair("m_positionOffset", &m_positionOffset),
-			std::make_pair("m_extent", &m_extent),
-			std::make_pair("m_min", &m_min),
-			std::make_pair("m_max", &m_max),
-			std::make_pair("m_cameraCollision", &m_cameraCollision)
+			std::pair("m_positionOffset", &m_positionOffset),
+			std::pair("m_extent", &m_extent),
+			std::pair("m_min", &m_min),
+			std::pair("m_max", &m_max),
+			std::pair("m_cameraCollision", &m_cameraCollision)
 		);
 	}
 };
@@ -126,18 +126,18 @@ struct Collider_Component final : public ecsComponent<Collider_Component, collid
 
 	inline std::vector<char> serialize() noexcept {
 		return Serializer::Serialize_Set(
-			std::make_pair("m_modelName", m_modelName),
-			std::make_pair("m_restitution", m_restitution),
-			std::make_pair("m_friction", m_friction),
-			std::make_pair("m_mass", m_mass)
+			std::pair("m_modelName", m_modelName),
+			std::pair("m_restitution", m_restitution),
+			std::pair("m_friction", m_friction),
+			std::pair("m_mass", m_mass)
 		);
 	}
 	inline void deserialize(const std::vector<char>& data) noexcept {
 		Serializer::Deserialize_Set(data,
-			std::make_pair("m_modelName", &m_modelName),
-			std::make_pair("m_restitution", &m_restitution),
-			std::make_pair("m_friction", &m_friction),
-			std::make_pair("m_mass", &m_mass)
+			std::pair("m_modelName", &m_modelName),
+			std::pair("m_restitution", &m_restitution),
+			std::pair("m_friction", &m_friction),
+			std::pair("m_mass", &m_mass)
 		);
 	}
 };
@@ -156,14 +156,14 @@ struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 
 	inline std::vector<char> serialize() noexcept {
 		return Serializer::Serialize_Set(
-			std::make_pair("m_modelName", m_modelName),
-			std::make_pair("m_skin", m_skin)
+			std::pair("m_modelName", m_modelName),
+			std::pair("m_skin", m_skin)
 		);
 	}
 	inline void deserialize(const std::vector<char>& data) noexcept {
 		Serializer::Deserialize_Set(data,
-			std::make_pair("m_modelName", &m_modelName),
-			std::make_pair("m_skin", &m_skin)
+			std::pair("m_modelName", &m_modelName),
+			std::pair("m_skin", &m_skin)
 		);
 	}
 };
@@ -182,16 +182,16 @@ struct Skeleton_Component final : public ecsComponent<Skeleton_Component, skelet
 
 	inline std::vector<char> serialize() noexcept {
 		return Serializer::Serialize_Set(
-			std::make_pair("m_modelName", m_modelName),
-			std::make_pair("m_animation", m_animation),
-			std::make_pair("m_playAnim", m_playAnim)
+			std::pair("m_modelName", m_modelName),
+			std::pair("m_animation", m_animation),
+			std::pair("m_playAnim", m_playAnim)
 		);
 	}
 	inline void deserialize(const std::vector<char>& data) noexcept {
 		Serializer::Deserialize_Set(data,
-			std::make_pair("m_modelName", &m_modelName),
-			std::make_pair("m_animation", &m_animation),
-			std::make_pair("m_playAnim", &m_playAnim)
+			std::pair("m_modelName", &m_modelName),
+			std::pair("m_animation", &m_animation),
+			std::pair("m_playAnim", &m_playAnim)
 		);
 	}
 };
@@ -215,20 +215,20 @@ struct Light_Component final : public ecsComponent<Light_Component, lightName> {
 
 	inline std::vector<char> serialize() noexcept {
 		return Serializer::Serialize_Set(
-			std::make_pair("m_type", m_type),
-			std::make_pair("m_color", m_color),
-			std::make_pair("m_intensity", m_intensity),
-			std::make_pair("m_radius", m_radius),
-			std::make_pair("m_cutoff", m_cutoff)
+			std::pair("m_type", m_type),
+			std::pair("m_color", m_color),
+			std::pair("m_intensity", m_intensity),
+			std::pair("m_radius", m_radius),
+			std::pair("m_cutoff", m_cutoff)
 		);
 	}
 	inline void deserialize(const std::vector<char>& data) noexcept {
 		Serializer::Deserialize_Set(data,
-			std::make_pair("m_type", &m_type),
-			std::make_pair("m_color", &m_color),
-			std::make_pair("m_intensity", &m_intensity),
-			std::make_pair("m_radius", &m_radius),
-			std::make_pair("m_cutoff", &m_cutoff)
+			std::pair("m_type", &m_type),
+			std::pair("m_color", &m_color),
+			std::pair("m_intensity", &m_intensity),
+			std::pair("m_radius", &m_radius),
+			std::pair("m_cutoff", &m_cutoff)
 		);
 	}
 };

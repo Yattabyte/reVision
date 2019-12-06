@@ -10,7 +10,7 @@ ReflectorSync_System::ReflectorSync_System(ReflectorData& frameData) noexcept :
 	addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 }
 
-void ReflectorSync_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept
+void ReflectorSync_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept
 {
 	// Resize light buffers to match number of entities this frame
 	m_frameData.lightBuffer.resize(components.size());

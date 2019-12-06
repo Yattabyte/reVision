@@ -17,12 +17,12 @@ Join_Reflections::Join_Reflections(Engine& engine) noexcept :
 {
 }
 
-void Join_Reflections::clearCache(const float& deltaTime) noexcept 
+void Join_Reflections::clearCache(const float&) noexcept 
 {
 	m_drawIndex = 0;
 }
 
-void Join_Reflections::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void Join_Reflections::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shader))
 		return;

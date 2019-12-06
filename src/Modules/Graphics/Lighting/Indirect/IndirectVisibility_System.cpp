@@ -10,15 +10,15 @@ IndirectVisibility_System::IndirectVisibility_System(Indirect_Light_Data& frameD
 	addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 }
 
-void IndirectVisibility_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void IndirectVisibility_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
 {
 	// Compile results PER viewport
 	for (auto& viewInfo : m_frameData.viewInfo) {
 		// Clear previous cached data
 		viewInfo.lightIndices.clear();
 
-		int index = 0;
-		for (const auto& componentParam : components)
-			viewInfo.lightIndices.push_back((GLuint)index++);
+		//for (const auto& componentParam : components)
+		for (GLuint index = 0; index < components.size(); ++index)
+			viewInfo.lightIndices.push_back(index);
 	}
 }

@@ -25,5 +25,5 @@ void PreferenceState::save() noexcept
 
 void PreferenceState::addCallback(const Preference& targetKey, const std::shared_ptr<bool>& alive, const std::function<void(float)>& callback) noexcept 
 {
-	m_callbacks[targetKey].emplace_back(std::make_pair(alive, callback));
+	m_callbacks[targetKey].emplace_back(std::pair(alive, callback));
 }

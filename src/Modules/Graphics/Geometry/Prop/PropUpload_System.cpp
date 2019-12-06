@@ -70,7 +70,7 @@ PropUpload_System::PropUpload_System(Engine& engine, PropData& frameData) noexce
 	}
 }
 
-void PropUpload_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept
+void PropUpload_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept
 {
 	for (const auto& componentParam : components) {
 		auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
@@ -176,7 +176,7 @@ void PropUpload_System::tryInsertMaterial(const Shared_Material& material) noexc
 		size_t offset(0ull);
 		for (int x = 0; x < int(material->m_textures.size() / MAX_PHYSICAL_IMAGES); ++x) {
 			// Find a free pixel buffer
-			auto& [pboID, fence] = getFreePBO();
+			auto [pboID, fence] = getFreePBO();
 			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, *pboID);
 			glNamedBufferSubData(*pboID, 0, size_t(m_materialSize) * size_t(m_materialSize) * MAX_DIGITAL_IMAGES * 4ull, &material->m_materialData[offset]);
 

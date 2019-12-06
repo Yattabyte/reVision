@@ -47,7 +47,7 @@ Reflector_Technique::Reflector_Technique(Engine& engine, std::vector<Camera*>& s
 		});
 }
 
-void Reflector_Technique::clearCache(const float& deltaTime) noexcept 
+void Reflector_Technique::clearCache(const float&) noexcept 
 {
 	m_frameData.lightBuffer.endReading();
 	m_frameData.viewInfo.clear();
@@ -185,7 +185,7 @@ void Reflector_Technique::updateReflectors(const float& deltaTime) noexcept
 	}
 }
 
-void Reflector_Technique::renderReflectors(const float& deltaTime, const std::shared_ptr<Viewport>& viewport) noexcept 
+void Reflector_Technique::renderReflectors(const float&, const std::shared_ptr<Viewport>& viewport) noexcept 
 {
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_BLEND);

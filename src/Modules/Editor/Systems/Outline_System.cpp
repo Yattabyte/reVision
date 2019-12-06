@@ -53,7 +53,7 @@ Outline_System::Outline_System(Engine& engine, LevelEditor_Module& editor) noexc
 	m_hemisphere = Shared_Mesh(engine, "//Models//hemisphere.obj");
 }
 
-void Outline_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void Outline_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
 {
 	if (m_shader->ready()) {
 		// Collate all component data to generate a draw call

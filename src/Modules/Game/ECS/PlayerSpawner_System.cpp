@@ -16,7 +16,7 @@ PlayerSpawn_System::PlayerSpawn_System(Engine& engine, Game_Module& game) noexce
 		engine.getManager_Messages().error("Invalid ECS System: PlayerSpawn_System");
 }
 
-void PlayerSpawn_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void PlayerSpawn_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
 {
 	if (m_playerCount == 0ull) {
 		for (const auto& componentParam : components) {

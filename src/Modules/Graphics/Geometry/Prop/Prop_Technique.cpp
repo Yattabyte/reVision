@@ -20,7 +20,7 @@ Prop_Technique::Prop_Technique(Engine& engine, std::vector<Camera*>& sceneCamera
 	m_auxilliarySystems.makeSystem<PropSync_System>(m_frameData);
 }
 
-void Prop_Technique::clearCache(const float& deltaTime) noexcept 
+void Prop_Technique::clearCache(const float&) noexcept 
 {
 	m_frameData.modelBuffer.endReading();
 	m_frameData.skeletonBuffer.endReading();
@@ -35,7 +35,7 @@ void Prop_Technique::updateCache(const float& deltaTime, ecsWorld& world) noexce
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Prop_Technique::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void Prop_Technique::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	// Exit Early
 	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shaderCull, m_shaderGeometry)) {
@@ -123,7 +123,7 @@ void Prop_Technique::renderTechnique(const float& deltaTime, const std::shared_p
 
 			// Copy depth for next frame
 			viewport->m_gfxFBOS.bindForWriting("DEPTH-ONLY");
-			const auto& [sourceID, destinationID] = std::make_pair(viewport->m_gfxFBOS.getFboID("GEOMETRY"), viewport->m_gfxFBOS.getFboID("DEPTH-ONLY"));
+			const auto& [sourceID, destinationID] = std::pair(viewport->m_gfxFBOS.getFboID("GEOMETRY"), viewport->m_gfxFBOS.getFboID("DEPTH-ONLY"));
 			const auto& size = viewport->m_dimensions;
 			glBlitNamedFramebuffer(sourceID, destinationID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
@@ -138,7 +138,7 @@ void Prop_Technique::renderTechnique(const float& deltaTime, const std::shared_p
 	}
 }
 
-void Prop_Technique::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void Prop_Technique::cullShadows(const float&, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
 	// Exit Early
 	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shaderShadowCull, m_shaderShadowGeometry)) {
@@ -217,7 +217,7 @@ void Prop_Technique::cullShadows(const float& deltaTime, const std::vector<std::
 	}
 }
 
-void Prop_Technique::renderShadows(const float& deltaTime) noexcept 
+void Prop_Technique::renderShadows(const float&) noexcept 
 {
 	// Exit Early
 	if (m_enabled && Asset::All_Ready(m_shapeCube, m_shaderShadowCull, m_shaderShadowGeometry)) {

@@ -12,7 +12,7 @@ PropSync_System::PropSync_System(PropData& frameData) noexcept :
 	addComponentType(BoundingBox_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 }
 
-void PropSync_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void PropSync_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
 {
 	// Resize BOTH buffers to match number of entities this frame, even though not all models have skeletons
 	m_frameData.modelBuffer.resize(components.size());

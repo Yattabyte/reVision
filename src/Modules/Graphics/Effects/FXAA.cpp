@@ -20,12 +20,12 @@ FXAA::~FXAA() noexcept
 	preferences.addCallback(PreferenceState::Preference::C_FXAA, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
 }
  
-void FXAA::clearCache(const float& deltaTime) noexcept 
+void FXAA::clearCache(const float&) noexcept 
 {
 	m_drawIndex = 0;
 }
 
-void FXAA::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void FXAA::renderTechnique(const float& , const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderFXAA))
 		return;

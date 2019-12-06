@@ -20,12 +20,12 @@ HDR::HDR(Engine& engine) noexcept :
 	preferences.addCallback(PreferenceState::Preference::C_GAMMA, m_aliveIndicator, [&](const float& f) { m_gamma = f; });
 }
 
-void HDR::clearCache(const float& deltaTime) noexcept
+void HDR::clearCache(const float&) noexcept
 {
 	m_drawIndex = 0;
 }
 
-void HDR::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void HDR::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderHDR))
 		return;

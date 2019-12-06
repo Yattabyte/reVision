@@ -57,7 +57,8 @@ public:
 			// For each remaining member of the parameter pack, recursively call this function
 			if constexpr (sizeof...(rest) > 0)
 				return All_Ready(rest...);
-			return true;
+			else
+				return true;
 		}
 
 		return false;

@@ -100,13 +100,13 @@ void List_Horizontal::userAction(ActionState& actionState) noexcept
 
 		// After, process remaining input for the list_Horizontal
 		if (actionState.isAction(ActionState::Action::UI_UP) == ActionState::State::PRESS) {
-			setHoverIndex(m_hoverIndex - 1 < 0 ? (int)m_children.size() - 1ull : m_hoverIndex - 1);
+			setHoverIndex(int(m_hoverIndex - 1) < 0 ? (int)m_children.size() - 1ull : int(m_hoverIndex - 1));
 
 			if (m_selectionIndex != -1)
 				setSelectionIndex(-1);
 		}
 		else if (actionState.isAction(ActionState::Action::UI_DOWN) == ActionState::State::PRESS) {
-			setHoverIndex(m_hoverIndex + 1 > m_children.size() - 1ull ? 0 : m_hoverIndex + 1);
+			setHoverIndex(int(m_hoverIndex + 1) > m_children.size() - 1ull ? 0 : int(m_hoverIndex + 1));
 
 			if (m_selectionIndex != -1)
 				setSelectionIndex(-1);

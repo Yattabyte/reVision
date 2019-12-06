@@ -12,7 +12,7 @@ Layout_Horizontal::Layout_Horizontal(Engine& engine) noexcept :
 void Layout_Horizontal::addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio) noexcept 
 {
 	UI_Element::addElement(child);
-	m_sizedChildren.push_back(std::make_pair(child, sizeRatio));
+	m_sizedChildren.push_back(std::pair(child, sizeRatio));
 }
 
 void Layout_Horizontal::setMargin(const float& margin) noexcept 

@@ -13,7 +13,7 @@ Inspector_Light_System::Inspector_Light_System(Engine& engine, LevelEditor_Modul
 	addComponentType(Light_Component::Runtime_ID);
 }
 
-void Inspector_Light_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void Inspector_Light_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
 {
 	ImGui::PushID(this);
 	const auto text = std::string(Light_Component::Name) + ": (" + std::to_string(components.size()) + ")";
