@@ -18,10 +18,8 @@ Shared_Texture::Shared_Texture(Engine& engine, const std::string& filename, cons
 
 Texture::~Texture() noexcept
 {
-	if (ready()) {
-		glDeleteBuffers(1, &m_pboID);
-		glDeleteTextures(1, &m_glTexID);
-	}
+	if (ready()) 
+		glDeleteTextures(1, &m_glTexID);	
 }
 
 Texture::Texture(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
@@ -41,23 +39,19 @@ void Texture::initialize() noexcept
 
 	// Create Texture
 	glCreateTextures(m_type, 1, &m_glTexID);
-	glCreateBuffers(1, &m_pboID);
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboID);
 
 	// Load Texture
 	switch (m_type) {
 	case GL_TEXTURE_1D: {
-		glNamedBufferStorage(m_pboID, GLsizeiptr(m_image->m_size.x) * 4LL, &m_image->m_pixelData[0], 0);
 		glTextureStorage1D(m_glTexID, 1, GL_RGBA16F, m_image->m_size.x);
-		glTextureSubImage1D(m_glTexID, 0, 0, m_image->m_size.x, GL_RGBA, GL_UNSIGNED_BYTE, (void*)nullptr);
+		glTextureSubImage1D(m_glTexID, 0, 0, m_image->m_size.x, GL_RGBA, GL_UNSIGNED_BYTE, &m_image->m_pixelData[0]);
 		glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		break;
 	}
 	case GL_TEXTURE_2D: {
-		glNamedBufferStorage(m_pboID, GLsizeiptr(m_image->m_size.x) * GLsizeiptr(m_image->m_size.y) * 4LL, &m_image->m_pixelData[0], 0);
 		glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_image->m_size.x, m_image->m_size.y);
-		glTextureSubImage2D(m_glTexID, 0, 0, 0, m_image->m_size.x, m_image->m_size.y, GL_RGBA, GL_UNSIGNED_BYTE, (void*)nullptr);
+		glTextureSubImage2D(m_glTexID, 0, 0, 0, m_image->m_size.x, m_image->m_size.y, GL_RGBA, GL_UNSIGNED_BYTE, &m_image->m_pixelData[0]);
 		if (m_anis)
 			glTextureParameterf(m_glTexID, GL_TEXTURE_MAX_ANISOTROPY_EXT, MAX_ANISOTROPY);
 		if (m_mipmap) {
@@ -72,16 +66,14 @@ void Texture::initialize() noexcept
 		break;
 	}
 	case GL_TEXTURE_2D_ARRAY: {
-		glNamedBufferStorage(m_pboID, GLsizeiptr(m_image->m_size.x) * GLsizeiptr(m_image->m_size.y) * 4LL, &m_image->m_pixelData[0], 0);
 		glTextureStorage3D(m_glTexID, 1, GL_RGBA16F, m_image->m_size.x, m_image->m_size.y, 0);
-		glTextureSubImage3D(m_glTexID, 0, 0, 0, 0, m_image->m_size.x, m_image->m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)nullptr);
+		glTextureSubImage3D(m_glTexID, 0, 0, 0, 0, m_image->m_size.x, m_image->m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, &m_image->m_pixelData[0]);
 		glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glGenerateTextureMipmap(m_glTexID);
 		break;
 	}
 	};
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);

@@ -55,7 +55,7 @@ public:
 
 
 	// Public Attributes
-	GLuint m_glTexID = 0, m_pboID = 0, m_type = GL_TEXTURE_2D;
+	GLuint m_glTexID = 0, m_type = GL_TEXTURE_2D;
 	bool m_mipmap = false;
 	bool m_anis = false;
 	Shared_Image m_image;

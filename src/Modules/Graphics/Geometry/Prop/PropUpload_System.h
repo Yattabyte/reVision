@@ -58,7 +58,7 @@ private:
 	GLsync m_fence = nullptr;
 	std::map<Shared_Model, std::pair<GLuint, GLuint>> m_modelMap;
 	std::map<Shared_Material, GLuint> m_materialMap;
-	std::array<std::pair<GLuint, GLsync>, 3> m_pixelBuffers;
+	std::array<std::pair<GLuint, GLsync>, 4> m_pixelBuffers;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

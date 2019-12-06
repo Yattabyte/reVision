@@ -19,10 +19,8 @@ Shared_Cubemap::Shared_Cubemap(Engine& engine, const std::string& filename, cons
 
 Cubemap::~Cubemap() noexcept
 {
-	if (ready()) {
-		glDeleteBuffers(CUBEMAP_SIDE_COUNT, m_pboIDs);
-		glDeleteTextures(1, &m_glTexID);
-	}
+	if (ready()) 
+		glDeleteTextures(1, &m_glTexID);	
 }
 
 Cubemap::Cubemap(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
@@ -59,12 +57,8 @@ void Cubemap::initialize() noexcept
 
 	// Load the final texture
 	glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_images[0]->m_size.x, m_images[0]->m_size.x);
-	for (int x = 0; x < CUBEMAP_SIDE_COUNT; ++x) {
-		glNamedBufferStorage(m_pboIDs[x], GLsizeiptr(m_images[x]->m_size.x) * GLsizeiptr(m_images[x]->m_size.x) * 4LL, &m_images[x]->m_pixelData[0], 0);
-		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboIDs[x]);
-		glTextureSubImage3D(m_glTexID, 0, 0, 0, x, m_images[x]->m_size.x, m_images[x]->m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, (void*)nullptr);
-	}
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+	for (int x = 0; x < CUBEMAP_SIDE_COUNT; ++x) 
+		glTextureSubImage3D(m_glTexID, 0, 0, 0, x, m_images[x]->m_size.x, m_images[x]->m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, &m_images[x]->m_pixelData[0]);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
