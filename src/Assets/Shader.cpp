@@ -42,7 +42,7 @@ void Shader::initialize() noexcept
 
 #ifdef NDEBUG
 	constexpr const char* DIRECTORY_SHADER_CACHE = R"(\cache\shaders\)";
-	//if (!loadCachedBinary(DIRECTORY_SHADER_CACHE + getFileName()))
+	if (!loadCachedBinary(DIRECTORY_SHADER_CACHE + getFileName()))
 #endif
 	{
 		// Create Vertex and Fragment shaders
@@ -51,9 +51,8 @@ void Shader::initialize() noexcept
 			glLinkProgram(m_glProgramID);
 			success = validateProgram();
 #ifdef NDEBUG
-			constexpr const char* DIRECTORY_SHADER_CACHE = R"(\cache\shaders\)";
-			if (success)
-				saveCachedBinary(DIRECTORY_SHADER_CACHE + getFileName());
+			if (success) 
+				saveCachedBinary(DIRECTORY_SHADER_CACHE + getFileName());			
 #endif
 		}
 		// If we ever failed, initialize default shader

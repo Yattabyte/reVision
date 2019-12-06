@@ -85,12 +85,12 @@ public:
 			int struct_size = (int)sizeof(Memory_Structure);
 			char payload_name[MAX_NAME_CHARS]{ '\0' };
 			int payload_size = (int)sizeof(T);
-			char payload_data[sizeof(T)];
+			char payload_data[sizeof(T)]{0};
 
 			/** Fill this memory structure. */
 			Memory_Structure(const std::string& name, const T& data) {
 				// Copy-in the variable name, clamped to a max of MAX_NAME_CHARS)
-				std::copy(&name[0], &name[std::min(name.size(), (size_t)MAX_NAME_CHARS)], &payload_name[0]);
+				std::copy(name.begin(), name.size() <= (size_t)MAX_NAME_CHARS ? name.end() : name.begin() + MAX_NAME_CHARS, std::begin(payload_name));
 				// Copy-in the variable data
 				*reinterpret_cast<T*>(&payload_data[0]) = data;
 			}
@@ -121,7 +121,7 @@ public:
 				struct_size += payload_size;
 
 				// Copy-in the variable name, clamped to a max of MAX_NAME_CHARS)
-				std::copy(&name[0], &name[std::min(name.size(), (size_t)MAX_NAME_CHARS)], &payload_name[0]);
+				std::copy(name.begin(), name.size() <= (size_t)MAX_NAME_CHARS ? name.end() : name.begin() + MAX_NAME_CHARS, std::begin(payload_name));
 			}
 		} const outputData(name, data);
 
@@ -129,7 +129,7 @@ public:
 		std::vector<char> dataBuffer(outputData.struct_size);
 		*reinterpret_cast<Memory_Structure*>(&dataBuffer[0]) = outputData;
 		// Copy-in the variable data
-		std::copy(&data[0], &data[data.size()], &dataBuffer[sizeof(Memory_Structure)]);
+		std::copy(data.begin(), data.end(), dataBuffer.begin() + sizeof(Memory_Structure));
 		return dataBuffer;
 	}
 

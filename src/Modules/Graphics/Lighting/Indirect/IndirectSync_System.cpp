@@ -25,9 +25,6 @@ void IndirectSync_System::updateComponents(const float& deltaTime, const std::ve
 		// Sync Common Buffer Attributes
 		const auto radiusSquared = (light->m_radius * light->m_radius);
 		const auto& position = trans->m_worldTransform.m_position;
-		const auto transM = glm::translate(glm::mat4(1.0f), position);
-		const auto rotM = glm::mat4_cast(trans->m_worldTransform.m_orientation);
-		const auto sclM = glm::scale(glm::mat4(1.0f), glm::vec3(radiusSquared * 1.1f));
 		trans->m_localTransform.m_scale = glm::vec3(radiusSquared * 1.1f);
 		trans->m_localTransform.update();
 		m_frameData.lightBuffer[index].LightColor = light->m_color;

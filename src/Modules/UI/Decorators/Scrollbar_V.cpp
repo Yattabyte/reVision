@@ -10,11 +10,9 @@ Scrollbar_V::~Scrollbar_V() noexcept
 }
 
 Scrollbar_V::Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& component) noexcept : 
-	UI_Decorator(engine, component) 
+	UI_Decorator(engine, component),
+	m_shader(Shared_Shader(engine, "UI\\ScrollBar"))
 {
-	// Asset Loading
-	m_shader = Shared_Shader(engine, "UI\\ScrollBar");
-
 	auto topButton = std::make_shared<Button>(engine), bottomButton = std::make_shared<Button>(engine), panel = std::make_shared<Button>(engine);
 	addElement(topButton);
 	addElement(bottomButton);
@@ -49,7 +47,7 @@ void Scrollbar_V::mouseAction(const MouseEvent& mouseEvent) noexcept
 	UI_Decorator::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 		MouseEvent subEvent = mouseEvent;
-		subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
+		//subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 		subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
 		if (m_children.size() == 3) {
 			if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed() && mouseEvent.m_action == MouseEvent::Action::MOVE)

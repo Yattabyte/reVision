@@ -706,12 +706,8 @@ void LevelEditor_Module::ungroupSelection() noexcept
 		Ungroup_Selection_Command(Engine& engine, LevelEditor_Module& editor) noexcept
 			: m_engine(engine), m_editor(editor), m_uuids(m_editor.getSelection()) {
 			const auto& ecsWorld = m_editor.getWorld();
-			for (const auto& entityHandle : m_uuids) {
-				std::vector<EntityHandle> childrenUUIDS;
-				for (const auto& childHandle : ecsWorld.getEntityHandles(entityHandle))
-					childrenUUIDS.push_back(childHandle);
-				m_children.push_back(childrenUUIDS);
-			}
+			for (const auto& entityHandle : m_uuids)
+				m_children.push_back(ecsWorld.getEntityHandles(entityHandle));			
 		}
 		virtual void execute() noexcept override final {
 			auto& ecsWorld = m_editor.getWorld();

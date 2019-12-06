@@ -9,11 +9,9 @@ List_Horizontal::~List_Horizontal() noexcept
 }
 
 List_Horizontal::List_Horizontal(Engine& engine) noexcept :
-	UI_Element(engine)
+	UI_Element(engine),
+	m_shader(Shared_Shader(engine, "UI\\List_Horizontal"))
 {
-	// Asset Loading
-	m_shader = Shared_Shader(engine, "UI\\List_Horizontal");
-
 	// Generate vertex array
 	glCreateVertexArrays(1, &m_vaoID);
 	glEnableVertexArrayAttrib(m_vaoID, 0);

@@ -23,7 +23,7 @@ public:
 	~List_Horizontal() noexcept;
 	/** Constructs a list_Horizontal.
 	@param	engine		reference to the engine to use. */
-	List_Horizontal(Engine& engine) noexcept;
+	explicit List_Horizontal(Engine& engine) noexcept;
 
 
 	// Public Interface Implementation

@@ -10,13 +10,11 @@ TextInput::~TextInput() noexcept
 }
 
 TextInput::TextInput(Engine& engine) noexcept :
-	UI_Element(engine)
+	UI_Element(engine),
+	m_shader(Shared_Shader(engine, "UI\\TextInput")),
+	m_label(std::make_shared<Label>(engine))
 {
-	// Asset Loading
-	m_shader = Shared_Shader(engine, "UI\\TextInput");
-
 	// Label
-	m_label = std::make_shared<Label>(engine);
 	m_label->setAlignment(Label::Alignment::align_left);
 	m_label->setColor(glm::vec3(0.0f));
 	addElement(m_label);
@@ -104,7 +102,7 @@ void TextInput::renderElement(const float& deltaTime, const glm::vec2& position,
 		return;
 
 	const glm::vec2 newPosition = position + m_position;
-	const glm::vec2 newScale = glm::min(m_scale, scale);
+	//const glm::vec2 newScale = glm::min(m_scale, scale);
 
 	// Render (background)
 	m_shader->bind();

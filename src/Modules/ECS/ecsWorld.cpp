@@ -272,10 +272,7 @@ void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle
 	// Check for parent transformations
 	if (childEntity == nullptr)
 		return;
-	if (parentEntity != nullptr)
-		if (const auto& transformComponent = getComponent<Transform_Component>(parentHandle))
-			newParentTransform = transformComponent->m_worldTransform;
-	if (childEntity != nullptr)
+	else
 		if (childEntity->m_parent.isValid()) {
 			const auto& oldParentHandle = childEntity->m_parent;
 			if (auto oldParent = getEntity(oldParentHandle)) {
@@ -284,6 +281,9 @@ void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle
 					oldParentTransform = transformComponent->m_worldTransform;
 			}
 		}
+	if (parentEntity != nullptr)
+		if (const auto& transformComponent = getComponent<Transform_Component>(parentHandle))
+			newParentTransform = transformComponent->m_worldTransform;
 
 	// Transform the child entity, removing it from its previous parent's space
 	if (const auto& transform = getComponent<Transform_Component>(childHandle)) {

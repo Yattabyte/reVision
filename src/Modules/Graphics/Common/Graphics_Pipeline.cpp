@@ -28,10 +28,10 @@ Graphics_Pipeline::~Graphics_Pipeline()
 }
 
 Graphics_Pipeline::Graphics_Pipeline(Engine& engine, Camera& clientCamera) noexcept :
-	m_engine(engine)
+	m_engine(engine),
+	m_transHierachy(std::make_shared<Transform_System>(engine))
 {
 	// Create Systems
-	m_transHierachy = std::make_shared<Transform_System>(engine);
 	m_worldSystems.addSystem(m_transHierachy);
 	m_worldSystems.makeSystem<FrustumCull_System>(m_sceneCameras);
 	m_worldSystems.makeSystem<Skeletal_Animation_System>(engine);

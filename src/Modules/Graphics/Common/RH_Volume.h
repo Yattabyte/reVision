@@ -51,7 +51,7 @@ public:
 private:
 	// Private Attributes
 	Engine& m_engine;
-	GLuint m_fboIDS[2]{}, m_textureIDS[2][RH_TEXTURE_COUNT] = { {}, {} };
+	GLuint m_fboIDS[2]{0}, m_textureIDS[2][RH_TEXTURE_COUNT] = { {0}, {0} };
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

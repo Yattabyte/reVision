@@ -13,7 +13,7 @@ public:
 	inline ~Layout_Vertical() = default;
 	/** Construct the layout.
 	@param	engine		reference to the engine to use. */
-	Layout_Vertical(Engine& engine) noexcept;
+	explicit Layout_Vertical(Engine& engine) noexcept;
 
 
 	// Public Methods

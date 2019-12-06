@@ -23,7 +23,7 @@ public:
 	~TextInput() noexcept;
 	/** Construct a text input.
 	@param	engine		reference to the engine to use. */
-	TextInput(Engine& engine) noexcept;
+	explicit TextInput(Engine& engine) noexcept;
 
 
 	// Public Interface Implementation

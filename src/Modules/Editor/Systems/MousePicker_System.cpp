@@ -71,7 +71,6 @@ void MousePicker_System::updateComponents(const float& deltaTime, const std::vec
 		// We won't change this at all, we just need the pointer address
 		closestPhysicsShape = const_cast<btCollisionShape*>(closestResults.m_collisionObject->getCollisionShape());
 		intersectionNormal = glm::vec3(closestResults.m_hitNormalWorld.x(), closestResults.m_hitNormalWorld.y(), closestResults.m_hitNormalWorld.z());
-		intersectionNormal = glm::vec3(1, 0, 0);
 	}
 
 	float closestDistance = FLT_MAX;

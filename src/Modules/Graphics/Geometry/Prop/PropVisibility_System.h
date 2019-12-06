@@ -16,7 +16,7 @@ public:
 	inline ~PropVisibility_System() = default;
 	/** Construct this system.
 	@param	frameData	reference to of common data that changes frame-to-frame. */
-	PropVisibility_System(PropData& frameData) noexcept;
+	explicit PropVisibility_System(PropData& frameData) noexcept;
 
 
 	// Public Interface Implementations
