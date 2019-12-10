@@ -49,6 +49,17 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Model(Model&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Model(const Model&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline const Model& operator =(Model&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline const Model& operator =(const Model&) noexcept = delete;
+
+
 	// Private Methods
 	/** Calculates a Axis Aligned Bounding Box from a set of vertices.
 	Returns it as updated minimum and maximum values &minOut and &maxOut respectively.
@@ -68,7 +79,7 @@ private:
 
 
 	// Private Interface Implementation
-	virtual void initialize() noexcept override final;
+	void initialize() noexcept final;
 
 
 	// Private Attributes

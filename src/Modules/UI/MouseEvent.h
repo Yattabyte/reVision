@@ -8,9 +8,9 @@ class MouseEvent {
 public:
 	// Public (De)Constructors
 	/** Destroy the mouse event. */
-	inline ~MouseEvent() = default;
+	inline ~MouseEvent() noexcept = default;
 	/** Construct a mouse event. */
-	inline MouseEvent() = default;
+	inline MouseEvent() noexcept = default;
 
 
 	// Public Attributes

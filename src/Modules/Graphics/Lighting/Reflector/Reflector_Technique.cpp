@@ -30,7 +30,7 @@ Reflector_Technique::Reflector_Technique(Engine& engine, std::vector<Camera*>& s
 	// Preferences
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_ENVMAP_SIZE, m_frameData.envmapSize.x);
-	preferences.addCallback(PreferenceState::Preference::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float& f) noexcept {
 		m_frameData.envmapSize = glm::ivec2(std::max(1u, (unsigned int)f));
 		m_viewport->resize(glm::ivec2(m_frameData.envmapSize), (int)m_frameData.reflectorLayers);
 		});
@@ -39,7 +39,7 @@ Reflector_Technique::Reflector_Technique(Engine& engine, std::vector<Camera*>& s
 	m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_frameData.envmapSize, engine);
 
 	// Asset-Finished Callbacks
-	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
+	m_shapeQuad->addCallback(m_aliveIndicator, [&]() noexcept {
 		// count, primCount, first, reserved
 		const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 };
 		m_indirectQuad = StaticMultiBuffer(sizeof(GLuint) * 4, quadData);
@@ -161,7 +161,7 @@ void Reflector_Technique::updateReflectors(const float& deltaTime) noexcept
 		glDisable(GL_BLEND);
 		glDisable(GL_STENCIL_TEST);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 		m_indirectQuad.endReading();
 
 		// Convolute all completed cubemap's, not just what was done this frame
@@ -176,7 +176,7 @@ void Reflector_Technique::updateReflectors(const float& deltaTime) noexcept
 			m_frameData.envmapFBO.bindForWriting(r);
 
 			// Convolute the 6 faces for this roughness level
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
+			glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 		}
 
 		m_indirectQuadConvolute.endReading();
@@ -212,7 +212,7 @@ void Reflector_Technique::renderReflectors(const float&, const std::shared_ptr<V
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDepthMask(GL_FALSE);
 	glFrontFace(GL_CW);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 	glFrontFace(GL_CCW);
 
 	// Now draw into color buffers
@@ -223,7 +223,7 @@ void Reflector_Technique::renderReflectors(const float&, const std::shared_ptr<V
 	glCullFace(GL_FRONT);
 	glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 
 	glClear(GL_STENCIL_BUFFER_BIT);
 	glDepthMask(GL_TRUE);

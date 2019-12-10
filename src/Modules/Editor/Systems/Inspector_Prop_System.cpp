@@ -31,7 +31,7 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 				uuids.push_back(componentParam[1]->m_handle);
 			return uuids;
 		};
-		auto* propComponent = static_cast<Prop_Component*>(components[0][1]);
+		const auto* propComponent = static_cast<Prop_Component*>(components[0][1]);
 
 		static ImGuiTextFilter filter;
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
@@ -83,14 +83,14 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 						}
 					}
 				}
-				virtual void execute() noexcept override final {
+				void execute() noexcept final {
 					setData(m_newData);
 				}
-				virtual void undo() noexcept override final {
+				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				virtual bool join(Editor_Command* other) noexcept override final {
-					if (auto newCommand = dynamic_cast<Name_Command*>(other)) {
+				bool join(Editor_Command* other) noexcept final {
+					if (const auto& newCommand = dynamic_cast<Name_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
 							return true;
@@ -127,14 +127,14 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 						}
 					}
 				}
-				virtual void execute() noexcept override final {
+				void execute() noexcept final {
 					setData(m_newData);
 				}
-				virtual void undo() noexcept override final {
+				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				virtual bool join(Editor_Command* other) noexcept override final {
-					if (auto newCommand = dynamic_cast<Skin_Command*>(other)) {
+				bool join(Editor_Command* other) noexcept final {
+					if (const auto& newCommand = dynamic_cast<Skin_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
 							return true;

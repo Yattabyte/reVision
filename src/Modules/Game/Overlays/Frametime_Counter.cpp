@@ -18,8 +18,8 @@ Frametime_Counter::Frametime_Counter(Engine& engine) noexcept :
 	auto& preferences = m_engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) { resize(glm::vec2(f, m_renderSize.y)); });
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) { resize(glm::vec2(m_renderSize.x, f)); });
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept { resize(glm::vec2(f, m_renderSize.y)); });
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept { resize(glm::vec2(m_renderSize.x, f)); });
 	resize(m_renderSize);
 }
 

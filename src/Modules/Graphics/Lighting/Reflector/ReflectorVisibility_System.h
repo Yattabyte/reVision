@@ -13,14 +13,14 @@ class ReflectorVisibility_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~ReflectorVisibility_System() = default;
+	inline ~ReflectorVisibility_System() noexcept = default;
 	/** Construct this system.
 	@param	frameData	reference to common data that changes frame-to-frame. */
 	explicit ReflectorVisibility_System(ReflectorData& frameData) noexcept;
 
 
 	// Public Interface Implementations
-	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
 
 
 private:

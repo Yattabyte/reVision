@@ -162,7 +162,7 @@ void SaveDialogue::tickMainDialogue() noexcept
 			ImGui::Spacing();
 
 			// Display an input field with a specific entry name on the same line
-			const auto inputFlags = ImGuiInputTextFlags_EnterReturnsTrue;
+			constexpr auto inputFlags = ImGuiInputTextFlags_EnterReturnsTrue;
 			if (ImGui::InputText("File name", nameInput, IM_ARRAYSIZE(nameInput), inputFlags))
 				option = DialogueOptions::SAVE;
 			ImGui::Spacing();
@@ -235,7 +235,7 @@ void SaveDialogue::tickMainDialogue() noexcept
 
 void SaveDialogue::tryToSave(const std::string& chosenName) noexcept
 {
-	constexpr const auto compareNCase = [](const std::string& str1, const std::string& str2) {
+	constexpr const auto compareNCase = [](const std::string& str1, const std::string& str2) noexcept {
 		return ((str1.size() == str2.size()) && std::equal(str1.cbegin(), str1.cend(), str2.cbegin(), [](const char& c1, const char& c2) {
 			return std::toupper(c1) == std::toupper(c2);
 			}));
@@ -292,7 +292,7 @@ void SaveDialogue::tickRenameDialogue() noexcept
 	if (ImGui::BeginPopupModal("Rename Level", &openRename, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 		ImGui::Text("Enter a new name for this item...");
 		ImGui::Spacing();
-		char nameInput[256];
+		char nameInput[256]{};
 		for (size_t x = 0; x < m_levels[m_selected].name.length() && x < IM_ARRAYSIZE(nameInput); ++x)
 			nameInput[x] = m_levels[m_selected].name[x];
 		nameInput[std::min(256ull, m_levels[m_selected].name.length())] = '\0';

@@ -12,9 +12,9 @@ class ecsWorld {
 public:
 	// Public (De)Constructors
 	/** Destroy this ECS World. */
-	~ecsWorld();
+	~ecsWorld() noexcept;
 	/** Construct an empty ECS World. */
-	inline ecsWorld() = default;
+	ecsWorld() noexcept;
 	/** Construct an ECS world from a serial data buffer. 
 	@param	data				serialized world data. */
 	explicit ecsWorld(const std::vector<char>& data) noexcept;
@@ -33,7 +33,7 @@ public:
 	@param	UUID				optional entity UUID, if empty will auto-generate.
 	@param	parentUUID			optional parent entity UUID, if not at the level root.
 	@return						handle to the entity on success, empty on failure. */
-	[[maybe_unused]] EntityHandle makeEntity(ecsBaseComponent** components, const size_t& numComponents, const std::string& name = "Entity", const EntityHandle& UUID = EntityHandle(), const EntityHandle& parentUUID = EntityHandle()) noexcept;
+	[[maybe_unused]] EntityHandle makeEntity(ecsBaseComponent** const components, const size_t& numComponents, const std::string& name = "Entity", const EntityHandle& UUID = EntityHandle(), const EntityHandle& parentUUID = EntityHandle()) noexcept;
 	/** Adds a component to an entity.
 	@param	entityHandle		handle to the entity to add the component to.
 	@param	component			the component being added.
@@ -89,7 +89,7 @@ public:
 	template <typename T>
 	inline T* getComponent(const EntityHandle& entityHandle) const noexcept {
 		if (auto* component = getComponent(entityHandle, T::Runtime_ID))
-			return static_cast<T*>(component);
+			return dynamic_cast<T*>(component);
 		return nullptr;
 	}
 	/** Retrieve a component.
@@ -104,7 +104,7 @@ public:
 	template <typename T>
 	inline T* getComponent(const ComponentHandle& componentHandle) const noexcept {
 		if (auto* component = getComponent(componentHandle))
-			return static_cast<T*>(component);
+			return dynamic_cast<T*>(component);
 		return nullptr;
 	}
 	/** Try to find a component matching the UUID provided.

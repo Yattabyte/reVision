@@ -54,6 +54,17 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Image(Image&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Image(const Image&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline const Image& operator =(Image&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline const Image& operator =(const Image&) noexcept = delete;
+
+
 	// Private Methods
 	/** Fill the image with the desired colors, in accordance with the fill policy.
 	@param	primaryColor	the primary color to use.
@@ -65,7 +76,7 @@ private:
 
 
 	// Private Interface Implementation
-	virtual void initialize() noexcept override final;
+	void initialize() noexcept final;
 
 
 	// Private Attributes

@@ -28,13 +28,13 @@ Outline_System::Outline_System(Engine& engine, LevelEditor_Module& editor) noexc
 	// Preferences
 	auto& preferences = m_engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::E_OUTLINE_SCALE, m_renderScale);
-	preferences.addCallback(PreferenceState::Preference::E_OUTLINE_SCALE, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::E_OUTLINE_SCALE, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderScale = f;
 		});
 
 	// Create VBO's
 	glCreateBuffers(1, &m_vboID);
-	glNamedBufferStorage(m_vboID, 1, 0, GL_DYNAMIC_STORAGE_BIT);
+	glNamedBufferStorage(m_vboID, 1, nullptr, GL_DYNAMIC_STORAGE_BIT);
 
 	// Create VAO
 	glCreateVertexArrays(1, &m_vaoID);
@@ -65,9 +65,9 @@ void Outline_System::updateComponents(const float&, const std::vector<std::vecto
 		std::vector<glm::ivec4> drawData;
 		for (const auto& componentParam : components) {
 			//auto* selectedComponent = static_cast<Selected_Component*>(componentParam[0]);
-			auto* trans = static_cast<Transform_Component*>(componentParam[1]);
-			auto* prop = static_cast<Prop_Component*>(componentParam[2]);
-			auto* light = static_cast<Light_Component*>(componentParam[3]);
+			const auto* trans = static_cast<Transform_Component*>(componentParam[1]);
+			const auto* prop = static_cast<Prop_Component*>(componentParam[2]);
+			const auto* light = static_cast<Light_Component*>(componentParam[3]);
 
 			const auto tryRegisterComponentModel = [&](const ComponentHandle& componentHandle, const Shared_Mesh& mesh) {
 				tryInsertModel(mesh);
@@ -126,14 +126,14 @@ void Outline_System::updateComponents(const float&, const std::vector<std::vecto
 		glStencilFunc(GL_ALWAYS, 1, 0xFF);
 		glStencilMask(0xFF);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, GLsizei(drawData.size()), 0);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, GLsizei(drawData.size()), 0);
 
 		// Render the shapes larger, cutting out previous region
 		m_shader->setUniform(0, 0.1f * m_renderScale);
 		m_shader->setUniform(3, glm::vec4(1, 0.8, 0.1, 1.0));
 		glStencilMask(0x00);
 		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, GLsizei(drawData.size()), 0);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, GLsizei(drawData.size()), 0);
 
 		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glDisable(GL_BLEND);
@@ -195,7 +195,7 @@ void Outline_System::tryToExpand(const size_t& arraySize) noexcept
 		// Create the new VBO's
 		GLuint newVBOID = 0;
 		glCreateBuffers(1, &newVBOID);
-		glNamedBufferStorage(newVBOID, m_maxCapacity, 0, GL_DYNAMIC_STORAGE_BIT);
+		glNamedBufferStorage(newVBOID, m_maxCapacity, nullptr, GL_DYNAMIC_STORAGE_BIT);
 
 		// Copy old VBO's
 		auto fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);

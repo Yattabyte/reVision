@@ -21,11 +21,11 @@ Panel::Panel(Engine& engine) noexcept :
 	glCreateBuffers(1, &m_vboID);
 	glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
 	constexpr auto num_data = 2 * 3;
-	glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
+	glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), nullptr, GL_DYNAMIC_STORAGE_BIT);
 	m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
+	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { updateGeometry(); });
 }
 
 void Panel::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 

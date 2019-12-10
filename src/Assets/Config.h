@@ -58,8 +58,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Config(Config&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Config(const Config&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline const Config& operator =(Config&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline const Config& operator =(const Config&) noexcept = delete;
+
+
 	// Private Interface Implementation
-	virtual void initialize() noexcept override final;
+	void initialize() noexcept final;
 
 
 	// Private Attributes

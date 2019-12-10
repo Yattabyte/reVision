@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 
-Graphics_Module::Graphics_Module(Engine& engine) : 
+Graphics_Module::Graphics_Module(Engine& engine) noexcept : 
 	Engine_Module(engine) 
 {
 }
@@ -19,7 +19,7 @@ void Graphics_Module::initialize() noexcept
 	m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
 
 	// Asset-Finished Callbacks
-	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
+	m_shapeQuad->addCallback(m_aliveIndicator, [&]() noexcept {
 		m_indirectQuad = IndirectDraw<1>((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 
@@ -30,20 +30,20 @@ void Graphics_Module::initialize() noexcept
 	// Preferences
 	auto& preferences = m_engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize = glm::ivec2(f, m_renderSize.y);
 		m_viewport->resize(m_renderSize, 1);
 		m_clientCamera->Dimensions = m_renderSize;
 		});
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize = glm::ivec2(m_renderSize.x, f);
 		m_viewport->resize(m_renderSize, 1);
 		m_clientCamera->Dimensions = m_renderSize;
 		});
 	float farPlane = 1000.0F;
 	preferences.getOrSetValue(PreferenceState::Preference::C_DRAW_DISTANCE, farPlane);
-	preferences.addCallback(PreferenceState::Preference::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float& f) noexcept {
 		if (m_clientCamera->FarPlane != f) {
 			m_clientCamera->FarPlane = f;
 			genPerspectiveMatrix();
@@ -51,7 +51,7 @@ void Graphics_Module::initialize() noexcept
 		});
 	float fov = 90.0F;
 	preferences.getOrSetValue(PreferenceState::Preference::C_FOV, fov);
-	preferences.addCallback(PreferenceState::Preference::C_FOV, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_FOV, m_aliveIndicator, [&](const float& f) noexcept {
 		if (m_clientCamera->FOV != f) {
 			m_clientCamera->FOV = f;
 			genPerspectiveMatrix();

@@ -18,13 +18,12 @@ struct ShaderHeader {
 
 Shared_Shader::Shared_Shader(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
-	(*(std::shared_ptr<Shader>*)(this)) = std::dynamic_pointer_cast<Shader>(
-		engine.getManager_Assets().shareAsset(
+	swap(std::dynamic_pointer_cast<Shader>(engine.getManager_Assets().shareAsset(
 			typeid(Shader).name(),
 			filename,
 			[&engine, filename]() { return std::make_shared<Shader>(engine, filename); },
 			threaded
-		));
+		)));
 }
 
 Shader::~Shader() noexcept
@@ -41,6 +40,7 @@ void Shader::initialize() noexcept
 	m_glProgramID = glCreateProgram();
 
 #ifdef NDEBUG
+	// Try to load the shader cache
 	constexpr const char* DIRECTORY_SHADER_CACHE = R"(\cache\shaders\)";
 	if (!loadCachedBinary(DIRECTORY_SHADER_CACHE + getFileName()))
 #endif
@@ -115,61 +115,74 @@ std::vector<GLchar> Shader::getErrorLog() const noexcept
 
 bool Shader::loadCachedBinary(const std::string& relativePath) noexcept
 {
-	if (Engine::File_Exists(relativePath + EXT_SHADER_BINARY)) {
-		ShaderHeader header{};
-		std::ifstream file((Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY).c_str(), std::ios::binary);
-		if (file.is_open()) {
-			file.read(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
-			std::vector<char> binary(header.length);
-			file.read(binary.data(), header.length);
-			file.close();
+	// Check if a shader binary exists
+	if (!Engine::File_Exists(relativePath + EXT_SHADER_BINARY))
+		return false;
 
-			glProgramBinary(m_glProgramID, header.format, binary.data(), header.length);
-			if (getProgramiv(GL_LINK_STATUS) != 0) {
-				glValidateProgram(m_glProgramID);
-				return true;
-			}
-			const std::vector<GLchar> infoLog = getErrorLog();
-			m_engine.getManager_Messages().error("Shader \"" + m_filename + "\" failed to use binary cache. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
-			return false;
-		}
+	// Attempt to open the file
+	ShaderHeader header{};
+	std::ifstream file((Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY).c_str(), std::ios::binary | std::ios::in | std::ios::beg);
+	if (!file.is_open()) {
 		m_engine.getManager_Messages().error("Shader \"" + m_filename + "\" failed to open binary cache.");
+		deleteCachedBinary(relativePath);
 		return false;
 	}
-	// Safe, binary file simply doesn't exist. Don't error report.
-	return false;
+
+	// Try to convert back into a shader program
+	file.read(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
+	std::vector<char> binary(header.length);
+	file.read(binary.data(), header.length);
+	file.close();
+	glProgramBinary(m_glProgramID, header.format, binary.data(), header.length);
+	if (getProgramiv(GL_LINK_STATUS) == 0) {
+		const auto infoLog = getErrorLog();
+		m_engine.getManager_Messages().error("Shader \"" + m_filename + "\" failed to use binary cache. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
+		deleteCachedBinary(relativePath);
+		return false;
+	}
+	
+	glValidateProgram(m_glProgramID);
+	return true;	
 }
 
 bool Shader::saveCachedBinary(const std::string& relativePath) noexcept
 {
+	// Retrieve the program binary
 	glProgramParameteri(m_glProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 	ShaderHeader header = { 0,  getProgramiv(GL_PROGRAM_BINARY_LENGTH) };
 	std::vector<char> binary(header.length);
 	glGetProgramBinary(m_glProgramID, header.length, nullptr, &header.format, binary.data());
 
+	// Attempt to open the file
 	const auto fullPath = Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY;
 	std::filesystem::create_directories(std::filesystem::path(fullPath).parent_path());
 	std::ofstream file(fullPath, std::ios::binary);
-	if (file.is_open()) {
-		file.write(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
-		file.write(binary.data(), header.length);
-		file.close();
-		return true;
+	if (!file.is_open()) {
+		m_engine.getManager_Messages().error("Shader \"" + m_filename + "\" failed to write to binary cache.");
+		return false;
 	}
-	m_engine.getManager_Messages().error("Shader \"" + m_filename + "\" failed to write to binary cache.");
-	return false;
+	
+	// Write the file to disk and return
+	file.write(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
+	file.write(binary.data(), header.length);
+	file.close();
+	return true;	
+}
+
+bool Shader::deleteCachedBinary(const std::string& relativePath) noexcept
+{
+	std::error_code ec;
+	return std::filesystem::remove(Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY, ec);
 }
 
 bool Shader::initShaders(const std::string& relativePath) noexcept
 {
-	const std::string filename = getFileName();
-
 	if (!m_vertexShader.loadDocument(m_engine, relativePath + EXT_SHADER_VERTEX) ||
 		!m_fragmentShader.loadDocument(m_engine, relativePath + EXT_SHADER_FRAGMENT))
 		return false;
 
-
 	// Create Vertex Shader
+	const auto filename = getFileName();
 	m_vertexShader.createGLShader(m_engine, filename);
 	glAttachShader(m_glProgramID, m_vertexShader.m_shaderID);
 
@@ -183,21 +196,26 @@ bool Shader::initShaders(const std::string& relativePath) noexcept
 bool Shader::validateProgram() noexcept
 {
 	// Check Validation
-	if (getProgramiv(GL_LINK_STATUS) != 0) {
-		glValidateProgram(m_glProgramID);
+	if (getProgramiv(GL_LINK_STATUS) == 0) 
+		return false;
 
-		// Detach the shaders now that the program is complete
-		glDetachShader(m_glProgramID, m_vertexShader.m_shaderID);
-		glDetachShader(m_glProgramID, m_fragmentShader.m_shaderID);
+	// Detach the shaders now that the program is complete
+	glValidateProgram(m_glProgramID);
+	glDetachShader(m_glProgramID, m_vertexShader.m_shaderID);
+	glDetachShader(m_glProgramID, m_fragmentShader.m_shaderID);
 
-		return true;
-	}
-	return false;
+	return true;
 }
 
-ShaderObj::~ShaderObj() noexcept { glDeleteShader(m_shaderID); }
+ShaderObj::~ShaderObj() noexcept 
+{ 
+	glDeleteShader(m_shaderID); 
+}
 
-ShaderObj::ShaderObj(const GLenum& type) noexcept : m_type(type) {}
+ShaderObj::ShaderObj(const GLenum& type) noexcept : 
+	m_type(type)
+{
+}
 
 GLint ShaderObj::getShaderiv(const GLenum& parameterName) const noexcept
 {
@@ -243,12 +261,13 @@ bool ShaderObj::createGLShader(Engine& engine, const std::string& filename) noex
 	glCompileShader(m_shaderID);
 
 	// Validate shader object
-	if (getShaderiv(GL_COMPILE_STATUS) != 0)
-		return true;
+	if (getShaderiv(GL_COMPILE_STATUS) == 0) {
+		// Report any errors
+		std::vector<GLchar> infoLog(getShaderiv(GL_INFO_LOG_LENGTH));
+		glGetShaderInfoLog(m_shaderID, (GLsizei)infoLog.size(), nullptr, &infoLog[0]);
+		engine.getManager_Messages().error("ShaderObj \"" + filename + "\" failed to compile. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
+		return false;
+	}
 
-	// Report any errors
-	std::vector<GLchar> infoLog(getShaderiv(GL_INFO_LOG_LENGTH));
-	glGetShaderInfoLog(m_shaderID, (GLsizei)infoLog.size(), nullptr, &infoLog[0]);
-	engine.getManager_Messages().error("ShaderObj \"" + filename + "\" failed to compile. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
-	return false;
+	return true;	
 }

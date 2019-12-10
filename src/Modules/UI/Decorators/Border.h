@@ -8,7 +8,7 @@
 
 
 /** Border decorator object. */
-class Border : public UI_Decorator {
+class Border final : public UI_Decorator {
 public:
 	// Public (De)Constructors
 	/** Destroy the border. */
@@ -20,7 +20,7 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
 
 
 	// Public Methods

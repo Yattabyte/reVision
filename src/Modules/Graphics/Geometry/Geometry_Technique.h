@@ -10,13 +10,13 @@ class Geometry_Technique : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destroy this technique. */
-	inline ~Geometry_Technique() = default;
+	inline ~Geometry_Technique() noexcept = default;
 	/** Construct this technique. */
 	Geometry_Technique() noexcept;
 
 
 	// Public Interface Implementation
-	virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override;
+	void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override;
 
 
 	// Public Interface Declarations

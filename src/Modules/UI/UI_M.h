@@ -17,15 +17,15 @@ class UI_Module final : public Engine_Module {
 public:
 	// Public (De)Constructors
 	/** Destroy the UI module. */
-	inline ~UI_Module() = default;
+	inline ~UI_Module() noexcept = default;
 	/** Construct a UI module.
 	@param	engine				reference to the engine to use. */
-	explicit UI_Module(Engine& engine);
+	explicit UI_Module(Engine& engine) noexcept;
 
 
 	// Public Interface Implementations
-	virtual void initialize() noexcept override final;
-	virtual void deinitialize() noexcept override final;
+	void initialize() noexcept final;
+	void deinitialize() noexcept final;
 
 
 	// Public Methods

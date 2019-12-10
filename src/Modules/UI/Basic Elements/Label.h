@@ -11,7 +11,7 @@
 
 
 /** UI text label class, affords displaying text on the screen. */
-class Label : public UI_Element {
+class Label final : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum class Interact : int {
@@ -35,7 +35,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
 
 
 	// Public Methods

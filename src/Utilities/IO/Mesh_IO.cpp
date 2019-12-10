@@ -128,8 +128,8 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 
 	// Copy Animations
 	importedData.animations.resize(scene->mNumAnimations);
-	for (int a = 0, total = scene->mNumAnimations; a < total; ++a) {
-		auto* animation = scene->mAnimations[a];
+	for (unsigned int a = 0, total = scene->mNumAnimations; a < total; ++a) {
+		const auto* animation = scene->mAnimations[a];
 		importedData.animations[a] = Animation(animation->mNumChannels, animation->mTicksPerSecond, animation->mDuration);
 
 		// Copy Channels
@@ -141,17 +141,17 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 			// Copy Keys
 			importedData.animations[a].channels[c]->scalingKeys.resize(channel->mNumScalingKeys);
 			for (unsigned int n = 0; n < channel->mNumScalingKeys; ++n) {
-				auto& key = channel->mScalingKeys[n];
+				const auto& key = channel->mScalingKeys[n];
 				importedData.animations[a].channels[c]->scalingKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 			}
 			importedData.animations[a].channels[c]->rotationKeys.resize(channel->mNumRotationKeys);
 			for (unsigned int n = 0; n < channel->mNumRotationKeys; ++n) {
-				auto& key = channel->mRotationKeys[n];
+				const auto& key = channel->mRotationKeys[n];
 				importedData.animations[a].channels[c]->rotationKeys[n] = Animation_Time_Key<glm::quat>(key.mTime, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
 			}
 			importedData.animations[a].channels[c]->positionKeys.resize(channel->mNumPositionKeys);
 			for (unsigned int n = 0; n < channel->mNumPositionKeys; ++n) {
-				auto& key = channel->mPositionKeys[n];
+				const auto& key = channel->mPositionKeys[n];
 				importedData.animations[a].channels[c]->positionKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 			}
 		}
@@ -161,10 +161,10 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 	importedData.rootNode = copy_node(scene->mRootNode);
 	importedData.bones.resize(importedData.vertices.size());
 	int vertexOffset = 0;
-	for (auto a = 0U, atotal = scene->mNumMeshes; a < atotal; ++a) {
+	for (unsigned int a = 0U, atotal = scene->mNumMeshes; a < atotal; ++a) {
 		const aiMesh* mesh = scene->mMeshes[a];
 
-		for (auto b = 0U, numBones = mesh->mNumBones; b < numBones; ++b) {
+		for (unsigned int b = 0U, numBones = mesh->mNumBones; b < numBones; ++b) {
 			size_t BoneIndex = 0;
 			std::string BoneName(mesh->mBones[b]->mName.data);
 
@@ -178,16 +178,16 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 			importedData.boneMap[BoneName] = BoneIndex;
 			importedData.boneTransforms[BoneIndex] = aiMatrix_to_Mat4x4(mesh->mBones[b]->mOffsetMatrix);
 
-			for (auto j = 0U, numWeights = mesh->mBones[b]->mNumWeights; j < numWeights; ++j) {
-				int VertexID = vertexOffset + mesh->mBones[b]->mWeights[j].mVertexId;
-				float Weight = mesh->mBones[b]->mWeights[j].mWeight;
+			for (unsigned int j = 0U, numWeights = mesh->mBones[b]->mNumWeights; j < numWeights; ++j) {
+				const int VertexID = vertexOffset + mesh->mBones[b]->mWeights[j].mVertexId;
+				const float Weight = mesh->mBones[b]->mWeights[j].mWeight;
 				importedData.bones[VertexID].AddBoneData((int)BoneIndex, Weight);
 			}
 		}
 
-		for (auto x = 0U, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
+		for (unsigned int x = 0U, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
 			const auto& face = mesh->mFaces[x];
-			for (auto b = 0U, indCount = face.mNumIndices; b < indCount; ++b)
+			for (unsigned int b = 0U, indCount = face.mNumIndices; b < indCount; ++b)
 				vertexOffset++;
 		}
 	}
@@ -220,7 +220,7 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 						auto it = std::search(
 							strHaystack.begin(), strHaystack.end(),
 							strNeedle.begin(), strNeedle.end(),
-							[](char ch1, char ch2) { return std::toupper(ch1) == std::toupper(ch2); }
+							[](char ch1, char ch2) noexcept { return std::toupper(ch1) == std::toupper(ch2); }
 						);
 						return (it != strHaystack.end());
 					};

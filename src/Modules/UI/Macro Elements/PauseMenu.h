@@ -7,7 +7,7 @@
 
 
 /** A UI element serving as a pause menu. */
-class PauseMenu : public Menu {
+class PauseMenu final : public Menu {
 public:
 	// Public Interaction Enums
 	enum class Interact : int {
@@ -19,7 +19,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy the start menu. */
-	inline ~PauseMenu() = default;
+	inline ~PauseMenu() noexcept = default;
 	/** Construct a start menu.
 	@param	engine		reference to the engine to use. */
 	explicit PauseMenu(Engine& engine) noexcept;

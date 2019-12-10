@@ -7,13 +7,12 @@ constexpr const char* DIRECTORY_MODEL = "\\Models\\";
 
 Shared_Model::Shared_Model(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
-	(*(std::shared_ptr<Model>*)(this)) = std::dynamic_pointer_cast<Model>(
-		engine.getManager_Assets().shareAsset(
+	swap(std::dynamic_pointer_cast<Model>(engine.getManager_Assets().shareAsset(
 			typeid(Model).name(),
 			filename,
 			[&engine, filename]() { return std::make_shared<Model>(engine, filename); },
 			threaded
-		));
+		)));
 }
 
 Model::Model(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}

@@ -11,7 +11,7 @@ class TitleBar final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this title bar. */
-	inline ~TitleBar() = default;
+	inline ~TitleBar() noexcept = default;
 	/** Construct a title bar.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
@@ -19,7 +19,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) noexcept override final;
+	void tick(const float& deltaTime) noexcept final;
 
 
 private:

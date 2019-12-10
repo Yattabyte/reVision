@@ -20,7 +20,7 @@ RH_Volume::RH_Volume(Engine& engine) noexcept :
 	auto& preferences = m_engine.getPreferenceState();
 	m_resolution = 16;
 	preferences.getOrSetValue(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_resolution);
-	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) { resize(f); });
+	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) noexcept { resize(f); });
 
 	glCreateFramebuffers(2, m_fboIDS);
 	for (int bounce = 0; bounce < 2; ++bounce) {
@@ -59,7 +59,7 @@ void RH_Volume::updateVolume(const Camera& camera) noexcept
 		frustumSlice[1] * tanHalfVFOV
 	};
 	float largestCoordinate = std::max(abs(frustumSlice[0]), abs(frustumSlice[1]));
-	for (float frustumPoint : frustumPoints)
+	for (const float frustumPoint : frustumPoints)
 		largestCoordinate = std::max(largestCoordinate, abs(frustumPoint));
 	const glm::vec3 centerOfVolume(0, 0, ((frustumSlice[1] - frustumSlice[0]) / 2.0F) + frustumSlice[0]);
 	const float radius = glm::distance(glm::vec3(largestCoordinate), centerOfVolume);
@@ -76,13 +76,13 @@ void RH_Volume::resize(const float& resolution) noexcept
 {
 	m_resolution = resolution;
 	for (auto& bounce : m_textureIDS)
-		for (unsigned int channel : bounce)
+		for (const unsigned int channel : bounce)
 			glTextureImage3DEXT(channel, GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, nullptr);
 }
 
 void RH_Volume::clear() noexcept
 {
-	GLfloat clearColor[] = { 0.0F, 0.0F, 0.0F, 0.0F };
+	constexpr GLfloat clearColor[] = { 0.0F, 0.0F, 0.0F, 0.0F };
 	for (unsigned int bounce : m_fboIDS)
 		for (GLint x = 0; x < RH_TEXTURE_COUNT; ++x)
 			glClearNamedFramebufferfv(bounce, GL_COLOR, x, clearColor);

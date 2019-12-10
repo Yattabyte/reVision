@@ -19,7 +19,7 @@ Shadow_Technique::Shadow_Technique(Engine& engine, std::vector<Camera*>& sceneCa
 	// Preferences
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_SHADOW_SIZE, m_frameData.shadowSize);
-	preferences.addCallback(PreferenceState::Preference::C_SHADOW_SIZE, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_SHADOW_SIZE, m_aliveIndicator, [&](const float& f) noexcept {
 		m_frameData.shadowSize = std::max(1.0f, f);
 		m_frameData.shadowSizeRCP = 1.0f / m_frameData.shadowSize;
 		});

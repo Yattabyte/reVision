@@ -11,9 +11,9 @@ class IndirectDraw {
 public:
 	// Public (De)Constructors
 	/** Destroy this Indirect Draw Object. */
-	inline ~IndirectDraw() = default;
+	inline ~IndirectDraw() noexcept = default;
 	/** Default Constructor. */
-	inline IndirectDraw() = default;
+	inline IndirectDraw() noexcept = default;
 	/** Construct an Indirect Draw Object.
 	@param	count			the number of vertices to draw.
 	@param	primitiveCount	the number of times to draw this object.

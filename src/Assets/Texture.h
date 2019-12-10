@@ -62,8 +62,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Texture(Texture&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Texture(const Texture&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline const Texture& operator =(Texture&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline const Texture& operator =(const Texture&) noexcept = delete;
+
+
 	// Private Interface Implementation
-	virtual void initialize() noexcept override final;
+	void initialize() noexcept final;
 
 
 	// Private Attributes

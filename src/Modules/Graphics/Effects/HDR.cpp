@@ -17,7 +17,7 @@ HDR::HDR(Engine& engine) noexcept :
 	// Preferences
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_GAMMA, m_gamma);
-	preferences.addCallback(PreferenceState::Preference::C_GAMMA, m_aliveIndicator, [&](const float& f) { m_gamma = f; });
+	preferences.addCallback(PreferenceState::Preference::C_GAMMA, m_aliveIndicator, [&](const float& f) noexcept { m_gamma = f; });
 }
 
 void HDR::clearCache(const float&) noexcept

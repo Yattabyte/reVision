@@ -21,9 +21,9 @@ void PropSync_System::updateComponents(const float&, const std::vector<std::vect
 	m_frameData.skeletonBuffer.beginWriting();
 	int index = 0;
 	for (const auto& componentParam : components) {
-		auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
+		const auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
 		auto* skeletonComponent = static_cast<Skeleton_Component*>(componentParam[1]);
-		auto* transformComponent = static_cast<Transform_Component*>(componentParam[2]);
+		const auto* transformComponent = static_cast<Transform_Component*>(componentParam[2]);
 		auto* bboxComponent = static_cast<BoundingBox_Component*>(componentParam[3]);
 
 		// Synchronize the component if it is visible

@@ -19,9 +19,9 @@ public:
 
 	// Public (De)Constructors
 	/** Virtual system destructor. */
-	inline virtual ~ecsBaseSystem() = default;
+	inline virtual ~ecsBaseSystem() noexcept = default;
 	/** Construct a base ecsSystem. */
-	inline ecsBaseSystem() = default;
+	inline ecsBaseSystem() noexcept = default;
 
 
 	// Public Methods
@@ -57,7 +57,7 @@ private:
 class ecsSystemList {
 public:
 	// Public (De)Constructors
-	inline explicit ecsSystemList() = default;
+	inline explicit ecsSystemList() noexcept = default;
 
 
 	// Public Methods

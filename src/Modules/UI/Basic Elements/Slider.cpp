@@ -24,7 +24,7 @@ Slider::Slider(Engine& engine, const float& value, const glm::vec2& range) noexc
 	addElement(m_label);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
+	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { updateGeometry(); });
 
 	// Configure THIS element
 	setValue(value);
@@ -97,7 +97,7 @@ std::string Slider::getText() const noexcept
 	return m_label->getText();
 }
 
-void Slider::updateGeometry()
+void Slider::updateGeometry() noexcept
 {
 	// Shorten the back panel by 50 units, and it is offset to the right by 50 units
 	m_backPanel->setPosition({ 50, 0 });
@@ -109,7 +109,7 @@ void Slider::updateGeometry()
 	updatePaddle();
 }
 
-void Slider::updatePaddle()
+void Slider::updatePaddle() noexcept
 {
 	if (m_paddle) {
 		// The paddle fills a 6th of the back panel, or 10 pixels, whichever is bigger

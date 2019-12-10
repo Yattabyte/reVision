@@ -21,7 +21,7 @@ void DirectSync_System::updateComponents(const float&, const std::vector<std::ve
 	int index = 0;
 	for (const auto& componentParam : components) {
 		auto* trans = static_cast<Transform_Component*>(componentParam[0]);
-		auto* light = static_cast<Light_Component*>(componentParam[1]);
+		const auto* light = static_cast<Light_Component*>(componentParam[1]);
 		auto* shadow = static_cast<Shadow_Component*>(componentParam[2]);
 
 		// Sync Common Buffer Attributes
@@ -69,9 +69,9 @@ void DirectSync_System::updateComponents(const float&, const std::vector<std::ve
 				const auto ar = size.x / size.y;
 				const auto tanHalfHFOV = glm::radians(ClientCamera.FOV) / 2.0f;
 				const auto tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
-				const auto near_plane = -Camera::ConstNearPlane;
+				constexpr auto near_plane = -Camera::ConstNearPlane;
 				const auto far_plane = -std::min(light->m_radius * light->m_radius, ClientCamera.FarPlane);
-				float cascadeEnd[NUM_CASCADES + 1];
+				float cascadeEnd[NUM_CASCADES + 1]{};
 				constexpr float lambda = 0.75f;
 				cascadeEnd[0] = near_plane;
 				for (int x = 1; x < NUM_CASCADES + 1; ++x) {

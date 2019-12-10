@@ -51,12 +51,12 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void bindBuffer(const GLenum& target) const noexcept override final {
+	inline void bindBuffer(const GLenum& target) const noexcept final {
 		// Ensure writing has finished before reading
 		//WaitForFence(m_writeFence[m_index]);
 		glBindBuffer(target, m_bufferID[m_index]);
 	}
-	inline virtual void bindBufferBase(const GLenum& target, const GLuint& index) const noexcept override final {
+	inline void bindBufferBase(const GLenum& target, const GLuint& index) const noexcept final {
 		// Ensure writing has finished before reading
 		//WaitForFence(m_writeFence[m_index]);
 		glBindBufferBase(target, index, m_bufferID[m_index]);
@@ -158,7 +158,7 @@ private:
 	static void WaitForFence(GLsync& fence) noexcept {
 		while (fence) {
 			GLbitfield waitFlags = 0;
-			if (auto waitReturn = glClientWaitSync(fence, waitFlags, 1);
+			if (const auto waitReturn = glClientWaitSync(fence, waitFlags, 1);
 				waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
 				glDeleteSync(fence);
 				fence = nullptr;

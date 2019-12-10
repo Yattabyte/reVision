@@ -1,8 +1,8 @@
 #include "Modules/ECS/ECS_M.h"
 
 
-ECS_Module::ECS_Module(Engine& engine) 
-	: Engine_Module(engine) 
+ECS_Module::ECS_Module(Engine& engine) noexcept :
+	Engine_Module(engine) 
 {
 }
 

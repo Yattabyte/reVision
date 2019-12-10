@@ -6,9 +6,13 @@
 #include <sstream>
 
 
-ecsWorld::~ecsWorld()
+ecsWorld::~ecsWorld() noexcept
 {
 	clear();
+}
+
+ecsWorld::ecsWorld() noexcept
+{
 }
 
 ecsWorld::ecsWorld(const std::vector<char>& data) noexcept
@@ -30,7 +34,7 @@ ecsWorld::ecsWorld(ecsWorld&& other) noexcept
 /// PUBLIC MAKE FUNCTIONS ///
 /////////////////////////////
 
-EntityHandle ecsWorld::makeEntity(ecsBaseComponent** components, const size_t& numComponents, const std::string& name, const EntityHandle& UUID, const EntityHandle& parentUUID) noexcept
+EntityHandle ecsWorld::makeEntity(ecsBaseComponent** const components, const size_t& numComponents, const std::string& name, const EntityHandle& UUID, const EntityHandle& parentUUID) noexcept
 {
 	const auto finalHandle = UUID == EntityHandle() ? (EntityHandle)(generateUUID()) : UUID;
 	auto* newEntity = new ecsEntity();
@@ -168,7 +172,7 @@ std::vector<EntityHandle> ecsWorld::getEntityHandles(const EntityHandle& rootHan
 
 ecsBaseComponent* ecsWorld::getComponent(const EntityHandle& entityHandle, const ComponentID& componentID) const noexcept 
 {
-	if (auto* entity = getEntity(entityHandle))
+	if (const auto& entity = getEntity(entityHandle))
 		return getComponent(entity->m_components, m_components.at(componentID), componentID);
 	return nullptr;
 }
@@ -244,11 +248,11 @@ ecsHandle ecsWorld::generateUUID() noexcept
 	for (auto i = 0; i < 16; i++) {
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_int_distribution<> dis(0, 255);
+		const std::uniform_int_distribution<> dis(0, 255);
 		const auto rc = dis(gen);
 		std::stringstream hexstream;
 		hexstream << std::hex << rc;
-		auto hex = hexstream.str();
+		const auto hex = hexstream.str();
 		ss << (hex.length() < 2 ? '0' + hex : hex);
 	}
 	const auto& string = ss.str();
@@ -313,9 +317,9 @@ void ecsWorld::unparentEntity(const EntityHandle& entityHandle) noexcept
 {
 	// Move entity up tree, making it a child of its old parent's parent
 	if (entityHandle.isValid())
-		if (auto* entity = getEntity(entityHandle))
+		if (const auto& entity = getEntity(entityHandle))
 			if (entity->m_parent.isValid())
-				if (auto* parent = getEntity(entity->m_parent))
+				if (const auto& parent = getEntity(entity->m_parent))
 					parentEntity(parent->m_parent.isValid() ? parent->m_parent : EntityHandle(), entityHandle);
 }
 
@@ -331,7 +335,7 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 		const auto& [createFn, freeFn, newFn, typeSize] = ecsBaseComponent::m_componentRegistry[componentID];
 		const auto srcIndex = mem_array.size() - typeSize;
 
-		auto* srcComponent = reinterpret_cast<ecsBaseComponent*>(&mem_array[srcIndex]);
+		const auto* srcComponent = reinterpret_cast<ecsBaseComponent*>(&mem_array[srcIndex]);
 		auto* destComponent = reinterpret_cast<ecsBaseComponent*>(&mem_array[index]);
 		freeFn(destComponent);
 
@@ -401,7 +405,7 @@ std::vector<char> ecsWorld::serializeEntity(const ecsEntity& entity) const noexc
 	dataIndex += nameSize * sizeof(char);
 	// Defer writing entity component data count until later
 	size_t entityDataCount(0ULL);
-	size_t entityDataCountIndex(dataIndex);
+	const size_t entityDataCountIndex(dataIndex);
 	dataIndex += sizeof(size_t);
 	// Write entity child count
 	const auto entityChildCount = (unsigned int)entity.m_children.size();
@@ -466,8 +470,7 @@ std::pair<EntityHandle, ecsEntity*> ecsWorld::deserializeEntity(const std::vecto
 	}
 
 	// Make the entity
-	auto thisEntityHandle = makeEntity(components.data(), components.size(), std::string(entityNameChars, nameSize), desiredHandle, parentHandle);
-	auto* thisEntity = getEntity(thisEntityHandle);
+	const auto thisEntityHandle = makeEntity(components.data(), components.size(), std::string(entityNameChars, nameSize), desiredHandle, parentHandle);
 	pointers.clear();
 	components.clear();
 
@@ -477,7 +480,7 @@ std::pair<EntityHandle, ecsEntity*> ecsWorld::deserializeEntity(const std::vecto
 		deserializeEntity(data, dataSize, dataRead, thisEntityHandle);
 		childEntitiesRead++;
 	}
-	return { thisEntityHandle, thisEntity };
+	return { thisEntityHandle, getEntity(thisEntityHandle) };
 }
 
 std::optional<ComponentID> ecsWorld::nameToComponentID(const char* name) noexcept

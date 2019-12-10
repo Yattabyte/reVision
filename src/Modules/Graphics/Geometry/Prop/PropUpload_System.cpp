@@ -8,7 +8,7 @@ PropUpload_System::~PropUpload_System() noexcept
 {
 	glDeleteBuffers(1, &m_vboID);
 	glDeleteVertexArrays(1, &m_vaoID);
-	for (auto& [pboID, fence] : m_pixelBuffers)
+	for (const auto& [pboID, fence] : m_pixelBuffers)
 		glDeleteBuffers(1, &pboID);
 }
 
@@ -20,7 +20,7 @@ PropUpload_System::PropUpload_System(Engine& engine, PropData& frameData) noexce
 
 	// Create VBO's
 	glCreateBuffers(1, &m_vboID);
-	glNamedBufferStorage(m_vboID, 1, 0, GL_DYNAMIC_STORAGE_BIT);
+	glNamedBufferStorage(m_vboID, 1, nullptr, GL_DYNAMIC_STORAGE_BIT);
 	// Create VAO
 	glCreateVertexArrays(1, &m_vaoID);
 	// Enable 7 attribute locations which all source data from binding point 0
@@ -140,7 +140,7 @@ void PropUpload_System::tryToExpand(const size_t& arraySize) noexcept
 		// Create the new VBO's
 		GLuint newVBOID = 0;
 		glCreateBuffers(1, &newVBOID);
-		glNamedBufferStorage(newVBOID, m_maxCapacity, 0, GL_DYNAMIC_STORAGE_BIT);
+		glNamedBufferStorage(newVBOID, m_maxCapacity, nullptr, GL_DYNAMIC_STORAGE_BIT);
 
 		// Copy old VBO's
 		auto fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
@@ -176,7 +176,7 @@ void PropUpload_System::tryInsertMaterial(const Shared_Material& material) noexc
 		size_t offset(0ull);
 		for (int x = 0; x < int(material->m_textures.size() / MAX_PHYSICAL_IMAGES); ++x) {
 			// Find a free pixel buffer
-			auto [pboID, fence] = getFreePBO();
+			const auto [pboID, fence] = getFreePBO();
 			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, *pboID);
 			glNamedBufferSubData(*pboID, 0, size_t(m_materialSize) * size_t(m_materialSize) * MAX_DIGITAL_IMAGES * 4ull, &material->m_materialData[offset]);
 
@@ -225,7 +225,7 @@ void PropUpload_System::clear() noexcept
 	waitOnFence();
 	GLuint newVBOID = 0;
 	glCreateBuffers(1, &newVBOID);
-	glNamedBufferStorage(newVBOID, m_maxCapacity, 0, GL_DYNAMIC_STORAGE_BIT);
+	glNamedBufferStorage(newVBOID, m_maxCapacity, nullptr, GL_DYNAMIC_STORAGE_BIT);
 	glDeleteBuffers(1, &m_vboID);
 	m_vboID = newVBOID;
 	glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(SingleVertex));

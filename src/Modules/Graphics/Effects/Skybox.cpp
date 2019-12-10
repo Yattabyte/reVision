@@ -29,7 +29,7 @@ Skybox::Skybox(Engine& engine) noexcept :
 	glTextureParameteri(m_cubemapMipped, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_cubemapMipped, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-	m_cubemapSky->addCallback(m_aliveIndicator, [&](void) mutable {
+	m_cubemapSky->addCallback(m_aliveIndicator, [&]() noexcept {
 		m_skyOutOfDate = true;
 		m_skySize = m_cubemapSky->m_images[0]->m_size;
 		glTextureStorage2D(m_cubemapMipped, 6, GL_RGB16F, m_skySize.x, m_skySize.x);
@@ -90,12 +90,12 @@ void Skybox::renderTechnique(const float&, const std::shared_ptr<Viewport>& view
 	m_shaderSkyReflect->bind();
 	viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);
 	viewport->m_gfxFBOS.bindForWriting("REFLECTION");
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 
 	// Render skybox to lighting buffer
 	m_shaderSky->bind();
 	viewport->m_gfxFBOS.bindForWriting("LIGHTING");
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 
 	glDisable(GL_DEPTH_TEST);
 	camBufferIndex.endReading();
@@ -133,7 +133,7 @@ void Skybox::convoluteSky(const std::shared_ptr<Viewport>& viewport) noexcept
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_MAX_LEVEL, r - 1);
 
 		// Convolute the 6 faces for this roughness level (RENDERS 6 TIMES)
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 	}
 
 	// Reset

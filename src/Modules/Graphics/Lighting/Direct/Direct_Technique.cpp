@@ -32,9 +32,9 @@ Direct_Technique::Direct_Technique(Engine& engine, ShadowData& shadowData, Camer
 	m_auxilliarySystems.makeSystem<DirectSync_System>(m_frameData);
 
 	// Asset-finished callbacks
-	m_shapeCube->addCallback(m_aliveIndicator, [&]() { registerLightShapes(); });
-	m_shapeSphere->addCallback(m_aliveIndicator, [&]() { registerLightShapes(); });
-	m_shapeHemisphere->addCallback(m_aliveIndicator, [&]() { registerLightShapes(); });
+	m_shapeCube->addCallback(m_aliveIndicator, [&]() noexcept { registerLightShapes(); });
+	m_shapeSphere->addCallback(m_aliveIndicator, [&]() noexcept { registerLightShapes(); });
+	m_shapeHemisphere->addCallback(m_aliveIndicator, [&]() noexcept { registerLightShapes(); });
 }
 
 void Direct_Technique::clearCache(const float&) noexcept
@@ -113,7 +113,7 @@ void Direct_Technique::renderTechnique(const float&, const std::shared_ptr<Viewp
 			glDisable(GL_CULL_FACE);
 			glClear(GL_STENCIL_BUFFER_BIT);
 			glStencilFunc(GL_ALWAYS, 0, 0);
-			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, GLsizei(drawData.size()), 0);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, GLsizei(drawData.size()), 0);
 
 			// Now draw into color buffers
 			m_shader_Lighting->bind();
@@ -122,7 +122,7 @@ void Direct_Technique::renderTechnique(const float&, const std::shared_ptr<Viewp
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_FRONT);
 			glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, GLsizei(drawData.size()), 0);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, GLsizei(drawData.size()), 0);
 
 			// Revert Rendering state
 			glClear(GL_STENCIL_BUFFER_BIT);

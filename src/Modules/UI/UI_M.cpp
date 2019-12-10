@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-UI_Module::UI_Module(Engine& engine) : 
+UI_Module::UI_Module(Engine& engine) noexcept : 
 	Engine_Module(engine)
 {
 }
@@ -21,13 +21,13 @@ void UI_Module::initialize() noexcept
 	m_projectionBuffer = StaticBuffer(sizeof(glm::mat4), nullptr, GL_DYNAMIC_STORAGE_BIT);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.x = (int)f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
 		for (auto element : m_rootElement)
 			element->setScale(m_renderSize);
 		});
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.y = (int)f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
 		for (auto element : m_rootElement)

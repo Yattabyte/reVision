@@ -9,18 +9,18 @@ PauseMenu::PauseMenu(Engine& engine) noexcept :
 	m_title->setText("PAUSE MENU");
 
 	// Add 'Start Game' button
-	addButton(engine, "RESUME", [&]() { resume(); });
+	addButton(engine, "RESUME", [&]() noexcept { resume(); });
 
 	// Add 'Options' button
 	m_optionsMenu = std::make_shared<OptionsMenu>(engine);
-	addButton(engine, "  OPTIONS >", [&]() { goToOptions(); });
-	m_optionsMenu->addCallback((int)OptionsMenu::Interact::on_back, [&]() { returnFromOptions(); });
+	addButton(engine, "  OPTIONS >", [&]() noexcept { goToOptions(); });
+	m_optionsMenu->addCallback((int)OptionsMenu::Interact::on_back, [&]() noexcept { returnFromOptions(); });
 
 	// Add 'Quit' button
-	addButton(engine, "END GAME", [&]() { quit(); });
+	addButton(engine, "END GAME", [&]() noexcept { quit(); });
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() {
+	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept {
 		const auto scale = getScale();
 		m_optionsMenu->setScale(scale);
 		});

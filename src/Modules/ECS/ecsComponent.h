@@ -25,7 +25,7 @@ using ComponentFreeFunction = std::function<void(ecsBaseComponent * comp)>;
 struct ecsBaseComponent {
 	// Public (De)Constructors
 	/** Destroy this base ecsComponent. */
-	inline virtual ~ecsBaseComponent() = default;
+	inline virtual ~ecsBaseComponent() noexcept = default;
 	/** Construct a base ecsComponent.
 	@param	ID			the runtime ID for this component.
 	@param	size		the byte-size of this component.
@@ -74,9 +74,9 @@ protected:
 
 	// Protected Attributes
 	/** Runtime container mapping indices to creation/destruction functions for components. */
-	static std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>> m_componentRegistry;
+	inline static std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>> m_componentRegistry = {};
 	/** A map between component class name's and it's runtime variables like ID and size. */
-	static MappedChar<ComponentID> m_nameRegistry;
+	inline static MappedChar<ComponentID> m_nameRegistry = MappedChar<ComponentID>();
 	/** Allow the ecsWorld to interact with these members. */
 	friend class ecsWorld;
 };
@@ -88,7 +88,7 @@ template <typename C, const char* chars>
 struct ecsComponent : public ecsBaseComponent {
 	// (De)Constructors
 	/** Destroy this component. */
-	inline virtual ~ecsComponent() = default;
+	inline virtual ~ecsComponent() noexcept = default;
 	/** Construct this specific component. */
 	inline ecsComponent() noexcept : ecsBaseComponent(ecsComponent::Runtime_ID, sizeof(C), chars) {}
 
@@ -102,7 +102,7 @@ struct ecsComponent : public ecsBaseComponent {
 	inline static void deserialize(const std::vector<char>&) noexcept {}
 	/** Save this component to a char buffer.
 	@return				serialized version of self. */
-	inline virtual std::vector<char> to_buffer() noexcept override {
+	inline std::vector<char> to_buffer() noexcept final {
 		// Get portable name data
 		const auto charCount = (int)std::string(chars).size();
 		std::vector<char> nameData(sizeof(unsigned int) + (charCount * sizeof(char)));
@@ -134,7 +134,7 @@ protected:
 	// Protected Interface Implementation
 	/** Recover previously serialized data.
 	@param	data		serialized version of component. */
-	inline virtual void recover_data(const std::vector<char>& data) noexcept override final {
+	inline void recover_data(const std::vector<char>& data) noexcept final {
 		// Previously recovered type name, created this class
 		// Next recover data
 		static_cast<C&>(*this).deserialize(data);
@@ -178,7 +178,7 @@ inline constexpr static auto newFn() noexcept {
 @param	comp			the component to destruct. */
 template <typename C>
 inline constexpr static void freeFn(ecsBaseComponent* comp) noexcept {
-	(static_cast<C*>(comp))->~C();
+	(dynamic_cast<C*>(comp))->~C();
 }
 
 /** Generate a static ID at run time for each type of component class used. */

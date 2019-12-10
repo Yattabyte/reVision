@@ -27,9 +27,9 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy the camera buffer. */
-	inline ~Camera() = default;
+	inline ~Camera() noexcept = default;
 	/** Construct a camera buffer. */
-	inline Camera() = default;
+	inline Camera() noexcept = default;
 
 
 	// Public Methods

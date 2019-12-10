@@ -61,14 +61,14 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 						m_editor.setGizmoTransform(newTransform);
 					}
 				}
-				virtual void execute() noexcept override final {
+				void execute() noexcept final {
 					setPosition(m_newData);
 				}
-				virtual void undo() noexcept override final {
+				void undo() noexcept final {
 					setPosition(m_oldData);
 				}
-				virtual bool join(Editor_Command* other) noexcept override final {
-					if (auto newCommand = dynamic_cast<Move_Command*>(other)) {
+				bool join(Editor_Command* other) noexcept final {
+					if (const auto& newCommand = dynamic_cast<Move_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
 							return true;
@@ -105,14 +105,14 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 						}
 					}
 				}
-				virtual void execute() noexcept override final {
+				void execute() noexcept final {
 					setOrientation(m_newData);
 				}
-				virtual void undo() noexcept override final {
+				void undo() noexcept final {
 					setOrientation(m_oldData);
 				}
-				virtual bool join(Editor_Command* other) noexcept override final {
-					if (auto newCommand = dynamic_cast<Rotate_Command*>(other)) {
+				bool join(Editor_Command* other) noexcept final {
+					if (const auto& newCommand = dynamic_cast<Rotate_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
 							return true;
@@ -151,14 +151,14 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 						}
 					}
 				}
-				virtual void execute() noexcept override final {
+				void execute() noexcept final {
 					setScale(m_newData);
 				}
-				virtual void undo() noexcept override final {
+				void undo() noexcept final {
 					setScale(m_oldData);
 				}
-				virtual bool join(Editor_Command* other) noexcept override final {
-					if (auto newCommand = dynamic_cast<Scale_Command*>(other)) {
+				bool join(Editor_Command* other) noexcept final {
+					if (const auto& newCommand = dynamic_cast<Scale_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
 							return true;

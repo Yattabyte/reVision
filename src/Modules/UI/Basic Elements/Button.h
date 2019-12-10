@@ -7,11 +7,11 @@
 
 
 /** UI button class, affords being pushed and released. */
-class Button : public UI_Element {
+class Button final : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this button. */
-	inline ~Button() = default;
+	inline ~Button() noexcept = default;
 	/** Creates a button with specific text inside.
 	@param	engine		reference to the engine to use. 
 	@param	text		the button text. */
@@ -19,8 +19,8 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void userAction(ActionState& actionState) noexcept override;
-	virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override;
+	void userAction(ActionState& actionState) noexcept final;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
 
 
 	// Public Methods

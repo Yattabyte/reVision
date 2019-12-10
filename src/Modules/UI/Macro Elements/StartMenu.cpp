@@ -9,21 +9,21 @@ StartMenu::StartMenu(Engine& engine) noexcept : Menu(engine)
 	m_title->setText("MAIN MENU");
 
 	// Add 'Start Game' button
-	addButton(engine, "START GAME", [&]() { startGame(); });
+	addButton(engine, "START GAME", [&]() noexcept { startGame(); });
 
 	// Add 'Level Editor' button
-	addButton(engine, "LEVEL EDITOR", [&]() { startEditor(); });
+	addButton(engine, "LEVEL EDITOR", [&]() noexcept { startEditor(); });
 
 	// Add 'Options' button
 	m_optionsMenu = std::make_shared<OptionsMenu>(engine);
-	addButton(engine, "  OPTIONS >", [&]() { goToOptions(); });
-	m_optionsMenu->addCallback((int)OptionsMenu::Interact::on_back, [&]() { returnFromOptions(); });
+	addButton(engine, "  OPTIONS >", [&]() noexcept { goToOptions(); });
+	m_optionsMenu->addCallback((int)OptionsMenu::Interact::on_back, [&]() noexcept { returnFromOptions(); });
 
 	// Add 'Quit' button
-	addButton(engine, "QUIT", [&]() { quit(); });
+	addButton(engine, "QUIT", [&]() noexcept { quit(); });
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() {
+	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept {
 		const auto scale = getScale();
 		m_optionsMenu->setScale(scale);
 		});

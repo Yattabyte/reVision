@@ -21,8 +21,8 @@ public:
 
 
 	// Public Interface Implementations.
-	virtual void clearCache(const float& deltaTime) noexcept override final;
-	virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final;
+	void clearCache(const float& deltaTime) noexcept final;
+	void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
 
 
 private:

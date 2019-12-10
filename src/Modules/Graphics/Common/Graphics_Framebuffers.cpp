@@ -69,7 +69,7 @@ void Graphics_Framebuffers::createFBO(const char* name, const std::vector<std::t
 			glTextureParameteri(texID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_renderSize.x, m_renderSize.y, m_layerFaces, 0, format, type, nullptr);
 		}
-		GLenum attachment;
+		GLenum attachment(GL_COLOR_ATTACHMENT0);
 		if (format == GL_DEPTH_STENCIL)
 			attachment = GL_DEPTH_STENCIL_ATTACHMENT;
 		else if (format == GL_DEPTH)

@@ -40,12 +40,23 @@ public:
 
 	// Public Attributes
 	Shared_Mesh m_mesh;
-	btCollisionShape* m_shape = nullptr;
+	std::unique_ptr<btCollisionShape> m_shape;
 
 
 protected:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Collider(Collider&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Collider(const Collider&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline const Collider& operator =(Collider&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline const Collider& operator =(const Collider&) noexcept = delete;
+
+
 	// Private Interface Implementation
-	virtual void initialize() noexcept override final;
+	void initialize() noexcept final;
 
 
 	// Private Attributes

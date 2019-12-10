@@ -33,7 +33,7 @@ struct Direct_Light_Data {
 		std::vector<Light_Component::Light_Type> lightTypes;
 	};
 	/** Construct this structure. */
-	Direct_Light_Data(ShadowData& sd, Camera& c) : shadowData(sd), clientCamera(c) {}
+	Direct_Light_Data(ShadowData& sd, Camera& c) noexcept : shadowData(sd), clientCamera(c) {}
 
 	ShadowData& shadowData;
 	Camera& clientCamera;

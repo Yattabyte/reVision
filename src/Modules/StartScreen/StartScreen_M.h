@@ -12,15 +12,15 @@ class StartScreen_Module final : public Engine_Module {
 public:
 	// Public (De)Constructors
 	/** Destroy this start screen module. */
-	inline ~StartScreen_Module() = default;
+	inline ~StartScreen_Module() noexcept = default;
 	/** Construct a start screen module.
 	@param	engine		reference to the engine to use. */
-	explicit StartScreen_Module(Engine& engine);
+	explicit StartScreen_Module(Engine& engine) noexcept;
 
 
 	// Public Interface Implementation
-	virtual void initialize() noexcept override final;
-	virtual void deinitialize() noexcept override final;
+	void initialize() noexcept final;
+	void deinitialize() noexcept final;
 
 
 	// Public Methods

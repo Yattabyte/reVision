@@ -10,7 +10,7 @@
 
 
 /** UI element which displays an editable text box. */
-class TextInput : public UI_Element {
+class TextInput final : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum class Interact : int {
@@ -27,9 +27,9 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void mouseAction(const MouseEvent& mouseEvent) noexcept override;
-	virtual void keyboardAction(const KeyboardEvent& keyboardEvent) noexcept override;
-	virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override;
+	void mouseAction(const MouseEvent& mouseEvent) noexcept final;
+	void keyboardAction(const KeyboardEvent& keyboardEvent) noexcept final;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
 
 
 	// Public Methods
@@ -44,7 +44,7 @@ public:
 protected:
 	// Protected Methods
 	/** Set the caret position in this text box. */
-	void setCaret(const int& index) noexcept;
+	void setCaret(const size_t& index) noexcept;
 	/** Update the data dependant on the scale of this element. */
 	void updateGeometry() noexcept;
 

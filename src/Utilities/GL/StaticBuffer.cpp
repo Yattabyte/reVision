@@ -17,7 +17,7 @@ StaticBuffer::StaticBuffer(const GLsizeiptr& size, const void* data, const GLbit
 }
 
 StaticBuffer::StaticBuffer(const StaticBuffer& other) noexcept :
-	StaticBuffer(other.m_size, 0, other.m_storageFlags) 
+	StaticBuffer(other.m_size, nullptr, other.m_storageFlags)
 {
 	glCopyNamedBufferSubData(other.m_bufferID, m_bufferID, 0, 0, other.m_size);
 }

@@ -17,7 +17,7 @@ class Engine;
 struct VertexBoneData {
 	int IDs[NUM_BONES_PER_VEREX];
 	float Weights[NUM_BONES_PER_VEREX];
-	inline ~VertexBoneData() = default;
+	inline ~VertexBoneData() noexcept = default;
 	VertexBoneData() noexcept;
 	VertexBoneData(const VertexBoneData& vbd) noexcept;
 	void Reset() noexcept;

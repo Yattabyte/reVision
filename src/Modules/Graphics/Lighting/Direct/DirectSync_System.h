@@ -13,14 +13,14 @@ class DirectSync_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~DirectSync_System() = default;
+	inline ~DirectSync_System() noexcept = default;
 	/** Construct this system.
 	@param	frameData	reference to common data that changes frame-to-frame. */
 	explicit DirectSync_System(Direct_Light_Data& frameData) noexcept;
 
 
 	// Public Interface Implementations
-	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
 
 
 private:

@@ -7,7 +7,7 @@
 
 
 /** A UI element serving as a start menu. */
-class StartMenu : public Menu {
+class StartMenu final : public Menu {
 public:
 	// Public Interaction Enums
 	enum class Interact : int {
@@ -20,7 +20,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy the start menu. */
-	inline ~StartMenu() = default;
+	inline ~StartMenu() noexcept = default;
 	/** Construct a start menu.
 	@param	engine		reference to the engine to use. */
 	explicit StartMenu(Engine& engine) noexcept;

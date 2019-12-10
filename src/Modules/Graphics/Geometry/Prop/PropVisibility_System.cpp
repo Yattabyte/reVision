@@ -22,9 +22,9 @@ void PropVisibility_System::updateComponents(const float&, const std::vector<std
 		viewInfo.skeletonData.clear();
 		int index = 0;
 		for (const auto& componentParam : components) {
-			auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
-			auto* skeletonComponent = static_cast<Skeleton_Component*>(componentParam[1]);
-			auto* bboxComponent = static_cast<BoundingBox_Component*>(componentParam[2]);
+			const auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
+			const auto* skeletonComponent = static_cast<Skeleton_Component*>(componentParam[1]);
+			const auto* bboxComponent = static_cast<BoundingBox_Component*>(componentParam[2]);
 			const auto& offset = propComponent->m_offset;
 			const auto& count = propComponent->m_count;
 

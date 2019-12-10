@@ -22,7 +22,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) noexcept override final;
+	void tick(const float& deltaTime) noexcept final;
 
 
 private:

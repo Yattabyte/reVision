@@ -20,15 +20,15 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy this game module. */
-	inline ~Game_Module() = default;
+	inline ~Game_Module() noexcept = default;
 	/** Construct a game module.
 	@param	engine		reference to the engine to use. */
-	explicit Game_Module(Engine& engine);
+	explicit Game_Module(Engine& engine) noexcept;
 
 
 	// Public Interface Implementation
-	virtual void initialize() noexcept override final;
-	virtual void deinitialize() noexcept override final;
+	void initialize() noexcept final;
+	void deinitialize() noexcept final;
 
 
 	// Public Methods

@@ -153,6 +153,10 @@ protected:
 	@param	relativePath		the relative path of the binary file.
 	@return						true on success, false otherwise. */
 	bool saveCachedBinary(const std::string& relativePath) noexcept;
+	/** Attempt to delete a shader program's cached binary file. 
+	@param	relativePath		the relative path of the binary file.
+	@return						true on success, false otherwise. */
+	bool deleteCachedBinary(const std::string& relativePath) noexcept;
 	/** Attempt to load a shader program from separate shader files.
 	@param	relativePath		the relative path of the shader files.
 	@return						true on success, false otherwise. */
@@ -163,8 +167,19 @@ protected:
 
 
 private:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Shader(Shader&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Shader(const Shader&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline const Shader& operator =(Shader&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline const Shader& operator =(const Shader&) noexcept = delete;
+
+
 	// Private Interface Implementation
-	virtual void initialize() noexcept override;
+	void initialize() noexcept override;
 
 
 	// Private Attributes

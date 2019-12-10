@@ -14,10 +14,10 @@ TitleBar::TitleBar(Engine& engine, LevelEditor_Module& editor) noexcept :
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.x = (int)f;
 		});
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.y = (int)f;
 		});
 
@@ -75,8 +75,8 @@ void TitleBar::tick(const float&) noexcept
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Edit")) {
-				if (BeginMenuWIcon("Undo", m_iconUndo, "CTRL+Z", false, m_editor.canUndo())) { m_editor.undo(); }
-				if (BeginMenuWIcon("Redo", m_iconRedo, "CTRL+Y", false, m_editor.canRedo())) { m_editor.redo(); }
+				if (BeginMenuWIcon("Undo", m_iconUndo, "CTRL+Z", nullptr, m_editor.canUndo())) { m_editor.undo(); }
+				if (BeginMenuWIcon("Redo", m_iconRedo, "CTRL+Y", nullptr, m_editor.canRedo())) { m_editor.redo(); }
 				ImGui::Separator();
 				if (ImGui::MenuItem("Select All", "CTRL+A")) { m_editor.selectAll(); }
 				const bool hasSelection = m_editor.getSelection().size() ? true : false;

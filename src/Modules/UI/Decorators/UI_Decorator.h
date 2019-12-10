@@ -10,17 +10,17 @@ class UI_Decorator : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this decorator. */
-	inline ~UI_Decorator() = default;
+	inline ~UI_Decorator() noexcept = default;
 	/** Construct a decorator, decorating the supplied component.
 	@param	component		the component to decorate. */
 	UI_Decorator(Engine& engine, const std::shared_ptr<UI_Element>& component) noexcept;
 
 
 	// Public Interface Implementations
-	virtual void renderElement(const float& deltaTime, const glm::vec2& position = glm::vec2(0.0f), const glm::vec2& scale = glm::vec2(1.0f)) noexcept override;
-	virtual void mouseAction(const MouseEvent& mouseEvent) noexcept override;
-	virtual void keyboardAction(const KeyboardEvent& keyboardEvent) noexcept override;
-	virtual void userAction(ActionState& actionState) noexcept override;
+	void renderElement(const float& deltaTime, const glm::vec2& position = glm::vec2(0.0f), const glm::vec2& scale = glm::vec2(1.0f)) noexcept override;
+	void mouseAction(const MouseEvent& mouseEvent) noexcept override;
+	void keyboardAction(const KeyboardEvent& keyboardEvent) noexcept override;
+	void userAction(ActionState& actionState) noexcept override;
 
 
 protected:

@@ -34,8 +34,8 @@ Prefabs::Prefabs(Engine& engine, LevelEditor_Module& editor) noexcept :
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) { m_renderSize.x = (int)f; });
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) { m_renderSize.y = (int)f; });
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept { m_renderSize.x = (int)f; });
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept { m_renderSize.y = (int)f; });
 
 	// Load prefabs
 	populatePrefabs();
@@ -421,7 +421,7 @@ void Prefabs::tickPopupDialogues(const float&) noexcept
 		ImGui::Text("Enter a new name for this prefab...");
 		ImGui::Spacing();
 
-		char nameInput[256];
+		char nameInput[256]{};
 		for (size_t x = 0; x < m_prefabs[m_selectedIndex].name.length() && x < IM_ARRAYSIZE(nameInput); ++x)
 			nameInput[x] = m_prefabs[m_selectedIndex].name[x];
 		nameInput[std::min(256ull, m_prefabs[m_selectedIndex].name.length())] = '\0';

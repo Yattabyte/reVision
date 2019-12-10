@@ -49,8 +49,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Cubemap(Cubemap&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Cubemap(const Cubemap&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline const Cubemap& operator =(Cubemap&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline const Cubemap& operator =(const Cubemap&) noexcept = delete;
+
+
 	// Private Interface Implementation
-	virtual void initialize() noexcept override final;
+	void initialize() noexcept final;
 
 
 	// Private Attributes

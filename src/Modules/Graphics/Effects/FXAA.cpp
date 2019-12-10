@@ -17,7 +17,7 @@ FXAA::~FXAA() noexcept
 	// Preferences
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_FXAA, m_enabled);
-	preferences.addCallback(PreferenceState::Preference::C_FXAA, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
+	preferences.addCallback(PreferenceState::Preference::C_FXAA, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = (bool)f; });
 }
  
 void FXAA::clearCache(const float&) noexcept 

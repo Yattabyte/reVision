@@ -10,9 +10,9 @@ class Buffer_Interface {
 public:
 	// Public (De)Constructors
 	/** Destroy this buffer. */
-	inline virtual ~Buffer_Interface() = default;
+	inline virtual ~Buffer_Interface() noexcept = default;
 	/** Construct a buffer. */
-	inline Buffer_Interface() = default;
+	inline Buffer_Interface() noexcept = default;
 
 
 	// Public Interface Declarations

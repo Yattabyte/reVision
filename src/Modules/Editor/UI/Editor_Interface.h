@@ -56,8 +56,8 @@ private:
 /** UI element representing an ImGUI element. */
 struct ImGUI_Element {
 	bool m_open = true;
-	inline virtual ~ImGUI_Element() = default;
-	inline ImGUI_Element() = default;
+	inline virtual ~ImGUI_Element() noexcept = default;
+	inline ImGUI_Element() noexcept = default;
 	void open() noexcept;
 	void close() noexcept;
 	virtual void tick(const float& deltaTime) noexcept;

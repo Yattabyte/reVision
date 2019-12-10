@@ -8,7 +8,7 @@
 
 
 /** Scrollbar decorator object. */
-class Scrollbar_V : public UI_Decorator {
+class Scrollbar_V final : public UI_Decorator {
 public:
 	// Public Interaction Enums
 	enum class Interact : int {
@@ -26,8 +26,8 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void mouseAction(const MouseEvent& mouseEvent) noexcept override;
-	virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override;
+	void mouseAction(const MouseEvent& mouseEvent) noexcept final;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
 
 
 	// Public Methods

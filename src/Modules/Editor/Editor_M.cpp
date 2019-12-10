@@ -19,8 +19,8 @@
 /** Construct a game module.
 @param	engine		reference to the engine to use. */
 
-LevelEditor_Module::LevelEditor_Module(Engine& engine) 
-	: Engine_Module(engine) 
+LevelEditor_Module::LevelEditor_Module(Engine& engine) noexcept :
+	Engine_Module(engine) 
 {
 }
 
@@ -45,7 +45,7 @@ void LevelEditor_Module::initialize() noexcept
 	// Assets
 	m_shader = Shared_Shader(m_engine, "Editor\\editorCopy");
 	m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
-	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
+	m_shapeQuad->addCallback(m_aliveIndicator, [&]() noexcept {
 		m_indirectQuad = IndirectDraw<1>((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 
@@ -53,24 +53,24 @@ void LevelEditor_Module::initialize() noexcept
 	auto& preferences = m_engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.x = (int)f;
-		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, 0);
-		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
+		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, nullptr);
+		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 		});
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.y = (int)f;
-		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, 0);
-		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
+		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, nullptr);
+		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 		});
 	preferences.getOrSetValue(PreferenceState::Preference::E_AUTOSAVE_INTERVAL, m_autosaveInterval);
-	preferences.addCallback(PreferenceState::Preference::E_AUTOSAVE_INTERVAL, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::E_AUTOSAVE_INTERVAL, m_aliveIndicator, [&](const float& f) noexcept {
 		m_autosaveInterval = f;
 		});
 	float undoStacksize = 500.0f;
 	preferences.getOrSetValue(PreferenceState::Preference::E_UNDO_STACKSIZE, undoStacksize);
 	m_maxUndo = int(undoStacksize);
-	preferences.addCallback(PreferenceState::Preference::E_UNDO_STACKSIZE, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::E_UNDO_STACKSIZE, m_aliveIndicator, [&](const float& f) noexcept {
 		m_maxUndo = int(f);
 		});
 
@@ -81,14 +81,14 @@ void LevelEditor_Module::initialize() noexcept
 	glTextureParameteri(m_texID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_texID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTextureParameteri(m_texID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, 0);
+	glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, nullptr);
 	glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_texID, 0);
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_depthID);
 	glTextureParameteri(m_depthID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_depthID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_depthID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTextureParameteri(m_depthID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
+	glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 	glNamedFramebufferTexture(m_fboID, GL_DEPTH_STENCIL_ATTACHMENT, m_depthID, 0);
 	glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 }
@@ -309,7 +309,7 @@ void LevelEditor_Module::openLevel(const std::string& name) noexcept
 
 void LevelEditor_Module::openLevelDialogue() noexcept
 {
-	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() {
+	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() noexcept {
 		m_editorInterface->m_uiOpenDialogue->open();
 		});
 }
@@ -488,12 +488,12 @@ void LevelEditor_Module::clearSelection() noexcept
 			newTransform.update();
 			m_editor.m_mouseGizmo->setTransform(newTransform);
 		};
-		virtual void execute() noexcept override final {
+		void execute() noexcept final {
 			// Remove all selection components from world
 			m_editor.getWorld().updateSystem(m_editor.m_systemSelClearer.get(), 0.0f);
 			m_editor.m_mouseGizmo->getSelection().clear();
 		}
-		virtual void undo() noexcept override final {
+		void undo() noexcept final {
 			// Remove all selection components from world
 			auto& ecsWorld = m_editor.getWorld();
 			ecsWorld.updateSystem(m_editor.m_systemSelClearer.get(), 0.0f);
@@ -521,8 +521,8 @@ void LevelEditor_Module::clearSelection() noexcept
 			newTransform.update();
 			m_editor.m_mouseGizmo->setTransform(newTransform);
 		}
-		virtual bool join(Editor_Command* other) noexcept override final {
-			if (auto newCommand = dynamic_cast<Clear_Selection_Command*>(other))
+		bool join(Editor_Command* other) noexcept final {
+			if (const auto& newCommand = dynamic_cast<Clear_Selection_Command*>(other))
 				return true;
 			return false;
 		}
@@ -573,14 +573,14 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles) 
 			newTransform.update();
 			m_editor.m_mouseGizmo->setTransform(newTransform);
 		};
-		virtual void execute() noexcept override final {
+		void execute() noexcept final {
 			switchSelection(m_uuids_new);
 		}
-		virtual void undo() noexcept override final {
+		void undo() noexcept final {
 			switchSelection(m_uuids_old);
 		}
-		virtual bool join(Editor_Command* other) noexcept override final {
-			if (auto newCommand = dynamic_cast<Set_Selection_Command*>(other)) {
+		bool join(Editor_Command* other) noexcept final {
+			if (const auto& newCommand = dynamic_cast<Set_Selection_Command*>(other)) {
 				// Join the 2 'new' sets together, make sure it's unique
 				m_uuids_new.insert(m_uuids_new.begin(), newCommand->m_uuids_new.cbegin(), newCommand->m_uuids_new.cend());
 				m_uuids_new.erase(std::unique(m_uuids_new.begin(), m_uuids_new.end()), m_uuids_new.end());
@@ -607,7 +607,7 @@ void LevelEditor_Module::mergeSelection() noexcept
 		std::vector<EntityHandle> m_uuids;
 		Merge_Selection_Command(Engine& engine, LevelEditor_Module& editor) noexcept
 			: m_engine(engine), m_editor(editor), m_uuids(m_editor.getSelection()) {}
-		virtual void execute() noexcept override final {
+		void execute() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
 			// Find the root element
 			const auto& root = m_uuids[0];
@@ -619,17 +619,17 @@ void LevelEditor_Module::mergeSelection() noexcept
 				m_editor.m_mouseGizmo->getSelection() = { root };
 			}
 		}
-		virtual void undo() noexcept override final {
+		void undo() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
 			// Find the root element
-			if (auto* root = ecsWorld.getEntity(m_uuids[0])) {
+			if (const auto& root = ecsWorld.getEntity(m_uuids[0])) {
 				// Un-parent remaining entities from the root
 				for (size_t x = 1ull, selSize = m_uuids.size(); x < selSize; ++x)
 					if (const auto& entityHandle = m_uuids[x])
 						ecsWorld.unparentEntity(entityHandle);
 			}
 		}
-		virtual bool join(Editor_Command* other) noexcept override final {
+		bool join(Editor_Command* other) noexcept final {
 			if (auto newCommand = dynamic_cast<Merge_Selection_Command*>(other)) {
 				// If root is the same, continue
 				if (m_uuids[0] == newCommand->m_uuids[0]) {
@@ -656,7 +656,7 @@ void LevelEditor_Module::groupSelection() noexcept
 		EntityHandle m_rootUUID;
 		Group_Selection_Command(Engine& engine, LevelEditor_Module& editor) noexcept
 			: m_engine(engine), m_editor(editor), m_uuids(m_editor.getSelection()) {}
-		virtual void execute() noexcept override final {
+		void execute() noexcept final {
 			// Determine a new central transform for the whole group
 			auto& ecsWorld = m_editor.getWorld();
 			Transform_Component rootTransform;
@@ -678,7 +678,7 @@ void LevelEditor_Module::groupSelection() noexcept
 			for (auto& uuid : m_uuids)
 				ecsWorld.parentEntity(m_rootUUID, uuid);
 		}
-		virtual void undo() noexcept override final {
+		void undo() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
 			auto& selection = m_editor.m_mouseGizmo->getSelection();
 			selection.clear();
@@ -709,13 +709,13 @@ void LevelEditor_Module::ungroupSelection() noexcept
 			for (const auto& entityHandle : m_uuids)
 				m_children.push_back(ecsWorld.getEntityHandles(entityHandle));			
 		}
-		virtual void execute() noexcept override final {
+		void execute() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
 			for (const auto& entityHandle : m_uuids)
 				for (const auto& childHandle : ecsWorld.getEntityHandles(entityHandle))
 					ecsWorld.unparentEntity(childHandle);
 		}
-		virtual void undo() noexcept override final {
+		void undo() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
 			size_t childIndex(0ull);
 			for (const auto& enityUUID : m_uuids)
@@ -742,7 +742,7 @@ void LevelEditor_Module::cutSelection() noexcept
 void LevelEditor_Module::copySelection() noexcept
 {
 	m_copiedData.clear();
-	auto& ecsWorld = getWorld();
+	const auto& ecsWorld = getWorld();
 	for (const auto& entityHandle : getSelection()) {
 		const auto entData = ecsWorld.serializeEntity(entityHandle);
 		m_copiedData.insert(m_copiedData.end(), entData.begin(), entData.end());
@@ -764,12 +764,12 @@ void LevelEditor_Module::deleteSelection() noexcept
 		const std::vector<EntityHandle> m_uuids;
 		Delete_Selection_Command(Engine& engine, LevelEditor_Module& editor, const std::vector<EntityHandle>& selection) noexcept
 			: m_engine(engine), m_editor(editor), m_data(editor.getWorld().serializeEntities(selection)), m_uuids(selection) {}
-		virtual void execute() noexcept override final {
+		void execute() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
 			for (const auto& entityHandle : m_uuids)
 				ecsWorld.removeEntity(entityHandle);
 		}
-		virtual void undo() noexcept override final {
+		void undo() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
 			size_t dataRead(0ull), uuidIndex(0ull);
 			while (dataRead < m_data.size() && uuidIndex < m_uuids.size())
@@ -792,12 +792,12 @@ void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const c
 		ComponentHandle m_componentHandle;
 		Spawn_Component_Command(Engine& engine, LevelEditor_Module& editor, const EntityHandle& entityHandle, const char* name) noexcept
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentName(name) {}
-		virtual void execute() noexcept override final {
+		void execute() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
 			if (const auto& componentID = ecsWorld.nameToComponentID(m_componentName))
 				m_componentHandle = ecsWorld.makeComponent(m_entityHandle, *componentID, nullptr, m_componentHandle);
 		}
-		virtual void undo() noexcept override final {
+		void undo() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
 			if (const auto& componentID = ecsWorld.nameToComponentID(m_componentName)) {
 				for (auto& component : ecsWorld.getEntity(m_entityHandle)->m_components) {
@@ -825,14 +825,14 @@ void LevelEditor_Module::deleteComponent(const EntityHandle& entityHandle, const
 		std::vector<char> m_componentData;
 		Delete_Component_Command(Engine& engine, LevelEditor_Module& editor, const EntityHandle& entityHandle, const ComponentHandle& componentHandle, const int& componentID) noexcept
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentHandle(componentHandle), m_componentID(componentID) {
-			auto& ecsWorld = m_editor.getWorld();
+			const auto& ecsWorld = m_editor.getWorld();
 			if (const auto& component = ecsWorld.getComponent(m_entityHandle, m_componentID))
 				m_componentData = component->to_buffer();
 		}
-		virtual void execute() noexcept override final {
+		void execute() noexcept final {
 			m_editor.getWorld().removeEntityComponent(m_entityHandle, m_componentID);
 		}
-		virtual void undo() noexcept override final {
+		void undo() noexcept final {
 			if (m_componentData.size()) {
 				size_t dataRead(0ull);
 				const auto& copy = ecsBaseComponent::from_buffer(m_componentData, dataRead);
@@ -856,7 +856,7 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const En
 		std::vector<EntityHandle> m_uuids;
 		Spawn_Command(Engine& engine, LevelEditor_Module& editor, const std::vector<char>& data, const EntityHandle& pUUID) noexcept
 			: m_engine(engine), m_editor(editor), m_data(data), m_parentUUID(pUUID), m_cursor(m_editor.getSpawnTransform()) {}
-		virtual void execute() noexcept override final {
+		void execute() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
 			size_t dataRead(0ull), handleCount(0ull);
 			glm::vec3 center(0.0f);
@@ -883,7 +883,7 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const En
 				transform->m_localTransform.update();
 			}
 		}
-		virtual void undo() noexcept override final {
+		void undo() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
 			for (const auto& entityHandle : m_uuids)
 				ecsWorld.removeEntity(entityHandle);

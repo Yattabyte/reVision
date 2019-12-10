@@ -30,9 +30,9 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void clearCache(const float& deltaTime) noexcept override final;
-	virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept override final;
-	virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final;
+	void clearCache(const float& deltaTime) noexcept final;
+	void updateCache(const float& deltaTime, ecsWorld& world) noexcept final;
+	void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
 
 
 private:
@@ -53,12 +53,12 @@ private:
 	@param	rhVolume			reference to the RH volume.
 	@param	camBufferRebounce	reference to the buffer for re-bouncing GI.
 	@param	indirectQuad		reference to the indirect quad draw call. */
-	void rebounceVolume(RH_Volume& rhVolume, DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) noexcept;
+	void rebounceVolume(RH_Volume& rhVolume, const DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) noexcept;
 	/** Reconstruct GI from the RH volume. 
 	@param	viewport			reference to the active viewport.
 	@param	camBufferRecon		reference to the buffer for reconstructing GI.
 	@param	indirectQuadRecon	reference to the indirect GI reconstruction draw call. */
-	void reconstructVolume(const std::shared_ptr<Viewport>& viewport, DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept;
+	void reconstructVolume(const std::shared_ptr<Viewport>& viewport, const DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept;
 
 
 	// Private Attributes

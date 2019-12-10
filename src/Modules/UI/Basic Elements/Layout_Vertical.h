@@ -6,11 +6,11 @@
 
 
 /** A layout class which controls the position and sizes of its children, laying them out evenly in a column. */
-class Layout_Vertical : public UI_Element {
+class Layout_Vertical final : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this layout. */
-	inline ~Layout_Vertical() = default;
+	inline ~Layout_Vertical() noexcept = default;
 	/** Construct the layout.
 	@param	engine		reference to the engine to use. */
 	explicit Layout_Vertical(Engine& engine) noexcept;

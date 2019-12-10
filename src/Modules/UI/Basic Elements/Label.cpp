@@ -22,7 +22,7 @@ Label::Label(Engine& engine, const std::string& text) noexcept :
 	glCreateBuffers(1, &m_vboID);
 	glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
 	constexpr auto num_data = 2 * 3;
-	glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
+	glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), nullptr, GL_DYNAMIC_STORAGE_BIT);
 	std::vector<glm::vec3> data(num_data);
 	data[0] = { -1, -1, 0 };
 	data[1] = { 1, -1, 0 };

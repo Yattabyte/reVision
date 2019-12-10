@@ -10,14 +10,14 @@ class CameraController final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy the camera controller. */
-	inline ~CameraController() = default;
+	inline ~CameraController() noexcept = default;
 	/** Construct a camera controller.
 	@param	engine		reference to the engine to use. */
 	explicit CameraController(Engine& engine) noexcept;
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) noexcept override final;
+	void tick(const float& deltaTime) noexcept final;
 
 
 private:

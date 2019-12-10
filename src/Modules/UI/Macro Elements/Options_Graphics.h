@@ -6,11 +6,11 @@
 
 
 /** A UI element serving as a graphics options menu. */
-class Options_Graphics : public Options_Pane {
+class Options_Graphics final : public Options_Pane {
 public:
 	// Public (De)Constructors
 	/** Destroy the graphics panel. */
-	inline ~Options_Graphics() = default;
+	inline ~Options_Graphics() noexcept = default;
 	/** Construct a graphics panel.
 	@param	engine		reference to the engine to use. */
 	explicit Options_Graphics(Engine& engine) noexcept;

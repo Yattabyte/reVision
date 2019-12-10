@@ -2,9 +2,6 @@
 #include "ecsComponent.h"
 
 
-std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>> ecsBaseComponent::m_componentRegistry = std::vector<std::tuple<ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t>>();
-MappedChar<ComponentID> ecsBaseComponent::m_nameRegistry = MappedChar<ComponentID>();
-
 ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string) noexcept
 {
 	const auto componentID = static_cast<ComponentID>(m_componentRegistry.size());

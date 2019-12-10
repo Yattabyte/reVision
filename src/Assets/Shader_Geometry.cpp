@@ -9,13 +9,12 @@ constexpr const char* DIRECTORY_SHADER = "\\Shaders\\";
 
 Shared_Shader_Geometry::Shared_Shader_Geometry(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
-	(*(std::shared_ptr<Shader_Geometry>*)(this)) = std::dynamic_pointer_cast<Shader_Geometry>(
-		engine.getManager_Assets().shareAsset(
+	swap(std::dynamic_pointer_cast<Shader_Geometry>(engine.getManager_Assets().shareAsset(
 			typeid(Shader_Geometry).name(),
 			filename,
 			[&engine, filename]() { return std::make_shared<Shader_Geometry>(engine, filename); },
 			threaded
-		));
+		)));
 }
 
 Shader_Geometry::~Shader_Geometry() noexcept

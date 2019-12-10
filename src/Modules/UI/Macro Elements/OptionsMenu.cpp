@@ -11,23 +11,23 @@ OptionsMenu::OptionsMenu(Engine& engine) noexcept :
 	// Add 'Video' button
 	m_videoMenu = std::make_shared<Options_Video>(engine);
 	m_videoMenu->setVisible(false);
-	addButton(engine, "VIDEO", [&]() { video(); });
+	addButton(engine, "VIDEO", [&]() noexcept { video(); });
 	addElement(m_videoMenu);
 
 	// Add 'Graphics' button
 	m_gfxMenu = std::make_shared<Options_Graphics>(engine);
 	m_gfxMenu->setVisible(false);
-	addButton(engine, "GRAPHICS", [&]() { graphics(); });
+	addButton(engine, "GRAPHICS", [&]() noexcept { graphics(); });
 	addElement(m_gfxMenu);
 
 	// Add 'Controls' button
-	addButton(engine, "CONTROLS", [&]() { controls(); });
+	addButton(engine, "CONTROLS", [&]() noexcept { controls(); });
 
 	// Add 'Back' button
-	addButton(engine, "< BACK  ", [&]() { back(); });
+	addButton(engine, "< BACK  ", [&]() noexcept { back(); });
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() {
+	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept {
 		const auto scale = getScale();
 		m_videoMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f });
 		m_gfxMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f });

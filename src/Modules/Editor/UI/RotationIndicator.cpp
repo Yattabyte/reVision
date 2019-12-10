@@ -22,10 +22,10 @@ RotationIndicator::RotationIndicator(Engine& engine) noexcept :
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.x = (int)f;
 		});
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.y = (int)f;
 		});
 
@@ -35,7 +35,7 @@ RotationIndicator::RotationIndicator(Engine& engine) noexcept :
 	m_shader = Shared_Shader(engine, "Editor\\3dindShader");
 
 	// Asset-Finished Callbacks
-	m_3dIndicator->addCallback(m_aliveIndicator, [&]() mutable {
+	m_3dIndicator->addCallback(m_aliveIndicator, [&]() noexcept {
 		m_indirectIndicator = IndirectDraw<1>((GLuint)m_3dIndicator->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 

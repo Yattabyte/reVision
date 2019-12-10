@@ -46,12 +46,23 @@ public:
 
 protected:
 	// Interface Implementation
-	virtual bool initShaders(const std::string& relativePath) noexcept override final;
+	bool initShaders(const std::string& relativePath) noexcept final;
 
 
 private:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Shader_Geometry(Shader_Geometry&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Shader_Geometry(const Shader_Geometry&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline const Shader_Geometry& operator =(Shader_Geometry&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline const Shader_Geometry& operator =(const Shader_Geometry&) noexcept = delete;
+
+
 	// Private Interface Implementation
-	virtual void initialize() noexcept override final;
+	void initialize() noexcept final;
 
 
 	// Private Attributes

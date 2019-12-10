@@ -114,23 +114,23 @@ void Engine::initWindow() noexcept
 	m_preferenceState.getOrSetValue(PreferenceState::Preference::C_VSYNC, m_vsync);
 
 	// Preference Callbacks
-	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
 		m_windowSize.x = int(f);
 		configureWindow();
 		});
-	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
 		m_windowSize.y = int(f);
 		configureWindow();
 		});
-	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float& f) {
+	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float& f) noexcept {
 		m_refreshRate = f;
 		configureWindow();
 		});
-	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_FULLSCREEN, m_aliveIndicator, [&](const float& f) {
+	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_FULLSCREEN, m_aliveIndicator, [&](const float& f) noexcept {
 		m_useFullscreen = f;
 		configureWindow();
 		});
-	m_preferenceState.addCallback(PreferenceState::Preference::C_VSYNC, m_aliveIndicator, [&](const float& f) {
+	m_preferenceState.addCallback(PreferenceState::Preference::C_VSYNC, m_aliveIndicator, [&](const float& f) noexcept {
 		m_vsync = f;
 		glfwSwapInterval((int)f);
 		});
@@ -138,21 +138,21 @@ void Engine::initWindow() noexcept
 	glfwSwapInterval((int)m_vsync);
 	glfwSetInputMode(m_window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
 	glfwSetWindowUserPointer(m_window, this);
-	glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
+	glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) noexcept {
 		auto& preferences = static_cast<Engine*>(glfwGetWindowUserPointer(window))->getPreferenceState();
 		preferences.setValue(PreferenceState::Preference::C_WINDOW_WIDTH, width);
 		preferences.setValue(PreferenceState::Preference::C_WINDOW_HEIGHT, height);
 		});
-	glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xPos, double yPos) {
+	glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xPos, double yPos) noexcept {
 		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyCursorPos(xPos, yPos);
 		});
-	glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) {
+	glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) noexcept {
 		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyCursorButton(button, action, mods);
 		});
-	glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int character) {
+	glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int character) noexcept {
 		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyChar(character);
 		});
-	glfwSetKeyCallback(m_window, [](GLFWwindow* window, int a, int b, int c, int d) {
+	glfwSetKeyCallback(m_window, [](GLFWwindow* window, int a, int b, int c, int d)noexcept {
 		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyKey(a, b, c, d);
 		});
 #ifdef DEBUG

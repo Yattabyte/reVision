@@ -8,7 +8,7 @@
 
 constexpr float DISK_VERTICES = 32.0F;
 constexpr float DISK_RADIUS = 8.0F;
-constexpr size_t DISK_MAX_POINTS = (size_t)DISK_VERTICES * 6ull;
+constexpr size_t DISK_MAX_POINTS = (size_t)(DISK_VERTICES) * 6ull;
 
 Rotation_Gizmo::~Rotation_Gizmo() noexcept
 {
@@ -30,7 +30,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine& engine, LevelEditor_Module& editor) noexc
 	*m_aliveIndicator = true;
 
 	// Asset-Finished Callbacks
-	m_model->addCallback(m_aliveIndicator, [&]() mutable {
+	m_model->addCallback(m_aliveIndicator, [&]() noexcept {
 		m_indirectIndicator = IndirectDraw<1>((GLuint)m_model->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 
@@ -38,18 +38,18 @@ Rotation_Gizmo::Rotation_Gizmo(Engine& engine, LevelEditor_Module& editor) noexc
 	auto& preferences = m_engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.x = (int)f;
 		});
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.y = (int)f;
 		});
 	preferences.getOrSetValue(PreferenceState::Preference::E_GIZMO_SCALE, m_renderScale);
-	preferences.addCallback(PreferenceState::Preference::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderScale = f;
 		});
 	preferences.getOrSetValue(PreferenceState::Preference::E_ANGLE_SNAP, m_angleSnapping);
-	preferences.addCallback(PreferenceState::Preference::E_ANGLE_SNAP, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::E_ANGLE_SNAP, m_aliveIndicator, [&](const float& f) noexcept {
 		m_angleSnapping = f;
 		});
 
@@ -263,7 +263,7 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 			Rotate_Selection_Command(Engine& engine, LevelEditor_Module& editor, glm::quat& oldRotation, const glm::quat& newRotation, const unsigned int& axis) noexcept
 				: m_engine(engine), m_editor(editor), m_startingOrientation(oldRotation),  m_oldRotation(oldRotation), m_newRotation(newRotation), m_axis(axis), m_uuids(m_editor.getSelection()) {}
 			void rotate(const glm::quat& rotation) noexcept {
-				auto& ecsWorld = m_editor.getWorld();
+				const auto& ecsWorld = m_editor.getWorld();
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
 				for (const auto& entityHandle : m_uuids)
@@ -281,16 +281,16 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 					transform->m_localTransform.update();
 				}
 			}
-			virtual void execute() noexcept override final {
+			void execute() noexcept final {
 				rotate(m_newRotation * glm::inverse(m_oldRotation));
 				m_startingOrientation = m_newRotation;
 			}
-			virtual void undo() noexcept override final {
+			void undo() noexcept final {
 				rotate(glm::inverse(m_newRotation) * m_oldRotation);
 				m_startingOrientation = m_oldRotation;
 			}
-			virtual bool join(Editor_Command* other) noexcept override final {
-				if (auto newCommand = dynamic_cast<Rotate_Selection_Command*>(other)) {
+			bool join(Editor_Command* other) noexcept final {
+				if (const auto& newCommand = dynamic_cast<Rotate_Selection_Command*>(other)) {
 					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 						m_newRotation = newCommand->m_newRotation;
 						return true;
@@ -309,7 +309,7 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 void Rotation_Gizmo::updateDisk() noexcept
 {
 	const auto fourthAxisMat = glm::inverse(glm::mat4_cast(glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->vMatrix)));
-	int steps = (int)ceilf((abs(m_deltaAngle) / 360.0f) * DISK_VERTICES);
+	const int steps = (int)ceilf((abs(m_deltaAngle) / 360.0f) * DISK_VERTICES);
 	std::vector<glm::vec3> points(size_t(steps) * 6ull, glm::vec3(0.0f));
 	for (size_t n = 0ull, v = 0ull; n < steps; ++n, v += 6ull) {
 		const auto startAngle = glm::radians(float(n) * (m_deltaAngle / float(steps))) + m_startingAngle;
@@ -332,7 +332,7 @@ void Rotation_Gizmo::updateDisk() noexcept
 			v2 = glm::vec3(x2, y2, 0);
 		}
 		else if (m_selectedAxes == ALL_AXES) {
-			auto t1 = fourthAxisMat * glm::vec4(x1, y1, 0, 1.0f), t2 = fourthAxisMat * glm::vec4(x2, y2, 0, 1.0f);
+			const auto t1 = fourthAxisMat * glm::vec4(x1, y1, 0, 1.0f), t2 = fourthAxisMat * glm::vec4(x2, y2, 0, 1.0f);
 			v1 = glm::vec3(t1 / t1.w);
 			v2 = glm::vec3(t2 / t2.w);
 		}

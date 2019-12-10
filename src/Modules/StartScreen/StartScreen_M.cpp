@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-StartScreen_Module::StartScreen_Module(Engine& engine) : 
+StartScreen_Module::StartScreen_Module(Engine& engine) noexcept : 
 	Engine_Module(engine) 
 {
 }
@@ -16,13 +16,13 @@ void StartScreen_Module::initialize() noexcept
 	// Create Main Menu
 	auto startMenu = std::make_shared<StartMenu>(m_engine);
 	m_startMenu = startMenu;
-	startMenu->addCallback((int)StartMenu::Interact::on_start_game, [&]() {
+	startMenu->addCallback((int)StartMenu::Interact::on_start_game, [&]() noexcept {
 		m_engine.goToGame();
 		});
-	startMenu->addCallback((int)StartMenu::Interact::on_level_editor, [&]() {
+	startMenu->addCallback((int)StartMenu::Interact::on_level_editor, [&]() noexcept {
 		m_engine.goToEditor();
 		});
-	startMenu->addCallback((int)StartMenu::Interact::on_quit, [&]() {
+	startMenu->addCallback((int)StartMenu::Interact::on_quit, [&]() noexcept {
 		//
 		});
 }

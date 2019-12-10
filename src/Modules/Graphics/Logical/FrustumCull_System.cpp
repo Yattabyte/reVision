@@ -13,7 +13,7 @@ FrustumCull_System::FrustumCull_System(std::vector<Camera*>& sceneCameras) noexc
 void FrustumCull_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
 {
 	for (const auto& componentParam : components) {
-		auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
+		const auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
 		auto* bboxComponent = static_cast<BoundingBox_Component*>(componentParam[1]);
 		auto* bsphereComponent = static_cast<BoundingSphere_Component*>(componentParam[2]);
 

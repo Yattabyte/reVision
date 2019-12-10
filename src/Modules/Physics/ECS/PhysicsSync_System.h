@@ -15,7 +15,7 @@ class PhysicsSync_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this physics sync system. */
-	inline ~PhysicsSync_System() = default;
+	inline ~PhysicsSync_System() noexcept = default;
 	/** Construct a physics sync system.
 	@param	engine		reference to the engine to use.
 	@param	world		reference to the physics world to use. */
@@ -23,7 +23,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
 
 
 private:

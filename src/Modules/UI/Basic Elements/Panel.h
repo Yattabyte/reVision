@@ -8,7 +8,7 @@
 
 
 /** UI panel class, affords containing other elements, and rendering a fixed color. */
-class Panel : public UI_Element {
+class Panel final : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this panel. */
@@ -19,7 +19,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
 
 
 	// Public Methods

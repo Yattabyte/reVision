@@ -11,7 +11,7 @@ class EntityInspector final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this inspector. */
-	inline ~EntityInspector() = default;
+	inline ~EntityInspector() noexcept = default;
 	/** Construct a component inspector.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
@@ -19,7 +19,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) noexcept override final;
+	void tick(const float& deltaTime) noexcept final;
 
 
 private:

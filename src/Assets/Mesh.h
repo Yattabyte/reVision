@@ -43,8 +43,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Mesh(Mesh&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Mesh(const Mesh&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline const Mesh& operator =(Mesh&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline const Mesh& operator =(const Mesh&) noexcept = delete;
+
+
 	// Private Interface Implementation
-	virtual void initialize() noexcept override final;
+	void initialize() noexcept final;
 
 
 	// Private Attributes

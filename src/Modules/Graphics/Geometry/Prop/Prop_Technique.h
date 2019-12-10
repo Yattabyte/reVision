@@ -16,7 +16,7 @@ class Prop_Technique final : public Geometry_Technique {
 public:
 	// Public (De)Constructors
 	/** Destroy this technique. */
-	inline ~Prop_Technique() = default;
+	inline ~Prop_Technique() noexcept = default;
 	/** Construct a prop rendering technique.
 	@param	engine			reference to the engine to use.
 	@param	sceneCameras	reference to the scene cameras to use. */
@@ -24,11 +24,11 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void clearCache(const float& deltaTime) noexcept override final;
-	virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept override final;
-	virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override final;
-	virtual void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) noexcept override final;
-	virtual void renderShadows(const float& deltaTime) noexcept override final;
+	void clearCache(const float& deltaTime) noexcept final;
+	void updateCache(const float& deltaTime, ecsWorld& world) noexcept final;
+	void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
+	void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
+	void renderShadows(const float& deltaTime) noexcept final;
 
 
 private:

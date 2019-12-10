@@ -23,7 +23,7 @@ SSR::SSR(Engine& engine) noexcept :
 	// Preferences
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_SSR, m_enabled);
-	preferences.addCallback(PreferenceState::Preference::C_SSR, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
+	preferences.addCallback(PreferenceState::Preference::C_SSR, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = (bool)f; });
 
 	// Bayer matrix
 	GLubyte data[16] = { 0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5 };
@@ -77,7 +77,7 @@ void SSR::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewpor
 	viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);
 	m_shaderSSR1->bind();
 	glBindTextureUnit(6, m_bayerID);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
@@ -86,7 +86,7 @@ void SSR::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewpor
 	glBindTextureUnit(5, viewport->m_gfxFBOS.getTexID("SSR", 0));
 	glBindTextureUnit(6, viewport->m_gfxFBOS.getTexID("SSR_MIP", 0));
 	m_shaderSSR2->bind();
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 
 	glBlendFunc(GL_ONE, GL_ONE);
 	glDisable(GL_BLEND);
@@ -111,7 +111,7 @@ void SSR::updateMIPChain(const std::shared_ptr<Viewport>& viewport) noexcept
 	viewport->m_gfxFBOS.bindForWriting("SSR_MIP");
 	GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glClearNamedFramebufferfv(mipFboID, GL_COLOR, 0, clearColor);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 
 	// Blur MIP chain, reading from 1 MIP level and writing into next
 	m_shaderConvMips->bind();
@@ -129,7 +129,7 @@ void SSR::updateMIPChain(const std::shared_ptr<Viewport>& viewport) noexcept
 			glNamedFramebufferTexture(mipFboID, GL_COLOR_ATTACHMENT0, mipTexID, x);
 
 			glViewport(0, 0, std::max(1, write_size.x), std::max(1, write_size.y));
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
+			glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 			read_size = write_size;
 		}
 		// Blend second pass

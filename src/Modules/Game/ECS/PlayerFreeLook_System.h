@@ -13,14 +13,14 @@ class PlayerFreeLook_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this free-look system. */
-	inline ~PlayerFreeLook_System() = default;
+	inline ~PlayerFreeLook_System() noexcept = default;
 	/** Construct a free-look system.
 	@param	engine		reference to the engine to use. */
 	explicit PlayerFreeLook_System(Engine& engine) noexcept;
 
 
 	// Public Interface Implementation
-	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
 
 
 private:

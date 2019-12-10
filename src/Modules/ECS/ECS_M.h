@@ -12,15 +12,15 @@ class ECS_Module final : public Engine_Module {
 public:
 	// Public (De)Constructors
 	/** Destroy this ECS module. */
-	inline ~ECS_Module() = default;
+	inline ~ECS_Module() noexcept = default;
 	/** Construct a ECS module.
 	@param	engine		reference to the engine to use. */
-	explicit ECS_Module(Engine& engine);
+	explicit ECS_Module(Engine& engine) noexcept;
 
 
 	// Public Interface Implementations
-	virtual void initialize() noexcept override final;
-	virtual void deinitialize() noexcept override final;
+	void initialize() noexcept final;
+	void deinitialize() noexcept final;
 
 
 	// Public Methods

@@ -26,7 +26,7 @@ public:
 	@param	capacity	the starting capacity of this buffer.
 	@param	data		optional data buffer, must be at least as large.
 	@param	mapFlags	bit-field flags. */
-	inline DynamicBuffer(const GLsizeiptr& capacity = 256, const void* data = 0, const GLbitfield& mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT) noexcept
+	inline DynamicBuffer(const GLsizeiptr& capacity = 256, const void* data = nullptr, const GLbitfield& mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT) noexcept
 		: m_mapFlags(mapFlags), m_maxCapacity(capacity) {
 		// Zero-initialize our starting variables
 		for (int x = 0; x < BufferCount; ++x) {
@@ -56,12 +56,12 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void bindBuffer(const GLenum& target) const noexcept override final {
+	inline void bindBuffer(const GLenum& target) const noexcept final {
 		// Ensure writing has finished before reading
 		//WaitForFence(m_writeFence[m_index]);
 		glBindBuffer(target, m_bufferID[m_index]);
 	}
-	inline virtual void bindBufferBase(const GLenum& target, const GLuint& index) const noexcept override final {
+	inline void bindBufferBase(const GLenum& target, const GLuint& index) const noexcept final {
 		// Ensure writing has finished before reading
 		//WaitForFence(m_writeFence[m_index]);
 		glBindBufferBase(target, index, m_bufferID[m_index]);
@@ -80,7 +80,7 @@ public:
 	@param	data		the data to write. */
 	inline void write(const GLsizeiptr& offset, const GLsizeiptr& size, const void* data) noexcept {
 		expandToFit(offset, size);
-		std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr[m_index]) + offset, data, size);
+		std::memcpy(static_cast<unsigned char*>(m_bufferPtr[m_index]) + offset, data, size);
 	}
 	/** Write the supplied data to GPU memory.
 	@param	offset		byte offset from the beginning.
@@ -110,7 +110,7 @@ public:
 				// Create new buffer
 				GLuint newBuffer = 0;
 				glCreateBuffers(1, &newBuffer);
-				glNamedBufferStorage(newBuffer, m_maxCapacity, 0, GL_DYNAMIC_STORAGE_BIT | m_mapFlags);
+				glNamedBufferStorage(newBuffer, m_maxCapacity, nullptr, GL_DYNAMIC_STORAGE_BIT | m_mapFlags);
 
 				// Copy old buffer
 				if (oldSize)
@@ -174,7 +174,7 @@ private:
 	static void WaitForFence(GLsync& fence) noexcept {
 		while (fence) {
 			GLbitfield waitFlags = 0;
-			if (auto waitReturn = glClientWaitSync(fence, waitFlags, 1);
+			if (const auto waitReturn = glClientWaitSync(fence, waitFlags, 1);
 				waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
 				glDeleteSync(fence);
 				fence = nullptr;

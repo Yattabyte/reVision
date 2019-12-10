@@ -49,10 +49,10 @@ Editor_Interface::Editor_Interface(Engine& engine, LevelEditor_Module& editor) n
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.x = (int)f;
 		});
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.y = (int)f;
 		});
 
@@ -88,7 +88,7 @@ void Editor_Interface::tick(const float& deltaTime) noexcept
 
 	// Prepare the docking regions
 	const auto dockspace_size = ImVec2((float)m_renderSize.x / 5.0F, (float)m_renderSize.y);
-	const auto window_flags = ImGuiWindowFlags_NoTitleBar |
+	constexpr auto window_flags = ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_MenuBar |
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoBringToFrontOnFocus |
@@ -101,15 +101,15 @@ void Editor_Interface::tick(const float& deltaTime) noexcept
 	ImGui::SetNextWindowBgAlpha(0.0f);
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Appearing);
 	ImGui::SetNextWindowSize(dockspace_size, ImGuiCond_Appearing);
-	ImGui::Begin("Docking Area A", NULL, window_flags);
+	ImGui::Begin("Docking Area A", nullptr, window_flags);
 	auto dockspace_id_a = ImGui::GetID("Docking Space A");
-	if (ImGui::DockBuilderGetNode(dockspace_id_a) == NULL) {
+	if (ImGui::DockBuilderGetNode(dockspace_id_a) == nullptr) {
 		ImGui::DockBuilderRemoveNode(dockspace_id_a); // Clear out existing layout
 		ImGui::DockBuilderAddNode(dockspace_id_a, ImGuiDockNodeFlags_DockSpace); // Add empty node
 		ImGui::DockBuilderSetNodeSize(dockspace_id_a, dockspace_size);
 
 		auto dock_id_top = dockspace_id_a;
-		auto dock_id_bottom = ImGui::DockBuilderSplitNode(dock_id_top, ImGuiDir_Down, 0.50f, NULL, &dock_id_top);
+		auto dock_id_bottom = ImGui::DockBuilderSplitNode(dock_id_top, ImGuiDir_Down, 0.50f, nullptr, &dock_id_top);
 
 		ImGui::DockBuilderDockWindow("Prefabs", dock_id_top);
 		ImGui::DockBuilderDockWindow("Preferences", dock_id_bottom);
@@ -120,15 +120,15 @@ void Editor_Interface::tick(const float& deltaTime) noexcept
 
 	ImGui::SetNextWindowPos(ImVec2(m_renderSize.x - (m_renderSize.x / 5.0F), 0), ImGuiCond_Appearing);
 	ImGui::SetNextWindowSize(dockspace_size, ImGuiCond_Appearing);
-	ImGui::Begin("Docking Area B", NULL, window_flags);
+	ImGui::Begin("Docking Area B", nullptr, window_flags);
 	auto dockspace_id_b = ImGui::GetID("Docking Space B");
-	if (ImGui::DockBuilderGetNode(dockspace_id_b) == NULL) {
+	if (ImGui::DockBuilderGetNode(dockspace_id_b) == nullptr) {
 		ImGui::DockBuilderRemoveNode(dockspace_id_b); // Clear out existing layout
 		ImGui::DockBuilderAddNode(dockspace_id_b, ImGuiDockNodeFlags_DockSpace); // Add empty node
 		ImGui::DockBuilderSetNodeSize(dockspace_id_b, dockspace_size);
 
 		auto dock_id_top = dockspace_id_b;
-		auto dock_id_bottom = ImGui::DockBuilderSplitNode(dock_id_top, ImGuiDir_Down, 0.50f, NULL, &dock_id_top);
+		auto dock_id_bottom = ImGui::DockBuilderSplitNode(dock_id_top, ImGuiDir_Down, 0.50f, nullptr, &dock_id_top);
 
 		ImGui::DockBuilderDockWindow("Scene Inspector", dock_id_top);
 		ImGui::DockBuilderDockWindow("Entity Inspector", dock_id_bottom);

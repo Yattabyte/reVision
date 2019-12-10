@@ -5,8 +5,8 @@ Layout_Horizontal::Layout_Horizontal(Engine& engine) noexcept :
 	UI_Element(engine)
 {
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() { alignChildren(); });
-	addCallback((int)UI_Element::Interact::on_childrenChange, [&]() { alignChildren(); });
+	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { alignChildren(); });
+	addCallback((int)UI_Element::Interact::on_childrenChange, [&]() noexcept { alignChildren(); });
 }
 
 void Layout_Horizontal::addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio) noexcept 
@@ -46,8 +46,7 @@ void Layout_Horizontal::alignChildren() noexcept
 
 	// Available space -= the dimensions of fixed-sized elements
 	int fixedElementCount = 0;
-	for (const auto& pair : m_sizedChildren) {
-		auto [child, ratio] = pair;
+	for (const auto& [child, ratio] : m_sizedChildren) {
 		if (!std::isnan(child->getMinScale().x) || !std::isnan(child->getMaxScale().x)) {
 			sizeUsed += child->getScale().x * ratio;
 			fixedElementCount++;
@@ -64,8 +63,7 @@ void Layout_Horizontal::alignChildren() noexcept
 
 	float positionFromLeft = -m_scale.x + m_margin;
 	const float left = positionFromLeft;
-	for (const auto& pair : m_sizedChildren) {
-		auto [child, ratio] = pair;
+	for (const auto& [child, ratio] : m_sizedChildren) {
 		child->setScale(glm::vec2(elementSize * ratio, m_scale.y - m_margin));
 		if (m_sizedChildren.size() == 1) {
 			child->setPosition(glm::vec2(0.0f));

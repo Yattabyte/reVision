@@ -26,10 +26,10 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 				uuids.push_back(componentParam[1]->m_handle);
 			return uuids;
 		};
-		auto* lightComponent = static_cast<Light_Component*>(components[0][1]);
+		const auto* lightComponent = static_cast<Light_Component*>(components[0][1]);
 
 
-		auto typeInput = lightComponent->m_type;
+		const auto typeInput = lightComponent->m_type;
 		constexpr const char* inputTypes[3] = {
 			"Directional Light", "Point Light", "Spot Light"
 		};
@@ -56,14 +56,14 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 								component->m_type = data[index++];
 					}
 				}
-				virtual void execute() noexcept override final {
+				void execute() noexcept final {
 					setData(m_newData);
 				}
-				virtual void undo() noexcept override final {
+				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				virtual bool join(Editor_Command* other) noexcept override final {
-					if (auto newCommand = dynamic_cast<Type_Command*>(other)) {
+				bool join(Editor_Command* other) noexcept final {
+					if (const auto& newCommand = dynamic_cast<Type_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
 							return true;
@@ -98,14 +98,14 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 								component->m_color = data[index++];
 					}
 				}
-				virtual void execute() noexcept override final {
+				void execute() noexcept final {
 					setData(m_newData);
 				}
-				virtual void undo() noexcept override final {
+				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				virtual bool join(Editor_Command* other) noexcept override final {
-					if (auto newCommand = dynamic_cast<Color_Command*>(other)) {
+				bool join(Editor_Command* other) noexcept final {
+					if (const auto& newCommand = dynamic_cast<Color_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
 							return true;
@@ -141,14 +141,14 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 						}
 					}
 				}
-				virtual void execute() noexcept override final {
+				void execute() noexcept final {
 					setData(m_newData);
 				}
-				virtual void undo() noexcept override final {
+				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				virtual bool join(Editor_Command* other) noexcept override final {
-					if (auto newCommand = dynamic_cast<Intensity_Command*>(other)) {
+				bool join(Editor_Command* other) noexcept final {
+					if (const auto& newCommand = dynamic_cast<Intensity_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
 							return true;
@@ -184,14 +184,14 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 						}
 					}
 				}
-				virtual void execute() noexcept override final {
+				void execute() noexcept final {
 					setData(m_newData);
 				}
-				virtual void undo() noexcept override final {
+				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				virtual bool join(Editor_Command* other) noexcept override final {
-					if (auto newCommand = dynamic_cast<Radius_Command*>(other)) {
+				bool join(Editor_Command* other) noexcept final {
+					if (const auto& newCommand = dynamic_cast<Radius_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
 							return true;
@@ -227,14 +227,14 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 						}
 					}
 				}
-				virtual void execute() noexcept override final {
+				void execute() noexcept final {
 					setData(m_newData);
 				}
-				virtual void undo() noexcept override final {
+				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				virtual bool join(Editor_Command* other) noexcept override final {
-					if (auto newCommand = dynamic_cast<Cutoff_Command*>(other)) {
+				bool join(Editor_Command* other) noexcept final {
+					if (const auto& newCommand = dynamic_cast<Cutoff_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
 							return true;

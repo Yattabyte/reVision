@@ -48,8 +48,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Shader_Pkg(Shader_Pkg&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Shader_Pkg(const Shader_Pkg&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline const Shader_Pkg& operator =(Shader_Pkg&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline const Shader_Pkg& operator =(const Shader_Pkg&) noexcept = delete;
+
+
 	// Private Interface Implementation
-	virtual void initialize() noexcept override final;
+	void initialize() noexcept final;
 
 
 	// Private Attributes

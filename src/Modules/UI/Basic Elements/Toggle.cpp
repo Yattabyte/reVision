@@ -23,8 +23,8 @@ Toggle::Toggle(Engine& engine, const bool& state) noexcept :
 	addElement(m_label);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_clicked, [&]() { setToggled(!m_toggledOn); });
-	addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
+	addCallback((int)UI_Element::Interact::on_clicked, [&]() noexcept { setToggled(!m_toggledOn); });
+	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { updateGeometry(); });
 
 	// Configure THIS element
 	setToggled(state);

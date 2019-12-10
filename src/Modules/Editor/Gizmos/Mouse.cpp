@@ -24,7 +24,7 @@ Mouse_Gizmo::Mouse_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept :
 	*m_aliveIndicator = true;
 
 	// Asset-Finished Callbacks
-	m_spawnModel->addCallback(m_aliveIndicator, [&]() mutable {
+	m_spawnModel->addCallback(m_aliveIndicator, [&]() noexcept {
 		m_spawnIndirect = IndirectDraw<1>((GLuint)m_spawnModel->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 }

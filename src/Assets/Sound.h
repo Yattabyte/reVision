@@ -43,8 +43,19 @@ public:
 
 
 protected:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Sound(Sound&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Sound(const Sound&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline const Sound& operator =(Sound&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline const Sound& operator =(const Sound&) noexcept = delete;
+
+
 	// Private Interface Implementation
-	virtual void initialize() noexcept override final;
+	void initialize() noexcept final;
 
 
 	// Private Attributes

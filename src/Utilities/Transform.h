@@ -12,9 +12,9 @@ Takes in position, orientation, and scaling attributes, and calculates a transfo
 struct Transform {
 	// (De)Constructors
 	/** Default Destructor. */
-	inline ~Transform() = default;
+	inline ~Transform() noexcept = default;
 	/** Default Constructor. */
-	inline Transform() = default;
+	inline Transform() noexcept = default;
 	/** Constructs a transformation object with any of the supplied parameters.
 	@param position			the desired position
 	@param orientation		the desired orientation

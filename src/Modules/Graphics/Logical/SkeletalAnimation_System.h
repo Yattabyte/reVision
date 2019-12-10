@@ -16,14 +16,14 @@ class Skeletal_Animation_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this skeletal animation system. */
-	inline ~Skeletal_Animation_System() = default;
+	inline ~Skeletal_Animation_System() noexcept = default;
 	/** Construct a skeletal animation system.
 	@param	engine		reference to the engine to use. */
 	explicit Skeletal_Animation_System(Engine& engine) noexcept;
 
 
 	// Public Interface Implementation
-	inline virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
 
 
 protected:

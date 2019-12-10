@@ -19,9 +19,9 @@ Bloom::Bloom(Engine& engine) noexcept :
 	// Preference Callbacks
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_BLOOM, m_enabled);
-	preferences.addCallback(PreferenceState::Preference::C_BLOOM, m_aliveIndicator, [&](const float& f) { m_enabled = (bool)f; });
+	preferences.addCallback(PreferenceState::Preference::C_BLOOM, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = (bool)f; });
 	preferences.getOrSetValue(PreferenceState::Preference::C_BLOOM_STRENGTH, m_bloomStrength);
-	preferences.addCallback(PreferenceState::Preference::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float& f) { setBloomStrength((int)f); });
+	preferences.addCallback(PreferenceState::Preference::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float& f) noexcept { setBloomStrength((int)f); });
 }
 
 void Bloom::clearCache(const float&) noexcept 
@@ -56,7 +56,7 @@ void Bloom::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewp
 	glBindVertexArray(m_shapeQuad->m_vaoID);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 	indirectQuad.bind();
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 	size_t bloomSpot = 0;
 
 	if (m_bloomStrength > 0) {
@@ -64,7 +64,7 @@ void Bloom::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewp
 		bool horizontal = false;
 		glBindTextureUnit(0, viewport->m_gfxFBOS.getTexID("BLOOM", 0));
 		glBindTextureUnit(1, viewport->m_gfxFBOS.getTexID("BLOOM", 1));
-		glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
+		glDrawBuffer(GL_COLOR_ATTACHMENT0 + (int)(horizontal));
 		m_shaderGB->bind();
 		m_shaderGB->setUniform(0, horizontal);
 		m_shaderGB->setUniform(1, glm::vec2(viewport->m_dimensions));
@@ -72,9 +72,9 @@ void Bloom::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewp
 		// Blur remainder of the times
 		for (int i = 0; i < m_bloomStrength; i++) {
 			horizontal = !horizontal;
-			glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
+			glDrawBuffer(GL_COLOR_ATTACHMENT0 + (int)(horizontal));
 			m_shaderGB->setUniform(0, horizontal);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
+			glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 		}
 		bloomSpot = horizontal ? 1ull : 0ull;
 	}
@@ -86,7 +86,7 @@ void Bloom::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewp
 	viewport->m_gfxFBOS.bindForWriting("LIGHTING");
 	glBindTextureUnit(0, viewport->m_gfxFBOS.getTexID("BLOOM", bloomSpot));
 	m_shaderCopy->bind();
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 	glDisable(GL_BLEND);
 	camBufferIndex.endReading();
 	indirectQuad.endReading();

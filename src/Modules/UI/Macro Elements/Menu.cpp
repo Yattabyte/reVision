@@ -15,7 +15,7 @@ Menu::Menu(Engine& engine) noexcept :
 
 	// Make a vertical layout to house list items
 	m_layout->setSpacing(10.0f);
-	m_layout->addCallback((int)List::Interact::on_selection, [&]() {
+	m_layout->addCallback((int)List::Interact::on_selection, [&]() noexcept {
 		const auto index = m_layout->getSelectionIndex();
 		if (index >= 0 && index < m_selectionCallbacks.size())
 			m_selectionCallbacks[index]();
@@ -32,7 +32,7 @@ Menu::Menu(Engine& engine) noexcept :
 	m_backPanel->addElement(m_separator);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() {
+	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept {
 		const auto scale = getScale();
 		m_backPanel->setScale({ 128, scale.y });
 		m_backPanel->setPosition(glm::vec2(256, scale.y));

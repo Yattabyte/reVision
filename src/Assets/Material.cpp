@@ -7,13 +7,12 @@ constexpr const char* MATERIAL_EXTENSION = ".mat";
 
 Shared_Material::Shared_Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded) noexcept
 {
-	(*(std::shared_ptr<Material>*)(this)) = std::dynamic_pointer_cast<Material>(
-		engine.getManager_Assets().shareAsset(
+	swap(std::dynamic_pointer_cast<Material>(engine.getManager_Assets().shareAsset(
 			typeid(Material).name(),
 			filename,
 			[&engine, filename, textures]() { return std::make_shared<Material>(engine, filename, textures); },
 			threaded
-		));
+		)));
 }
 
 Material::Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures) noexcept
@@ -96,10 +95,10 @@ void Material::initialize() noexcept
 [[nodiscard]] static std::string get_between_quotes(std::string& s) noexcept
 {
 	std::string output = s;
-	size_t spot1 = s.find_first_of('\"');
+	const auto spot1 = s.find_first_of('\"');
 	if (spot1 != std::string::npos) {
 		output = output.substr(spot1 + 1, output.length() - spot1 - 1);
-		size_t spot2 = output.find_first_of('\"');
+		const auto spot2 = output.find_first_of('\"');
 		if (spot2 != std::string::npos) {
 			output = output.substr(0, spot2);
 

@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-Physics_Module::Physics_Module(Engine& engine) : 
+Physics_Module::Physics_Module(Engine& engine) noexcept : 
 	Engine_Module(engine),
 	m_dispatcher(&m_collisionConfiguration),
 	m_world(&m_dispatcher, &m_broadphase, &m_solver, &m_collisionConfiguration)

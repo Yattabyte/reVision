@@ -8,7 +8,7 @@
 
 
 /** UI separator class. Renders a faded out line across its width. */
-class Separator : public UI_Element {
+class Separator final : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this separator. */
@@ -19,7 +19,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
 
 
 	// Public Methods

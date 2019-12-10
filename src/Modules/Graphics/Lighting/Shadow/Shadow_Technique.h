@@ -22,9 +22,9 @@ public:
 	Shadow_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept;
 
 	// Public Interface Implementations
-	virtual void clearCache(const float& deltaTime) noexcept override final;
-	virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept override final;
-	virtual void updatePass(const float& deltaTime) noexcept override final;
+	void clearCache(const float& deltaTime) noexcept final;
+	void updateCache(const float& deltaTime, ecsWorld& world) noexcept final;
+	void updatePass(const float& deltaTime) noexcept final;
 
 
 	// Public Methods

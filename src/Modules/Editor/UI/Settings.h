@@ -10,7 +10,7 @@ class Settings final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this settings dialogue. */
-	inline ~Settings() = default;
+	inline ~Settings() noexcept = default;
 	/** Construct a settings dialogue.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
@@ -18,7 +18,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) noexcept override final;
+	void tick(const float& deltaTime) noexcept final;
 
 
 private:

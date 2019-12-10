@@ -25,25 +25,25 @@ Translation_Gizmo::Translation_Gizmo(Engine& engine, LevelEditor_Module& editor)
 	*m_aliveIndicator = true;
 
 	// Asset-Finished Callbacks
-	m_model->addCallback(m_aliveIndicator, [&]() mutable {
+	m_model->addCallback(m_aliveIndicator, [&]() noexcept {
 		m_indirectIndicator = IndirectDraw<1>((GLuint)m_model->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 
 	auto& preferences = m_engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.x = (int)f;
 		});
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize.y = (int)f;
 		});
 	preferences.getOrSetValue(PreferenceState::Preference::E_GIZMO_SCALE, m_renderScale);
-	preferences.addCallback(PreferenceState::Preference::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderScale = f;
 		});
 	preferences.getOrSetValue(PreferenceState::Preference::E_GRID_SNAP, m_gridSnap);
-	preferences.addCallback(PreferenceState::Preference::E_GRID_SNAP, m_aliveIndicator, [&](const float& f) {
+	preferences.addCallback(PreferenceState::Preference::E_GRID_SNAP, m_aliveIndicator, [&](const float& f) noexcept {
 		m_gridSnap = f;
 		});
 
@@ -142,7 +142,7 @@ void Translation_Gizmo::checkMouseHover() noexcept
 
 	const auto scalingFactor = m_direction * glm::distance(position, m_engine.getModule_Graphics().getClientCamera()->EyePosition) * m_renderScale;
 	const auto mMatrix = glm::translate(glm::mat4(1.0f), position);
-	glm::vec3 arrowAxes_min[3], arrowAxes_max[3], doubleAxes_min[3], doubleAxes_max[3], plane_normals[3];
+	glm::vec3 arrowAxes_min[3]{}, arrowAxes_max[3]{}, doubleAxes_min[3]{}, doubleAxes_max[3]{}, plane_normals[3]{};
 	arrowAxes_min[0] = glm::vec3(2, -0.5, -0.5) * scalingFactor;
 	arrowAxes_max[0] = glm::vec3(8, 0.5, 0.5) * scalingFactor;
 	arrowAxes_min[1] = glm::vec3(-0.5, 2, -0.5) * scalingFactor;
@@ -299,7 +299,7 @@ bool Translation_Gizmo::checkMousePress() noexcept
 			Move_Selection_Command(Engine& engine, LevelEditor_Module& editor, const glm::vec3& newPosition, const unsigned int& axis) noexcept
 				: m_engine(engine), m_editor(editor), m_oldPosition(m_editor.getGizmoTransform().m_position), m_newPosition(newPosition), m_axis(axis), m_uuids(m_editor.getSelection()) {}
 			void move(const glm::vec3& position) noexcept {
-				auto& ecsWorld = m_editor.getWorld();
+				const auto& ecsWorld = m_editor.getWorld();
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
 				for (const auto& entityHandle : m_uuids)
@@ -317,14 +317,14 @@ bool Translation_Gizmo::checkMousePress() noexcept
 				gizmoTransform.update();
 				m_editor.setGizmoTransform(gizmoTransform);
 			}
-			virtual void execute() noexcept override final {
+			void execute() noexcept final {
 				move(m_newPosition);
 			}
-			virtual void undo() noexcept override final {
+			void undo() noexcept final {
 				move(m_oldPosition);
 			}
-			virtual bool join(Editor_Command* other) noexcept override final {
-				if (auto newCommand = dynamic_cast<Move_Selection_Command*>(other)) {
+			bool join(Editor_Command* other) noexcept final {
+				if (const auto& newCommand = dynamic_cast<Move_Selection_Command*>(other)) {
 					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 						m_newPosition = newCommand->m_newPosition;
 						return true;

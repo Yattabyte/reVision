@@ -9,7 +9,7 @@
 
 
 /** A UI component with a bar and a sliding paddle control. */
-class Slider : public UI_Element {
+class Slider final : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum class Interact : int {
@@ -19,7 +19,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy the slider. */
-	inline ~Slider() = default;
+	inline ~Slider() noexcept = default;
 	/** Construct a slider with a given starting value.
 	@param	engine		reference to the engine to use. 
 	@param	value		the starting value to use.
@@ -28,9 +28,9 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override;
-	virtual void mouseAction(const MouseEvent& mouseEvent) noexcept override;
-	virtual void userAction(ActionState& actionState) noexcept override;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
+	void mouseAction(const MouseEvent& mouseEvent) noexcept final;
+	void userAction(ActionState& actionState) noexcept final;
 
 
 	// Public Methods
@@ -55,9 +55,9 @@ public:
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */
-	void updateGeometry();
+	void updateGeometry() noexcept;
 	/** Update the position of the paddle for this element. */
-	void updatePaddle();
+	void updatePaddle() noexcept;
 
 
 	// Protected Attributes

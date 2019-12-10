@@ -10,10 +10,10 @@ class Engine_Module {
 public:
 	// Public (De)Constructors
 	/** Destroy this engine module. */
-	inline virtual ~Engine_Module() = default;
+	inline virtual ~Engine_Module() noexcept = default;
 	/** Construct an engine module.
 	@param	engine	reference to the engine to use. */
-	explicit Engine_Module(Engine& engine);
+	explicit Engine_Module(Engine& engine) noexcept;
 
 
 	// Public Interface Declarations

@@ -20,7 +20,7 @@ TextInput::TextInput(Engine& engine) noexcept :
 	addElement(m_label);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() {
+	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept {
 		m_label->setScale(getScale());
 		updateGeometry();
 		});
@@ -37,8 +37,8 @@ TextInput::TextInput(Engine& engine) noexcept :
 	glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID[0], 0, sizeof(glm::vec3));
 	glVertexArrayVertexBuffer(m_vaoID, 1, m_vboID[1], 0, sizeof(int));
 	constexpr auto num_data = 4 * 3;
-	glNamedBufferStorage(m_vboID[0], num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
-	glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), 0, GL_DYNAMIC_STORAGE_BIT);
+	glNamedBufferStorage(m_vboID[0], num_data * sizeof(glm::vec3), nullptr, GL_DYNAMIC_STORAGE_BIT);
+	glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), nullptr, GL_DYNAMIC_STORAGE_BIT);
 	m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 }
 
@@ -50,7 +50,7 @@ void TextInput::mouseAction(const MouseEvent& mouseEvent) noexcept
 			// If already editing, move caret to mouse position
 			if (m_edit) {
 				const int mx = int(float(mouseEvent.m_xPos) - m_position.x + m_scale.x);
-				setCaret((int)std::roundf(float(mx) / 10.0f));
+				setCaret((size_t)std::roundf(float(mx) / 10.0f));
 			}
 			m_edit = true;
 			m_clicked = false;
@@ -65,9 +65,9 @@ void TextInput::keyboardAction(const KeyboardEvent& keyboardEvent) noexcept
 {
 	if (m_edit) {
 		// Check for a text stream
-		if (auto character = keyboardEvent.getChar()) {
+		if (const auto character = keyboardEvent.getChar()) {
 			setText(m_text.substr(0, m_caretIndex) + char(character) + m_text.substr(m_caretIndex, m_text.size()));
-			setCaret(m_caretIndex + 1);
+			setCaret(size_t(m_caretIndex) + 1);
 			enactCallback((int)TextInput::Interact::on_text_change);
 		}
 		// Otherwise, check keyboard states
@@ -76,21 +76,21 @@ void TextInput::keyboardAction(const KeyboardEvent& keyboardEvent) noexcept
 				m_edit = false;
 			else if ((int)keyboardEvent.getState(KeyboardEvent::Key::BACKSPACE)) {
 				if (m_caretIndex > 0) {
-					setText(m_text.substr(0, m_caretIndex - 1) + m_text.substr(m_caretIndex, m_text.size()));
-					setCaret(m_caretIndex - 1);
+					setText(m_text.substr(0, size_t(m_caretIndex) - 1) + m_text.substr(m_caretIndex, m_text.size()));
+					setCaret(size_t(m_caretIndex) - 1);
 					enactCallback((int)TextInput::Interact::on_text_change);
 				}
 			}
 			else if ((int)keyboardEvent.getState(KeyboardEvent::Key::DEL)) {
-				if (m_caretIndex + 1 <= m_text.size()) {
-					setText(m_text.substr(0, m_caretIndex) + m_text.substr(m_caretIndex + 1, m_text.size()));
+				if (size_t(m_caretIndex) + 1 <= m_text.size()) {
+					setText(m_text.substr(0, m_caretIndex) + m_text.substr(size_t(m_caretIndex) + 1, m_text.size()));
 					enactCallback((int)TextInput::Interact::on_text_change);
 				}
 			}
 			else if ((int)keyboardEvent.getState(KeyboardEvent::Key::LEFT))
-				setCaret(m_caretIndex - 1);
+				setCaret(size_t(m_caretIndex) - 1);
 			else if ((int)keyboardEvent.getState(KeyboardEvent::Key::RIGHT))
-				setCaret(m_caretIndex + 1);
+				setCaret(size_t(m_caretIndex) + 1);
 		}
 	}
 }
@@ -129,9 +129,9 @@ std::string TextInput::getText() const noexcept
 	return m_text;
 }
 
-void TextInput::setCaret(const int& index) noexcept 
+void TextInput::setCaret(const size_t& index) noexcept 
 {
-	m_caretIndex = std::clamp<int>(index, 0, (int)m_text.size());
+	m_caretIndex = (int)std::clamp<size_t>(index, 0, m_text.size());
 	updateGeometry();
 }
 

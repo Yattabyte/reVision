@@ -15,14 +15,14 @@ class Options_Pane : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy the options pane. */
-	inline ~Options_Pane() = default;
+	inline ~Options_Pane() noexcept = default;
 	/** Construct a options pane.
 	@param	engine		reference to the engine to use. */
 	explicit Options_Pane(Engine& engine) noexcept;
 
 
 	// Public Interface Implementations
-	virtual void userAction(ActionState& actionState) noexcept override;
+	void userAction(ActionState& actionState) noexcept override;
 
 
 protected:

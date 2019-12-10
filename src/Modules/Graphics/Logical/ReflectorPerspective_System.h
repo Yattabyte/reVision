@@ -13,14 +13,14 @@ class ReflectorPerspective_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~ReflectorPerspective_System() = default;
+	inline ~ReflectorPerspective_System() noexcept = default;
 	/** Construct this system.
 	@param	sceneCameras	reference to the scene cameras to use. */
 	explicit ReflectorPerspective_System(std::vector<Camera*>& sceneCameras) noexcept;
 
 
 	// Public Interface Implementations
-	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept override final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
 
 
 private:

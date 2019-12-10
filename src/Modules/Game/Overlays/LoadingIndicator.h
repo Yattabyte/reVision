@@ -22,7 +22,7 @@ public:
 
 
 	// Public Interface Implementations.
-	virtual void applyEffect(const float& deltaTime) noexcept override final;
+	void applyEffect(const float& deltaTime) noexcept final;
 
 
 private:

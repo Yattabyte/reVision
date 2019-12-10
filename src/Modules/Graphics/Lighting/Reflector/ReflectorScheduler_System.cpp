@@ -19,7 +19,7 @@ ReflectorScheduler_System::ReflectorScheduler_System(Engine& engine, ReflectorDa
 	auto& preferences = engine.getPreferenceState();
 	m_maxReflectionCasters = 1u;
 	preferences.getOrSetValue(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_maxReflectionCasters);
-	preferences.addCallback(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) { m_maxReflectionCasters = (unsigned int)f; });
+	preferences.addCallback(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) noexcept { m_maxReflectionCasters = (unsigned int)f; });
 }
 
 void ReflectorScheduler_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
@@ -32,12 +32,12 @@ void ReflectorScheduler_System::updateComponents(const float&, const std::vector
 	const auto& clientPosition = clientCamera->EyePosition;
 	const auto& clientFarPlane = clientCamera->FarPlane;
 	const auto clientTime = m_engine.getTime();
-	if (int availableRoom = (int)m_maxReflectionCasters - (int)m_frameData.reflectorsToUpdate.size()) {
+	if (const int availableRoom = (int)m_maxReflectionCasters - (int)m_frameData.reflectorsToUpdate.size()) {
 		int cameraCount = 0;
 		for (const auto& componentParam : components) {
 			auto* reflectorComponent = static_cast<Reflector_Component*>(componentParam[0]);
 
-			auto tryToAddReflector = [&reflectors, &maxReflectors, &clientPosition, &clientFarPlane, &clientTime](const int& reflectorSpot, Camera* cb, float* updateTime) {
+			const auto tryToAddReflector = [&reflectors, &maxReflectors, &clientPosition, &clientFarPlane, &clientTime](const int& reflectorSpot, Camera* cb, float* updateTime) {
 				const float linDist = glm::distance(clientPosition, cb->getFrustumCenter()) / clientFarPlane;
 				const float importance_distance = 1.0f - (linDist * linDist);
 

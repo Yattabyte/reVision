@@ -27,8 +27,8 @@ SideList::SideList(Engine& engine) noexcept :
 	glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID[0], 0, sizeof(glm::vec3));
 	glVertexArrayVertexBuffer(m_vaoID, 1, m_vboID[1], 0, sizeof(int));
 	constexpr auto num_data = 2 * 3;
-	glNamedBufferStorage(m_vboID[0], num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
-	glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), 0, GL_DYNAMIC_STORAGE_BIT);
+	glNamedBufferStorage(m_vboID[0], num_data * sizeof(glm::vec3), nullptr, GL_DYNAMIC_STORAGE_BIT);
+	glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), nullptr, GL_DYNAMIC_STORAGE_BIT);
 	m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 
 	// Make a background panel for cosmetic purposes
@@ -43,7 +43,7 @@ SideList::SideList(Engine& engine) noexcept :
 	addElement(m_label);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
+	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { updateGeometry(); });
 
 	// Configure THIS element
 	setIndex(0);

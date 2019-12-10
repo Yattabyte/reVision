@@ -15,14 +15,14 @@ class Menu : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy the menu. */
-	inline ~Menu() = default;
+	inline ~Menu() noexcept = default;
 	/** Construct a menu.
 	@param	engine		reference to the engine to use. */
 	explicit Menu(Engine& engine) noexcept;
 
 
 	// Public Interface Implementations
-	virtual void userAction(ActionState& actionState) noexcept override;
+	void userAction(ActionState& actionState) noexcept override;
 
 
 	// Public Methods

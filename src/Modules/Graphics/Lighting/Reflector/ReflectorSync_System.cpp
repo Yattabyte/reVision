@@ -18,7 +18,7 @@ void ReflectorSync_System::updateComponents(const float&, const std::vector<std:
 	int index = 0;
 	for (const auto& componentParam : components) {
 		auto* reflectorComponent = static_cast<Reflector_Component*>(componentParam[0]);
-		auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);
+		const auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);
 
 		const auto& position = transformComponent->m_worldTransform.m_position;
 		const auto& orientation = transformComponent->m_worldTransform.m_orientation;

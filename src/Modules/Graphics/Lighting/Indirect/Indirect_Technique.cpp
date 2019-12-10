@@ -26,9 +26,9 @@ Indirect_Technique::Indirect_Technique(Engine& engine, ShadowData& shadowData, C
 	m_auxilliarySystems.makeSystem<IndirectSync_System>(m_frameData);
 
 	// Noise Texture
-	std::uniform_real_distribution<float> randomFloats(0.0, 1.0);
+	const std::uniform_real_distribution<float> randomFloats(0.0, 1.0);
 	std::default_random_engine generator;
-	glm::vec3 texData[32 * 32 * 32];
+	glm::vec3 texData[32 * 32 * 32]{};
 	for (int x = 0, total = (32 * 32 * 32); x < total; ++x)
 		texData[x] = glm::vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator));
 	glCreateTextures(GL_TEXTURE_3D, 1, &m_textureNoise32);
@@ -42,7 +42,7 @@ Indirect_Technique::Indirect_Technique(Engine& engine, ShadowData& shadowData, C
 	// Preferences
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_bounceSize);
-	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) { m_bounceSize = (GLuint)f; });
+	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) noexcept { m_bounceSize = (GLuint)f; });
 }
 
 void Indirect_Technique::clearCache(const float&) noexcept 
@@ -150,10 +150,10 @@ void Indirect_Technique::fillBounceVolume(const size_t& shadowCount, RH_Volume& 
 	m_drawData[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 	m_frameData.lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 	m_drawData[m_drawIndex].indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 }
 
-void Indirect_Technique::rebounceVolume(RH_Volume& rhVolume, DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) noexcept 
+void Indirect_Technique::rebounceVolume(RH_Volume& rhVolume, const DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) noexcept 
 {
 	// Bind common data
 	glDepthMask(GL_TRUE);
@@ -179,7 +179,7 @@ void Indirect_Technique::rebounceVolume(RH_Volume& rhVolume, DynamicBuffer<>& ca
 	indirectQuad.drawCall();
 }
 
-void Indirect_Technique::reconstructVolume(const std::shared_ptr<Viewport>& viewport, DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept 
+void Indirect_Technique::reconstructVolume(const std::shared_ptr<Viewport>& viewport, const DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept 
 {
 	// Reconstruct indirect radiance
 	glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));

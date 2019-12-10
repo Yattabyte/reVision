@@ -13,7 +13,7 @@
 
 /** UI list class, scrolls horizontally, displays one element at a time.
 Controllable by directional arrows. */
-class SideList : public UI_Element {
+class SideList final : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum class Interact : int {
@@ -30,9 +30,9 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void mouseAction(const MouseEvent& mouseEvent) noexcept override;
-	virtual void userAction(ActionState& actionState) noexcept override;
-	virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override;
+	void mouseAction(const MouseEvent& mouseEvent) noexcept final;
+	void userAction(ActionState& actionState) noexcept final;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
 
 
 	// Public Methods

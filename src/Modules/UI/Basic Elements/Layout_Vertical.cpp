@@ -5,8 +5,8 @@ Layout_Vertical::Layout_Vertical(Engine& engine) noexcept :
 	UI_Element(engine)
 {
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() { alignChildren(); });
-	addCallback((int)UI_Element::Interact::on_childrenChange, [&]() { alignChildren(); });
+	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { alignChildren(); });
+	addCallback((int)UI_Element::Interact::on_childrenChange, [&]() noexcept { alignChildren(); });
 }
 
 void Layout_Vertical::addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio) noexcept 
@@ -46,8 +46,7 @@ void Layout_Vertical::alignChildren() noexcept
 
 	// Available space -= the dimensions of fixed-sized elements
 	int fixedElementCount = 0;
-	for (const auto& pair : m_sizedChildren) {
-		auto [child, ratio] = pair;
+	for (const auto& [child, ratio] : m_sizedChildren) {
 		if (!std::isnan(child->getMinScale().y) || !std::isnan(child->getMaxScale().y)) {
 			sizeUsed += child->getScale().y * ratio;
 			fixedElementCount++;
@@ -64,8 +63,7 @@ void Layout_Vertical::alignChildren() noexcept
 
 	float positionFromTop = m_scale.y - m_margin;
 	const float top = positionFromTop;
-	for (const auto& pair : m_sizedChildren) {
-		auto [child, ratio] = pair;
+	for (const auto& [child, ratio] : m_sizedChildren) {
 		child->setScale(glm::vec2(m_scale.x - m_margin, elementSize * ratio));
 		if (m_sizedChildren.size() == 1) {
 			child->setPosition(glm::vec2(0.0f));

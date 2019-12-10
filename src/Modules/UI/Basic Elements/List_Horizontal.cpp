@@ -20,14 +20,14 @@ List_Horizontal::List_Horizontal(Engine& engine) noexcept :
 	glCreateBuffers(1, &m_vboID);
 	glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
 	constexpr auto num_data = 8 * 6;
-	glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
+	glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), nullptr, GL_DYNAMIC_STORAGE_BIT);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() {
+	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept {
 		alignChildren();
 		updateSelectionGeometry();
 		});
-	addCallback((int)UI_Element::Interact::on_childrenChange, [&]() {
+	addCallback((int)UI_Element::Interact::on_childrenChange, [&]() noexcept {
 		alignChildren();
 		});
 }
@@ -210,7 +210,7 @@ void List_Horizontal::updateSelectionGeometry() noexcept
 	std::vector<glm::vec3> m_data(num_data);
 
 	if (m_hoverIndex > -1) {
-		auto scale = glm::min(m_children[m_hoverIndex]->getScale() + m_spacing, m_scale - m_borderSize);
+		const auto scale = glm::min(m_children[m_hoverIndex]->getScale() + m_spacing, m_scale - m_borderSize);
 		// Bottom Bar
 		m_data[0] = { -scale.x - m_borderSize, -scale.y, 0 };
 		m_data[1] = { scale.x + m_borderSize, -scale.y, 0 };
@@ -245,7 +245,7 @@ void List_Horizontal::updateSelectionGeometry() noexcept
 	}
 
 	if (m_selectionIndex > -1) {
-		auto scale = glm::min(m_children[m_selectionIndex]->getScale() + m_spacing, m_scale - m_borderSize);
+		const auto scale = glm::min(m_children[m_selectionIndex]->getScale() + m_spacing, m_scale - m_borderSize);
 		// Bottom Bar
 		m_data[24] = { -scale.x - m_borderSize, -scale.y, 0 };
 		m_data[25] = { scale.x + m_borderSize, -scale.y, 0 };

@@ -10,7 +10,7 @@
 /** A UI container class that layout its children vertically, in a list.
 Only modifies the position of its children, not their scale.
 If children need to expand to fit inside a parent container, consider using a vertical layout. */
-class List : public UI_Element {
+class List final : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum class Interact : int {
@@ -27,9 +27,9 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override;
-	virtual void mouseAction(const MouseEvent& mouseEvent) noexcept override;
-	virtual void userAction(ActionState& actionState) noexcept override;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
+	void mouseAction(const MouseEvent& mouseEvent) noexcept final;
+	void userAction(ActionState& actionState) noexcept final;
 
 	// Public Methods
 	/** Change the item this list is hovered over.

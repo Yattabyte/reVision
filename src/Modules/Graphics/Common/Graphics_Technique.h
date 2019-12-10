@@ -23,7 +23,7 @@ public:
 
 	// Public (De)Constructors
 	/** Virtual Destructor. */
-	inline virtual ~Graphics_Technique() = default;
+	inline virtual ~Graphics_Technique() noexcept = default;
 	/** Constructor. */
 	explicit Graphics_Technique(const Technique_Category& category) noexcept;
 

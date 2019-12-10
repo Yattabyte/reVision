@@ -26,14 +26,14 @@ int SoundManager::GetVersion() noexcept
 void SoundManager::playSound(const Shared_Sound& sharedSound, const float& volume, const float& speed) const noexcept
 {
 	auto& soLoud = *reinterpret_cast<SoLoud::Soloud*>(m_soundEngine);
-	auto handle = soLoud.play(*reinterpret_cast<SoLoud::Wav*>(sharedSound->m_soundObj), volume);
+	const auto handle = soLoud.play(*reinterpret_cast<SoLoud::Wav*>(sharedSound->m_soundObj), volume);
 	soLoud.setRelativePlaySpeed(handle, speed);
 }
 
 unsigned int SoundManager::playWavBackground(const Shared_Sound& sharedSound, const float& volume, const bool& loop, const double& loopPoint) const noexcept
 {
 	auto& soLoud = *reinterpret_cast<SoLoud::Soloud*>(m_soundEngine);
-	auto handle = soLoud.playBackground(*reinterpret_cast<SoLoud::Wav*>(sharedSound->m_soundObj), volume);
+	const auto handle = soLoud.playBackground(*reinterpret_cast<SoLoud::Wav*>(sharedSound->m_soundObj), volume);
 
 	if (loop) {
 		soLoud.setLooping(handle, true);

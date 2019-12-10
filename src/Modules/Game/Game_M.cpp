@@ -9,8 +9,8 @@
 #include "Engine.h"
 
 
-Game_Module::Game_Module(Engine& engine) 
-	: Engine_Module(engine)
+Game_Module::Game_Module(Engine& engine) noexcept : 
+	Engine_Module(engine)
 {
 }
 
@@ -30,11 +30,11 @@ void Game_Module::initialize() noexcept
 	// Create Pause Menu
 	auto pauseMenu = std::make_shared<PauseMenu>(m_engine);
 	m_pauseMenu = pauseMenu;
-	pauseMenu->addCallback((int)PauseMenu::Interact::on_resume_game, [&]() {
+	pauseMenu->addCallback((int)PauseMenu::Interact::on_resume_game, [&]() noexcept {
 		showPauseMenu(false);
 		pauseMenu->setVisible(true);
 		});
-	pauseMenu->addCallback((int)PauseMenu::Interact::on_end, [&]() {
+	pauseMenu->addCallback((int)PauseMenu::Interact::on_end, [&]() noexcept {
 		showPauseMenu(false);
 		m_engine.goToMainMenu();
 		});

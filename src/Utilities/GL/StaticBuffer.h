@@ -13,7 +13,7 @@ public:
 	~StaticBuffer() noexcept;
 	/** Default Constructor. */
 	/** Construct a static buffer. */
-	inline StaticBuffer() = default;
+	inline StaticBuffer() noexcept = default;
 	/** Explicit Instantiation. */
 	explicit StaticBuffer(const GLsizeiptr& size, const void* data = 0, const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT) noexcept;
 	/** Construct and copy another static buffer.
@@ -29,8 +29,8 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void bindBuffer(const GLenum& target) const noexcept override final;
-	virtual void bindBufferBase(const GLenum& target, const GLuint& index) const noexcept override final;
+	void bindBuffer(const GLenum& target) const noexcept final;
+	void bindBufferBase(const GLenum& target, const GLuint& index) const noexcept final;
 
 
 	// Public Methods

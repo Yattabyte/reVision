@@ -52,7 +52,7 @@ void SceneInspector::tick(const float&) noexcept
 						};
 						auto tryRightClickElement = [&]() {
 							if (ImGui::BeginPopupContextItem("Entity Controls")) {
-								char entityNameChars[256];
+								char entityNameChars[256]{};
 								for (int x = 0; x < entityName.size() && x < 256; ++x)
 									entityNameChars[x] = entityName[x];
 								entityNameChars[entityName.size()] = '\0';
@@ -94,7 +94,7 @@ void SceneInspector::tick(const float&) noexcept
 							if (ImGui::BeginDragDropTarget()) {
 								if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
 									IM_ASSERT(payload->DataSize == sizeof(EntityHandle*));
-									m_editor.setSelection({ entityHandle, (*reinterpret_cast<EntityHandle*>(payload->Data)) });
+									m_editor.setSelection({ entityHandle, (*static_cast<EntityHandle*>(payload->Data)) });
 									m_editor.mergeSelection();
 									m_editor.setSelection({ entityHandle });
 								}
@@ -189,7 +189,7 @@ void SceneInspector::tick(const float&) noexcept
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
 					IM_ASSERT(payload->DataSize == sizeof(EntityHandle*));
-					m_editor.setSelection({ EntityHandle(), (*reinterpret_cast<EntityHandle*>(payload->Data)) });
+					m_editor.setSelection({ EntityHandle(), (*static_cast<EntityHandle*>(payload->Data)) });
 					m_editor.mergeSelection();
 					m_editor.clearSelection();
 				}

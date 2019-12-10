@@ -70,14 +70,14 @@ inline static bool RayOOBBIntersection(
 ) noexcept {
 	float tMin = 0.0f;
 	float tMax = 100000.0f;
-	glm::vec3 OBBposition_worldspace(ModelMatrix[3].x, ModelMatrix[3].y, ModelMatrix[3].z);
-	glm::vec3 delta = OBBposition_worldspace - ray_origin;
+	const glm::vec3 OBBposition_worldspace(ModelMatrix[3].x, ModelMatrix[3].y, ModelMatrix[3].z);
+	const glm::vec3 delta = OBBposition_worldspace - ray_origin;
 
 	// Test intersection with the 2 planes perpendicular to the OBB's X axis
 	{
-		glm::vec3 xaxis(ModelMatrix[0].x, ModelMatrix[0].y, ModelMatrix[0].z);
-		float e = glm::dot(xaxis, delta);
-		float f = glm::dot(ray_direction, xaxis);
+		const glm::vec3 xaxis(ModelMatrix[0].x, ModelMatrix[0].y, ModelMatrix[0].z);
+		const float e = glm::dot(xaxis, delta);
+		const float f = glm::dot(ray_direction, xaxis);
 
 		if (fabs(f) > 0.001f) { // Standard case
 			float t1 = (e + aabb_min.x) / f; // Intersection with the "left" plane
@@ -86,11 +86,8 @@ inline static bool RayOOBBIntersection(
 
 			// We want t1 to represent the nearest intersection,
 			// so if it's not the case, invert t1 and t2
-			if (t1 > t2) {
-				float w = t1;
-				t1 = t2;
-				t2 = w; // swap t1 and t2
-			}
+			if (t1 > t2)
+				std::swap(t1, t2);
 
 			// tMax is the nearest "far" intersection (amongst the X,Y and Z planes pairs)
 			if (t2 < tMax)
@@ -114,19 +111,16 @@ inline static bool RayOOBBIntersection(
 	// Test intersection with the 2 planes perpendicular to the OBB's Y axis
 	// Exactly the same thing than above.
 	{
-		glm::vec3 yaxis(ModelMatrix[1].x, ModelMatrix[1].y, ModelMatrix[1].z);
-		float e = glm::dot(yaxis, delta);
-		float f = glm::dot(ray_direction, yaxis);
+		const glm::vec3 yaxis(ModelMatrix[1].x, ModelMatrix[1].y, ModelMatrix[1].z);
+		const float e = glm::dot(yaxis, delta);
+		const float f = glm::dot(ray_direction, yaxis);
 
 		if (fabs(f) > 0.001f) {
 			float t1 = (e + aabb_min.y) / f;
 			float t2 = (e + aabb_max.y) / f;
 
-			if (t1 > t2) {
-				float w = t1;
-				t1 = t2;
-				t2 = w;
-			}
+			if (t1 > t2)
+				std::swap(t1, t2);
 
 			if (t2 < tMax)
 				tMax = t2;
@@ -144,19 +138,16 @@ inline static bool RayOOBBIntersection(
 	// Test intersection with the 2 planes perpendicular to the OBB's Z axis
 	// Exactly the same thing than above.
 	{
-		glm::vec3 zaxis(ModelMatrix[2].x, ModelMatrix[2].y, ModelMatrix[2].z);
-		float e = glm::dot(zaxis, delta);
-		float f = glm::dot(ray_direction, zaxis);
+		const glm::vec3 zaxis(ModelMatrix[2].x, ModelMatrix[2].y, ModelMatrix[2].z);
+		const float e = glm::dot(zaxis, delta);
+		const float f = glm::dot(ray_direction, zaxis);
 
 		if (fabs(f) > 0.001f) {
 			float t1 = (e + aabb_min.z) / f;
 			float t2 = (e + aabb_max.z) / f;
 
-			if (t1 > t2) {
-				float w = t1;
-				t1 = t2;
-				t2 = w;
-			}
+			if (t1 > t2) 
+				std::swap(t1, t2);			
 
 			if (t2 < tMax)
 				tMax = t2;

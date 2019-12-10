@@ -44,7 +44,7 @@ void PhysicsSync_System::updateComponents(const float&, const std::vector<std::v
 					if (colliderComponent->m_worldTransform.m_scale != transformComponent->m_worldTransform.m_scale || !colliderComponent->m_shape) {
 						if (!colliderComponent->m_shape)
 							delete colliderComponent->m_shape;
-						colliderComponent->m_shape = new btConvexHullShape(*static_cast<btConvexHullShape*>(colliderComponent->m_collider->m_shape));
+						colliderComponent->m_shape = new btConvexHullShape(*dynamic_cast<btConvexHullShape*>(colliderComponent->m_collider->m_shape.get()));
 						colliderComponent->m_shape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 					}
 

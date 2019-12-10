@@ -106,7 +106,7 @@ void Skeletal_Animation_System::ReadNodeHeirarchy(std::vector<glm::mat4>& transf
 	const glm::mat4 GlobalInverseTransform = glm::inverse(model->m_geometry.rootNode->transformation);
 	const std::map<std::string, size_t>& BoneMap = model->m_geometry.boneMap;
 	if (BoneMap.find(NodeName) != BoneMap.end()) {
-		size_t BoneIndex = BoneMap.at(NodeName);
+		const size_t BoneIndex = BoneMap.at(NodeName);
 		transforms.at(BoneIndex) = GlobalInverseTransform * GlobalTransformation * model->m_geometry.boneTransforms.at(BoneIndex);
 	}
 

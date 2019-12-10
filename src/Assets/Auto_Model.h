@@ -54,8 +54,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Auto_Model(Auto_Model&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Auto_Model(const Auto_Model&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline const Auto_Model& operator =(Auto_Model&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline const Auto_Model& operator =(const Auto_Model&) noexcept = delete;
+
+
 	// Private Interface Implementation
-	virtual void initialize() noexcept override final;
+	void initialize() noexcept final;
 
 
 	// Private Attributes

@@ -37,7 +37,7 @@ void OpenDialogue::populateLevels(const std::string& directory) noexcept
 		std::string timeString = "";
 		struct _stat64 fileInfo;
 		if (_wstati64(entry.path().wstring().c_str(), &fileInfo) == 0) {
-			const auto t = std::localtime(&fileInfo.st_mtime);
+			const auto* const t = std::localtime(&fileInfo.st_mtime);
 			timeString = std::to_string(t->tm_hour > 12 ? 24 - t->tm_hour : t->tm_hour) + ":" + std::to_string(t->tm_min)
 				+ (t->tm_hour >= 12 ? "PM " : "AM ") + std::to_string(t->tm_mday) + "/" + std::to_string(t->tm_mon) + "/" + std::to_string(t->tm_year - 100);
 		}
@@ -220,7 +220,7 @@ void OpenDialogue::tickRenameDialogue() noexcept
 	if (ImGui::BeginPopupModal("Rename Level", &openRename, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 		ImGui::Text("Enter a new name for this item...");
 		ImGui::Spacing();
-		char nameInput[256];
+		char nameInput[256]{};
 		for (size_t x = 0; x < m_levels[m_selected].name.length() && x < IM_ARRAYSIZE(nameInput); ++x)
 			nameInput[x] = m_levels[m_selected].name[x];
 		nameInput[std::min(256ull, m_levels[m_selected].name.length())] = '\0';

@@ -68,8 +68,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Material(Material&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Material(const Material&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline const Material& operator =(Material&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline const Material& operator =(const Material&) noexcept = delete;
+
+
 	// Private Interface Implementation
-	virtual void initialize() noexcept override final;
+	void initialize() noexcept final;
 
 
 	// Private Attributes

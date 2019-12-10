@@ -9,7 +9,7 @@
 
 
 /** UI toggle switch class, affords being switched left and right. */
-class Toggle : public UI_Element {
+class Toggle final : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum class Interact : int {
@@ -19,7 +19,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy this toggle switch. */
-	inline ~Toggle() = default;
+	inline ~Toggle() noexcept = default;
 	/** Construct a toggle switch with a given on/off state.
 	@param	engine		reference to the engine to use. 
 	@param	state		the on/off state to use. */
@@ -27,8 +27,8 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept override;
-	virtual void userAction(ActionState& actionState) noexcept override;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
+	void userAction(ActionState& actionState) noexcept final;
 
 
 	// Public Methods

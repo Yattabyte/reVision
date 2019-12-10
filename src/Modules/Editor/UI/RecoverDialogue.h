@@ -11,7 +11,7 @@ class RecoverDialogue final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this level dialogue. */
-	inline ~RecoverDialogue() = default;
+	inline ~RecoverDialogue() noexcept = default;
 	/** Construct a level dialogue.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
@@ -19,7 +19,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) noexcept override final;
+	void tick(const float& deltaTime) noexcept final;
 
 
 	// Public Methods

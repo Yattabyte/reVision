@@ -9,7 +9,7 @@
 
 
 /** A UI element serving as an options menu. */
-class OptionsMenu : public Menu {
+class OptionsMenu final : public Menu {
 public:
 	// Public Interaction Enums
 	enum class Interact : int {
@@ -22,7 +22,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy the options menu. */
-	inline ~OptionsMenu() = default;
+	inline ~OptionsMenu() noexcept = default;
 	/** Construct an options menu.
 	@param	engine		reference to the engine to use. */
 	explicit OptionsMenu(Engine& engine) noexcept;

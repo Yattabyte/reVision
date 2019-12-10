@@ -19,7 +19,7 @@ void IndirectSync_System::updateComponents(const float&, const std::vector<std::
 	int index = 0;
 	for (const auto& componentParam : components) {
 		auto* trans = static_cast<Transform_Component*>(componentParam[0]);
-		auto* light = static_cast<Light_Component*>(componentParam[1]);
+		const auto* light = static_cast<Light_Component*>(componentParam[1]);
 		const auto* shadow = static_cast<Shadow_Component*>(componentParam[2]);
 
 		// Sync Common Buffer Attributes

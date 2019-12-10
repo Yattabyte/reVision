@@ -13,7 +13,7 @@ class OpenDialogue final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this level opening dialogue. */
-	inline ~OpenDialogue() = default;
+	inline ~OpenDialogue() noexcept = default;
 	/** Construct a level opening dialogue.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
@@ -21,7 +21,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void tick(const float& deltaTime) noexcept override final;
+	void tick(const float& deltaTime) noexcept final;
 
 
 private:

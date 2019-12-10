@@ -36,7 +36,7 @@ void PlayerFreeLook_System::updateComponents(const float& deltaTime, const std::
 			rotation.y = -90.0f;
 
 		// Determine how much to move in local space
-		const float velocity = 25.0f;
+		constexpr float velocity = 25.0f;
 		const float moveAmount = velocity * deltaTime;
 		glm::vec3 deltaPosition(0.0f);
 		if ((int)actionState.isAction(ActionState::Action::FORWARD))

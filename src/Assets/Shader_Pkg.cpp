@@ -19,8 +19,8 @@ inline static void parse(Engine& engine, Shader_Pkg& userAsset) noexcept
 	while (spot != std::string::npos) {
 		std::string directory = input.substr(spot);
 
-		size_t qspot1 = directory.find('\"');
-		size_t qspot2 = directory.find('\"', qspot1 + 1);
+		const auto qspot1 = directory.find('\"');
+		const auto qspot2 = directory.find('\"', qspot1 + 1);
 		// find std::string quotes and remove them
 		directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
 
@@ -35,13 +35,12 @@ inline static void parse(Engine& engine, Shader_Pkg& userAsset) noexcept
 
 Shared_Shader_Pkg::Shared_Shader_Pkg(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
-	(*(std::shared_ptr<Shader_Pkg>*)(this)) = std::dynamic_pointer_cast<Shader_Pkg>(
-		engine.getManager_Assets().shareAsset(
+	swap(std::dynamic_pointer_cast<Shader_Pkg>(engine.getManager_Assets().shareAsset(
 			typeid(Shader_Pkg).name(),
 			filename,
 			[&engine, filename]() { return std::make_shared<Shader_Pkg>(engine, filename); },
 			threaded
-		));
+		)));
 }
 
 Shader_Pkg::Shader_Pkg(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}

@@ -8,13 +8,12 @@ constexpr const auto CUBEMAP_SIDE_COUNT = 6;
 
 Shared_Cubemap::Shared_Cubemap(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
-	(*(std::shared_ptr<Cubemap>*)(this)) = std::dynamic_pointer_cast<Cubemap>(
-		engine.getManager_Assets().shareAsset(
+	swap(std::dynamic_pointer_cast<Cubemap>(engine.getManager_Assets().shareAsset(
 			typeid(Cubemap).name(),
 			filename,
 			[&engine, filename]() { return std::make_shared<Cubemap>(engine, filename); },
 			threaded
-		));
+		)));
 }
 
 Cubemap::~Cubemap() noexcept

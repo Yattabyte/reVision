@@ -4,6 +4,7 @@
 
 #include <atomic>
 #include <functional>
+#include <memory>
 #include <string>
 #include <type_traits>
 #include <vector>
@@ -92,9 +93,13 @@ protected:
 
 private:
 	// Private but deleted
-	/** Disallow asset assignment. */
+	/** Disallow asset move constructor. */
+	inline Asset(Asset&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
 	inline Asset(const Asset&) noexcept = delete;
-	/** Disallow asset assignment. */
+	/** Disallow asset move assignment. */
+	inline const Asset& operator =(Asset&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
 	inline const Asset& operator =(const Asset&) noexcept = delete;
 };
 

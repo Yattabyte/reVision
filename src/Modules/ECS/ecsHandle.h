@@ -9,9 +9,9 @@ public:
 	/** The UUID container. */
 	char m_uuid[32] = { '\0' };
 	/** Destroy this handle. */
-	inline virtual ~ecsHandle() = default;
+	inline virtual ~ecsHandle() noexcept = default;
 	/** Construct an empty handle. */
-	inline ecsHandle() = default;
+	inline ecsHandle() noexcept = default;
 	/** Construct a specific handle.
 	@param	id[32]		specific handle name as char array of size 32. */
 	explicit ecsHandle(const char id[32]) noexcept;
@@ -42,13 +42,13 @@ public:
 };
 
 struct EntityHandle final : ecsHandle {
-	inline ~EntityHandle() = default;
-	inline EntityHandle() = default;
+	inline ~EntityHandle() noexcept = default;
+	inline EntityHandle() noexcept = default;
 	explicit EntityHandle(const ecsHandle& handle) noexcept;
 };
 struct ComponentHandle final : ecsHandle {
-	inline ~ComponentHandle() = default;
-	inline ComponentHandle() = default;
+	inline ~ComponentHandle() noexcept = default;
+	inline ComponentHandle() noexcept = default;
 	explicit ComponentHandle(const ecsHandle& handle) noexcept;
 };
 
