@@ -55,7 +55,7 @@ void Layout_Vertical::alignChildren() noexcept
 
 	// Available space -= spacing factor between elements
 	if (m_sizedChildren.size() > 1)
-		sizeUsed += float(m_sizedChildren.size() - 1ull) * m_spacing;
+		sizeUsed += (float)(m_sizedChildren.size() - 1ULL) * m_spacing;
 
 	// Remaining space divvied up between remaining elements
 	const float remainder = innerRectSize - sizeUsed;
@@ -79,7 +79,7 @@ void Layout_Vertical::alignChildren() noexcept
 	// Edge Case: all elements are fixed size, gap may be present
 	// Solution: change spacing to fit all elements within bounds
 	if (m_sizedChildren.size() > 1 && fixedElementCount == m_sizedChildren.size()) {
-		const float delta = (bottom - top) / float(m_sizedChildren.size() + size_t(1));
+		const float delta = (bottom - top) / float(m_sizedChildren.size() + 1ULL);
 
 		for (size_t x = 1; x < m_sizedChildren.size(); ++x)
 			m_sizedChildren[x].first->setPosition(m_sizedChildren[x].first->getPosition() + glm::vec2(0, delta * x));

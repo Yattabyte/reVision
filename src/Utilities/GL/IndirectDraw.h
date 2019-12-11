@@ -42,15 +42,28 @@ public:
 	inline IndirectDraw(IndirectDraw&& other) noexcept {
 		*this = std::move(other);
 	}
-	/** Move an Indirect Draw Object. 
-	@param	other			another buffer to copy from. 
+	/** Copy an Indirect Draw Object.
+	@param	other			another buffer to copy from.
 	@return					reference to this. */
-	inline IndirectDraw& operator=(IndirectDraw&& other) noexcept {
+	inline IndirectDraw& operator=(const IndirectDraw& other) noexcept {
 		if (this != &other) {
 			m_count = other.m_count;
 			m_primitiveCount = other.m_primitiveCount;
 			m_first = other.m_first;
 			m_storageFlags = other.m_storageFlags;
+			m_buffer = other.m_buffer;
+		}
+		return *this;
+	}
+	/** Move an Indirect Draw Object. 
+	@param	other			another buffer to move from. 
+	@return					reference to this. */
+	inline IndirectDraw& operator=(IndirectDraw&& other) noexcept {
+		if (this != &other) {
+			m_count = std::move(other.m_count);
+			m_primitiveCount = std::move(other.m_primitiveCount);
+			m_first = std::move(other.m_first);
+			m_storageFlags = std::move(other.m_storageFlags);
 			m_buffer = std::move(other.m_buffer);
 		}
 		return *this;
@@ -84,19 +97,19 @@ public:
 	@param	count			the vertex count. */
 	inline void setCount(const GLuint& count) noexcept {
 		m_count = count;
-		m_buffer.write(0, GLsizeiptr(sizeof(GLuint)), &count);
+		m_buffer.write(0, (GLsizeiptr)(sizeof(GLuint)), &count);
 	}
 	/** Specify how many primitives will be rendered.
 	@param	primitiveCount	the number of primitives to be rendered. */
 	inline void setPrimitiveCount(const GLuint& primitiveCount) noexcept {
 		m_primitiveCount = primitiveCount;
-		m_buffer.write(GLsizeiptr(sizeof(GLuint)), GLsizeiptr(sizeof(GLuint)), &primitiveCount);
+		m_buffer.write((GLsizeiptr)(sizeof(GLuint)), (GLsizeiptr)(sizeof(GLuint)), &primitiveCount);
 	}
 	/** Specify the offset to the first vertex to be rendered.
 	@param	first			the offset to the first rendered vertex. */
 	inline void setFirst(const GLuint& first) noexcept {
 		m_first = first;
-		m_buffer.write(GLsizeiptr(sizeof(GLuint)) * 2ull, GLsizeiptr(sizeof(GLuint)), &first);
+		m_buffer.write((GLsizeiptr)(sizeof(GLuint)) * 2ull, (GLsizeiptr)(sizeof(GLuint)), &first);
 	}
 
 

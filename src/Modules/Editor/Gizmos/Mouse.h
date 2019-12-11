@@ -7,6 +7,7 @@
 #include "Modules/Editor/Gizmos/Translation.h"
 #include "Modules/Editor/Gizmos/Scaling.h"
 #include "Modules/Editor/Gizmos/Rotation.h"
+#include "Modules/Editor/Systems/MousePicker_System.h"
 #include "Modules/ECS/ecsEntity.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Utilities/Transform.h"
@@ -63,7 +64,7 @@ private:
 	LevelEditor_Module& m_editor;
 	Transform m_selectionTransform, m_spawnTransform;
 	std::vector<EntityHandle> m_selection;
-	std::shared_ptr<ecsBaseSystem> m_pickerSystem;
+	MousePicker_System m_pickerSystem;
 	unsigned int m_inputMode = 0;
 	Translation_Gizmo m_translationGizmo;
 	Scaling_Gizmo m_scalingGizmo;

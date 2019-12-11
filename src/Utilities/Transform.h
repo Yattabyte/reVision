@@ -15,6 +15,10 @@ struct Transform {
 	inline ~Transform() noexcept = default;
 	/** Default Constructor. */
 	inline Transform() noexcept = default;
+	/** Move a transform. */
+	inline Transform(Transform&&) noexcept = default;
+	/** Copy a transform. */
+	inline Transform(const Transform&) noexcept = default;
 	/** Constructs a transformation object with any of the supplied parameters.
 	@param position			the desired position
 	@param orientation		the desired orientation
@@ -31,6 +35,14 @@ struct Transform {
 	/** Calculate and return an inverse transform.
 	@return				an inverse version of this transform. */
 	Transform inverse() noexcept;
+	/** Copy Assignment Operator.
+	@param	other		the other transform to copy from.
+	@return				reference to self. */
+	Transform& operator=(const Transform& other) noexcept;
+	/** Move Assignment Operator.
+	@param	other		the other transform to move from.
+	@return				reference to self. */
+	Transform& operator=(Transform&& other) noexcept;
 	/** Retrieve if this transform is equal to another transform.
 	@param	other		the other transform to compare against.
 	@return				true if this transform equals the other transform, false otherwise. */

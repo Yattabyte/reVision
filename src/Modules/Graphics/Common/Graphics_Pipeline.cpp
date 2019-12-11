@@ -21,12 +21,6 @@
 #include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
 
 
-Graphics_Pipeline::~Graphics_Pipeline()
-{
-	for (auto& technique : m_allTechniques)
-		delete technique;
-}
-
 Graphics_Pipeline::Graphics_Pipeline(Engine& engine, Camera& clientCamera) noexcept :
 	m_engine(engine),
 	m_transHierachy(std::make_shared<Transform_System>(engine))
@@ -40,18 +34,18 @@ Graphics_Pipeline::Graphics_Pipeline(Engine& engine, Camera& clientCamera) noexc
 	m_cameraSystems.makeSystem<ReflectorPerspective_System>(m_sceneCameras);
 
 	// Create Rendering Techniques
-	auto propView = new Prop_Technique(engine, m_sceneCameras);
-	auto shadowing = new Shadow_Technique(engine, m_sceneCameras);
-	auto directLighting = new Direct_Technique(engine, shadowing->getShadowData(), clientCamera, m_sceneCameras);
-	auto indirectLighting = new Indirect_Technique(engine, shadowing->getShadowData(), clientCamera, m_sceneCameras);
-	auto reflectorLighting = new Reflector_Technique(engine, m_sceneCameras);
-	auto skybox = new Skybox(engine);
-	auto ssao = new SSAO(engine);
-	auto ssr = new SSR(engine);
-	auto joinReflections = new Join_Reflections(engine);
-	auto bloom = new Bloom(engine);
-	auto hdr = new HDR(engine);
-	auto fxaa = new FXAA(engine);
+	auto propView = std::make_shared<Prop_Technique>(engine, m_sceneCameras);
+	auto shadowing = std::make_shared<Shadow_Technique>(engine, m_sceneCameras);
+	auto directLighting = std::make_shared<Direct_Technique>(engine, shadowing->getShadowData(), clientCamera, m_sceneCameras);
+	auto indirectLighting = std::make_shared<Indirect_Technique>(engine, shadowing->getShadowData(), clientCamera, m_sceneCameras);
+	auto reflectorLighting = std::make_shared<Reflector_Technique>(engine, m_sceneCameras);
+	auto skybox = std::make_shared<Skybox>(engine);
+	auto ssao = std::make_shared<SSAO>(engine);
+	auto ssr = std::make_shared<SSR>(engine);
+	auto joinReflections = std::make_shared<Join_Reflections>(engine);
+	auto bloom = std::make_shared<Bloom>(engine);
+	auto hdr = std::make_shared<HDR>(engine);
+	auto fxaa = std::make_shared<FXAA>(engine);
 
 	// Filter Techniques
 	m_geometryTechniques = {
@@ -92,7 +86,7 @@ std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime
 	world.updateSystems(m_worldSystems, deltaTime);
 
 	// Update rendering techniques
-	for (auto* tech : m_allTechniques)
+	for (auto& tech : m_allTechniques)
 		tech->updateCache(deltaTime, world);
 
 	// Write camera data to camera GPU buffer
@@ -104,7 +98,7 @@ std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime
 
 	// Apply pre-rendering passes
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
-	for (auto* tech : m_allTechniques)
+	for (auto& tech : m_allTechniques)
 		tech->updatePass(deltaTime);
 
 	return perspectives;
@@ -113,14 +107,14 @@ std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime
 void Graphics_Pipeline::end(const float& deltaTime) noexcept
 {
 	m_cameraBuffer.endReading();
-	for (auto* tech : m_allTechniques)
+	for (auto& tech : m_allTechniques)
 		tech->clearCache(deltaTime);
 }
 
 void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories) noexcept
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
-	for (auto* tech : m_allTechniques)
+	for (auto& tech : m_allTechniques)
 		if (((unsigned int)categories & (unsigned int)tech->getCategory()) != 0u)
 			tech->renderTechnique(deltaTime, viewport, perspectives);
 }
@@ -128,13 +122,13 @@ void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Vie
 void Graphics_Pipeline::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
-	for (auto* tech : m_geometryTechniques)
+	for (auto& tech : m_geometryTechniques)
 		tech->cullShadows(deltaTime, perspectives);
 }
 
 void Graphics_Pipeline::renderShadows(const float& deltaTime) noexcept
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
-	for (auto* tech : m_geometryTechniques)
+	for (auto& tech : m_geometryTechniques)
 		tech->renderShadows(deltaTime);
 }

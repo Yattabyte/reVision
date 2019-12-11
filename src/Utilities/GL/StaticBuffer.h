@@ -22,6 +22,10 @@ public:
 	/** Construct and move from another static buffer.
 	@param	other	another buffer to move from. */
 	StaticBuffer(StaticBuffer&& other) noexcept;
+	/** Copy OpenGL object from 1 instance to another.
+	@param	other	another buffer to copy from.
+	@return			reference to this. */
+	StaticBuffer& operator=(const StaticBuffer& other) noexcept;
 	/** Move OpenGL object from 1 instance to another.
 	@param	other	another buffer to move from.
 	@return			reference to this. */

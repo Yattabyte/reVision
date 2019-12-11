@@ -75,7 +75,7 @@ void DirectSync_System::updateComponents(const float&, const std::vector<std::ve
 				constexpr float lambda = 0.75f;
 				cascadeEnd[0] = near_plane;
 				for (int x = 1; x < NUM_CASCADES + 1; ++x) {
-					const float xDivM = float(x) / float(NUM_CASCADES);
+					const float xDivM = (float)x / (float)NUM_CASCADES;
 					const float cLog = near_plane * powf((far_plane / near_plane), xDivM);
 					const float cUni = near_plane + (far_plane - near_plane) * xDivM;
 					cascadeEnd[x] = (lambda * cLog) + (1.0f - lambda) * cUni;

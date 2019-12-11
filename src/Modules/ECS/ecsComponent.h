@@ -88,7 +88,7 @@ template <typename C, const char* chars>
 struct ecsComponent : public ecsBaseComponent {
 	// (De)Constructors
 	/** Destroy this component. */
-	inline virtual ~ecsComponent() noexcept = default;
+	inline ~ecsComponent() noexcept = default;
 	/** Construct this specific component. */
 	inline ecsComponent() noexcept : ecsBaseComponent(ecsComponent::Runtime_ID, sizeof(C), chars) {}
 

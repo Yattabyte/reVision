@@ -152,6 +152,11 @@ public:
 
 
 private:
+	// Private Disallowed Methods
+	/** Copy constructor. */
+	inline GL_Vector(const GL_Vector&) noexcept = delete;
+
+
 	// Private Methods
 	/** Wait for the fence at the supplied index to pass.
 	@param	fence			the fence belonging to a particular internal buffer. */

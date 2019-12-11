@@ -15,6 +15,10 @@ public:
 	inline ~ActionState() noexcept = default;
 	/** Construct the action state. */
 	ActionState() noexcept;
+	/** Move an action state. */
+	inline ActionState(ActionState&&) noexcept = default;
+	/** Copy an action state. */
+	inline ActionState(const ActionState&) noexcept = default;
 
 
 	// Public Static Enumerations

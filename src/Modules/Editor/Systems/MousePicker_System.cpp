@@ -171,7 +171,7 @@ static bool RayProp(const Transform_Component* transformComponent, Prop_Componen
 @return							true on successful intersection, false if disjoint. */
 static bool RayCollider(const Collider_Component* collider, const void* const closestPhysicsShape, const float& closetstPhysicsHit, float& distanceFromScreen, int& confidence) noexcept
 {
-	if (collider->m_shape && collider->m_shape == closestPhysicsShape) {
+	if (collider->m_shape && collider->m_shape.get() == closestPhysicsShape) {
 		distanceFromScreen = closetstPhysicsHit;
 		confidence = 3;
 		return true;

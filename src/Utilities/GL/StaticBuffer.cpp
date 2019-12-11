@@ -27,11 +27,25 @@ StaticBuffer::StaticBuffer(StaticBuffer&& other) noexcept
 	(*this) = std::move(other);
 }
 
+StaticBuffer& StaticBuffer::operator=(const StaticBuffer& other) noexcept
+{
+	if (this != &other) {
+		m_size = other.m_size;
+		m_storageFlags = other.m_storageFlags;
+		glCopyNamedBufferSubData(other.m_bufferID, m_bufferID, 0, 0, other.m_size);
+	}
+	return *this;
+}
+
 StaticBuffer& StaticBuffer::operator=(StaticBuffer&& other) noexcept
 {
 	if (this != &other) {
 		m_bufferID = other.m_bufferID;
+		m_size = other.m_size;
+		m_storageFlags = other.m_storageFlags;
 		other.m_bufferID = 0;
+		other.m_size = 0;
+		other.m_storageFlags = 0;
 	}
 	return *this;
 }

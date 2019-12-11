@@ -18,6 +18,10 @@ public:
 	/** Construct a key-binding.
 	@param	engine		reference to the engine to use. */
 	explicit InputBinding(Engine& engine) noexcept;
+	/** Move an input binding. */
+	inline InputBinding(InputBinding&&) noexcept = default;
+	/** Copy an input binding. */
+	inline InputBinding(const InputBinding&) noexcept = default;
 
 
 	// Public Methods

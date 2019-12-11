@@ -44,6 +44,17 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow manager move constructor. */
+	inline AssetManager(AssetManager&&) noexcept = delete;
+	/** Disallow manager copy constructor. */
+	inline AssetManager(const AssetManager&) noexcept = delete;
+	/** Disallow manager move assignment. */
+	inline const AssetManager& operator =(AssetManager&&) noexcept = delete;
+	/** Disallow manager copy assignment. */
+	inline const AssetManager& operator =(const AssetManager&) noexcept = delete;
+
+
 	// Private Attributes
 	std::shared_mutex m_Mutex_Assets;
 	VectorMap<Shared_Asset> m_AssetMap;

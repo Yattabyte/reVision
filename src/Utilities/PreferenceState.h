@@ -20,6 +20,10 @@ public:
 	@param	engine		reference to the engine to use. 
 	@param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
 	explicit PreferenceState(Engine& engine, const std::string& filename = "preferences") noexcept;
+	/** Move a preference state. */
+	inline PreferenceState(PreferenceState&&) noexcept = default;
+	/** Copy a preference state. */
+	inline PreferenceState(const PreferenceState&) noexcept = default;
 
 
 	// Public Static Enumerations

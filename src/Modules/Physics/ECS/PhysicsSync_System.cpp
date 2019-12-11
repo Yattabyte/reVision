@@ -31,31 +31,29 @@ void PhysicsSync_System::updateComponents(const float&, const std::vector<std::v
 				if (colliderComponent->m_worldTransform != transformComponent->m_localTransform) {
 					// Remove from the physics simulation
 					if (colliderComponent->m_rigidBody) {
-						m_world.removeRigidBody(colliderComponent->m_rigidBody);
-						delete colliderComponent->m_rigidBody;
+						m_world.removeRigidBody(colliderComponent->m_rigidBody.get());
+						colliderComponent->m_rigidBody.reset();
 					}
 
 					// Build the collider from the transform info
 					if (!colliderComponent->m_motionState)
-						colliderComponent->m_motionState = new btDefaultMotionState();
+						colliderComponent->m_motionState = std::make_shared<btDefaultMotionState>();
 					colliderComponent->m_motionState->setWorldTransform(btTransform(btTransform(btQuaternion(orientation.x, orientation.y, orientation.z, orientation.w), btVector3(position.x, position.y, position.z))));
 
 					// Resize the collider shape to fit
 					if (colliderComponent->m_worldTransform.m_scale != transformComponent->m_worldTransform.m_scale || !colliderComponent->m_shape) {
-						if (!colliderComponent->m_shape)
-							delete colliderComponent->m_shape;
-						colliderComponent->m_shape = new btConvexHullShape(*dynamic_cast<btConvexHullShape*>(colliderComponent->m_collider->m_shape.get()));
+						colliderComponent->m_shape = std::make_shared<btConvexHullShape>(*dynamic_cast<btConvexHullShape*>(colliderComponent->m_collider->m_shape.get()));
 						colliderComponent->m_shape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 					}
 
 					// Add back to simulation
 					btVector3 Inertia(0, 0, 0);
 					colliderComponent->m_shape->calculateLocalInertia(colliderComponent->m_mass, Inertia);
-					auto bodyCI = btRigidBody::btRigidBodyConstructionInfo(colliderComponent->m_mass, colliderComponent->m_motionState, colliderComponent->m_shape, Inertia);
+					auto bodyCI = btRigidBody::btRigidBodyConstructionInfo(colliderComponent->m_mass, colliderComponent->m_motionState.get(), colliderComponent->m_shape.get(), Inertia);
 					bodyCI.m_restitution = colliderComponent->m_restitution;
 					bodyCI.m_friction = colliderComponent->m_friction;
-					colliderComponent->m_rigidBody = new btRigidBody(bodyCI);
-					m_world.addRigidBody(colliderComponent->m_rigidBody);
+					colliderComponent->m_rigidBody = std::make_shared<btRigidBody>(bodyCI);
+					m_world.addRigidBody(colliderComponent->m_rigidBody.get());
 
 					// Update the transform
 					colliderComponent->m_worldTransform = transformComponent->m_worldTransform;

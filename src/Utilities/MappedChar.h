@@ -28,6 +28,10 @@ public:
 	inline ~MappedChar() = default;
 	/** Construct the map. */
 	inline MappedChar() = default;
+	/** Move a map. */
+	inline MappedChar(MappedChar&&) noexcept = default;
+	/** Copy a map. */
+	inline MappedChar(const MappedChar&) noexcept = default;
 
 
 	// Public Methods

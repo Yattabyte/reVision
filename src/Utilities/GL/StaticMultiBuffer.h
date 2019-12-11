@@ -68,7 +68,7 @@ public:
 		for (int x = 0; x < BufferCount; ++x)
 			glCopyNamedBufferSubData(other.m_bufferID[x], m_bufferID[x], 0, 0, m_size);
 	}
-	/** Explicit Instantiation. */
+	/** Move Constructor. */
 	inline StaticMultiBuffer(StaticMultiBuffer&& other) noexcept {
 		(*this) = std::move(other);
 	}
@@ -112,24 +112,36 @@ public:
 			m_readFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		m_index = (m_index + 1) % BufferCount;
 	}
+	/** Copy GL object from 1 instance in to another. */
+	inline StaticMultiBuffer& operator=(const StaticMultiBuffer& other) noexcept {
+		if (this != &other) {
+			m_size = other.m_size;
+			m_mapFlags = other.m_mapFlags;
+			for (int x = 0; x < BufferCount; ++x)
+				glCopyNamedBufferSubData(other.m_bufferID[x], m_bufferID[x], 0, 0, other.m_size);
+		}
+		return *this;
+	}
 	/** Move GL object from 1 instance to another. */
 	inline StaticMultiBuffer& operator=(StaticMultiBuffer&& other) noexcept {
-		for (int x = 0; x < BufferCount; ++x) {
-			m_bufferID[x] = std::move(other.m_bufferID[x]);
-			m_bufferPtr[x] = std::move(other.m_bufferPtr[x]);
-			m_writeFence[x] = std::move(other.m_writeFence[x]);
-			m_readFence[x] = std::move(other.m_readFence[x]);
-			other.m_bufferID[x] = 0;
-			other.m_bufferPtr[x] = nullptr;
-			other.m_writeFence[x] = nullptr;
-			other.m_readFence[x] = nullptr;
+		if (this != &other) {
+			for (int x = 0; x < BufferCount; ++x) {
+				m_bufferID[x] = std::move(other.m_bufferID[x]);
+				m_bufferPtr[x] = std::move(other.m_bufferPtr[x]);
+				m_writeFence[x] = std::move(other.m_writeFence[x]);
+				m_readFence[x] = std::move(other.m_readFence[x]);
+				other.m_bufferID[x] = 0;
+				other.m_bufferPtr[x] = nullptr;
+				other.m_writeFence[x] = nullptr;
+				other.m_readFence[x] = nullptr;
+			}
+			m_mapFlags = (std::move(other.m_mapFlags));
+			m_index = std::move(other.m_index);
+			m_size = (std::move(other.m_size));
+			other.m_mapFlags = 0;
+			other.m_index = 0;
+			other.m_size = 0;
 		}
-		m_mapFlags = (std::move(other.m_mapFlags));
-		m_index = std::move(other.m_index);
-		m_size = (std::move(other.m_size));
-		other.m_mapFlags = 0;
-		other.m_index = 0;
-		other.m_size = 0;
 		return *this;
 	}
 

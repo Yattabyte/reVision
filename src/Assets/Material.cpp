@@ -46,10 +46,10 @@ Material::Material(Engine& engine, const std::string& filename, const std::vecto
 void Material::initialize() noexcept
 {
 	// Some definitions for later
-	const size_t remainder = m_textures.size() % size_t(6U);
+	const size_t remainder = m_textures.size() % 6ULL;
 	const size_t textureCount = remainder != 0U
-		? m_textures.size() + size_t(6U) - remainder // if remainder != 0, round up to nearest multiple of 6
-		: std::max(size_t(6U), m_textures.size()); // else remainder == 0, enforce minimum size of 6
+		? m_textures.size() + 6ULL - remainder // if remainder != 0, round up to nearest multiple of 6
+		: std::max(6ULL, m_textures.size()); // else remainder == 0, enforce minimum size of 6
 	const size_t materialCount = textureCount / MAX_PHYSICAL_IMAGES;
 	m_textures.resize(textureCount);
 

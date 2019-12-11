@@ -20,7 +20,7 @@ class Graphics_Pipeline {
 public:
 	// Public (De)Constructors
 	/** Destroy this rendering pipeline. */
-	~Graphics_Pipeline();
+	inline ~Graphics_Pipeline() noexcept = default;
 	/** Construct a PBR rendering pipeline.
 	@param	engine			reference to the engine to use. 
 	@param	clientCamera	the main camera. */
@@ -59,8 +59,8 @@ protected:
 	GL_Vector<Camera::GPUData> m_cameraBuffer;
 	ecsSystemList m_worldSystems, m_cameraSystems;
 	std::shared_ptr<ecsBaseSystem> m_transHierachy;
-	std::vector<Geometry_Technique*> m_geometryTechniques;
-	std::vector<Graphics_Technique*> m_lightingTechniques, m_effectTechniques, m_allTechniques;
+	std::vector< std::shared_ptr<Geometry_Technique>> m_geometryTechniques;
+	std::vector<std::shared_ptr<Graphics_Technique>> m_lightingTechniques, m_effectTechniques, m_allTechniques;
 };
 
 #endif // GRAPHICS_PIPELINE_H

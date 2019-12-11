@@ -60,7 +60,7 @@ inline static constexpr auto FindKey = [](const float& AnimationTime, const size
 	for (size_t i = 0; i < count; i++)
 		if (AnimationTime < (float)(keyVector[i + 1]).time)
 			return i;
-	return size_t(0);
+	return 0ULL;
 };
 
 /** Interpolate between this key-frame, and the next one, based on the animation time.

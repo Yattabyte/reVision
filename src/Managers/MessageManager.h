@@ -31,6 +31,17 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow manager move constructor. */
+	inline MessageManager(MessageManager&&) noexcept = delete;
+	/** Disallow manager copy constructor. */
+	inline MessageManager(const MessageManager&) noexcept = delete;
+	/** Disallow manager move assignment. */
+	inline const MessageManager& operator =(MessageManager&&) noexcept = delete;
+	/** Disallow manager copy assignment. */
+	inline const MessageManager& operator =(const MessageManager&) noexcept = delete;
+
+
 	// Private Methods
 	/** A helper function that writes the message to a log and to the console. 
 	@param	output	the text to write to the log. */

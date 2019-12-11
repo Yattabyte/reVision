@@ -56,7 +56,7 @@ void PropSync_System::updateComponents(const float&, const std::vector<std::vect
 			// Sync Animation Attributes
 			if (skeletonComponent) {
 				auto& bones = m_frameData.skeletonBuffer[index].bones;
-				for (size_t i = 0, total = std::min(skeletonComponent->m_transforms.size(), size_t(NUM_MAX_BONES)); i < total; ++i)
+				for (size_t i = 0, total = std::min(skeletonComponent->m_transforms.size(), (size_t)NUM_MAX_BONES); i < total; ++i)
 					bones[i] = skeletonComponent->m_transforms[i];
 			}
 

@@ -115,14 +115,14 @@ struct Collider_Component final : public ecsComponent<Collider_Component, collid
 	std::string m_modelName;
 	float m_restitution = 1.0f;
 	float m_friction = 1.0f;
-	btScalar m_mass = btScalar(0);
+	btScalar m_mass = 0;
 
 	// Derived Attributes
 	Transform m_worldTransform;
 	Shared_Collider m_collider;
-	btDefaultMotionState* m_motionState = nullptr;
-	btRigidBody* m_rigidBody = nullptr;
-	btCollisionShape* m_shape = nullptr;
+	std::shared_ptr<btDefaultMotionState> m_motionState = nullptr;
+	std::shared_ptr<btRigidBody> m_rigidBody = nullptr;
+	std::shared_ptr<btCollisionShape> m_shape = nullptr;
 
 	inline std::vector<char> serialize() noexcept {
 		return Serializer::Serialize_Set(

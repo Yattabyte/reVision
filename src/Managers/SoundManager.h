@@ -41,6 +41,18 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow manager move constructor. */
+	inline SoundManager(SoundManager&&) noexcept = delete;
+	/** Disallow manager copy constructor. */
+	inline SoundManager(const SoundManager&) noexcept = delete;
+	/** Disallow manager move assignment. */
+	inline const SoundManager& operator =(SoundManager&&) noexcept = delete;
+	/** Disallow MessageManager copy assignment. */
+	inline const SoundManager& operator =(const SoundManager&) noexcept = delete;
+
+
+	// Private Attributes
 	SoundEngineObj* m_soundEngine = nullptr;
 };
 

@@ -14,7 +14,7 @@ void Physics_Module::initialize() noexcept
 {
 	Engine_Module::initialize();
 	m_engine.getManager_Messages().statement("Loading Module: Physics...");
-	m_world.setGravity(btVector3(0, btScalar(-9.8), 0));
+	m_world.setGravity(btVector3(0, (btScalar)-9.8, 0));
 
 	// Physics Systems
 	m_physicsSystems.makeSystem<PhysicsSync_System>(m_engine, m_world);

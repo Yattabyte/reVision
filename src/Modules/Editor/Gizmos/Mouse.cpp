@@ -1,5 +1,4 @@
 #include "Modules/Editor/Gizmos/Mouse.h"
-#include "Modules/Editor/Systems/MousePicker_System.h"
 #include "Engine.h"
 #include "imgui.h"
 
@@ -13,7 +12,7 @@ Mouse_Gizmo::~Mouse_Gizmo() noexcept
 Mouse_Gizmo::Mouse_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_engine(engine),
 	m_editor(editor),
-	m_pickerSystem(std::make_shared<MousePicker_System>(engine)),
+	m_pickerSystem(engine),
 	m_translationGizmo(engine, editor),
 	m_scalingGizmo(engine, editor),
 	m_rotationGizmo(engine, editor),
@@ -54,8 +53,8 @@ bool Mouse_Gizmo::checkInput(const float& deltaTime) noexcept
 
 		// Set selection LAST, allow attempts at other gizmo's first
 		if (ImGui::IsMouseClicked(0)) {
-			m_editor.getWorld().updateSystem(m_pickerSystem.get(), deltaTime);
-			const auto& [entityHandle, selectionTransform, intersectionTransform] = (std::dynamic_pointer_cast<MousePicker_System>(m_pickerSystem))->getSelection();
+			m_editor.getWorld().updateSystem(&m_pickerSystem, deltaTime);
+			const auto& [entityHandle, selectionTransform, intersectionTransform] = m_pickerSystem.getSelection();
 
 			// Set selection to all tools that need it
 			if (ImGui::GetIO().KeyCtrl)
@@ -70,8 +69,8 @@ bool Mouse_Gizmo::checkInput(const float& deltaTime) noexcept
 			return m_editor.getSelection().size();
 		}
 		else if (ImGui::IsMouseClicked(2)) {
-			m_editor.getWorld().updateSystem(m_pickerSystem.get(), deltaTime);
-			const auto& [entityHandle, selectionTransform, intersectionTransform] = (std::dynamic_pointer_cast<MousePicker_System>(m_pickerSystem))->getSelection();
+			m_editor.getWorld().updateSystem(&m_pickerSystem, deltaTime);
+			const auto& [entityHandle, selectionTransform, intersectionTransform] = m_pickerSystem.getSelection();
 			m_spawnTransform = intersectionTransform;
 			return true;
 		}

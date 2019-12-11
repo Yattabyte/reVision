@@ -13,6 +13,10 @@ public:
 	inline virtual ~Buffer_Interface() noexcept = default;
 	/** Construct a buffer. */
 	inline Buffer_Interface() noexcept = default;
+	/** Move a buffer. */
+	inline Buffer_Interface(Buffer_Interface&&) noexcept = default;
+	/** Copy a buffer. */
+	inline Buffer_Interface(const Buffer_Interface&) noexcept = default;
 
 
 	// Public Interface Declarations
