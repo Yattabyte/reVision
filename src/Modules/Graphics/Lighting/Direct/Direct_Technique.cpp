@@ -51,7 +51,7 @@ void Direct_Technique::updateCache(const float& deltaTime, ecsWorld& world) noex
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Direct_Technique::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void Direct_Technique::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	// Exit Early
 	if (m_enabled && m_geometryReady && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shader_Lighting)) {
@@ -100,8 +100,8 @@ void Direct_Technique::renderTechnique(const float&, const std::shared_ptr<Viewp
 
 			// Draw only into depth-stencil buffer
 			m_shader_Stencil->bind();															// Shader (point)
-			viewport->m_gfxFBOS.bindForWriting("LIGHTING");									// Ensure writing to lighting FBO
-			viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);									// Read from Geometry FBO
+			viewport.m_gfxFBOS.bindForWriting("LIGHTING");									// Ensure writing to lighting FBO
+			viewport.m_gfxFBOS.bindForReading("GEOMETRY", 0);									// Read from Geometry FBO
 			glBindTextureUnit(4, m_frameData.shadowData.shadowFBO.m_texDepth);				// Shadow map(linear depth texture)
 			m_drawData[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 			m_drawData[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);		// SSBO visible light indices

@@ -28,6 +28,6 @@ void Graphics_Technique::updatePass(const float&) noexcept
 {
 }
 
-void Graphics_Technique::renderTechnique(const float& , const std::shared_ptr<Viewport>&, const std::vector<std::pair<int, int>>&) noexcept
+void Graphics_Technique::renderTechnique(const float& , Viewport&, const std::vector<std::pair<int, int>>&) noexcept
 {
 }

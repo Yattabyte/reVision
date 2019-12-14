@@ -5,7 +5,8 @@
 
 
 Graphics_Module::Graphics_Module(Engine& engine) noexcept : 
-	Engine_Module(engine) 
+	Engine_Module(engine),
+	m_viewport(glm::ivec2(0), m_renderSize, m_engine)
 {
 }
 
@@ -32,13 +33,13 @@ void Graphics_Module::initialize() noexcept
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize = glm::ivec2(f, m_renderSize.y);
-		m_viewport->resize(m_renderSize, 1);
+		m_viewport.resize(m_renderSize, 1);
 		m_clientCamera->Dimensions = m_renderSize;
 		});
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderSize = glm::ivec2(m_renderSize.x, f);
-		m_viewport->resize(m_renderSize, 1);
+		m_viewport.resize(m_renderSize, 1);
 		m_clientCamera->Dimensions = m_renderSize;
 		});
 	float farPlane = 1000.0F;
@@ -59,7 +60,7 @@ void Graphics_Module::initialize() noexcept
 		});
 
 	// Camera Setup
-	m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_renderSize, m_engine);
+	m_viewport.resize(m_renderSize, 1);
 	m_clientCamera.setEnabled(true);
 	m_clientCamera->Dimensions = glm::vec2(m_renderSize);
 	m_clientCamera->FarPlane = farPlane;
@@ -77,7 +78,6 @@ void Graphics_Module::deinitialize() noexcept
 	// Update indicator
 	*m_aliveIndicator = false;
 	m_pipeline.reset();
-	m_viewport.reset();
 }
 
 std::shared_ptr<Graphics_Pipeline> Graphics_Module::getPipeline() const noexcept 
@@ -92,14 +92,14 @@ void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const
 	copyToFramebuffer(fboID);
 }
 
-void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, std::vector<Camera>& cameras) noexcept
+void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, Viewport& viewport, std::vector<Camera>& cameras) noexcept
 {
 	if (!cameras.empty()) {
 		// Prepare rendering pipeline for a new frame, wait for buffers to free
 		const auto perspectives = m_pipeline->begin(deltaTime, world, cameras);
-		viewport->bind();
-		viewport->clear();
-		viewport->m_gfxFBOS.m_rhVolume.updateVolume(cameras[0]);
+		viewport.bind();
+		viewport.clear();
+		viewport.m_gfxFBOS.m_rhVolume.updateVolume(cameras[0]);
 
 		m_pipeline->render(deltaTime, viewport, perspectives);
 

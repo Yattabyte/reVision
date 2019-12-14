@@ -9,12 +9,13 @@ constexpr const char* DIRECTORY_COLLIDER = "\\Models\\";
 
 Shared_Collider::Shared_Collider(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
-	swap(std::dynamic_pointer_cast<Collider>(engine.getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Collider>(engine.getManager_Assets().shareAsset(
 			typeid(Collider).name(),
 			filename,
 			[&engine, filename]() { return std::make_shared<Collider>(engine, filename); },
 			threaded
-		)));
+		));
+	swap(newAsset);
 }
 
 Collider::Collider(Engine& engine, const std::string& filename) noexcept : 

@@ -7,12 +7,13 @@ constexpr const float MAX_ANISOTROPY = 16.0F;
 
 Shared_Texture::Shared_Texture(Engine& engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy, const bool& threaded) noexcept
 {
-	swap(std::dynamic_pointer_cast<Texture>(engine.getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Texture>(engine.getManager_Assets().shareAsset(
 			typeid(Texture).name(),
 			filename,
 			[&engine, filename, type, mipmap, anisotropy]() { return std::make_shared<Texture>(engine, filename, type, mipmap, anisotropy); },
 			threaded
-		)));
+		));
+	swap(newAsset);
 }
 
 Texture::~Texture() noexcept

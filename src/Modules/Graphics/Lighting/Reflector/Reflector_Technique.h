@@ -27,7 +27,7 @@ public:
 	void clearCache(const float& deltaTime) noexcept final;
 	void updateCache(const float& deltaTime, ecsWorld& world) noexcept final;
 	void updatePass(const float& deltaTime) noexcept final;
-	void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
+	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
 
 
 private:
@@ -38,7 +38,7 @@ private:
 	/** Render all the lights
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	void renderReflectors(const float& deltaTime, const std::shared_ptr<Viewport>& viewport) noexcept;
+	void renderReflectors(const float& deltaTime, Viewport& viewport) noexcept;
 
 
 	// Private Attributes
@@ -47,7 +47,7 @@ private:
 	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
 	Shared_Auto_Model m_shapeCube, m_shapeQuad;
 	StaticMultiBuffer<> m_indirectQuad = StaticMultiBuffer(sizeof(GLuint) * 4), m_indirectQuadConvolute = StaticMultiBuffer(sizeof(GLuint) * 4);
-	std::shared_ptr<Viewport> m_viewport;
+	Viewport m_viewport;
 	struct DrawData {
 		DynamicBuffer<> bufferCamIndex;
 		DynamicBuffer<> visLights;

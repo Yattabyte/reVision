@@ -35,7 +35,7 @@ void Prop_Technique::updateCache(const float& deltaTime, ecsWorld& world) noexce
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Prop_Technique::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void Prop_Technique::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	// Exit Early
 	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shaderCull, m_shaderGeometry)) {
@@ -101,7 +101,7 @@ void Prop_Technique::renderTechnique(const float&, const std::shared_ptr<Viewpor
 			glDepthMask(GL_FALSE);
 			glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 			m_shaderCull->bind();
-			viewport->m_gfxFBOS.bindForWriting("DEPTH-ONLY"); // use previous frame's depth
+			viewport.m_gfxFBOS.bindForWriting("DEPTH-ONLY"); // use previous frame's depth
 			glBindVertexArray(m_shapeCube->m_vaoID);
 			propCullingBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			propRenderBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
@@ -114,7 +114,7 @@ void Prop_Technique::renderTechnique(const float&, const std::shared_ptr<Viewpor
 			glDepthMask(GL_TRUE);
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_BACK);
-			viewport->m_gfxFBOS.bindForWriting("GEOMETRY"); // fill current frame's depth
+			viewport.m_gfxFBOS.bindForWriting("GEOMETRY"); // fill current frame's depth
 			m_shaderGeometry->bind();
 			glBindVertexArray(m_frameData.m_geometryVAOID);
 			glBindTextureUnit(0, m_frameData.m_materialArrayID);
@@ -122,9 +122,9 @@ void Prop_Technique::renderTechnique(const float&, const std::shared_ptr<Viewpor
 			glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, (GLsizei)visibleIndices.size(), 0);
 
 			// Copy depth for next frame
-			viewport->m_gfxFBOS.bindForWriting("DEPTH-ONLY");
-			const auto& [sourceID, destinationID] = std::pair(viewport->m_gfxFBOS.getFboID("GEOMETRY"), viewport->m_gfxFBOS.getFboID("DEPTH-ONLY"));
-			const auto& size = viewport->m_dimensions;
+			viewport.m_gfxFBOS.bindForWriting("DEPTH-ONLY");
+			const auto& [sourceID, destinationID] = std::pair(viewport.m_gfxFBOS.getFboID("GEOMETRY"), viewport.m_gfxFBOS.getFboID("DEPTH-ONLY"));
+			const auto& size = viewport.m_dimensions;
 			glBlitNamedFramebuffer(sourceID, destinationID, 0, 0, size.x, size.y, 0, 0, size.x, size.y, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 			camBufferIndex.endReading();

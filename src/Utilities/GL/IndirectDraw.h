@@ -77,7 +77,7 @@ public:
 	}
 	/** Bind this buffer and also perform an indirect draw call. 
 	@param	indirect		an indirect pointer. */
-	inline void drawCall(const void* indirect = 0) noexcept {
+	inline void drawCall(const void* indirect = nullptr) noexcept {
 		bind();
 		glDrawArraysIndirect(GL_TRIANGLES, indirect);
 	}

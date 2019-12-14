@@ -16,14 +16,10 @@ public:
 
 
 	// Public Interface Implementation
-	void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override;
+	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override;
 
 
 	// Public Interface Declarations
-	/** Apply this geometry technique.
-	@param	deltaTime		the amount of time passed since last frame.
-	@param	viewport		the viewport to render from. */
-	virtual void renderGeometry(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept;
 	/** Use geometry techniques to cull shadows.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	perspectives	the camera and layer indices to render. */

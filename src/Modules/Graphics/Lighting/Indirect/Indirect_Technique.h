@@ -32,7 +32,7 @@ public:
 	// Public Interface Implementations
 	void clearCache(const float& deltaTime) noexcept final;
 	void updateCache(const float& deltaTime, ecsWorld& world) noexcept final;
-	void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
+	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
 
 
 private:
@@ -58,7 +58,7 @@ private:
 	@param	viewport			reference to the active viewport.
 	@param	camBufferRecon		reference to the buffer for reconstructing GI.
 	@param	indirectQuadRecon	reference to the indirect GI reconstruction draw call. */
-	void reconstructVolume(const std::shared_ptr<Viewport>& viewport, const DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept;
+	void reconstructVolume(Viewport& viewport, const DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept;
 
 
 	// Private Attributes

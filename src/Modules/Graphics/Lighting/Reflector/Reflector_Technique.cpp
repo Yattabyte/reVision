@@ -20,6 +20,7 @@ Reflector_Technique::Reflector_Technique(Engine& engine, std::vector<Camera*>& s
 	m_shaderConvolute(Shared_Shader(engine, "Core\\Reflector\\Cube_Convolution")),
 	m_shapeCube(Shared_Auto_Model(engine, "cube")),
 	m_shapeQuad(Shared_Auto_Model(engine, "quad")),
+	m_viewport(glm::ivec2(0), glm::ivec2(1), engine),
 	m_sceneCameras(sceneCameras)
 {
 	// Auxiliary Systems
@@ -32,11 +33,11 @@ Reflector_Technique::Reflector_Technique(Engine& engine, std::vector<Camera*>& s
 	preferences.getOrSetValue(PreferenceState::Preference::C_ENVMAP_SIZE, m_frameData.envmapSize.x);
 	preferences.addCallback(PreferenceState::Preference::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float& f) noexcept {
 		m_frameData.envmapSize = glm::ivec2(std::max(1u, (unsigned int)f));
-		m_viewport->resize(glm::ivec2(m_frameData.envmapSize), (int)m_frameData.reflectorLayers);
+		m_viewport.resize(glm::ivec2(m_frameData.envmapSize), (int)m_frameData.reflectorLayers);
 		});
 	// Environment Map
 	m_frameData.envmapSize = glm::ivec2(std::max(1u, (unsigned int)m_frameData.envmapSize.x));
-	m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_frameData.envmapSize, engine);
+	m_viewport.resize(m_frameData.envmapSize, (int)m_frameData.reflectorLayers);
 
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() noexcept {
@@ -70,7 +71,7 @@ void Reflector_Technique::updatePass(const float& deltaTime) noexcept
 		updateReflectors(deltaTime);
 }
 
-void Reflector_Technique::renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void Reflector_Technique::renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	// Exit Early
 	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shaderLighting, m_shaderStencil)) {
@@ -116,11 +117,11 @@ void Reflector_Technique::renderTechnique(const float& deltaTime, const std::sha
 
 void Reflector_Technique::updateReflectors(const float& deltaTime) noexcept 
 {
-	auto clientTime = m_engine.getTime();
+	auto clientTime = m_engine.GetSystemTime();
 	if (m_frameData.reflectorsToUpdate.size()) {
-		m_viewport->resize(m_frameData.envmapSize, (int)m_frameData.reflectorLayers);
-		m_viewport->bind();
-		m_viewport->clear();
+		m_viewport.resize(m_frameData.envmapSize, (int)m_frameData.reflectorLayers);
+		m_viewport.bind();
+		m_viewport.clear();
 
 		// Accumulate Perspective Data
 		std::vector<std::pair<int, int>> perspectives;
@@ -153,7 +154,7 @@ void Reflector_Technique::updateReflectors(const float& deltaTime) noexcept
 		m_engine.getModule_Graphics().getPipeline()->render(deltaTime, m_viewport, perspectives, categories);
 
 		// Copy all lighting results into cube faces, generating cubemap's
-		m_viewport->m_gfxFBOS.bindForReading("LIGHTING", 0);
+		m_viewport.m_gfxFBOS.bindForReading("LIGHTING", 0);
 		m_frameData.envmapFBO.bindForWriting(0);
 		m_shaderCopy->bind();
 		m_indirectQuad.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -185,7 +186,7 @@ void Reflector_Technique::updateReflectors(const float& deltaTime) noexcept
 	}
 }
 
-void Reflector_Technique::renderReflectors(const float&, const std::shared_ptr<Viewport>& viewport) noexcept 
+void Reflector_Technique::renderReflectors(const float&, Viewport& viewport) noexcept 
 {
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_BLEND);
@@ -197,8 +198,8 @@ void Reflector_Technique::renderReflectors(const float&, const std::shared_ptr<V
 
 	// Draw only into depth-stencil buffer
 	m_shaderStencil->bind();										// Shader (reflector)
-	viewport->m_gfxFBOS.bindForWriting("REFLECTION");				// Ensure writing to reflection FBO
-	viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);				// Read from Geometry FBO
+	viewport.m_gfxFBOS.bindForWriting("REFLECTION");				// Ensure writing to reflection FBO
+	viewport.m_gfxFBOS.bindForReading("GEOMETRY", 0);				// Read from Geometry FBO
 	m_frameData.envmapFBO.bindForReading(4);						// Reflection map (environment texture)
 	m_drawData[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 	m_drawData[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible light indices

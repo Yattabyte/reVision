@@ -26,7 +26,7 @@ public:
 	// Public Interface Implementations
 	void clearCache(const float& deltaTime) noexcept final;
 	void updateCache(const float& deltaTime, ecsWorld& world) noexcept final;
-	void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
+	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
 	void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
 	void renderShadows(const float& deltaTime) noexcept final;
 

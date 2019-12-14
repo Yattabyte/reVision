@@ -22,14 +22,14 @@ public:
 
 	// Public Interface Implementations.
 	void clearCache(const float& deltaTime) noexcept final;
-	void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
+	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
 
 
 private:
 	// Private Methods
 	/** Convolute the lighting buffer into each of its MIP levels.
 	@param	viewport	the viewport to render from. */
-	void updateMIPChain(const std::shared_ptr<Viewport>& viewport) noexcept;
+	void updateMIPChain(Viewport& viewport) noexcept;
 
 
 	// Private Attributes

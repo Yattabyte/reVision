@@ -156,7 +156,7 @@ protected:
 	/** Attempt to delete a shader program's cached binary file. 
 	@param	relativePath		the relative path of the binary file.
 	@return						true on success, false otherwise. */
-	bool deleteCachedBinary(const std::string& relativePath) noexcept;
+	static bool deleteCachedBinary(const std::string& relativePath) noexcept;
 	/** Attempt to load a shader program from separate shader files.
 	@param	relativePath		the relative path of the shader files.
 	@return						true on success, false otherwise. */

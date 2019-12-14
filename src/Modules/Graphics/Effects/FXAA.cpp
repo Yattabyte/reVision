@@ -25,7 +25,7 @@ void FXAA::clearCache(const float&) noexcept
 	m_drawIndex = 0;
 }
 
-void FXAA::renderTechnique(const float& , const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void FXAA::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderFXAA))
 		return;
@@ -46,14 +46,14 @@ void FXAA::renderTechnique(const float& , const std::shared_ptr<Viewport>& viewp
 
 	// Apply FXAA effect
 	camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-	viewport->m_gfxFBOS.bindForWriting("FXAA");
-	viewport->m_gfxFBOS.bindForReading("HDR", 0);
+	viewport.m_gfxFBOS.bindForWriting("FXAA");
+	viewport.m_gfxFBOS.bindForReading("HDR", 0);
 	m_shaderFXAA->bind();
 	glBindVertexArray(m_shapeQuad->m_vaoID);
 	indirectQuad.drawCall();
 
 	// Bind for reading by next effect
-	glBindTextureUnit(0, viewport->m_gfxFBOS.getTexID("FXAA", 0));
+	glBindTextureUnit(0, viewport.m_gfxFBOS.getTexID("FXAA", 0));
 	camBufferIndex.endReading();
 	indirectQuad.endReading();
 	Shader::Release();

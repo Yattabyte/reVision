@@ -21,10 +21,7 @@
 #include "Utilities/InputBinding.h"
 #include "Utilities/PreferenceState.h"
 #include "Utilities/MappedChar.h"
-
-// Other
-#include <future>
-#include <string>
+#include "Utilities/GL/Window.h"
 
 
 constexpr char ENGINE_VERSION[] = "@PROJECT_VERSION@";
@@ -48,27 +45,13 @@ public:
 	Engine() noexcept;
 
 
-private:
-	// Private Initialization Methods
-	/** Initialize the window for this application. */
-	void initWindow() noexcept;
-	/** Initialize the auxiliary processing threads. */
-	void initThreads() noexcept;
-	/** Print the engine boiler-plate text to the message manager. */
-	void printBoilerPlate() noexcept;
-
-
 public:
 	// Public Methods
 	/** Ticks the engine's overall simulation by a frame from the main thread. */
 	void tick() noexcept;
 	/** Ticks the engine's overall simulation by a frame from a secondary thread.
-	@param	exitObject	object signaling when to close the thread.
-	@param	window		pointer to the window object. */
-	void tickThreaded(std::future<void> exitObject, GLFWwindow* const window) noexcept;
-	/** Checks if the engine wants to shut down.
-	@return	true if engine should shut down. */
-	bool shouldClose() noexcept;
+	@param	exitObject	object signaling when to close the thread. */
+	void tickThreaded(std::future<void> exitObject, GLFWwindow* const auxContext) noexcept;
 	/** Tells the engine to shut down. */
 	void shutDown() noexcept;
 	/** Set the input mode for the mouse, useful for changing between 2D and 3D views.
@@ -83,24 +66,24 @@ public:
 
 
 	// Public Accessors
+	/** Checks if the engine wants to shut down.
+	@return				true if engine should shut down. */
+	bool shouldClose() const noexcept;
 	/** Retrieve the mouse input mode.
 	@return				the mouse input mode, such as free-look or normal cursor. */
 	MouseInputMode getMouseInputMode() const noexcept;
+	/** Retrieve the application window for this engine. 
+	@return				the engine's window. */
+	Window& getWindow() noexcept;
 	/** Retrieve the current time. 
 	@return				the current time. */
-	static float getTime() noexcept;
-	/** Retrieve a list of available resolutions. 
-	@return				vector of supported resolutions. */
-	static std::vector<glm::ivec3> getResolutions() noexcept;
+	static float GetSystemTime() noexcept;
 	/** Retrieve this engine's action state.
 	@return				the engine's action state. */
 	ActionState& getActionState() noexcept;
 	/** Retrieve this engine's preference state. 
 	@return				this engine's preference state. */
 	PreferenceState& getPreferenceState() noexcept;
-	/** Retrieve this engine's rendering context. 
-	@return				this engine's rendering context. */
-	GLFWwindow* getContext() const noexcept;
 
 
 	// Manager Accessors
@@ -148,8 +131,10 @@ public:
 
 private:
 	// Private Methods
-	/** Updates the window attributes. */
-	void configureWindow() noexcept;
+	/** Print the engine boiler-plate text to the message manager. */
+	void printBoilerPlate() noexcept;
+	/** Parse and process the engine's inputs. */
+	void processInputs();
 
 
 	// Private Attributes
@@ -160,11 +145,6 @@ private:
 	} m_engineState = Engine_State::in_startMenu;
 	float m_lastTime = 0.0f;
 	float m_frameAccumulator = 0.0f;
-	float m_refreshRate = 120.0f;
-	float m_useFullscreen = 1.0f;
-	float m_vsync = 1.0f;
-	glm::ivec2 m_windowSize = glm::ivec2(1);
-	GLFWwindow* m_window = nullptr;
 	MouseInputMode m_mouseInputMode = MouseInputMode::NORMAL;
 	SoundManager m_soundManager;
 	AssetManager m_assetManager;
@@ -172,8 +152,7 @@ private:
 	PreferenceState	m_preferenceState;
 	ActionState	m_actionState;
 	InputBinding m_inputBindings;
-	std::vector<std::pair<std::thread, std::promise<void>>> m_threads;
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
+	Window m_window;
 
 
 	// Private Modules

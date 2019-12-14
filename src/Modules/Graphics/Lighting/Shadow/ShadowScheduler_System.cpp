@@ -32,7 +32,7 @@ void ShadowScheduler_System::updateComponents(const float&, const std::vector<st
 	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
 	const auto& clientPosition = clientCamera->EyePosition;
 	const auto& clientFarPlane = clientCamera->FarPlane;
-	const auto clientTime = m_engine.getTime();
+	const auto clientTime = m_engine.GetSystemTime();
 	if (const int availableRoom = (int)m_maxShadowsCasters - (int)m_frameData.shadowsToUpdate.size()) {
 		int cameraCount = 0;
 		for (const auto& componentParam : components) {

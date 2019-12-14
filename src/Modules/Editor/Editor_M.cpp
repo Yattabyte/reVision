@@ -15,10 +15,6 @@
 #include <fstream>
 
 
-
-/** Construct a game module.
-@param	engine		reference to the engine to use. */
-
 LevelEditor_Module::LevelEditor_Module(Engine& engine) noexcept :
 	Engine_Module(engine) 
 {

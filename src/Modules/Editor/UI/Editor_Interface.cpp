@@ -72,7 +72,7 @@ Editor_Interface::Editor_Interface(Engine& engine, LevelEditor_Module& editor) n
 	ImGui::StyleColorsDark();
 
 	// Setup Platform/Renderer bindings
-	ImGui_ImplGlfw_InitForOpenGL(engine.getContext(), true);
+	ImGui_ImplGlfw_InitForOpenGL(engine.getWindow().getContext(), true);
 	ImGui_ImplOpenGL3_Init("#version 150");
 }
 

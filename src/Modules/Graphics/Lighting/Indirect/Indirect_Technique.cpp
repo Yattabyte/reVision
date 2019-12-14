@@ -59,7 +59,7 @@ void Indirect_Technique::updateCache(const float& deltaTime, ecsWorld& world) no
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Indirect_Technique::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void Indirect_Technique::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	// Update light-bounce volume
 	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeQuad, m_shader_Bounce, m_shader_Recon, m_shader_Rebounce)) {
@@ -83,8 +83,8 @@ void Indirect_Technique::renderTechnique(const float&, const std::shared_ptr<Vie
 
 		if (lightIndices.size()) {
 			updateDrawParams(camIndicesGen, camIndiciesRebounce, camIndiciesRecon, lightIndices, shadowCount, perspectives.size());
-			fillBounceVolume(shadowCount, viewport->m_gfxFBOS.m_rhVolume);
-			rebounceVolume(viewport->m_gfxFBOS.m_rhVolume, camBufferRebounce, indirectQuad);
+			fillBounceVolume(shadowCount, viewport.m_gfxFBOS.m_rhVolume);
+			rebounceVolume(viewport.m_gfxFBOS.m_rhVolume, camBufferRebounce, indirectQuad);
 			reconstructVolume(viewport, camBufferRecon, indirectQuadRecon);
 			camBufferIndex.endReading();
 			camBufferRebounce.endReading();
@@ -179,14 +179,14 @@ void Indirect_Technique::rebounceVolume(RH_Volume& rhVolume, const DynamicBuffer
 	indirectQuad.drawCall();
 }
 
-void Indirect_Technique::reconstructVolume(const std::shared_ptr<Viewport>& viewport, const DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept 
+void Indirect_Technique::reconstructVolume(Viewport& viewport, const DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept 
 {
 	// Reconstruct indirect radiance
-	glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
+	glViewport(0, 0, GLsizei(viewport.m_dimensions.x), GLsizei(viewport.m_dimensions.y));
 	m_shader_Recon->bind();
-	viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);
-	viewport->m_gfxFBOS.m_rhVolume.readSecondary(4);
-	viewport->m_gfxFBOS.bindForWriting("BOUNCE");
+	viewport.m_gfxFBOS.bindForReading("GEOMETRY", 0);
+	viewport.m_gfxFBOS.m_rhVolume.readSecondary(4);
+	viewport.m_gfxFBOS.bindForWriting("BOUNCE");
 	camBufferRecon.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 	indirectQuadRecon.drawCall();
 	glEnable(GL_DEPTH_TEST);

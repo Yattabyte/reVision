@@ -28,7 +28,7 @@ struct Indirect_Light_Data {
 		std::vector<GLint> lightIndices;
 	};
 	/** Construct this structure. */
-	Indirect_Light_Data(ShadowData& sd, Camera& c) noexcept : shadowData(sd), clientCamera(c) {}
+	Indirect_Light_Data(ShadowData& shadowData, Camera& camera) noexcept : shadowData(shadowData), clientCamera(camera) {}
 
 	ShadowData& shadowData;
 	Camera& clientCamera;

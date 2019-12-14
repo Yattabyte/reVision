@@ -18,12 +18,13 @@ struct ShaderHeader {
 
 Shared_Shader::Shared_Shader(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
-	swap(std::dynamic_pointer_cast<Shader>(engine.getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Shader>(engine.getManager_Assets().shareAsset(
 			typeid(Shader).name(),
 			filename,
 			[&engine, filename]() { return std::make_shared<Shader>(engine, filename); },
 			threaded
-		)));
+		));
+	swap(newAsset);
 }
 
 Shader::~Shader() noexcept

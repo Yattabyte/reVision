@@ -7,12 +7,13 @@ constexpr const char* MATERIAL_EXTENSION = ".mat";
 
 Shared_Material::Shared_Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded) noexcept
 {
-	swap(std::dynamic_pointer_cast<Material>(engine.getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Material>(engine.getManager_Assets().shareAsset(
 			typeid(Material).name(),
 			filename,
 			[&engine, filename, textures]() { return std::make_shared<Material>(engine, filename, textures); },
 			threaded
-		)));
+		));
+	swap(newAsset);
 }
 
 Material::Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures) noexcept

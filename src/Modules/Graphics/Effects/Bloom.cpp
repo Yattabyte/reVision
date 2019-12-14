@@ -29,7 +29,7 @@ void Bloom::clearCache(const float&) noexcept
 	m_drawIndex = 0;
 }
 
-void Bloom::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void Bloom::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderBloomExtract, m_shaderCopy, m_shaderGB))
 		return;
@@ -51,8 +51,8 @@ void Bloom::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewp
 	// Extract bright regions from lighting buffer
 	camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 	m_shaderBloomExtract->bind();
-	viewport->m_gfxFBOS.bindForWriting("BLOOM");
-	viewport->m_gfxFBOS.bindForReading("LIGHTING", 0);
+	viewport.m_gfxFBOS.bindForWriting("BLOOM");
+	viewport.m_gfxFBOS.bindForReading("LIGHTING", 0);
 	glBindVertexArray(m_shapeQuad->m_vaoID);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 	indirectQuad.bind();
@@ -62,12 +62,12 @@ void Bloom::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewp
 	if (m_bloomStrength > 0) {
 		// Read from desired texture, blur into this frame buffer
 		bool horizontal = false;
-		glBindTextureUnit(0, viewport->m_gfxFBOS.getTexID("BLOOM", 0));
-		glBindTextureUnit(1, viewport->m_gfxFBOS.getTexID("BLOOM", 1));
+		glBindTextureUnit(0, viewport.m_gfxFBOS.getTexID("BLOOM", 0));
+		glBindTextureUnit(1, viewport.m_gfxFBOS.getTexID("BLOOM", 1));
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + (int)(horizontal));
 		m_shaderGB->bind();
 		m_shaderGB->setUniform(0, horizontal);
-		m_shaderGB->setUniform(1, glm::vec2(viewport->m_dimensions));
+		m_shaderGB->setUniform(1, glm::vec2(viewport.m_dimensions));
 
 		// Blur remainder of the times
 		for (int i = 0; i < m_bloomStrength; i++) {
@@ -83,8 +83,8 @@ void Bloom::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewp
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_ONE, GL_ONE);
-	viewport->m_gfxFBOS.bindForWriting("LIGHTING");
-	glBindTextureUnit(0, viewport->m_gfxFBOS.getTexID("BLOOM", bloomSpot));
+	viewport.m_gfxFBOS.bindForWriting("LIGHTING");
+	glBindTextureUnit(0, viewport.m_gfxFBOS.getTexID("BLOOM", bloomSpot));
 	m_shaderCopy->bind();
 	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 	glDisable(GL_BLEND);

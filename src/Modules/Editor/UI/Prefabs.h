@@ -3,15 +3,13 @@
 #define PREFABS_H
 
 #include "Modules/Editor/UI/Editor_Interface.h"
+#include "Modules/Graphics/Common/Camera.h"
+#include "Modules/Graphics/Common/Viewport.h"
 #include "Modules/ECS/ecsWorld.h"
 #include "Assets/Texture.h"
 #include <string>
 #include <vector>
 
-
-// Forward declarations
-struct Viewport;
-class Camera;
 
 /** A level editor UI element allowing the user to spawn previously made prefab object sets. */
 class Prefabs final : public ImGUI_Element {
@@ -76,7 +74,7 @@ private:
 	std::vector<Entry> m_prefabs;
 	std::vector<Camera> m_prefabCameras;
 	ecsWorld m_previewWorld;
-	std::shared_ptr<Viewport> m_viewport;
+	Viewport m_viewport;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	EntityHandle m_sunHandle;
 

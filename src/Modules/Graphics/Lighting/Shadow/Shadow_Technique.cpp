@@ -51,7 +51,7 @@ ShadowData& Shadow_Technique::getShadowData() noexcept
 
 void Shadow_Technique::updateShadows(const float& deltaTime) noexcept 
 {
-	auto clientTime = m_engine.getTime();
+	auto clientTime = m_engine.GetSystemTime();
 	if (m_frameData.shadowsToUpdate.size()) {
 		// Prepare Viewport
 		glViewport(0, 0, (GLsizei)m_frameData.shadowSize, (GLsizei)m_frameData.shadowSize);

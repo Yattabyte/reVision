@@ -23,14 +23,14 @@ public:
 
 	// Public Interface Implementations.
 	void clearCache(const float& deltaTime) noexcept final;
-	void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
+	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
 
 
 private:
 	// Private Methods
 	/** Convolute the skybox cubemap, generating blurred MIPs (for rougher materials).
 	@param	viewport	the viewport to render from. */
-	void convoluteSky(const std::shared_ptr<Viewport>& viewport) noexcept;
+	void convoluteSky(Viewport& viewport) noexcept;
 
 
 	// Private Attributes

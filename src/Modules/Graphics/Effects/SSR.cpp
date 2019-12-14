@@ -46,7 +46,7 @@ void SSR::clearCache(const float&) noexcept
 	m_drawIndex = 0;
 }
 
-void SSR::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void SSR::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderCopy, m_shaderConvMips, m_shaderSSR1, m_shaderSSR2))
 		return;
@@ -73,8 +73,8 @@ void SSR::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewpor
 	updateMIPChain(viewport);
 
 	glDisable(GL_BLEND);
-	viewport->m_gfxFBOS.bindForWriting("SSR");
-	viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);
+	viewport.m_gfxFBOS.bindForWriting("SSR");
+	viewport.m_gfxFBOS.bindForReading("GEOMETRY", 0);
 	m_shaderSSR1->bind();
 	glBindTextureUnit(6, m_bayerID);
 	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
@@ -82,9 +82,9 @@ void SSR::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewpor
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	viewport->m_gfxFBOS.bindForWriting("REFLECTION");
-	glBindTextureUnit(5, viewport->m_gfxFBOS.getTexID("SSR", 0));
-	glBindTextureUnit(6, viewport->m_gfxFBOS.getTexID("SSR_MIP", 0));
+	viewport.m_gfxFBOS.bindForWriting("REFLECTION");
+	glBindTextureUnit(5, viewport.m_gfxFBOS.getTexID("SSR", 0));
+	glBindTextureUnit(6, viewport.m_gfxFBOS.getTexID("SSR_MIP", 0));
 	m_shaderSSR2->bind();
 	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 
@@ -96,19 +96,19 @@ void SSR::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewpor
 	m_drawIndex++;
 }
 
-void SSR::updateMIPChain(const std::shared_ptr<Viewport>& viewport) noexcept 
+void SSR::updateMIPChain(Viewport& viewport) noexcept 
 {
-	const auto mipFboID = viewport->m_gfxFBOS.getFboID("SSR_MIP");
-	const auto mipTexID = viewport->m_gfxFBOS.getTexID("SSR_MIP", 0);
-	const auto dimensions = glm::vec2(viewport->m_dimensions);
+	const auto mipFboID = viewport.m_gfxFBOS.getFboID("SSR_MIP");
+	const auto mipTexID = viewport.m_gfxFBOS.getTexID("SSR_MIP", 0);
+	const auto dimensions = glm::vec2(viewport.m_dimensions);
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 
 	// Copy lighting texture to one with a MIP chain
 	m_shaderCopy->bind();
-	viewport->m_gfxFBOS.bindForReading("LIGHTING", 0);
-	viewport->m_gfxFBOS.bindForWriting("SSR_MIP");
+	viewport.m_gfxFBOS.bindForReading("LIGHTING", 0);
+	viewport.m_gfxFBOS.bindForWriting("SSR_MIP");
 	GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glClearNamedFramebufferfv(mipFboID, GL_COLOR, 0, clearColor);
 	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
@@ -118,7 +118,7 @@ void SSR::updateMIPChain(const std::shared_ptr<Viewport>& viewport) noexcept
 	glBindTextureUnit(0, mipTexID);
 	for (int horizontal = 0; horizontal < 2; ++horizontal) {
 		m_shaderConvMips->setUniform(0, horizontal);
-		glm::ivec2 read_size = viewport->m_dimensions;
+		glm::ivec2 read_size = viewport.m_dimensions;
 		for (int x = 1; x < 6; ++x) {
 			// Ensure we are reading from MIP level x - 1
 			m_shaderConvMips->setUniform(1, read_size);

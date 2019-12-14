@@ -16,12 +16,13 @@ struct Single_Primitive_Vertex {
 
 Shared_Auto_Model::Shared_Auto_Model(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
-	swap(std::dynamic_pointer_cast<Auto_Model>(engine.getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Auto_Model>(engine.getManager_Assets().shareAsset(
 			typeid(Auto_Model).name(),
 			filename,
 			[&engine, filename]() { return std::make_shared<Auto_Model>(engine, filename); },
 			threaded
-		)));
+		));
+	swap(newAsset);
 }
 
 Auto_Model::~Auto_Model() noexcept

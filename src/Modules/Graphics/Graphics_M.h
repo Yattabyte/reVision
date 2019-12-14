@@ -11,7 +11,6 @@
 
 
 // Forward Declarations
-class Camera;
 struct Viewport;
 
 /** A module responsible for rendering.
@@ -45,7 +44,7 @@ public:
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	viewport		the viewport to render into.
 	@param	cameras			the cameras to render from. */
-	void renderWorld(ecsWorld& world, const float& deltaTime, const std::shared_ptr<Viewport>& viewport, std::vector<Camera>& cameras) noexcept;
+	void renderWorld(ecsWorld& world, const float& deltaTime, Viewport& viewport, std::vector<Camera>& cameras) noexcept;
 	/** Generates a perspective matrix for the client camera. */
 	void genPerspectiveMatrix() noexcept;
 	/** Retrieves a shared pointer to the primary camera.
@@ -63,8 +62,8 @@ private:
 	// Private Attributes
 	glm::ivec2										m_renderSize = glm::ivec2(1);
 	std::shared_ptr<Graphics_Pipeline>				m_pipeline;
-	std::shared_ptr<Viewport>						m_viewport;
 	Camera											m_clientCamera;
+	Viewport										m_viewport;
 	Shared_Shader									m_shader;
 	Shared_Auto_Model								m_shapeQuad;
 	IndirectDraw<1>									m_indirectQuad;

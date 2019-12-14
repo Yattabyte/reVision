@@ -19,16 +19,14 @@ Prefabs::~Prefabs() noexcept
 
 Prefabs::Prefabs(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_engine(engine),
-	m_editor(editor)
+	m_editor(editor),
+	m_texBack(engine, "Editor//folderBack.png"),
+	m_texFolder(engine, "Editor//folder.png"),
+	m_texMissingThumb(engine, "Editor//prefab.png"),
+	m_texIconRefresh(engine, "Editor//iconRefresh.png"),
+	m_viewport(glm::vec2(0.0f), glm::vec2((float)m_thumbSize), engine)
 {
 	m_open = true;
-	m_viewport = std::make_shared<Viewport>(glm::vec2(0.0f), glm::vec2((float)m_thumbSize), engine);
-
-	// Load Assets
-	m_texBack = Shared_Texture(engine, "Editor//folderBack.png");
-	m_texFolder = Shared_Texture(engine, "Editor//folder.png");
-	m_texMissingThumb = Shared_Texture(engine, "Editor//prefab.png");
-	m_texIconRefresh = Shared_Texture(engine, "Editor//iconRefresh.png");
 
 	// Preferences
 	auto& preferences = engine.getPreferenceState();
@@ -271,7 +269,7 @@ void Prefabs::tickThumbnails(const float& deltaTime) noexcept
 
 	GLint previousFBO(0);
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFBO);
-	m_viewport->resize(glm::vec2((float)m_thumbSize), (int)m_prefabs.size());
+	m_viewport.resize(glm::vec2((float)m_thumbSize), (int)m_prefabs.size());
 	m_engine.getModule_Graphics().renderWorld(m_previewWorld, deltaTime, m_viewport, m_prefabCameras);
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
@@ -279,7 +277,7 @@ void Prefabs::tickThumbnails(const float& deltaTime) noexcept
 	// Copy viewport layers into prefab textures
 	count = 0;
 	for (const auto& prefab : m_prefabs)
-		glCopyImageSubData(m_viewport->m_gfxFBOS.getTexID("FXAA", 0), GL_TEXTURE_2D_ARRAY, 0, 0, 0, count++, prefab.texID, GL_TEXTURE_2D, 0, 0, 0, 0, m_thumbSize, m_thumbSize, 1);
+		glCopyImageSubData(m_viewport.m_gfxFBOS.getTexID("FXAA", 0), GL_TEXTURE_2D_ARRAY, 0, 0, 0, count++, prefab.texID, GL_TEXTURE_2D, 0, 0, 0, 0, m_thumbSize, m_thumbSize, 1);
 }
 
 void Prefabs::tickWindow(const float&) noexcept

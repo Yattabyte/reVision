@@ -42,12 +42,13 @@ inline int find_CFG_Property(const std::string& s, const std::vector<std::string
 
 Shared_Config::Shared_Config(Engine& engine, const std::string& filename, const std::vector<std::string>& cfg_strings, const bool& threaded) noexcept
 {
-	swap(std::dynamic_pointer_cast<Config>(engine.getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Config>(engine.getManager_Assets().shareAsset(
 			typeid(Config).name(),
 			filename,
 			[&engine, filename, cfg_strings]() { return std::make_shared<Config>(engine, filename, cfg_strings); },
 			threaded
-		)));
+		));
+	swap(newAsset);
 }
 
 Config::Config(Engine& engine, const std::string& filename, const std::vector<std::string>& strings) noexcept : Asset(engine, filename), m_strings(strings) {}

@@ -51,7 +51,7 @@ void Skybox::clearCache(const float&) noexcept
 	m_drawIndex = 0;
 }
 
-void Skybox::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void Skybox::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderSky, m_shaderSkyReflect, m_shaderConvolute, m_cubemapSky))
 		return;
@@ -88,13 +88,13 @@ void Skybox::renderTechnique(const float&, const std::shared_ptr<Viewport>& view
 
 	// Render skybox to reflection buffer
 	m_shaderSkyReflect->bind();
-	viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);
-	viewport->m_gfxFBOS.bindForWriting("REFLECTION");
+	viewport.m_gfxFBOS.bindForReading("GEOMETRY", 0);
+	viewport.m_gfxFBOS.bindForWriting("REFLECTION");
 	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 
 	// Render skybox to lighting buffer
 	m_shaderSky->bind();
-	viewport->m_gfxFBOS.bindForWriting("LIGHTING");
+	viewport.m_gfxFBOS.bindForWriting("LIGHTING");
 	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 
 	glDisable(GL_DEPTH_TEST);
@@ -104,7 +104,7 @@ void Skybox::renderTechnique(const float&, const std::shared_ptr<Viewport>& view
 	m_drawIndex++;
 }
 
-void Skybox::convoluteSky(const std::shared_ptr<Viewport>& viewport) noexcept 
+void Skybox::convoluteSky(Viewport& viewport) noexcept 
 {
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
@@ -141,7 +141,7 @@ void Skybox::convoluteSky(const std::shared_ptr<Viewport>& viewport) noexcept
 	glTextureParameteri(m_cubemapMipped, GL_TEXTURE_BASE_LEVEL, 0);
 	glTextureParameteri(m_cubemapMipped, GL_TEXTURE_MAX_LEVEL, 5);
 	glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, 0);
-	glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
+	glViewport(0, 0, GLsizei(viewport.m_dimensions.x), GLsizei(viewport.m_dimensions.y));
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, previousFBO);
 	Shader::Release();
 }

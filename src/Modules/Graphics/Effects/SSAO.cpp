@@ -44,17 +44,17 @@ SSAO::SSAO(Engine& engine) noexcept :
 	glTextureParameteri(m_noiseID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_noiseID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	m_shader->addCallback(m_aliveIndicator, [&]()noexcept {
-		std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
-		std::default_random_engine generator;
+		std::uniform_real_distribution<GLfloat> rdmFloats(0.0, 1.0);
+		std::default_random_engine gen;
 		glm::vec4 new_kernel[MAX_KERNEL_SIZE]{};
 		for (int i = 0, t = 0; i < MAX_KERNEL_SIZE; i++, t++) {
 			glm::vec3 sample(
-				randomFloats(generator) * 2.0 - 1.0,
-				randomFloats(generator) * 2.0 - 1.0,
-				randomFloats(generator)
+				rdmFloats(gen) * 2.0 - 1.0,
+				rdmFloats(gen) * 2.0 - 1.0,
+				rdmFloats(gen)
 			);
 			sample = glm::normalize(sample);
-			sample *= randomFloats(generator);
+			sample *= rdmFloats(gen);
 			GLfloat scale = GLfloat(i) / (GLfloat)(MAX_KERNEL_SIZE);
 			scale = 0.1f + (scale * scale) * (1.0f - 0.1f);
 			sample *= scale;
@@ -76,7 +76,7 @@ void SSAO::clearCache(const float&) noexcept
 	m_drawIndex = 0;
 }
 
-void SSAO::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void SSAO::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shader, m_shaderCopyAO, m_shaderGB_A))
 		return;
@@ -100,8 +100,8 @@ void SSAO::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewpo
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	m_shader->bind();
-	viewport->m_gfxFBOS.bindForWriting("SSAO");
-	viewport->m_gfxFBOS.bindForReading("GEOMETRY", 0);
+	viewport.m_gfxFBOS.bindForWriting("SSAO");
+	viewport.m_gfxFBOS.bindForReading("GEOMETRY", 0);
 	glBindTextureUnit(6, m_noiseID);
 	glBindVertexArray(m_shapeQuad->m_vaoID);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -113,16 +113,16 @@ void SSAO::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewpo
 	if (m_blurStrength > 0) {
 		// Clear the second attachment
 		GLfloat clearRed = 0.0f;
-		glClearTexImage(viewport->m_gfxFBOS.getTexID("SSAO", 1), 0, GL_RED, GL_FLOAT, &clearRed);
+		glClearTexImage(viewport.m_gfxFBOS.getTexID("SSAO", 1), 0, GL_RED, GL_FLOAT, &clearRed);
 
 		// Read from desired texture, blur into this frame buffer
 		bool horizontal = false;
-		glBindTextureUnit(0, viewport->m_gfxFBOS.getTexID("SSAO", 0));
-		glBindTextureUnit(1, viewport->m_gfxFBOS.getTexID("SSAO", 1));
+		glBindTextureUnit(0, viewport.m_gfxFBOS.getTexID("SSAO", 0));
+		glBindTextureUnit(1, viewport.m_gfxFBOS.getTexID("SSAO", 1));
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + (int)(horizontal));
 		m_shaderGB_A->bind();
 		m_shaderGB_A->setUniform(0, horizontal);
-		m_shaderGB_A->setUniform(1, glm::vec2(viewport->m_dimensions));
+		m_shaderGB_A->setUniform(1, glm::vec2(viewport.m_dimensions));
 
 		// Blur remainder of the times
 		for (int i = 0; i < m_blurStrength; i++) {
@@ -138,9 +138,9 @@ void SSAO::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewpo
 	glEnable(GL_BLEND);
 	glBlendFuncSeparate(GL_ONE, GL_ONE, GL_DST_ALPHA, GL_ZERO);
 	m_shaderCopyAO->bind();
-	viewport->m_gfxFBOS.bindForWriting("GEOMETRY");
+	viewport.m_gfxFBOS.bindForWriting("GEOMETRY");
 	glDrawBuffer(GL_COLOR_ATTACHMENT2);
-	glBindTextureUnit(0, viewport->m_gfxFBOS.getTexID("SSAO", aoSpot));
+	glBindTextureUnit(0, viewport.m_gfxFBOS.getTexID("SSAO", aoSpot));
 	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 
 	constexpr GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };

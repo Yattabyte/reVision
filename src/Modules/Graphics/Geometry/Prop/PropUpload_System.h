@@ -42,7 +42,8 @@ private:
 	/** Attempt to insert the material supplied into the material map, failing only if it is already present.
 	@param	material	the material to insert only 1 copy of. */
 	void tryInsertMaterial(const Shared_Material& material) noexcept;
-	/***/
+	/** Find the first pixel buffer object that isn't in use.
+	@return				the first free PBO. */
 	std::pair<GLuint*, GLsync*> getFreePBO() noexcept;
 	/** Clear all data held by this system. */
 	void clear() noexcept;

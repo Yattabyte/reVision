@@ -35,12 +35,13 @@ inline static void parse(Engine& engine, Shader_Pkg& userAsset) noexcept
 
 Shared_Shader_Pkg::Shared_Shader_Pkg(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
-	swap(std::dynamic_pointer_cast<Shader_Pkg>(engine.getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Shader_Pkg>(engine.getManager_Assets().shareAsset(
 			typeid(Shader_Pkg).name(),
 			filename,
 			[&engine, filename]() { return std::make_shared<Shader_Pkg>(engine, filename); },
 			threaded
-		)));
+		));
+	swap(newAsset);
 }
 
 Shader_Pkg::Shader_Pkg(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}

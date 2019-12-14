@@ -17,7 +17,7 @@ Options_Video::Options_Video(Engine& engine) noexcept :
 	float width = 1920.0f, height = 1080.0f;
 	engine.getPreferenceState().getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, width);
 	engine.getPreferenceState().getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, height);
-	m_resolutions = engine.getResolutions();
+	m_resolutions = Window::GetResolutions();
 	std::vector<std::string> strings(m_resolutions.size());
 	int counter = 0, index = 0;
 	for (const auto& res : m_resolutions) {
@@ -30,10 +30,10 @@ Options_Video::Options_Video(Engine& engine) noexcept :
 	element_res->setStrings(strings);
 	element_res->setIndex(index);
 	addOption(engine, element_res, 1.0f, "Resolution:", "Changes the resolution the game renders at.", (int)SideList::Interact::on_index_changed, [&, element_res]() noexcept {
-		const auto& index = element_res->getIndex();
-		m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_resolutions[index].x);
-		m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_resolutions[index].y);
-		m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_WINDOW_REFRESH_RATE, m_resolutions[index].z);
+		const auto& resolutionIndex = element_res->getIndex();
+		m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_resolutions[resolutionIndex].x);
+		m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_resolutions[resolutionIndex].y);
+		m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_WINDOW_REFRESH_RATE, m_resolutions[resolutionIndex].z);
 		});
 
 	// Gamma Option
@@ -47,11 +47,11 @@ Options_Video::Options_Video(Engine& engine) noexcept :
 	addOption(engine, gamma_slider, 0.75f, "Gamma:", "Changes the gamma correction value used.", (int)Slider::Interact::on_value_change, [&, gamma_slider]() noexcept {
 		// Get a round version of the input
 		const float round_value = (int)(gamma_slider->getValue() * 100.0f + .5f) / 100.0f;
-		std::ostringstream out;
-		out.precision(2);
-		out << std::fixed << gamma_slider->getValue();
+		std::ostringstream sstream;
+		sstream.precision(2);
+		sstream << std::fixed << gamma_slider->getValue();
 		m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_GAMMA, round_value);
-		gamma_slider->setText(out.str());
+		gamma_slider->setText(sstream.str());
 		});
 
 	// Draw Distance Option

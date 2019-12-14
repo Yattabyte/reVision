@@ -7,12 +7,13 @@ constexpr const char* DIRECTORY_SOUNDS = "Sounds\\";
 
 Shared_Sound::Shared_Sound(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
-	swap(std::dynamic_pointer_cast<Sound>(engine.getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Sound>(engine.getManager_Assets().shareAsset(
 			typeid(Sound).name(),
 			filename,
 			[&engine, filename]() { return std::make_shared<Sound>(engine, filename); },
 			threaded
-		)));
+		));
+	swap(newAsset);
 }
 
 Sound::~Sound() noexcept

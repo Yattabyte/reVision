@@ -7,12 +7,13 @@
 
 Shared_Mesh::Shared_Mesh(Engine& engine, const std::string& filename, const bool& threaded) noexcept
 {
-	swap(std::dynamic_pointer_cast<Mesh>(engine.getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Mesh>(engine.getManager_Assets().shareAsset(
 			typeid(Mesh).name(),
 			filename,
 			[&engine, filename]() { return std::make_shared<Mesh>(engine, filename); },
 			threaded
-		)));
+		));
+	swap(newAsset);
 }
 
 Mesh::Mesh(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}

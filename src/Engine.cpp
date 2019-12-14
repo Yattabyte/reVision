@@ -3,32 +3,22 @@
 #include "LinearMath/btScalar.h"
 #include <direct.h>
 
-// OpenGL Dependent Systems //
-#include <glad/glad.h>
-#include "GLFW/glfw3.h"
-
 // Importers Used //
 #include "Utilities/IO/Image_IO.h"
 #include "Utilities/IO/Mesh_IO.h"
 
 
-constexpr int DESIRED_OGL_VER_MAJOR = 4;
-constexpr int DESIRED_OGL_VER_MINOR = 5;
-
 Engine::~Engine() noexcept
 {
-	// Update indicator
-	*m_aliveIndicator = false;
-	m_moduleECS.deinitialize();
-	m_moduleGraphics.deinitialize();
-	m_moduleUI.deinitialize();
 	m_modulePhysics.deinitialize();
-	m_moduleStartScreen.deinitialize();
+	m_moduleUI.deinitialize();
+	m_moduleGraphics.deinitialize();
 	m_moduleEditor.deinitialize();
 	m_moduleGame.deinitialize();
+	m_moduleStartScreen.deinitialize();
+	m_moduleECS.deinitialize();
+
 	Image_IO::Deinitialize();
-	glfwDestroyWindow(m_window);
-	glfwTerminate();
 	m_messageManager.statement("Shutting down...");
 }
 
@@ -36,6 +26,7 @@ Engine::Engine() noexcept :
 	// Initialize engine-dependent members first
 	m_preferenceState(*this),
 	m_inputBindings(*this),
+	m_window(*this),
 	m_moduleECS(*this),
 	m_moduleStartScreen(*this),
 	m_moduleGame(*this),
@@ -44,8 +35,6 @@ Engine::Engine() noexcept :
 	m_moduleUI(*this),
 	m_modulePhysics(*this)
 {
-	// Initialize an OGL context
-	initWindow();
 	Image_IO::Initialize();
 	m_inputBindings.loadFile("binds");
 
@@ -58,220 +47,7 @@ Engine::Engine() noexcept :
 	m_moduleEditor.initialize();
 	m_moduleGame.initialize();
 
-	initThreads();
 	goToMainMenu();
-}
-
-void Engine::initWindow() noexcept
-{
-	// Initialize GLFW
-	if (!glfwInit()) {
-		m_messageManager.error("GLFW unable to initialize, shutting down...");
-		glfwTerminate();
-		exit(-1);
-	}
-
-	// Create main window
-	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
-	glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
-	glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
-	glfwWindowHint(GLFW_ALPHA_BITS, 0);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DESIRED_OGL_VER_MAJOR);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DESIRED_OGL_VER_MINOR);
-	glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-	glfwWindowHint(GLFW_AUTO_ICONIFY, GL_TRUE);
-	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-	glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
-	glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
-#ifdef DEBUG
-	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
-#endif
-	m_window = glfwCreateWindow(1, 1, "", nullptr, nullptr);
-	glfwMakeContextCurrent(m_window);
-	glfwSetWindowIcon(m_window, 0, nullptr);
-	glfwSetCursorPos(m_window, 0, 0);
-
-	// Initialize GLAD
-	if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 0) {
-		m_messageManager.error("GLAD unable to initialize, shutting down...");
-		glfwTerminate();
-		exit(-1);
-	}
-
-	// Preference Values
-	m_refreshRate = float(glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate);
-	m_windowSize.x = glfwGetVideoMode(glfwGetPrimaryMonitor())->width;
-	m_windowSize.y = glfwGetVideoMode(glfwGetPrimaryMonitor())->height;
-	m_preferenceState.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_windowSize.x);
-	m_preferenceState.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_windowSize.y);
-	m_preferenceState.getOrSetValue(PreferenceState::Preference::C_WINDOW_REFRESH_RATE, m_refreshRate);
-	m_preferenceState.getOrSetValue(PreferenceState::Preference::C_WINDOW_FULLSCREEN, m_useFullscreen);
-	m_preferenceState.getOrSetValue(PreferenceState::Preference::C_VSYNC, m_vsync);
-
-	// Preference Callbacks
-	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
-		m_windowSize.x = int(f);
-		configureWindow();
-		});
-	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
-		m_windowSize.y = int(f);
-		configureWindow();
-		});
-	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float& f) noexcept {
-		m_refreshRate = f;
-		configureWindow();
-		});
-	m_preferenceState.addCallback(PreferenceState::Preference::C_WINDOW_FULLSCREEN, m_aliveIndicator, [&](const float& f) noexcept {
-		m_useFullscreen = f;
-		configureWindow();
-		});
-	m_preferenceState.addCallback(PreferenceState::Preference::C_VSYNC, m_aliveIndicator, [&](const float& f) noexcept {
-		m_vsync = f;
-		glfwSwapInterval((int)f);
-		});
-	configureWindow();
-	glfwSwapInterval((int)m_vsync);
-	glfwSetInputMode(m_window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
-	glfwSetWindowUserPointer(m_window, this);
-	glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) noexcept {
-		auto& preferences = static_cast<Engine*>(glfwGetWindowUserPointer(window))->getPreferenceState();
-		preferences.setValue(PreferenceState::Preference::C_WINDOW_WIDTH, width);
-		preferences.setValue(PreferenceState::Preference::C_WINDOW_HEIGHT, height);
-		});
-	glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xPos, double yPos) noexcept {
-		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyCursorPos(xPos, yPos);
-		});
-	glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) noexcept {
-		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyCursorButton(button, action, mods);
-		});
-	glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int character) noexcept {
-		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyChar(character);
-		});
-	glfwSetKeyCallback(m_window, [](GLFWwindow* window, int a, int b, int c, int d)noexcept {
-		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyKey(a, b, c, d);
-		});
-#ifdef DEBUG
-	if (GLAD_GL_KHR_debug) {
-		GLint v;
-		glGetIntegerv(GL_CONTEXT_FLAGS, &v);
-		if (v && GL_CONTEXT_FLAG_DEBUG_BIT) {
-			glEnable(GL_DEBUG_OUTPUT);
-			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-			m_messageManager.statement(">>> KHR DEBUG MODE ENABLED <<<");
-			auto myCallback = [](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* msg, const void* data) {
-				char* _source;
-				char* _type;
-				char* _severity;
-				switch (source) {
-				case GL_DEBUG_SOURCE_API:
-					_source = "API";
-					break;
-				case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-					_source = "WINDOW SYSTEM";
-					break;
-				case GL_DEBUG_SOURCE_SHADER_COMPILER:
-					_source = "SHADER COMPILER";
-					break;
-				case GL_DEBUG_SOURCE_THIRD_PARTY:
-					_source = "THIRD PARTY";
-					break;
-				case GL_DEBUG_SOURCE_APPLICATION:
-					_source = "APPLICATION";
-					break;
-				case GL_DEBUG_SOURCE_OTHER:
-					_source = "UNKNOWN";
-					break;
-				default:
-					_source = "UNKNOWN";
-					break;
-				}
-
-				switch (type) {
-				case GL_DEBUG_TYPE_ERROR:
-					_type = "ERROR";
-					break;
-				case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-					_type = "DEPRECATED BEHAVIOR";
-					break;
-				case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-					_type = "UDEFINED BEHAVIOR";
-					break;
-				case GL_DEBUG_TYPE_PORTABILITY:
-					_type = "PORTABILITY";
-					break;
-				case GL_DEBUG_TYPE_PERFORMANCE:
-					_type = "PERFORMANCE";
-					break;
-				case GL_DEBUG_TYPE_OTHER:
-					_type = "OTHER";
-					break;
-				case GL_DEBUG_TYPE_MARKER:
-					_type = "MARKER";
-					break;
-				default:
-					_type = "UNKNOWN";
-					break;
-				}
-
-				switch (severity) {
-				case GL_DEBUG_SEVERITY_HIGH:
-					_severity = "HIGH";
-					break;
-				case GL_DEBUG_SEVERITY_MEDIUM:
-					_severity = "MEDIUM";
-					break;
-				case GL_DEBUG_SEVERITY_LOW:
-					_severity = "LOW";
-					break;
-				case GL_DEBUG_SEVERITY_NOTIFICATION:
-					_severity = "NOTIFICATION";
-					break;
-				default:
-					_severity = "UNKNOWN";
-					break;
-				}
-
-				if (severity != GL_DEBUG_SEVERITY_NOTIFICATION && severity != GL_DEBUG_SEVERITY_LOW)
-					(reinterpret_cast<MessageManager*>(const_cast<void*>(data)))->error(
-						std::to_string(id) + ": " + std::string(_type) + " of " + std::string(_severity) + " severity, raised from " + std::string(_source) + ": " + std::string(msg, length));
-			};
-			glDebugMessageCallbackKHR(myCallback, &m_messageManager);
-		}
-	}
-#endif
-}
-
-void Engine::initThreads() noexcept
-{
-	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());
-	for (unsigned int x = 0; x < maxThreads; ++x) {
-		// Create an invisible window for multi-threaded GL operations
-		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
-		glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
-		glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
-		glfwWindowHint(GLFW_ALPHA_BITS, 0);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DESIRED_OGL_VER_MAJOR);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DESIRED_OGL_VER_MINOR);
-		glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-		glfwWindowHint(GLFW_AUTO_ICONIFY, GL_TRUE);
-		glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-		std::promise<void> exitSignal;
-		std::future<void> exitObject = exitSignal.get_future();
-		std::thread workerThread(&Engine::tickThreaded, this, std::move(exitObject), std::move(glfwCreateWindow(1, 1, "", nullptr, m_window)));
-		workerThread.detach();
-		m_threads.push_back(std::move(std::pair(std::move(workerThread), std::move(exitSignal))));
-	}
 }
 
 void Engine::printBoilerPlate() noexcept
@@ -293,7 +69,7 @@ void Engine::printBoilerPlate() noexcept
 	m_messageManager.statement("  Dear ImGui   " + std::string(ImGui::GetVersion()));
 	m_messageManager.statement("  FreeImage    " + Image_IO::Get_Version());
 	m_messageManager.statement("  GLAD         " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor));
-	m_messageManager.statement("  GLFW         " + std::string(glfwGetVersionString(), 5));
+	m_messageManager.statement("  GLFW         " + Window::GetVersion());
 	m_messageManager.statement("  GLM          " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
 	m_messageManager.statement("  SoLoud       " + std::to_string(m_soundManager.GetVersion()));
 	m_messageManager.statement("");
@@ -307,30 +83,11 @@ void Engine::printBoilerPlate() noexcept
 
 void Engine::tick() noexcept
 {
-	///*----------------------------------------------------BEGIN FRAME----------------------------------------------------*///
-	const float thisTime = (float)glfwGetTime(), deltaTime = thisTime - m_lastTime;
+	const float thisTime = GetSystemTime(), deltaTime = thisTime - m_lastTime;
 	m_lastTime = thisTime;
 
-	// Update Managers
+	processInputs();
 	m_assetManager.notifyObservers();
-
-	// Updated mouse states, manually
-	double mouseX, mouseY;
-	glfwGetCursorPos(m_window, &mouseX, &mouseY);
-	m_actionState[ActionState::Action::MOUSE_L] = (float)glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT);
-	m_actionState[ActionState::Action::MOUSE_R] = (float)glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT);
-	m_actionState[ActionState::Action::MOUSE_X] = (float)mouseX;
-	m_actionState[ActionState::Action::MOUSE_Y] = (float)mouseY;
-	if (m_mouseInputMode == MouseInputMode::FREE_LOOK)
-		glfwSetCursorPos(m_window, 0, 0);
-
-	// Update key binding states, manually
-	if (const auto& bindings = m_inputBindings.getBindings())
-		if (bindings->ready())
-			for (const auto& pair : bindings.get()->m_configuration)
-				m_actionState[ActionState::Action(pair.first)] = glfwGetKey(m_window, (int)pair.second) ? 1.0f : 0.0f;
-
-	// Update UI module based on action state, manually
 	m_moduleUI.applyActionState(m_actionState);
 
 	// Tick relevant systems
@@ -342,29 +99,26 @@ void Engine::tick() noexcept
 		m_moduleEditor.frameTick(deltaTime);
 	m_moduleUI.frameTick(deltaTime);
 
-	// Swap buffers and end
-	glfwSwapBuffers(m_window);
-	glfwPollEvents();
-	///*-----------------------------------------------------END FRAME-----------------------------------------------------*///
+	m_window.swapBuffers();
 }
 
-void Engine::tickThreaded(std::future<void> exitObject, GLFWwindow* const window) noexcept
+void Engine::tickThreaded(std::future<void> exitObject, GLFWwindow* const auxContext) noexcept
 {
-	glfwMakeContextCurrent(window);
+	Window::MakeCurrent(auxContext);
 
 	// Check if thread should shutdown
 	while (exitObject.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
-		m_assetManager.beginWorkOrder();
+		m_assetManager.beginWorkOrder();	
 }
 
-bool Engine::shouldClose() noexcept
+bool Engine::shouldClose() const noexcept
 {
-	return glfwWindowShouldClose(m_window);
+	return m_window.shouldClose();
 }
 
 void Engine::shutDown() noexcept
 {
-	glfwSetWindowShouldClose(m_window, GLFW_TRUE);
+	m_window.close();
 }
 
 void Engine::setMouseInputMode(const MouseInputMode& mode) noexcept
@@ -372,11 +126,11 @@ void Engine::setMouseInputMode(const MouseInputMode& mode) noexcept
 	m_mouseInputMode = mode;
 	switch (mode) {
 	case MouseInputMode::NORMAL:
-		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		m_window.setMouseMode3D(false);
 		break;
 	case MouseInputMode::FREE_LOOK:
-		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		glfwSetCursorPos(m_window, m_actionState[ActionState::Action::LOOK_X], m_actionState[ActionState::Action::LOOK_Y]);
+		m_window.setMouseMode3D(true);
+		m_window.setMousePos({ m_actionState[ActionState::Action::LOOK_X], m_actionState[ActionState::Action::LOOK_Y] });
 		m_actionState[ActionState::Action::LOOK_X] = m_actionState[ActionState::Action::MOUSE_X];
 		m_actionState[ActionState::Action::LOOK_Y] = m_actionState[ActionState::Action::MOUSE_Y];
 		break;
@@ -406,19 +160,14 @@ Engine::MouseInputMode Engine::getMouseInputMode() const noexcept
 	return m_mouseInputMode;
 }
 
-float Engine::getTime() noexcept
+Window& Engine::getWindow() noexcept
 {
-	return (float)glfwGetTime();
+	return m_window;
 }
 
-std::vector<glm::ivec3> Engine::getResolutions() noexcept
+float Engine::GetSystemTime() noexcept
 {
-	int count(0);
-	const GLFWvidmode* modes = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);
-	std::vector<glm::ivec3> resolutions(count);
-	for (int x = 0; x < count; ++x)
-		resolutions[x] = { modes[x].width, modes[x].height, modes[x].refreshRate };
-	return resolutions;
+	return Window::GetSystemTime();
 }
 
 ActionState& Engine::getActionState() noexcept 
@@ -429,11 +178,6 @@ ActionState& Engine::getActionState() noexcept
 PreferenceState& Engine::getPreferenceState() noexcept 
 { 
 	return m_preferenceState; 
-}
-
-GLFWwindow* Engine::getContext() const noexcept 
-{ 
-	return m_window; 
 }
 
 AssetManager& Engine::getManager_Assets() noexcept 
@@ -497,17 +241,21 @@ bool Engine::File_Exists(const std::string& name) noexcept
 	return (stat((Engine::Get_Current_Dir() + name).c_str(), &buffer) == 0);
 }
 
-void Engine::configureWindow() noexcept
+void Engine::processInputs()
 {
-	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	const int maxWidth = mainMode->width, maxHeight = mainMode->height;
-	glfwSetWindowSize(m_window, m_windowSize.x, m_windowSize.y);
-	glfwSetWindowPos(m_window, (maxWidth - m_windowSize.x) / 2, (maxHeight - m_windowSize.y) / 2);
-	glfwSetWindowMonitor(
-		m_window,
-		m_useFullscreen ? glfwGetPrimaryMonitor() : nullptr,
-		0, 0,
-		m_windowSize.x, m_windowSize.y,
-		(int)m_refreshRate
-	);
+	// Updated mouse states, manually
+	auto& actionState = getActionState();
+	const auto cursorPos = m_window.getMousePos();
+	actionState[ActionState::Action::MOUSE_L] = (float)m_window.getMouseKey(0);
+	actionState[ActionState::Action::MOUSE_R] = (float)m_window.getMouseKey(1);
+	actionState[ActionState::Action::MOUSE_X] = cursorPos.x;
+	actionState[ActionState::Action::MOUSE_Y] = cursorPos.y;
+	if (m_mouseInputMode == MouseInputMode::FREE_LOOK)
+		m_window.setMousePos({ 0, 0 });
+
+	// Update key binding states, manually
+	if (const auto& bindings = m_inputBindings.getBindings())
+		if (bindings->ready())
+			for (const auto& pair : bindings.get()->m_configuration)
+				m_actionState[ActionState::Action(pair.first)] = (float)(m_window.getKey((int)pair.second));
 }

@@ -51,7 +51,7 @@ public:
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	viewport		the viewport to render from.
 	@param	perspectives	the viewing perspectives to render from. */
-	virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept;
+	virtual void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept;
 
 
 protected:

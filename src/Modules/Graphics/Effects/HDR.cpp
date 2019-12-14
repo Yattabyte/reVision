@@ -25,7 +25,7 @@ void HDR::clearCache(const float&) noexcept
 	m_drawIndex = 0;
 }
 
-void HDR::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void HDR::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderHDR))
 		return;
@@ -46,8 +46,8 @@ void HDR::renderTechnique(const float&, const std::shared_ptr<Viewport>& viewpor
 
 	// Write HDR effect to own framebuffer
 	camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-	viewport->m_gfxFBOS.bindForWriting("HDR");
-	viewport->m_gfxFBOS.bindForReading("LIGHTING", 0);
+	viewport.m_gfxFBOS.bindForWriting("HDR");
+	viewport.m_gfxFBOS.bindForReading("LIGHTING", 0);
 	m_shaderHDR->bind();
 	m_shaderHDR->setUniform(0, 1.0f);
 	m_shaderHDR->setUniform(1, m_gamma);

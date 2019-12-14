@@ -111,7 +111,7 @@ void Graphics_Pipeline::end(const float& deltaTime) noexcept
 		tech->clearCache(deltaTime);
 }
 
-void Graphics_Pipeline::render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories) noexcept
+void Graphics_Pipeline::render(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories) noexcept
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for (auto& tech : m_allTechniques)

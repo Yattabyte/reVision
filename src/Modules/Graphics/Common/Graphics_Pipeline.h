@@ -42,7 +42,7 @@ public:
 	@param	viewport		the viewport to render into.
 	@param	perspectives	the camera and layer indices to render with.
 	@param	categories		the allowed technique categories to render. */
-	void render(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories = (unsigned int)Graphics_Technique::Technique_Category::ALL) noexcept;
+	void render(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories = (unsigned int)Graphics_Technique::Technique_Category::ALL) noexcept;
 	/** Use geometry techniques to cull shadows.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	perspectives	the camera and layer indices to render. */
@@ -59,7 +59,7 @@ protected:
 	GL_Vector<Camera::GPUData> m_cameraBuffer;
 	ecsSystemList m_worldSystems, m_cameraSystems;
 	std::shared_ptr<ecsBaseSystem> m_transHierachy;
-	std::vector< std::shared_ptr<Geometry_Technique>> m_geometryTechniques;
+	std::vector<std::shared_ptr<Geometry_Technique>> m_geometryTechniques;
 	std::vector<std::shared_ptr<Graphics_Technique>> m_lightingTechniques, m_effectTechniques, m_allTechniques;
 };
 

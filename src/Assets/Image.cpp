@@ -5,12 +5,13 @@
 
 Shared_Image::Shared_Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded, const Fill_Policy& policyFill, const Resize_Policy& policyResize) noexcept
 {
-	swap(std::dynamic_pointer_cast<Image>(engine.getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Image>(engine.getManager_Assets().shareAsset(
 			typeid(Image).name(),
 			filename,
 			[&engine, filename, specificSize, policyFill, policyResize]() { return std::make_shared<Image>(engine, filename, specificSize, policyFill, policyResize); },
 			threaded
-		)));
+		));
+	swap(newAsset);
 }
 
 Image::Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize) noexcept : Asset(engine, filename), m_policyFill(policyFill), m_policyResize(policyResize)
