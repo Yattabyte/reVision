@@ -14,7 +14,7 @@
 constexpr size_t MAX_IMPORTERS = 4;
 struct Importer_Pool {
 	Importer_Pool() noexcept {
-		std::generate(pool, pool + MAX_IMPORTERS, []() {return new Assimp::Importer(); });
+		std::generate(std::begin(pool), std::end(pool), []() { return new Assimp::Importer(); });
 	}
 
 	/** Borrow a single importer.
@@ -274,22 +274,23 @@ VertexBoneData::VertexBoneData() noexcept
 
 VertexBoneData::VertexBoneData(const VertexBoneData& vbd) noexcept
 {
-	Reset();
-	for (size_t i = 0; i < 4; ++i) {
+	for(size_t i = 0; i < NUM_BONES_PER_VEREX; ++i) {
 		IDs[i] = vbd.IDs[i];
 		Weights[i] = vbd.Weights[i];
 	}
 }
 
-inline void VertexBoneData::Reset() noexcept
+void VertexBoneData::Reset() noexcept
 {
-	memset(IDs, 0, sizeof(IDs));
-	memset(Weights, 0, sizeof(Weights));
+	for(size_t i = 0; i < NUM_BONES_PER_VEREX; ++i) {
+		IDs[i] = 0;
+		Weights[i] = 0.0f;
+	}
 }
 
-inline void VertexBoneData::AddBoneData(const int& BoneID, const float& Weight) noexcept
+void VertexBoneData::AddBoneData(const int& BoneID, const float& Weight) noexcept
 {
-	for (size_t i = 0; i < 4; ++i)
+	for(size_t i = 0; i < NUM_BONES_PER_VEREX; ++i)
 		if (Weights[i] == 0.0) {
 			IDs[i] = BoneID;
 			Weights[i] = Weight;

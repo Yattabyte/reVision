@@ -62,14 +62,12 @@ void MousePicker_System::updateComponents(const float&, const std::vector<std::v
 	btCollisionWorld::ClosestRayResultCallback closestResults(origin, direction);
 	closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
 	m_engine.getModule_Physics().getWorld().rayTest(origin, direction, closestResults);
-	void* closestPhysicsShape = nullptr;
+	const auto& closestPhysicsShape = closestResults.hasHit() ? closestResults.m_collisionObject->getCollisionShape() : nullptr;
 	float closetstPhysicsHit = FLT_MAX;
 	glm::vec3 intersectionNormal(0, 1, 0);
 	if (closestResults.hasHit()) {
 		const auto p = origin.lerp(direction, closestResults.m_closestHitFraction);
 		closetstPhysicsHit = glm::distance(ray_origin, glm::vec3(p.x(), p.y(), p.z()));
-		// We won't change this at all, we just need the pointer address
-		closestPhysicsShape = const_cast<btCollisionShape*>(closestResults.m_collisionObject->getCollisionShape());
 		intersectionNormal = glm::vec3(closestResults.m_hitNormalWorld.x(), closestResults.m_hitNormalWorld.y(), closestResults.m_hitNormalWorld.z());
 	}
 

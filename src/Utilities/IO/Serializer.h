@@ -53,7 +53,7 @@ public:
 						char payload_name[MAX_NAME_CHARS]{ '\0' };
 						int payload_size;
 					};
-					const auto& memStruct = *reinterpret_cast<Memory_Structure*>(const_cast<char*>(&memberData[index]));
+					const auto& memStruct = *reinterpret_cast<const Memory_Structure*>(&memberData[index]);
 					const std::string memory_payload_string(memStruct.payload_name, MAX_NAME_CHARS);
 					if (memStruct.struct_size == 0 || memory_payload_string.empty())
 						break;
@@ -82,15 +82,15 @@ public:
 	inline static std::vector<char> Serialize_Value(const std::string& name, const T& data) {
 		// For convenience sake, wrap our output data into a memory-copyable struct
 		struct Memory_Structure {
-			int struct_size = (int)sizeof(Memory_Structure);
+			int struct_size = (int)(sizeof(Memory_Structure));
 			char payload_name[MAX_NAME_CHARS]{ '\0' };
-			int payload_size = (int)sizeof(T);
+			int payload_size = (int)(sizeof(T));
 			char payload_data[sizeof(T)]{0};
 
 			/** Fill this memory structure. */
 			Memory_Structure(const std::string& name, const T& data) {
 				// Copy-in the variable name, clamped to a max of MAX_NAME_CHARS)
-				std::copy(name.begin(), name.size() <= (size_t)MAX_NAME_CHARS ? name.end() : name.begin() + MAX_NAME_CHARS, std::begin(payload_name));
+				std::copy(name.begin(), name.size() <= (size_t)(MAX_NAME_CHARS) ? name.end() : name.begin() + MAX_NAME_CHARS, std::begin(payload_name));
 				// Copy-in the variable data
 				*reinterpret_cast<T*>(&payload_data[0]) = data;
 			}
@@ -121,7 +121,7 @@ public:
 				struct_size += payload_size;
 
 				// Copy-in the variable name, clamped to a max of MAX_NAME_CHARS)
-				std::copy(name.begin(), name.size() <= (size_t)MAX_NAME_CHARS ? name.end() : name.begin() + MAX_NAME_CHARS, std::begin(payload_name));
+				std::copy(name.begin(), name.size() <= (size_t)(MAX_NAME_CHARS) ? name.end() : name.begin() + MAX_NAME_CHARS, std::begin(payload_name));
 			}
 		} const outputData(name, data);
 
@@ -150,11 +150,11 @@ public:
 		// Ensure the data buffer is of the expected size
 		if (dataBuffer.size() == (int)sizeof(Memory_Structure)) {
 			// Cast the memory back into the structure
-			const auto& inputData = *reinterpret_cast<Memory_Structure*>(const_cast<char*>(&dataBuffer[0]));
+			const auto& inputData = *reinterpret_cast<const Memory_Structure*>(&dataBuffer[0]);
 			// Ensure internal memory size matches
 			if (dataBuffer.size() == inputData.struct_size) {
 				const std::string name(inputData.payload_name, MAX_NAME_CHARS);
-				const T& data = *reinterpret_cast<T*>(const_cast<char*>(&inputData.payload_data[0]));
+				const T& data = *reinterpret_cast<const T*>(&inputData.payload_data[0]);
 				return { { name,data } };
 			}
 		}
@@ -176,7 +176,7 @@ public:
 		// Ensure the data buffer is of the expected size
 		if (dataBuffer.size() >= (int)sizeof(Memory_Structure)) {
 			// Cast the memory back into the structure
-			const auto& inputData = *reinterpret_cast<Memory_Structure*>(const_cast<char*>(&dataBuffer[0]));
+			const auto& inputData = *reinterpret_cast<const Memory_Structure*>(&dataBuffer[0]);
 			// Ensure internal memory size matches
 			if (dataBuffer.size() == inputData.struct_size) {
 				const std::string name(inputData.payload_name, MAX_NAME_CHARS);

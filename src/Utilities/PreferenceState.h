@@ -153,11 +153,11 @@ public:
 			// Call callbacks
 			if (m_callbacks.find(targetKey) != m_callbacks.end()) {
 				size_t index(0ull);
-				for (const auto& pair : m_callbacks[targetKey]) {
+				for (const auto& pair : m_callbacks.at(targetKey)) {
 					if (pair.first)
 						pair.second(castValue);
 					else
-						m_callbacks[targetKey].erase(m_callbacks[targetKey].begin() + index);
+						m_callbacks.at(targetKey).erase(m_callbacks.at(targetKey).begin() + index);
 					index++;
 				}
 			}
