@@ -15,7 +15,7 @@ Frametime_Counter::Frametime_Counter(Engine& engine) noexcept :
 	m_shapeQuad(Shared_Auto_Model(engine, "quad"))
 {
 	// Preferences
-	auto& preferences = m_engine.getPreferenceState();
+	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept { resize(glm::vec2(f, m_renderSize.y)); });

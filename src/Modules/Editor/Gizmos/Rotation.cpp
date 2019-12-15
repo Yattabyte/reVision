@@ -35,7 +35,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine& engine, LevelEditor_Module& editor) noexc
 		});
 
 	// Preferences
-	auto& preferences = m_engine.getPreferenceState();
+	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {

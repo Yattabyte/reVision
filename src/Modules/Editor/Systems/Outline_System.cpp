@@ -26,7 +26,7 @@ Outline_System::Outline_System(Engine& engine, LevelEditor_Module& editor) noexc
 	addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 
 	// Preferences
-	auto& preferences = m_engine.getPreferenceState();
+	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::E_OUTLINE_SCALE, m_renderScale);
 	preferences.addCallback(PreferenceState::Preference::E_OUTLINE_SCALE, m_aliveIndicator, [&](const float& f) noexcept {
 		m_renderScale = f;

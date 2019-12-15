@@ -31,7 +31,7 @@ MousePicker_System::MousePicker_System(Engine& engine) noexcept :
 	addComponentType(Prop_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 
 	// Preferences
-	auto& preferences = m_engine.getPreferenceState();
+	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {

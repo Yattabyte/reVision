@@ -2,7 +2,9 @@
 #ifndef REFLECTOR_TECHNIQUE_H
 #define REFLECTOR_TECHNIQUE_H
 
-#include "Modules/Graphics/Common/Graphics_Pipeline.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Camera.h"
+#include "Modules/Graphics/Common/Viewport.h"
 #include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Assets/Shader.h"

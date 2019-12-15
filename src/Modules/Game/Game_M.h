@@ -4,7 +4,8 @@
 
 #include "Modules/Engine_Module.h"
 #include "Modules/ECS/ecsWorld.h"
-#include "Modules/Game/Overlays/Overlay.h"
+#include "Modules/Game/Overlays/LoadingIndicator.h"
+#include "Modules/Game/Overlays/Frametime_Counter.h"
 #include "Modules/UI/Basic Elements/UI_Element.h"
 
 
@@ -53,8 +54,9 @@ private:
 	Game_State m_gameState = Game_State::in_game;
 	ecsSystemList m_Systems;
 	ecsWorld m_world;
+	LoadingIndicator m_loadingRing;
+	Frametime_Counter m_frameTime;
 	std::shared_ptr<UI_Element> m_pauseMenu;
-	std::shared_ptr<Overlay> m_loadingRing, m_frameTime;
 };
 
 #endif // GAME_MODULE_H

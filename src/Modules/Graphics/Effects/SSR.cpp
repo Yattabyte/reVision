@@ -36,7 +36,7 @@ SSR::SSR(Engine& engine) noexcept :
 	glTextureParameteri(m_bayerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	// Error Reporting
-	auto& msgMgr = m_engine.getManager_Messages();
+	auto& msgMgr = engine.getManager_Messages();
 	if (!glIsTexture(m_bayerID))
 		msgMgr.error("SSR Bayer Matrix Texture is incomplete.");
 }

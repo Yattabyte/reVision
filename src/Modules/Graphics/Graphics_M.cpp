@@ -5,8 +5,9 @@
 
 
 Graphics_Module::Graphics_Module(Engine& engine) noexcept : 
-	Engine_Module(engine),
-	m_viewport(glm::ivec2(0), m_renderSize, m_engine)
+	Engine_Module(engine),	
+	m_viewport(glm::ivec2(0), m_renderSize, engine),
+	m_pipeline(m_engine, m_clientCamera)
 {
 }
 
@@ -66,9 +67,6 @@ void Graphics_Module::initialize() noexcept
 	m_clientCamera->FarPlane = farPlane;
 	m_clientCamera->FOV = fov;
 	genPerspectiveMatrix();
-
-	// Rendering Effects & systems
-	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, m_clientCamera);
 }
 
 void Graphics_Module::deinitialize() noexcept
@@ -77,10 +75,9 @@ void Graphics_Module::deinitialize() noexcept
 
 	// Update indicator
 	*m_aliveIndicator = false;
-	m_pipeline.reset();
 }
 
-std::shared_ptr<Graphics_Pipeline> Graphics_Module::getPipeline() const noexcept 
+Graphics_Pipeline& Graphics_Module::getPipeline() noexcept 
 {
 	return m_pipeline;
 }
@@ -96,14 +93,14 @@ void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, Viewp
 {
 	if (!cameras.empty()) {
 		// Prepare rendering pipeline for a new frame, wait for buffers to free
-		const auto perspectives = m_pipeline->begin(deltaTime, world, cameras);
+		const auto perspectives = m_pipeline.begin(deltaTime, world, cameras);
 		viewport.bind();
 		viewport.clear();
 		viewport.m_gfxFBOS.m_rhVolume.updateVolume(cameras[0]);
 
-		m_pipeline->render(deltaTime, viewport, perspectives);
+		m_pipeline.render(deltaTime, viewport, perspectives);
 
-		m_pipeline->end(deltaTime);
+		m_pipeline.end(deltaTime);
 	}
 }
 

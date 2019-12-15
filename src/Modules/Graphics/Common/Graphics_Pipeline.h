@@ -2,10 +2,20 @@
 #ifndef GRAPHICS_PIPELINE_H
 #define GRAPHICS_PIPELINE_H
 
-#include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Geometry/Geometry_Technique.h"
 #include "Modules/Graphics/Common/Camera.h"
 #include "Modules/Graphics/Common/Viewport.h"
+#include "Modules/Graphics/Geometry/Prop/Prop_Technique.h"
+#include "Modules/Graphics/Lighting/Shadow/Shadow_Technique.h"
+#include "Modules/Graphics/Lighting/Direct/Direct_Technique.h"
+#include "Modules/Graphics/Lighting/Indirect/Indirect_Technique.h"
+#include "Modules/Graphics/Lighting/Reflector/Reflector_Technique.h"
+#include "Modules/Graphics/Effects/Skybox.h"
+#include "Modules/Graphics/Effects/SSAO.h"
+#include "Modules/Graphics/Effects/SSR.h"
+#include "Modules/Graphics/Effects/Join_Reflections.h"
+#include "Modules/Graphics/Effects/Bloom.h"
+#include "Modules/Graphics/Effects/HDR.h"
+#include "Modules/Graphics/Effects/FXAA.h"
 #include "Modules/ECS/ecsSystem.h"
 #include "Modules/ECS/ecsWorld.h"
 #include "Utilities/GL/GL_Vector.h"
@@ -55,12 +65,26 @@ public:
 protected:
 	// Protected Attributes
 	Engine& m_engine;
+	Prop_Technique m_propView;
+	Shadow_Technique m_shadowing;
+	Direct_Technique m_directLighting;
+	Indirect_Technique m_indirectLighting;
+	Reflector_Technique m_reflectorLighting;
+	Skybox m_skybox;
+	SSAO m_ssao;
+	SSR m_ssr;
+	Join_Reflections m_joinReflections;
+	Bloom m_bloom;
+	HDR m_hdr;
+	FXAA m_fxaa;
+	Geometry_Technique* const m_geometryTechniques[1] = {&m_propView};
+	Graphics_Technique* const m_lightingTechniques[5] = {&m_shadowing, &m_directLighting, &m_indirectLighting, &m_skybox, &m_reflectorLighting};
+	Graphics_Technique* const m_effectTechniques[6] = {&m_ssao, &m_ssr, &m_joinReflections, &m_bloom, &m_hdr, &m_fxaa};
+	Graphics_Technique* const m_allTechniques[12] = {&m_propView, &m_shadowing, &m_directLighting, &m_indirectLighting, &m_skybox, &m_reflectorLighting, &m_ssao, &m_ssr, &m_joinReflections, &m_bloom, &m_hdr, &m_fxaa };
 	std::vector<Camera*> m_sceneCameras;
 	GL_Vector<Camera::GPUData> m_cameraBuffer;
 	ecsSystemList m_worldSystems, m_cameraSystems;
 	std::shared_ptr<ecsBaseSystem> m_transHierachy;
-	std::vector<std::shared_ptr<Geometry_Technique>> m_geometryTechniques;
-	std::vector<std::shared_ptr<Graphics_Technique>> m_lightingTechniques, m_effectTechniques, m_allTechniques;
 };
 
 #endif // GRAPHICS_PIPELINE_H

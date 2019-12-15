@@ -1,10 +1,8 @@
 #include "Modules/Editor/Editor_M.h"
-#include "Modules/Editor/UI/Editor_Interface.h"
 #include "Modules/Editor/UI/Prefabs.h"
 #include "Modules/Editor/UI/RecoverDialogue.h"
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
 #include "Modules/Editor/UI/MissingFileDialogue.h"
-#include "Modules/Editor/Gizmos/Mouse.h"
 #include "Modules/Editor/Systems/ClearSelection_System.h"
 #include "Modules/Editor/Systems/Outline_System.h"
 #include "Modules/ECS/component_types.h"
@@ -16,7 +14,9 @@
 
 
 LevelEditor_Module::LevelEditor_Module(Engine& engine) noexcept :
-	Engine_Module(engine) 
+	Engine_Module(engine),
+	m_editorInterface(engine, *this),
+	m_mouseGizmo(engine, *this)
 {
 }
 
@@ -27,12 +27,6 @@ void LevelEditor_Module::initialize() noexcept
 
 	// Update indicator
 	*m_aliveIndicator = true;
-
-	// UI
-	m_editorInterface = std::make_shared<Editor_Interface>(m_engine, *this);
-
-	// Gizmos
-	m_mouseGizmo = std::make_shared<Mouse_Gizmo>(m_engine, *this);
 
 	// Systems
 	m_systemOutline = std::make_shared<Outline_System>(m_engine, *this);
@@ -95,8 +89,6 @@ void LevelEditor_Module::deinitialize() noexcept
 
 	// Update indicator
 	*m_aliveIndicator = false;
-	m_editorInterface.reset();
-	m_mouseGizmo.reset();
 	m_systemSelClearer.reset();
 	m_systemOutline.reset();
 
@@ -123,8 +115,8 @@ void LevelEditor_Module::frameTick(const float& deltaTime) noexcept
 		// Render editor interface into separate FBO
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 		m_world.updateSystem(m_systemOutline, deltaTime);
-		m_mouseGizmo->frameTick(deltaTime);
-		m_editorInterface->tick(deltaTime);
+		m_mouseGizmo.frameTick(deltaTime);
+		m_editorInterface.tick(deltaTime);
 
 		// Just apply physics systems, don't update simulation
 		m_engine.getModule_Physics().updateSystems(m_world, deltaTime);
@@ -168,17 +160,17 @@ void LevelEditor_Module::frameTick(const float& deltaTime) noexcept
 
 void LevelEditor_Module::setGizmoTransform(const Transform& transform) noexcept
 {
-	m_mouseGizmo->setTransform(transform);
+	m_mouseGizmo.setTransform(transform);
 }
 
 Transform LevelEditor_Module::getGizmoTransform() const noexcept
 {
-	return m_mouseGizmo->getSelectionTransform();
+	return m_mouseGizmo.getSelectionTransform();
 }
 
 Transform LevelEditor_Module::getSpawnTransform() const noexcept
 {
-	return m_mouseGizmo->getSpawnTransform();
+	return m_mouseGizmo.getSpawnTransform();
 }
 
 glm::vec3 LevelEditor_Module::getCameraPosition() const noexcept
@@ -188,7 +180,7 @@ glm::vec3 LevelEditor_Module::getCameraPosition() const noexcept
 
 void LevelEditor_Module::toggleAddToSelection(const EntityHandle& entityHandle) noexcept
 {
-	auto selectionCopy = m_mouseGizmo->getSelection();
+	auto selectionCopy = m_mouseGizmo.getSelection();
 
 	// If the entity is already selected, de-select it
 	if (std::find(selectionCopy.cbegin(), selectionCopy.cend(), entityHandle) != selectionCopy.cend())
@@ -207,17 +199,17 @@ bool LevelEditor_Module::hasCopy() const noexcept
 
 void LevelEditor_Module::openSceneInspector() noexcept
 {
-	m_editorInterface->m_uiSceneInspector->open();
+	m_editorInterface.m_uiSceneInspector->open();
 }
 
 void LevelEditor_Module::openEntityInspector() noexcept
 {
-	m_editorInterface->m_uiEntityInspector->open();
+	m_editorInterface.m_uiEntityInspector->open();
 }
 
 void LevelEditor_Module::openPrefabs() noexcept
 {
-	m_editorInterface->m_uiPrefabs->open();
+	m_editorInterface.m_uiPrefabs->open();
 }
 
 void LevelEditor_Module::showEditor() noexcept
@@ -228,8 +220,8 @@ void LevelEditor_Module::showEditor() noexcept
 	for (const auto& item : std::filesystem::recursive_directory_iterator(Engine::Get_Current_Dir() + "\\Maps\\")) {
 		const auto& path = item.path();
 		if (path.has_extension() && path.extension().string() == ".autosave") {
-			std::dynamic_pointer_cast<RecoverDialogue>(m_editorInterface->m_uiRecoverDialogue)->setPath(path);
-			m_editorInterface->m_uiRecoverDialogue->open();
+			std::dynamic_pointer_cast<RecoverDialogue>(m_editorInterface.m_uiRecoverDialogue)->setPath(path);
+			m_editorInterface.m_uiRecoverDialogue->open();
 			break;
 		}
 	}
@@ -238,7 +230,7 @@ void LevelEditor_Module::showEditor() noexcept
 
 void LevelEditor_Module::exit() noexcept
 {
-	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() {
+	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface.m_uiUnsavedDialogue)->tryPrompt([&]() {
 		m_engine.goToMainMenu();
 		m_currentLevelName = "My Map.bmap";
 		m_unsavedChanges = false;
@@ -270,7 +262,7 @@ std::deque<std::string> LevelEditor_Module::getRecentLevels() const noexcept
 
 void LevelEditor_Module::newLevel() noexcept
 {
-	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() {
+	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface.m_uiUnsavedDialogue)->tryPrompt([&]() {
 		m_world.clear();
 		m_currentLevelName = "My Map.bmap";
 
@@ -285,7 +277,7 @@ void LevelEditor_Module::openLevel(const std::string& name) noexcept
 {
 	// If the level doesn't exist, remove it from the 'recent levels' list
 	if (!Level_IO::Level_Exists(name)) {
-		std::dynamic_pointer_cast<MissingFileDialogue>(m_editorInterface->m_uiMissingDialogue)->notifyMissing(name);
+		std::dynamic_pointer_cast<MissingFileDialogue>(m_editorInterface.m_uiMissingDialogue)->notifyMissing(name);
 		if (std::find(m_recentLevels.cbegin(), m_recentLevels.cend(), name) != m_recentLevels.cend())
 			m_recentLevels.erase(std::remove(m_recentLevels.begin(), m_recentLevels.end(), name));
 	}
@@ -305,8 +297,8 @@ void LevelEditor_Module::openLevel(const std::string& name) noexcept
 
 void LevelEditor_Module::openLevelDialogue() noexcept
 {
-	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() noexcept {
-		m_editorInterface->m_uiOpenDialogue->open();
+	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface.m_uiUnsavedDialogue)->tryPrompt([&]() noexcept {
+		m_editorInterface.m_uiOpenDialogue->open();
 		});
 }
 
@@ -348,12 +340,12 @@ void LevelEditor_Module::saveLevel() noexcept
 
 void LevelEditor_Module::saveLevelDialogue() noexcept
 {
-	m_editorInterface->m_uiSaveDialogue->open();
+	m_editorInterface.m_uiSaveDialogue->open();
 }
 
 void LevelEditor_Module::openSettingsDialogue() noexcept
 {
-	m_editorInterface->m_uiSettings->open();
+	m_editorInterface.m_uiSettings->open();
 }
 
 bool LevelEditor_Module::canUndo() const noexcept
@@ -460,10 +452,10 @@ void LevelEditor_Module::clearSelection() noexcept
 			// Remove all selection components from world
 			auto& ecsWorld = m_editor.getWorld();
 			ecsWorld.updateSystem(m_editor.m_systemSelClearer.get(), 0.0f);
-			m_editor.m_mouseGizmo->getSelection().clear();
+			m_editor.m_mouseGizmo.getSelection().clear();
 
 			// Add selection component to new selection
-			m_editor.m_mouseGizmo->setSelection(uuids);
+			m_editor.m_mouseGizmo.setSelection(uuids);
 			for (const auto& entityHandle : uuids)
 				ecsWorld.makeComponent(entityHandle, Selected_Component::Runtime_ID);
 
@@ -482,21 +474,21 @@ void LevelEditor_Module::clearSelection() noexcept
 			newTransform.m_position = center;
 			newTransform.m_scale = scale;
 			newTransform.update();
-			m_editor.m_mouseGizmo->setTransform(newTransform);
+			m_editor.m_mouseGizmo.setTransform(newTransform);
 		};
 		void execute() noexcept final {
 			// Remove all selection components from world
 			m_editor.getWorld().updateSystem(m_editor.m_systemSelClearer.get(), 0.0f);
-			m_editor.m_mouseGizmo->getSelection().clear();
+			m_editor.m_mouseGizmo.getSelection().clear();
 		}
 		void undo() noexcept final {
 			// Remove all selection components from world
 			auto& ecsWorld = m_editor.getWorld();
 			ecsWorld.updateSystem(m_editor.m_systemSelClearer.get(), 0.0f);
-			m_editor.m_mouseGizmo->getSelection().clear();
+			m_editor.m_mouseGizmo.getSelection().clear();
 
 			// Add selection component to new selection
-			m_editor.m_mouseGizmo->setSelection(m_uuids_old);
+			m_editor.m_mouseGizmo.setSelection(m_uuids_old);
 			for (const auto& entityHandle : m_uuids_old)
 				ecsWorld.makeComponent(entityHandle, Selected_Component::Runtime_ID);
 
@@ -515,7 +507,7 @@ void LevelEditor_Module::clearSelection() noexcept
 			newTransform.m_position = center;
 			newTransform.m_scale = scale;
 			newTransform.update();
-			m_editor.m_mouseGizmo->setTransform(newTransform);
+			m_editor.m_mouseGizmo.setTransform(newTransform);
 		}
 		bool join(Editor_Command* other) noexcept final {
 			if (const auto& newCommand = dynamic_cast<Clear_Selection_Command*>(other))
@@ -545,10 +537,10 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles) 
 			// Remove all selection components from world
 			auto& ecsWorld = m_editor.getWorld();
 			ecsWorld.updateSystem(m_editor.m_systemSelClearer.get(), 0.0f);
-			m_editor.m_mouseGizmo->getSelection().clear();
+			m_editor.m_mouseGizmo.getSelection().clear();
 
 			// Add selection component to new selection
-			m_editor.m_mouseGizmo->setSelection(uuids);
+			m_editor.m_mouseGizmo.setSelection(uuids);
 			for (const auto& entityHandle : uuids)
 				ecsWorld.makeComponent(entityHandle, Selected_Component::Runtime_ID);
 
@@ -567,7 +559,7 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles) 
 			newTransform.m_position = center;
 			newTransform.m_scale = scale;
 			newTransform.update();
-			m_editor.m_mouseGizmo->setTransform(newTransform);
+			m_editor.m_mouseGizmo.setTransform(newTransform);
 		};
 		void execute() noexcept final {
 			switchSelection(m_uuids_new);
@@ -590,9 +582,9 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles) 
 		doReversableAction(std::make_shared<Set_Selection_Command>(m_engine, *this, handles));
 }
 
-const std::vector<EntityHandle>& LevelEditor_Module::getSelection() const noexcept
+std::vector<EntityHandle>& LevelEditor_Module::getSelection() noexcept
 {
-	return m_mouseGizmo->getSelection();
+	return m_mouseGizmo.getSelection();
 }
 
 void LevelEditor_Module::mergeSelection() noexcept
@@ -612,7 +604,7 @@ void LevelEditor_Module::mergeSelection() noexcept
 				for (size_t x = 1ull, selSize = m_uuids.size(); x < selSize; ++x)
 					if (const auto& entityHandle = m_uuids[x])
 						ecsWorld.parentEntity(root, entityHandle);
-				m_editor.m_mouseGizmo->getSelection() = { root };
+				m_editor.m_mouseGizmo.getSelection() = { root };
 			}
 		}
 		void undo() noexcept final {
@@ -639,7 +631,7 @@ void LevelEditor_Module::mergeSelection() noexcept
 		}
 	};
 
-	if (m_mouseGizmo->getSelection().size())
+	if (m_mouseGizmo.getSelection().size())
 		doReversableAction(std::make_shared<Merge_Selection_Command>(m_engine, *this));
 }
 
@@ -676,7 +668,7 @@ void LevelEditor_Module::groupSelection() noexcept
 		}
 		void undo() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
-			auto& selection = m_editor.m_mouseGizmo->getSelection();
+			auto& selection = m_editor.m_mouseGizmo.getSelection();
 			selection.clear();
 			if (m_rootUUID != EntityHandle()) {
 				for (const auto& child : ecsWorld.getEntityHandles(m_rootUUID)) {
@@ -688,7 +680,7 @@ void LevelEditor_Module::groupSelection() noexcept
 		}
 	};
 
-	if (m_mouseGizmo->getSelection().size())
+	if (m_mouseGizmo.getSelection().size())
 		doReversableAction(std::make_shared<Group_Selection_Command>(m_engine, *this));
 }
 
@@ -720,13 +712,13 @@ void LevelEditor_Module::ungroupSelection() noexcept
 		}
 	};
 
-	if (m_mouseGizmo->getSelection().size())
+	if (m_mouseGizmo.getSelection().size())
 		doReversableAction(std::make_shared<Ungroup_Selection_Command>(m_engine, *this));
 }
 
 void LevelEditor_Module::makePrefab() noexcept
 {
-	std::dynamic_pointer_cast<Prefabs>(m_editorInterface->m_uiPrefabs)->addPrefab(getWorld().serializeEntities(getSelection()));
+	std::dynamic_pointer_cast<Prefabs>(m_editorInterface.m_uiPrefabs)->addPrefab(getWorld().serializeEntities(getSelection()));
 }
 
 void LevelEditor_Module::cutSelection() noexcept
@@ -773,7 +765,7 @@ void LevelEditor_Module::deleteSelection() noexcept
 		}
 	};
 
-	auto& selection = m_mouseGizmo->getSelection();
+	auto& selection = m_mouseGizmo.getSelection();
 	if (selection.size())
 		doReversableAction(std::make_shared<Delete_Selection_Command>(m_engine, *this, selection));
 }

@@ -1,18 +1,6 @@
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
 
 /* Rendering Techniques Used */
-#include "Modules/Graphics/Geometry/Prop/Prop_Technique.h"
-#include "Modules/Graphics/Lighting/Shadow/Shadow_Technique.h"
-#include "Modules/Graphics/Lighting/Direct/Direct_Technique.h"
-#include "Modules/Graphics/Lighting/Indirect/Indirect_Technique.h"
-#include "Modules/Graphics/Lighting/Reflector/Reflector_Technique.h"
-#include "Modules/Graphics/Effects/Skybox.h"
-#include "Modules/Graphics/Effects/SSAO.h"
-#include "Modules/Graphics/Effects/SSR.h"
-#include "Modules/Graphics/Effects/Join_Reflections.h"
-#include "Modules/Graphics/Effects/Bloom.h"
-#include "Modules/Graphics/Effects/HDR.h"
-#include "Modules/Graphics/Effects/FXAA.h"
 #include "Modules/Graphics/Logical/Transform_System.h"
 #include "Modules/Graphics/Logical/CameraPerspective_System.h"
 #include "Modules/Graphics/Logical/ReflectorPerspective_System.h"
@@ -23,6 +11,18 @@
 
 Graphics_Pipeline::Graphics_Pipeline(Engine& engine, Camera& clientCamera) noexcept :
 	m_engine(engine),
+	m_propView(engine, m_sceneCameras),
+	m_shadowing(engine, m_sceneCameras),
+	m_directLighting(engine, m_shadowing.getShadowData(), clientCamera, m_sceneCameras),
+	m_indirectLighting(engine, m_shadowing.getShadowData(), clientCamera, m_sceneCameras),
+	m_reflectorLighting(engine, m_sceneCameras),
+	m_skybox(engine),
+	m_ssao(engine),
+	m_ssr(engine),
+	m_joinReflections(engine),
+	m_bloom(engine),
+	m_hdr(engine),
+	m_fxaa(engine),
 	m_transHierachy(std::make_shared<Transform_System>(engine))
 {
 	// Create Systems
@@ -32,36 +32,6 @@ Graphics_Pipeline::Graphics_Pipeline(Engine& engine, Camera& clientCamera) noexc
 	m_cameraSystems.makeSystem<CameraPerspective_System>(m_sceneCameras);
 	m_cameraSystems.makeSystem<ShadowPerspective_System>(m_sceneCameras);
 	m_cameraSystems.makeSystem<ReflectorPerspective_System>(m_sceneCameras);
-
-	// Create Rendering Techniques
-	auto propView = std::make_shared<Prop_Technique>(engine, m_sceneCameras);
-	auto shadowing = std::make_shared<Shadow_Technique>(engine, m_sceneCameras);
-	auto directLighting = std::make_shared<Direct_Technique>(engine, shadowing->getShadowData(), clientCamera, m_sceneCameras);
-	auto indirectLighting = std::make_shared<Indirect_Technique>(engine, shadowing->getShadowData(), clientCamera, m_sceneCameras);
-	auto reflectorLighting = std::make_shared<Reflector_Technique>(engine, m_sceneCameras);
-	auto skybox = std::make_shared<Skybox>(engine);
-	auto ssao = std::make_shared<SSAO>(engine);
-	auto ssr = std::make_shared<SSR>(engine);
-	auto joinReflections = std::make_shared<Join_Reflections>(engine);
-	auto bloom = std::make_shared<Bloom>(engine);
-	auto hdr = std::make_shared<HDR>(engine);
-	auto fxaa = std::make_shared<FXAA>(engine);
-
-	// Filter Techniques
-	m_geometryTechniques = {
-		propView
-	};
-	m_lightingTechniques = {
-		shadowing, directLighting, indirectLighting, skybox, reflectorLighting,
-	};
-	m_effectTechniques = {
-		ssao, ssr, joinReflections, bloom, hdr, fxaa,
-	};
-	m_allTechniques = {
-		propView,
-		shadowing, directLighting, indirectLighting, skybox, reflectorLighting,
-		ssao, ssr, joinReflections, bloom, hdr, fxaa,
-	};
 }
 
 std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime, ecsWorld& world, std::vector<Camera>& cameras) noexcept

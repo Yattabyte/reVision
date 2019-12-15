@@ -1,8 +1,6 @@
 #include "Modules/Game/Game_M.h"
 #include "Modules/Game/ECS/PlayerSpawner_System.h"
 #include "Modules/Game/ECS/PlayerFreeLook_System.h"
-#include "Modules/Game/Overlays/LoadingIndicator.h"
-#include "Modules/Game/Overlays/Frametime_Counter.h"
 #include "Modules/UI/Macro Elements/StartMenu.h"
 #include "Modules/UI/Macro Elements/PauseMenu.h"
 #include "Utilities/IO/Level_IO.h"
@@ -10,7 +8,9 @@
 
 
 Game_Module::Game_Module(Engine& engine) noexcept : 
-	Engine_Module(engine)
+	Engine_Module(engine), 
+	m_loadingRing(engine),
+	m_frameTime(engine)
 {
 }
 
@@ -22,10 +22,6 @@ void Game_Module::initialize() noexcept
 	// Initialize ECS Systems
 	m_Systems.makeSystem<PlayerSpawn_System>(m_engine, *this);
 	m_Systems.makeSystem<PlayerFreeLook_System>(m_engine);
-
-	// Create Overlay Effects
-	m_loadingRing = std::make_shared<LoadingIndicator>(m_engine);
-	m_frameTime = std::make_shared<Frametime_Counter>(m_engine);
 
 	// Create Pause Menu
 	auto pauseMenu = std::make_shared<PauseMenu>(m_engine);
@@ -78,8 +74,8 @@ ecsWorld& Game_Module::getWorld() noexcept
 
 void Game_Module::renderOverlays(const float& deltaTime) noexcept
 {
-	m_loadingRing->applyEffect(deltaTime);
-	m_frameTime->applyEffect(deltaTime);
+	m_loadingRing.applyEffect(deltaTime);
+	m_frameTime.applyEffect(deltaTime);
 }
 
 void Game_Module::showGame() noexcept

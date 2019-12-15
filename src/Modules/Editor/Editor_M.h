@@ -4,6 +4,8 @@
 
 #include "Modules/Engine_Module.h"
 #include "Modules/ECS/ecsWorld.h"
+#include "Modules/Editor/Gizmos/Mouse.h"
+#include "Modules/Editor/UI/Editor_Interface.h"
 #include "Assets/Auto_Model.h"
 #include "Assets/Shader.h"
 #include "Utilities/Transform.h"
@@ -13,7 +15,6 @@
 
 // Forward Declarations
 class Editor_Interface;
-class Mouse_Gizmo;
 struct Editor_Command;
 
 /** A level editor module. */
@@ -87,7 +88,7 @@ public:
 	void setSelection(const std::vector<EntityHandle>& handles) noexcept;
 	/** Retrieve the set of selected entities.
 	@return					all selected entity handles. */
-	const std::vector<EntityHandle>& getSelection() const noexcept;
+	std::vector<EntityHandle>& getSelection() noexcept;
 	/** Parent all selected entities into the first one in the set. */
 	void mergeSelection() noexcept;
 	/** Create a new entity and parent all selected entities into it. */
@@ -177,8 +178,8 @@ private:
 	std::deque<std::shared_ptr<Editor_Command>> m_undoStack, m_redoStack;
 	int m_maxUndo = 500;
 	std::deque<std::string> m_recentLevels;
-	std::shared_ptr<Editor_Interface> m_editorInterface;
-	std::shared_ptr<Mouse_Gizmo> m_mouseGizmo;
+	Editor_Interface m_editorInterface;
+	Mouse_Gizmo m_mouseGizmo;
 	std::shared_ptr<ecsBaseSystem> m_systemSelClearer, m_systemOutline;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

@@ -32,8 +32,8 @@ public:
 
 	// Public Methods
 	/** Retrieve a shared pointer to the rendering pipeline.
-	@return					shared pointer to the rendering pipeline. */
-	std::shared_ptr<Graphics_Pipeline> getPipeline() const noexcept;
+	@return					reference to the rendering pipeline. */
+	Graphics_Pipeline& getPipeline() noexcept;
 	/** Convenience function for rendering a given ecsWorld to a given FBO.
 	@param	world			the ecsWorld to source data from.
 	@param	deltaTime		the amount of time passed since last frame.
@@ -61,9 +61,9 @@ private:
 
 	// Private Attributes
 	glm::ivec2										m_renderSize = glm::ivec2(1);
-	std::shared_ptr<Graphics_Pipeline>				m_pipeline;
 	Camera											m_clientCamera;
 	Viewport										m_viewport;
+	Graphics_Pipeline								m_pipeline;
 	Shared_Shader									m_shader;
 	Shared_Auto_Model								m_shapeQuad;
 	IndirectDraw<1>									m_indirectQuad;

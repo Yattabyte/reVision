@@ -151,7 +151,7 @@ void Reflector_Technique::updateReflectors(const float& deltaTime) noexcept
 
 		// Update all reflectors at once
 		constexpr unsigned int categories = (unsigned int)Graphics_Technique::Technique_Category::GEOMETRY | (unsigned int)Graphics_Technique::Technique_Category::PRIMARY_LIGHTING | (unsigned int)Graphics_Technique::Technique_Category::SECONDARY_LIGHTING;
-		m_engine.getModule_Graphics().getPipeline()->render(deltaTime, m_viewport, perspectives, categories);
+		m_engine.getModule_Graphics().getPipeline().render(deltaTime, m_viewport, perspectives, categories);
 
 		// Copy all lighting results into cube faces, generating cubemap's
 		m_viewport.m_gfxFBOS.bindForReading("LIGHTING", 0);
