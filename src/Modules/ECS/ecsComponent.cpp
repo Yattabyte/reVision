@@ -22,11 +22,10 @@ std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const std::vecto
 	int charCount(0);
 	std::memcpy(&charCount, &data[dataRead], sizeof(int));
 	dataRead += sizeof(int);
-	char* nameString = new char[size_t(charCount) + 1ULL]{'\0'};
-	std::memcpy(nameString, &data[dataRead], charCount);
+	std::vector<char> nameString(size_t(charCount) + 1ULL);
+	std::memcpy(&nameString[0], &data[dataRead], charCount);
 	dataRead += sizeof(char) * charCount;
-	const auto componentTypeName = std::string(nameString);
-	delete[] nameString;
+	const auto componentTypeName = std::string(nameString.data());
 	size_t classDataSize(0ULL);
 	std::memcpy(&classDataSize, &data[dataRead], sizeof(size_t));
 	dataRead += sizeof(size_t);

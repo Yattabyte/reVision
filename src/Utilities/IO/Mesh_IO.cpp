@@ -11,41 +11,6 @@
 #include <cctype>
 
 
-constexpr size_t MAX_IMPORTERS = 4;
-struct Importer_Pool {
-	Importer_Pool() noexcept {
-		std::generate(std::begin(pool), std::end(pool), []() { return new Assimp::Importer(); });
-	}
-
-	/** Borrow a single importer.
-	@return		returns a single importer*/
-	[[nodiscard]] Assimp::Importer* rentImporter() noexcept {
-		// Check if any of our importers are free to be used
-		std::unique_lock<std::mutex> readGuard(poolMutex);
-		if (available != 0ULL)
-			return pool[--available];
-		// Otherwise create a new one
-		return new Assimp::Importer();
-	}
-
-	void returnImporter(Assimp::Importer* returnedImporter) noexcept {
-		// Check if we have enough importers, free extra
-		std::unique_lock<std::mutex> readGuard(poolMutex);
-		if (available >= 4)
-			delete returnedImporter;
-		else
-			pool[available++] = returnedImporter;
-	}
-
-
-private:
-	Assimp::Importer* pool[MAX_IMPORTERS]{};
-	size_t available = MAX_IMPORTERS;
-	std::mutex poolMutex;
-};
-
-static Importer_Pool importer_pool;
-
 /** Convert an aiMatrix to glm::mat4.
 @param	d	the aiMatrix to convert from.
 @return		the glm::mat4 converted to. */
@@ -60,16 +25,16 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d) noexcept
 /** Copy a node into a new node. 
 @param	oldNode		the old node to copy from.
 @return				the new node. */
-[[nodiscard]] inline Node* copy_node(const aiNode* oldNode) noexcept
+[[nodiscard]] inline Node copy_node(const aiNode* oldNode) noexcept
 {
 	// Copy Node
-	Node* newNode = new Node(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
+	Node newNode(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
 
 	// Copy Node's Children
 	const auto childCount = oldNode->mNumChildren;
-	newNode->children.resize(childCount);
+	newNode.children.resize(childCount);
 	for (unsigned int c = 0; c < childCount; ++c)
-		newNode->children[c] = copy_node(oldNode->mChildren[c]);
+		newNode.children[c] = copy_node(oldNode->mChildren[c]);
 	return newNode;
 }
 
@@ -82,8 +47,8 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 	}
 
 	// Get Importer Resource
-	Assimp::Importer* importer = importer_pool.rentImporter();
-	const aiScene* scene = importer->ReadFile(
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(
 		Engine::Get_Current_Dir() + relativePath,
 		aiProcess_LimitBoneWeights |
 		aiProcess_Triangulate |
@@ -145,26 +110,26 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 		importedData.animations[a].channels.resize(channelCount);
 		for (unsigned int c = 0; c < channelCount; ++c) {
 			const auto* channel = animation->mChannels[c];
-			importedData.animations[a].channels[c] = new Node_Animation(std::string(channel->mNodeName.data));
+			importedData.animations[a].channels[c] = Node_Animation(std::string(channel->mNodeName.data));
 
 			// Copy Keys
 			const auto scalingKeyCount = channel->mNumScalingKeys;
-			importedData.animations[a].channels[c]->scalingKeys.resize(scalingKeyCount);
+			importedData.animations[a].channels[c].scalingKeys.resize(scalingKeyCount);
 			for (unsigned int n = 0; n < scalingKeyCount; ++n) {
 				const auto& key = channel->mScalingKeys[n];
-				importedData.animations[a].channels[c]->scalingKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+				importedData.animations[a].channels[c].scalingKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 			}
 			const auto rotationKeyCount = channel->mNumRotationKeys;
-			importedData.animations[a].channels[c]->rotationKeys.resize(rotationKeyCount);
+			importedData.animations[a].channels[c].rotationKeys.resize(rotationKeyCount);
 			for (unsigned int n = 0; n < rotationKeyCount; ++n) {
 				const auto& key = channel->mRotationKeys[n];
-				importedData.animations[a].channels[c]->rotationKeys[n] = Animation_Time_Key<glm::quat>(key.mTime, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
+				importedData.animations[a].channels[c].rotationKeys[n] = Animation_Time_Key<glm::quat>(key.mTime, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
 			}
 			const auto positionKeyCount = channel->mNumPositionKeys;
-			importedData.animations[a].channels[c]->positionKeys.resize(positionKeyCount);
+			importedData.animations[a].channels[c].positionKeys.resize(positionKeyCount);
 			for (unsigned int n = 0; n < positionKeyCount; ++n) {
 				const auto& key = channel->mPositionKeys[n];
-				importedData.animations[a].channels[c]->positionKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+				importedData.animations[a].channels[c].positionKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 			}
 		}
 	}
@@ -253,9 +218,6 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 	else
 		//importedData.materials.push_back(Material_Strings("albedo.png", "normal.png", "metalness.png", "roughness.png", "height.png", "ao.png"));
 		importedData.materials.emplace_back("", "", "", "", "", "");
-
-	// Free Importer Resource
-	importer_pool.returnImporter(importer);
 	return true;
 }
 

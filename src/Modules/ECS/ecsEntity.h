@@ -11,7 +11,7 @@
 
 // Definitions to make life easier
 struct ecsEntity;
-using EntityMap = std::map<EntityHandle, ecsEntity*>;
+using EntityMap = std::map<EntityHandle, std::shared_ptr<ecsEntity>>;
 
 /** An entity in the ECS paradigm - holds components and hierarchical information. */
 struct ecsEntity {

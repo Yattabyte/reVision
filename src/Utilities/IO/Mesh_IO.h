@@ -45,14 +45,15 @@ struct Node_Animation {
 struct Node {
 	std::string name = "";
 	glm::mat4 transformation = glm::mat4(1);
-	std::vector<Node*> children;
+	std::vector<Node> children;
+	inline Node() {};
 	inline Node(const std::string& n, const glm::mat4& t) noexcept : name(n), transformation(t) {}
 };
 struct Animation {
 	unsigned int numChannels = 0;
 	double ticksPerSecond = 0.0;
 	double duration = 0.0;
-	std::vector<Node_Animation*> channels;
+	std::vector<Node_Animation> channels;
 	inline Animation(const unsigned int& nC = 0, const double& tick = 0, const double& dur = 0) noexcept
 		: numChannels(nC), ticksPerSecond(tick), duration(dur) {}
 };
@@ -74,7 +75,7 @@ struct Mesh_Geometry {
 	std::vector<glm::mat4> boneTransforms;
 	std::map<std::string, size_t> boneMap;
 	std::vector<Animation> animations;
-	Node* rootNode = nullptr;
+	Node rootNode;
 };
 struct SingleVertex {
 	glm::vec3 vertex = glm::vec3(0.0f);

@@ -5,6 +5,7 @@
 // Component Inspectors
 #include "Modules/Editor/Systems/Inspector_Transform_System.h"
 #include "Modules/Editor/Systems/Inspector_Prop_System.h"
+#include "Modules/Editor/Systems/Inspector_Skeleton_System.h"
 #include "Modules/Editor/Systems/Inspector_Collider_System.h"
 #include "Modules/Editor/Systems/Inspector_Light_System.h"
 
@@ -16,6 +17,7 @@ EntityInspector::EntityInspector(Engine& engine, LevelEditor_Module& editor) noe
 	m_open = true;
 	m_inspectorSystems.makeSystem<Inspector_Transform_System>(engine, editor);
 	m_inspectorSystems.makeSystem<Inspector_Prop_System>(engine, editor);
+	m_inspectorSystems.makeSystem<Inspector_Skeleton_System>(engine, editor);
 	m_inspectorSystems.makeSystem<Inspector_Collider_System>(engine, editor);
 	m_inspectorSystems.makeSystem<Inspector_Light_System>(engine, editor);
 }

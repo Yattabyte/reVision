@@ -24,7 +24,7 @@ void SceneInspector::tick(const float&) noexcept
 			size_t displayCount(0ull);
 			std::function<void(const EntityHandle&)> displayEntity = [&](const EntityHandle&
 																			 entityHandle) {
-				if (auto* entity = ecsWorld.getEntity(entityHandle)) {
+				if (const auto entity = ecsWorld.getEntity(entityHandle)) {
 					bool entity_or_components_pass_filter = false;
 					auto& entityName = entity->m_name;
 					const auto& components = entity->m_components;
@@ -36,7 +36,7 @@ void SceneInspector::tick(const float&) noexcept
 
 					// Check if the entity or its components matched search criteria
 					if (entity_or_components_pass_filter) {
-						ImGui::PushID(entity);
+						ImGui::PushID(entity.get());
 						ImGui::AlignTextToFramePadding();
 						ImGuiTreeNodeFlags node_flags =
 							ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
@@ -130,7 +130,7 @@ void SceneInspector::tick(const float&) noexcept
 						};
 
 						// Check if the entity is expanded
-						if (ImGui::TreeNodeEx(entity, node_flags, "%s", entityName.c_str())) {
+						if (ImGui::TreeNodeEx(entity.get(), node_flags, "%s", entityName.c_str())) {
 							tryLeftClickElement();
 							tryRightClickElement();
 							tryDragElement();

@@ -71,11 +71,11 @@ public:
 	/** Try to find an entity matching the UUID provided.
 	@param	UUID				the target entity's UUID.
 	@return						pointer to the found entity on success, nullptr on failure. */
-	ecsEntity* getEntity(const EntityHandle& UUID) const noexcept;
+	std::shared_ptr<ecsEntity> getEntity(const EntityHandle& UUID) const noexcept;
 	/** Try to find a list of entities matching the UUID's provided.
 	@param	UUIDs				list of target entity UUID's.
 	@return						list of pointers to the found entities. Dimensions may not match input list (nullptr's omitted). */
-	std::vector<ecsEntity*> getEntities(const std::vector<EntityHandle>& uuids) const noexcept;
+	std::vector<std::shared_ptr<ecsEntity>> getEntities(const std::vector<EntityHandle>& uuids) const noexcept;
 	/** Retrieve a list of entity handles, given a root node.
 	@param	rootHandle			an optional root element to start fetching at (empty == map root).
 	@return						a vector of all level entities. */
@@ -143,7 +143,7 @@ public:
 	/** Serialize a specific set of entities to a char vector.
 	@param	entities			the set of specific entities to serialize.
 	@return						char vector containing serialized entity data. */
-	[[nodiscard]] std::vector<char> serializeEntities(const std::vector<ecsEntity*>& entities) const noexcept;
+	[[nodiscard]] std::vector<char> serializeEntities(const std::vector<std::shared_ptr<ecsEntity>>& entities) const noexcept;
 	/** Serialize a specific entity to a char vector.
 	@param	entityHandle		handle to the entity to serialize.
 	@return						char vector containing serialized entity data. */

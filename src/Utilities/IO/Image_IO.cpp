@@ -3,9 +3,9 @@
 #include "FreeImagePlus.h"
 
 
-inline GLubyte* RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size) noexcept
+inline auto RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size) noexcept
 {
-	auto* newPixels = new GLubyte[size_t(size) * 4ULL];
+	std::vector<GLubyte> newPixels(size_t(size) * 4ULL);
 	for (size_t x = 0; x < size; ++x) {
 		newPixels[x * 4 + 0] = pixels[x * 4 + 2];
 		newPixels[x * 4 + 1] = pixels[x * 4 + 1];
@@ -97,10 +97,11 @@ void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, 
 		// Proceed if dimensions aren't the same
 		if (newSize != importedData.dimensions) {
 			// Create FreeImage bitmap from data provided
-			GLubyte* BGRA_Pixels = RGBA_to_BGRA(&importedData.pixelData[0], importedData.dimensions.x * importedData.dimensions.y);
+			auto BGRA_Pixels = RGBA_to_BGRA(&importedData.pixelData[0], importedData.dimensions.x * importedData.dimensions.y);
 			importedData.pixelData.clear();
-			FIBITMAP* bitmap = FreeImage_ConvertFromRawBits(BGRA_Pixels, importedData.dimensions.x, importedData.dimensions.y, importedData.pitch, importedData.bpp, 0, 0, 0);
-			delete BGRA_Pixels;
+			FIBITMAP* bitmap = FreeImage_ConvertFromRawBits(BGRA_Pixels.data(), importedData.dimensions.x, importedData.dimensions.y, importedData.pitch, importedData.bpp, 0, 0, 0);
+			BGRA_Pixels.clear();
+			BGRA_Pixels.shrink_to_fit();
 
 			// Resize the bitmap
 			FIBITMAP* newBitmap = FreeImage_Rescale(bitmap, newSize.x, newSize.y, resizePolicy == Resize_Policy::LINEAR ? FREE_IMAGE_FILTER::FILTER_CATMULLROM : FREE_IMAGE_FILTER::FILTER_BOX);

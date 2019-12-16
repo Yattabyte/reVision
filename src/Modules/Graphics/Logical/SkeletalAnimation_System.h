@@ -35,7 +35,7 @@ protected:
 	@param	parentNode		parent node in the node hierarchy.
 	@param	model			the model to process the animations from.
 	@param	ParentTransform	parent transform in the node hierarchy. */
-	static void ReadNodeHeirarchy(std::vector<glm::mat4>& transforms, const float& AnimationTime, const int& animation_ID, const Node* parentNode, const Shared_Mesh& model, const glm::mat4& ParentTransform) noexcept;
+	static void ReadNodeHeirarchy(std::vector<glm::mat4>& transforms, const float& AnimationTime, const int& animation_ID, const Node& parentNode, const Shared_Mesh& model, const glm::mat4& ParentTransform) noexcept;
 
 
 private:

@@ -29,9 +29,9 @@ void PropVisibility_System::updateComponents(const float&, const std::vector<std
 
 			if (count && propComponent->m_uploadModel && propComponent->m_uploadMaterial) {
 				viewInfo.visibleIndices.push_back((GLuint)index);
-
 				viewInfo.skeletonData.push_back(skeletonComponent ? index : -1); // get skeleton ID if this entity has one
-																				 // Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
+
+				// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
 				if ((count >= 100) && bboxComponent && bboxComponent->m_cameraCollision == BoundingBox_Component::CameraCollision::OUTSIDE) {
 					// Allow occlusion culling
 					viewInfo.cullingDrawData.push_back(glm::ivec4(36, 1, 0, 1));

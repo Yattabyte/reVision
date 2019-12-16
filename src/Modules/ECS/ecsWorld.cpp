@@ -37,12 +37,12 @@ ecsWorld::ecsWorld(ecsWorld&& other) noexcept
 EntityHandle ecsWorld::makeEntity(const ecsBaseComponent* const* const components, const size_t& numComponents, const std::string& name, const EntityHandle& UUID, const EntityHandle& parentUUID) noexcept
 {
 	const auto finalHandle = UUID == EntityHandle() ? (EntityHandle)(generateUUID()) : UUID;
-	auto* newEntity = new ecsEntity();
-	auto* root = parentUUID.isValid() ? &(getEntity(parentUUID)->m_children) : &m_entities;
+	auto newEntity = std::make_shared<ecsEntity>();
+	auto& root = parentUUID.isValid() ? (getEntity(parentUUID)->m_children) : m_entities;
 	newEntity->m_name = name;
-	newEntity->m_entityIndex = (int)root->size();
+	newEntity->m_entityIndex = (int)root.size();
 	newEntity->m_parent = parentUUID;
-	root->insert_or_assign(finalHandle, newEntity);
+	root.insert_or_assign(finalHandle, newEntity);
 
 	for (size_t i = 0; i < numComponents; ++i)
 		makeComponent(finalHandle, components[i]);
@@ -58,7 +58,7 @@ void ecsWorld::makeComponent(const EntityHandle& entityHandle, const ecsBaseComp
 void ecsWorld::makeComponent(const EntityHandle& entityHandle, const ComponentID& componentID, const ecsBaseComponent* const component, ComponentHandle& UUID) noexcept
 {
 	// Check if entity is valid
-	if (auto* entity = getEntity(entityHandle)) {
+	if (const auto entity = getEntity(entityHandle)) {
 		// Check if component ID is valid
 		if (isComponentIDValid(componentID)) {
 			// Prevent adding duplicate component types to the same entity
@@ -83,7 +83,7 @@ void ecsWorld::makeComponent(const EntityHandle& entityHandle, const ComponentID
 bool ecsWorld::removeEntity(const EntityHandle& entityHandle) noexcept
 {
 	// Delete this entity's components
-	if (auto* entity = getEntity(entityHandle)) {
+	if (const auto entity = getEntity(entityHandle)) {
 		for (auto& [id, createFn, componentHandle] : entity->m_components)
 			deleteComponent(id, createFn);
 
@@ -92,9 +92,8 @@ bool ecsWorld::removeEntity(const EntityHandle& entityHandle) noexcept
 			removeEntity(childHandle);
 
 		// Delete this entity
-		auto* root = entity->m_parent.isValid() ? &(getEntity(entity->m_parent)->m_children) : &m_entities;
-		root->erase(entityHandle);
-		delete entity;
+		auto& root = entity->m_parent.isValid() ? (getEntity(entity->m_parent)->m_children) : m_entities;
+		root.erase(entityHandle);
 		return true;
 	}
 	return false;
@@ -111,7 +110,7 @@ bool ecsWorld::removeComponent(const ComponentHandle& componentHandle) noexcept
 bool ecsWorld::removeEntityComponent(const EntityHandle& entityHandle, const ComponentID& componentID) noexcept
 {
 	// Check if entity handle is valid
-	if (auto* entity = getEntity(entityHandle)) {
+	if (const auto entity = getEntity(entityHandle)) {
 		auto& entityComponents = entity->m_components;
 		const auto entityComponentCount = entityComponents.size();
 		for (size_t i = 0ULL; i < entityComponentCount; ++i) {
@@ -134,9 +133,9 @@ bool ecsWorld::removeEntityComponent(const EntityHandle& entityHandle, const Com
 /// PUBLIC GET FUNCTIONS ///
 ////////////////////////////
 
-ecsEntity* ecsWorld::getEntity(const EntityHandle& UUID) const noexcept
+std::shared_ptr<ecsEntity> ecsWorld::getEntity(const EntityHandle& UUID) const noexcept
 {
-	std::function<ecsEntity * (const EntityHandle&, const std::map<EntityHandle, ecsEntity*>&)> find_entity = [&](const EntityHandle& UUID, const std::map<EntityHandle, ecsEntity*>& entities) -> ecsEntity* {
+	std::function<std::shared_ptr<ecsEntity>(const EntityHandle&, const EntityMap&)> find_entity = [&](const EntityHandle& UUID, const EntityMap& entities) -> std::shared_ptr<ecsEntity> {
 		// First try to find in main map using built-in algorithm
 		const auto pos = entities.find(UUID);
 		if (pos != entities.end())
@@ -144,19 +143,19 @@ ecsEntity* ecsWorld::getEntity(const EntityHandle& UUID) const noexcept
 
 		// Next start searching children
 		for (auto& [handle, entity] : entities)
-			if (auto* childEntity = find_entity(UUID, entity->m_children))
+			if (const auto& childEntity = find_entity(UUID, entity->m_children))
 				return childEntity;
-		return nullptr;
+		return {};
 	};
 	return find_entity(UUID, m_entities);
 }
 
-std::vector<ecsEntity*> ecsWorld::getEntities(const std::vector<EntityHandle>& uuids) const noexcept
+std::vector<std::shared_ptr<ecsEntity>> ecsWorld::getEntities(const std::vector<EntityHandle>& uuids) const noexcept
 {
-	std::vector<ecsEntity*> entities;
+	std::vector<std::shared_ptr<ecsEntity>> entities;
 	entities.reserve(uuids.size());
 	for (const auto& uuid : uuids)
-		if (auto* entity = getEntity(uuid))
+		if (const auto entity = getEntity(uuid))
 			entities.push_back(entity);
 	return entities;
 }
@@ -164,16 +163,16 @@ std::vector<ecsEntity*> ecsWorld::getEntities(const std::vector<EntityHandle>& u
 std::vector<EntityHandle> ecsWorld::getEntityHandles(const EntityHandle& rootHandle) const noexcept
 {
 	std::vector<EntityHandle> entityHandles;
-	auto* root = rootHandle != EntityHandle() ? &getEntity(rootHandle)->m_children : &m_entities;
-	entityHandles.reserve(root->size());
-	for (const auto& [handle, entity] : *root)
+	auto& root = rootHandle != EntityHandle() ? getEntity(rootHandle)->m_children : m_entities;
+	entityHandles.reserve(root.size());
+	for (const auto& [handle, entity] : root)
 		entityHandles.push_back(handle);
 	return entityHandles;
 }
 
 ecsBaseComponent* ecsWorld::getComponent(const EntityHandle& entityHandle, const ComponentID& componentID) const noexcept 
 {
-	if (const auto& entity = getEntity(entityHandle))
+	if (const auto entity = getEntity(entityHandle))
 		return getComponent(entity->m_components, m_components.at(componentID), componentID);
 	return nullptr;
 }
@@ -234,13 +233,6 @@ void ecsWorld::clear() noexcept
 	m_components.clear();
 
 	// Remove all entities
-	std::function<void(ecsEntity*)> deleteEntity = [&](ecsEntity* entity) {
-		for (auto& [handle, child] : entity->m_children)
-			deleteEntity(child);
-		delete entity;
-	};
-	for (const auto& [handle, entity] : m_entities)
-		deleteEntity(entity);
 	m_entities.clear();
 }
 
@@ -270,7 +262,7 @@ void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle
 		return;
 
 	// Variables
-	auto* parentEntity = getEntity(parentHandle), * childEntity = getEntity(childHandle);
+	auto parentEntity = getEntity(parentHandle), childEntity = getEntity(childHandle);
 	auto* root = &m_entities, * newRoot = parentEntity != nullptr ? &parentEntity->m_children : &m_entities;
 	Transform newParentTransform;
 	Transform oldParentTransform;
@@ -319,9 +311,9 @@ void ecsWorld::unparentEntity(const EntityHandle& entityHandle) noexcept
 {
 	// Move entity up tree, making it a child of its old parent's parent
 	if (entityHandle.isValid())
-		if (const auto& entity = getEntity(entityHandle))
+		if (const auto entity = getEntity(entityHandle))
 			if (entity->m_parent.isValid())
-				if (const auto& parent = getEntity(entity->m_parent))
+				if (const auto parent = getEntity(entity->m_parent))
 					parentEntity(parent->m_parent.isValid() ? parent->m_parent : EntityHandle(), entityHandle);
 }
 
@@ -348,8 +340,8 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 		std::memcpy((void*)destComponent, srcComponent, typeSize);
 
 		// Update references
-		for (auto& srcEntity : getEntity(srcComponent->m_entity)->m_components) {
-			auto& [compID, fn, compHandle] = srcEntity;
+		for (auto& srcComponent : getEntity(srcComponent->m_entity)->m_components) {
+			auto& [compID, fn, compHandle] = srcComponent;
 			if (componentID == compID && (ComponentID)(srcIndex) == fn) {
 				fn = index;
 				break;
@@ -364,7 +356,7 @@ std::vector<char> ecsWorld::serializeEntities(const std::vector<EntityHandle>& e
 	return serializeEntities(getEntities(entityHandles));
 }
 
-std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsEntity*>& entities) const noexcept
+std::vector<char> ecsWorld::serializeEntities(const std::vector<std::shared_ptr<ecsEntity>>& entities) const noexcept
 {
 	std::vector<char> data;
 	for (const auto& entity : entities) {
@@ -378,7 +370,7 @@ std::vector<char> ecsWorld::serializeEntities(const std::vector<ecsEntity*>& ent
 
 std::vector<char> ecsWorld::serializeEntity(const EntityHandle& entityHandle) const noexcept
 {
-	if (const auto& entity = getEntity(entityHandle))
+	if (const auto entity = getEntity(entityHandle))
 		return serializeEntity(*entity);
 	return {};
 }
@@ -551,7 +543,7 @@ std::vector<std::vector<ecsBaseComponent*>> ecsWorld::getRelevantComponents(cons
 			components.reserve(mem_arraySize / typeSize); // reserve, not resize, as the component at [i] may be invalid
 			for (size_t i = 0; i < mem_arraySize; i += typeSize) {
 				componentParam[minSizeIndex] = (ecsBaseComponent*)(&mem_array[i]);
-				if (const auto* entity = getEntity(componentParam[minSizeIndex]->m_entity)) {
+				if (const auto entity = getEntity(componentParam[minSizeIndex]->m_entity)) {
 					const auto& entityComponents = entity->m_components;
 
 					bool isValid = true;

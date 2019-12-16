@@ -14,10 +14,6 @@ void Skeletal_Animation_System::updateComponents(const float& deltaTime, const s
 	for (const auto& componentParam : components) {
 		auto* skeletonComponent = static_cast<Skeleton_Component*>(componentParam[0]);
 
-		// Ensure skeleton has a mesh
-		if (!skeletonComponent->m_mesh)
-			skeletonComponent->m_mesh = Shared_Mesh(m_engine, "\\Models\\" + skeletonComponent->m_modelName);
-
 		// Animate if the mesh has finished loading
 		if (skeletonComponent->m_mesh->ready()) {
 			// Animate if there exists an animation & bones
@@ -44,9 +40,9 @@ void Skeletal_Animation_System::updateComponents(const float& deltaTime, const s
 	@return					pointer to the node matching the name specified if found, nullptr otherwise. */
 inline static constexpr auto FindNodeAnim = [](const Animation& pAnimation, const std::string& NodeName) -> const Node_Animation* {
 	for (unsigned int i = 0; i < pAnimation.numChannels; i++) {
-		const Node_Animation* pNodeAnim = pAnimation.channels[i];
-		if (pNodeAnim->nodeName == NodeName)
-			return pNodeAnim;
+		auto& pNodeAnim = pAnimation.channels[i];
+		if (pNodeAnim.nodeName == NodeName)
+			return &pNodeAnim;
 	}
 	return nullptr;
 };
@@ -85,16 +81,15 @@ inline static constexpr auto InterpolateKeys = [](const float& AnimationTime, co
 	return Result;
 };
 
-void Skeletal_Animation_System::ReadNodeHeirarchy(std::vector<glm::mat4>& transforms, const float& AnimationTime, const int& animation_ID, const Node* parentNode, const Shared_Mesh& model, const glm::mat4& ParentTransform) noexcept 
+void Skeletal_Animation_System::ReadNodeHeirarchy(std::vector<glm::mat4>& transforms, const float& AnimationTime, const int& animation_ID, const Node& parentNode, const Shared_Mesh& model, const glm::mat4& ParentTransform) noexcept 
 {
-	const std::string& NodeName = parentNode->name;
+	const std::string& NodeName = parentNode.name;
 	const Animation& pAnimation = model->m_geometry.animations[animation_ID];
-	const Node_Animation* pNodeAnim = FindNodeAnim(pAnimation, NodeName);
-	glm::mat4 NodeTransformation = parentNode->transformation;
+	glm::mat4 NodeTransformation = parentNode.transformation;
 
 	// Interpolate scaling, rotation, and translation.
 	// Generate their matrices and apply their transformations.
-	if (pNodeAnim) {
+	if (const auto* pNodeAnim = FindNodeAnim(pAnimation, NodeName)) {
 		const glm::vec3 Scaling = InterpolateKeys(AnimationTime, pNodeAnim->scalingKeys);
 		const glm::quat Rotation = InterpolateKeys(AnimationTime, pNodeAnim->rotationKeys);
 		const glm::vec3 Translation = InterpolateKeys(AnimationTime, pNodeAnim->positionKeys);
@@ -103,13 +98,13 @@ void Skeletal_Animation_System::ReadNodeHeirarchy(std::vector<glm::mat4>& transf
 	}
 
 	const glm::mat4 GlobalTransformation = ParentTransform * NodeTransformation;
-	const glm::mat4 GlobalInverseTransform = glm::inverse(model->m_geometry.rootNode->transformation);
+	const glm::mat4 GlobalInverseTransform = glm::inverse(model->m_geometry.rootNode.transformation);
 	const std::map<std::string, size_t>& BoneMap = model->m_geometry.boneMap;
 	if (BoneMap.find(NodeName) != BoneMap.end()) {
 		const size_t BoneIndex = BoneMap.at(NodeName);
 		transforms.at(BoneIndex) = GlobalInverseTransform * GlobalTransformation * model->m_geometry.boneTransforms.at(BoneIndex);
 	}
 
-	for (auto& childNode : parentNode->children)
+	for (const auto& childNode : parentNode.children)
 		ReadNodeHeirarchy(transforms, AnimationTime, animation_ID, childNode, model, GlobalTransformation);
 }

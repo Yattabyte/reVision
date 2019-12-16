@@ -171,8 +171,7 @@ struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 constexpr static const char skeletonName[] = "Skeleton_Component";
 struct Skeleton_Component final : public ecsComponent<Skeleton_Component, skeletonName> {
 	// Serialized Attributes
-	std::string m_modelName;
-	int m_animation = -1;
+	int m_animation = 0;
 	bool m_playAnim = true;
 
 	// Derived Attributes
@@ -182,14 +181,12 @@ struct Skeleton_Component final : public ecsComponent<Skeleton_Component, skelet
 
 	inline std::vector<char> serialize() noexcept {
 		return Serializer::Serialize_Set(
-			std::pair("m_modelName", m_modelName),
 			std::pair("m_animation", m_animation),
 			std::pair("m_playAnim", m_playAnim)
 		);
 	}
 	inline void deserialize(const std::vector<char>& data) noexcept {
 		Serializer::Deserialize_Set(data,
-			std::pair("m_modelName", &m_modelName),
 			std::pair("m_animation", &m_animation),
 			std::pair("m_playAnim", &m_playAnim)
 		);

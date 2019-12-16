@@ -195,6 +195,7 @@ void PropUpload_System::tryInsertMaterial(const Shared_Material& material) noexc
 		glGenerateTextureMipmap(m_matID);
 	}
 }
+
 std::pair<GLuint*, GLsync*> PropUpload_System::getFreePBO() noexcept
 {
 	GLenum state = GL_UNSIGNALED;

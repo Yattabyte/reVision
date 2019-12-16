@@ -13,7 +13,9 @@ Scrollbar_V::Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& comp
 	UI_Decorator(engine, component),
 	m_shader(Shared_Shader(engine, "UI\\ScrollBar"))
 {
-	auto topButton = std::make_shared<Button>(engine), bottomButton = std::make_shared<Button>(engine), panel = std::make_shared<Button>(engine);
+	auto topButton = std::make_shared<Button>(engine), 
+		bottomButton = std::make_shared<Button>(engine), 
+		panel = std::make_shared<Button>(engine);
 	addElement(topButton);
 	addElement(bottomButton);
 	addElement(panel);

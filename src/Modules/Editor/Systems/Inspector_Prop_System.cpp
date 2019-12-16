@@ -145,8 +145,6 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 			};
 			m_editor.doReversableAction(std::make_shared<Skin_Command>(m_editor.getWorld(), getUUIDS(), skinInput));
 		}
-		for (const auto& componentParam : components)
-			static_cast<Prop_Component*>(componentParam[1])->m_skin = (unsigned int)skinInput;
 	}
 	ImGui::PopID();
 }

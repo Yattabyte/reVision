@@ -611,7 +611,7 @@ void LevelEditor_Module::mergeSelection() noexcept
 		void undo() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
 			// Find the root element
-			if (const auto& root = ecsWorld.getEntity(m_uuids[0])) {
+			if (const auto root = ecsWorld.getEntity(m_uuids[0])) {
 				// Un-parent remaining entities from the root
 				const auto selSize = m_uuids.size();
 				for (size_t x = 1ull; x < selSize; ++x)
