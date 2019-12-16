@@ -34,6 +34,7 @@ private:
 	Engine& m_engine;
 	Game_Module& m_game;
 	size_t m_playerCount = 0ull;
+	EntityHandle m_playerHandle;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

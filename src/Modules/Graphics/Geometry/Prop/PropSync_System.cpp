@@ -41,9 +41,9 @@ void PropSync_System::updateComponents(const float&, const std::vector<std::vect
 				const glm::vec3 bboxMin_World = (propComponent->m_model->m_bboxMin * scale) + position;
 				const glm::vec3 bboxCenter = (bboxMax_World + bboxMin_World) / 2.0f;
 				const glm::vec3 bboxScale = (bboxMax_World - bboxMin_World) / 2.0f;
-				glm::mat4 matTrans = glm::translate(glm::mat4(1.0f), bboxCenter);
-				glm::mat4 matScale = glm::scale(glm::mat4(1.0f), bboxScale);
-				glm::mat4 matFinal = (matTrans * matRot * matScale);
+				const glm::mat4 matTrans = glm::translate(glm::mat4(1.0f), bboxCenter);
+				const glm::mat4 matScale = glm::scale(glm::mat4(1.0f), bboxScale);
+				const glm::mat4 matFinal = (matTrans * matRot * matScale);
 				m_frameData.modelBuffer[index].bBoxMatrix = matFinal;
 			}
 			if (bboxComponent) {
@@ -56,7 +56,8 @@ void PropSync_System::updateComponents(const float&, const std::vector<std::vect
 			// Sync Animation Attributes
 			if (skeletonComponent) {
 				auto& bones = m_frameData.skeletonBuffer[index].bones;
-				for (size_t i = 0, total = std::min(skeletonComponent->m_transforms.size(), (size_t)NUM_MAX_BONES); i < total; ++i)
+				const auto total = std::min(skeletonComponent->m_transforms.size(), (size_t)NUM_MAX_BONES);
+				for (size_t i = 0; i < total; ++i)
 					bones[i] = skeletonComponent->m_transforms[i];
 			}
 

@@ -174,7 +174,8 @@ void PropUpload_System::tryInsertMaterial(const Shared_Material& material) noexc
 
 		// Try to upload the images piece-meal
 		size_t offset(0ull);
-		for (int x = 0; x < int(material->m_textures.size() / MAX_PHYSICAL_IMAGES); ++x) {
+		const auto materialCount = int(material->m_textures.size() / MAX_PHYSICAL_IMAGES);
+		for (int x = 0; x < materialCount; ++x) {
 			// Find a free pixel buffer
 			const auto [pboID, fence] = getFreePBO();
 			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, *pboID);

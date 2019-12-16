@@ -6,7 +6,7 @@
 inline GLubyte* RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size) noexcept
 {
 	auto* newPixels = new GLubyte[size_t(size) * 4ULL];
-	for (unsigned int x = 0; x < size; ++x) {
+	for (size_t x = 0; x < size; ++x) {
 		newPixels[x * 4 + 0] = pixels[x * 4 + 2];
 		newPixels[x * 4 + 1] = pixels[x * 4 + 1];
 		newPixels[x * 4 + 2] = pixels[x * 4 + 0];
@@ -72,13 +72,13 @@ bool Image_IO::Import_Image(Engine& engine, const std::string& relativePath, Ima
 void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData) noexcept
 {
 	const glm::ivec2 dimensions(FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap));
-	const unsigned int size_mult = (unsigned int)(dimensions.x) * (unsigned int)(dimensions.y);
+	const size_t size_mult = (size_t)(dimensions.x) * (size_t)(dimensions.y);
 
 	// Always create RGBA format
-	importedData.pixelData.resize(size_t(size_mult) * 4ULL);
+	importedData.pixelData.resize(size_mult * 4ULL);
 	const GLubyte* pixels = (GLubyte*)FreeImage_GetBits(bitmap);
 
-	for (unsigned int i = 0; i < size_mult; ++i) {
+	for (size_t i = 0; i < size_mult; ++i) {
 		importedData.pixelData[i * 4 + 2] = pixels[i * 4 + 0];
 		importedData.pixelData[i * 4 + 1] = pixels[i * 4 + 1];
 		importedData.pixelData[i * 4 + 0] = pixels[i * 4 + 2];

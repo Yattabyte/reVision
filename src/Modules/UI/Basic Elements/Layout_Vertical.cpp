@@ -63,9 +63,10 @@ void Layout_Vertical::alignChildren() noexcept
 
 	float positionFromTop = m_scale.y - m_margin;
 	const float top = positionFromTop;
+	const auto childrenCount = m_sizedChildren.size();
 	for (const auto& [child, ratio] : m_sizedChildren) {
 		child->setScale(glm::vec2(m_scale.x - m_margin, elementSize * ratio));
-		if (m_sizedChildren.size() == 1) {
+		if (childrenCount == 1) {
 			child->setPosition(glm::vec2(0.0f));
 			continue;
 		}
@@ -78,10 +79,10 @@ void Layout_Vertical::alignChildren() noexcept
 
 	// Edge Case: all elements are fixed size, gap may be present
 	// Solution: change spacing to fit all elements within bounds
-	if (m_sizedChildren.size() > 1 && fixedElementCount == m_sizedChildren.size()) {
-		const float delta = (bottom - top) / float(m_sizedChildren.size() + 1ULL);
+	if (childrenCount > 1 && fixedElementCount == childrenCount) {
+		const float delta = (bottom - top) / float(childrenCount + 1ULL);
 
-		for (size_t x = 1; x < m_sizedChildren.size(); ++x)
+		for (size_t x = 1; x < childrenCount; ++x)
 			m_sizedChildren[x].first->setPosition(m_sizedChildren[x].first->getPosition() + glm::vec2(0, delta * x));
 	}
 }

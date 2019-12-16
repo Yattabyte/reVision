@@ -104,7 +104,7 @@ void Skybox::renderTechnique(const float&, Viewport& viewport, const std::vector
 	m_drawIndex++;
 }
 
-void Skybox::convoluteSky(Viewport& viewport) noexcept 
+void Skybox::convoluteSky(const Viewport& viewport) noexcept 
 {
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);

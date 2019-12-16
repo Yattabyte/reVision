@@ -130,7 +130,8 @@ void Reflector_Technique::updateReflectors(const float& deltaTime) noexcept
 			// Accumulate all visibility info for the cameras passed in
 			int visibilityIndex = 0;
 			bool found = false;
-			for (int y = 0; y < m_sceneCameras.size(); ++y)
+			const auto cameraCount = m_sceneCameras.size();
+			for (int y = 0; y < cameraCount; ++y)
 				if (m_sceneCameras.at(y) == camera) {
 					visibilityIndex = y;
 					found = true;

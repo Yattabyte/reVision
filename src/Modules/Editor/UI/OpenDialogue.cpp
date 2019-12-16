@@ -221,7 +221,8 @@ void OpenDialogue::tickRenameDialogue() noexcept
 		ImGui::Text("Enter a new name for this item...");
 		ImGui::Spacing();
 		char nameInput[256]{};
-		for (size_t x = 0; x < m_levels[m_selected].name.length() && x < IM_ARRAYSIZE(nameInput); ++x)
+		const auto nameLength = m_levels[m_selected].name.length();
+		for (size_t x = 0; x < nameLength && x < IM_ARRAYSIZE(nameInput); ++x)
 			nameInput[x] = m_levels[m_selected].name[x];
 		nameInput[std::min(256ull, m_levels[m_selected].name.length())] = '\0';
 		if (ImGui::IsRootWindowOrAnyChildFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))

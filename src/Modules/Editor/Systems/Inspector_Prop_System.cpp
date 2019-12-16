@@ -52,7 +52,7 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 		}
 		if (entries.empty())
 			entries.resize(1ull);
-		static int item_current = static_cast<int>(typeInput);
+		static int item_current = (int)(typeInput);
 		if (ImGui::Combo("Model File", &item_current, &entries[0], (int)entries.size())) {
 			struct Name_Command final : Editor_Command {
 				ecsWorld& m_ecsWorld;

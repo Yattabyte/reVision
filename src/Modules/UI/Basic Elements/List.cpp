@@ -190,10 +190,11 @@ float List::getBorderSize() const noexcept
 void List::alignChildren() noexcept 
 {
 	float positionFromTop = m_scale.y - m_margin;
-	for (size_t x = 0; x < m_children.size(); ++x) {
+	const auto childrenCount = m_children.size();
+	for (size_t x = 0; x < childrenCount; ++x) {
 		const float size = m_children[x]->getScale().y;
 		m_children[x]->setScale(glm::vec2(m_scale.x - m_margin, size));
-		if (m_children.size() == 1) {
+		if (childrenCount == 1) {
 			m_children[x]->setPosition(glm::vec2(0.0f));
 			continue;
 		}

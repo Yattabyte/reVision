@@ -38,7 +38,7 @@ void SaveDialogue::populateLevels(const std::string& directory) noexcept
 		std::string timeString = "";
 		struct _stat64 fileInfo;
 		if (_wstati64(entry.path().wstring().c_str(), &fileInfo) == 0) {
-			const auto t = std::localtime(&fileInfo.st_mtime);
+			const auto& t = std::localtime(&fileInfo.st_mtime);
 			timeString = std::to_string(t->tm_hour > 12 ? 24 - t->tm_hour : t->tm_hour) + ":" + std::to_string(t->tm_min)
 				+ (t->tm_hour >= 12 ? "PM " : "AM ") + std::to_string(t->tm_mday) + "/" + std::to_string(t->tm_mon) + "/" + std::to_string(t->tm_year - 100);
 		}
@@ -93,12 +93,13 @@ void SaveDialogue::tickMainDialogue() noexcept
 				RENAME,
 				DELETE,
 			} option = DialogueOptions::NONE;
-			static char nameInput[256];
+			static char nameInput[256]{};
 			static auto setName = [&]() {
 				if (m_selected != -1) {
-					for (size_t x = 0; x < m_levels[m_selected].name.length() && x < IM_ARRAYSIZE(nameInput); ++x)
+					const auto nameLength = m_levels[m_selected].name.length();
+					for (size_t x = 0; x < nameLength && x < IM_ARRAYSIZE(nameInput); ++x)
 						nameInput[x] = m_levels[m_selected].name[x];
-					nameInput[std::min(256ull, m_levels[m_selected].name.length())] = '\0';
+					nameInput[std::min(256ull, nameLength)] = '\0';
 				}
 			};
 			if (freshlyOpened) {
@@ -236,7 +237,7 @@ void SaveDialogue::tickMainDialogue() noexcept
 void SaveDialogue::tryToSave(const std::string& chosenName) noexcept
 {
 	constexpr const auto compareNCase = [](const std::string& str1, const std::string& str2) noexcept {
-		return ((str1.size() == str2.size()) && std::equal(str1.cbegin(), str1.cend(), str2.cbegin(), [](const char& c1, const char& c2) {
+		return ((str1.size() == str2.size()) && std::equal(str1.cbegin(), str1.cend(), str2.cbegin(), [](const char& c1, const char& c2) noexcept {
 			return std::toupper(c1) == std::toupper(c2);
 			}));
 	};
@@ -293,9 +294,10 @@ void SaveDialogue::tickRenameDialogue() noexcept
 		ImGui::Text("Enter a new name for this item...");
 		ImGui::Spacing();
 		char nameInput[256]{};
-		for (size_t x = 0; x < m_levels[m_selected].name.length() && x < IM_ARRAYSIZE(nameInput); ++x)
+		const auto nameLength = m_levels[m_selected].name.length();
+		for (size_t x = 0; x < nameLength && x < IM_ARRAYSIZE(nameInput); ++x)
 			nameInput[x] = m_levels[m_selected].name[x];
-		nameInput[std::min(256ull, m_levels[m_selected].name.length())] = '\0';
+		nameInput[std::min(256ull, nameLength)] = '\0';
 		if (ImGui::IsRootWindowOrAnyChildFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
 			ImGui::SetKeyboardFocusHere(0);
 		if (ImGui::InputText("", nameInput, IM_ARRAYSIZE(nameInput), ImGuiInputTextFlags_EnterReturnsTrue)) {

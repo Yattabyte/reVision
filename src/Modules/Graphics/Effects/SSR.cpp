@@ -26,7 +26,7 @@ SSR::SSR(Engine& engine) noexcept :
 	preferences.addCallback(PreferenceState::Preference::C_SSR, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = (bool)f; });
 
 	// Bayer matrix
-	GLubyte data[16] = { 0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5 };
+	constexpr GLubyte data[16] = { 0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5 };
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_bayerID);
 	glTextureStorage2D(m_bayerID, 1, GL_R16F, 4, 4);
 	glTextureSubImage2D(m_bayerID, 0, 0, 0, 4, 4, GL_RED, GL_UNSIGNED_BYTE, &data);
@@ -109,7 +109,7 @@ void SSR::updateMIPChain(Viewport& viewport) noexcept
 	m_shaderCopy->bind();
 	viewport.m_gfxFBOS.bindForReading("LIGHTING", 0);
 	viewport.m_gfxFBOS.bindForWriting("SSR_MIP");
-	GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glClearNamedFramebufferfv(mipFboID, GL_COLOR, 0, clearColor);
 	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 

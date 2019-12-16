@@ -17,8 +17,8 @@ void IndirectVisibility_System::updateComponents(const float&, const std::vector
 		// Clear previous cached data
 		viewInfo.lightIndices.clear();
 
-		//for (const auto& componentParam : components)
-		for (GLuint index = 0; index < components.size(); ++index)
+		const auto componentCount = components.size();
+		for (GLuint index = 0; index < componentCount; ++index)
 			viewInfo.lightIndices.push_back(index);
 	}
 }

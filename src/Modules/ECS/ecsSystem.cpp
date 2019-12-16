@@ -30,7 +30,8 @@ bool ecsSystemList::addSystem(const std::shared_ptr<ecsBaseSystem>& system) noex
 
 bool ecsSystemList::removeSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept 
 {
-	for (size_t i = 0; i < m_systems.size(); ++i)
+	const auto systemCount = m_systems.size();
+	for (size_t i = 0; i < systemCount; ++i)
 		if (system.get() == m_systems[i].get()) {
 			m_systems.erase(m_systems.begin() + i);
 			return true;

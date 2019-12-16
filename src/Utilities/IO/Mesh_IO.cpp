@@ -62,10 +62,13 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d) noexcept
 @return				the new node. */
 [[nodiscard]] inline Node* copy_node(const aiNode* oldNode) noexcept
 {
+	// Copy Node
 	Node* newNode = new Node(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
-	// Copy Children
-	newNode->children.resize(oldNode->mNumChildren);
-	for (unsigned int c = 0; c < oldNode->mNumChildren; ++c)
+
+	// Copy Node's Children
+	const auto childCount = oldNode->mNumChildren;
+	newNode->children.resize(childCount);
+	for (unsigned int c = 0; c < childCount; ++c)
 		newNode->children[c] = copy_node(oldNode->mChildren[c]);
 	return newNode;
 }
@@ -99,12 +102,16 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 	}
 
 	// Import geometry
-	for (unsigned int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
+	const auto meshCount = scene->mNumMeshes;
+	const auto materialCount = scene->mNumMaterials;
+	for (unsigned int a = 0; a < meshCount; ++a) {
 		const aiMesh* mesh = scene->mMeshes[a];
-		const GLuint meshMaterialOffset = std::max(0U, scene->mNumMaterials > 1 ? mesh->mMaterialIndex - 1U : 0U);
-		for (unsigned int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
+		const GLuint meshMaterialOffset = std::max(0U, materialCount > 1 ? mesh->mMaterialIndex - 1U : 0U);
+		const auto faceCount = mesh->mNumFaces;
+		for (unsigned int x = 0; x < faceCount; ++x) {
 			const aiFace& face = mesh->mFaces[x];
-			for (unsigned int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
+			const auto indCount = face.mNumIndices;
+			for (unsigned int b = 0; b < indCount; ++b) {
 				const auto& index = face.mIndices[b];
 				importedData.vertices.emplace_back(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z);
 
@@ -127,30 +134,35 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 	}
 
 	// Copy Animations
-	importedData.animations.resize(scene->mNumAnimations);
-	for (unsigned int a = 0, total = scene->mNumAnimations; a < total; ++a) {
+	const auto animationCount = scene->mNumAnimations;
+	importedData.animations.resize(animationCount);
+	for (unsigned int a = 0; a < animationCount; ++a) {
 		const auto* animation = scene->mAnimations[a];
 		importedData.animations[a] = Animation(animation->mNumChannels, animation->mTicksPerSecond, animation->mDuration);
 
 		// Copy Channels
-		importedData.animations[a].channels.resize(animation->mNumChannels);
-		for (unsigned int c = 0; c < scene->mAnimations[a]->mNumChannels; ++c) {
-			auto* channel = scene->mAnimations[a]->mChannels[c];
+		const auto channelCount = animation->mNumChannels;
+		importedData.animations[a].channels.resize(channelCount);
+		for (unsigned int c = 0; c < channelCount; ++c) {
+			const auto* channel = animation->mChannels[c];
 			importedData.animations[a].channels[c] = new Node_Animation(std::string(channel->mNodeName.data));
 
 			// Copy Keys
-			importedData.animations[a].channels[c]->scalingKeys.resize(channel->mNumScalingKeys);
-			for (unsigned int n = 0; n < channel->mNumScalingKeys; ++n) {
+			const auto scalingKeyCount = channel->mNumScalingKeys;
+			importedData.animations[a].channels[c]->scalingKeys.resize(scalingKeyCount);
+			for (unsigned int n = 0; n < scalingKeyCount; ++n) {
 				const auto& key = channel->mScalingKeys[n];
 				importedData.animations[a].channels[c]->scalingKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 			}
-			importedData.animations[a].channels[c]->rotationKeys.resize(channel->mNumRotationKeys);
-			for (unsigned int n = 0; n < channel->mNumRotationKeys; ++n) {
+			const auto rotationKeyCount = channel->mNumRotationKeys;
+			importedData.animations[a].channels[c]->rotationKeys.resize(rotationKeyCount);
+			for (unsigned int n = 0; n < rotationKeyCount; ++n) {
 				const auto& key = channel->mRotationKeys[n];
 				importedData.animations[a].channels[c]->rotationKeys[n] = Animation_Time_Key<glm::quat>(key.mTime, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
 			}
-			importedData.animations[a].channels[c]->positionKeys.resize(channel->mNumPositionKeys);
-			for (unsigned int n = 0; n < channel->mNumPositionKeys; ++n) {
+			const auto positionKeyCount = channel->mNumPositionKeys;
+			importedData.animations[a].channels[c]->positionKeys.resize(positionKeyCount);
+			for (unsigned int n = 0; n < positionKeyCount; ++n) {
 				const auto& key = channel->mPositionKeys[n];
 				importedData.animations[a].channels[c]->positionKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 			}
@@ -161,10 +173,10 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 	importedData.rootNode = copy_node(scene->mRootNode);
 	importedData.bones.resize(importedData.vertices.size());
 	int vertexOffset = 0;
-	for (unsigned int a = 0U, atotal = scene->mNumMeshes; a < atotal; ++a) {
+	for (unsigned int a = 0U; a < meshCount; ++a) {
 		const aiMesh* mesh = scene->mMeshes[a];
-
-		for (unsigned int b = 0U, numBones = mesh->mNumBones; b < numBones; ++b) {
+		const auto boneCount = mesh->mNumBones;
+		for (unsigned int b = 0U; b < boneCount; ++b) {
 			size_t BoneIndex = 0;
 			std::string BoneName(mesh->mBones[b]->mName.data);
 
@@ -185,16 +197,18 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 			}
 		}
 
-		for (unsigned int x = 0U, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
+		const auto faceCount = mesh->mNumFaces;
+		for (unsigned int x = 0U; x < faceCount; ++x) {
 			const auto& face = mesh->mFaces[x];
-			for (unsigned int b = 0U, indCount = face.mNumIndices; b < indCount; ++b)
+			const auto indexCount = face.mNumIndices;
+			for (unsigned int b = 0U; b < indexCount; ++b)
 				vertexOffset++;
 		}
 	}
 
 	// Copy Texture Paths
-	if (scene->mNumMaterials > 1U)
-		for (auto x = 1U; x < scene->mNumMaterials; ++x) {
+	if (materialCount > 1U)
+		for (auto x = 1U; x < materialCount; ++x) {
 			constexpr static auto getMaterial = [](const aiScene* scene, const unsigned int& materialIndex) -> Material_Strings {
 				constexpr static auto getTexture = [](const aiMaterial* sceneMaterial, const aiTextureType& textureType, std::string& texturePath) {
 					aiString path;
@@ -274,7 +288,7 @@ VertexBoneData::VertexBoneData() noexcept
 
 VertexBoneData::VertexBoneData(const VertexBoneData& vbd) noexcept
 {
-	for(size_t i = 0; i < NUM_BONES_PER_VEREX; ++i) {
+	for (auto i = 0; i < NUM_BONES_PER_VEREX; ++i) {
 		IDs[i] = vbd.IDs[i];
 		Weights[i] = vbd.Weights[i];
 	}
@@ -282,7 +296,7 @@ VertexBoneData::VertexBoneData(const VertexBoneData& vbd) noexcept
 
 void VertexBoneData::Reset() noexcept
 {
-	for(size_t i = 0; i < NUM_BONES_PER_VEREX; ++i) {
+	for (auto i = 0; i < NUM_BONES_PER_VEREX; ++i) {
 		IDs[i] = 0;
 		Weights[i] = 0.0f;
 	}
@@ -290,8 +304,8 @@ void VertexBoneData::Reset() noexcept
 
 void VertexBoneData::AddBoneData(const int& BoneID, const float& Weight) noexcept
 {
-	for(size_t i = 0; i < NUM_BONES_PER_VEREX; ++i)
-		if (Weights[i] == 0.0) {
+	for (auto i = 0; i < NUM_BONES_PER_VEREX; ++i)
+		if (Weights[i] == 0.0f) {
 			IDs[i] = BoneID;
 			Weights[i] = Weight;
 			return;

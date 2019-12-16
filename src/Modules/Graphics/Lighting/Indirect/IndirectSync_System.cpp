@@ -34,7 +34,8 @@ void IndirectSync_System::updateComponents(const float&, const std::vector<std::
 
 		// Copy Shadow Attributes
 		{
-			for (int x = 0; x < shadow->m_cameras.size(); ++x) {
+			const auto shadowCameraCount = shadow->m_cameras.size();
+			for (int x = 0; x < shadowCameraCount; ++x) {
 				if (shadow->m_cameras[x].getEnabled()) {
 					m_frameData.lightBuffer[index].lightVP[x] = shadow->m_cameras[x].get()->pvMatrix;
 					m_frameData.lightBuffer[index].CascadeEndClipSpace[x] = shadow->m_cameras[x].get()->FarPlane;

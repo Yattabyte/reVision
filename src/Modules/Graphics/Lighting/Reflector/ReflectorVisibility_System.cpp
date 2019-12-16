@@ -13,13 +13,12 @@ ReflectorVisibility_System::ReflectorVisibility_System(ReflectorData& frameData)
 void ReflectorVisibility_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
 {
 	// Compile results PER viewport
-	for (int x = 0; x < m_frameData.viewInfo.size(); ++x) {
-		auto& viewInfo = m_frameData.viewInfo[x];
-
+	for (auto& viewInfo : m_frameData.viewInfo) {
+		// Clear previous cached data
 		viewInfo.lightIndices.clear();
 
-		//for (const auto& componentParam : components)
-		for (GLuint index = 0; index < components.size(); ++index)
+		const auto componentCount = components.size();
+		for (GLuint index = 0; index < componentCount; ++index)
 			viewInfo.lightIndices.push_back(index);
 	}
 }

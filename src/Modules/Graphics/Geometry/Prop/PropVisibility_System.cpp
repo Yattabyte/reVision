@@ -14,8 +14,7 @@ PropVisibility_System::PropVisibility_System(PropData& frameData) noexcept :
 void PropVisibility_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
 {
 	// Compile results PER viewport
-	for (int x = 0; x < m_frameData.viewInfo.size(); ++x) {
-		auto& viewInfo = m_frameData.viewInfo[x];
+	for (auto& viewInfo : m_frameData.viewInfo) {
 		viewInfo.cullingDrawData.clear();
 		viewInfo.renderingDrawData.clear();
 		viewInfo.visibleIndices.clear();

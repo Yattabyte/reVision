@@ -49,7 +49,7 @@ public:
 	@param	...rest		the rest of the values to check.
 	@return				true if all the assets have finished finalizing, false otherwise. */
 	template <typename FirstAsset, typename ...RemainingAssets>
-	inline static bool All_Ready(const FirstAsset& firstAsset, const RemainingAssets& ...rest) {
+	inline static bool All_Ready(const FirstAsset& firstAsset, const RemainingAssets& ...rest) noexcept {
 		// Ensure all inputs are shared assets
 		static_assert(!std::is_base_of<std::shared_ptr<Asset>, FirstAsset>::value, "Asset::All_Ready(...) parameter is not a Shared_Asset!");
 

@@ -39,7 +39,7 @@ public:
 		const auto bufferSize = sizeof(T) * m_capacity;
 		glCreateBuffers(BufferCount, m_bufferID);
 		for (int x = 0; x < BufferCount; ++x) {
-			glNamedBufferStorage(m_bufferID[x], bufferSize, 0, GL_DYNAMIC_STORAGE_BIT | BufferFlags);
+			glNamedBufferStorage(m_bufferID[x], bufferSize, nullptr, GL_DYNAMIC_STORAGE_BIT | BufferFlags);
 			m_bufferPtr[x] = static_cast<T*>(glMapNamedBufferRange(m_bufferID[x], 0, bufferSize, BufferFlags));
 		}
 	}
@@ -102,7 +102,7 @@ public:
 				// Create new buffer
 				GLuint newBuffer = 0;
 				glCreateBuffers(1, &newBuffer);
-				glNamedBufferStorage(newBuffer, newByteSize, 0, GL_DYNAMIC_STORAGE_BIT | BufferFlags);
+				glNamedBufferStorage(newBuffer, newByteSize, nullptr, GL_DYNAMIC_STORAGE_BIT | BufferFlags);
 
 				// Copy old buffer
 				if (oldByteSize)

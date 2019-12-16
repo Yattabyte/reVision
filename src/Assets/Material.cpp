@@ -34,7 +34,8 @@ Material::Material(Engine& engine, const std::string& filename, const std::vecto
 		const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
 		const std::string modelDirectory = relativePath.substr(0, furthestFolderIndex + 1);
 		// Apply these texture directories to the material whenever not null
-		for (size_t x = 0, size = m_textures.size(); x < size; ++x) {
+		const auto size = m_textures.size();
+		for (size_t x = 0; x < size; ++x) {
 			// In case we made the original texture set larger, copy the original texture naming pattern
 			if (m_textures[x].empty())
 				m_textures[x] = m_textures[x % MAX_PHYSICAL_IMAGES];

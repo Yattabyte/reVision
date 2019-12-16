@@ -51,7 +51,7 @@ ShadowData& Shadow_Technique::getShadowData() noexcept
 
 void Shadow_Technique::updateShadows(const float& deltaTime) noexcept 
 {
-	auto clientTime = m_engine.GetSystemTime();
+	const auto clientTime = m_engine.GetSystemTime();
 	if (m_frameData.shadowsToUpdate.size()) {
 		// Prepare Viewport
 		glViewport(0, 0, (GLsizei)m_frameData.shadowSize, (GLsizei)m_frameData.shadowSize);
@@ -60,8 +60,9 @@ void Shadow_Technique::updateShadows(const float& deltaTime) noexcept
 		// Accumulate Perspective Data
 		std::vector<std::pair<int, int>> perspectives;
 		perspectives.reserve(m_frameData.shadowsToUpdate.size());
+		const auto sceneCameraCount = m_sceneCameras.size();
 		for (auto& [importance, time, shadowSpot, camera] : m_frameData.shadowsToUpdate) {
-			for (int y = 0; y < m_sceneCameras.size(); ++y)
+			for (int y = 0; y < sceneCameraCount; ++y)
 				if (m_sceneCameras.at(y) == camera) {
 					perspectives.push_back({ y, shadowSpot });
 					break;

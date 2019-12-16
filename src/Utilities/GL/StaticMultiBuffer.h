@@ -36,7 +36,7 @@ public:
 	@param	size			the starting size of this buffer.
 	@param	data			optional data buffer, must be at least as large.
 	@param	storageFlags	optional bit-field flags. */
-	inline explicit StaticMultiBuffer(const GLsizeiptr& size, const void* data = 0, const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT) noexcept
+	inline explicit StaticMultiBuffer(const GLsizeiptr& size, const void* data = nullptr, const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT) noexcept
 		: m_size(size) {
 		// Zero-initialize our starting variables
 		for (int x = 0; x < BufferCount; ++x) {

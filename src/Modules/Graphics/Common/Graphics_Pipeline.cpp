@@ -62,7 +62,8 @@ std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime
 	// Write camera data to camera GPU buffer
 	m_cameraBuffer.beginWriting();
 	m_cameraBuffer.resize(m_sceneCameras.size());
-	for (size_t x = 0ULL; x < m_sceneCameras.size(); ++x)
+	const auto sceneCameraCount = m_sceneCameras.size();
+	for (size_t x = 0ULL; x < sceneCameraCount; ++x)
 		m_cameraBuffer[x] = *m_sceneCameras[x]->get();
 	m_cameraBuffer.endWriting();
 

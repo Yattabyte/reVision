@@ -30,7 +30,7 @@ private:
 	// Private Methods
 	/** Convolute the skybox cubemap, generating blurred MIPs (for rougher materials).
 	@param	viewport	the viewport to render from. */
-	void convoluteSky(Viewport& viewport) noexcept;
+	void convoluteSky(const Viewport& viewport) noexcept;
 
 
 	// Private Attributes

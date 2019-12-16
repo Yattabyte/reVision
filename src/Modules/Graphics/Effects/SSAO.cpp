@@ -29,13 +29,11 @@ SSAO::SSAO(Engine& engine) noexcept :
 	preferences.addCallback(PreferenceState::Preference::C_SSAO_BLUR_STRENGTH, m_aliveIndicator, [&](const float& f) noexcept { m_blurStrength = (int)f; });
 
 	// Prepare the noise texture and kernel
-	std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
+	const std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 	std::default_random_engine generator;
 	glm::vec3 noiseArray[16]{};
-	for (GLuint i = 0; i < 16; i++) {
-		glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f);
-		noiseArray[i] = (noise);
-	}
+	for (GLuint i = 0; i < 16; i++) 
+		noiseArray[i] = glm::vec3(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f);	
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_noiseID);
 	glTextureStorage2D(m_noiseID, 1, GL_RGB16F, 4, 4);
 	glTextureSubImage2D(m_noiseID, 0, 0, 0, 4, 4, GL_RGB, GL_FLOAT, &noiseArray[0]);
@@ -44,7 +42,7 @@ SSAO::SSAO(Engine& engine) noexcept :
 	glTextureParameteri(m_noiseID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_noiseID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	m_shader->addCallback(m_aliveIndicator, [&]()noexcept {
-		std::uniform_real_distribution<GLfloat> rdmFloats(0.0, 1.0);
+		const std::uniform_real_distribution<GLfloat> rdmFloats(0.0, 1.0);
 		std::default_random_engine gen;
 		glm::vec4 new_kernel[MAX_KERNEL_SIZE]{};
 		for (int i = 0, t = 0; i < MAX_KERNEL_SIZE; i++, t++) {
@@ -112,7 +110,7 @@ void SSAO::renderTechnique(const float&, Viewport& viewport, const std::vector<s
 	size_t aoSpot = 0;
 	if (m_blurStrength > 0) {
 		// Clear the second attachment
-		GLfloat clearRed = 0.0f;
+		constexpr GLfloat clearRed = 0.0f;
 		glClearTexImage(viewport.m_gfxFBOS.getTexID("SSAO", 1), 0, GL_RED, GL_FLOAT, &clearRed);
 
 		// Read from desired texture, blur into this frame buffer

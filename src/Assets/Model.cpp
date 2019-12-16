@@ -57,7 +57,8 @@ void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minO
 	if (!mesh.empty()) {
 		const auto& vector = mesh[0].vertex;
 		auto minX = vector.x, maxX = vector.x, minY = vector.y, maxY = vector.y, minZ = vector.z, maxZ = vector.z;
-		for (size_t x = 1, total = mesh.size(); x < total; ++x) {
+		const auto total = mesh.size();
+		for (size_t x = 1; x < total; ++x) {
 			const glm::vec3& vertex = mesh[x].vertex;
 			if (vertex.x < minX)
 				minX = vertex.x;
@@ -89,7 +90,8 @@ void Model::loadMaterial(const std::string& relativePath, Shared_Material& model
 	const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
 	const std::string meshDirectory = relativePath.substr(0, furthestFolderIndex + 1);
 	std::vector<std::string> textures(materials.size() * (size_t)MAX_PHYSICAL_IMAGES);
-	for (size_t tx = 0, mx = 0; tx < textures.size() && mx < materials.size(); tx += MAX_PHYSICAL_IMAGES, ++mx) {
+	const auto texturesSize = textures.size(), materialsSize = materials.size();
+	for (size_t tx = 0, mx = 0; tx < texturesSize && mx < materialsSize; tx += MAX_PHYSICAL_IMAGES, ++mx) {
 		if (!materials[mx].albedo.empty())
 			textures[tx + 0] = meshDirectory + materials[mx].albedo;
 		if (!materials[mx].normal.empty())

@@ -48,36 +48,41 @@ void ShadowScheduler_System::updateComponents(const float&, const std::vector<st
 
 				const float importance = importance_distance + importance_time * (1.0f - importance_distance);
 				bool didAnything = false;
-				// Try to find the oldest components
-				for (int x = 0; x < shadows.size(); ++x) {
-					auto& [oldImportance, oldTime, oldShadowSpot, oldCamera] = shadows[x];
-					if ((oldShadowSpot != -1 && importance > oldImportance)) {
-						// Expand container by one
-						shadows.resize(shadows.size() + 1);
-						// Shuffle next elements down
-						for (auto y = shadows.size() - 1ull; y > x; --y)
-							shadows[y] = shadows[y - 1ull];
-						oldImportance = importance;
-						oldTime = updateTime;
-						oldShadowSpot = shadowSpot;
-						oldCamera = cb;
-						didAnything = true;
-						break;
+				{
+					const auto shadowCount = shadows.size();
+					// Try to find the oldest components
+					for (int x = 0; x < shadowCount; ++x) {
+						auto& [oldImportance, oldTime, oldShadowSpot, oldCamera] = shadows[x];
+						if ((oldShadowSpot != -1 && importance > oldImportance)) {
+							// Expand container by one
+							shadows.resize(shadowCount + 1);
+							// Shuffle next elements down
+							for (auto y = shadows.size() - 1ull; y > x; --y)
+								shadows[y] = shadows[y - 1ull];
+							oldImportance = importance;
+							oldTime = updateTime;
+							oldShadowSpot = shadowSpot;
+							oldCamera = cb;
+							didAnything = true;
+							break;
+						}
 					}
 				}
-				if (!didAnything && shadows.size() < maxShadows)
+				const auto shadowCount = shadows.size();
+				if (!didAnything && shadowCount < maxShadows)
 					shadows.push_back({ importance, updateTime, shadowSpot, cb });
-				if (shadows.size() > maxShadows)
+				if (shadowCount > maxShadows)
 					shadows.resize(maxShadows);
 			};
 			// Set appropriate shadow spot
+			const auto shadowCameraCount = shadow->m_cameras.size();
 			shadow->m_shadowSpot = cameraCount;
-			shadow->m_updateTimes.resize(shadow->m_cameras.size());
-			for (int x = 0; x < shadow->m_cameras.size(); ++x) {
+			shadow->m_updateTimes.resize(shadowCameraCount);
+			for (int x = 0; x < shadowCameraCount; ++x) {
 				shadow->m_cameras[x].setEnabled(false);
 				tryToAddShadow(shadow->m_shadowSpot + x, &shadow->m_cameras[x], &shadow->m_updateTimes[x]);
 			}
-			cameraCount += (int)shadow->m_cameras.size();
+			cameraCount += (int)shadowCameraCount;
 		}
 
 		// Enable cameras in final set

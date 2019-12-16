@@ -98,10 +98,11 @@ void Prefabs::addPrefab(const std::vector<char>& entityData) noexcept
 	Prefabs::Entry newPrefab = { "New Entity", m_prefabSubDirectory + "\\New Entity", Entry::Type::FILE };
 
 	size_t dataRead(0ull);
-	while (dataRead < entityData.size())
-		newPrefab.entityHandles.push_back(
-			std::get<0>(m_previewWorld.deserializeEntity(entityData, entityData.size(), dataRead))
-		);
+	while(dataRead < entityData.size()) {
+		EntityHandle newPrefabHandle;
+		m_previewWorld.deserializeEntity(entityData, entityData.size(), dataRead, newPrefabHandle);
+		newPrefab.entityHandles.push_back(newPrefabHandle);
+	}
 	addPrefab(newPrefab);
 	m_selectedIndex = (int)(m_prefabs.size()) - 1;
 
@@ -144,7 +145,7 @@ void Prefabs::populatePrefabs(const std::string& directory) noexcept
 			a.m_localTransform.m_scale = glm::vec3(15.0f);
 			a.m_localTransform.update();
 			c.m_modelName = "FireHydrant\\FireHydrantMesh.obj";
-			ecsBaseComponent* entityComponents[] = { &a, &b, &c };
+			const ecsBaseComponent* entityComponents[] = { &a, &b, &c };
 			Prefabs::Entry entry{ "Basic Model", "", Entry::Type::FILE, {m_previewWorld.makeEntity(entityComponents, 3ull, "Basic Model")} };
 			addPrefab(entry);
 		}
@@ -159,7 +160,7 @@ void Prefabs::populatePrefabs(const std::string& directory) noexcept
 			a.m_localTransform.update();
 			e.m_color = glm::vec3(1.0f);
 			e.m_intensity = 15.0f;
-			ecsBaseComponent* entityComponents[] = { &a, &b, &c, &d, &e };
+			const ecsBaseComponent* entityComponents[] = { &a, &b, &c, &d, &e };
 			addPrefab(Prefabs::Entry{ "Basic Sun", "", Entry::file, m_previewWorld.makeEntity(entityComponents, 5ull, "Basic Sun") });
 		}*/
 		// Basic Light
@@ -174,7 +175,7 @@ void Prefabs::populatePrefabs(const std::string& directory) noexcept
 			b.m_intensity = 15.0f;
 			b.m_radius = 1.0F;
 			b.m_cutoff = 180.0f;
-			ecsBaseComponent* entityComponents[] = { &a, &b, &c };
+			const ecsBaseComponent* entityComponents[] = { &a, &b, &c };
 			addPrefab(Prefabs::Entry{ "Basic Sun", "", Entry::file, {m_previewWorld.makeEntity(entityComponents, 3ull, "Basic Sun")} });
 		}*/
 	}
@@ -190,10 +191,11 @@ void Prefabs::populatePrefabs(const std::string& directory) noexcept
 				std::vector<char> data(size);
 				prefabFile.read(&data[0], (std::streamsize)size);
 				size_t dataRead(0ull);
-				while (dataRead < data.size())
-					newPrefab.entityHandles.push_back(
-						std::get<0>(m_previewWorld.deserializeEntity(data, size, dataRead))
-					);
+				while(dataRead < data.size()) {
+					EntityHandle newPrefabHandle;
+					m_previewWorld.deserializeEntity(data, size, dataRead, newPrefabHandle);
+					newPrefab.entityHandles.push_back(newPrefabHandle);
+				}
 			}
 			prefabFile.close();
 		}
@@ -211,7 +213,7 @@ void Prefabs::populatePrefabs(const std::string& directory) noexcept
 		b.m_intensity = 10.0f;
 		b.m_radius = 1000.0f;
 		b.m_cutoff = 180.0f;
-		ecsBaseComponent* entityComponents[] = { &a, &b };
+		const ecsBaseComponent* entityComponents[] = { &a, &b };
 		m_sunHandle = m_previewWorld.makeEntity(entityComponents, 2ull, "Preview Sun");
 	}
 }
@@ -231,7 +233,7 @@ void Prefabs::openPrefabEntry() noexcept
 
 void Prefabs::tickThumbnails(const float& deltaTime) noexcept
 {
-	auto rotation = glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->vMatrix);
+	const auto rotation = glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->vMatrix);
 	const auto rotMat = glm::mat4_cast(rotation);
 	auto& trans = *m_previewWorld.getComponent<Transform_Component>(m_sunHandle);
 	trans.m_localTransform.m_orientation = glm::inverse(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(45.0f), glm::vec3(1, 0, 0)) * rotation);
@@ -324,7 +326,7 @@ void Prefabs::tickWindow(const float&) noexcept
 					textureID = m_texMissingThumb->m_glTexID;*/
 
 				ImGui::BeginGroup();
-				ImVec4 color = count == m_selectedIndex ? ImVec4(1, 1, 1, 0.75) : ImVec4(0, 0, 0, 0);
+				const ImVec4 color = count == m_selectedIndex ? ImVec4(1, 1, 1, 0.75) : ImVec4(0, 0, 0, 0);
 				ImGui::ImageButton(
 					(ImTextureID)static_cast<uintptr_t>(textureID),
 					ImVec2(50, 50),
@@ -420,7 +422,8 @@ void Prefabs::tickPopupDialogues(const float&) noexcept
 		ImGui::Spacing();
 
 		char nameInput[256]{};
-		for (size_t x = 0; x < m_prefabs[m_selectedIndex].name.length() && x < IM_ARRAYSIZE(nameInput); ++x)
+		const auto nameLength = m_prefabs[m_selectedIndex].name.length();
+		for (size_t x = 0; x < nameLength && x < IM_ARRAYSIZE(nameInput); ++x)
 			nameInput[x] = m_prefabs[m_selectedIndex].name[x];
 		nameInput[std::min(256ull, m_prefabs[m_selectedIndex].name.length())] = '\0';
 		if (ImGui::IsRootWindowOrAnyChildFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))

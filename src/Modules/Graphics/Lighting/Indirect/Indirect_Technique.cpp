@@ -29,8 +29,8 @@ Indirect_Technique::Indirect_Technique(Engine& engine, ShadowData& shadowData, C
 	const std::uniform_real_distribution<float> randomFloats(0.0, 1.0);
 	std::default_random_engine generator;
 	glm::vec3 texData[32 * 32 * 32]{};
-	for (int x = 0, total = (32 * 32 * 32); x < total; ++x)
-		texData[x] = glm::vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator));
+	for (auto& pixel : texData)
+		pixel = glm::vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator));
 	glCreateTextures(GL_TEXTURE_3D, 1, &m_textureNoise32);
 	glTextureImage3DEXT(m_textureNoise32, GL_TEXTURE_3D, 0, GL_RGB16F, 32, 32, 32, 0, GL_RGB, GL_FLOAT, texData);
 	glTextureParameteri(m_textureNoise32, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);

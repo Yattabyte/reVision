@@ -46,26 +46,30 @@ void ReflectorScheduler_System::updateComponents(const float&, const std::vector
 
 				const float importance = importance_distance + importance_time * (1.0f - importance_distance);
 				bool didAnything = false;
-				// Try to find the oldest components
-				for (int x = 0; x < reflectors.size(); ++x) {
-					auto& [oldImportance, oldTime, oldReflectorSpot, oldCamera] = reflectors[x];
-					if ((oldReflectorSpot != -1 && importance > oldImportance)) {
-						// Expand container by one
-						reflectors.resize(reflectors.size() + 1);
-						// Shuffle next elements down
-						for (auto y = reflectors.size() - 1ull; y > x; --y)
-							reflectors[y] = reflectors[y - 1ull];
-						oldImportance = importance;
-						oldTime = updateTime;
-						oldReflectorSpot = reflectorSpot;
-						oldCamera = cb;
-						didAnything = true;
-						break;
+				{
+					// Try to find the oldest components
+					const auto reflectorCount = reflectors.size();
+					for (int x = 0; x < reflectorCount; ++x) {
+						auto& [oldImportance, oldTime, oldReflectorSpot, oldCamera] = reflectors[x];
+						if ((oldReflectorSpot != -1 && importance > oldImportance)) {
+							// Expand container by one
+							reflectors.resize(reflectorCount + 1);
+							// Shuffle next elements down
+							for (auto y = reflectors.size() - 1ull; y > x; --y)
+								reflectors[y] = reflectors[y - 1ull];
+							oldImportance = importance;
+							oldTime = updateTime;
+							oldReflectorSpot = reflectorSpot;
+							oldCamera = cb;
+							didAnything = true;
+							break;
+						}
 					}
 				}
-				if (!didAnything && reflectors.size() < maxReflectors)
+				const auto reflectorCount = reflectors.size();
+				if (!didAnything && reflectorCount < maxReflectors)
 					reflectors.push_back({ importance, updateTime, reflectorSpot, cb });
-				if (reflectors.size() > maxReflectors)
+				if (reflectorCount > maxReflectors)
 					reflectors.resize(maxReflectors);
 			};
 			// Set appropriate reflector spot

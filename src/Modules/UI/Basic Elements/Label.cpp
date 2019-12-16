@@ -75,13 +75,13 @@ void Label::setText(const std::string& text) noexcept
 	m_text = text;
 
 	// Write letters to a buffer
-	const GLuint count = (GLuint)m_text.size();
-	std::vector<int> data(size_t(count) + 1ull);
+	const auto count = m_text.size();
+	std::vector<int> data(count + 1ull);
 	data[0] = (int)count;
-	for (size_t x = 0; x < (size_t)count; ++x)
+	for (size_t x = 0; x < count; ++x)
 		data[x + 1ull] = (int)(m_text[x]) - 32;
-	m_bufferString.write_immediate(0, sizeof(int) * (size_t(count) + 1ull), data.data());
-	m_charCount = count;
+	m_bufferString.write_immediate(0, sizeof(int) * (count + 1ull), data.data());
+	m_charCount = (GLuint)count;
 
 	// Notify text changed
 	enactCallback((int)Label::Interact::on_textChanged);

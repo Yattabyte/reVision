@@ -141,7 +141,7 @@ void TextInput::updateGeometry() noexcept
 	std::vector<glm::vec3> data(num_data);
 	std::vector<int> objIndices(num_data);
 
-	for (int x = 0; x < 12; x += 6) {
+	for (size_t x = 0; x < 12; x += 6) {
 		data[x + 0] = { -1, -1, 0 };
 		data[x + 1] = { 1, -1, 0 };
 		data[x + 2] = { 1,  1, 0 };
@@ -149,11 +149,11 @@ void TextInput::updateGeometry() noexcept
 		data[x + 4] = { -1,  1, 0 };
 		data[x + 5] = { -1, -1, 0 };
 	}
-	for (int x = 0; x < 6; ++x) {
+	for (auto x = 0; x < 6; ++x) {
 		data[x] *= glm::vec3(m_scale, 0.0f);
 		objIndices[x] = 0;
 	}
-	for (int x = 6; x < 12; ++x) {
+	for (auto x = 6; x < 12; ++x) {
 		data[x] *= glm::vec3(1.0, 10, 1);
 		data[x].x = (data[x].x - m_scale.x) + (10.0f * m_caretIndex);
 		objIndices[x] = 1;

@@ -18,7 +18,8 @@ void FrustumCull_System::updateComponents(const float&, const std::vector<std::v
 		auto* bsphereComponent = static_cast<BoundingSphere_Component*>(componentParam[2]);
 
 		// Update the visibility status for each camera this entity is visible in
-		for (int x = 0; x < m_sceneCameras.size(); ++x) {
+		const auto sceneCameraCount = m_sceneCameras.size();
+		for (int x = 0; x < sceneCameraCount; ++x) {
 			const auto& camera = m_sceneCameras.at(x);
 
 			// Err on the side of caution and say its visible by default

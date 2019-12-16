@@ -52,7 +52,7 @@ void Inspector_Collider_System::updateComponents(const float&, const std::vector
 		}
 		if (entries.empty())
 			entries.resize(1ull);
-		static int item_current = static_cast<int>(typeInput);
+		static int item_current = (int)(typeInput);
 		if (ImGui::Combo("Model File", &item_current, &entries[0], (int)entries.size())) {
 			struct Name_Command final : Editor_Command {
 				ecsWorld& m_ecsWorld;
@@ -128,7 +128,7 @@ void Inspector_Collider_System::updateComponents(const float&, const std::vector
 					setData(m_oldData);
 				}
 				bool join(Editor_Command* other) noexcept final {
-					if (auto newCommand = dynamic_cast<Restitution_Command*>(other)) {
+					if (const auto& newCommand = dynamic_cast<Restitution_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
 							return true;

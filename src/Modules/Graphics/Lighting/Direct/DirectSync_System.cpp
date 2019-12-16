@@ -80,7 +80,7 @@ void DirectSync_System::updateComponents(const float&, const std::vector<std::ve
 					const float cUni = near_plane + (far_plane - near_plane) * xDivM;
 					cascadeEnd[x] = (lambda * cLog) + (1.0f - lambda) * cUni;
 				}
-				for (int x = 0; x < NUM_CASCADES; x++) {
+				for (int x = 0; x < NUM_CASCADES; ++x) {
 					// Find the middle of current view frustum chunk
 					const auto middle = glm::vec3(0, 0, ((cascadeEnd[x + 1] - cascadeEnd[x]) / 2.0f) + cascadeEnd[x]);
 

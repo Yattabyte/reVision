@@ -100,13 +100,13 @@ void List_Horizontal::userAction(ActionState& actionState) noexcept
 
 		// After, process remaining input for the list_Horizontal
 		if (actionState.isAction(ActionState::Action::UI_UP) == ActionState::State::PRESS) {
-			setHoverIndex(int(m_hoverIndex - 1) < 0 ? (int)m_children.size() - 1ull : int(m_hoverIndex - 1));
+			setHoverIndex(int(size_t(m_hoverIndex) - 1) < 0 ? (int)(m_children.size() - 1ull) : int(size_t(m_hoverIndex) - 1));
 
 			if (m_selectionIndex != -1)
 				setSelectionIndex(-1);
 		}
 		else if (actionState.isAction(ActionState::Action::UI_DOWN) == ActionState::State::PRESS) {
-			setHoverIndex(int(m_hoverIndex + 1) > m_children.size() - 1ull ? 0 : int(m_hoverIndex + 1));
+			setHoverIndex(int(size_t(m_hoverIndex) + 1) > m_children.size() - 1ull ? 0 : int(size_t(m_hoverIndex) + 1));
 
 			if (m_selectionIndex != -1)
 				setSelectionIndex(-1);
@@ -121,10 +121,11 @@ void List_Horizontal::userAction(ActionState& actionState) noexcept
 void List_Horizontal::setHoverIndex(const int& newIndex) noexcept 
 {
 	m_hoverIndex = newIndex;
-	if (m_children.size()) {
+	const auto childrenCount = m_children.size();
+	if (childrenCount) {
 		for (auto& child : m_children)
 			child->clearFocus();
-		if (m_hoverIndex > -1 && m_hoverIndex < m_children.size())
+		if (m_hoverIndex > -1 && m_hoverIndex < childrenCount)
 			m_children[m_hoverIndex]->setHovered();
 	}
 	updateSelectionGeometry();

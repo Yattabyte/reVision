@@ -8,9 +8,9 @@
 
 
 // Forward Declarations
-static bool RayProp(const Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence) noexcept;
+static bool RayProp(const Transform_Component* transformComponent, const Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence) noexcept;
 static bool RayCollider(const Collider_Component* collider, const void* const closestPhysicsShape, const float& closetstPhysicsHit, float& distanceFromScreen, int& confidence) noexcept;
-static bool RayBBox(Transform_Component* transformComponent, const BoundingBox_Component* bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept;
+static bool RayBBox(const Transform_Component* transformComponent, const BoundingBox_Component* bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept;
 static bool RayBSphere(const Transform_Component* transformComponent, const BoundingSphere_Component* bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept;
 static bool RayOrigin(const Transform_Component* transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine) noexcept;
 
@@ -76,10 +76,10 @@ void MousePicker_System::updateComponents(const float&, const std::vector<std::v
 	bool found = false;
 	for (const auto& componentParam : components) {
 		auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
-		auto* bBox = static_cast<BoundingBox_Component*>(componentParam[1]);
-		auto* bSphere = static_cast<BoundingSphere_Component*>(componentParam[2]);
-		auto* collider = static_cast<Collider_Component*>(componentParam[3]);
-		auto* prop = static_cast<Prop_Component*>(componentParam[4]);
+		const auto* bBox = static_cast<BoundingBox_Component*>(componentParam[1]);
+		const auto* bSphere = static_cast<BoundingSphere_Component*>(componentParam[2]);
+		const auto* collider = static_cast<Collider_Component*>(componentParam[3]);
+		const auto* prop = static_cast<Prop_Component*>(componentParam[4]);
 		float distanceFromScreen = FLT_MAX;
 		int confidence = 0;
 		const bool hasBoundingShape = bSphere || bBox;
@@ -132,12 +132,13 @@ std::tuple<EntityHandle, Transform, Transform> MousePicker_System::getSelection(
 @param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
 @param	confidence				reference updated with the confidence level for this function.
 @return							true on successful intersection, false if disjoint. */
-static bool RayProp(const Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence) noexcept 
+static bool RayProp(const Transform_Component* transformComponent, const Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence) noexcept 
 {
 	bool intersection = false;
 	if (prop->m_model->ready()) {
 		float distance = FLT_MAX;
-		for (size_t x = 0; x < prop->m_model->m_data.m_vertices.size(); x += 3) {
+		const auto vertexCount = prop->m_model->m_data.m_vertices.size();
+		for (size_t x = 0; x < vertexCount; x += 3) {
 			auto v0 = transformComponent->m_worldTransform.m_modelMatrix * glm::vec4(prop->m_model->m_data.m_vertices[x].vertex, 1);
 			auto v1 = transformComponent->m_worldTransform.m_modelMatrix * glm::vec4(prop->m_model->m_data.m_vertices[x + 1].vertex, 1);
 			auto v2 = transformComponent->m_worldTransform.m_modelMatrix * glm::vec4(prop->m_model->m_data.m_vertices[x + 2].vertex, 1);
@@ -185,7 +186,7 @@ static bool RayCollider(const Collider_Component* collider, const void* const cl
 @param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
 @param	confidence				reference updated with the confidence level for this function.
 @return							true on successful intersection, false if disjoint. */
-static bool RayBBox(Transform_Component* transformComponent, const BoundingBox_Component* bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept
+static bool RayBBox(const Transform_Component* transformComponent, const BoundingBox_Component* bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept
 {
 	float distance(FLT_MAX);
 	const auto& scale = transformComponent->m_worldTransform.m_scale;

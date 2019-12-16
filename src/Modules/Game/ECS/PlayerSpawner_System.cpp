@@ -21,14 +21,14 @@ void PlayerSpawn_System::updateComponents(const float&, const std::vector<std::v
 	if (m_playerCount == 0ull) {
 		for (const auto& componentParam : components) {
 			//auto* spawnComponent = static_cast<PlayerSpawn_Component*>(componentParam[0]);
-			auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);
+			const auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);
 			Player3D_Component player;
 			Transform_Component trans;
 
 			trans.m_localTransform = transformComponent->m_worldTransform;
 
-			ecsBaseComponent* entityComponents[] = { &player, &trans };
-			m_game.getWorld().makeEntity(entityComponents, 2ull, "Player");
+			const ecsBaseComponent* entityComponents[] = { &player, &trans };
+			m_playerHandle = m_game.getWorld().makeEntity(entityComponents, 2ull, "Player");
 			m_playerCount++;
 		}
 	}

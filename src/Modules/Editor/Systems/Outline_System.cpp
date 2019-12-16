@@ -161,7 +161,8 @@ void Outline_System::tryInsertModel(const Shared_Mesh& mesh) noexcept
 		// Upload vertex data
 		std::vector<glm::vec3> mergedData;
 		mergedData.reserve(mesh->m_geometry.vertices.size() * 2);
-		for (size_t x = 0, size = std::min(mesh->m_geometry.vertices.size(), mesh->m_geometry.normals.size()); x < size; ++x) {
+		const auto size = std::min(mesh->m_geometry.vertices.size(), mesh->m_geometry.normals.size());
+		for (size_t x = 0; x < size; ++x) {
 			mergedData.push_back(mesh->m_geometry.vertices[x]);
 			mergedData.push_back(mesh->m_geometry.normals[x]);
 		}

@@ -83,7 +83,7 @@ void RH_Volume::resize(const float& resolution) noexcept
 void RH_Volume::clear() noexcept
 {
 	constexpr GLfloat clearColor[] = { 0.0F, 0.0F, 0.0F, 0.0F };
-	for (unsigned int bounce : m_fboIDS)
+	for (const auto& bounce : m_fboIDS)
 		for (GLint x = 0; x < RH_TEXTURE_COUNT; ++x)
 			glClearNamedFramebufferfv(bounce, GL_COLOR, x, clearColor);
 }

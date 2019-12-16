@@ -37,12 +37,13 @@ void Frametime_Counter::applyEffect(const float& deltaTime) noexcept
 	m_shader->setUniform(1, m_projMatrix);
 	const glm::mat4 scale = glm::translate(glm::mat4(1.0f), glm::vec3(12, 12, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(12));
 
-	float dt_seconds = deltaTime * 1000;
+	const float dt_seconds = deltaTime * 1000.0f;
 	std::string test = std::to_string(dt_seconds);
 	bool foundDecimal = false;
 	int decimalCount = 0;
 	bool repeat = true;
-	for (size_t x = 0, length = test.size(); x < length && repeat; ++x) {
+	const auto length = test.size();
+	for (size_t x = 0; x < length && repeat; ++x) {
 		if (foundDecimal)
 			decimalCount++;
 		if (decimalCount >= 2)

@@ -33,20 +33,18 @@ public:
 	@param	UUID				optional entity UUID, if empty will auto-generate.
 	@param	parentUUID			optional parent entity UUID, if not at the level root.
 	@return						handle to the entity on success, empty on failure. */
-	[[maybe_unused]] EntityHandle makeEntity(ecsBaseComponent** const components, const size_t& numComponents, const std::string& name = "Entity", const EntityHandle& UUID = EntityHandle(), const EntityHandle& parentUUID = EntityHandle()) noexcept;
+	[[maybe_unused]] EntityHandle makeEntity(const ecsBaseComponent* const *const components, const size_t& numComponents, const std::string& name = "Entity", const EntityHandle& UUID = EntityHandle(), const EntityHandle& parentUUID = EntityHandle()) noexcept;
 	/** Adds a component to an entity.
 	@param	entityHandle		handle to the entity to add the component to.
 	@param	component			the component being added.
-	@param	UUID				optional component UUID, if empty will auto-generate.
-	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity). */
-	[[maybe_unused]] ComponentHandle makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* component, const ComponentHandle& UUID = ComponentHandle()) noexcept;
+	@param	UUID				optional reference to the component UUID, if empty will auto-generate. */
+	void makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* const component, ComponentHandle& UUID = ComponentHandle()) noexcept;
 	/** Adds a component to an entity.
 	@param	entityHandle		handle to the entity to add the component to.
 	@param	componentID			the runtime component class.
 	@param	component			the component being added.
-	@param	UUID				optional component UUID, if empty will auto-generate.
-	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity). */
-	[[maybe_unused]] ComponentHandle makeComponent(const EntityHandle& entityHandle, const ComponentID& componentID, const ecsBaseComponent* component = nullptr, const ComponentHandle& UUID = ComponentHandle()) noexcept;
+	@param	UUID				optional reference to the component UUID, if empty will auto-generate. */
+	void makeComponent(const EntityHandle& entityHandle, const ComponentID& componentID, const ecsBaseComponent* const component = nullptr, ComponentHandle& UUID = ComponentHandle()) noexcept;
 
 
 	///////////////////////////////
@@ -158,10 +156,9 @@ public:
 	@param	data				previously serialized entity data.
 	@param	dataSize			the size of the data in bytes (sizeof(char) * elements).
 	@param	dataRead			reference to number of elements or bytes read in data so far.
-	@param	parentHandle		optional handle to parent entity, designed to be called recursively if entity has children.
-	@param	desiredHandle		optional specific handle to use, if empty will use handle held in data stream.
-	@return						a handle and a pointer pair to the entity created. */
-	[[maybe_unused]] std::pair<EntityHandle, ecsEntity*> deserializeEntity(const std::vector<char>& data, const size_t& dataSize, size_t& dataRead, const EntityHandle& parentHandle = EntityHandle(), const EntityHandle& desiredHandle = EntityHandle()) noexcept;
+	@param	desiredHandle		specific handle to use. If empty will be updated with serialized value instead.
+	@param	parentHandle		optional handle to parent entity, designed to be called recursively if entity has children. */
+	void deserializeEntity(const std::vector<char>& data, const size_t& dataSize, size_t& dataRead, EntityHandle& desiredHandle = EntityHandle(),  const EntityHandle& parentHandle = EntityHandle()) noexcept;
 	/** Try to find a component ID based on the component ID.
 	@param	name				the component class name to search for.
 	@return						optional component ID on success, nullptr on failure. */

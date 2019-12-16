@@ -601,7 +601,8 @@ void LevelEditor_Module::mergeSelection() noexcept
 			const auto& root = m_uuids[0];
 			if (root.isValid()) {
 				// Parent remaining entities in the selection to the root
-				for (size_t x = 1ull, selSize = m_uuids.size(); x < selSize; ++x)
+				const auto selSize = m_uuids.size();
+				for (size_t x = 1ull; x < selSize; ++x)
 					if (const auto& entityHandle = m_uuids[x])
 						ecsWorld.parentEntity(root, entityHandle);
 				m_editor.m_mouseGizmo.getSelection() = { root };
@@ -612,13 +613,14 @@ void LevelEditor_Module::mergeSelection() noexcept
 			// Find the root element
 			if (const auto& root = ecsWorld.getEntity(m_uuids[0])) {
 				// Un-parent remaining entities from the root
-				for (size_t x = 1ull, selSize = m_uuids.size(); x < selSize; ++x)
+				const auto selSize = m_uuids.size();
+				for (size_t x = 1ull; x < selSize; ++x)
 					if (const auto& entityHandle = m_uuids[x])
 						ecsWorld.unparentEntity(entityHandle);
 			}
 		}
 		bool join(Editor_Command* other) noexcept final {
-			if (auto newCommand = dynamic_cast<Merge_Selection_Command*>(other)) {
+			if (const auto& newCommand = dynamic_cast<Merge_Selection_Command*>(other)) {
 				// If root is the same, continue
 				if (m_uuids[0] == newCommand->m_uuids[0]) {
 					// Join the 2 'new' sets together, make sure it's unique
@@ -659,7 +661,7 @@ void LevelEditor_Module::groupSelection() noexcept
 			rootTransform.m_worldTransform = rootTransform.m_localTransform;
 
 			// Make a new root entity for the selection
-			ecsBaseComponent* entityComponents[] = { &rootTransform };
+			const ecsBaseComponent* entityComponents[] = { &rootTransform };
 			m_rootUUID = ecsWorld.makeEntity(entityComponents, 1ull, "Group", m_rootUUID);
 
 			// Offset children by new center position
@@ -749,7 +751,7 @@ void LevelEditor_Module::deleteSelection() noexcept
 		Engine& m_engine;
 		LevelEditor_Module& m_editor;
 		const std::vector<char> m_data;
-		const std::vector<EntityHandle> m_uuids;
+		std::vector<EntityHandle> m_uuids;
 		Delete_Selection_Command(Engine& engine, LevelEditor_Module& editor, const std::vector<EntityHandle>& selection) noexcept
 			: m_engine(engine), m_editor(editor), m_data(editor.getWorld().serializeEntities(selection)), m_uuids(selection) {}
 		void execute() noexcept final {
@@ -761,7 +763,7 @@ void LevelEditor_Module::deleteSelection() noexcept
 			auto& ecsWorld = m_editor.getWorld();
 			size_t dataRead(0ull), uuidIndex(0ull);
 			while (dataRead < m_data.size() && uuidIndex < m_uuids.size())
-				ecsWorld.deserializeEntity(m_data, m_data.size(), dataRead, EntityHandle(), m_uuids[uuidIndex]);
+				ecsWorld.deserializeEntity(m_data, m_data.size(), dataRead, m_uuids[uuidIndex++]);
 		}
 	};
 
@@ -783,7 +785,7 @@ void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const c
 		void execute() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
 			if (const auto& componentID = ecsWorld.nameToComponentID(m_componentName))
-				m_componentHandle = ecsWorld.makeComponent(m_entityHandle, *componentID, nullptr, m_componentHandle);
+				ecsWorld.makeComponent(m_entityHandle, *componentID, nullptr, m_componentHandle);
 		}
 		void undo() noexcept final {
 			auto& ecsWorld = m_editor.getWorld();
@@ -808,7 +810,7 @@ void LevelEditor_Module::deleteComponent(const EntityHandle& entityHandle, const
 		Engine& m_engine;
 		LevelEditor_Module& m_editor;
 		const EntityHandle m_entityHandle;
-		const ComponentHandle m_componentHandle;
+		ComponentHandle m_componentHandle;
 		const int m_componentID;
 		std::vector<char> m_componentData;
 		Delete_Component_Command(Engine& engine, LevelEditor_Module& editor, const EntityHandle& entityHandle, const ComponentHandle& componentHandle, const int& componentID) noexcept
@@ -852,9 +854,9 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const En
 			while (dataRead < m_data.size()) {
 				// Ensure we have a vector large enough to hold all UUIDs, but maintain previous data
 				m_uuids.resize(std::max<size_t>(m_uuids.size(), handleCount + 1ull));
-				const auto desiredHandle = m_uuids[handleCount].isValid() ? m_uuids[handleCount] : (EntityHandle)(ecsWorld.generateUUID());
-				const auto& [entityHandle, entity] = ecsWorld.deserializeEntity(m_data, m_data.size(), dataRead, m_parentUUID, desiredHandle);
-				if (entityHandle.isValid() && entity) {
+				auto entityHandle = m_uuids[handleCount].isValid() ? m_uuids[handleCount] : (EntityHandle)(ecsWorld.generateUUID());
+				ecsWorld.deserializeEntity(m_data, m_data.size(), dataRead, entityHandle, m_parentUUID);
+				if (entityHandle.isValid() && ecsWorld.getEntity(entityHandle)) {
 					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
 						center += transform->m_localTransform.m_position;
