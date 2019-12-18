@@ -218,6 +218,24 @@ ShaderObj::ShaderObj(const GLenum& type) noexcept :
 {
 }
 
+ShaderObj::ShaderObj(ShaderObj&& other) noexcept :
+	m_shaderID(std::move(other.m_shaderID)),
+	m_shaderText(std::move(other.m_shaderText)),
+	m_type(std::move(other.m_type))
+{
+}
+
+ShaderObj::ShaderObj(const ShaderObj& other) :
+	m_shaderText(other.m_shaderText),
+	m_type(other.m_type)
+{
+	const char* source = m_shaderText.c_str();
+	const auto length = (GLint)m_shaderText.length();
+	m_shaderID = glCreateShader(m_type);
+	glShaderSource(m_shaderID, 1, &source, &length);
+	glCompileShader(m_shaderID);
+}
+
 GLint ShaderObj::getShaderiv(const GLenum& parameterName) const noexcept
 {
 	GLint param;

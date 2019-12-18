@@ -44,12 +44,18 @@ public:
 struct EntityHandle final : ecsHandle {
 	inline ~EntityHandle() noexcept = default;
 	inline EntityHandle() noexcept = default;
+	inline EntityHandle(EntityHandle&&) noexcept = default;
+	inline EntityHandle(const EntityHandle&) noexcept = default;
 	explicit EntityHandle(const ecsHandle& handle) noexcept;
+	EntityHandle& operator=(const EntityHandle& other) noexcept;
 };
 struct ComponentHandle final : ecsHandle {
 	inline ~ComponentHandle() noexcept = default;
 	inline ComponentHandle() noexcept = default;
+	inline ComponentHandle(ComponentHandle&&) noexcept = default;
+	inline ComponentHandle(const ComponentHandle&) noexcept = default;
 	explicit ComponentHandle(const ecsHandle& handle) noexcept;
+	ComponentHandle& operator=(const ComponentHandle& other) noexcept;
 };
 
 #endif // ECS_HANDLE_H

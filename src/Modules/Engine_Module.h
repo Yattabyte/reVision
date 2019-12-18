@@ -24,7 +24,20 @@ public:
 
 
 protected:
+	// Protected Attributes
 	Engine& m_engine;
+
+
+private:
+	// Private and deleted
+	/** Disallow module move constructor. */
+	inline Engine_Module(Engine_Module&&) noexcept = delete;
+	/** Disallow module copy constructor. */
+	inline Engine_Module(const Engine_Module&) noexcept = delete;
+	/** Disallow module move assignment. */
+	inline const Engine_Module& operator =(Engine_Module&&) noexcept = delete;
+	/** Disallow module copy assignment. */
+	inline const Engine_Module& operator =(const Engine_Module&) noexcept = delete;
 };
 
 #endif // ENGINE_MODULE_H

@@ -31,6 +31,10 @@ struct ecsBaseComponent {
 	@param	size		the byte-size of this component.
 	@param	name		the char array name of this component. */
 	ecsBaseComponent(const ComponentID& ID, const size_t& size, const char* name) noexcept;
+	/** Move a base ecsComponent. */
+	inline ecsBaseComponent(ecsBaseComponent&&) noexcept = default;
+	/** Copy a base ecsComponent. */
+	inline ecsBaseComponent(const ecsBaseComponent&) noexcept = default;
 
 
 	// Public Methods
@@ -91,6 +95,10 @@ struct ecsComponent : public ecsBaseComponent {
 	inline ~ecsComponent() noexcept = default;
 	/** Construct this specific component. */
 	inline ecsComponent() noexcept : ecsBaseComponent(ecsComponent::Runtime_ID, sizeof(C), chars) {}
+	/** Move an ecsComponent. */
+	inline ecsComponent(ecsComponent&&) noexcept = default;
+	/** Copy an ecsComponent. */
+	inline ecsComponent(const ecsComponent&) noexcept = default;
 
 
 	// Public Methods

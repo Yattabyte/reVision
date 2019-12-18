@@ -24,7 +24,7 @@
 #include "Utilities/GL/Window.h"
 
 
-constexpr char ENGINE_VERSION[] = "4.20.6";
+constexpr char ENGINE_VERSION[] = "4.20.7";
 struct GLFWwindow;
 
 /** The main game engine object. Encapsulates the entire engine state. */
@@ -130,6 +130,17 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow engine move constructor. */
+	inline Engine(Engine&&) noexcept = delete;
+	/** Disallow engine copy constructor. */
+	inline Engine(const Engine&) noexcept = delete;
+	/** Disallow engine move assignment. */
+	inline const Engine& operator =(Engine&&) noexcept = delete;
+	/** Disallow engine copy assignment. */
+	inline const Engine& operator =(const Engine&) noexcept = delete;
+
+
 	// Private Methods
 	/** Print the engine boiler-plate text to the message manager. */
 	void printBoilerPlate() noexcept;

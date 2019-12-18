@@ -123,7 +123,7 @@ public:
 	inline size_t getLength() const noexcept {
 		return m_capacity;
 	}
-	/** Assignment operator, for moving another buffer into this one.
+	/** Movement operator, for moving another buffer into this one.
 	@param	other			another buffer to move the data from, to here. */
 	inline GL_Vector& operator=(GL_Vector&& other) noexcept {
 		for (int x = 0; x < BufferCount; ++x) {

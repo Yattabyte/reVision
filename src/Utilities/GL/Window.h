@@ -66,6 +66,17 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow window move constructor. */
+	inline Window(Window&&) noexcept = delete;
+	/** Disallow window copy constructor. */
+	inline Window(const Window&) noexcept = delete;
+	/** Disallow window move assignment. */
+	inline const Window& operator =(Window&&) noexcept = delete;
+	/** Disallow window copy assignment. */
+	inline const Window& operator =(const Window&) noexcept = delete;
+
+
 	// Private Methods
 	/** Initialize the auxiliary processing threads. */
 	void initThreads() noexcept;

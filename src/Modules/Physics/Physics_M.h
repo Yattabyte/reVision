@@ -36,6 +36,17 @@ public:
 
 
 private:
+	// Private and deleted
+	/** Disallow module move constructor. */
+	inline Physics_Module(Physics_Module&&) noexcept = delete;
+	/** Disallow module copy constructor. */
+	inline Physics_Module(const Physics_Module&) noexcept = delete;
+	/** Disallow module move assignment. */
+	inline const Physics_Module& operator =(Physics_Module&&) noexcept = delete;
+	/** Disallow module copy assignment. */
+	inline const Physics_Module& operator =(const Physics_Module&) noexcept = delete;
+
+
 	// Private Attributes
 	btDbvtBroadphase m_broadphase;
 	btDefaultCollisionConfiguration m_collisionConfiguration;

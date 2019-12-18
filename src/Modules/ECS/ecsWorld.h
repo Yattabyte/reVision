@@ -188,6 +188,8 @@ public:
 
 private:
 	// Private Methods
+	/** Disallow copying an ECS world. */
+	inline ecsWorld(const ecsWorld&) noexcept = delete;
 	/** Check if a given component ID has been previously registered and deemed valid.
 	@param	componentID			the component ID to verify.
 	@return						true if valid and registered, false otherwise. */

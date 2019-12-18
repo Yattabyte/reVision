@@ -53,6 +53,17 @@ public:
 
 
 private:
+	// Private and deleted
+	/** Disallow module move constructor. */
+	inline Graphics_Module(Graphics_Module&&) noexcept = delete;
+	/** Disallow module copy constructor. */
+	inline Graphics_Module(const Graphics_Module&) noexcept = delete;
+	/** Disallow module move assignment. */
+	inline const Graphics_Module& operator =(Graphics_Module&&) noexcept = delete;
+	/** Disallow module copy assignment. */
+	inline const Graphics_Module& operator =(const Graphics_Module&) noexcept = delete;
+
+
 	// Private Methods
 	/** Copy the client camera's final color buffer to a specific framebuffer.
 	@param	fboID			the framebuffer ID. */

@@ -20,6 +20,7 @@ struct VertexBoneData {
 	inline ~VertexBoneData() noexcept = default;
 	VertexBoneData() noexcept;
 	VertexBoneData(const VertexBoneData& vbd) noexcept;
+	inline VertexBoneData(VertexBoneData&&) noexcept = default;
 	void Reset() noexcept;
 	void AddBoneData(const int& BoneID, const float& Weight) noexcept;
 };

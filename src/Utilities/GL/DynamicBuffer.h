@@ -143,7 +143,7 @@ public:
 			m_readFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		m_index = (m_index + 1) % BufferCount;
 	}
-	/** Assignment operator, for moving another buffer into this one.
+	/** Movement operator, for moving another buffer into this one.
 	@param	other			another buffer to move the data from, to here. */
 	inline DynamicBuffer& operator=(DynamicBuffer&& other) noexcept {
 		for (int x = 0; x < BufferCount; ++x) {

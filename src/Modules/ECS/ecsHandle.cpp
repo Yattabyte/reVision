@@ -50,7 +50,19 @@ EntityHandle::EntityHandle(const ecsHandle& handle) noexcept
 {
 }
 
+EntityHandle& EntityHandle::operator=(const EntityHandle& other) noexcept
+{
+	std::copy(&other.m_uuid[0], &other.m_uuid[32], &m_uuid[0]);
+	return *this;
+}
+
 ComponentHandle::ComponentHandle(const ecsHandle& handle) noexcept 
 	: ecsHandle(handle) 
 {
+}
+
+ComponentHandle& ComponentHandle::operator=(const ComponentHandle& other) noexcept
+{
+	std::copy(&other.m_uuid[0], &other.m_uuid[32], &m_uuid[0]);
+	return *this;
 }

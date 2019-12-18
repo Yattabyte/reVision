@@ -152,6 +152,17 @@ public:
 
 
 private:
+	// Private and deleted
+	/** Disallow module move constructor. */
+	inline LevelEditor_Module(LevelEditor_Module&&) noexcept = delete;
+	/** Disallow module copy constructor. */
+	inline LevelEditor_Module(const LevelEditor_Module&) noexcept = delete;
+	/** Disallow module move assignment. */
+	inline const LevelEditor_Module& operator =(LevelEditor_Module&&) noexcept = delete;
+	/** Disallow module copy assignment. */
+	inline const LevelEditor_Module& operator =(const LevelEditor_Module&) noexcept = delete;
+
+
 	// Private Methods
 	/** Add a level name to the 'recent maps' list.
 	@param	name			a level name to add to the recent maps list. */

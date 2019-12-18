@@ -72,6 +72,17 @@ public:
 
 
 private:
+	// Private and deleted
+	/** Disallow module move constructor. */
+	inline UI_Module(UI_Module&&) noexcept = delete;
+	/** Disallow module copy constructor. */
+	inline UI_Module(const UI_Module&) noexcept = delete;
+	/** Disallow module move assignment. */
+	inline const UI_Module& operator =(UI_Module&&) noexcept = delete;
+	/** Disallow module copy assignment. */
+	inline const UI_Module& operator =(const UI_Module&) noexcept = delete;
+
+
 	// Private Attributes
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	glm::ivec2 m_renderSize = glm::ivec2(1);

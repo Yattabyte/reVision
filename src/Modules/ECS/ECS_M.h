@@ -45,6 +45,18 @@ public:
 	@param	componentTypes		list of component types to retrieve.
 	@param	func				lambda function serving as a system. */
 	[[maybe_unused]] static void updateSystem(const float& deltaTime, ecsWorld& world, const std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>>& componentTypes, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func) noexcept;
+	
+
+private:
+	// Private and deleted
+	/** Disallow module move constructor. */
+	inline ECS_Module(ECS_Module&&) noexcept = delete;
+	/** Disallow module copy constructor. */
+	inline ECS_Module(const ECS_Module&) noexcept = delete;
+	/** Disallow module move assignment. */
+	inline const ECS_Module& operator =(ECS_Module&&) noexcept = delete;
+	/** Disallow module copy assignment. */
+	inline const ECS_Module& operator =(const ECS_Module&) noexcept = delete;
 };
 
 #endif // ECS_MODULE_H

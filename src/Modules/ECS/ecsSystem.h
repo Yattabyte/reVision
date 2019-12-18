@@ -22,6 +22,10 @@ public:
 	inline virtual ~ecsBaseSystem() noexcept = default;
 	/** Construct a base ecsSystem. */
 	inline ecsBaseSystem() noexcept = default;
+	/** Move an base system. */
+	inline ecsBaseSystem(ecsBaseSystem&&) noexcept = default;
+	/** Copy an base system. */
+	inline ecsBaseSystem(const ecsBaseSystem&) noexcept = default;
 
 
 	// Public Methods

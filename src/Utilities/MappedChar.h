@@ -133,9 +133,6 @@ public:
 Extends the MappedChar class, but exists to shorten 'MappedChar<std::vector<T>> myMap' down to 'VectorMap<T> myMap'. */
 template <typename T>
 class VectorMap : public MappedChar<std::vector<T>> {
-public:
-	inline ~VectorMap() = default;
-	inline VectorMap() = default;
 };
 
 #endif // MAPPEDCHAR_H

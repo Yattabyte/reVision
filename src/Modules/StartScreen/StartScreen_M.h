@@ -32,6 +32,17 @@ public:
 
 
 private:
+	// Private and deleted
+	/** Disallow module move constructor. */
+	inline StartScreen_Module(StartScreen_Module&&) noexcept = delete;
+	/** Disallow module copy constructor. */
+	inline StartScreen_Module(const StartScreen_Module&) noexcept = delete;
+	/** Disallow module move assignment. */
+	inline const StartScreen_Module& operator =(StartScreen_Module&&) noexcept = delete;
+	/** Disallow module copy assignment. */
+	inline const StartScreen_Module& operator =(const StartScreen_Module&) noexcept = delete;
+
+
 	// Private Attributes
 	ecsWorld m_world;
 	std::shared_ptr<UI_Element> m_startMenu;
