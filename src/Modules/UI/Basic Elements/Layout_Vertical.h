@@ -13,14 +13,14 @@ public:
 	inline ~Layout_Vertical() noexcept = default;
 	/** Construct the layout.
 	@param	engine		reference to the engine to use. */
-	explicit Layout_Vertical(Engine& engine) noexcept;
+	explicit Layout_Vertical(Engine& engine);
 
 
 	// Public Methods
 	/** Add a child to this layout, optionally using a specific fraction of size alloted to it.
 	@param	child		the child to add to this layout.
 	@param	sizeRatio	the fractional amount of size this element should retain when resizing. */
-	void addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio = 1.0f) noexcept;
+	void addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio = 1.0f);
 	/** Set the margin distance between elements and the edge of this layout.
 	@param	margin		the margin for this layout. */
 	void setMargin(const float& margin) noexcept;

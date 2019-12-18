@@ -17,12 +17,12 @@ public:
 	~FXAA() noexcept;
 	/** Construct a FXAA effect.
 	@param	engine			reference to the engine to use. */
-	explicit FXAA(Engine& engine) noexcept;
+	explicit FXAA(Engine& engine);
 
 
 	// Public Interface Implementations.
-	void clearCache(const float& deltaTime) noexcept final;
-	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
+	void clearCache(const float& deltaTime) final;
+	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) final;
 
 
 private:

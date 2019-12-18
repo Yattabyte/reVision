@@ -25,19 +25,19 @@ public:
 	inline ~OptionsMenu() noexcept = default;
 	/** Construct an options menu.
 	@param	engine		reference to the engine to use. */
-	explicit OptionsMenu(Engine& engine) noexcept;
+	explicit OptionsMenu(Engine& engine);
 
 
 protected:
 	// Protected Methods
 	/** Choose 'video' from the options menu. */
-	void video() noexcept;
+	void video();
 	/** Choose 'graphics' from the options menu. */
-	void graphics() noexcept;
+	void graphics();
 	/** Choose 'controls' from the options menu. */
-	void controls() noexcept;
+	void controls();
 	/** Choose 'back' from the options menu. */
-	void back() noexcept;
+	void back();
 
 
 	// Protected Attributes

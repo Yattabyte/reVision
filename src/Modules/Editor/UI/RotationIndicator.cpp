@@ -14,7 +14,7 @@ RotationIndicator::~RotationIndicator() noexcept
 	glDeleteTextures(1, &m_depthID);
 }
 
-RotationIndicator::RotationIndicator(Engine& engine) noexcept :
+RotationIndicator::RotationIndicator(Engine& engine) :
 	m_engine(engine)
 {
 	m_open = true;
@@ -58,7 +58,7 @@ RotationIndicator::RotationIndicator(Engine& engine) noexcept :
 	glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 }
 
-void RotationIndicator::tick(const float&) noexcept
+void RotationIndicator::tick(const float&)
 {
 	if (m_open && Asset::All_Ready(m_3dIndicator, m_colorPalette, m_shader)) {
 		// Set up state

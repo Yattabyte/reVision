@@ -19,11 +19,11 @@ public:
 	/** Construct this system.
 	@param	engine		reference to the engine to use. 
 	@param	frameData	reference to common data that changes frame-to-frame. */
-	ShadowScheduler_System(Engine& engine, ShadowData& frameData) noexcept;
+	ShadowScheduler_System(Engine& engine, ShadowData& frameData);
 
 
 	// Public Interface Implementations
-	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) final;
 
 
 private:

@@ -9,7 +9,7 @@ Scrollbar_V::~Scrollbar_V() noexcept
 	glDeleteVertexArrays(1, &m_vaoID);
 }
 
-Scrollbar_V::Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& component) noexcept : 
+Scrollbar_V::Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& component) : 
 	UI_Decorator(engine, component),
 	m_shader(Shared_Shader(engine, "UI\\ScrollBar"))
 {
@@ -44,7 +44,7 @@ Scrollbar_V::Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& comp
 	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { updateGeometry(); });
 }
 
-void Scrollbar_V::mouseAction(const MouseEvent& mouseEvent) noexcept 
+void Scrollbar_V::mouseAction(const MouseEvent& mouseEvent) 
 {
 	UI_Decorator::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -83,7 +83,7 @@ void Scrollbar_V::renderElement(const float& deltaTime, const glm::vec2& positio
 	UI_Decorator::renderElement(deltaTime, position, newScale);
 }
 
-void Scrollbar_V::setLinear(const float& linear) noexcept 
+void Scrollbar_V::setLinear(const float& linear) 
 {
 	m_linear = std::clamp<float>(linear, -1.0f, 1.0f);
 	updateElementPosition();
@@ -95,7 +95,7 @@ float Scrollbar_V::getLinear() const noexcept
 	return m_linear;
 }
 
-void Scrollbar_V::updateGeometry() noexcept
+void Scrollbar_V::updateGeometry()
 {
 	constexpr auto num_data = 2 * 3;
 	std::vector<glm::vec3> data(num_data);

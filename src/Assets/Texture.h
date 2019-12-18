@@ -23,7 +23,7 @@ public:
 	@param	anisotropy		use 16x anisotropic filtering.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Texture(Engine& engine, const std::string& filename, const GLuint& type = GL_TEXTURE_2D, const bool& mipmap = false, const bool& anisotropy = false, const bool& threaded = true) noexcept;
+	explicit Shared_Texture(Engine& engine, const std::string& filename, const GLuint& type = GL_TEXTURE_2D, const bool& mipmap = false, const bool& anisotropy = false, const bool& threaded = true);
 };
 
 /** An encapsulation of an OpenGL texture object.
@@ -74,7 +74,7 @@ private:
 
 
 	// Private Interface Implementation
-	void initialize() noexcept final;
+	void initialize() final;
 
 
 	// Private Attributes

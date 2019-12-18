@@ -8,7 +8,7 @@ List_Horizontal::~List_Horizontal() noexcept
 	glDeleteVertexArrays(1, &m_vaoID);
 }
 
-List_Horizontal::List_Horizontal(Engine& engine) noexcept :
+List_Horizontal::List_Horizontal(Engine& engine) :
 	UI_Element(engine),
 	m_shader(Shared_Shader(engine, "UI\\List_Horizontal"))
 {
@@ -136,7 +136,7 @@ int List_Horizontal::getHoverIndex() const noexcept
 	return m_hoverIndex;
 }
 
-void List_Horizontal::setSelectionIndex(const int& newIndex) noexcept 
+void List_Horizontal::setSelectionIndex(const int& newIndex) 
 {
 	m_selectionIndex = newIndex;
 	m_focusMap.focusIndex(m_selectionIndex);
@@ -204,7 +204,7 @@ void List_Horizontal::alignChildren() noexcept
 	}
 }
 
-void List_Horizontal::updateSelectionGeometry() noexcept 
+void List_Horizontal::updateSelectionGeometry() 
 {
 	if (m_children.size() < 1) return;
 	constexpr auto num_data = 8 * 6;

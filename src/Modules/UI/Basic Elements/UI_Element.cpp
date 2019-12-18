@@ -8,7 +8,7 @@ UI_Element::UI_Element(Engine& engine) noexcept :
 {
 }
 
-void UI_Element::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept
+void UI_Element::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Exit early if this element is invisible (all child elements will be invisible)
 	if (!getVisible()) return;
@@ -23,7 +23,7 @@ void UI_Element::renderElement(const float& deltaTime, const glm::vec2& position
 			child->renderElement(deltaTime, newPosition, newScale);
 }
 
-void UI_Element::mouseAction(const MouseEvent& mouseEvent) noexcept
+void UI_Element::mouseAction(const MouseEvent& mouseEvent)
 {
 	// If the element is visible, enabled, and the mouse is within, then process the mouse event
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -54,7 +54,7 @@ void UI_Element::mouseAction(const MouseEvent& mouseEvent) noexcept
 	}
 }
 
-void UI_Element::keyboardAction(const KeyboardEvent& keyboardEvent) noexcept
+void UI_Element::keyboardAction(const KeyboardEvent& keyboardEvent)
 {
 	// Base UI element has no specific keyboard actions
 	// Keyboard actions are specific like typing in a text-box, NOT navigating a main menu
@@ -63,7 +63,7 @@ void UI_Element::keyboardAction(const KeyboardEvent& keyboardEvent) noexcept
 		child->keyboardAction(keyboardEvent);
 }
 
-void UI_Element::userAction(ActionState& /*unused*/) noexcept
+void UI_Element::userAction(ActionState& /*unused*/)
 {
 	// Base UI element has no specific user action support
 	// User actions are specific actions like navigating a menu, toggling a switch
@@ -73,7 +73,7 @@ void UI_Element::userAction(ActionState& /*unused*/) noexcept
 
 // Public Methods
 
-void UI_Element::addElement(const std::shared_ptr<UI_Element>& child) noexcept
+void UI_Element::addElement(const std::shared_ptr<UI_Element>& child)
 {
 	m_children.push_back(child);
 	enactCallback((int)UI_Element::Interact::on_childrenChange);
@@ -84,18 +84,18 @@ std::shared_ptr<UI_Element> UI_Element::getElement(const size_t& index) const no
 	return m_children[index];
 }
 
-void UI_Element::clearElements() noexcept
+void UI_Element::clearElements()
 {
 	m_children.clear();
 	enactCallback((int)UI_Element::Interact::on_childrenChange);
 }
 
-void UI_Element::addCallback(const int& interactionEventID, const std::function<void()>& func) noexcept
+void UI_Element::addCallback(const int& interactionEventID, const std::function<void()>& func)
 {
 	m_callbacks[interactionEventID].push_back(func);
 }
 
-void UI_Element::setPosition(const glm::vec2& position) noexcept
+void UI_Element::setPosition(const glm::vec2& position)
 {
 	m_position = position;
 	enactCallback((int)UI_Element::Interact::on_reposition);
@@ -106,7 +106,7 @@ glm::vec2 UI_Element::getPosition() const noexcept
 	return m_position;
 }
 
-void UI_Element::setScale(const glm::vec2& scale) noexcept
+void UI_Element::setScale(const glm::vec2& scale)
 {
 	m_scale = scale;
 
@@ -128,7 +128,7 @@ glm::vec2 UI_Element::getScale() const noexcept
 	return m_scale;
 }
 
-void UI_Element::setMaxScale(const glm::vec2& scale) noexcept
+void UI_Element::setMaxScale(const glm::vec2& scale)
 {
 	m_maxScale = scale;
 
@@ -146,19 +146,19 @@ glm::vec2 UI_Element::getMaxScale() const noexcept
 	return m_maxScale;
 }
 
-void UI_Element::setMaxWidth(const float& width) noexcept
+void UI_Element::setMaxWidth(const float& width)
 {
 	m_maxScale.x = width;
 	enactCallback((int)UI_Element::Interact::on_resize);
 }
 
-void UI_Element::setMaxHeight(const float& height) noexcept
+void UI_Element::setMaxHeight(const float& height)
 {
 	m_maxScale.y = height;
 	enactCallback((int)UI_Element::Interact::on_resize);
 }
 
-void UI_Element::setMinScale(const glm::vec2& scale) noexcept
+void UI_Element::setMinScale(const glm::vec2& scale)
 {
 	m_minScale = scale;
 
@@ -176,13 +176,13 @@ glm::vec2 UI_Element::getMinScale() const noexcept
 	return m_minScale;
 }
 
-void UI_Element::setMinWidth(const float& width) noexcept
+void UI_Element::setMinWidth(const float& width)
 {
 	m_minScale.x = width;
 	enactCallback((int)UI_Element::Interact::on_resize);
 }
 
-void UI_Element::setMinHeight(const float& height) noexcept
+void UI_Element::setMinHeight(const float& height)
 {
 	m_minScale.y = height;
 	enactCallback((int)UI_Element::Interact::on_resize);
@@ -210,7 +210,7 @@ bool UI_Element::getEnabled() const noexcept
 	return m_enabled;
 }
 
-void UI_Element::setHovered() noexcept
+void UI_Element::setHovered()
 {
 	if (!m_hovered) {
 		m_hovered = true;
@@ -223,7 +223,7 @@ bool UI_Element::getHovered() const noexcept
 	return m_hovered;
 }
 
-void UI_Element::setPressed() noexcept
+void UI_Element::setPressed()
 {
 	if (!m_pressed) {
 		m_pressed = true;
@@ -236,7 +236,7 @@ bool UI_Element::getPressed() const noexcept
 	return m_pressed;
 }
 
-void UI_Element::setReleased() noexcept
+void UI_Element::setReleased()
 {
 	if (m_pressed)
 		setClicked();
@@ -249,7 +249,7 @@ bool UI_Element::getReleased() const noexcept
 	return !m_pressed;
 }
 
-void UI_Element::setClicked() noexcept
+void UI_Element::setClicked()
 {
 	m_hovered = true;
 	m_clicked = true;
@@ -261,7 +261,7 @@ bool UI_Element::getClicked() noexcept
 	return false;
 }
 
-void UI_Element::clearFocus() noexcept
+void UI_Element::clearFocus()
 {
 	m_pressed = false;
 	m_clicked = false;
@@ -281,7 +281,7 @@ bool UI_Element::withinBBox(const glm::vec2& box_p1, const glm::vec2& box_p2, co
 	return (point.x >= box_p1.x && point.x <= box_p2.x && point.y >= box_p1.y && point.y <= box_p2.y);
 }
 
-void UI_Element::enactCallback(const int& interactionEventID) noexcept
+void UI_Element::enactCallback(const int& interactionEventID)
 {
 	// Callbacks aren't actually called immediately, but are deferred to the UI module to be performed later
 	// This is a safety net in case the callback drastically alters the overall engine state, like deleting the calling UI element

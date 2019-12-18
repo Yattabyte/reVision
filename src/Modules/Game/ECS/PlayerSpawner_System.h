@@ -22,11 +22,11 @@ public:
 	/** Construct a free-look system.
 	@param	engine		reference to the engine to use. 
 	@param	game		reference to the game module to use. */
-	PlayerSpawn_System(Engine& engine, Game_Module& game) noexcept;
+	PlayerSpawn_System(Engine& engine, Game_Module& game);
 
 
 	// Public Interface Implementation
-	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) final;
 
 
 private:

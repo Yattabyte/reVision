@@ -34,7 +34,7 @@ public:
 	/** Construct a PBR rendering pipeline.
 	@param	engine			reference to the engine to use. 
 	@param	clientCamera	the main camera. */
-	Graphics_Pipeline(Engine& engine, Camera& clientCamera) noexcept;
+	Graphics_Pipeline(Engine& engine, Camera& clientCamera);
 
 
 	// Public Methods
@@ -43,7 +43,7 @@ public:
 	@param	world			the ecsWorld to source data from.
 	@param	cameras			the cameras to render from.
 	@return					camera and layer indices to render with. */
-	std::vector<std::pair<int, int>> begin(const float& deltaTime, ecsWorld& world, std::vector<Camera>& cameras) noexcept;
+	std::vector<std::pair<int, int>> begin(const float& deltaTime, ecsWorld& world, std::vector<Camera>& cameras);
 	/** Flush the pipeline after rendering.
 	@param	deltaTime		the amount of time passed since last frame. */
 	void end(const float& deltaTime) noexcept;

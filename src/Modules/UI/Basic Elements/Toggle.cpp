@@ -1,7 +1,7 @@
 #include "Modules/UI/Basic Elements/Toggle.h"
 
 
-Toggle::Toggle(Engine& engine, const bool& state) noexcept :
+Toggle::Toggle(Engine& engine, const bool& state) :
 	UI_Element(engine)
 {
 	// Make a background panel for cosmetic purposes
@@ -64,7 +64,7 @@ std::string Toggle::getText() const noexcept
 	return m_label->getText();
 }
 
-void Toggle::setToggled(const bool& state) noexcept 
+void Toggle::setToggled(const bool& state) 
 {
 	m_toggledOn = state;
 	setText(m_toggledOn ? "ON" : "OFF");

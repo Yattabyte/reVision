@@ -3,13 +3,14 @@
 #include "Modules/Editor/Editor_M.h"
 #include "imgui.h"
 
+
 SceneInspector::SceneInspector(Engine& engine, LevelEditor_Module& editor) noexcept
 	: m_engine(engine), m_editor(editor)
 {
 	m_open = true;
 }
 
-void SceneInspector::tick(const float&) noexcept
+void SceneInspector::tick(const float&)
 {
 	if (m_open) {
 		auto& ecsWorld = m_editor.getWorld();

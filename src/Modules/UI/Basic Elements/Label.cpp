@@ -9,7 +9,7 @@ Label::~Label() noexcept
 	glDeleteVertexArrays(1, &m_vaoID);
 }
 
-Label::Label(Engine& engine, const std::string& text) noexcept :
+Label::Label(Engine& engine, const std::string& text) :
 	UI_Element(engine),
 	m_shader(Shared_Shader(engine, "UI\\Label")),
 	m_textureFont(Shared_Texture(engine, "font.tga", GL_TEXTURE_2D, true, true))
@@ -70,7 +70,7 @@ void Label::renderElement(const float& deltaTime, const glm::vec2& position, con
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void Label::setText(const std::string& text) noexcept 
+void Label::setText(const std::string& text) 
 {
 	m_text = text;
 

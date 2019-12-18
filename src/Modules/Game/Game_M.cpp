@@ -14,7 +14,7 @@ Game_Module::Game_Module(Engine& engine) noexcept :
 {
 }
 
-void Game_Module::initialize() noexcept
+void Game_Module::initialize()
 {
 	Engine_Module::initialize();
 	m_engine.getManager_Messages().statement("Loading Module: Game...");
@@ -36,7 +36,7 @@ void Game_Module::initialize() noexcept
 		});
 }
 
-void Game_Module::deinitialize() noexcept
+void Game_Module::deinitialize()
 {
 	m_engine.getManager_Messages().statement("Unloading Module: Game...");
 }
@@ -78,7 +78,7 @@ void Game_Module::renderOverlays(const float& deltaTime) noexcept
 	m_frameTime.applyEffect(deltaTime);
 }
 
-void Game_Module::showGame() noexcept
+void Game_Module::showGame()
 {
 	m_gameState = Game_State::in_game;
 	m_engine.setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);

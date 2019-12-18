@@ -18,9 +18,9 @@ public:
 
 	// Public Interface Declarations
 	/** Initialize the module. */
-	virtual void initialize() noexcept;
+	virtual void initialize();
 	/** De-initialize the module. */
-	virtual void deinitialize() noexcept;
+	virtual void deinitialize();
 
 
 protected:

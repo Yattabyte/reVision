@@ -10,17 +10,17 @@ RecoverDialogue::RecoverDialogue(Engine& engine, LevelEditor_Module& editor) noe
 	m_open = false;
 }
 
-void RecoverDialogue::tick(const float&) noexcept
+void RecoverDialogue::tick(const float&)
 {
 	tickMainDialogue();
 }
 
-void RecoverDialogue::setPath(const std::filesystem::path& path) noexcept
+void RecoverDialogue::setPath(const std::filesystem::path& path)
 {
 	m_recoveredPath = path;
 }
 
-void RecoverDialogue::tickMainDialogue() noexcept
+void RecoverDialogue::tickMainDialogue()
 {
 	if (m_open) {
 		ImGui::OpenPopup("Recover Level");
@@ -68,7 +68,7 @@ void RecoverDialogue::tickMainDialogue() noexcept
 	}
 }
 
-void RecoverDialogue::tickDeleteDialogue() noexcept
+void RecoverDialogue::tickDeleteDialogue()
 {
 	bool openDelete = true;
 	ImGui::SetNextWindowSize({ 350, 95 }, ImGuiCond_Appearing);

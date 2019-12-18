@@ -15,7 +15,7 @@ Outline_System::~Outline_System() noexcept
 	}
 }
 
-Outline_System::Outline_System(Engine& engine, LevelEditor_Module& editor) noexcept :
+Outline_System::Outline_System(Engine& engine, LevelEditor_Module& editor) :
 	m_engine(engine),
 	m_editor(editor)
 {
@@ -53,7 +53,7 @@ Outline_System::Outline_System(Engine& engine, LevelEditor_Module& editor) noexc
 	m_hemisphere = Shared_Mesh(engine, "//Models//hemisphere.obj");
 }
 
-void Outline_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void Outline_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	if (m_shader->ready()) {
 		// Collate all component data to generate a draw call
@@ -147,7 +147,7 @@ void Outline_System::updateComponents(const float&, const std::vector<std::vecto
 	}
 }
 
-void Outline_System::tryInsertModel(const Shared_Mesh& mesh) noexcept 
+void Outline_System::tryInsertModel(const Shared_Mesh& mesh) 
 {
 	if (m_meshMap.find(mesh) == m_meshMap.end()) {
 		// Prop hasn't been uploaded yet

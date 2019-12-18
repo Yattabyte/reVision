@@ -11,7 +11,7 @@ Indirect_Technique::~Indirect_Technique() noexcept
 	*m_aliveIndicator = false;
 }
 
-Indirect_Technique::Indirect_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras) noexcept :
+Indirect_Technique::Indirect_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras) :
 	Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 	m_engine(engine),
 	m_shader_Bounce(Shared_Shader(engine, "Core\\Light\\Bounce")),
@@ -45,21 +45,21 @@ Indirect_Technique::Indirect_Technique(Engine& engine, ShadowData& shadowData, C
 	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) noexcept { m_bounceSize = (GLuint)f; });
 }
 
-void Indirect_Technique::clearCache(const float&) noexcept 
+void Indirect_Technique::clearCache(const float&) 
 {
 	m_frameData.lightBuffer.endReading();
 	m_frameData.viewInfo.clear();
 	m_drawIndex = 0;
 }
 
-void Indirect_Technique::updateCache(const float& deltaTime, ecsWorld& world) noexcept 
+void Indirect_Technique::updateCache(const float& deltaTime, ecsWorld& world) 
 {
 	// Link together the dimensions of view info to that of the viewport vectors
 	m_frameData.viewInfo.resize(m_sceneCameras.size());
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Indirect_Technique::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void Indirect_Technique::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	// Update light-bounce volume
 	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeQuad, m_shader_Bounce, m_shader_Recon, m_shader_Rebounce)) {

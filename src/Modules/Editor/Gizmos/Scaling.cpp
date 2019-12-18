@@ -14,7 +14,7 @@ Scaling_Gizmo::~Scaling_Gizmo() noexcept
 	glDeleteVertexArrays(1, &m_axisVAO);
 }
 
-Scaling_Gizmo::Scaling_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept :
+Scaling_Gizmo::Scaling_Gizmo(Engine& engine, LevelEditor_Module& editor) :
 	m_engine(engine),
 	m_editor(editor),
 	m_model(Shared_Auto_Model(engine, "Editor\\scale")),
@@ -60,7 +60,7 @@ Scaling_Gizmo::Scaling_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcep
 	glVertexArrayVertexBuffer(m_axisVAO, 0, m_axisVBO, 0, sizeof(glm::vec3));
 }
 
-bool Scaling_Gizmo::checkMouseInput(const float&) noexcept
+bool Scaling_Gizmo::checkMouseInput(const float&)
 {
 	// See if the mouse intersects any entities.
 	checkMouseHover();
@@ -75,7 +75,7 @@ bool Scaling_Gizmo::checkMouseInput(const float&) noexcept
 	return false;
 }
 
-void Scaling_Gizmo::render(const float&) noexcept
+void Scaling_Gizmo::render(const float&)
 {
 	// Safety check first
 	if (Asset::All_Ready(m_model, m_gizmoShader) && m_editor.getSelection().size()) {
@@ -130,7 +130,7 @@ void Scaling_Gizmo::setTransform(const Transform& transform) noexcept
 	m_transform = transform;
 }
 
-void Scaling_Gizmo::checkMouseHover() noexcept
+void Scaling_Gizmo::checkMouseHover()
 {
 	const auto& actionState = m_engine.getActionState();
 	const auto& position = m_transform.m_position;
@@ -199,7 +199,7 @@ void Scaling_Gizmo::checkMouseHover() noexcept
 		m_hoveredAxes |= Y_AXIS | Z_AXIS;
 }
 
-bool Scaling_Gizmo::checkMousePress() noexcept
+bool Scaling_Gizmo::checkMousePress()
 {
 	const auto& position = m_transform.m_position;
 	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();

@@ -10,7 +10,7 @@ SideList::~SideList() noexcept
 	glDeleteVertexArrays(1, &m_vaoID);
 }
 
-SideList::SideList(Engine& engine) noexcept :
+SideList::SideList(Engine& engine) :
 	UI_Element(engine),
 	m_shader(Shared_Shader(engine, "UI\\SideList")),
 	m_label(std::make_shared<Label>(engine, ""))
@@ -118,7 +118,7 @@ void SideList::renderElement(const float& deltaTime, const glm::vec2& position, 
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void SideList::setIndex(const int& index) noexcept 
+void SideList::setIndex(const int& index) 
 {
 	if (m_index != index) {
 		m_index = std::clamp<int>(index, 0, int(m_strings.size()) - 1);

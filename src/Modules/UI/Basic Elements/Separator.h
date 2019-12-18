@@ -15,7 +15,7 @@ public:
 	~Separator() noexcept;
 	/** Construct a separator.
 	@param	engine		reference to the engine to use. */
-	explicit Separator(Engine& engine) noexcept;
+	explicit Separator(Engine& engine);
 
 
 	// Public Interface Implementation

@@ -20,15 +20,15 @@ public:
 	/** Construct a prop rendering technique.
 	@param	engine			reference to the engine to use.
 	@param	sceneCameras	reference to the scene cameras to use. */
-	Prop_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept;
+	Prop_Technique(Engine& engine, std::vector<Camera*>& sceneCameras);
 
 
 	// Public Interface Implementations
-	void clearCache(const float& deltaTime) noexcept final;
-	void updateCache(const float& deltaTime, ecsWorld& world) noexcept final;
-	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
-	void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
-	void renderShadows(const float& deltaTime) noexcept final;
+	void clearCache(const float& deltaTime) final;
+	void updateCache(const float& deltaTime, ecsWorld& world) final;
+	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) final;
+	void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) final;
+	void renderShadows(const float& deltaTime) final;
 
 
 private:

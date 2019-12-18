@@ -7,7 +7,7 @@
 #include <filesystem>
 
 
-Inspector_Prop_System::Inspector_Prop_System(Engine& engine, LevelEditor_Module& editor) noexcept :
+Inspector_Prop_System::Inspector_Prop_System(Engine& engine, LevelEditor_Module& editor) :
 	m_engine(engine),
 	m_editor(editor)
 {
@@ -18,7 +18,7 @@ Inspector_Prop_System::Inspector_Prop_System(Engine& engine, LevelEditor_Module&
 	populateModels();
 }
 
-void Inspector_Prop_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void Inspector_Prop_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	ImGui::PushID(this);
 	const auto text = std::string(Prop_Component::Name) + ": (" + std::to_string(components.size()) + ")";

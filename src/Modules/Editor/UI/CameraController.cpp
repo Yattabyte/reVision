@@ -11,7 +11,7 @@ CameraController::CameraController(Engine& engine) noexcept :
 	m_open = true;
 }
 
-void CameraController::tick(const float& deltaTime) noexcept
+void CameraController::tick(const float& deltaTime)
 {
 	// All camera input, including both rotation and translation only when mouse isn't captured by any windows
 	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(1)) {

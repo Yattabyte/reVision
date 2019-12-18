@@ -31,7 +31,7 @@ public:
 	/** Construct a label, giving it the desired text.
 	@param	engine		reference to the engine to use. 
 	@param	text		the label text. */
-	explicit Label(Engine& engine, const std::string& text = "Label") noexcept;
+	explicit Label(Engine& engine, const std::string& text = "Label");
 
 
 	// Public Interface Implementation
@@ -41,7 +41,7 @@ public:
 	// Public Methods
 	/** Set this label element's text.
 	@param	text	the text to use. */
-	void setText(const std::string& text) noexcept;
+	void setText(const std::string& text);
 	/** Retrieve this label's text.
 	@return	the text this label uses. */
 	std::string getText() const noexcept;

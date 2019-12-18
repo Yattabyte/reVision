@@ -21,18 +21,18 @@ public:
 	/** Construct this system.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
-	Outline_System(Engine& engine, LevelEditor_Module& editor) noexcept;
+	Outline_System(Engine& engine, LevelEditor_Module& editor);
 
 
 	// Public Interface Implementation
-	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) final;
 
 
 private:
 	// Private Methods
 	/** Attempt to insert the mesh supplied into the mesh map, failing only if it is already present.
 	@param	mesh		the mesh to insert only 1 copy of. */
-	void tryInsertModel(const Shared_Mesh& mesh) noexcept;
+	void tryInsertModel(const Shared_Mesh& mesh);
 	/** Wait on the prop fence if it still exists. */
 	void waitOnFence() noexcept;
 	/** Attempt to expand the props' vertex buffer if it isn't large enough.

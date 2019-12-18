@@ -21,7 +21,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	Shared_Shader_Geometry(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
+	Shared_Shader_Geometry(Engine& engine, const std::string& filename, const bool& threaded = true);
 };
 
 /** An entire OpenGL vertex/geometry/fragment shader program.
@@ -46,7 +46,7 @@ public:
 
 protected:
 	// Interface Implementation
-	bool initShaders(const std::string& relativePath) noexcept final;
+	bool initShaders(const std::string& relativePath) final;
 
 
 private:
@@ -62,7 +62,7 @@ private:
 
 
 	// Private Interface Implementation
-	void initialize() noexcept final;
+	void initialize() final;
 
 
 	// Private Attributes

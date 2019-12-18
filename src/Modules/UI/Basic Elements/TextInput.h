@@ -23,19 +23,19 @@ public:
 	~TextInput() noexcept;
 	/** Construct a text input.
 	@param	engine		reference to the engine to use. */
-	explicit TextInput(Engine& engine) noexcept;
+	explicit TextInput(Engine& engine);
 
 
 	// Public Interface Implementation
-	void mouseAction(const MouseEvent& mouseEvent) noexcept final;
-	void keyboardAction(const KeyboardEvent& keyboardEvent) noexcept final;
-	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
+	void mouseAction(const MouseEvent& mouseEvent) final;
+	void keyboardAction(const KeyboardEvent& keyboardEvent) final;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) final;
 
 
 	// Public Methods
 	/** Set the text to display in this field.
 	@param		string		the new text to display. */
-	void setText(const std::string& text) noexcept;
+	void setText(const std::string& text);
 	/** Retrieve the text displayed in this field.
 	@return					the text displayed in this field. */
 	std::string getText() const noexcept;
@@ -46,7 +46,7 @@ protected:
 	/** Set the caret position in this text box. */
 	void setCaret(const size_t& index) noexcept;
 	/** Update the data dependant on the scale of this element. */
-	void updateGeometry() noexcept;
+	void updateGeometry();
 
 
 	// Protected Attributes

@@ -4,15 +4,7 @@
 
 
 /** Holds mouse interaction information. */
-class MouseEvent {
-public:
-	// Public (De)Constructors
-	/** Destroy the mouse event. */
-	inline ~MouseEvent() noexcept = default;
-	/** Construct a mouse event. */
-	inline MouseEvent() noexcept = default;
-
-
+struct MouseEvent {
 	// Public Attributes
 	double m_xPos = 0.0, m_yPos = 0.0;
 	int m_mods = 0;

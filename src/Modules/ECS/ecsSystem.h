@@ -41,7 +41,7 @@ public:
 	/** Tick this system by deltaTime, passing in all the components matching this system's requirements.
 	@param	deltaTime		the amount of time which passed since last update
 	@param	components		the components to update. */
-	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept = 0;
+	virtual void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) = 0;
 
 
 protected:

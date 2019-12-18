@@ -7,7 +7,7 @@ UI_Decorator::UI_Decorator(Engine& engine, const std::shared_ptr<UI_Element>& co
 {
 }
 
-void UI_Decorator::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
+void UI_Decorator::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
 {
 	UI_Element::renderElement(deltaTime, position, scale);
 	const glm::vec2 newPosition = position + m_position;
@@ -15,7 +15,7 @@ void UI_Decorator::renderElement(const float& deltaTime, const glm::vec2& positi
 	m_component->renderElement(deltaTime, newPosition, newScale);
 }
 
-void UI_Decorator::mouseAction(const MouseEvent& mouseEvent) noexcept 
+void UI_Decorator::mouseAction(const MouseEvent& mouseEvent) 
 {
 	UI_Element::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -28,13 +28,13 @@ void UI_Decorator::mouseAction(const MouseEvent& mouseEvent) noexcept
 		m_component->clearFocus();
 }
 
-void UI_Decorator::keyboardAction(const KeyboardEvent& keyboardEvent) noexcept
+void UI_Decorator::keyboardAction(const KeyboardEvent& keyboardEvent)
 {
 	m_component->keyboardAction(keyboardEvent);
 	UI_Element::keyboardAction(keyboardEvent);
 }
 
-void UI_Decorator::userAction(ActionState& actionState) noexcept
+void UI_Decorator::userAction(ActionState& actionState)
 {
 	m_component->userAction(actionState);
 	UI_Element::userAction(actionState);

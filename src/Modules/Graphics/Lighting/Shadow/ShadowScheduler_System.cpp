@@ -10,7 +10,7 @@ ShadowScheduler_System::~ShadowScheduler_System() noexcept
 	*m_aliveIndicator = false;
 }
 
-ShadowScheduler_System::ShadowScheduler_System(Engine& engine, ShadowData& frameData) noexcept :
+ShadowScheduler_System::ShadowScheduler_System(Engine& engine, ShadowData& frameData) :
 	m_engine(engine),
 	m_frameData(frameData)
 {
@@ -23,7 +23,7 @@ ShadowScheduler_System::ShadowScheduler_System(Engine& engine, ShadowData& frame
 	preferences.addCallback(PreferenceState::Preference::C_SHADOW_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) noexcept { m_maxShadowsCasters = (unsigned int)f; });
 }
 
-void ShadowScheduler_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void ShadowScheduler_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	// Maintain list of shadows, update with oldest within range
 	// Technique will clear list when ready

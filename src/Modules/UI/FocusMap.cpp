@@ -1,12 +1,12 @@
 #include "Modules/UI/FocusMap.h"
 
 
-void FocusMap::addElement(const std::shared_ptr<UI_Element>& element) noexcept 
+void FocusMap::addElement(const std::shared_ptr<UI_Element>& element) 
 {
 	m_elements.push_back(element);
 }
 
-bool FocusMap::removeElement(const std::shared_ptr<UI_Element>& element) noexcept 
+bool FocusMap::removeElement(const std::shared_ptr<UI_Element>& element) 
 {
 	size_t index(0ull);
 	bool found = false;

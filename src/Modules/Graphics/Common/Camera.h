@@ -40,7 +40,7 @@ public:
 	@return				true if enabled, false otherwise. */
 	bool getEnabled() const noexcept;
 	/** Recalculate frustum data for this camera. */
-	void updateFrustum() noexcept;
+	void updateFrustum();
 	/** Retrieve the center of this camera's frustum.
 	@return				the center of this frustum. */
 	glm::vec3 getFrustumCenter() const noexcept;

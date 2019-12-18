@@ -21,16 +21,16 @@ public:
 	/** Construct this gizmo.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
-	Scaling_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept;
+	Scaling_Gizmo(Engine& engine, LevelEditor_Module& editor);
 
 
 	// Public Methods
 	/** Check for mouse input.
 	@param	deltaTime	the amount of time since the last frame. */
-	bool checkMouseInput(const float& deltaTime) noexcept;
+	bool checkMouseInput(const float& deltaTime);
 	/** Render this gizmo.
 	@param	deltaTime	the amount of time since the last frame. */
-	void render(const float& deltaTime) noexcept;
+	void render(const float& deltaTime);
 	/** Apply a specific transform.
 	@param	transform	the new transform to use. */
 	void setTransform(const Transform& transform) noexcept;
@@ -39,9 +39,9 @@ public:
 private:
 	// Private Methods
 	/** Check if the mouse is hovering over any particular element of this gizmo, highlighting it. */
-	void checkMouseHover() noexcept;
+	void checkMouseHover();
 	/** Check if the mouse is pressing any particular element of this gizmo, selecting or dragging it. */
-	bool checkMousePress() noexcept;
+	bool checkMousePress();
 
 
 	// Private Attributes

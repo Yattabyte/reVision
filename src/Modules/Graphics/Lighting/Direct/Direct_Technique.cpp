@@ -16,7 +16,7 @@ Direct_Technique::~Direct_Technique() noexcept
 	}
 }
 
-Direct_Technique::Direct_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras) noexcept :
+Direct_Technique::Direct_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras) :
 	Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 	m_engine(engine),
 	m_shader_Lighting(Shared_Shader(engine, "Core\\Light\\Direct")),
@@ -37,21 +37,21 @@ Direct_Technique::Direct_Technique(Engine& engine, ShadowData& shadowData, Camer
 	m_shapeHemisphere->addCallback(m_aliveIndicator, [&]() noexcept { registerLightShapes(); });
 }
 
-void Direct_Technique::clearCache(const float&) noexcept
+void Direct_Technique::clearCache(const float&)
 {
 	m_frameData.lightBuffer.endReading();
 	m_frameData.viewInfo.clear();
 	m_drawIndex = 0;
 }
 
-void Direct_Technique::updateCache(const float& deltaTime, ecsWorld& world) noexcept 
+void Direct_Technique::updateCache(const float& deltaTime, ecsWorld& world) 
 {
 	// Link together the dimensions of view info to that of the viewport vectors
 	m_frameData.viewInfo.resize(m_sceneCameras.size());
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Direct_Technique::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void Direct_Technique::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	// Exit Early
 	if (m_enabled && m_geometryReady && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shader_Lighting)) {
@@ -141,7 +141,7 @@ void Direct_Technique::renderTechnique(const float&, Viewport& viewport, const s
 	}
 }
 
-void Direct_Technique::registerLightShapes() noexcept 
+void Direct_Technique::registerLightShapes() 
 {
 	if (Asset::All_Ready(m_shapeCube, m_shapeSphere, m_shapeHemisphere)) {
 		// Create a container to store all vertices

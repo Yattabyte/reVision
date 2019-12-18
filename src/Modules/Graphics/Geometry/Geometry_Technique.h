@@ -16,17 +16,17 @@ public:
 
 
 	// Public Interface Implementation
-	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept override;
+	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) override;
 
 
 	// Public Interface Declarations
 	/** Use geometry techniques to cull shadows.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	perspectives	the camera and layer indices to render. */
-	virtual void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) noexcept;
+	virtual void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives);
 	/** Use geometry techniques to render shadows.
 	@param	deltaTime		the amount of time passed since last frame. */
-	virtual void renderShadows(const float& deltaTime) noexcept;
+	virtual void renderShadows(const float& deltaTime);
 };
 
 #endif // GEOMETRY_TECHNIQUE_H

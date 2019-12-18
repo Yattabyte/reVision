@@ -13,7 +13,7 @@ public:
 	inline ~Options_Graphics() noexcept = default;
 	/** Construct a graphics panel.
 	@param	engine		reference to the engine to use. */
-	explicit Options_Graphics(Engine& engine) noexcept;
+	explicit Options_Graphics(Engine& engine);
 
 
 protected:

@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-Options_Pane::Options_Pane(Engine& engine) noexcept :
+Options_Pane::Options_Pane(Engine& engine) :
 	UI_Element(engine),
 	m_title(std::make_shared<Label>(engine)),
 	m_description(std::make_shared<Label>(engine)),
@@ -70,7 +70,7 @@ void Options_Pane::userAction(ActionState& actionState) noexcept
 		m_engine.getModule_UI().getFocusMap()->back();
 }
 
-void Options_Pane::addOption(Engine& engine, std::shared_ptr<UI_Element> element, const float& ratio, const std::string& text, const std::string& description, const int& eventType, const std::function<void()>& callback) noexcept 
+void Options_Pane::addOption(Engine& engine, std::shared_ptr<UI_Element> element, const float& ratio, const std::string& text, const std::string& description, const int& eventType, const std::function<void()>& callback) 
 {
 	auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
 	auto label = std::make_shared<Label>(engine, text);

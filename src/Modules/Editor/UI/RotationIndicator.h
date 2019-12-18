@@ -18,11 +18,11 @@ public:
 	/** Construct a rotation indicator.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
-	explicit RotationIndicator(Engine& engine) noexcept;
+	explicit RotationIndicator(Engine& engine);
 
 
 	// Public Interface Implementation
-	void tick(const float& deltaTime) noexcept final;
+	void tick(const float& deltaTime) final;
 
 
 private:

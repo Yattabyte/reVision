@@ -11,12 +11,12 @@ Settings::Settings(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_open = true;
 }
 
-void Settings::tick(const float&) noexcept
+void Settings::tick(const float&)
 {
 	tickMainDialogue();
 }
 
-void Settings::tickMainDialogue() noexcept
+void Settings::tickMainDialogue()
 {
 	if (m_open) {
 		if (ImGui::Begin("Preferences", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {

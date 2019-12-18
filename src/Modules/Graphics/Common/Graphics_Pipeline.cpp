@@ -9,7 +9,7 @@
 #include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
 
 
-Graphics_Pipeline::Graphics_Pipeline(Engine& engine, Camera& clientCamera) noexcept :
+Graphics_Pipeline::Graphics_Pipeline(Engine& engine, Camera& clientCamera) :
 	m_engine(engine),
 	m_propView(engine, m_sceneCameras),
 	m_shadowing(engine, m_sceneCameras),
@@ -34,7 +34,7 @@ Graphics_Pipeline::Graphics_Pipeline(Engine& engine, Camera& clientCamera) noexc
 	m_cameraSystems.makeSystem<ReflectorPerspective_System>(m_sceneCameras);
 }
 
-std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime, ecsWorld& world, std::vector<Camera>& cameras) noexcept
+std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime, ecsWorld& world, std::vector<Camera>& cameras)
 {
 	// Add input cameras to shared list
 	m_sceneCameras.clear();

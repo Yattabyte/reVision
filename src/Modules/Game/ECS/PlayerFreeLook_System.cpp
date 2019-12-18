@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 
-PlayerFreeLook_System::PlayerFreeLook_System(Engine& engine) noexcept
+PlayerFreeLook_System::PlayerFreeLook_System(Engine& engine)
 	: m_engine(engine) 
 {
 	// Declare component types used
@@ -16,7 +16,7 @@ PlayerFreeLook_System::PlayerFreeLook_System(Engine& engine) noexcept
 		engine.getManager_Messages().error("Invalid ECS System: PlayerFreeLook_System");
 }
 
-void PlayerFreeLook_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept
+void PlayerFreeLook_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	for (const auto& componentParam : components) {
 		auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);

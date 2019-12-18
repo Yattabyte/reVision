@@ -13,7 +13,7 @@ InputBinding::InputBinding(Engine& engine) noexcept :
 {
 }
 
-void InputBinding::loadFile(const std::string& filename) noexcept
+void InputBinding::loadFile(const std::string& filename)
 {
 	m_config = Shared_Config(m_engine, filename, ActionState::Action_Strings(), false);
 

@@ -29,16 +29,16 @@ public:
 
 
 	// Public Interface Implementation
-	void initialize() noexcept final;
-	void deinitialize() noexcept final;
+	void initialize() final;
+	void deinitialize() final;
 
 
 	// Public Methods
 	/** Tick this module by a specific amount of delta time.
 	@param	deltaTime		the amount of time since last frame. */
-	void frameTick(const float& deltaTime) noexcept;
+	void frameTick(const float& deltaTime);
 	/** Display the level editor. */
-	void showEditor() noexcept;
+	void showEditor();
 	/** Close the level editor, returning to the main menu. */
 	void exit() noexcept;
 	/** Check if the editor has any unsaved changes.
@@ -49,22 +49,22 @@ public:
 	ecsWorld& getWorld() noexcept;
 	/** Retrieve the currently active map's file name.
 	@return					current map's file name. */
-	std::string getMapName() const noexcept;
+	std::string getMapName() const;
 	/** Retrieve a list of recently opened levels.
 	@return					list of recently opened levels. */
-	std::deque<std::string> getRecentLevels() const noexcept;
+	std::deque<std::string> getRecentLevels() const;
 	/** Close the current level, starting a new one. */
 	void newLevel() noexcept;
 	/** Open a specific level with the file name specified.
 	@param	name			the level name to open. */
-	void openLevel(const std::string& name) noexcept;
+	void openLevel(const std::string& name);
 	/** Display the 'open level' dialogue for choosing a level.	*/
 	void openLevelDialogue() noexcept;
 	/** Save the level with a specific name.
 	@param	name			the level name to save. */
-	void saveLevel(const std::string& name) noexcept;
+	void saveLevel(const std::string& name);
 	/** Save and overwrite the currently active level. */
-	void saveLevel() noexcept;
+	void saveLevel();
 	/** Display the 'save level' dialogue for choosing a level to save. */
 	void saveLevelDialogue() noexcept;
 	/** Display the 'settings' dialogue for the level editor. */
@@ -76,47 +76,47 @@ public:
 	@return					true if able to redo, false otherwise. */
 	bool canRedo() const noexcept;
 	/** Undo the previous action in the undo stack. */
-	void undo() noexcept;
+	void undo();
 	/** Redo the previously undone action in the redo stack. */
-	void redo() noexcept;
+	void redo();
 	/** De-select all level entities. */
-	void clearSelection() noexcept;
+	void clearSelection();
 	/** Select all level entities. */
 	void selectAll() noexcept;
 	/** Select a specific set of entities.
 	@param	handles			the new set of entity handles to make selected. */
-	void setSelection(const std::vector<EntityHandle>& handles) noexcept;
+	void setSelection(const std::vector<EntityHandle>& handles);
 	/** Retrieve the set of selected entities.
 	@return					all selected entity handles. */
 	std::vector<EntityHandle>& getSelection() noexcept;
 	/** Parent all selected entities into the first one in the set. */
-	void mergeSelection() noexcept;
+	void mergeSelection();
 	/** Create a new entity and parent all selected entities into it. */
-	void groupSelection() noexcept;
+	void groupSelection();
 	/** Un-parent all selected entities from their common parent. */
-	void ungroupSelection() noexcept;
+	void ungroupSelection();
 	/** Save the current set of selected entities into a prefab. */
 	void makePrefab() noexcept;
 	/** Delete the current selection and place it on the clipboard. */
 	void cutSelection() noexcept;
 	/** Copy the current selection to the clipboard. */
-	void copySelection() noexcept;
+	void copySelection();
 	/** Paste whatever is on the clipboard into the level. */
 	void paste() noexcept;
 	/** Delete the currently selected entities from the level. */
-	void deleteSelection() noexcept;
+	void deleteSelection();
 	/** Add a new blank component to an entity given its handle and component name alone.
 	@param	entityHandle	handle to the entity the component will be added to.
 	@param	name			the component class name. */
-	void makeComponent(const EntityHandle& entityHandle, const char* name) noexcept;
+	void makeComponent(const EntityHandle& entityHandle, const char* name);
 	/** Delete the component given its entity and component ID.
 	@param	entityHandle	handle to the entity the component belongs to.
 	@param	componentID		the runtime ID for this component. */
-	void deleteComponent(const EntityHandle& entityHandle, const int& componentID) noexcept;
+	void deleteComponent(const EntityHandle& entityHandle, const int& componentID);
 	/** Spawn a serialized entity into the level.
 	@param	entityData		the serialized entity data.
 	@param	parent			optional parent's handle. */
-	void addEntity(const std::vector<char>& entityData, const EntityHandle& parentUUID = EntityHandle()) noexcept;
+	void addEntity(const std::vector<char>& entityData, const EntityHandle& parentUUID = EntityHandle());
 	/** Bind the editor's FBO to the currently active GL context, for rendering. */
 	void bindFBO() noexcept;
 	/** Bind the editor's screen texture to the currently active GL context.
@@ -136,7 +136,7 @@ public:
 	glm::vec3 getCameraPosition() const noexcept;
 	/** Try to add an entity to the selection, removing it if it's already present.
 	@param	entityHandle	the entity to attempt to (de)select. */
-	void toggleAddToSelection(const EntityHandle& entityHandle) noexcept;
+	void toggleAddToSelection(const EntityHandle& entityHandle);
 	/** Retrieve if we have any data on the clipboard.
 	@return					true if clipboard data present, false otherwise. */
 	bool hasCopy() const noexcept;
@@ -148,7 +148,7 @@ public:
 	void openPrefabs() noexcept;
 	/** Perform an action following the Command design pattern, executing it and appending it to an undo list.
 	@param	command			the command to execute and store. */
-	void doReversableAction(const std::shared_ptr<Editor_Command>& command) noexcept;
+	void doReversableAction(const std::shared_ptr<Editor_Command>& command);
 
 
 private:
@@ -166,13 +166,12 @@ private:
 	// Private Methods
 	/** Add a level name to the 'recent maps' list.
 	@param	name			a level name to add to the recent maps list. */
-	void addToRecentList(const std::string& name) noexcept;
+	void addToRecentList(const std::string& name);
 	/** Populate the 'recent maps' list from disk. */
-	void populateRecentList() noexcept;
+	void populateRecentList();
 	/** Save the level with a specific name.
 	@param	name			the level name to save. */
-	void saveLevel_Internal(const std::string& name) noexcept;
-
+	void saveLevel_Internal(const std::string& name);
 
 
 	// Private Attributes
@@ -201,13 +200,13 @@ struct Editor_Command {
 	// Public Interface
 	inline virtual ~Editor_Command() noexcept = default;
 	/** Perform the command. */
-	virtual void execute() noexcept = 0;
+	virtual void execute() = 0;
 	/** Perform the reverse, undo the command. */
-	virtual void undo() noexcept = 0;
+	virtual void undo() = 0;
 	/** Join into this command the data found in another newer command.
 	@param	newerCommand	the newer of the two commands, to take data from.
 	@return					true if this command supports & successfully joined with a newer command, false otherwise. */
-	virtual bool join(Editor_Command* newerCommand) noexcept;
+	virtual bool join(Editor_Command* newerCommand);
 };
 
 #endif // EDITOR_MODULE_H

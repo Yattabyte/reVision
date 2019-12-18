@@ -31,10 +31,10 @@ struct Transform {
 
 	// Public Methods
 	/** Recalculates the transformation matrix (and inverse) using this transformations current data. */
-	void update() noexcept;
+	void update();
 	/** Calculate and return an inverse transform.
 	@return				an inverse version of this transform. */
-	Transform inverse() noexcept;
+	Transform inverse();
 	/** Copy Assignment Operator.
 	@param	other		the other transform to copy from.
 	@return				reference to self. */
@@ -54,11 +54,11 @@ struct Transform {
 	/** Concatenate this transform with another transform.
 	@param	other		the other transform to apply to this transform. 
 	@return				reference to this transform. */
-	Transform& operator*=(const Transform& other) noexcept;
+	Transform& operator*=(const Transform& other);
 	/** Concatenate this transform with another transform, returning its product.
 	@param	other		the other transform to apply to this transform.
 	@return				a new transform based on this transform. */
-	Transform operator*(const Transform& o) const noexcept;
+	Transform operator*(const Transform& o) const;
 
 
 	// Public Attributes

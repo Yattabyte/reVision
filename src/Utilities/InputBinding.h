@@ -27,7 +27,7 @@ public:
 	// Public Methods
 	/** Loads a preference file from disk.
 	@param	filename	the relative path to the bindings file to load. */
-	void loadFile(const std::string& filename) noexcept;
+	void loadFile(const std::string& filename);
 	/** Saves the preference file to disk, using the same filename as when loaded. */
 	void save() noexcept;
 	/** Retrieve the key-bindings.

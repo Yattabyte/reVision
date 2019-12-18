@@ -18,13 +18,13 @@ public:
 
 
 	// Public Interface Implementation
-	void tick(const float& deltaTime) noexcept final;
+	void tick(const float& deltaTime) final;
 
 
 private:
 	// Private Methods
 	/** Tick the main dialogue, rendering it and performing all logic. */
-	void tickMainDialogue() noexcept;
+	void tickMainDialogue();
 
 
 	// Private Attributes

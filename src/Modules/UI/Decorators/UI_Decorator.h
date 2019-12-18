@@ -17,10 +17,10 @@ public:
 
 
 	// Public Interface Implementations
-	void renderElement(const float& deltaTime, const glm::vec2& position = glm::vec2(0.0f), const glm::vec2& scale = glm::vec2(1.0f)) noexcept override;
-	void mouseAction(const MouseEvent& mouseEvent) noexcept override;
-	void keyboardAction(const KeyboardEvent& keyboardEvent) noexcept override;
-	void userAction(ActionState& actionState) noexcept override;
+	void renderElement(const float& deltaTime, const glm::vec2& position = glm::vec2(0.0f), const glm::vec2& scale = glm::vec2(1.0f)) override;
+	void mouseAction(const MouseEvent& mouseEvent) override;
+	void keyboardAction(const KeyboardEvent& keyboardEvent) override;
+	void userAction(ActionState& actionState) override;
 
 
 protected:

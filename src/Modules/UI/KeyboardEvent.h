@@ -32,11 +32,11 @@ public:
 	/** Retrieve the key action state for a given key type.
 	@param	key				the key to check the state of.
 	@return					the action state for the given key. */
-	KeyboardEvent::Action getState(const KeyboardEvent::Key& key) const noexcept;
+	KeyboardEvent::Action getState(const KeyboardEvent::Key& key) const;
 	/** Set the action state for a given key.
 	@param	key				the key to set the state for.
 	@param	action			the state to set for the given key. */
-	void setState(const KeyboardEvent::Key& key, const KeyboardEvent::Action& action) noexcept;
+	void setState(const KeyboardEvent::Key& key, const KeyboardEvent::Action& action);
 
 
 protected:

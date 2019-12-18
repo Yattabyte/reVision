@@ -8,7 +8,7 @@ Border::~Border() noexcept
 	glDeleteVertexArrays(1, &m_vaoID);
 }
 
-Border::Border(Engine& engine, const std::shared_ptr<UI_Element>& component) noexcept :
+Border::Border(Engine& engine, const std::shared_ptr<UI_Element>& component) :
 	UI_Decorator(engine, component),
 	m_shader(Shared_Shader(engine, "UI\\Border"))
 {
@@ -69,7 +69,7 @@ glm::vec3 Border::getBorderColor() const noexcept
 	return m_borderColor;
 }
 
-void Border::updateGeometry() noexcept 
+void Border::updateGeometry() 
 {
 	constexpr auto num_data = 8 * 3;
 	std::vector<glm::vec3> data(num_data);

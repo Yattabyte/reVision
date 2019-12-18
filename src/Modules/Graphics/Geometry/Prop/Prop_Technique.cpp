@@ -5,7 +5,7 @@
 #include "Modules/Graphics/Common/Viewport.h"
 
 
-Prop_Technique::Prop_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept :
+Prop_Technique::Prop_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) :
 	m_engine(engine),
 	m_shaderCull(Shared_Shader(engine, "Core\\Props\\culling")),
 	m_shaderGeometry(Shared_Shader(engine, "Core\\Props\\geometry")),
@@ -20,7 +20,7 @@ Prop_Technique::Prop_Technique(Engine& engine, std::vector<Camera*>& sceneCamera
 	m_auxilliarySystems.makeSystem<PropSync_System>(m_frameData);
 }
 
-void Prop_Technique::clearCache(const float&) noexcept 
+void Prop_Technique::clearCache(const float&) 
 {
 	m_frameData.modelBuffer.endReading();
 	m_frameData.skeletonBuffer.endReading();
@@ -28,14 +28,14 @@ void Prop_Technique::clearCache(const float&) noexcept
 	clear();
 }
 
-void Prop_Technique::updateCache(const float& deltaTime, ecsWorld& world) noexcept 
+void Prop_Technique::updateCache(const float& deltaTime, ecsWorld& world) 
 {
 	// Link together the dimensions of view info to that of the viewport vectors
 	m_frameData.viewInfo.resize(m_sceneCameras.size());
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Prop_Technique::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void Prop_Technique::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	// Exit Early
 	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shaderCull, m_shaderGeometry)) {
@@ -138,7 +138,7 @@ void Prop_Technique::renderTechnique(const float&, Viewport& viewport, const std
 	}
 }
 
-void Prop_Technique::cullShadows(const float&, const std::vector<std::pair<int, int>>& perspectives) noexcept 
+void Prop_Technique::cullShadows(const float&, const std::vector<std::pair<int, int>>& perspectives) 
 {
 	// Exit Early
 	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shaderShadowCull, m_shaderShadowGeometry)) {
@@ -217,7 +217,7 @@ void Prop_Technique::cullShadows(const float&, const std::vector<std::pair<int, 
 	}
 }
 
-void Prop_Technique::renderShadows(const float&) noexcept 
+void Prop_Technique::renderShadows(const float&) 
 {
 	// Exit Early
 	if (m_enabled && Asset::All_Ready(m_shapeCube, m_shaderShadowCull, m_shaderShadowGeometry)) {

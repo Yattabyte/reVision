@@ -14,7 +14,7 @@ public:
 	inline ~Options_Video() noexcept = default;
 	/** Construct a video pane.
 	@param	engine		reference to the engine to use. */
-	explicit Options_Video(Engine& engine) noexcept;
+	explicit Options_Video(Engine& engine);
 
 
 protected:

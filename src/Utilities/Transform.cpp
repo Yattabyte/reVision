@@ -15,7 +15,7 @@ Transform::Transform(const glm::quat& orientation) noexcept :
 {
 }
 
-void Transform::update() noexcept 
+void Transform::update() 
 {
 	m_modelMatrix = 
 		glm::translate(glm::mat4(1.0f), m_position) *
@@ -24,7 +24,7 @@ void Transform::update() noexcept
 	m_inverseModelMatrix = glm::inverse(m_modelMatrix);
 }
 
-Transform Transform::inverse() noexcept 
+Transform Transform::inverse() 
 {
 	Transform n(*this);
 	n.m_modelMatrix = m_inverseModelMatrix;
@@ -69,7 +69,7 @@ bool Transform::operator!=(const Transform& other) const noexcept
 	return !((*this) == other);
 }
 
-Transform& Transform::operator*=(const Transform& other) noexcept 
+Transform& Transform::operator*=(const Transform& other) 
 {
 	m_position += other.m_position;
 	m_orientation *= other.m_orientation;
@@ -79,7 +79,7 @@ Transform& Transform::operator*=(const Transform& other) noexcept
 	return *this;
 }
 
-Transform Transform::operator*(const Transform& o) const noexcept 
+Transform Transform::operator*(const Transform& o) const 
 {
 	Transform n(m_position + o.m_position, m_orientation * o.m_orientation, m_scale * o.m_scale);
 	n.m_modelMatrix = m_modelMatrix * o.m_modelMatrix;

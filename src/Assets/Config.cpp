@@ -40,7 +40,7 @@ inline int find_CFG_Property(const std::string& s, const std::vector<std::string
 	return -1;
 }
 
-Shared_Config::Shared_Config(Engine& engine, const std::string& filename, const std::vector<std::string>& cfg_strings, const bool& threaded) noexcept
+Shared_Config::Shared_Config(Engine& engine, const std::string& filename, const std::vector<std::string>& cfg_strings, const bool& threaded)
 {
 	auto newAsset = std::dynamic_pointer_cast<Config>(engine.getManager_Assets().shareAsset(
 			typeid(Config).name(),
@@ -51,9 +51,9 @@ Shared_Config::Shared_Config(Engine& engine, const std::string& filename, const 
 	swap(newAsset);
 }
 
-Config::Config(Engine& engine, const std::string& filename, const std::vector<std::string>& strings) noexcept : Asset(engine, filename), m_strings(strings) {}
+Config::Config(Engine& engine, const std::string& filename, const std::vector<std::string>& strings) : Asset(engine, filename), m_strings(strings) {}
 
-void Config::initialize() noexcept
+void Config::initialize()
 {
 	try {
 		std::ifstream file_stream(Engine::Get_Current_Dir() + DIRECTORY_CONFIG + getFileName() + EXT_CONFIG);
@@ -75,20 +75,20 @@ void Config::initialize() noexcept
 	Asset::finalize();
 }
 
-void Config::setValue(const unsigned int& cfg_key, const float& cfg_value) noexcept
+void Config::setValue(const unsigned int& cfg_key, const float& cfg_value)
 {
 	// If the key doesn't exist in the map, [ ] will create it
 	m_configuration[cfg_key] = cfg_value;
 }
 
-float Config::getValue(const unsigned int& cfg_key) const noexcept
+float Config::getValue(const unsigned int& cfg_key) const
 {
 	if (m_configuration.find(cfg_key) != m_configuration.end())
 		return m_configuration.at(cfg_key);
 	return std::nanf("");
 }
 
-void Config::saveConfig() const noexcept
+void Config::saveConfig() const
 {
 	std::string output;
 	for (const auto& value : m_configuration)

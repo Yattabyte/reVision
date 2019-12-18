@@ -9,7 +9,7 @@ Skeletal_Animation_System::Skeletal_Animation_System(Engine& engine) noexcept :
 	addComponentType(Skeleton_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 }
 
-void Skeletal_Animation_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void Skeletal_Animation_System::updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	for (const auto& componentParam : components) {
 		auto* skeletonComponent = static_cast<Skeleton_Component*>(componentParam[0]);
@@ -38,7 +38,7 @@ void Skeletal_Animation_System::updateComponents(const float& deltaTime, const s
 	@param	pAnimation		the animation system to search through.
 	@param	NodeName		the name of the node to find.
 	@return					pointer to the node matching the name specified if found, nullptr otherwise. */
-inline static constexpr auto FindNodeAnim = [](const Animation& pAnimation, const std::string& NodeName) -> const Node_Animation* {
+inline static constexpr auto FindNodeAnim = [](const Animation& pAnimation, const std::string& NodeName) noexcept -> const Node_Animation* {
 	for (unsigned int i = 0; i < pAnimation.numChannels; i++) {
 		auto& pNodeAnim = pAnimation.channels[i];
 		if (pNodeAnim.nodeName == NodeName)
@@ -52,7 +52,7 @@ inline static constexpr auto FindNodeAnim = [](const Animation& pAnimation, cons
 @param	count			the number of key frames.
 @param	keyVector		array of key frames.
 @return					an appropriate key-frame, 0 otherwise. */
-inline static constexpr auto FindKey = [](const float& AnimationTime, const size_t& count, const auto& keyVector) -> const size_t {
+inline static constexpr auto FindKey = [](const float& AnimationTime, const size_t& count, const auto& keyVector) noexcept {
 	for (size_t i = 0; i < count; i++)
 		if (AnimationTime < (float)(keyVector[i + 1]).time)
 			return i;
@@ -63,7 +63,7 @@ inline static constexpr auto FindKey = [](const float& AnimationTime, const size
 @param	AnimationTime	the current time in the animation.
 @param	keyVector		array of key frames.
 @return					a new key-frame value. */
-inline static constexpr auto InterpolateKeys = [](const float& AnimationTime, const auto& keyVector) {
+inline static constexpr auto InterpolateKeys = [](const float& AnimationTime, const auto& keyVector) noexcept {
 	const size_t& keyCount = keyVector.size();
 	assert(keyCount > 0);
 	const auto& Result = keyVector[0].value;
@@ -81,7 +81,7 @@ inline static constexpr auto InterpolateKeys = [](const float& AnimationTime, co
 	return Result;
 };
 
-void Skeletal_Animation_System::ReadNodeHeirarchy(std::vector<glm::mat4>& transforms, const float& AnimationTime, const int& animation_ID, const Node& parentNode, const Shared_Mesh& model, const glm::mat4& ParentTransform) noexcept 
+void Skeletal_Animation_System::ReadNodeHeirarchy(std::vector<glm::mat4>& transforms, const float& AnimationTime, const int& animation_ID, const Node& parentNode, const Shared_Mesh& model, const glm::mat4& ParentTransform) 
 {
 	const std::string& NodeName = parentNode.name;
 	const Animation& pAnimation = model->m_geometry.animations[animation_ID];

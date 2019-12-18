@@ -2,7 +2,7 @@
 #include <algorithm>
 
 
-Slider::Slider(Engine& engine, const float& value, const glm::vec2& range) noexcept :
+Slider::Slider(Engine& engine, const float& value, const glm::vec2& range) :
 	UI_Element(engine), m_value(value), m_lowerRange(range.x), m_upperRange(range.y)
 {
 	// Make a background panel for cosmetic purposes
@@ -64,7 +64,7 @@ void Slider::userAction(ActionState& actionState) noexcept
 		setValue(getValue() + offsetAmount);
 }
 
-void Slider::setValue(const float& amount) noexcept 
+void Slider::setValue(const float& amount) 
 {
 	m_value = std::clamp<float>(amount, m_lowerRange, m_upperRange);
 	setText(std::to_string((int)std::round(m_value)));

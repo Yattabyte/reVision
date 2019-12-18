@@ -9,7 +9,7 @@ constexpr const char* DIRECTORY_SHADER_PKG = "\\Shaders\\";
 /** Parse the shader snippet, looking for any directives that require us to modify the document.
 @param	engine			reference to the engine to use. 
 @param	userAsset		the asset we are loading from. */
-inline static void parse(Engine& engine, Shader_Pkg& userAsset) noexcept
+inline static void parse(Engine& engine, Shader_Pkg& userAsset)
 {
 	std::string input;
 	input = userAsset.m_packageText;
@@ -33,7 +33,7 @@ inline static void parse(Engine& engine, Shader_Pkg& userAsset) noexcept
 	userAsset.m_packageText = input;
 }
 
-Shared_Shader_Pkg::Shared_Shader_Pkg(Engine& engine, const std::string& filename, const bool& threaded) noexcept
+Shared_Shader_Pkg::Shared_Shader_Pkg(Engine& engine, const std::string& filename, const bool& threaded)
 {
 	auto newAsset = std::dynamic_pointer_cast<Shader_Pkg>(engine.getManager_Assets().shareAsset(
 			typeid(Shader_Pkg).name(),
@@ -46,12 +46,12 @@ Shared_Shader_Pkg::Shared_Shader_Pkg(Engine& engine, const std::string& filename
 
 Shader_Pkg::Shader_Pkg(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
-std::string Shader_Pkg::getPackageText() const noexcept
+std::string Shader_Pkg::getPackageText() const
 {
 	return m_packageText;
 }
 
-void Shader_Pkg::initialize() noexcept
+void Shader_Pkg::initialize()
 {
 	const bool found = Text_IO::Import_Text(m_engine, DIRECTORY_SHADER_PKG + getFileName() + EXT_PACKAGE, m_packageText);
 

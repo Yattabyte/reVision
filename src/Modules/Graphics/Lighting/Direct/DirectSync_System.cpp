@@ -13,7 +13,7 @@ DirectSync_System::DirectSync_System(Direct_Light_Data& frameData) noexcept :
 	addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 }
 
-void DirectSync_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void DirectSync_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	// Resize light buffers to match number of entities this frame
 	m_frameData.lightBuffer.resize(components.size());

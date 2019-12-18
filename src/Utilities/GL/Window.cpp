@@ -7,7 +7,7 @@
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
-Window::~Window() noexcept
+Window::~Window()
 {
 	*m_aliveIndicator = false;
 	for (auto& [thread, promise, context] : m_threads) {
@@ -21,7 +21,7 @@ Window::~Window() noexcept
 	glfwTerminate();
 }
 
-Window::Window(Engine& engine) noexcept :
+Window::Window(Engine& engine) :
 	m_engine(engine)
 {
 	// Initialize GLFW
@@ -209,7 +209,7 @@ Window::Window(Engine& engine) noexcept :
 	initThreads();
 }
 
-void Window::initThreads() noexcept
+void Window::initThreads()
 {
 	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());
 	for (unsigned int x = 0; x < maxThreads; ++x) {
@@ -295,12 +295,12 @@ float Window::GetSystemTime() noexcept
 	return (float)glfwGetTime();
 }
 
-std::string Window::GetVersion() noexcept
+std::string Window::GetVersion()
 {
 	return std::string(glfwGetVersionString(), 5);
 }
 
-std::vector<glm::ivec3> Window::GetResolutions() noexcept
+std::vector<glm::ivec3> Window::GetResolutions()
 {
 	int count(0);
 	const GLFWvidmode* modes = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);

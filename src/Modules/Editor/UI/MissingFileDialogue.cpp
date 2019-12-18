@@ -10,7 +10,7 @@ MissingFileDialogue::MissingFileDialogue(Engine& engine, LevelEditor_Module& edi
 	m_open = false;
 }
 
-void MissingFileDialogue::tick(const float&) noexcept
+void MissingFileDialogue::tick(const float&)
 {
 	// Draw 'Missing File' notification
 	if (m_open && !m_fileName.empty()) {
@@ -32,7 +32,7 @@ void MissingFileDialogue::tick(const float&) noexcept
 	}
 }
 
-void MissingFileDialogue::notifyMissing(const std::string& filename) noexcept
+void MissingFileDialogue::notifyMissing(const std::string& filename)
 {
 	m_fileName = filename;
 	m_open = !filename.empty();

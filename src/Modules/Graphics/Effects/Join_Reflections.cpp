@@ -8,7 +8,7 @@ Join_Reflections::~Join_Reflections() noexcept
 	*m_aliveIndicator = false;
 }
 
-Join_Reflections::Join_Reflections(Engine& engine) noexcept :
+Join_Reflections::Join_Reflections(Engine& engine) :
 	Graphics_Technique(Technique_Category::SECONDARY_LIGHTING),
 	m_engine(engine),
 	m_shader(Shared_Shader(engine, "Effects\\Join Reflections")),
@@ -17,12 +17,12 @@ Join_Reflections::Join_Reflections(Engine& engine) noexcept :
 {
 }
 
-void Join_Reflections::clearCache(const float&) noexcept 
+void Join_Reflections::clearCache(const float&) 
 {
 	m_drawIndex = 0;
 }
 
-void Join_Reflections::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void Join_Reflections::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shader))
 		return;

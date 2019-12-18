@@ -7,7 +7,7 @@
 
 constexpr const char* DIRECTORY_COLLIDER = "\\Models\\";
 
-Shared_Collider::Shared_Collider(Engine& engine, const std::string& filename, const bool& threaded) noexcept
+Shared_Collider::Shared_Collider(Engine& engine, const std::string& filename, const bool& threaded)
 {
 	auto newAsset = std::dynamic_pointer_cast<Collider>(engine.getManager_Assets().shareAsset(
 			typeid(Collider).name(),
@@ -23,7 +23,7 @@ Collider::Collider(Engine& engine, const std::string& filename) noexcept :
 {
 }
 
-void Collider::initialize() noexcept
+void Collider::initialize()
 {
 	// Forward asset creation
 	m_mesh = Shared_Mesh(m_engine, DIRECTORY_COLLIDER + getFileName(), false);

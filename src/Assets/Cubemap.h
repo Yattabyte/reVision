@@ -20,7 +20,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	Shared_Cubemap(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
+	Shared_Cubemap(Engine& engine, const std::string& filename, const bool& threaded = true);
 };
 
 /** A cubemap texture object.
@@ -61,7 +61,7 @@ private:
 
 
 	// Private Interface Implementation
-	void initialize() noexcept final;
+	void initialize() final;
 
 
 	// Private Attributes

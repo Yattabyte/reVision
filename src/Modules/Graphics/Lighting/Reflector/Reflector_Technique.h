@@ -22,21 +22,21 @@ public:
 	/** Construct a reflector technique.
 	@param	engine			reference to the engine to use. 
 	@param	sceneCameras	reference to the scene cameras to use. */
-	Reflector_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept;
+	Reflector_Technique(Engine& engine, std::vector<Camera*>& sceneCameras);
 
 
 	// Public Interface Implementations
-	void clearCache(const float& deltaTime) noexcept final;
-	void updateCache(const float& deltaTime, ecsWorld& world) noexcept final;
-	void updatePass(const float& deltaTime) noexcept final;
-	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
+	void clearCache(const float& deltaTime) final;
+	void updateCache(const float& deltaTime, ecsWorld& world) final;
+	void updatePass(const float& deltaTime) final;
+	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) final;
 
 
 private:
 	// Private Methods
 	/** Render all the geometry for each reflector.
 	@param	deltaTime	the amount of time passed since last frame. */
-	void updateReflectors(const float& deltaTime) noexcept;
+	void updateReflectors(const float& deltaTime);
 	/** Render all the lights
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */

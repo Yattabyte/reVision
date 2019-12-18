@@ -19,7 +19,7 @@ Rotation_Gizmo::~Rotation_Gizmo() noexcept
 	glDeleteVertexArrays(1, &m_axisVAO);
 }
 
-Rotation_Gizmo::Rotation_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept :
+Rotation_Gizmo::Rotation_Gizmo(Engine& engine, LevelEditor_Module& editor) :
 	m_engine(engine),
 	m_editor(editor),
 	m_model(Shared_Auto_Model(engine, "Editor\\rotate")),
@@ -74,7 +74,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine& engine, LevelEditor_Module& editor) noexc
 	glVertexArrayVertexBuffer(m_diskVAO, 0, m_diskVBO, 0, sizeof(glm::vec3));
 }
 
-bool Rotation_Gizmo::checkMouseInput(const float&) noexcept
+bool Rotation_Gizmo::checkMouseInput(const float&)
 {
 	// See if the mouse intersects any entities
 	checkMouseHover();
@@ -89,7 +89,7 @@ bool Rotation_Gizmo::checkMouseInput(const float&) noexcept
 	return false;
 }
 
-void Rotation_Gizmo::render(const float&) noexcept
+void Rotation_Gizmo::render(const float&)
 {
 	// Safety check first
 	if (Asset::All_Ready(m_model, m_gizmoShader) && m_editor.getSelection().size()) {
@@ -160,7 +160,7 @@ void Rotation_Gizmo::setTransform(const Transform& transform) noexcept
 	m_transform = transform;
 }
 
-void Rotation_Gizmo::checkMouseHover() noexcept
+void Rotation_Gizmo::checkMouseHover()
 {
 	const auto& actionState = m_engine.getActionState();
 	const auto& position = m_transform.m_position;
@@ -211,7 +211,7 @@ void Rotation_Gizmo::checkMouseHover() noexcept
 		m_hoveredAxes = ALL_AXES;
 }
 
-bool Rotation_Gizmo::checkMousePress() noexcept
+bool Rotation_Gizmo::checkMousePress()
 {
 	const auto& position = m_transform.m_position;
 	m_startingAngle = 0.0f;
@@ -306,7 +306,7 @@ bool Rotation_Gizmo::checkMousePress() noexcept
 	return false;
 }
 
-void Rotation_Gizmo::updateDisk() noexcept
+void Rotation_Gizmo::updateDisk()
 {
 	const auto fourthAxisMat = glm::inverse(glm::mat4_cast(glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->vMatrix)));
 	const int steps = (int)ceilf((abs(m_deltaAngle) / 360.0f) * DISK_VERTICES);

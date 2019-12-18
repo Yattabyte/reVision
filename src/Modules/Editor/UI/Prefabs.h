@@ -20,35 +20,35 @@ public:
 	/** Construct a prefab UI element.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
-	Prefabs(Engine& engine, LevelEditor_Module& editor) noexcept;
+	Prefabs(Engine& engine, LevelEditor_Module& editor);
 
 
 	// Public Interface Implementation
-	void tick(const float& deltaTime) noexcept final;
+	void tick(const float& deltaTime) final;
 
 
 	// Public Methods
 	/** Construct a prefab from serialized entity data.
 	@param	entityData		serialized entity data. */
-	void addPrefab(const std::vector<char>& entityData) noexcept;
+	void addPrefab(const std::vector<char>& entityData);
 
 
 private:
 	// Private Methods
 	/** Populate a list of prefabs given an optional subdirectory.
 	@param	directory		if non-blank, a subdirectory within the prefabs folder. */
-	void populatePrefabs(const std::string& directory = "") noexcept;
+	void populatePrefabs(const std::string& directory = "");
 	/** Open the selected prefab entry, spawning if its an object, if a folder populates with the folder contents.*/
-	void openPrefabEntry() noexcept;
+	void openPrefabEntry();
 	/** Update the thumbnails by a specific delta time.
 	@param	deltaTime		the amount of time since last frame. */
-	void tickThumbnails(const float& deltaTime) noexcept;
+	void tickThumbnails(const float& deltaTime);
 	/** Update the prefabs window.
 	@param	deltaTime		the amount of time since last frame. */
-	void tickWindow(const float& deltaTime) noexcept;
+	void tickWindow(const float& deltaTime);
 	/** Update any prefab pop-up's.
 	@param	deltaTime		the amount of time since last frame. */
-	void tickPopupDialogues(const float& deltaTime) noexcept;
+	void tickPopupDialogues(const float& deltaTime);
 
 
 	// Private Attributes
@@ -82,7 +82,7 @@ private:
 	// Private Methods
 	/** Add a specific prefab to the list.
 	@param	prefab			the prefab to add. */
-	void addPrefab(Prefabs::Entry& prefab) noexcept;
+	void addPrefab(Prefabs::Entry& prefab);
 };
 
 #endif // PREFABS_H

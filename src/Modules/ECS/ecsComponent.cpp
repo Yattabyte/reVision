@@ -2,7 +2,7 @@
 #include "ecsComponent.h"
 
 
-ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string) noexcept
+ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string)
 {
 	const auto componentID = (ComponentID)(m_componentRegistry.size());
 	m_componentRegistry.emplace_back(createFn, freeFn, newFn, size);
@@ -16,7 +16,7 @@ ecsBaseComponent::ecsBaseComponent(const ComponentID& ID, const size_t& size, co
 {
 }
 
-std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const std::vector<char>& data, size_t& dataRead) noexcept
+std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const std::vector<char>& data, size_t& dataRead)
 {
 	// Read Name
 	int charCount(0);

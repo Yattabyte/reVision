@@ -11,7 +11,7 @@ bool Camera::getEnabled() const noexcept
 	return m_enabled;
 }
 
-void Camera::updateFrustum() noexcept 
+void Camera::updateFrustum() 
 {
 	glm::vec4 posB = m_localData.vMatrixInverse * glm::vec4(0, 0, -m_localData.FarPlane / 2.0f, 1.0f);
 	posB /= posB.w;

@@ -42,68 +42,68 @@ public:
 	// Public Interface Declaration
 	/** Render this element (and all sub-elements).
 	@param	transform				the transform to use. */
-	virtual void renderElement(const float& deltaTime, const glm::vec2& position = glm::vec2(0.0f), const glm::vec2& scale = glm::vec2(1.0f)) noexcept;
+	virtual void renderElement(const float& deltaTime, const glm::vec2& position = glm::vec2(0.0f), const glm::vec2& scale = glm::vec2(1.0f));
 	/** Applies a mouse action across this UI element.
 	@param	mouseEvent				the mouse event occurring. */
-	virtual void mouseAction(const MouseEvent& mouseEvent) noexcept;
+	virtual void mouseAction(const MouseEvent& mouseEvent);
 	/** Propagates a keyboard action event from this UI element to its children.
 	@param keyboardEvent			the event to propagate. */
-	virtual void keyboardAction(const KeyboardEvent& keyboardEvent) noexcept;
+	virtual void keyboardAction(const KeyboardEvent& keyboardEvent);
 	/** Process user input from peripheral devices.
 	@param	actionState				engine action state. */
-	virtual void userAction(ActionState& actionState) noexcept;
+	virtual void userAction(ActionState& actionState);
 
 
 	// Public Methods
 	/** Add a child UI element to this one.
 	@param	child				the element to be chained to this one. */
-	void addElement(const std::shared_ptr<UI_Element>& child) noexcept;
+	void addElement(const std::shared_ptr<UI_Element>& child);
 	/** Retrieve the child element found at the index specified.
 	@param	index				the index of the element to retrieve.
 	@return						the element found at the index specified. */
 	std::shared_ptr<UI_Element> getElement(const size_t& index) const noexcept;
 	/** Remove all child UI elements. */
-	void clearElements() noexcept;
+	void clearElements();
 	/** Add a callback function, to be called when the given event occurs.
 	@param	interactionEventID	the ID corresponding to an event type
 	@param	func				the callback function to be called. */
-	void addCallback(const int& interactionEventID, const std::function<void()>& func) noexcept;
+	void addCallback(const int& interactionEventID, const std::function<void()>& func);
 	/** Sets this elements' position.
 	@param	position			the new position to use. */
-	void setPosition(const glm::vec2& position) noexcept;
+	void setPosition(const glm::vec2& position);
 	/** Retrieves this elements' position.
 	@return						this elements' position. */
 	glm::vec2 getPosition() const noexcept;
 	/** Sets this elements' scale.
 	@param	scale				the new scale to use. */
-	void setScale(const glm::vec2& scale) noexcept;
+	void setScale(const glm::vec2& scale);
 	/** Retrieves this elements' scale.
 	@return						this elements' scale. */
 	glm::vec2 getScale() const noexcept;
 	/** Sets this elements' maximum scale.
 	@param	scale				the new maximum scale to use. */
-	void setMaxScale(const glm::vec2& scale) noexcept;
+	void setMaxScale(const glm::vec2& scale);
 	/** Retrieves this elements' maximum scale.
 	@return						this elements' maximum scale. */
 	glm::vec2 getMaxScale() const noexcept;
 	/** Set the max width of this element.
 	@param	width				the maximum width to use. */
-	void setMaxWidth(const float& width) noexcept;
+	void setMaxWidth(const float& width);
 	/** Set the max height of this element.
 	@param	height				the maximum height to use. */
-	void setMaxHeight(const float& height) noexcept;
+	void setMaxHeight(const float& height);
 	/** Sets this elements' minimum scale.
 	@param	scale				the new minimum scale to use. */
-	void setMinScale(const glm::vec2& scale) noexcept;
+	void setMinScale(const glm::vec2& scale);
 	/** Retrieves this elements' minimum scale.
 	@return						this elements' minimum scale. */
 	glm::vec2 getMinScale() const noexcept;
 	/** Set the minimum width of this element.
 	@param	width				the minimum width to use. */
-	void setMinWidth(const float& width) noexcept;
+	void setMinWidth(const float& width);
 	/** Set the minimum height of this element.
 	@param	width				the minimum height to use. */
-	void setMinHeight(const float& height) noexcept;
+	void setMinHeight(const float& height);
 	/** Set this element as visible or not.
 	@param	visible				whether or not this element should be visible. */
 	void setVisible(const bool& visible) noexcept;
@@ -117,27 +117,27 @@ public:
 	@return						if this element is enabled. */
 	bool getEnabled() const noexcept;
 	/** Set this element as hovered, enacting its callback. */
-	void setHovered() noexcept;
+	void setHovered();
 	/** Retrieve this element's hovered state.
 	@return						true if this element is hovered, false otherwise. */
 	bool getHovered() const noexcept;
 	/** Set this element as pressed, enacting its callback. */
-	void setPressed() noexcept;
+	void setPressed();
 	/** Retrieve this element's pressed state.
 	@return						true if this element is pressed, false otherwise. */
 	bool getPressed() const noexcept;
 	/** Set this element as released, enacting its callback. */
-	void setReleased() noexcept;
+	void setReleased();
 	/** Retrieve this element's released state.
 	@return						true if this element is released, false otherwise. */
 	bool getReleased() const noexcept;
 	/** Set this element as clicked, enacting its callback. */
-	void setClicked() noexcept;
+	void setClicked();
 	/** Retrieve this element's clicked state.
 	@return						true if this element is clicked, false otherwise. */
 	static bool getClicked() noexcept;
 	/** Reset this element, releasing, un-pressing, un-hovering this element and all its children. */
-	void clearFocus() noexcept;
+	void clearFocus();
 	/** Retrieve whether or not the mouse is within this element.
 	@return						true if the mouse is within this element. */
 	bool mouseWithin(const MouseEvent& mouseEvent) const noexcept;
@@ -149,7 +149,7 @@ protected:
 	// Protected Methods
 	/** Triggers all callback functions identified by the event ID specified.
 	@param	interactionEventID	the event type. */
-	void enactCallback(const int& interactionEventID) noexcept;
+	void enactCallback(const int& interactionEventID);
 
 
 	// Protected Attributes

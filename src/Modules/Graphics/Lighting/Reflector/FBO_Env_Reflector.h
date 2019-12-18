@@ -20,7 +20,7 @@ public:
 	/** Set the size of this framebuffer.
 	@param	newSize		the new size to use.
 	@param	depth		the new depth to use. */
-	void resize(const glm::ivec2 newSize, const GLuint& depth) noexcept;
+	void resize(const glm::ivec2 newSize, const GLuint& depth);
 	/** Clear the data out of the entire framebuffer. */
 	void clear() noexcept;
 	/** Clear the data out of a specific layer in the framebuffer.

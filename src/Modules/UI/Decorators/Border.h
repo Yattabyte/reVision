@@ -16,7 +16,7 @@ public:
 	/** Construct a border, decorating the supplied component.
 	@param	engine		reference to the engine to use. 
 	@param	component	the component to decorate. */
-	Border(Engine& engine, const std::shared_ptr<UI_Element>& component) noexcept;
+	Border(Engine& engine, const std::shared_ptr<UI_Element>& component);
 
 
 	// Public Interface Implementations
@@ -40,7 +40,7 @@ public:
 
 protected:
 	// Protected Methods
-	void updateGeometry() noexcept;
+	void updateGeometry();
 
 
 	// Protected Attributes

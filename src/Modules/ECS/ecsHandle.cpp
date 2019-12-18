@@ -2,7 +2,7 @@
 #include <algorithm>
 
 
-ecsHandle::ecsHandle(const char id[32]) noexcept
+ecsHandle::ecsHandle(const char id[32])
 {
 	std::copy(&id[0], &id[32], &m_uuid[0]);
 }
@@ -17,7 +17,7 @@ ecsHandle::ecsHandle(ecsHandle&& other) noexcept
 	std::move(std::begin(other.m_uuid), std::end(other.m_uuid), m_uuid);
 }
 
-ecsHandle& ecsHandle::operator=(const ecsHandle& other) noexcept
+ecsHandle& ecsHandle::operator=(const ecsHandle& other)
 {
 	std::copy(&other.m_uuid[0], &other.m_uuid[32], &m_uuid[0]);
 	return *this;
@@ -50,7 +50,7 @@ EntityHandle::EntityHandle(const ecsHandle& handle) noexcept
 {
 }
 
-EntityHandle& EntityHandle::operator=(const EntityHandle& other) noexcept
+EntityHandle& EntityHandle::operator=(const EntityHandle& other)
 {
 	std::copy(&other.m_uuid[0], &other.m_uuid[32], &m_uuid[0]);
 	return *this;
@@ -61,7 +61,7 @@ ComponentHandle::ComponentHandle(const ecsHandle& handle) noexcept
 {
 }
 
-ComponentHandle& ComponentHandle::operator=(const ComponentHandle& other) noexcept
+ComponentHandle& ComponentHandle::operator=(const ComponentHandle& other)
 {
 	std::copy(&other.m_uuid[0], &other.m_uuid[32], &m_uuid[0]);
 	return *this;

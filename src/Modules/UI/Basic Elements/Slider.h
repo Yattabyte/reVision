@@ -24,7 +24,7 @@ public:
 	@param	engine		reference to the engine to use. 
 	@param	value		the starting value to use.
 	@param	range		the starting range to use. */
-	explicit Slider(Engine& engine, const float& value = 0.0f, const glm::vec2& range = { 0.0f, 1.0f }) noexcept;
+	explicit Slider(Engine& engine, const float& value = 0.0f, const glm::vec2& range = { 0.0f, 1.0f });
 
 
 	// Public Interface Implementation
@@ -36,7 +36,7 @@ public:
 	// Public Methods
 	/** Set the percentage for this slider.
 	@param	amount		the value to put this slider at. */
-	void setValue(const float& amount) noexcept;
+	void setValue(const float& amount);
 	/** Retrieve the percentage value for this scrollbar.
 	@return				the percentage value for this slider. */
 	float getValue() const noexcept;

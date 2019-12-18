@@ -23,7 +23,7 @@ public:
 	~List() noexcept;
 	/** Constructs a list.
 	@param	engine		reference to the engine to use. */
-	explicit List(Engine& engine) noexcept;
+	explicit List(Engine& engine);
 
 
 	// Public Interface Implementation
@@ -40,7 +40,7 @@ public:
 	int getHoverIndex() const noexcept;
 	/** Change this lists selected item.
 	@param	newIndex		the new selected index. */
-	void setSelectionIndex(const int& newIndex) noexcept;
+	void setSelectionIndex(const int& newIndex);
 	/** Retrieve this list's selected item index.
 	@return					this list's selected index. */
 	int getSelectionIndex() const noexcept;
@@ -73,7 +73,7 @@ protected:
 	/** Update position of each child element. */
 	void alignChildren() noexcept;
 	/** Update the geometry of the selection box. */
-	void updateSelectionGeometry() noexcept;
+	void updateSelectionGeometry();
 
 
 	// Protected Attributes

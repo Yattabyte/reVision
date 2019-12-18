@@ -6,7 +6,7 @@
 #include <sstream>
 
 
-Options_Video::Options_Video(Engine& engine) noexcept : 
+Options_Video::Options_Video(Engine& engine) : 
 	Options_Pane(engine) 
 {
 	// Title

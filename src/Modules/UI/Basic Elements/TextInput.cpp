@@ -9,7 +9,7 @@ TextInput::~TextInput() noexcept
 	glDeleteVertexArrays(1, &m_vaoID);
 }
 
-TextInput::TextInput(Engine& engine) noexcept :
+TextInput::TextInput(Engine& engine) :
 	UI_Element(engine),
 	m_shader(Shared_Shader(engine, "UI\\TextInput")),
 	m_label(std::make_shared<Label>(engine))
@@ -42,7 +42,7 @@ TextInput::TextInput(Engine& engine) noexcept :
 	m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 }
 
-void TextInput::mouseAction(const MouseEvent& mouseEvent) noexcept 
+void TextInput::mouseAction(const MouseEvent& mouseEvent) 
 {
 	UI_Element::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -61,7 +61,7 @@ void TextInput::mouseAction(const MouseEvent& mouseEvent) noexcept
 		m_edit = false;
 }
 
-void TextInput::keyboardAction(const KeyboardEvent& keyboardEvent) noexcept 
+void TextInput::keyboardAction(const KeyboardEvent& keyboardEvent) 
 {
 	if (m_edit) {
 		// Check for a text stream
@@ -95,7 +95,7 @@ void TextInput::keyboardAction(const KeyboardEvent& keyboardEvent) noexcept
 	}
 }
 
-void TextInput::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept
+void TextInput::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Exit Early
 	if (!getVisible() || !m_shader->ready())
@@ -118,7 +118,7 @@ void TextInput::renderElement(const float& deltaTime, const glm::vec2& position,
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void TextInput::setText(const std::string& text) noexcept 
+void TextInput::setText(const std::string& text) 
 {
 	m_text = text;
 	m_label->setText(text);
@@ -135,7 +135,7 @@ void TextInput::setCaret(const size_t& index) noexcept
 	updateGeometry();
 }
 
-void TextInput::updateGeometry() noexcept 
+void TextInput::updateGeometry() 
 {
 	constexpr auto num_data = 4 * 3;
 	std::vector<glm::vec3> data(num_data);

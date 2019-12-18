@@ -70,7 +70,7 @@ PropUpload_System::PropUpload_System(Engine& engine, PropData& frameData) noexce
 	}
 }
 
-void PropUpload_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept
+void PropUpload_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	for (const auto& componentParam : components) {
 		auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
@@ -98,7 +98,7 @@ void PropUpload_System::updateComponents(const float&, const std::vector<std::ve
 	}
 }
 
-void PropUpload_System::tryInsertModel(const Shared_Model& model) noexcept 
+void PropUpload_System::tryInsertModel(const Shared_Model& model) 
 {
 	if (m_modelMap.find(model) == m_modelMap.end()) {
 		// Prop hasn't been uploaded yet
@@ -161,7 +161,7 @@ void PropUpload_System::tryToExpand(const size_t& arraySize) noexcept
 	}
 }
 
-void PropUpload_System::tryInsertMaterial(const Shared_Material& material) noexcept
+void PropUpload_System::tryInsertMaterial(const Shared_Material& material)
 {
 	if (m_materialMap.find(material) == m_materialMap.end()) {
 		// Get spot in the material array

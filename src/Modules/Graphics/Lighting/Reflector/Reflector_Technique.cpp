@@ -11,7 +11,7 @@ Reflector_Technique::~Reflector_Technique() noexcept
 	*m_aliveIndicator = false;
 }
 
-Reflector_Technique::Reflector_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept :
+Reflector_Technique::Reflector_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) :
 	Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 	m_engine(engine),
 	m_shaderLighting(Shared_Shader(engine, "Core\\Reflector\\IBL_Parallax")),
@@ -48,7 +48,7 @@ Reflector_Technique::Reflector_Technique(Engine& engine, std::vector<Camera*>& s
 		});
 }
 
-void Reflector_Technique::clearCache(const float&) noexcept 
+void Reflector_Technique::clearCache(const float&) 
 {
 	m_frameData.lightBuffer.endReading();
 	m_frameData.viewInfo.clear();
@@ -57,21 +57,21 @@ void Reflector_Technique::clearCache(const float&) noexcept
 	m_drawData.clear();
 }
 
-void Reflector_Technique::updateCache(const float& deltaTime, ecsWorld& world) noexcept 
+void Reflector_Technique::updateCache(const float& deltaTime, ecsWorld& world) 
 {
 	// Link together the dimensions of view info to that of the viewport vectors
 	m_frameData.viewInfo.resize(m_sceneCameras.size());
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Reflector_Technique::updatePass(const float& deltaTime) noexcept 
+void Reflector_Technique::updatePass(const float& deltaTime)
 {
 	// Exit Early
 	if (m_enabled && Asset::All_Ready(m_shapeQuad, m_shaderCopy, m_shaderConvolute))
 		updateReflectors(deltaTime);
 }
 
-void Reflector_Technique::renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void Reflector_Technique::renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	// Exit Early
 	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shaderLighting, m_shaderStencil)) {
@@ -115,7 +115,7 @@ void Reflector_Technique::renderTechnique(const float& deltaTime, Viewport& view
 	}
 }
 
-void Reflector_Technique::updateReflectors(const float& deltaTime) noexcept 
+void Reflector_Technique::updateReflectors(const float& deltaTime) 
 {
 	auto clientTime = m_engine.GetSystemTime();
 	if (m_frameData.reflectorsToUpdate.size()) {

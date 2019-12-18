@@ -20,11 +20,11 @@ class Graphics_Framebuffers {
 public:
 	// Public (De)Constructors
 	/** Destroy this collection of frame-buffers. */
-	~Graphics_Framebuffers() noexcept;
+	~Graphics_Framebuffers();
 	/** Construct a collection of PBR frame-buffers at a specific size.
 	@param	size			the size to use.
 	@param	engine			reference to the engine to use. */
-	Graphics_Framebuffers(const glm::ivec2& size, Engine& engine) noexcept;
+	Graphics_Framebuffers(const glm::ivec2& size, Engine& engine);
 
 
 	// Public Methods
@@ -32,7 +32,7 @@ public:
 	@param	name			the name of the framebuffer, for lookup later.
 	@param	textureFormats	vector of texture parameters to connect to the FBO.
 	@param	mipmapped		(optional) whether to mipmap the FBO textures, down to 6 LOD intervals. */
-	void createFBO(const char* name, const std::vector<std::tuple<GLenum, GLenum, GLenum>>& textureFormats, const bool& mipmapped = false) noexcept;
+	void createFBO(const char* name, const std::vector<std::tuple<GLenum, GLenum, GLenum>>& textureFormats, const bool& mipmapped = false);
 	/** Bind a framebuffer for writing.
 	@param	name			the name of the framebuffer to bind. */
 	void bindForWriting(const char* name) noexcept;
@@ -41,11 +41,11 @@ public:
 	@param	binding			the reading index which the framebuffer should bind to. */
 	void bindForReading(const char* name, const GLuint& binding = 0) noexcept;
 	/** Clear all framebuffer color attachments of their data. */
-	void clear() noexcept;
+	void clear();
 	/** Resize all framebuffer textures.
 	@param	newSize			the new size all framebuffer textures should expand/shrink to.
 	@param	layerFaces		the number of layers to use. */
-	void resize(const glm::ivec2& newSize, const int& layerFaces) noexcept;
+	void resize(const glm::ivec2& newSize, const int& layerFaces);
 	/** Retrieve the FBO ID for a given framebuffer.
 	@param	name			the name of the framebuffer to retrieve from. */
 	GLuint getFboID(const char* name) noexcept;

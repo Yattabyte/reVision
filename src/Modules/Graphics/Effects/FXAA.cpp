@@ -8,7 +8,7 @@ FXAA::~FXAA() noexcept
 	*m_aliveIndicator = false;
 }
 
- FXAA::FXAA(Engine& engine) noexcept :
+ FXAA::FXAA(Engine& engine) :
 	Graphics_Technique(Technique_Category::POST_PROCESSING),
 	m_engine(engine),
 	m_shaderFXAA(Shared_Shader(engine, "Effects\\FXAA")),
@@ -20,12 +20,12 @@ FXAA::~FXAA() noexcept
 	preferences.addCallback(PreferenceState::Preference::C_FXAA, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = (bool)f; });
 }
  
-void FXAA::clearCache(const float&) noexcept 
+void FXAA::clearCache(const float&) 
 {
 	m_drawIndex = 0;
 }
 
-void FXAA::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void FXAA::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderFXAA))
 		return;

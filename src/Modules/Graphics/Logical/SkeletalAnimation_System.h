@@ -23,11 +23,11 @@ public:
 
 
 	// Public Interface Implementation
-	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) final;
 
 
 protected:
-	// Protected functions	
+	// Protected Methods
 	/** Process animation nodes from a scene, updating a series of transformation matrix representing the bones in the skeleton.
 	@param	transforms		matrix vector representing bones in the skeleton.
 	@param	AnimationTime	the current time in the animation.
@@ -35,7 +35,7 @@ protected:
 	@param	parentNode		parent node in the node hierarchy.
 	@param	model			the model to process the animations from.
 	@param	ParentTransform	parent transform in the node hierarchy. */
-	static void ReadNodeHeirarchy(std::vector<glm::mat4>& transforms, const float& AnimationTime, const int& animation_ID, const Node& parentNode, const Shared_Mesh& model, const glm::mat4& ParentTransform) noexcept;
+	static void ReadNodeHeirarchy(std::vector<glm::mat4>& transforms, const float& AnimationTime, const int& animation_ID, const Node& parentNode, const Shared_Mesh& model, const glm::mat4& ParentTransform);
 
 
 private:

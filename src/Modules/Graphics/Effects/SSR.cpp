@@ -11,7 +11,7 @@ SSR::~SSR() noexcept
 	glDeleteTextures(1, &m_bayerID);
 }
 
-SSR::SSR(Engine& engine) noexcept :
+SSR::SSR(Engine& engine) :
 	Graphics_Technique(Technique_Category::SECONDARY_LIGHTING),
 	m_engine(engine),
 	m_shaderSSR1(Shared_Shader(engine, "Effects\\SSR part 1")),
@@ -41,12 +41,12 @@ SSR::SSR(Engine& engine) noexcept :
 		msgMgr.error("SSR Bayer Matrix Texture is incomplete.");
 }
 
-void SSR::clearCache(const float&) noexcept 
+void SSR::clearCache(const float&) 
 {
 	m_drawIndex = 0;
 }
 
-void SSR::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void SSR::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderCopy, m_shaderConvMips, m_shaderSSR1, m_shaderSSR2))
 		return;

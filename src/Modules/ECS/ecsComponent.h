@@ -45,7 +45,7 @@ struct ecsBaseComponent {
 	@param	data		serialized version of component.
 	@param	dataRead	reference updated with the number of bytes read.
 	@return				if successful a shared pointer to a new component, nullptr otherwise. */
-	static std::shared_ptr<ecsBaseComponent> from_buffer(const std::vector<char>& data, size_t& dataRead) noexcept;
+	static std::shared_ptr<ecsBaseComponent> from_buffer(const std::vector<char>& data, size_t& dataRead);
 
 
 	// Public Attributes
@@ -70,7 +70,7 @@ protected:
 	@param	size		the total size of a single component.
 	@param	string		type-name of the component, for name-lookups between since component ID's can change.
 	@return				runtime component ID. */
-	static ComponentID registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string) noexcept;
+	static ComponentID registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string);
 	/** Recover and load component data into this component from a char buffer.
 	@param	data		serialized component data. */
 	virtual void recover_data(const std::vector<char>& data) noexcept = 0;

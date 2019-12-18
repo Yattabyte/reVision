@@ -1,7 +1,7 @@
 #include "Modules/UI/Basic Elements/Layout_Vertical.h"
 
 
-Layout_Vertical::Layout_Vertical(Engine& engine) noexcept :
+Layout_Vertical::Layout_Vertical(Engine& engine) :
 	UI_Element(engine)
 {
 	// Add Callbacks
@@ -9,7 +9,7 @@ Layout_Vertical::Layout_Vertical(Engine& engine) noexcept :
 	addCallback((int)UI_Element::Interact::on_childrenChange, [&]() noexcept { alignChildren(); });
 }
 
-void Layout_Vertical::addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio) noexcept 
+void Layout_Vertical::addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio) 
 {
 	UI_Element::addElement(child);
 	m_sizedChildren.push_back(std::pair(child, sizeRatio));

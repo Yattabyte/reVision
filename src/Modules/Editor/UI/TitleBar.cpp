@@ -4,7 +4,7 @@
 #include "imgui.h"
 
 
-TitleBar::TitleBar(Engine& engine, LevelEditor_Module& editor) noexcept :
+TitleBar::TitleBar(Engine& engine, LevelEditor_Module& editor) :
 	m_engine(engine),
 	m_editor(editor)
 {
@@ -37,7 +37,7 @@ TitleBar::TitleBar(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_iconSettings = Shared_Texture(engine, "Editor//iconOptions.png");
 }
 
-void TitleBar::tick(const float&) noexcept
+void TitleBar::tick(const float&)
 {
 	if (m_open) {
 		constexpr static auto BeginMenuWIcon = [](const char* string, const Shared_Texture& iconTexture, const char* shortcut = nullptr, bool* selected = nullptr, const bool& enabled = true) -> bool {

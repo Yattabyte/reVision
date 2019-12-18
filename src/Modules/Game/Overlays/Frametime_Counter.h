@@ -17,18 +17,18 @@ public:
 	~Frametime_Counter() noexcept;
 	/** Construct a frame-time counter.
 	@param	engine		reference to the engine to use. */
-	explicit Frametime_Counter(Engine& engine) noexcept;
+	explicit Frametime_Counter(Engine& engine);
 
 
 	// Public Interface Implementations.
-	void applyEffect(const float& deltaTime) noexcept final;
+	void applyEffect(const float& deltaTime) final;
 
 
 private:
 	// Private Methods
 	/** Resize this indicator.
 	@param	size		the new size to use. */
-	void resize(const glm::ivec2& size) noexcept;
+	void resize(const glm::ivec2& size);
 
 
 	// Private Attributes

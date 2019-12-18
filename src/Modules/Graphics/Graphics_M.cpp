@@ -11,7 +11,7 @@ Graphics_Module::Graphics_Module(Engine& engine) noexcept :
 {
 }
 
-void Graphics_Module::initialize() noexcept
+void Graphics_Module::initialize()
 {
 	Engine_Module::initialize();
 	m_engine.getManager_Messages().statement("Loading Module: Graphics...");
@@ -69,7 +69,7 @@ void Graphics_Module::initialize() noexcept
 	genPerspectiveMatrix();
 }
 
-void Graphics_Module::deinitialize() noexcept
+void Graphics_Module::deinitialize()
 {
 	m_engine.getManager_Messages().statement("Unloading Module: Graphics...");
 
@@ -82,7 +82,7 @@ Graphics_Pipeline& Graphics_Module::getPipeline() noexcept
 	return m_pipeline;
 }
 
-void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID) noexcept
+void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID)
 {
 	std::vector<Camera> cameras = { m_clientCamera };
 	renderWorld(world, deltaTime, m_viewport, cameras);
@@ -104,7 +104,7 @@ void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, Viewp
 	}
 }
 
-void Graphics_Module::genPerspectiveMatrix() noexcept
+void Graphics_Module::genPerspectiveMatrix()
 {
 	// Update Perspective Matrix
 	const float ar = std::max(1.0F, m_clientCamera->Dimensions.x) / std::max(1.0F, m_clientCamera->Dimensions.y);

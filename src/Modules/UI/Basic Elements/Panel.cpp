@@ -8,7 +8,7 @@ Panel::~Panel() noexcept
 	glDeleteVertexArrays(1, &m_vaoID);
 }
 
-Panel::Panel(Engine& engine) noexcept :
+Panel::Panel(Engine& engine) :
 	UI_Element(engine),
 	m_shader(Shared_Shader(engine, "UI\\Panel"))
 {
@@ -57,7 +57,7 @@ glm::vec4 Panel::getColor() const noexcept
 	return m_color;
 }
 
-void Panel::updateGeometry() noexcept 
+void Panel::updateGeometry() 
 {
 	constexpr auto num_data = 2 * 3;
 	std::vector<glm::vec3> data(num_data);

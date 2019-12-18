@@ -19,11 +19,11 @@ public:
 	/** Construct this system.
 	@param	engine		reference to the engine to use. 
 	@param	frameData	reference to common data that changes frame-to-frame. */
-	ReflectorScheduler_System(Engine& engine, ReflectorData& frameData) noexcept;
+	ReflectorScheduler_System(Engine& engine, ReflectorData& frameData);
 
 
 	// Public Interface Implementations
-	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) final;
 
 
 private:

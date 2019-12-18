@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-StartMenu::StartMenu(Engine& engine) noexcept : Menu(engine)
+StartMenu::StartMenu(Engine& engine) : Menu(engine)
 {
 	// Title
 	m_title->setText("MAIN MENU");
@@ -35,19 +35,19 @@ StartMenu::StartMenu(Engine& engine) noexcept : Menu(engine)
 	engine.getModule_UI().setFocusMap(getFocusMap());
 }
 
-void StartMenu::startGame() noexcept
+void StartMenu::startGame()
 {
 	m_engine.getModule_UI().clear();
 	enactCallback((int)StartMenu::Interact::on_start_game);
 }
 
-void StartMenu::startEditor() noexcept
+void StartMenu::startEditor()
 {
 	m_engine.getModule_UI().clear();
 	enactCallback((int)StartMenu::Interact::on_level_editor);
 }
 
-void StartMenu::goToOptions() noexcept 
+void StartMenu::goToOptions() 
 {
 	// Transfer appearance and control to options menu
 	auto& ui = m_engine.getModule_UI();
@@ -63,7 +63,7 @@ void StartMenu::returnFromOptions() noexcept
 	m_engine.getModule_UI().setFocusMap(getFocusMap());
 }
 
-void StartMenu::quit() noexcept 
+void StartMenu::quit() 
 {
 	m_engine.getModule_UI().clear();
 	m_engine.shutDown();

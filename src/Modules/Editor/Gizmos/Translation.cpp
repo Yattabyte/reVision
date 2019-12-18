@@ -14,7 +14,7 @@ Translation_Gizmo::~Translation_Gizmo() noexcept
 	glDeleteVertexArrays(1, &m_axisVAO);
 }
 
-Translation_Gizmo::Translation_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept :
+Translation_Gizmo::Translation_Gizmo(Engine& engine, LevelEditor_Module& editor) :
 	m_engine(engine),
 	m_editor(editor),
 	m_model(Shared_Auto_Model(engine, "Editor\\translate")),
@@ -60,7 +60,7 @@ Translation_Gizmo::Translation_Gizmo(Engine& engine, LevelEditor_Module& editor)
 	glVertexArrayVertexBuffer(m_axisVAO, 0, m_axisVBO, 0, sizeof(glm::vec3));
 }
 
-bool Translation_Gizmo::checkMouseInput(const float&) noexcept
+bool Translation_Gizmo::checkMouseInput(const float&)
 {
 	// See if the mouse intersects any entities.
 	checkMouseHover();
@@ -75,7 +75,7 @@ bool Translation_Gizmo::checkMouseInput(const float&) noexcept
 	return false;
 }
 
-void Translation_Gizmo::render(const float&) noexcept
+void Translation_Gizmo::render(const float&)
 {
 	// Safety check first
 	if (Asset::All_Ready(m_model, m_gizmoShader) && m_editor.getSelection().size()) {
@@ -130,7 +130,7 @@ void Translation_Gizmo::setTransform(const Transform& transform) noexcept
 	m_transform = transform;
 }
 
-void Translation_Gizmo::checkMouseHover() noexcept
+void Translation_Gizmo::checkMouseHover()
 {
 	const auto& actionState = m_engine.getActionState();
 	const auto& position = m_transform.m_position;
@@ -199,7 +199,7 @@ void Translation_Gizmo::checkMouseHover() noexcept
 		m_hoveredAxes |= Y_AXIS | Z_AXIS;
 }
 
-bool Translation_Gizmo::checkMousePress() noexcept
+bool Translation_Gizmo::checkMousePress()
 {
 	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
 	const auto ray_origin = clientCamera->EyePosition;

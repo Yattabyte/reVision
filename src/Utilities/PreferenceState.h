@@ -121,7 +121,7 @@ public:
 	// Public Methods
 	/** Loads a preference file from disk.
 	@param	filename	the relative path to the preference file to load. */
-	void loadFile(const std::string& filename) noexcept;
+	void loadFile(const std::string& filename);
 	/** Saves the preference file to disk, using the same filename as when loaded. */
 	void save() noexcept;
 	/** Tries to update the container with the value associated with the target key. If key doesn't exist, creates the key-value pair from the value given.
@@ -167,7 +167,7 @@ public:
 	@param	targetKey	the preference-ID to which this callback will be attached.
 	@param	alive		the shared pointer indicating if the target is still alive and valid.
 	@param	callback	the method to be triggered on value update. */
-	void addCallback(const Preference& targetKey, const std::shared_ptr<bool>& alive, const std::function<void(float)>& callback) noexcept;
+	void addCallback(const Preference& targetKey, const std::shared_ptr<bool>& alive, const std::function<void(float)>& callback);
 
 
 private:

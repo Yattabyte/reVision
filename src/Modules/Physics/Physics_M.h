@@ -16,18 +16,18 @@ public:
 	inline ~Physics_Module() noexcept = default;
 	/** Construct a physics module.
 	@param	engine		reference to the engine to use. */
-	explicit Physics_Module(Engine& engine) noexcept;
+	explicit Physics_Module(Engine& engine);
 
 
 	// Public Interface Implementations
-	void initialize() noexcept final;
-	void deinitialize() noexcept final;
+	void initialize() final;
+	void deinitialize() final;
 
 
 	// Public Methods
 	/** Tick this module by a specific amount of delta time.
 	@param	deltaTime	the amount of time since last frame. */
-	void frameTick(ecsWorld& world, const float& deltaTime) noexcept;
+	void frameTick(ecsWorld& world, const float& deltaTime);
 	/** Update generic physics based ECS systems using a specific ECS world. */
 	void updateSystems(ecsWorld& world, const float& deltaTime) noexcept;
 	/** Retrieves a pointer to the physics-world.

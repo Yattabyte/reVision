@@ -17,29 +17,29 @@ public:
 	/** Construct a level save dialogue.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
-	SaveDialogue(Engine& engine, LevelEditor_Module& editor) noexcept;
+	SaveDialogue(Engine& engine, LevelEditor_Module& editor);
 
 
 	// Public Interface Implementation
-	void tick(const float& deltaTime) noexcept final;
+	void tick(const float& deltaTime) final;
 
 
 private:
 	// Private Methods
 	/** Populate the level dialogue with an optional sub-directory.
 	@param	directory	if non-blank, a sub-folder within the maps folder. */
-	void populateLevels(const std::string& directory = "") noexcept;
+	void populateLevels(const std::string& directory = "");
 	/** Tick the main dialogue, rendering it and performing all logic. */
-	void tickMainDialogue() noexcept;
+	void tickMainDialogue();
 	/** Tick the confirm-overwrite-prompt, rendering it and performing all logic. */
-	void tickOverwriteDialogue() noexcept;
+	void tickOverwriteDialogue();
 	/** Tick the rename dialogue, rendering it and performing all logic. */
-	void tickRenameDialogue() noexcept;
+	void tickRenameDialogue();
 	/** Tick the delete dialogue, rendering it and performing all logic. */
-	void tickDeleteDialogue() noexcept;
+	void tickDeleteDialogue();
 	/** Attempt to save the current level with the supplied name.
 	@param	chosenName	the unformatted level name to use. */
-	void tryToSave(const std::string& chosenName) noexcept;
+	void tryToSave(const std::string& chosenName);
 
 
 	// Private Attributes

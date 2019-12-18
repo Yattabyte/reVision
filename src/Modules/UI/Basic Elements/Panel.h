@@ -15,7 +15,7 @@ public:
 	~Panel() noexcept;
 	/** Construct a panel.
 	@param	engine		reference to the engine to use. */
-	explicit Panel(Engine& engine) noexcept;
+	explicit Panel(Engine& engine);
 
 
 	// Public Interface Implementation
@@ -34,7 +34,7 @@ public:
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */
-	void updateGeometry() noexcept;
+	void updateGeometry();
 
 
 	// Protected Attributes

@@ -18,7 +18,7 @@ public:
 	inline ~Options_Pane() noexcept = default;
 	/** Construct a options pane.
 	@param	engine		reference to the engine to use. */
-	explicit Options_Pane(Engine& engine) noexcept;
+	explicit Options_Pane(Engine& engine);
 
 
 	// Public Interface Implementations
@@ -32,7 +32,7 @@ protected:
 	@param	element		the element to add to the options menu.
 	@param	text		the text to title the option.
 	@param	description	the text to describe the option. */
-	void addOption(Engine& engine, std::shared_ptr<UI_Element> element, const float& ratio, const std::string& text, const std::string& description, const int& eventType, const std::function<void()>& callback) noexcept;
+	void addOption(Engine& engine, std::shared_ptr<UI_Element> element, const float& ratio, const std::string& text, const std::string& description, const int& eventType, const std::function<void()>& callback);
 
 
 	// Protected Attributes

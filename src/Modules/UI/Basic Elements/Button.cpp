@@ -1,7 +1,7 @@
 #include "Modules/UI/Basic Elements/Button.h"
 
 
-Button::Button(Engine& engine, const std::string& text) noexcept :
+Button::Button(Engine& engine, const std::string& text) :
 	UI_Element(engine),
 	m_label(std::make_shared<Label>(engine, text))
 {
@@ -35,7 +35,7 @@ void Button::renderElement(const float& deltaTime, const glm::vec2& position, co
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void Button::pressButton() noexcept 
+void Button::pressButton() 
 {
 	enactCallback((int)UI_Element::Interact::on_clicked);
 }

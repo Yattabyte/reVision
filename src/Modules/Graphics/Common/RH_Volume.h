@@ -19,13 +19,13 @@ public:
 	~RH_Volume() noexcept;
 	/** Construct a radiance hint volume.
 	@param	engine			reference to the engine to use. */
-	explicit RH_Volume(Engine& engine) noexcept;
+	explicit RH_Volume(Engine& engine);
 
 
 	// Public Methods
 	/** Update the volume's attributes based on the input camera.
 	@param	camera			the camera to use the frustum of. */
-	void updateVolume(const Camera& camera) noexcept;
+	void updateVolume(const Camera& camera);
 	/** Resize this volume's 3D texture.
 	@param	resolution		the new size to use. */
 	void resize(const float& resolution = 16.0f) noexcept;

@@ -5,7 +5,7 @@
 #include "glm/geometric.hpp"
 
 
-Shared_Mesh::Shared_Mesh(Engine& engine, const std::string& filename, const bool& threaded) noexcept
+Shared_Mesh::Shared_Mesh(Engine& engine, const std::string& filename, const bool& threaded)
 {
 	auto newAsset = std::dynamic_pointer_cast<Mesh>(engine.getManager_Assets().shareAsset(
 			typeid(Mesh).name(),
@@ -18,7 +18,7 @@ Shared_Mesh::Shared_Mesh(Engine& engine, const std::string& filename, const bool
 
 Mesh::Mesh(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
-void Mesh::initialize() noexcept
+void Mesh::initialize()
 {
 	if (!Mesh_IO::Import_Model(m_engine, getFileName(), m_geometry)) {
 		// Create hard-coded alternative

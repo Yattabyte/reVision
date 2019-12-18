@@ -27,7 +27,7 @@ FBO_Env_Reflector::FBO_Env_Reflector() noexcept
 	}
 }
 
-void FBO_Env_Reflector::resize(const glm::ivec2 newSize, const GLuint& depth) noexcept 
+void FBO_Env_Reflector::resize(const glm::ivec2 newSize, const GLuint& depth) 
 {
 	if (m_size != newSize || m_depth != depth) {
 		m_size = newSize;

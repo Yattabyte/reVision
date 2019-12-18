@@ -21,19 +21,19 @@ public:
 	@param	shadowData		reference to the shadow data to use. 
 	@param	clientCamera	reference to the client camera to use. 
 	@param	sceneCameras	reference to the scene cameras to use. */
-	Direct_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras) noexcept;
+	Direct_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras);
 
 
 	// Public Interface Implementations
-	void clearCache(const float& deltaTime) noexcept final;
-	void updateCache(const float& deltaTime, ecsWorld& world) noexcept final;
-	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept final;
+	void clearCache(const float& deltaTime) final;
+	void updateCache(const float& deltaTime, ecsWorld& world) final;
+	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) final;
 
 
 private:
 	// Private Methods
 	/** Attempt to register the geometry of all light models. */
-	void registerLightShapes() noexcept;
+	void registerLightShapes();
 
 
 	// Private Attributes

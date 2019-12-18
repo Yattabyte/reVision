@@ -5,7 +5,7 @@
 
 constexpr const char* DIRECTORY_MODEL = "\\Models\\";
 
-Shared_Model::Shared_Model(Engine& engine, const std::string& filename, const bool& threaded) noexcept
+Shared_Model::Shared_Model(Engine& engine, const std::string& filename, const bool& threaded)
 {
 	auto newAsset = std::dynamic_pointer_cast<Model>(engine.getManager_Assets().shareAsset(
 			typeid(Model).name(),
@@ -18,7 +18,7 @@ Shared_Model::Shared_Model(Engine& engine, const std::string& filename, const bo
 
 Model::Model(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
-void Model::initialize() noexcept
+void Model::initialize()
 {
 	// Forward asset creation
 	m_mesh = Shared_Mesh(m_engine, DIRECTORY_MODEL + getFileName(), false);
@@ -52,7 +52,7 @@ void Model::initialize() noexcept
 	Asset::finalize();
 }
 
-void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minOut, glm::vec3& maxOut, glm::vec3& scaleOut, glm::vec3& centerOut, float& radiusOut) noexcept
+void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minOut, glm::vec3& maxOut, glm::vec3& scaleOut, glm::vec3& centerOut, float& radiusOut)
 {
 	if (!mesh.empty()) {
 		const auto& vector = mesh[0].vertex;
@@ -82,7 +82,7 @@ void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minO
 	}
 }
 
-void Model::loadMaterial(const std::string& relativePath, Shared_Material& modelMaterial, const std::vector<Material_Strings>& materials) noexcept
+void Model::loadMaterial(const std::string& relativePath, Shared_Material& modelMaterial, const std::vector<Material_Strings>& materials)
 {
 	// Retrieve texture directories from the mesh file
 	const size_t slash1Index = relativePath.find_last_of('/');

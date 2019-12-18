@@ -9,7 +9,7 @@ DirectVisibility_System::DirectVisibility_System(Direct_Light_Data& frameData) n
 	addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 }
 
-void DirectVisibility_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void DirectVisibility_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	// Compile results PER viewport
 	for (auto& viewInfo : m_frameData.viewInfo) {

@@ -19,13 +19,13 @@ public:
 
 
 	// Public Interface Implementation
-	void tick(const float& deltaTime) noexcept final;
+	void tick(const float& deltaTime) final;
 
 
 	// Public Methods
 	/** Notify the user that a file is missing. 
 	@param	filename	the file name of the missing file. */
-	void notifyMissing(const std::string& filename) noexcept;
+	void notifyMissing(const std::string& filename);
 
 
 private:

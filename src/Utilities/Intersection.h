@@ -20,7 +20,7 @@ inline static bool RayPlaneIntersection(
 	const glm::vec3& plane_origin,
 	const glm::vec3& plane_normal,
 	float& intersectionDistance
-) noexcept {
+) {
 	return glm::intersectRayPlane(ray_origin, ray_direction, plane_origin, plane_normal, intersectionDistance);
 }
 
@@ -43,7 +43,7 @@ inline static bool RayTriangleIntersection(
 	glm::vec3& normal,
 	glm::vec2& baryPos,
 	float& intersectionDistance
-) noexcept {
+) {
 	const bool result = glm::intersectRayTriangle(ray_origin, ray_direction, v0, v1, v2, baryPos, intersectionDistance);
 	if (result) {
 		normal = -glm::triangleNormal(v0, v1, v2);
@@ -67,7 +67,7 @@ inline static bool RayOOBBIntersection(
 	const glm::vec3& aabb_max,
 	const glm::mat4& ModelMatrix,
 	float& intersection_distance
-) noexcept {
+) {
 	float tMin = 0.0f;
 	float tMax = 100000.0f;
 	const glm::vec3 OBBposition_worldspace(ModelMatrix[3].x, ModelMatrix[3].y, ModelMatrix[3].z);
@@ -176,7 +176,7 @@ inline static float RaySphereIntersection(
 	const glm::vec3& ray_direction,
 	const glm::vec3& center,
 	const float& radius
-) noexcept {
+) {
 	const auto oc = ray_origin - center;
 	const auto a = glm::dot(ray_direction, ray_direction);
 	const auto b = 2.0f * glm::dot(oc, ray_direction);

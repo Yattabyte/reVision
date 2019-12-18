@@ -5,7 +5,7 @@
 #include "Engine.h"
 
 
-Options_Graphics::Options_Graphics(Engine& engine) noexcept :
+Options_Graphics::Options_Graphics(Engine& engine) :
 	Options_Pane(engine)
 {
 	// Title

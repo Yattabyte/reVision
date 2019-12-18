@@ -14,7 +14,7 @@ public:
 	inline ecsHandle() noexcept = default;
 	/** Construct a specific handle.
 	@param	id[32]		specific handle name as char array of size 32. */
-	explicit ecsHandle(const char id[32]) noexcept;
+	explicit ecsHandle(const char id[32]);
 	/** Copy Constructor. 
 	@param	other		an other handle to copy from. */
 	ecsHandle(const ecsHandle& other) noexcept;
@@ -24,7 +24,7 @@ public:
 	/** Copy from another handle.
 	@param	other		an other handle to copy from. 
 	@return				reference to this. */
-	ecsHandle& operator=(const ecsHandle& other) noexcept;
+	ecsHandle& operator=(const ecsHandle& other);
 	/** Compare against another handle.
 	@param	other		an other handle to compare against.
 	@return				true if this handle is the same as the other handle, false otherwise. */
@@ -47,7 +47,7 @@ struct EntityHandle final : ecsHandle {
 	inline EntityHandle(EntityHandle&&) noexcept = default;
 	inline EntityHandle(const EntityHandle&) noexcept = default;
 	explicit EntityHandle(const ecsHandle& handle) noexcept;
-	EntityHandle& operator=(const EntityHandle& other) noexcept;
+	EntityHandle& operator=(const EntityHandle& other);
 };
 struct ComponentHandle final : ecsHandle {
 	inline ~ComponentHandle() noexcept = default;
@@ -55,7 +55,7 @@ struct ComponentHandle final : ecsHandle {
 	inline ComponentHandle(ComponentHandle&&) noexcept = default;
 	inline ComponentHandle(const ComponentHandle&) noexcept = default;
 	explicit ComponentHandle(const ecsHandle& handle) noexcept;
-	ComponentHandle& operator=(const ComponentHandle& other) noexcept;
+	ComponentHandle& operator=(const ComponentHandle& other);
 };
 
 #endif // ECS_HANDLE_H

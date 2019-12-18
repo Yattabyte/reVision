@@ -22,7 +22,7 @@ EntityInspector::EntityInspector(Engine& engine, LevelEditor_Module& editor) noe
 	m_inspectorSystems.makeSystem<Inspector_Light_System>(engine, editor);
 }
 
-void EntityInspector::tick(const float& deltaTime) noexcept
+void EntityInspector::tick(const float& deltaTime)
 {
 	if (m_open) {
 		const auto& selectedEntities = m_editor.getSelection();

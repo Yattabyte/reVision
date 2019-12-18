@@ -15,7 +15,7 @@ public:
 	/** Creates a button with specific text inside.
 	@param	engine		reference to the engine to use. 
 	@param	text		the button text. */
-	explicit Button(Engine& engine, const std::string& text = "Button") noexcept;
+	explicit Button(Engine& engine, const std::string& text = "Button");
 
 
 	// Public Interface Implementation
@@ -25,7 +25,7 @@ public:
 
 	// Public Methods
 	/** Fully press and release this button, enacting its on_clicked callback. */
-	void pressButton() noexcept;
+	void pressButton();
 	/** Set this label element's text.
 	@param	text	the text to use. */
 	void setText(const std::string& text) noexcept;

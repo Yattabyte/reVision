@@ -15,11 +15,11 @@ public:
 	/** Construct a title bar.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
-	TitleBar(Engine& engine, LevelEditor_Module& editor) noexcept;
+	TitleBar(Engine& engine, LevelEditor_Module& editor);
 
 
 	// Public Interface Implementation
-	void tick(const float& deltaTime) noexcept final;
+	void tick(const float& deltaTime) final;
 
 
 private:

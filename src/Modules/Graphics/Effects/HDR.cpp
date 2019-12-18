@@ -8,7 +8,7 @@ HDR::~HDR() noexcept
 	*m_aliveIndicator = false;
 }
 
-HDR::HDR(Engine& engine) noexcept :
+HDR::HDR(Engine& engine) :
 	Graphics_Technique(Technique_Category::POST_PROCESSING),
 	m_engine(engine),
 	m_shaderHDR(Shared_Shader(engine, "Effects\\HDR")),
@@ -20,12 +20,12 @@ HDR::HDR(Engine& engine) noexcept :
 	preferences.addCallback(PreferenceState::Preference::C_GAMMA, m_aliveIndicator, [&](const float& f) noexcept { m_gamma = f; });
 }
 
-void HDR::clearCache(const float&) noexcept
+void HDR::clearCache(const float&)
 {
 	m_drawIndex = 0;
 }
 
-void HDR::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void HDR::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderHDR))
 		return;

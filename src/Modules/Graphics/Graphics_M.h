@@ -26,8 +26,8 @@ public:
 
 
 	// Public Interface Implementation
-	void initialize() noexcept final;
-	void deinitialize() noexcept final;
+	void initialize() final;
+	void deinitialize() final;
 
 
 	// Public Methods
@@ -38,7 +38,7 @@ public:
 	@param	world			the ecsWorld to source data from.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	fboID			the FBO to render to. */
-	void renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID = 0) noexcept;
+	void renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID = 0);
 	/** Convenience function for rendering a given ecsWorld into the pipeline.
 	@param	world			the ecsWorld to source data from.
 	@param	deltaTime		the amount of time passed since last frame.
@@ -46,7 +46,7 @@ public:
 	@param	cameras			the cameras to render from. */
 	void renderWorld(ecsWorld& world, const float& deltaTime, Viewport& viewport, std::vector<Camera>& cameras) noexcept;
 	/** Generates a perspective matrix for the client camera. */
-	void genPerspectiveMatrix() noexcept;
+	void genPerspectiveMatrix();
 	/** Retrieves a shared pointer to the primary camera.
 	@return					the primary camera. */
 	Camera& getClientCamera() noexcept;

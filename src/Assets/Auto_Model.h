@@ -21,7 +21,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	Shared_Auto_Model(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
+	Shared_Auto_Model(Engine& engine, const std::string& filename, const bool& threaded = true);
 };
 
 /** A basic 3D model used in visual processing.
@@ -66,7 +66,7 @@ private:
 
 
 	// Private Interface Implementation
-	void initialize() noexcept final;
+	void initialize() final;
 
 
 	// Private Attributes

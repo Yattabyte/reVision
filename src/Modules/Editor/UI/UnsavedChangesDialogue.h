@@ -19,19 +19,19 @@ public:
 
 
 	// Public Interface Implementation
-	void tick(const float& deltaTime) noexcept final;
+	void tick(const float& deltaTime) final;
 
 
 	// Public Methods
 	/** Checks if the editor has unsaved changes, otherwise executes the supplied function. Prompts user to save. 
 	@param	funcAfterPrompt		the function to call if the editor is safe to do so. */
-	void tryPrompt(const std::function<void()>& funcAfterPrompt) noexcept;
+	void tryPrompt(const std::function<void()>& funcAfterPrompt);
 
 
 private:
 	// Private Methods
 	/** Executes a stored function awaiting the level's changes to be saved, or ignored. */
-	void executeFunction() noexcept;
+	void executeFunction();
 
 
 	// Private Attributes

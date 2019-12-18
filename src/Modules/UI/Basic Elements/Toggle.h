@@ -23,7 +23,7 @@ public:
 	/** Construct a toggle switch with a given on/off state.
 	@param	engine		reference to the engine to use. 
 	@param	state		the on/off state to use. */
-	explicit Toggle(Engine& engine, const bool& state = true) noexcept;
+	explicit Toggle(Engine& engine, const bool& state = true);
 
 
 	// Public Interface Implementation
@@ -40,7 +40,7 @@ public:
 	std::string getText() const noexcept;
 	/** Set the toggle state of this button.
 	@param	state	the new state to use. */
-	void setToggled(const bool& state) noexcept;
+	void setToggled(const bool& state);
 	/** Retrieve the toggle state of this button.
 	@return			whether or not this toggle is on or off. */
 	bool isToggled() const noexcept;

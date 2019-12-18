@@ -10,7 +10,7 @@ UnsavedChangesDialogue::UnsavedChangesDialogue(Engine& engine, LevelEditor_Modul
 	m_open = false;
 }
 
-void UnsavedChangesDialogue::tick(const float&) noexcept
+void UnsavedChangesDialogue::tick(const float&)
 {
 	// Draw 'Delete Level' confirmation
 	if (m_open) {
@@ -46,7 +46,7 @@ void UnsavedChangesDialogue::tick(const float&) noexcept
 	}
 }
 
-void UnsavedChangesDialogue::tryPrompt(const std::function<void()>& funcAfterPrompt) noexcept
+void UnsavedChangesDialogue::tryPrompt(const std::function<void()>& funcAfterPrompt)
 {
 	m_open = m_editor.hasUnsavedChanges();
 	m_func = funcAfterPrompt;
@@ -55,7 +55,7 @@ void UnsavedChangesDialogue::tryPrompt(const std::function<void()>& funcAfterPro
 		executeFunction();
 }
 
-void UnsavedChangesDialogue::executeFunction() noexcept
+void UnsavedChangesDialogue::executeFunction()
 {
 	if (m_func) {
 		m_func();

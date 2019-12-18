@@ -25,7 +25,7 @@ public:
 	@param	category		the category of image, if available.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded = true, const Fill_Policy& policyFill = Fill_Policy::CHECKERED, const Resize_Policy& policyResize = Resize_Policy::LINEAR) noexcept;
+	explicit Shared_Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded = true, const Fill_Policy& policyFill = Fill_Policy::CHECKERED, const Resize_Policy& policyResize = Resize_Policy::LINEAR);
 };
 
 /** Contains image data and related attributes.
@@ -69,14 +69,14 @@ private:
 	/** Fill the image with the desired colors, in accordance with the fill policy.
 	@param	primaryColor	the primary color to use.
 	@param	secondaryColor	the secondary color to use. */
-	void fill(const glm::uvec4 primaryColor = glm::uvec4(128, 128, 255, 255), const glm::uvec4 secondaryColor = glm::uvec4(0, 0, 0, 255)) noexcept;
+	void fill(const glm::uvec4 primaryColor = glm::uvec4(128, 128, 255, 255), const glm::uvec4 secondaryColor = glm::uvec4(0, 0, 0, 255));
 	/** Resize the image.
 	@param	newSize			the new size to use. */
-	void resize(const glm::ivec2 newSize) noexcept;
+	void resize(const glm::ivec2 newSize);
 
 
 	// Private Interface Implementation
-	void initialize() noexcept final;
+	void initialize() final;
 
 
 	// Private Attributes

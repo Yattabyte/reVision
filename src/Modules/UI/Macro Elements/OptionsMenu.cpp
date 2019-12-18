@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-OptionsMenu::OptionsMenu(Engine& engine) noexcept : 
+OptionsMenu::OptionsMenu(Engine& engine) : 
 	Menu(engine) 
 {
 	// Title
@@ -40,7 +40,7 @@ OptionsMenu::OptionsMenu(Engine& engine) noexcept :
 	m_focusMap->focusElement(m_layout);
 }
 
-void OptionsMenu::video() noexcept 
+void OptionsMenu::video() 
 {
 	// Remove control from the graphics menu
 	m_gfxMenu->setVisible(false);
@@ -54,7 +54,7 @@ void OptionsMenu::video() noexcept
 	enactCallback((int)OptionsMenu::Interact::on_video);
 }
 
-void OptionsMenu::graphics() noexcept 
+void OptionsMenu::graphics() 
 {
 	// Remove control from the video menu
 	m_videoMenu->setVisible(false);
@@ -68,12 +68,12 @@ void OptionsMenu::graphics() noexcept
 	enactCallback((int)OptionsMenu::Interact::on_graphics);
 }
 
-void OptionsMenu::controls() noexcept 
+void OptionsMenu::controls() 
 {
 	enactCallback((int)OptionsMenu::Interact::on_controls);
 }
 
-void OptionsMenu::back() noexcept 
+void OptionsMenu::back() 
 {
 	m_videoMenu->setVisible(false);
 	m_gfxMenu->setVisible(false);

@@ -16,7 +16,7 @@ struct ShaderHeader {
 	GLsizei length;
 };
 
-Shared_Shader::Shared_Shader(Engine& engine, const std::string& filename, const bool& threaded) noexcept
+Shared_Shader::Shared_Shader(Engine& engine, const std::string& filename, const bool& threaded)
 {
 	auto newAsset = std::dynamic_pointer_cast<Shader>(engine.getManager_Assets().shareAsset(
 			typeid(Shader).name(),
@@ -35,7 +35,7 @@ Shader::~Shader() noexcept
 
 Shader::Shader(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
-void Shader::initialize() noexcept
+void Shader::initialize()
 {
 	// Attempt to load cache, otherwise load manually
 	m_glProgramID = glCreateProgram();
@@ -105,7 +105,7 @@ GLint Shader::getProgramiv(const GLenum& pname) const noexcept
 	return param;
 }
 
-std::vector<GLchar> Shader::getErrorLog() const noexcept
+std::vector<GLchar> Shader::getErrorLog() const
 {
 	const auto size = getProgramiv(GL_INFO_LOG_LENGTH);
 	std::vector<GLchar> infoLog(size);
@@ -114,7 +114,7 @@ std::vector<GLchar> Shader::getErrorLog() const noexcept
 	return infoLog;
 }
 
-bool Shader::loadCachedBinary(const std::string& relativePath) noexcept
+bool Shader::loadCachedBinary(const std::string& relativePath)
 {
 	// Check if a shader binary exists
 	if (!Engine::File_Exists(relativePath + EXT_SHADER_BINARY))
@@ -146,7 +146,7 @@ bool Shader::loadCachedBinary(const std::string& relativePath) noexcept
 	return true;	
 }
 
-bool Shader::saveCachedBinary(const std::string& relativePath) noexcept
+bool Shader::saveCachedBinary(const std::string& relativePath)
 {
 	// Retrieve the program binary
 	glProgramParameteri(m_glProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
@@ -170,13 +170,13 @@ bool Shader::saveCachedBinary(const std::string& relativePath) noexcept
 	return true;	
 }
 
-bool Shader::deleteCachedBinary(const std::string& relativePath) noexcept
+bool Shader::deleteCachedBinary(const std::string& relativePath)
 {
 	std::error_code ec;
 	return std::filesystem::remove(Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY, ec);
 }
 
-bool Shader::initShaders(const std::string& relativePath) noexcept
+bool Shader::initShaders(const std::string& relativePath)
 {
 	if (!m_vertexShader.loadDocument(m_engine, relativePath + EXT_SHADER_VERTEX) ||
 		!m_fragmentShader.loadDocument(m_engine, relativePath + EXT_SHADER_FRAGMENT))

@@ -16,7 +16,7 @@ public:
 	// Public Interface
 	/** Apply this overlay effect.
 	@param	deltaTime	the amount of time passed since last frame. */
-	virtual void applyEffect(const float& deltaTime) noexcept = 0;
+	virtual void applyEffect(const float& deltaTime) = 0;
 };
 
 #endif // OVERLAY_H

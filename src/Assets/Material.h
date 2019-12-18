@@ -25,7 +25,7 @@ public:
 	@param	textures		the textures to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded = true) noexcept;
+	explicit Shared_Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded = true);
 };
 
 /** A collection of textures which together form 1 or more PBR surfaces.
@@ -49,7 +49,7 @@ public:
 	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory).
 	@param	textures		the textures to use. */
-	Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures) noexcept;
+	Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures);
 
 
 	// Public Methods
@@ -57,7 +57,7 @@ public:
 	@brief					Updates the appropriate supplied string with a path to the appropriate file.
 	@param	filename		the absolute file path of the '.mat' file to read from.
 	@return					the vector storing texture directories. */
-	static std::vector<std::string> Get_Material_Textures(const std::string& filename) noexcept;
+	static std::vector<std::string> Get_Material_Textures(const std::string& filename);
 
 
 	// Public Attributes
@@ -80,7 +80,7 @@ private:
 
 
 	// Private Interface Implementation
-	void initialize() noexcept final;
+	void initialize() final;
 
 
 	// Private Attributes

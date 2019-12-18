@@ -18,18 +18,18 @@ public:
 	~LoadingIndicator() noexcept;
 	/** Construct a loading indicator.
 	@param	engine		reference to the engine to use. */
-	explicit LoadingIndicator(Engine& engine) noexcept;
+	explicit LoadingIndicator(Engine& engine);
 
 
 	// Public Interface Implementations.
-	void applyEffect(const float& deltaTime) noexcept final;
+	void applyEffect(const float& deltaTime) final;
 
 
 private:
 	// Private Methods
 	/** Resize this indicator. 
 	@param	size		the new size to use. */
-	void resize(const glm::ivec2& size) noexcept;
+	void resize(const glm::ivec2& size);
 
 
 	// Private Attributes

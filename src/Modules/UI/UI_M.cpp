@@ -2,12 +2,12 @@
 #include "Engine.h"
 
 
-UI_Module::UI_Module(Engine& engine) noexcept : 
+UI_Module::UI_Module(Engine& engine) : 
 	Engine_Module(engine)
 {
 }
 
-void UI_Module::initialize() noexcept
+void UI_Module::initialize()
 {
 	Engine_Module::initialize();
 	m_engine.getManager_Messages().statement("Loading Module: User Interface...");
@@ -36,7 +36,7 @@ void UI_Module::initialize() noexcept
 	calcOthoProj(m_renderSize, m_projectionBuffer);
 }
 
-void UI_Module::deinitialize() noexcept
+void UI_Module::deinitialize()
 {
 	m_engine.getManager_Messages().statement("Unloading Module: User Interface...");
 
@@ -46,7 +46,7 @@ void UI_Module::deinitialize() noexcept
 	m_rootElement.clear();
 }
 
-void UI_Module::frameTick(const float& deltaTime) noexcept
+void UI_Module::frameTick(const float& deltaTime)
 {
 	glViewport(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -72,7 +72,7 @@ void UI_Module::frameTick(const float& deltaTime) noexcept
 	}
 }
 
-void UI_Module::pushRootElement(const std::shared_ptr<UI_Element>& rootElement) noexcept
+void UI_Module::pushRootElement(const std::shared_ptr<UI_Element>& rootElement)
 {
 	m_rootElement.push_back(rootElement);
 	if (rootElement)
@@ -142,7 +142,7 @@ void UI_Module::applyActionState(ActionState& actionState) noexcept
 		m_focusMap->applyActionState(actionState);
 }
 
-void UI_Module::pushCallback(const std::function<void()>& callback) noexcept
+void UI_Module::pushCallback(const std::function<void()>& callback)
 {
 	m_callbacks.push_back(callback);
 }

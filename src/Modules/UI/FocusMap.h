@@ -22,11 +22,11 @@ public:
 	// Public Methods
 	/** Add an element to this focus map, setting it in focus.
 	@param	element			the new element to add to the map. */
-	void addElement(const std::shared_ptr<UI_Element>& element) noexcept;
+	void addElement(const std::shared_ptr<UI_Element>& element);
 	/** Remove an element from this focus map, comparing its underlying pointer.
 	@param	element			the element to remove from the map.
 	@return					true if found and removed, false otherwise. */
-	bool removeElement(const std::shared_ptr<UI_Element>& element) noexcept;
+	bool removeElement(const std::shared_ptr<UI_Element>& element);
 	/** Remove all elements from this focus map. */
 	void clear() noexcept;
 	/** Set the focus onto a specific index, if it is able to be focused on.

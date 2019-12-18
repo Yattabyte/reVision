@@ -28,7 +28,7 @@ public:
 	/** Construct this gizmo.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
-	Mouse_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept;
+	Mouse_Gizmo(Engine& engine, LevelEditor_Module& editor);
 
 
 	// Public Methods
@@ -37,10 +37,10 @@ public:
 	void frameTick(const float& deltaTime) noexcept;
 	/** Check for user input.
 	@param	deltaTime		the amount of time since the last frame. */
-	bool checkInput(const float& deltaTime) noexcept;
+	bool checkInput(const float& deltaTime);
 	/** Render this gizmo.
 	@param	deltaTime		the amount of time since the last frame. */
-	void render(const float& deltaTime) noexcept;
+	void render(const float& deltaTime);
 	/** Apply a specific transform.
 	@param	transform		the new transform to use. */
 	void setTransform(const Transform& transform) noexcept;
@@ -52,7 +52,7 @@ public:
 	Transform getSpawnTransform() const noexcept;
 	/** Set a specific set of entities as the selection, moving the gizmo to their center.
 	@param	entityHandles	the new set of selected entity handles to use. */
-	void setSelection(const std::vector<EntityHandle>& entityHandles) noexcept;
+	void setSelection(const std::vector<EntityHandle>& entityHandles);
 	/** Retrieve the current set of selected entities.
 	@return					the active set of selected entity handles. */
 	std::vector<EntityHandle>& getSelection() noexcept;

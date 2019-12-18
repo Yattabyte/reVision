@@ -18,9 +18,9 @@ class Window {
 public:
 	// Public (De)Constructors
 	/** Destroy this window. */
-	~Window() noexcept;
+	~Window();
 	/** Construct a window. */
-	explicit Window(Engine& engine) noexcept;
+	explicit Window(Engine& engine);
 
 
 	// Public Methods
@@ -59,10 +59,10 @@ public:
 	static float GetSystemTime() noexcept;
 	/** Retrieve the GLFW version.
 	@return				the version of GLFW in use. */
-	static std::string GetVersion() noexcept;
+	static std::string GetVersion();
 	/** Retrieve a list of available resolutions.
 	@return				vector of supported resolutions. */
-	static std::vector<glm::ivec3> GetResolutions() noexcept;
+	static std::vector<glm::ivec3> GetResolutions();
 
 
 private:
@@ -79,7 +79,7 @@ private:
 
 	// Private Methods
 	/** Initialize the auxiliary processing threads. */
-	void initThreads() noexcept;
+	void initThreads();
 	/** Updates the window attributes. */
 	void configureWindow() noexcept;
 

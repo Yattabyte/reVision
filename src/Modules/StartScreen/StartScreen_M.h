@@ -19,14 +19,14 @@ public:
 
 
 	// Public Interface Implementation
-	void initialize() noexcept final;
-	void deinitialize() noexcept final;
+	void initialize() final;
+	void deinitialize() final;
 
 
 	// Public Methods
 	/** Tick this module by a specific amount of delta time.
 	@param	deltaTime		the amount of time since last frame. */
-	void frameTick(const float& deltaTime) noexcept;
+	void frameTick(const float& deltaTime);
 	/** Display the start menu. */
 	void showStartMenu() noexcept;
 

@@ -39,19 +39,19 @@ public:
 	// Public Interface
 	/** Prepare this technique for the next frame, swapping any of its buffers.
 	@param	deltaTime		the amount of time passed since last frame. */
-	virtual void clearCache(const float& deltaTime) noexcept;
+	virtual void clearCache(const float& deltaTime);
 	/** Update any data needed before rendering this frame.
 	@param	deltaTime		the amount of time passed since last frame. 
 	@param	world			the ecsWorld to source data from. */
-	virtual void updateCache(const float& deltaTime, ecsWorld& world) noexcept;
+	virtual void updateCache(const float& deltaTime, ecsWorld& world);
 	/** Perform any pre-requisite rendering passes.
 	@param	deltaTime		the amount of time passed since last frame. */
-	virtual void updatePass(const float& deltaTime) noexcept;
+	virtual void updatePass(const float& deltaTime);
 	/** Apply this lighting technique.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	viewport		the viewport to render from.
 	@param	perspectives	the viewing perspectives to render from. */
-	virtual void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept;
+	virtual void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives);
 
 
 protected:

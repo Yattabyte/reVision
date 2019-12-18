@@ -5,7 +5,7 @@
 
 constexpr const char* MATERIAL_EXTENSION = ".mat";
 
-Shared_Material::Shared_Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded) noexcept
+Shared_Material::Shared_Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures, const bool& threaded)
 {
 	auto newAsset = std::dynamic_pointer_cast<Material>(engine.getManager_Assets().shareAsset(
 			typeid(Material).name(),
@@ -16,7 +16,7 @@ Shared_Material::Shared_Material(Engine& engine, const std::string& filename, co
 	swap(newAsset);
 }
 
-Material::Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures) noexcept
+Material::Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures)
 	: Asset(engine, filename), m_textures(textures)
 {
 	// We need to reserve a region of GPU memory for all the textures
@@ -45,7 +45,7 @@ Material::Material(Engine& engine, const std::string& filename, const std::vecto
 	}
 }
 
-void Material::initialize() noexcept
+void Material::initialize()
 {
 	// Some definitions for later
 	const size_t remainder = m_textures.size() % 6ULL;
@@ -94,7 +94,7 @@ void Material::initialize() noexcept
 
 /** Attempts to retrieve a std::string between quotation marks "<std::string>"
 @return	the std::string between quotation marks */
-[[nodiscard]] static std::string get_between_quotes(std::string& s) noexcept
+[[nodiscard]] static std::string get_between_quotes(std::string& s)
 {
 	std::string output = s;
 	const auto spot1 = s.find_first_of('\"');
@@ -128,7 +128,7 @@ void Material::initialize() noexcept
 }
 
 /** Parse a PBR material document. */
-[[nodiscard]] static std::vector<std::string> parse_pbr(std::ifstream& file_stream) noexcept
+[[nodiscard]] static std::vector<std::string> parse_pbr(std::ifstream& file_stream)
 {
 	std::vector<std::string> textures(MAX_PHYSICAL_IMAGES);
 	int bracketCount = 0;
@@ -162,7 +162,7 @@ void Material::initialize() noexcept
 	return textures;
 }
 
-[[nodiscard]] std::vector<std::string> Material::Get_Material_Textures(const std::string& filename) noexcept
+[[nodiscard]] std::vector<std::string> Material::Get_Material_Textures(const std::string& filename)
 {
 	std::vector<std::string> dstTextures;
 	std::ifstream file_stream(Engine::Get_Current_Dir() + filename);

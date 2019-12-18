@@ -26,14 +26,14 @@ public:
 
 
 	// Public Interface Implementations
-	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) final;
 
 
 private:
 	// Private Methods
 	/** Attempt to insert the model supplied into the model map, failing only if it is already present.
 	@param	model		the model to insert only 1 copy of. */
-	void tryInsertModel(const Shared_Model& model) noexcept;
+	void tryInsertModel(const Shared_Model& model);
 	/** Wait on the prop fence if it still exists. */
 	void waitOnFence() noexcept;
 	/** Attempt to expand the props' vertex buffer if it isn't large enough.
@@ -41,7 +41,7 @@ private:
 	void tryToExpand(const size_t& arraySize) noexcept;
 	/** Attempt to insert the material supplied into the material map, failing only if it is already present.
 	@param	material	the material to insert only 1 copy of. */
-	void tryInsertMaterial(const Shared_Material& material) noexcept;
+	void tryInsertMaterial(const Shared_Material& material);
 	/** Find the first pixel buffer object that isn't in use.
 	@return				the first free PBO. */
 	std::pair<GLuint*, GLsync*> getFreePBO() noexcept;

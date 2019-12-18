@@ -18,11 +18,11 @@ public:
 	/** Construct this system. 
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
-	Inspector_Collider_System(Engine& engine, LevelEditor_Module& editor) noexcept;
+	Inspector_Collider_System(Engine& engine, LevelEditor_Module& editor);
 
 
 	// Public Interface Implementation
-	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) final;
 
 
 private:

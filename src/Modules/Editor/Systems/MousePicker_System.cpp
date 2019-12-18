@@ -8,11 +8,11 @@
 
 
 // Forward Declarations
-static bool RayProp(const Transform_Component& transformComponent, const Prop_Component& prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence) noexcept;
+static bool RayProp(const Transform_Component& transformComponent, const Prop_Component& prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence);
 static bool RayCollider(const Collider_Component& collider, const void* const closestPhysicsShape, const float& closetstPhysicsHit, float& distanceFromScreen, int& confidence) noexcept;
 static bool RayBBox(const Transform_Component& transformComponent, const BoundingBox_Component& bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept;
 static bool RayBSphere(const Transform_Component& transformComponent, const BoundingSphere_Component& bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept;
-static bool RayOrigin(const Transform_Component& transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine) noexcept;
+static bool RayOrigin(const Transform_Component& transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine);
 
 MousePicker_System::~MousePicker_System() noexcept 
 {
@@ -20,7 +20,7 @@ MousePicker_System::~MousePicker_System() noexcept
 	*m_aliveIndicator = false;
 }
 
-MousePicker_System::MousePicker_System(Engine& engine) noexcept :
+MousePicker_System::MousePicker_System(Engine& engine) :
 	m_engine(engine)
 {
 	// Declare component types used
@@ -42,7 +42,7 @@ MousePicker_System::MousePicker_System(Engine& engine) noexcept :
 		});
 }
 
-void MousePicker_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void MousePicker_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	const auto& actionState = m_engine.getActionState();
 	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
@@ -132,7 +132,7 @@ std::tuple<EntityHandle, Transform, Transform> MousePicker_System::getSelection(
 @param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
 @param	confidence				reference updated with the confidence level for this function.
 @return							true on successful intersection, false if disjoint. */
-static bool RayProp(const Transform_Component& transformComponent, const Prop_Component& prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence) noexcept 
+static bool RayProp(const Transform_Component& transformComponent, const Prop_Component& prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence) 
 {
 	bool intersection = false;
 	if (prop.m_model->ready()) {
@@ -232,7 +232,7 @@ static bool RayBSphere(const Transform_Component& transformComponent, const Boun
 @param	confidence				reference updated with the confidence level for this function.
 @param	engine					reference to the engine to use.
 @return							true on successful intersection, false if disjoint. */
-static bool RayOrigin(const Transform_Component& transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine) noexcept
+static bool RayOrigin(const Transform_Component& transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine)
 {
 	// Create scaling factor to keep all origins same screen size
 	const auto radius = glm::distance(transformComponent.m_worldTransform.m_position, engine.getModule_Graphics().getClientCamera()->EyePosition) * 0.033f;

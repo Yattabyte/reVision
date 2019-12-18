@@ -2,7 +2,7 @@
 #include "Modules/UI/Basic Elements/Button.h"
 
 
-Menu::Menu(Engine& engine) noexcept :
+Menu::Menu(Engine& engine) :
 	UI_Element(engine),
 	m_backPanel(std::make_shared<Panel>(engine)),
 	m_layout(std::make_shared<List>(engine)),
@@ -56,7 +56,7 @@ std::shared_ptr<FocusMap> Menu::getFocusMap() const noexcept
 	return m_focusMap;
 }
 
-void Menu::addButton(Engine& engine, const char* buttonText, const std::function<void()>& callback) noexcept 
+void Menu::addButton(Engine& engine, const char* buttonText, const std::function<void()>& callback) 
 {
 	auto button = std::make_shared<Button>(engine, buttonText);
 	button->setScale({ 120, 20 });

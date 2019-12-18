@@ -19,12 +19,12 @@ public:
 	/** Construct a shadow technique.
 	@param	engine			reference to the engine to use. 
 	@param	sceneCameras	reference to the scene cameras to use. */
-	Shadow_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept;
+	Shadow_Technique(Engine& engine, std::vector<Camera*>& sceneCameras);
 
 	// Public Interface Implementations
-	void clearCache(const float& deltaTime) noexcept final;
-	void updateCache(const float& deltaTime, ecsWorld& world) noexcept final;
-	void updatePass(const float& deltaTime) noexcept final;
+	void clearCache(const float& deltaTime) final;
+	void updateCache(const float& deltaTime, ecsWorld& world) final;
+	void updatePass(const float& deltaTime) final;
 
 
 	// Public Methods
@@ -36,8 +36,8 @@ public:
 private:
 	// Private Methods
 	/** Render all the geometry from each light.
-	@param	deltaTime	the amount of time passed since last frame. */
-	void updateShadows(const float& deltaTime) noexcept;
+	@param	deltaTime	the amount of time passed last frame. */
+	void updateShadows(const float& deltaTime);
 
 
 	// Private Attributes

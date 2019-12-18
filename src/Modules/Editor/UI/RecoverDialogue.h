@@ -19,21 +19,21 @@ public:
 
 
 	// Public Interface Implementation
-	void tick(const float& deltaTime) noexcept final;
+	void tick(const float& deltaTime) final;
 
 
 	// Public Methods
 	/** Set the recovered file path.
 	@param	path		the recovered file path*/
-	void setPath(const std::filesystem::path& path) noexcept;
+	void setPath(const std::filesystem::path& path);
 
 
 private:
 	// Private Methods
 	/** Tick the main dialogue, rendering it and performing all logic. */
-	void tickMainDialogue() noexcept;
+	void tickMainDialogue();
 	/** Tick the delete dialogue, rendering it and performing all logic. */
-	void tickDeleteDialogue() noexcept;
+	void tickDeleteDialogue();
 
 
 	// Private Attributes

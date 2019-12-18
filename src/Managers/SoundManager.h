@@ -13,9 +13,9 @@ class SoundManager {
 public:
 	// Public (De)Constructors
 	/** Destroy the sound manager. */
-	~SoundManager() noexcept;
+	~SoundManager();
 	/** Construct the sound manager. */
-	SoundManager() noexcept;
+	SoundManager();
 
 
 	// Public Methods
@@ -27,17 +27,17 @@ public:
 	@param		volume		the volume. (default == -1 means == use default).
 	@param		speed		the playback speed. (default == 1.0f == normal speed).
 	@return					handle to the playing track. */
-	void playSound(const Shared_Sound& sharedSound, const float& volume = -1.0f, const float& speed = 1.0f) const noexcept;
+	void playSound(const Shared_Sound& sharedSound, const float& volume = -1.0f, const float& speed = 1.0f) const;
 	/** Play a sound wave file as background audio.
 	@param		sharedSound	the sound file.
 	@param		volume		the volume. (default == -1 means == use default).
 	@param		loop		whether to loop the track or not.
 	@param		loopPoint	if looping, the point in seconds to loop back to (default == 0.0 == beginning).
 	@return					handle to the playing track. */
-	unsigned int playWavBackground(const Shared_Sound& sharedSound, const float& volume = 1.0f, const bool& loop = false, const double& loopPoint = 0.0) const noexcept;
+	unsigned int playWavBackground(const Shared_Sound& sharedSound, const float& volume = 1.0f, const bool& loop = false, const double& loopPoint = 0.0) const;
 	/** Stops a playing track from playing.
 	@param		handle		the handle to the playing track. */
-	void stopWav(const unsigned int& handle) const noexcept;
+	void stopWav(const unsigned int& handle) const;
 
 
 private:

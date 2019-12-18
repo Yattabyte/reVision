@@ -21,7 +21,7 @@ public:
 
 
 	// Public Interface Implementations
-	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) final;
 
 
 	// Public Attributes

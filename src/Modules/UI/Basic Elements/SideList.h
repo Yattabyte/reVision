@@ -26,7 +26,7 @@ public:
 	~SideList() noexcept;
 	/** Construct the side list.
 	@param	engine		reference to the engine to use. */
-	explicit SideList(Engine& engine) noexcept;
+	explicit SideList(Engine& engine);
 
 
 	// Public Interface Implementation
@@ -38,7 +38,7 @@ public:
 	// Public Methods
 	/** Set the index to display as selected in the list.
 	@param	index		the new integer index to use. */
-	void setIndex(const int& index) noexcept;
+	void setIndex(const int& index);
 	/** Retrieve the index currently used in this list.
 	@return	currently	active index. */
 	int getIndex() const noexcept;

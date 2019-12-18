@@ -16,11 +16,11 @@ public:
 	inline ~PlayerFreeLook_System() noexcept = default;
 	/** Construct a free-look system.
 	@param	engine		reference to the engine to use. */
-	explicit PlayerFreeLook_System(Engine& engine) noexcept;
+	explicit PlayerFreeLook_System(Engine& engine);
 
 
 	// Public Interface Implementation
-	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) final;
 
 
 private:

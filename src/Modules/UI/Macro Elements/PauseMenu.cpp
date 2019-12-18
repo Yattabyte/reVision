@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-PauseMenu::PauseMenu(Engine& engine) noexcept :
+PauseMenu::PauseMenu(Engine& engine) :
 	Menu(engine)
 {
 	// Title
@@ -31,12 +31,12 @@ PauseMenu::PauseMenu(Engine& engine) noexcept :
 	engine.getModule_UI().setFocusMap(getFocusMap());
 }
 
-void PauseMenu::resume() noexcept
+void PauseMenu::resume()
 {
 	enactCallback((int)PauseMenu::Interact::on_resume_game);
 }
 
-void PauseMenu::goToOptions() noexcept 
+void PauseMenu::goToOptions() 
 {
 	// Transfer appearance and control to options menu
 	auto& ui = m_engine.getModule_UI();
@@ -52,7 +52,7 @@ void PauseMenu::returnFromOptions() noexcept
 	m_engine.getModule_UI().setFocusMap(getFocusMap());
 }
 
-void PauseMenu::quit() noexcept 
+void PauseMenu::quit() 
 {
 	m_engine.getModule_UI().clear();
 	enactCallback((int)PauseMenu::Interact::on_end);

@@ -90,15 +90,15 @@ public:
 	/** Retrieve the value for a specific action category.
 	@param	index		the action index category to look-up.
 	@return				the value reference belonging found at the index. */
-	float& operator[](const ActionState::Action& index) noexcept;
+	float& operator[](const ActionState::Action& index);
 	/** Retrieve the value for a specific action category.
 	@param	index		the action index category to look-up.
 	@return				the value const reference belonging found at the index. */
-	const float& operator[](const ActionState::Action& index) const noexcept;
+	const float& operator[](const ActionState::Action& index) const;
 	/** Retrieve the state for a specific action category.
 	@param	index		the action index category to look-up.
 	@return				the state belonging found at the index, such as pressed, released, or repeating. */
-	ActionState::State isAction(const ActionState::Action& actionEnum) noexcept;
+	ActionState::State isAction(const ActionState::Action& actionEnum);
 
 
 private:

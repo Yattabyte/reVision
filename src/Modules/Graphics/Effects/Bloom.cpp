@@ -8,7 +8,7 @@ Bloom::~Bloom() noexcept
 	*m_aliveIndicator = false;
 }
 
-Bloom::Bloom(Engine& engine) noexcept :
+Bloom::Bloom(Engine& engine) :
 	Graphics_Technique(Technique_Category::POST_PROCESSING),
 	m_engine(engine),
 	m_shaderBloomExtract(Shared_Shader(engine, "Effects\\Bloom Extraction")),
@@ -24,12 +24,12 @@ Bloom::Bloom(Engine& engine) noexcept :
 	preferences.addCallback(PreferenceState::Preference::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float& f) noexcept { setBloomStrength((int)f); });
 }
 
-void Bloom::clearCache(const float&) noexcept 
+void Bloom::clearCache(const float&) 
 {
 	m_drawIndex = 0;
 }
 
-void Bloom::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void Bloom::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderBloomExtract, m_shaderCopy, m_shaderGB))
 		return;

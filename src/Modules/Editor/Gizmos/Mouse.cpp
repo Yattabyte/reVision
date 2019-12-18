@@ -9,7 +9,7 @@ Mouse_Gizmo::~Mouse_Gizmo() noexcept
 	*m_aliveIndicator = false;
 }
 
-Mouse_Gizmo::Mouse_Gizmo(Engine& engine, LevelEditor_Module& editor) noexcept :
+Mouse_Gizmo::Mouse_Gizmo(Engine& engine, LevelEditor_Module& editor) :
 	m_engine(engine),
 	m_editor(editor),
 	m_pickerSystem(engine),
@@ -34,7 +34,7 @@ void Mouse_Gizmo::frameTick(const float& deltaTime) noexcept
 	render(deltaTime);
 }
 
-bool Mouse_Gizmo::checkInput(const float& deltaTime) noexcept
+bool Mouse_Gizmo::checkInput(const float& deltaTime)
 {
 	if (!ImGui::GetIO().WantCaptureMouse) {
 		if (ImGui::IsKeyPressed('t') || ImGui::IsKeyPressed('T'))
@@ -78,7 +78,7 @@ bool Mouse_Gizmo::checkInput(const float& deltaTime) noexcept
 	return false;
 }
 
-void Mouse_Gizmo::render(const float& deltaTime) noexcept
+void Mouse_Gizmo::render(const float& deltaTime)
 {
 	if (m_inputMode == 0)
 		m_translationGizmo.render(deltaTime);
@@ -123,7 +123,7 @@ Transform Mouse_Gizmo::getSpawnTransform() const noexcept
 	return m_spawnTransform;
 }
 
-void Mouse_Gizmo::setSelection(const std::vector<EntityHandle>& entityHandles) noexcept
+void Mouse_Gizmo::setSelection(const std::vector<EntityHandle>& entityHandles)
 {
 	m_selection = entityHandles;
 }

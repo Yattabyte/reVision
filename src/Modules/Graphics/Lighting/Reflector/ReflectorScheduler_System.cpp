@@ -10,7 +10,7 @@ ReflectorScheduler_System::~ReflectorScheduler_System() noexcept
 	*m_aliveIndicator = false;
 }
 
-ReflectorScheduler_System::ReflectorScheduler_System(Engine& engine, ReflectorData& frameData) noexcept :
+ReflectorScheduler_System::ReflectorScheduler_System(Engine& engine, ReflectorData& frameData) :
 	m_engine(engine),
 	m_frameData(frameData)
 {
@@ -22,7 +22,7 @@ ReflectorScheduler_System::ReflectorScheduler_System(Engine& engine, ReflectorDa
 	preferences.addCallback(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) noexcept { m_maxReflectionCasters = (unsigned int)f; });
 }
 
-void ReflectorScheduler_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void ReflectorScheduler_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	// Maintain list of reflectors, update with oldest within range
 	// Technique will clear list when ready

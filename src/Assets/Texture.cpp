@@ -5,7 +5,7 @@
 constexpr const char* DIRECTORY_TEXTURE = "\\Textures\\";
 constexpr const float MAX_ANISOTROPY = 16.0F;
 
-Shared_Texture::Shared_Texture(Engine& engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy, const bool& threaded) noexcept
+Shared_Texture::Shared_Texture(Engine& engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy, const bool& threaded)
 {
 	auto newAsset = std::dynamic_pointer_cast<Texture>(engine.getManager_Assets().shareAsset(
 			typeid(Texture).name(),
@@ -32,7 +32,7 @@ Texture::Texture(Engine& engine, const std::string& filename, const GLuint& type
 {
 }
 
-void Texture::initialize() noexcept
+void Texture::initialize()
 {
 	// Forward asset creation
 	m_image = Shared_Image(m_engine, DIRECTORY_TEXTURE + getFileName(), {}, false);

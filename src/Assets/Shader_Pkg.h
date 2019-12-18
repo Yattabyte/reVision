@@ -20,7 +20,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	Shared_Shader_Pkg(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
+	Shared_Shader_Pkg(Engine& engine, const std::string& filename, const bool& threaded = true);
 };
 
 /** An accessory asset for loading shader code chunks.
@@ -40,7 +40,7 @@ public:
 	// Public Methods
 	/** Retrieves this package's content as a std::string.
 	@return				package contents. */
-	std::string getPackageText() const noexcept;
+	std::string getPackageText() const;
 
 
 	// Public Attributes
@@ -60,7 +60,7 @@ private:
 
 
 	// Private Interface Implementation
-	void initialize() noexcept final;
+	void initialize() final;
 
 
 	// Private Attributes

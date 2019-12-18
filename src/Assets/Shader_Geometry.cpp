@@ -7,7 +7,7 @@
 constexpr const char* EXT_SHADER_GEOMETRY = ".gsh";
 constexpr const char* DIRECTORY_SHADER = "\\Shaders\\";
 
-Shared_Shader_Geometry::Shared_Shader_Geometry(Engine& engine, const std::string& filename, const bool& threaded) noexcept
+Shared_Shader_Geometry::Shared_Shader_Geometry(Engine& engine, const std::string& filename, const bool& threaded)
 {
 	auto newAsset = std::dynamic_pointer_cast<Shader_Geometry>(engine.getManager_Assets().shareAsset(
 			typeid(Shader_Geometry).name(),
@@ -26,7 +26,7 @@ Shader_Geometry::~Shader_Geometry() noexcept
 
 Shader_Geometry::Shader_Geometry(Engine& engine, const std::string& filename) noexcept : Shader(engine, filename) {}
 
-void Shader_Geometry::initialize() noexcept
+void Shader_Geometry::initialize()
 {
 	// Attempt to load cache, otherwise load manually
 	m_glProgramID = glCreateProgram();
@@ -53,7 +53,7 @@ void Shader_Geometry::initialize() noexcept
 	Asset::finalize();
 }
 
-bool Shader_Geometry::initShaders(const std::string& relativePath) noexcept
+bool Shader_Geometry::initShaders(const std::string& relativePath)
 {
 	const std::string filename = getFileName();
 

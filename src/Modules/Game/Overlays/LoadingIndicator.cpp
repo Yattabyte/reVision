@@ -8,7 +8,7 @@ LoadingIndicator::~LoadingIndicator() noexcept
 	*m_aliveIndicator = false;
 }
 
-LoadingIndicator::LoadingIndicator(Engine& engine) noexcept :
+LoadingIndicator::LoadingIndicator(Engine& engine) :
 	m_engine(engine),
 	m_shader(Shared_Shader(engine, "Effects\\LoadingIndicator")),
 	m_texture(Shared_Texture(engine, "spinner.png", GL_TEXTURE_2D)),
@@ -28,7 +28,7 @@ LoadingIndicator::LoadingIndicator(Engine& engine) noexcept :
 		});
 }
 
-void LoadingIndicator::applyEffect(const float& deltaTime) noexcept 
+void LoadingIndicator::applyEffect(const float& deltaTime) 
 {
 	if (!Asset::All_Ready(m_shapeQuad, m_shader, m_texture))
 		return;
@@ -58,7 +58,7 @@ void LoadingIndicator::applyEffect(const float& deltaTime) noexcept
 	}
 }
 
-void LoadingIndicator::resize(const glm::ivec2& size) noexcept 
+void LoadingIndicator::resize(const glm::ivec2& size) 
 {
 	m_renderSize = size;
 	m_projMatrix = glm::ortho(0.0f, (float)size.x, 0.0f, (float)size.y);

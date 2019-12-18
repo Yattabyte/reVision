@@ -9,7 +9,7 @@ SSAO::~SSAO() noexcept
 	*m_aliveIndicator = false;
 }
 
-SSAO::SSAO(Engine& engine) noexcept :
+SSAO::SSAO(Engine& engine) :
 	Graphics_Technique(Technique_Category::SECONDARY_LIGHTING),
 	m_engine(engine),
 	m_shader(Shared_Shader(engine, "Effects\\SSAO")),
@@ -69,12 +69,12 @@ SSAO::SSAO(Engine& engine) noexcept :
 		msgMgr.error("SSAO Noise Texture is incomplete.");
 }
 
-void SSAO::clearCache(const float&) noexcept
+void SSAO::clearCache(const float&)
 {
 	m_drawIndex = 0;
 }
 
-void SSAO::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void SSAO::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shader, m_shaderCopyAO, m_shaderGB_A))
 		return;

@@ -6,10 +6,10 @@ Engine_Module::Engine_Module(Engine& engine) noexcept :
 {
 }
 
-void Engine_Module::initialize() noexcept 
+void Engine_Module::initialize() 
 {
 }
 
-void Engine_Module::deinitialize() noexcept 
+void Engine_Module::deinitialize() 
 {
 }

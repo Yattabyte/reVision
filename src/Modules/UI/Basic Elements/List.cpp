@@ -8,7 +8,7 @@ List::~List() noexcept
 	glDeleteVertexArrays(1, &m_vaoID);
 }
 
-List::List(Engine& engine) noexcept :
+List::List(Engine& engine) :
 	UI_Element(engine),
 	m_shader(Shared_Shader(engine, "UI\\List"))
 {
@@ -135,7 +135,7 @@ int List::getHoverIndex() const noexcept
 	return m_hoverIndex;
 }
 
-void List::setSelectionIndex(const int& newIndex) noexcept 
+void List::setSelectionIndex(const int& newIndex) 
 {
 	m_selectionIndex = newIndex;
 	m_focusMap.focusIndex(m_selectionIndex);
@@ -204,7 +204,7 @@ void List::alignChildren() noexcept
 	}
 }
 
-void List::updateSelectionGeometry() noexcept 
+void List::updateSelectionGeometry() 
 {
 	if (m_children.size() < 1) return;
 	constexpr auto num_data = 8 * 6;

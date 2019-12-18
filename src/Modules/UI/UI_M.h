@@ -20,21 +20,21 @@ public:
 	inline ~UI_Module() noexcept = default;
 	/** Construct a UI module.
 	@param	engine				reference to the engine to use. */
-	explicit UI_Module(Engine& engine) noexcept;
+	explicit UI_Module(Engine& engine);
 
 
 	// Public Interface Implementations
-	void initialize() noexcept final;
-	void deinitialize() noexcept final;
+	void initialize() final;
+	void deinitialize() final;
 
 
 	// Public Methods
 	/** Tick this module by a specific amount of delta time.
 	@param	deltaTime			the amount of time since last frame. */
-	void frameTick(const float& deltaTime) noexcept;
+	void frameTick(const float& deltaTime);
 	/** Push a new UI element onto a stack to receive input and be rendered.
 	@param	rootElement			the main element of focus for this UI system. */
-	void pushRootElement(const std::shared_ptr<UI_Element>& rootElement) noexcept;
+	void pushRootElement(const std::shared_ptr<UI_Element>& rootElement);
 	/** Pop the top UI element off the stack. */
 	void popRootElement() noexcept;
 	/** Set a new focus map to be used for user action input.
@@ -68,7 +68,7 @@ public:
 	void applyActionState(ActionState& actionState) noexcept;
 	/** Add a new callback to be called as-soon-as-possible.
 	@param	callback			the callback to call later. */
-	void pushCallback(const std::function<void()>& callback) noexcept;
+	void pushCallback(const std::function<void()>& callback);
 
 
 private:

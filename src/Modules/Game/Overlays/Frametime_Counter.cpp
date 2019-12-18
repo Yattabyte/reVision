@@ -8,7 +8,7 @@ Frametime_Counter::~Frametime_Counter() noexcept
 	*m_aliveIndicator = false;
 }
 
-Frametime_Counter::Frametime_Counter(Engine& engine) noexcept :
+Frametime_Counter::Frametime_Counter(Engine& engine) :
 	m_engine(engine),
 	m_shader(Shared_Shader(engine, "Utilities\\numberPrint")),
 	m_numberTexture(Shared_Texture(engine, "numbers.png", GL_TEXTURE_2D, false, false)),
@@ -23,7 +23,7 @@ Frametime_Counter::Frametime_Counter(Engine& engine) noexcept :
 	resize(m_renderSize);
 }
 
-void Frametime_Counter::applyEffect(const float& deltaTime) noexcept 
+void Frametime_Counter::applyEffect(const float& deltaTime) 
 {
 	if (!Asset::All_Ready(m_shapeQuad, m_shader, m_numberTexture))
 		return;
@@ -63,7 +63,7 @@ void Frametime_Counter::applyEffect(const float& deltaTime) noexcept
 	Shader::Release();
 }
 
-void Frametime_Counter::resize(const glm::ivec2& size) noexcept
+void Frametime_Counter::resize(const glm::ivec2& size)
 {
 	m_renderSize = size;
 	m_projMatrix = glm::ortho(0.0f, (float)size.x, 0.0f, (float)size.y);

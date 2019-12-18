@@ -8,7 +8,7 @@ Separator::~Separator() noexcept
 	glDeleteVertexArrays(1, &m_vaoID);
 }
 
-Separator::Separator(Engine& engine) noexcept :
+Separator::Separator(Engine& engine) :
 	UI_Element(engine),
 	m_shader(Shared_Shader(engine, "UI\\Separator"))
 {

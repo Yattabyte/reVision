@@ -8,7 +8,7 @@ Skybox::~Skybox() noexcept
 	*m_aliveIndicator = false;
 }
 
-Skybox::Skybox(Engine& engine) noexcept :
+Skybox::Skybox(Engine& engine) :
 	Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 	m_engine(engine),
 	m_cubemapSky(Shared_Cubemap(engine, "sky\\")),
@@ -46,12 +46,12 @@ Skybox::Skybox(Engine& engine) noexcept :
 		});
 }
 
-void Skybox::clearCache(const float&) noexcept 
+void Skybox::clearCache(const float&) 
 {
 	m_drawIndex = 0;
 }
 
-void Skybox::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void Skybox::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderSky, m_shaderSkyReflect, m_shaderConvolute, m_cubemapSky))
 		return;

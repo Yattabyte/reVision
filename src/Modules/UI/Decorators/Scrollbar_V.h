@@ -22,18 +22,18 @@ public:
 	/** Construct a vertical scrollbar, decorating the supplied component.
 	@param	engine		reference to the engine to use. 
 	@param	component	the component to decorate. */
-	Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& component) noexcept;
+	Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& component);
 
 
 	// Public Interface Implementation
-	void mouseAction(const MouseEvent& mouseEvent) noexcept final;
+	void mouseAction(const MouseEvent& mouseEvent) final;
 	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
 
 
 	// Public Methods
 	/** Set the linear amount for the location of the scroll bar.
 	@param	linear		the linear amount to put the scroll bar. */
-	void setLinear(const float& linear) noexcept;
+	void setLinear(const float& linear);
 	/** Retrieve the linear value for this scrollbar.
 	@return				the linear value for this scroll bar. */
 	float getLinear() const noexcept;
@@ -42,7 +42,7 @@ public:
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */
-	void updateGeometry() noexcept;
+	void updateGeometry();
 	/** Update the position of all scrollbar elements. */
 	void updateElementPosition() noexcept;
 

@@ -9,7 +9,7 @@ Shadow_Technique::~Shadow_Technique() noexcept
 	*m_aliveIndicator = false;
 }
 
-Shadow_Technique::Shadow_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) noexcept :
+Shadow_Technique::Shadow_Technique(Engine& engine, std::vector<Camera*>& sceneCameras) :
 	Graphics_Technique(Technique_Category::PRIMARY_LIGHTING),
 	m_engine(engine),
 	m_sceneCameras(sceneCameras)
@@ -27,17 +27,17 @@ Shadow_Technique::Shadow_Technique(Engine& engine, std::vector<Camera*>& sceneCa
 	m_frameData.shadowSizeRCP = 1.0f / m_frameData.shadowSize;
 }
 
-void Shadow_Technique::clearCache(const float&) noexcept 
+void Shadow_Technique::clearCache(const float&) 
 {
 	m_frameData.shadowsToUpdate.clear();
 }
 
-void Shadow_Technique::updateCache(const float& deltaTime, ecsWorld& world) noexcept 
+void Shadow_Technique::updateCache(const float& deltaTime, ecsWorld& world) 
 {
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Shadow_Technique::updatePass(const float& deltaTime) noexcept 
+void Shadow_Technique::updatePass(const float& deltaTime) 
 {
 	// Render important shadows
 	if (m_enabled)
@@ -49,7 +49,7 @@ ShadowData& Shadow_Technique::getShadowData() noexcept
 	return m_frameData;
 }
 
-void Shadow_Technique::updateShadows(const float& deltaTime) noexcept 
+void Shadow_Technique::updateShadows(const float& deltaTime) 
 {
 	const auto clientTime = m_engine.GetSystemTime();
 	if (m_frameData.shadowsToUpdate.size()) {

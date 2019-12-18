@@ -22,19 +22,19 @@ public:
 	inline ~PauseMenu() noexcept = default;
 	/** Construct a start menu.
 	@param	engine		reference to the engine to use. */
-	explicit PauseMenu(Engine& engine) noexcept;
+	explicit PauseMenu(Engine& engine);
 
 
 protected:
 	// Protected Methods
 	/** Choose 'resume' from the pause menu. */
-	void resume() noexcept;
+	void resume();
 	/** Choose 'options' from the main menu. */
-	void goToOptions() noexcept;
+	void goToOptions();
 	/** Chosen when control is returned from the options menu. */
 	void returnFromOptions() noexcept;
 	/** Choose 'quit' from the pause menu. */
-	void quit() noexcept;
+	void quit();
 
 
 	// Protected Attributes

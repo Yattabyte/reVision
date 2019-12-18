@@ -24,10 +24,10 @@ public:
 	void statement(const std::string& input) noexcept;
 	/** Prints a warning message into the console.
 	@param	input	std::string message to print */
-	void warning(const std::string& input) noexcept;
+	void warning(const std::string& input);
 	/** Prints an error message into the console.
 	@param	input	the error message to be displayed. */
-	void error(const std::string& input) noexcept;
+	void error(const std::string& input);
 
 
 private:
@@ -45,7 +45,7 @@ private:
 	// Private Methods
 	/** A helper function that writes the message to a log and to the console. 
 	@param	output	the text to write to the log. */
-	void textOutput(const std::string& output) noexcept;
+	void textOutput(const std::string& output);
 
 
 	// Private Attributes

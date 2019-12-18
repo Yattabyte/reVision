@@ -23,21 +23,21 @@ public:
 	inline ~StartMenu() noexcept = default;
 	/** Construct a start menu.
 	@param	engine		reference to the engine to use. */
-	explicit StartMenu(Engine& engine) noexcept;
+	explicit StartMenu(Engine& engine);
 
 
 protected:
 	// Protected Methods
 	/** Choose 'start game' from the main menu. */
-	void startGame() noexcept;
+	void startGame();
 	/** Choose 'level editor' from the main menu. */
-	void startEditor() noexcept;
+	void startEditor();
 	/** Choose 'options' from the main menu. */
-	void goToOptions() noexcept;
+	void goToOptions();
 	/** Chosen when control is returned from the options menu. */
 	void returnFromOptions() noexcept;
 	/** Choose 'quit' from the main menu. */
-	void quit() noexcept;
+	void quit();
 
 
 	// Protected Attributes

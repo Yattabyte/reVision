@@ -8,7 +8,7 @@
 #include <time.h>
 
 
-OpenDialogue::OpenDialogue(Engine& engine, LevelEditor_Module& editor) noexcept :
+OpenDialogue::OpenDialogue(Engine& engine, LevelEditor_Module& editor) :
 	m_engine(engine),
 	m_editor(editor),
 	m_iconFile(Shared_Texture(engine, "Editor//iconFile.png")),
@@ -19,12 +19,12 @@ OpenDialogue::OpenDialogue(Engine& engine, LevelEditor_Module& editor) noexcept 
 	m_open = false;
 }
 
-void OpenDialogue::tick(const float&) noexcept
+void OpenDialogue::tick(const float&)
 {
 	tickMainDialogue();
 }
 
-void OpenDialogue::populateLevels(const std::string& directory) noexcept
+void OpenDialogue::populateLevels(const std::string& directory)
 {
 	m_levels.clear();
 	m_subDirectory = directory;
@@ -76,7 +76,7 @@ void OpenDialogue::populateLevels(const std::string& directory) noexcept
 	}
 }
 
-void OpenDialogue::tickMainDialogue() noexcept
+void OpenDialogue::tickMainDialogue()
 {
 	static bool freshlyOpened = true; // flag used for operations that should happen only once-per-opening
 	const auto title = "Open Level";
@@ -214,7 +214,7 @@ void OpenDialogue::tickMainDialogue() noexcept
 		freshlyOpened = true;
 }
 
-void OpenDialogue::tickRenameDialogue() noexcept
+void OpenDialogue::tickRenameDialogue()
 {
 	bool openRename = true;
 	if (ImGui::BeginPopupModal("Rename Level", &openRename, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
@@ -242,7 +242,7 @@ void OpenDialogue::tickRenameDialogue() noexcept
 	}
 }
 
-void OpenDialogue::tickDeleteDialogue() noexcept
+void OpenDialogue::tickDeleteDialogue()
 {
 	bool openDelete = true;
 	ImGui::SetNextWindowSize({ 350, 95 }, ImGuiCond_Appearing);

@@ -6,7 +6,7 @@
 constexpr const char* DIRECTORY_CUBEMAP = R"(\Textures\Cubemaps\)";
 constexpr const auto CUBEMAP_SIDE_COUNT = 6;
 
-Shared_Cubemap::Shared_Cubemap(Engine& engine, const std::string& filename, const bool& threaded) noexcept
+Shared_Cubemap::Shared_Cubemap(Engine& engine, const std::string& filename, const bool& threaded)
 {
 	auto newAsset = std::dynamic_pointer_cast<Cubemap>(engine.getManager_Assets().shareAsset(
 			typeid(Cubemap).name(),
@@ -25,7 +25,7 @@ Cubemap::~Cubemap() noexcept
 
 Cubemap::Cubemap(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
 
-void Cubemap::initialize() noexcept
+void Cubemap::initialize()
 {
 	static const std::string side_suffixes[CUBEMAP_SIDE_COUNT] = { "right", "left", "bottom", "top", "front", "back" };
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };

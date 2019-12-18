@@ -13,14 +13,14 @@ RH_Volume::~RH_Volume() noexcept
 	glDeleteTextures(RH_TEXTURE_COUNT, m_textureIDS[1]);
 }
 
-RH_Volume::RH_Volume(Engine& engine) noexcept :
+RH_Volume::RH_Volume(Engine& engine) :
 	m_engine(engine)
 {
 	// Preferences
 	auto& preferences = engine.getPreferenceState();
 	m_resolution = 16;
 	preferences.getOrSetValue(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_resolution);
-	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) noexcept { resize(f); });
+	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) { resize(f); });
 
 	glCreateFramebuffers(2, m_fboIDS);
 	for (int bounce = 0; bounce < 2; ++bounce) {
@@ -44,7 +44,7 @@ RH_Volume::RH_Volume(Engine& engine) noexcept :
 	}
 }
 
-void RH_Volume::updateVolume(const Camera& camera) noexcept
+void RH_Volume::updateVolume(const Camera& camera)
 {
 	const glm::mat4 InverseView = camera->vMatrixInverse;
 	const auto& ViewDimensions = camera->Dimensions;

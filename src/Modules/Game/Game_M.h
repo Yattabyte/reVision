@@ -28,8 +28,8 @@ public:
 
 
 	// Public Interface Implementation
-	void initialize() noexcept final;
-	void deinitialize() noexcept final;
+	void initialize() final;
+	void deinitialize() final;
 
 
 	// Public Methods
@@ -43,7 +43,7 @@ public:
 	@param	deltaTime		the amount of time passed since last frame. */
 	void renderOverlays(const float& deltaTime) noexcept;
 	/** Show the game. */
-	void showGame() noexcept;
+	void showGame();
 	/** Either show or hide the pause menu.
 	@param	show			whether to show or hide the pause menu. */
 	void showPauseMenu(const bool& show) noexcept;

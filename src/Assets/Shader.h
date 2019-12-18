@@ -22,7 +22,7 @@ public:
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	Shared_Shader(Engine& engine, const std::string& filename, const bool& threaded = true) noexcept;
+	Shared_Shader(Engine& engine, const std::string& filename, const bool& threaded = true);
 };
 
 /** A single shader object, like a fragment shader or a vertex shader, not a whole shader program. */
@@ -148,23 +148,23 @@ protected:
 	GLint getProgramiv(const GLenum& pname) const noexcept;
 	/** Retrieve an error log corresponding to this shader program.
 	@return						an error log for this shader program. */
-	[[nodiscard]] std::vector<GLchar> getErrorLog() const noexcept;
+	[[nodiscard]] std::vector<GLchar> getErrorLog() const;
 	/** Attempt to load a shader program from a cached binary file.
 	@param	relativePath		the relative path of the binary file.
 	@return						true on success, false otherwise. */
-	bool loadCachedBinary(const std::string& relativePath) noexcept;
+	bool loadCachedBinary(const std::string& relativePath);
 	/** Attempt to save a shader program to a cached binary file.
 	@param	relativePath		the relative path of the binary file.
 	@return						true on success, false otherwise. */
-	bool saveCachedBinary(const std::string& relativePath) noexcept;
+	bool saveCachedBinary(const std::string& relativePath);
 	/** Attempt to delete a shader program's cached binary file. 
 	@param	relativePath		the relative path of the binary file.
 	@return						true on success, false otherwise. */
-	static bool deleteCachedBinary(const std::string& relativePath) noexcept;
+	static bool deleteCachedBinary(const std::string& relativePath);
 	/** Attempt to load a shader program from separate shader files.
 	@param	relativePath		the relative path of the shader files.
 	@return						true on success, false otherwise. */
-	virtual bool initShaders(const std::string& relativePath) noexcept;
+	virtual bool initShaders(const std::string& relativePath);
 	/** Use to validate this shader program after linking.
 	@return						true on success, false otherwise. */
 	bool validateProgram() noexcept;
@@ -183,7 +183,7 @@ private:
 
 
 	// Private Interface Implementation
-	void initialize() noexcept override;
+	void initialize() override;
 
 
 	// Private Attributes

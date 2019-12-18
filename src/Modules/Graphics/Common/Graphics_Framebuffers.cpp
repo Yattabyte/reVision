@@ -1,7 +1,7 @@
 #include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 
 
-Graphics_Framebuffers::~Graphics_Framebuffers() noexcept
+Graphics_Framebuffers::~Graphics_Framebuffers()
 {
 	// Destroy OpenGL objects
 	for (auto& [name, fboData] : m_fbos) {
@@ -12,7 +12,7 @@ Graphics_Framebuffers::~Graphics_Framebuffers() noexcept
 	}
 }
 
-Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2& size, Engine& engine) noexcept :
+Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2& size, Engine& engine) :
 	m_renderSize(size),
 	m_rhVolume(engine)
 {
@@ -29,7 +29,7 @@ Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2& size, Engine& eng
 	createFBO("FXAA", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 }
 
-void Graphics_Framebuffers::createFBO(const char* name, const std::vector<std::tuple<GLenum, GLenum, GLenum>>& textureFormats, const bool& mipmapped) noexcept
+void Graphics_Framebuffers::createFBO(const char* name, const std::vector<std::tuple<GLenum, GLenum, GLenum>>& textureFormats, const bool& mipmapped)
 {
 	//  Variables for this frame buffer entry
 	GLuint fboID(0);	// FBO ID
@@ -100,7 +100,7 @@ void Graphics_Framebuffers::bindForReading(const char* name, const GLuint& bindi
 		glBindTextureUnit(binding + counter++, texID);
 }
 
-void Graphics_Framebuffers::clear() noexcept
+void Graphics_Framebuffers::clear()
 {
 	glDepthMask(GL_TRUE);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -125,7 +125,7 @@ void Graphics_Framebuffers::clear() noexcept
 	m_rhVolume.clear();
 }
 
-void Graphics_Framebuffers::resize(const glm::ivec2& newSize, const int& layerFaces) noexcept
+void Graphics_Framebuffers::resize(const glm::ivec2& newSize, const int& layerFaces)
 {
 	m_renderSize = newSize;
 	m_layerFaces = layerFaces;
