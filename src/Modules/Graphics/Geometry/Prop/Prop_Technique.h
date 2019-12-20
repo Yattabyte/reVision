@@ -24,11 +24,11 @@ public:
 
 
 	// Public Interface Implementations
-	void clearCache(const float& deltaTime) final;
+	void clearCache(const float& deltaTime) noexcept final;
 	void updateCache(const float& deltaTime, ecsWorld& world) final;
 	void renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives) final;
 	void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) final;
-	void renderShadows(const float& deltaTime) final;
+	void renderShadows(const float& deltaTime) noexcept final;
 
 
 private:

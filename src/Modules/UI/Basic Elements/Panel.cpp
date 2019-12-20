@@ -25,10 +25,10 @@ Panel::Panel(Engine& engine) :
 	m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { updateGeometry(); });
+	addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
 }
 
-void Panel::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
+void Panel::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
 {
 	// Exit Early
 	if (!getVisible() || !m_shader->ready())

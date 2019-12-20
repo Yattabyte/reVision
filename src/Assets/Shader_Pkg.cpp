@@ -44,7 +44,7 @@ Shared_Shader_Pkg::Shared_Shader_Pkg(Engine& engine, const std::string& filename
 	swap(newAsset);
 }
 
-Shader_Pkg::Shader_Pkg(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
+Shader_Pkg::Shader_Pkg(Engine& engine, const std::string& filename) : Asset(engine, filename) {}
 
 std::string Shader_Pkg::getPackageText() const
 {

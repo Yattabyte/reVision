@@ -3,7 +3,7 @@
 #include "FreeImagePlus.h"
 
 
-inline auto RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size) noexcept
+inline auto RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size)
 {
 	std::vector<GLubyte> newPixels(size_t(size) * 4ULL);
 	for (size_t x = 0; x < size; ++x) {
@@ -15,7 +15,7 @@ inline auto RGBA_to_BGRA(const GLubyte* pixels, const unsigned int& size) noexce
 	return newPixels;
 }
 
-FIBITMAP* Image_IO::Import_Bitmap(Engine& engine, const std::string& relativePath) noexcept
+FIBITMAP* Image_IO::Import_Bitmap(Engine& engine, const std::string& relativePath)
 {
 	FIBITMAP* bitmap = nullptr;
 	if (!relativePath.empty()) {
@@ -90,7 +90,7 @@ void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData) noexc
 	importedData.bpp = FreeImage_GetBPP(bitmap);
 }
 
-void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, const Resize_Policy& resizePolicy) noexcept
+void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, const Resize_Policy& resizePolicy)
 {
 	// Make sure new sizes AREN'T zero
 	if ((newSize.x != 0) && (newSize.y != 0) && (importedData.dimensions.x != 0) && (importedData.dimensions.y != 0))
@@ -113,7 +113,7 @@ void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, 
 		}
 }
 
-std::string Image_IO::Get_Version() noexcept
+std::string Image_IO::Get_Version()
 {
 	return std::string(FreeImage_GetVersion());
 }

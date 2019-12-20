@@ -20,7 +20,7 @@ RH_Volume::RH_Volume(Engine& engine) :
 	auto& preferences = engine.getPreferenceState();
 	m_resolution = 16;
 	preferences.getOrSetValue(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_resolution);
-	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) { resize(f); });
+	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) noexcept { resize(f); });
 
 	glCreateFramebuffers(2, m_fboIDS);
 	for (int bounce = 0; bounce < 2; ++bounce) {

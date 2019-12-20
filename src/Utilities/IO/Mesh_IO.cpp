@@ -25,7 +25,7 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d) noexcept
 /** Copy a node into a new node. 
 @param	oldNode		the old node to copy from.
 @return				the new node. */
-[[nodiscard]] inline Node copy_node(const aiNode* oldNode) noexcept
+[[nodiscard]] inline Node copy_node(const aiNode* oldNode)
 {
 	// Copy Node
 	Node newNode(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
@@ -38,7 +38,7 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d) noexcept
 	return newNode;
 }
 
-bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh_Geometry& importedData) noexcept
+bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh_Geometry& importedData)
 {
 	// Check if the file exists
 	if (!Engine::File_Exists(relativePath)) {
@@ -221,12 +221,12 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 	return true;
 }
 
-std::string Mesh_IO::Get_Version() noexcept
+std::string Mesh_IO::Get_Version()
 {
 	return std::to_string(aiGetVersionMajor()) + "." + std::to_string(aiGetVersionMinor()) + "." + std::to_string(aiGetVersionRevision());
 }
 
-std::vector<std::string> Mesh_IO::Get_Supported_Types() noexcept
+std::vector<std::string> Mesh_IO::Get_Supported_Types()
 {
 	aiString ext;
 	Assimp::Importer importer;

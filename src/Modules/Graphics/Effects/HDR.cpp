@@ -20,7 +20,7 @@ HDR::HDR(Engine& engine) :
 	preferences.addCallback(PreferenceState::Preference::C_GAMMA, m_aliveIndicator, [&](const float& f) noexcept { m_gamma = f; });
 }
 
-void HDR::clearCache(const float&)
+void HDR::clearCache(const float&) noexcept
 {
 	m_drawIndex = 0;
 }

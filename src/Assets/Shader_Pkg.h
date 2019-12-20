@@ -34,7 +34,7 @@ public:
 	/** Construct the Shader Package.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory). */
-	Shader_Pkg(Engine& engine, const std::string& filename) noexcept;
+	Shader_Pkg(Engine& engine, const std::string& filename);
 
 
 	// Public Methods

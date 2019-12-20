@@ -75,14 +75,14 @@ std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime
 	return perspectives;
 }
 
-void Graphics_Pipeline::end(const float& deltaTime) noexcept
+void Graphics_Pipeline::end(const float& deltaTime)
 {
 	m_cameraBuffer.endReading();
 	for (auto& tech : m_allTechniques)
 		tech->clearCache(deltaTime);
 }
 
-void Graphics_Pipeline::render(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories) noexcept
+void Graphics_Pipeline::render(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories)
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for (auto& tech : m_allTechniques)
@@ -90,14 +90,14 @@ void Graphics_Pipeline::render(const float& deltaTime, Viewport& viewport, const
 			tech->renderTechnique(deltaTime, viewport, perspectives);
 }
 
-void Graphics_Pipeline::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) noexcept
+void Graphics_Pipeline::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives)
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for (auto& tech : m_geometryTechniques)
 		tech->cullShadows(deltaTime, perspectives);
 }
 
-void Graphics_Pipeline::renderShadows(const float& deltaTime) noexcept
+void Graphics_Pipeline::renderShadows(const float& deltaTime)
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for (auto& tech : m_geometryTechniques)

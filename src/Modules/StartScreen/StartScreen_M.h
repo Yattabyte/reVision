@@ -28,7 +28,7 @@ public:
 	@param	deltaTime		the amount of time since last frame. */
 	void frameTick(const float& deltaTime);
 	/** Display the start menu. */
-	void showStartMenu() noexcept;
+	void showStartMenu();
 
 
 private:

@@ -14,12 +14,12 @@ bool ecsBaseSystem::isValid() const noexcept
 	return false;
 }
 
-void ecsBaseSystem::addComponentType(const ComponentID& componentType, const RequirementsFlag& componentFlag) noexcept 
+void ecsBaseSystem::addComponentType(const ComponentID& componentType, const RequirementsFlag& componentFlag) 
 {
 	m_componentTypes.push_back({ componentType, componentFlag });
 }
 
-bool ecsSystemList::addSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept 
+bool ecsSystemList::addSystem(const std::shared_ptr<ecsBaseSystem>& system) 
 {
 	if (system->isValid()) {
 		m_systems.push_back(system);
@@ -28,7 +28,7 @@ bool ecsSystemList::addSystem(const std::shared_ptr<ecsBaseSystem>& system) noex
 	return false;
 }
 
-bool ecsSystemList::removeSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept 
+bool ecsSystemList::removeSystem(const std::shared_ptr<ecsBaseSystem>& system) 
 {
 	const auto systemCount = m_systems.size();
 	for (size_t i = 0; i < systemCount; ++i)

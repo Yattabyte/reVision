@@ -41,7 +41,7 @@ SSR::SSR(Engine& engine) :
 		msgMgr.error("SSR Bayer Matrix Texture is incomplete.");
 }
 
-void SSR::clearCache(const float&) 
+void SSR::clearCache(const float&) noexcept
 {
 	m_drawIndex = 0;
 }

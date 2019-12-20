@@ -20,13 +20,13 @@ public:
 
 
 	// Public Interface Implementations
-	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) final;
 
 
 	// Public Methods
 	/** Set the border size for this decorator.
 	@param		size		the new border size to use. */
-	void setBorderSize(const float& size) noexcept;
+	void setBorderSize(const float& size);
 	/** Retrieve the border size of this decorator.
 	@return					the size of the border this decorator uses. */
 	float getBorderSize() const noexcept;

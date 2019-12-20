@@ -24,7 +24,7 @@ Bloom::Bloom(Engine& engine) :
 	preferences.addCallback(PreferenceState::Preference::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float& f) noexcept { setBloomStrength((int)f); });
 }
 
-void Bloom::clearCache(const float&) 
+void Bloom::clearCache(const float&) noexcept
 {
 	m_drawIndex = 0;
 }

@@ -21,10 +21,10 @@ constexpr static const char transformName[] = "Transform_Component";
 struct Transform_Component final : public ecsComponent<Transform_Component, transformName> {
 	Transform m_localTransform, m_worldTransform;
 
-	inline std::vector<char> serialize() noexcept {
+	inline std::vector<char> serialize() {
 		return Serializer::Serialize_Set(std::pair("m_localTransform", m_localTransform), std::pair("m_worldTransform", m_worldTransform));
 	}
-	inline void deserialize(const std::vector<char>& data) noexcept {
+	inline void deserialize(const std::vector<char>& data) {
 		Serializer::Deserialize_Set(data, std::pair("m_localTransform", &m_localTransform), std::pair("m_worldTransform", &m_worldTransform));
 	}
 };
@@ -37,10 +37,10 @@ constexpr static const char player3DName[] = "Player3D_Component";
 struct Player3D_Component final : public ecsComponent<Player3D_Component, player3DName> {
 	glm::vec3 m_rotation = glm::vec3(0.0f);
 
-	inline std::vector<char> serialize() noexcept {
+	inline std::vector<char> serialize() {
 		return Serializer::Serialize_Set(std::pair("m_rotation", m_rotation));
 	}
-	inline void deserialize(const std::vector<char>& data) noexcept {
+	inline void deserialize(const std::vector<char>& data) {
 		Serializer::Deserialize_Set(data, std::pair("m_rotation", &m_rotation));
 	}
 };
@@ -50,10 +50,10 @@ struct Camera_Component final : public ecsComponent<Camera_Component, cameraName
 	Camera m_camera;
 	float m_updateTime = 0.0f;
 
-	inline std::vector<char> serialize() noexcept {
+	inline std::vector<char> serialize() {
 		return Serializer::Serialize_Set(std::pair("m_camera", m_camera));
 	}
-	inline void deserialize(const std::vector<char>& data) noexcept {
+	inline void deserialize(const std::vector<char>& data) {
 		Serializer::Deserialize_Set(data, std::pair("m_camera", &m_camera));
 	}
 };
@@ -66,14 +66,14 @@ struct [[deprecated]] BoundingSphere_Component final : public ecsComponent<Bound
 		OUTSIDE, INSIDE
 	} m_cameraCollision = CameraCollision::OUTSIDE;
 
-	inline std::vector<char> serialize() noexcept {
+	inline std::vector<char> serialize() {
 		return Serializer::Serialize_Set(
 			std::pair("m_positionOffset", m_positionOffset),
 			std::pair("m_radius", m_radius),
 			std::pair("m_cameraCollision", m_cameraCollision)
 		);
 	}
-	inline void deserialize(const std::vector<char>& data) noexcept {
+	inline void deserialize(const std::vector<char>& data) {
 		Serializer::Deserialize_Set(data,
 			std::pair("m_positionOffset", &m_positionOffset),
 			std::pair("m_radius", &m_radius),
@@ -89,7 +89,7 @@ struct [[deprecated]] BoundingBox_Component final : public ecsComponent<Bounding
 		OUTSIDE, INSIDE
 	} m_cameraCollision = CameraCollision::OUTSIDE;
 
-	inline std::vector<char> serialize() noexcept {
+	inline std::vector<char> serialize() {
 		return Serializer::Serialize_Set(
 			std::pair("m_positionOffset", m_positionOffset),
 			std::pair("m_extent", m_extent),
@@ -98,7 +98,7 @@ struct [[deprecated]] BoundingBox_Component final : public ecsComponent<Bounding
 			std::pair("m_cameraCollision", m_cameraCollision)
 		);
 	}
-	inline void deserialize(const std::vector<char>& data) noexcept {
+	inline void deserialize(const std::vector<char>& data) {
 		Serializer::Deserialize_Set(data,
 			std::pair("m_positionOffset", &m_positionOffset),
 			std::pair("m_extent", &m_extent),
@@ -124,7 +124,7 @@ struct Collider_Component final : public ecsComponent<Collider_Component, collid
 	std::shared_ptr<btRigidBody> m_rigidBody = nullptr;
 	std::shared_ptr<btCollisionShape> m_shape = nullptr;
 
-	inline std::vector<char> serialize() noexcept {
+	inline std::vector<char> serialize() {
 		return Serializer::Serialize_Set(
 			std::pair("m_modelName", m_modelName),
 			std::pair("m_restitution", m_restitution),
@@ -132,7 +132,7 @@ struct Collider_Component final : public ecsComponent<Collider_Component, collid
 			std::pair("m_mass", m_mass)
 		);
 	}
-	inline void deserialize(const std::vector<char>& data) noexcept {
+	inline void deserialize(const std::vector<char>& data) {
 		Serializer::Deserialize_Set(data,
 			std::pair("m_modelName", &m_modelName),
 			std::pair("m_restitution", &m_restitution),
@@ -154,13 +154,13 @@ struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 	size_t m_offset = 0ull, m_count = 0ull;
 	GLuint m_materialID = 0u;
 
-	inline std::vector<char> serialize() noexcept {
+	inline std::vector<char> serialize() {
 		return Serializer::Serialize_Set(
 			std::pair("m_modelName", m_modelName),
 			std::pair("m_skin", m_skin)
 		);
 	}
-	inline void deserialize(const std::vector<char>& data) noexcept {
+	inline void deserialize(const std::vector<char>& data) {
 		Serializer::Deserialize_Set(data,
 			std::pair("m_modelName", &m_modelName),
 			std::pair("m_skin", &m_skin)
@@ -179,13 +179,13 @@ struct Skeleton_Component final : public ecsComponent<Skeleton_Component, skelet
 	float m_animTime = 0, m_animStart = 0;
 	std::vector<glm::mat4> m_transforms;
 
-	inline std::vector<char> serialize() noexcept {
+	inline std::vector<char> serialize() {
 		return Serializer::Serialize_Set(
 			std::pair("m_animation", m_animation),
 			std::pair("m_playAnim", m_playAnim)
 		);
 	}
-	inline void deserialize(const std::vector<char>& data) noexcept {
+	inline void deserialize(const std::vector<char>& data) {
 		Serializer::Deserialize_Set(data,
 			std::pair("m_animation", &m_animation),
 			std::pair("m_playAnim", &m_playAnim)
@@ -210,7 +210,7 @@ struct Light_Component final : public ecsComponent<Light_Component, lightName> {
 	float m_radius = 1.0f;
 	float m_cutoff = 45.0f;
 
-	inline std::vector<char> serialize() noexcept {
+	inline std::vector<char> serialize() {
 		return Serializer::Serialize_Set(
 			std::pair("m_type", m_type),
 			std::pair("m_color", m_color),
@@ -219,7 +219,7 @@ struct Light_Component final : public ecsComponent<Light_Component, lightName> {
 			std::pair("m_cutoff", m_cutoff)
 		);
 	}
-	inline void deserialize(const std::vector<char>& data) noexcept {
+	inline void deserialize(const std::vector<char>& data) {
 		Serializer::Deserialize_Set(data,
 			std::pair("m_type", &m_type),
 			std::pair("m_color", &m_color),

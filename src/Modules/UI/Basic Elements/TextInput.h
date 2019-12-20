@@ -38,13 +38,13 @@ public:
 	void setText(const std::string& text);
 	/** Retrieve the text displayed in this field.
 	@return					the text displayed in this field. */
-	std::string getText() const noexcept;
+	std::string getText() const;
 
 
 protected:
 	// Protected Methods
 	/** Set the caret position in this text box. */
-	void setCaret(const size_t& index) noexcept;
+	void setCaret(const size_t& index);
 	/** Update the data dependant on the scale of this element. */
 	void updateGeometry();
 

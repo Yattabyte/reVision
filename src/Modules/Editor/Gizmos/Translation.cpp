@@ -296,9 +296,9 @@ bool Translation_Gizmo::checkMousePress()
 			glm::vec3 m_oldPosition, m_newPosition;
 			const unsigned int m_axis = NONE;
 			const std::vector<EntityHandle> m_uuids;
-			Move_Selection_Command(Engine& engine, LevelEditor_Module& editor, const glm::vec3& newPosition, const unsigned int& axis) noexcept
+			Move_Selection_Command(Engine& engine, LevelEditor_Module& editor, const glm::vec3& newPosition, const unsigned int& axis)
 				: m_engine(engine), m_editor(editor), m_oldPosition(m_editor.getGizmoTransform().m_position), m_newPosition(newPosition), m_axis(axis), m_uuids(m_editor.getSelection()) {}
-			void move(const glm::vec3& position) noexcept {
+			void move(const glm::vec3& position) {
 				const auto& ecsWorld = m_editor.getWorld();
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
@@ -317,13 +317,13 @@ bool Translation_Gizmo::checkMousePress()
 				gizmoTransform.update();
 				m_editor.setGizmoTransform(gizmoTransform);
 			}
-			void execute() noexcept final {
+			void execute() final {
 				move(m_newPosition);
 			}
-			void undo() noexcept final {
+			void undo()  final {
 				move(m_oldPosition);
 			}
-			bool join(Editor_Command* other) noexcept final {
+			bool join(Editor_Command* other) final {
 				if (const auto& newCommand = dynamic_cast<Move_Selection_Command*>(other)) {
 					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 						m_newPosition = newCommand->m_newPosition;

@@ -58,7 +58,7 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
 				std::vector<std::string> m_oldData, m_newData;
-				Name_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const std::string& data) noexcept
+				Name_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const std::string& data)
 					: m_ecsWorld(world), m_uuids(uuids) {
 					for (const auto& componentHandle : m_uuids) {
 						if (const auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle)) {
@@ -67,7 +67,7 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 						}
 					}
 				}
-				void setData(const std::vector<std::string>& data) noexcept {
+				void setData(const std::vector<std::string>& data) {
 					if (data.size()) {
 						size_t index(0ull);
 						for (const auto& componentHandle : m_uuids) {
@@ -83,13 +83,13 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 						}
 					}
 				}
-				void execute() noexcept final {
+				void execute() final {
 					setData(m_newData);
 				}
-				void undo() noexcept final {
+				void undo() final {
 					setData(m_oldData);
 				}
-				bool join(Editor_Command* other) noexcept final {
+				bool join(Editor_Command* other) final {
 					if (const auto& newCommand = dynamic_cast<Name_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
@@ -109,7 +109,7 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
 				std::vector<unsigned int> m_oldData, m_newData;
-				Skin_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const unsigned int& data) noexcept
+				Skin_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const unsigned int& data)
 					: m_ecsWorld(world), m_uuids(uuids) {
 					for (const auto& componentHandle : m_uuids) {
 						if (const auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle)) {
@@ -133,7 +133,7 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				bool join(Editor_Command* other) noexcept final {
+				bool join(Editor_Command* other) final {
 					if (const auto& newCommand = dynamic_cast<Skin_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;

@@ -28,7 +28,7 @@ Mouse_Gizmo::Mouse_Gizmo(Engine& engine, LevelEditor_Module& editor) :
 		});
 }
 
-void Mouse_Gizmo::frameTick(const float& deltaTime) noexcept
+void Mouse_Gizmo::frameTick(const float& deltaTime)
 {
 	checkInput(deltaTime);
 	render(deltaTime);

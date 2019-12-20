@@ -38,14 +38,14 @@ public:
 	/** Construct the Texture.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory). */
-	Texture(Engine& engine, const std::string& filename) noexcept;
+	Texture(Engine& engine, const std::string& filename);
 	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory).
 	@param	type			the texture type (2D, 3D, CUBEMAP, etc).
 	@param	mipmap			use mipmaps.
 	@param	anisotropy		use 16x anisotropic filtering. */
-	Texture(Engine& engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy) noexcept;
+	Texture(Engine& engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy);
 
 
 	// Public Methods

@@ -113,7 +113,7 @@ void Material::initialize()
 /** Parse a given line between parentheses and convert it to a string.
 @param	in	the string to convert
 @return		a string */
-[[nodiscard]] static std::string getType_String(std::string& in) noexcept
+[[nodiscard]] static std::string getType_String(std::string& in)
 {
 	return get_between_quotes(in);
 }

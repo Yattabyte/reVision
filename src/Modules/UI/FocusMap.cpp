@@ -52,7 +52,7 @@ bool FocusMap::focusElement(const std::shared_ptr<UI_Element>& element) noexcept
 	return found;
 }
 
-void FocusMap::applyActionState(ActionState& actionState) noexcept 
+void FocusMap::applyActionState(ActionState& actionState) 
 {
 	if (m_elements.size() && m_index >= 0) {
 		if (elementFocusable(m_elements[m_index]))

@@ -38,7 +38,7 @@ public:
 	bool focusElement(const std::shared_ptr<UI_Element>& element) noexcept;
 	/** Apply user input to the focus map, forwarding it to the focused element and perhaps changing the focus as well.
 	@param	actionState		the action state to apply. */
-	void applyActionState(ActionState& actionState) noexcept;
+	void applyActionState(ActionState& actionState);
 	/** Move the focus back by 1. */
 	void back() noexcept;
 	/** Move the focus ahead by 1. */

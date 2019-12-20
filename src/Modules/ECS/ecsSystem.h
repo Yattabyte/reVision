@@ -49,7 +49,7 @@ protected:
 	/** Add a component type to be used by this system.
 	@param	componentType	the type of component to use
 	@param	componentFlag	flag indicating required/optional */
-	void addComponentType(const ComponentID& componentType, const RequirementsFlag& componentFlag = RequirementsFlag::FLAG_REQUIRED) noexcept;
+	void addComponentType(const ComponentID& componentType, const RequirementsFlag& componentFlag = RequirementsFlag::FLAG_REQUIRED);
 
 
 private:
@@ -75,11 +75,11 @@ public:
 	}
 	/** Adds a system to the list.
 	@param	system	the system to add. */
-	bool addSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept;
+	bool addSystem(const std::shared_ptr<ecsBaseSystem>& system);
 	/** Removes a system from the list.
 	@param	system	the system to remove.
 	@return			true if successfully removed, false otherwise. */
-	bool removeSystem(const std::shared_ptr<ecsBaseSystem>& system) noexcept;
+	bool removeSystem(const std::shared_ptr<ecsBaseSystem>& system);
 	/** Retrieve the number of systems in the list.
 	@return			the size of the list. */
 	size_t size() const noexcept;

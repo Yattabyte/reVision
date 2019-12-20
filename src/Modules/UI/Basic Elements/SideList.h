@@ -30,9 +30,9 @@ public:
 
 
 	// Public Interface Implementation
-	void mouseAction(const MouseEvent& mouseEvent) noexcept final;
-	void userAction(ActionState& actionState) noexcept final;
-	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
+	void mouseAction(const MouseEvent& mouseEvent) final;
+	void userAction(ActionState& actionState) final;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) final;
 
 
 	// Public Methods
@@ -44,16 +44,16 @@ public:
 	int getIndex() const noexcept;
 	/** Set the strings to display in this list.
 	@param	strings		the new strings to use in this list. */
-	void setStrings(const std::vector<std::string>& strings) noexcept;
+	void setStrings(const std::vector<std::string>& strings);
 	/** Retrieve the strings this list uses for each item in this list.
 	@return				the list of strings describing each item. */
-	std::vector<std::string> getStrings() const noexcept;
+	std::vector<std::string> getStrings() const;
 
 
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */
-	void updateGeometry() noexcept;
+	void updateGeometry();
 
 
 	// Protected Attributes

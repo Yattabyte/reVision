@@ -40,7 +40,7 @@ void StartScreen_Module::frameTick(const float& deltaTime)
 	m_engine.getModule_Graphics().renderWorld(m_world, deltaTime);
 }
 
-void StartScreen_Module::showStartMenu() noexcept
+void StartScreen_Module::showStartMenu()
 {
 	m_engine.setMouseInputMode(Engine::MouseInputMode::NORMAL);
 	m_engine.getModule_UI().clear();

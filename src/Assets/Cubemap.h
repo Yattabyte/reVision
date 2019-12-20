@@ -34,7 +34,7 @@ public:
 	/** Construct the Cubemap.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory). */
-	Cubemap(Engine& engine, const std::string& filename) noexcept;
+	Cubemap(Engine& engine, const std::string& filename);
 
 
 	// Public Methods

@@ -22,7 +22,7 @@ public:
 	Shadow_Technique(Engine& engine, std::vector<Camera*>& sceneCameras);
 
 	// Public Interface Implementations
-	void clearCache(const float& deltaTime) final;
+	void clearCache(const float& deltaTime) noexcept final;
 	void updateCache(const float& deltaTime, ecsWorld& world) final;
 	void updatePass(const float& deltaTime) final;
 

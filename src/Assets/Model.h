@@ -37,7 +37,7 @@ public:
 	/** Construct the Model.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory). */
-	Model(Engine& engine, const std::string& filename) noexcept;
+	Model(Engine& engine, const std::string& filename);
 
 
 	// Public Attributes

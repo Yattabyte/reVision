@@ -29,7 +29,7 @@ Skybox::Skybox(Engine& engine) :
 	glTextureParameteri(m_cubemapMipped, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_cubemapMipped, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-	m_cubemapSky->addCallback(m_aliveIndicator, [&]() noexcept {
+	m_cubemapSky->addCallback(m_aliveIndicator, [&]() {
 		m_skyOutOfDate = true;
 		m_skySize = m_cubemapSky->m_images[0]->m_size;
 		glTextureStorage2D(m_cubemapMipped, 6, GL_RGB16F, m_skySize.x, m_skySize.x);
@@ -46,7 +46,7 @@ Skybox::Skybox(Engine& engine) :
 		});
 }
 
-void Skybox::clearCache(const float&) 
+void Skybox::clearCache(const float&) noexcept
 {
 	m_drawIndex = 0;
 }

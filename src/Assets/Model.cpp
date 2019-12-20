@@ -16,7 +16,7 @@ Shared_Model::Shared_Model(Engine& engine, const std::string& filename, const bo
 	swap(newAsset);
 }
 
-Model::Model(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
+Model::Model(Engine& engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Model::initialize()
 {

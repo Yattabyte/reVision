@@ -13,7 +13,7 @@ public:
 	/** Destroy this framebuffer. */
 	~FBO_Env_Reflector() noexcept;
 	/** Construct a framebuffer. */
-	FBO_Env_Reflector() noexcept;
+	FBO_Env_Reflector();
 
 
 	// Public Methods

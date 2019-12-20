@@ -23,7 +23,7 @@ struct Transform {
 	@param position			the desired position
 	@param orientation		the desired orientation
 	@param scale			the desired scale */
-	Transform(const glm::vec3& position, const glm::quat& orientation, const glm::vec3& scale) noexcept;
+	Transform(const glm::vec3& position, const glm::quat& orientation, const glm::vec3& scale);
 	/** Constructs a transformation object with only orientation.
 	@param orientation	the desired orientation	*/
 	explicit Transform(const glm::quat& orientation) noexcept;

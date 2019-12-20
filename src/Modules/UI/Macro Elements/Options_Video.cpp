@@ -44,7 +44,7 @@ Options_Video::Options_Video(Engine& engine) :
 	out.precision(2);
 	out << std::fixed << gamma;
 	gamma_slider->setText(out.str());
-	addOption(engine, gamma_slider, 0.75f, "Gamma:", "Changes the gamma correction value used.", (int)Slider::Interact::on_value_change, [&, gamma_slider]() noexcept {
+	addOption(engine, gamma_slider, 0.75f, "Gamma:", "Changes the gamma correction value used.", (int)Slider::Interact::on_value_change, [&, gamma_slider]() {
 		// Get a round version of the input
 		const float round_value = (int)(gamma_slider->getValue() * 100.0f + .5f) / 100.0f;
 		std::ostringstream sstream;

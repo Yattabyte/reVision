@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-void MessageManager::statement(const std::string& input) noexcept
+void MessageManager::statement(const std::string& input)
 {
 	textOutput(input);
 }

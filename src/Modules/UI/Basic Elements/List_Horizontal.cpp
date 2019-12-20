@@ -23,16 +23,16 @@ List_Horizontal::List_Horizontal(Engine& engine) :
 	glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), nullptr, GL_DYNAMIC_STORAGE_BIT);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept {
+	addCallback((int)UI_Element::Interact::on_resize, [&]() {
 		alignChildren();
 		updateSelectionGeometry();
 		});
-	addCallback((int)UI_Element::Interact::on_childrenChange, [&]() noexcept {
+	addCallback((int)UI_Element::Interact::on_childrenChange, [&]() {
 		alignChildren();
 		});
 }
 
-void List_Horizontal::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
+void List_Horizontal::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
 {
 	// Exit Early
 	if (!getVisible() || !m_children.size() || !m_shader->ready())
@@ -63,7 +63,7 @@ void List_Horizontal::renderElement(const float& deltaTime, const glm::vec2& pos
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void List_Horizontal::mouseAction(const MouseEvent& mouseEvent) noexcept 
+void List_Horizontal::mouseAction(const MouseEvent& mouseEvent) 
 {
 	UI_Element::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -89,7 +89,7 @@ void List_Horizontal::mouseAction(const MouseEvent& mouseEvent) noexcept
 	}
 }
 
-void List_Horizontal::userAction(ActionState& actionState) noexcept 
+void List_Horizontal::userAction(ActionState& actionState) 
 {
 	// User can go up or down the list_Horizontal with an input device
 	// User input wraps around, and if an item is selected, moving will deselect it
@@ -118,7 +118,7 @@ void List_Horizontal::userAction(ActionState& actionState) noexcept
 	}
 }
 
-void List_Horizontal::setHoverIndex(const int& newIndex) noexcept 
+void List_Horizontal::setHoverIndex(const int& newIndex) 
 {
 	m_hoverIndex = newIndex;
 	const auto childrenCount = m_children.size();
@@ -165,7 +165,7 @@ float List_Horizontal::getMargin() const noexcept
 	return m_margin;
 }
 
-void List_Horizontal::setSpacing(const float& spacing) noexcept 
+void List_Horizontal::setSpacing(const float& spacing) 
 {
 	m_spacing = spacing;
 	alignChildren();
@@ -177,7 +177,7 @@ float List_Horizontal::getSpacing() const noexcept
 	return m_spacing;
 }
 
-void List_Horizontal::setBorderSize(const float& size) noexcept 
+void List_Horizontal::setBorderSize(const float& size) 
 {
 	m_borderSize = size;
 	updateSelectionGeometry();
@@ -188,7 +188,7 @@ float List_Horizontal::getBorderSize() const noexcept
 	return m_borderSize;
 }
 
-void List_Horizontal::alignChildren() noexcept 
+void List_Horizontal::alignChildren() 
 {
 	float positionFromLeft = m_margin;
 	for (size_t x = 0; x < m_children.size(); ++x) {

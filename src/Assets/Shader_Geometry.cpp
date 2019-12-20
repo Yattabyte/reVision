@@ -24,7 +24,7 @@ Shader_Geometry::~Shader_Geometry() noexcept
 		glDeleteProgram(m_glProgramID);
 }
 
-Shader_Geometry::Shader_Geometry(Engine& engine, const std::string& filename) noexcept : Shader(engine, filename) {}
+Shader_Geometry::Shader_Geometry(Engine& engine, const std::string& filename) : Shader(engine, filename) {}
 
 void Shader_Geometry::initialize()
 {

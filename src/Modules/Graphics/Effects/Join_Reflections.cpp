@@ -17,7 +17,7 @@ Join_Reflections::Join_Reflections(Engine& engine) :
 {
 }
 
-void Join_Reflections::clearCache(const float&) 
+void Join_Reflections::clearCache(const float&) noexcept
 {
 	m_drawIndex = 0;
 }

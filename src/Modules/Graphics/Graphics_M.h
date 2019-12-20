@@ -22,7 +22,7 @@ public:
 	inline ~Graphics_Module() noexcept = default;
 	/** Construct a graphics rendering module.
 	@param	engine		reference to the engine to use. */
-	explicit Graphics_Module(Engine& engine) noexcept;
+	explicit Graphics_Module(Engine& engine);
 
 
 	// Public Interface Implementation
@@ -44,7 +44,7 @@ public:
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	viewport		the viewport to render into.
 	@param	cameras			the cameras to render from. */
-	void renderWorld(ecsWorld& world, const float& deltaTime, Viewport& viewport, std::vector<Camera>& cameras) noexcept;
+	void renderWorld(ecsWorld& world, const float& deltaTime, Viewport& viewport, std::vector<Camera>& cameras);
 	/** Generates a perspective matrix for the client camera. */
 	void genPerspectiveMatrix();
 	/** Retrieves a shared pointer to the primary camera.

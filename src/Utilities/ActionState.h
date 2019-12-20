@@ -14,7 +14,7 @@ public:
 	/** Destroy the action state. */
 	inline ~ActionState() noexcept = default;
 	/** Construct the action state. */
-	ActionState() noexcept;
+	ActionState();
 	/** Move an action state. */
 	inline ActionState(ActionState&&) noexcept = default;
 	/** Copy an action state. */

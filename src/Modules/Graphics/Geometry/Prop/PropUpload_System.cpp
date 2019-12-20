@@ -12,7 +12,7 @@ PropUpload_System::~PropUpload_System() noexcept
 		glDeleteBuffers(1, &pboID);
 }
 
-PropUpload_System::PropUpload_System(Engine& engine, PropData& frameData) noexcept :
+PropUpload_System::PropUpload_System(Engine& engine, PropData& frameData) :
 	m_engine(engine),
 	m_frameData(frameData)
 {

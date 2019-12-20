@@ -35,7 +35,7 @@ public:
 	/** Construct the Collider.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory). */
-	Collider(Engine& engine, const std::string& filename) noexcept;
+	Collider(Engine& engine, const std::string& filename);
 
 
 	// Public Attributes

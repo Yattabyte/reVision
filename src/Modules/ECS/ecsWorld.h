@@ -12,12 +12,12 @@ class ecsWorld {
 public:
 	// Public (De)Constructors
 	/** Destroy this ECS World. */
-	~ecsWorld() noexcept;
+	~ecsWorld();
 	/** Construct an empty ECS World. */
 	ecsWorld() noexcept;
 	/** Construct an ECS world from a serial data buffer. 
 	@param	data				serialized world data. */
-	explicit ecsWorld(const std::vector<char>& data) noexcept;
+	explicit ecsWorld(const std::vector<char>& data);
 	/** Move an ECS world. 
 	@param	other				another ecsWorld to move to here. */
 	ecsWorld(ecsWorld&& other) noexcept;
@@ -38,7 +38,7 @@ public:
 	@param	entityHandle		handle to the entity to add the component to.
 	@param	component			the component being added.
 	@param	UUID				optional reference to the component UUID, if empty will auto-generate. */
-	void makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* const component, ComponentHandle& UUID = ComponentHandle()) noexcept;
+	void makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* const component, ComponentHandle& UUID = ComponentHandle());
 	/** Adds a component to an entity.
 	@param	entityHandle		handle to the entity to add the component to.
 	@param	componentID			the runtime component class.
@@ -62,7 +62,7 @@ public:
 	@param	entityHandle		handle to the entity to remove the component from.
 	@param	componentID			the runtime ID identifying the component class.
 	@return						true on successful removal, false otherwise. */
-	bool removeEntityComponent(const EntityHandle& entityHandle, const ComponentID& componentID) noexcept;
+	bool removeEntityComponent(const EntityHandle& entityHandle, const ComponentID& componentID);
 
 
 	////////////////////////////
@@ -71,7 +71,7 @@ public:
 	/** Try to find an entity matching the UUID provided.
 	@param	UUID				the target entity's UUID.
 	@return						pointer to the found entity on success, nullptr on failure. */
-	std::shared_ptr<ecsEntity> getEntity(const EntityHandle& UUID) const noexcept;
+	std::shared_ptr<ecsEntity> getEntity(const EntityHandle& UUID) const;
 	/** Try to find a list of entities matching the UUID's provided.
 	@param	UUIDs				list of target entity UUID's.
 	@return						list of pointers to the found entities. Dimensions may not match input list (nullptr's omitted). */
@@ -108,7 +108,7 @@ public:
 	/** Try to find a component matching the UUID provided.
 	@param	UUID				the target component's UUID.
 	@return						pointer to the found component on success, nullptr on failure. */
-	ecsBaseComponent* getComponent(const ComponentHandle& componentHandle) const noexcept;
+	ecsBaseComponent* getComponent(const ComponentHandle& componentHandle) const;
 	/** Retrieve the component from an entity matching the class specified.
 	@param	entityComponents	the array of entity component IDS.
 	@param	mem_array			the array of component data.
@@ -135,11 +135,11 @@ public:
 	void parentEntity(const EntityHandle& parentHandle, const EntityHandle& childHandle);
 	/** Strip a child entity of its parent.
 	@param	entityHandle		handle to the child entity, whom will be stripped of its parent. */
-	void unparentEntity(const EntityHandle& entityHandle) noexcept;
+	void unparentEntity(const EntityHandle& entityHandle);
 	/** Serialize a specific set of entities to a char vector.
 	@param	entityHandles		the set of entities identified by their handles to serialize.
 	@return						char vector containing serialized entity data. */
-	[[nodiscard]] std::vector<char> serializeEntities(const std::vector<EntityHandle>& entityHandles) const noexcept;
+	[[nodiscard]] std::vector<char> serializeEntities(const std::vector<EntityHandle>& entityHandles) const;
 	/** Serialize a specific set of entities to a char vector.
 	@param	entities			the set of specific entities to serialize.
 	@return						char vector containing serialized entity data. */
@@ -147,7 +147,7 @@ public:
 	/** Serialize a specific entity to a char vector.
 	@param	entityHandle		handle to the entity to serialize.
 	@return						char vector containing serialized entity data. */
-	[[nodiscard]] std::vector<char> serializeEntity(const EntityHandle& entityHandle) const noexcept;
+	[[nodiscard]] std::vector<char> serializeEntity(const EntityHandle& entityHandle) const;
 	/** Serialize a specific entity to a char vector.
 	@param	entity				the specific entity to serialize.
 	@return						char vector containing serialized entity data. */

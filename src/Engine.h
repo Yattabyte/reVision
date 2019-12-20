@@ -24,7 +24,7 @@
 #include "Utilities/GL/Window.h"
 
 
-constexpr char ENGINE_VERSION[] = "4.20.8";
+constexpr char ENGINE_VERSION[] = "4.20.9";
 struct GLFWwindow;
 
 /** The main game engine object. Encapsulates the entire engine state. */
@@ -40,29 +40,29 @@ public:
 
 	// Public (De)Constructors
 	/** Destroys the game engine. */
-	~Engine() noexcept;
+	~Engine();
 	/** Construct the game engine. */
-	Engine() noexcept;
+	Engine();
 
 
 public:
 	// Public Methods
 	/** Ticks the engine's overall simulation by a frame from the main thread. */
-	void tick() noexcept;
+	void tick();
 	/** Ticks the engine's overall simulation by a frame from a secondary thread.
 	@param	exitObject	object signaling when to close the thread. */
-	void tickThreaded(std::future<void> exitObject, GLFWwindow* const auxContext) noexcept;
+	void tickThreaded(std::future<void> exitObject, GLFWwindow* const auxContext);
 	/** Tells the engine to shut down. */
 	void shutDown() noexcept;
 	/** Set the input mode for the mouse, useful for changing between 2D and 3D views.
 	@param	mode		the new mouse input mode to use. */
-	void setMouseInputMode(const MouseInputMode& mode) noexcept;
+	void setMouseInputMode(const MouseInputMode& mode);
 	/** Switch the UI over to the main menu. */
 	void goToMainMenu() noexcept;
 	/** Switch the UI over to the game. */
-	void goToGame() noexcept;
+	void goToGame();
 	/** Switch the UI over to the level editor. */
-	void goToEditor() noexcept;
+	void goToEditor();
 
 
 	// Public Accessors
@@ -122,11 +122,11 @@ public:
 	// Static Methods
 	/** Retrieves the application's running directory.
 	@return					std::string of the absolute directory that this executable ran from */
-	static std::string Get_Current_Dir() noexcept;
+	static std::string Get_Current_Dir();
 	/** Check if a given file exists, relative to the application directory.
 	@param	name			the full file path
 	@return					true if the file exists, false otherwise */
-	static bool File_Exists(const std::string& name) noexcept;
+	static bool File_Exists(const std::string& name);
 
 
 private:
@@ -143,7 +143,7 @@ private:
 
 	// Private Methods
 	/** Print the engine boiler-plate text to the message manager. */
-	void printBoilerPlate() noexcept;
+	void printBoilerPlate();
 	/** Parse and process the engine's inputs. */
 	void processInputs();
 

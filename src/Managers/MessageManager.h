@@ -20,10 +20,10 @@ public:
 
 	// Public Methods
 	/** Prints a general statement into the console.
-	@param	input	std::string message to print */
-	void statement(const std::string& input) noexcept;
+	@param	input	std::string message to print. */
+	void statement(const std::string& input);
 	/** Prints a warning message into the console.
-	@param	input	std::string message to print */
+	@param	input	std::string message to print. */
 	void warning(const std::string& input);
 	/** Prints an error message into the console.
 	@param	input	the error message to be displayed. */

@@ -20,7 +20,7 @@ TextInput::TextInput(Engine& engine) :
 	addElement(m_label);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept {
+	addCallback((int)UI_Element::Interact::on_resize, [&]() {
 		m_label->setScale(getScale());
 		updateGeometry();
 		});
@@ -124,12 +124,12 @@ void TextInput::setText(const std::string& text)
 	m_label->setText(text);
 }
 
-std::string TextInput::getText() const noexcept 
+std::string TextInput::getText() const 
 {
 	return m_text;
 }
 
-void TextInput::setCaret(const size_t& index) noexcept 
+void TextInput::setCaret(const size_t& index) 
 {
 	m_caretIndex = (int)std::clamp<size_t>(index, 0, m_text.size());
 	updateGeometry();

@@ -1,7 +1,7 @@
 #include "Utilities/ActionState.h"
 
 
-ActionState::ActionState() noexcept
+ActionState::ActionState()
 {
 	for (unsigned int x = 0; x < (unsigned int)Action::ACTION_COUNT; ++x)
 		m_keyStates.insert({ Action(x),{ false, 0.0f } });

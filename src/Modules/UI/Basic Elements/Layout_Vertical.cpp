@@ -37,7 +37,7 @@ float Layout_Vertical::getSpacing() const noexcept
 	return m_spacing;
 }
 
-void Layout_Vertical::alignChildren() noexcept 
+void Layout_Vertical::alignChildren() 
 {
 	const float innerRectSize = m_scale.y;
 

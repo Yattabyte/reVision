@@ -45,7 +45,7 @@ Indirect_Technique::Indirect_Technique(Engine& engine, ShadowData& shadowData, C
 	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) noexcept { m_bounceSize = (GLuint)f; });
 }
 
-void Indirect_Technique::clearCache(const float&) 
+void Indirect_Technique::clearCache(const float&) noexcept
 {
 	m_frameData.lightBuffer.endReading();
 	m_frameData.viewInfo.clear();

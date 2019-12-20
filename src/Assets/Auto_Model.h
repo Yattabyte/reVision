@@ -36,7 +36,7 @@ public:
 	/** Construct the Auto_Model.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory). */
-	Auto_Model(Engine& engine, const std::string& filename) noexcept;
+	Auto_Model(Engine& engine, const std::string& filename);
 
 
 	// Public Methods

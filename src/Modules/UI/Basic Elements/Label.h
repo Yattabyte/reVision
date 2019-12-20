@@ -35,7 +35,7 @@ public:
 
 
 	// Public Interface Implementation
-	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) final;
 
 
 	// Public Methods
@@ -44,7 +44,7 @@ public:
 	void setText(const std::string& text);
 	/** Retrieve this label's text.
 	@return	the text this label uses. */
-	std::string getText() const noexcept;
+	std::string getText() const;
 	/** Set this label element's text scaling factor.
 	@param	text	the new scaling factor to use. */
 	void setTextScale(const float& textScale) noexcept;

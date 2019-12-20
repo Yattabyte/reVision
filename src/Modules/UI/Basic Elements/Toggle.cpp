@@ -23,14 +23,14 @@ Toggle::Toggle(Engine& engine, const bool& state) :
 	addElement(m_label);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_clicked, [&]() noexcept { setToggled(!m_toggledOn); });
-	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { updateGeometry(); });
+	addCallback((int)UI_Element::Interact::on_clicked, [&]() { setToggled(!m_toggledOn); });
+	addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
 
 	// Configure THIS element
 	setToggled(state);
 }
 
-void Toggle::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
+void Toggle::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
 {
 	// Update Colors
 	glm::vec4 color(0.75);
@@ -44,7 +44,7 @@ void Toggle::renderElement(const float& deltaTime, const glm::vec2& position, co
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void Toggle::userAction(ActionState& actionState) noexcept
+void Toggle::userAction(ActionState& actionState)
 {
 	if (actionState.isAction(ActionState::Action::UI_LEFT) == ActionState::State::PRESS)
 		setToggled(false);
@@ -54,12 +54,12 @@ void Toggle::userAction(ActionState& actionState) noexcept
 		setToggled(!m_toggledOn);
 }
 
-void Toggle::setText(const std::string& text) noexcept 
+void Toggle::setText(const std::string& text) 
 {
 	m_label->setText(text);
 }
 
-std::string Toggle::getText() const noexcept 
+std::string Toggle::getText() const 
 {
 	return m_label->getText();
 }
@@ -77,7 +77,7 @@ bool Toggle::isToggled() const noexcept
 	return m_toggledOn;
 }
 
-void Toggle::updateGeometry() noexcept
+void Toggle::updateGeometry()
 {
 	// Shorten the back panel by 50 units, and it is offset to the right by 50 units
 	m_backPanel->setPosition({ 50, 0 });

@@ -41,7 +41,7 @@ Scrollbar_V::Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& comp
 	m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { updateGeometry(); });
+	addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
 }
 
 void Scrollbar_V::mouseAction(const MouseEvent& mouseEvent) 
@@ -63,7 +63,7 @@ void Scrollbar_V::mouseAction(const MouseEvent& mouseEvent)
 	}
 }
 
-void Scrollbar_V::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept
+void Scrollbar_V::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Quit Early
 	if (!getVisible() || !m_shader->ready()) 
@@ -117,7 +117,7 @@ void Scrollbar_V::updateGeometry()
 	m_component->setScale(glm::vec2(m_scale.x - 12.5f, m_scale.y));
 }
 
-void Scrollbar_V::updateElementPosition() noexcept 
+void Scrollbar_V::updateElementPosition() 
 {
 	if (m_children.size() == 3) {
 		// Buttons

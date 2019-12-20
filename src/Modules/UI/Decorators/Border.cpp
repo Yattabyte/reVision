@@ -24,10 +24,10 @@ Border::Border(Engine& engine, const std::shared_ptr<UI_Element>& component) :
 	m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { updateGeometry(); });
+	addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
 }
 
-void Border::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
+void Border::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
 {
 	// Exit Early
 	if (!getVisible() || !m_shader->ready())
@@ -48,7 +48,7 @@ void Border::renderElement(const float& deltaTime, const glm::vec2& position, co
 	UI_Decorator::renderElement(deltaTime, position, newScale);
 }
 
-void Border::setBorderSize(const float& size) noexcept 
+void Border::setBorderSize(const float& size) 
 {
 	m_borderSize = size;
 	updateGeometry();

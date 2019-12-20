@@ -8,7 +8,7 @@
 #include "Utilities/IO/Mesh_IO.h"
 
 
-Engine::~Engine() noexcept
+Engine::~Engine()
 {
 	m_modulePhysics.deinitialize();
 	m_moduleUI.deinitialize();
@@ -22,7 +22,7 @@ Engine::~Engine() noexcept
 	m_messageManager.statement("Shutting down...");
 }
 
-Engine::Engine() noexcept :
+Engine::Engine() :
 	// Initialize engine-dependent members first
 	m_preferenceState(*this),
 	m_inputBindings(*this),
@@ -50,7 +50,7 @@ Engine::Engine() noexcept :
 	goToMainMenu();
 }
 
-void Engine::printBoilerPlate() noexcept
+void Engine::printBoilerPlate()
 {
 	m_messageManager.statement("+~-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-~\\");
 	m_messageManager.statement("  > reVision Engine:");
@@ -81,7 +81,7 @@ void Engine::printBoilerPlate() noexcept
 	m_messageManager.statement("+~-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-~/");
 }
 
-void Engine::tick() noexcept
+void Engine::tick()
 {
 	const float thisTime = GetSystemTime(), deltaTime = thisTime - m_lastTime;
 	m_lastTime = thisTime;
@@ -102,7 +102,7 @@ void Engine::tick() noexcept
 	m_window.swapBuffers();
 }
 
-void Engine::tickThreaded(std::future<void> exitObject, GLFWwindow* const auxContext) noexcept
+void Engine::tickThreaded(std::future<void> exitObject, GLFWwindow* const auxContext)
 {
 	Window::MakeCurrent(auxContext);
 
@@ -121,7 +121,7 @@ void Engine::shutDown() noexcept
 	m_window.close();
 }
 
-void Engine::setMouseInputMode(const MouseInputMode& mode) noexcept
+void Engine::setMouseInputMode(const MouseInputMode& mode)
 {
 	m_mouseInputMode = mode;
 	switch (mode) {
@@ -143,13 +143,13 @@ void Engine::goToMainMenu() noexcept
 	m_moduleStartScreen.showStartMenu();
 }
 
-void Engine::goToGame() noexcept
+void Engine::goToGame()
 {
 	m_engineState = Engine_State::in_game;
 	m_moduleGame.showGame();
 }
 
-void Engine::goToEditor() noexcept
+void Engine::goToEditor()
 {
 	m_engineState = Engine_State::in_editor;
 	m_moduleEditor.showEditor();
@@ -225,7 +225,7 @@ Physics_Module& Engine::getModule_Physics() noexcept
 	return m_modulePhysics; 
 }
 
-std::string Engine::Get_Current_Dir() noexcept
+std::string Engine::Get_Current_Dir()
 {
 	// Technique to return the running directory of the application
 	char cCurrentPath[FILENAME_MAX];
@@ -234,7 +234,7 @@ std::string Engine::Get_Current_Dir() noexcept
 	return std::string(cCurrentPath);
 }
 
-bool Engine::File_Exists(const std::string& name) noexcept
+bool Engine::File_Exists(const std::string& name)
 {
 	// Technique to return whether or not a given file or folder exists
 	struct stat buffer;

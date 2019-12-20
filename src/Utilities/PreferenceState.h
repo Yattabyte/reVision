@@ -19,7 +19,7 @@ public:
 	/** Construct the preference state.
 	@param	engine		reference to the engine to use. 
 	@param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
-	explicit PreferenceState(Engine& engine, const std::string& filename = "preferences") noexcept;
+	explicit PreferenceState(Engine& engine, const std::string& filename = "preferences");
 	/** Move a preference state. */
 	inline PreferenceState(PreferenceState&&) noexcept = default;
 	/** Copy a preference state. */
@@ -123,13 +123,13 @@ public:
 	@param	filename	the relative path to the preference file to load. */
 	void loadFile(const std::string& filename);
 	/** Saves the preference file to disk, using the same filename as when loaded. */
-	void save() noexcept;
+	void save();
 	/** Tries to update the container with the value associated with the target key. If key doesn't exist, creates the key-value pair from the value given.
 	@param	<T>			the value class type to cast to (auto-deduced).
 	@param	targetKey	the preference key to look up.
 	@param	container	the object to update. */
 	template <typename T>
-	inline void getOrSetValue(const Preference& targetKey, T& container) noexcept {
+	inline void getOrSetValue(const Preference& targetKey, T& container) {
 		if (m_preferences->ready()) {
 			const float value = m_preferences->getValue((unsigned int)targetKey);
 
@@ -145,7 +145,7 @@ public:
 	@param	targetKey	the preference key to set the value to.
 	@param	targetValue	the value to tie to the key supplied. */
 	template <typename T>
-	inline void setValue(const Preference& targetKey, const T& targetValue) noexcept {
+	inline void setValue(const Preference& targetKey, const T& targetValue) {
 		const float castValue = (float)targetValue;
 		if (m_preferences) {
 			m_preferences->setValue((unsigned int)targetKey, castValue);

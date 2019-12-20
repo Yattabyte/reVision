@@ -27,14 +27,14 @@ public:
 
 
 	// Public Interface Implementation
-	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
-	void mouseAction(const MouseEvent& mouseEvent) noexcept final;
-	void userAction(ActionState& actionState) noexcept final;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) final;
+	void mouseAction(const MouseEvent& mouseEvent) final;
+	void userAction(ActionState& actionState) final;
 
 	// Public Methods
 	/** Change the item this list_Horizontal is hovered over.
 	@param	newIndex		the new hover index to use. */
-	void setHoverIndex(const int& newIndex) noexcept;
+	void setHoverIndex(const int& newIndex);
 	/** Retrieve this list_Horizontal's hovered item index.
 	@return					this list_Horizontal's hovered index. */
 	int getHoverIndex() const noexcept;
@@ -56,13 +56,13 @@ public:
 	float getMargin() const noexcept;
 	/** Set the spacing distance between elements in this layout.
 	@param	spacing		the spacing distance between elements. */
-	void setSpacing(const float& spacing) noexcept;
+	void setSpacing(const float& spacing);
 	/** Retrieve the spacing distance between elements in this layout.
 	@return				the spacing distance between elements. */
 	float getSpacing() const noexcept;
 	/** Set the border size.
 	@param	size		the new border size to use. */
-	void setBorderSize(const float& size) noexcept;
+	void setBorderSize(const float& size);
 	/** Retrieve the border size.
 	@return				border size. */
 	float getBorderSize() const noexcept;
@@ -71,7 +71,7 @@ public:
 protected:
 	// Protected Methods
 	/** Update position of each child element. */
-	void alignChildren() noexcept;
+	void alignChildren();
 	/** Update the geometry of the selection box. */
 	void updateSelectionGeometry();
 

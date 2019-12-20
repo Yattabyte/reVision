@@ -18,7 +18,7 @@ void Transform_System::updateComponents(const float&, const std::vector<std::vec
 	}
 
 	// Compound the transforms of all parent-child entities
-	const std::function<void(const EntityHandle&)> transformHierarchy = [&](const EntityHandle& entityHandle) noexcept {
+	const std::function<void(const EntityHandle&)> transformHierarchy = [&](const EntityHandle& entityHandle) {
 		if (auto* entityTransform = m_world->getComponent<Transform_Component>(entityHandle)) {
 			for (const auto& childHandle : m_world->getEntityHandles(entityHandle)) {
 				if (auto* childTransform = m_world->getComponent<Transform_Component>(childHandle)) {

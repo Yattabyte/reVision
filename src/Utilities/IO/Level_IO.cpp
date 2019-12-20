@@ -6,17 +6,17 @@
 
 constexpr auto LevelPrefix = "\\Maps\\";
 
-inline static auto Get_Full_Path(const std::string& relativePath) noexcept
+inline static auto Get_Full_Path(const std::string& relativePath)
 {
 	return Engine::Get_Current_Dir() + LevelPrefix + relativePath;
 }
 
-bool Level_IO::Level_Exists(const std::string& relativePath) noexcept
+bool Level_IO::Level_Exists(const std::string& relativePath)
 {
 	return std::filesystem::exists(Get_Full_Path(relativePath));
 }
 
-bool Level_IO::Import_BMap(const std::string& relativePath, ecsWorld& world) noexcept
+bool Level_IO::Import_BMap(const std::string& relativePath, ecsWorld& world)
 {
 	// Try to get file first
 	const auto path = Get_Full_Path(relativePath);
@@ -32,7 +32,7 @@ bool Level_IO::Import_BMap(const std::string& relativePath, ecsWorld& world) noe
 	return true;
 }
 
-bool Level_IO::Export_BMap(const std::string& relativePath, const ecsWorld& world) noexcept
+bool Level_IO::Export_BMap(const std::string& relativePath, const ecsWorld& world)
 {
 	// Try to get file first
 	std::fstream mapFile(Get_Full_Path(relativePath), std::ios::binary | std::ios::out);

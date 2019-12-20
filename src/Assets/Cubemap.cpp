@@ -23,7 +23,7 @@ Cubemap::~Cubemap() noexcept
 		glDeleteTextures(1, &m_glTexID);	
 }
 
-Cubemap::Cubemap(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
+Cubemap::Cubemap(Engine& engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Cubemap::initialize()
 {

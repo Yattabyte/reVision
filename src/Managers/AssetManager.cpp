@@ -4,7 +4,7 @@
 #include <thread>
 
 
-Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& filename, const std::function<Shared_Asset(void)>& constructor, const bool& threaded) noexcept
+Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& filename, const std::function<Shared_Asset(void)>& constructor, const bool& threaded)
 {
 	// Find out if the asset already exists
 	std::shared_lock<std::shared_mutex> asset_read_guard(m_Mutex_Assets);
@@ -39,7 +39,7 @@ Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& 
 	return asset;
 }
 
-void AssetManager::beginWorkOrder() noexcept
+void AssetManager::beginWorkOrder()
 {
 	// Start reading work orders
 	std::unique_lock<std::shared_mutex> writeGuard(m_Mutex_Workorders);
@@ -55,14 +55,14 @@ void AssetManager::beginWorkOrder() noexcept
 	}
 }
 
-void AssetManager::submitNotifyee(const std::pair<std::shared_ptr<bool>, std::function<void()>>& callBack) noexcept
+void AssetManager::submitNotifyee(const std::pair<std::shared_ptr<bool>, std::function<void()>>& callBack)
 {
 	std::unique_lock<std::shared_mutex> writeGuard(m_mutexNofications);
 	m_notifyees.push_back(callBack);
 	m_changed = true;
 }
 
-void AssetManager::notifyObservers() noexcept
+void AssetManager::notifyObservers()
 {
 	std::vector<std::pair<std::shared_ptr<bool>, std::function<void()>>> copyNotifyees;
 	{
@@ -75,7 +75,7 @@ void AssetManager::notifyObservers() noexcept
 			pair.second();
 }
 
-bool AssetManager::readyToUse() noexcept
+bool AssetManager::readyToUse()
 {
 	{
 		std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Workorders);
@@ -93,7 +93,7 @@ bool AssetManager::readyToUse() noexcept
 	return true;
 }
 
-bool AssetManager::hasChanged() noexcept
+bool AssetManager::hasChanged()
 {
 	// Changes every time assets finalize, when this manager notifies the assets' observers.
 	std::shared_lock<std::shared_mutex> readGuard(m_mutexNofications);

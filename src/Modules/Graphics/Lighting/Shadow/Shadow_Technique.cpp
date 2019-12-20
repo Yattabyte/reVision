@@ -27,7 +27,7 @@ Shadow_Technique::Shadow_Technique(Engine& engine, std::vector<Camera*>& sceneCa
 	m_frameData.shadowSizeRCP = 1.0f / m_frameData.shadowSize;
 }
 
-void Shadow_Technique::clearCache(const float&) 
+void Shadow_Technique::clearCache(const float&) noexcept
 {
 	m_frameData.shadowsToUpdate.clear();
 }

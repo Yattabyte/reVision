@@ -52,10 +52,10 @@ public:
 	@param	newSize			the desired image size.
 	@param	importedData	the container holding the image data (gets updated with new data).
 	@param	resizePolicy	the resize policy to use, such as nearest neighbor or linear interpolation. */
-	static void Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, const Resize_Policy& resizePolicy = Resize_Policy::LINEAR) noexcept;
+	static void Resize_Image(const glm::ivec2 newSize, Image_Data& importedData, const Resize_Policy& resizePolicy = Resize_Policy::LINEAR);
 	/** Retrieve the plugin version.
 	@return					the plugin version. */
-	static std::string Get_Version() noexcept;
+	static std::string Get_Version();
 
 
 private:
@@ -63,7 +63,7 @@ private:
 	@param	engine			reference to the engine to use. 
 	@param	relativePath	the path to the file.
 	@return					the free image bitmap object. */
-	static FIBITMAP* Import_Bitmap(Engine& engine, const std::string& relativePath) noexcept;
+	static FIBITMAP* Import_Bitmap(Engine& engine, const std::string& relativePath);
 };
 
 #endif // IMAGE_IO_H

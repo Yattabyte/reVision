@@ -25,7 +25,7 @@ public:
 	inline ~LevelEditor_Module() noexcept = default;
 	/** Construct a game module.
 	@param	engine		reference to the engine to use. */
-	explicit LevelEditor_Module(Engine& engine) noexcept;
+	explicit LevelEditor_Module(Engine& engine);
 
 
 	// Public Interface Implementation
@@ -40,7 +40,7 @@ public:
 	/** Display the level editor. */
 	void showEditor();
 	/** Close the level editor, returning to the main menu. */
-	void exit() noexcept;
+	void exit();
 	/** Check if the editor has any unsaved changes.
 	@return					true if the level has unsaved changes, false otherwise. */
 	bool hasUnsavedChanges() const noexcept;
@@ -54,12 +54,12 @@ public:
 	@return					list of recently opened levels. */
 	std::deque<std::string> getRecentLevels() const;
 	/** Close the current level, starting a new one. */
-	void newLevel() noexcept;
+	void newLevel();
 	/** Open a specific level with the file name specified.
 	@param	name			the level name to open. */
 	void openLevel(const std::string& name);
 	/** Display the 'open level' dialogue for choosing a level.	*/
-	void openLevelDialogue() noexcept;
+	void openLevelDialogue();
 	/** Save the level with a specific name.
 	@param	name			the level name to save. */
 	void saveLevel(const std::string& name);
@@ -82,7 +82,7 @@ public:
 	/** De-select all level entities. */
 	void clearSelection();
 	/** Select all level entities. */
-	void selectAll() noexcept;
+	void selectAll();
 	/** Select a specific set of entities.
 	@param	handles			the new set of entity handles to make selected. */
 	void setSelection(const std::vector<EntityHandle>& handles);
@@ -96,13 +96,13 @@ public:
 	/** Un-parent all selected entities from their common parent. */
 	void ungroupSelection();
 	/** Save the current set of selected entities into a prefab. */
-	void makePrefab() noexcept;
+	void makePrefab();
 	/** Delete the current selection and place it on the clipboard. */
-	void cutSelection() noexcept;
+	void cutSelection();
 	/** Copy the current selection to the clipboard. */
 	void copySelection();
 	/** Paste whatever is on the clipboard into the level. */
-	void paste() noexcept;
+	void paste();
 	/** Delete the currently selected entities from the level. */
 	void deleteSelection();
 	/** Add a new blank component to an entity given its handle and component name alone.

@@ -236,8 +236,8 @@ void SaveDialogue::tickMainDialogue()
 
 void SaveDialogue::tryToSave(const std::string& chosenName)
 {
-	constexpr const auto compareNCase = [](const std::string& str1, const std::string& str2) noexcept {
-		return ((str1.size() == str2.size()) && std::equal(str1.cbegin(), str1.cend(), str2.cbegin(), [](const char& c1, const char& c2) noexcept {
+	constexpr const auto compareNCase = [](const std::string& str1, const std::string& str2) {
+		return ((str1.size() == str2.size()) && std::equal(str1.cbegin(), str1.cend(), str2.cbegin(), [](const char& c1, const char& c2) {
 			return std::toupper(c1) == std::toupper(c2);
 			}));
 	};

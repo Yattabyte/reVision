@@ -33,7 +33,7 @@ void Physics_Module::frameTick(ecsWorld& world, const float& deltaTime)
 	updateSystems(world, deltaTime);
 }
 
-void Physics_Module::updateSystems(ecsWorld& world, const float& deltaTime) noexcept
+void Physics_Module::updateSystems(ecsWorld& world, const float& deltaTime)
 {
 	world.updateSystems(m_physicsSystems, deltaTime);
 }

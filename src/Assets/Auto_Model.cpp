@@ -31,7 +31,7 @@ Auto_Model::~Auto_Model() noexcept
 		glDeleteBuffers(1, &m_vboID);
 }
 
-Auto_Model::Auto_Model(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename)
+Auto_Model::Auto_Model(Engine& engine, const std::string& filename) : Asset(engine, filename)
 {
 	glCreateVertexArrays(1, &m_vaoID);
 	glEnableVertexArrayAttrib(m_vaoID, 0);

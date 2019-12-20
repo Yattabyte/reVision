@@ -38,7 +38,7 @@ Label::Label(Engine& engine, const std::string& text) :
 	setTextScale(m_textScale);
 }
 
-void Label::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
+void Label::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
 {
 	// Exit Early
 	if (!getVisible() || !Asset::All_Ready(m_shader, m_textureFont)) 
@@ -87,7 +87,7 @@ void Label::setText(const std::string& text)
 	enactCallback((int)Label::Interact::on_textChanged);
 }
 
-std::string Label::getText() const noexcept 
+std::string Label::getText() const 
 {
 	return m_text;
 }

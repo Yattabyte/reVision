@@ -6,7 +6,7 @@
 #include <sstream>
 
 
-ecsWorld::~ecsWorld() noexcept
+ecsWorld::~ecsWorld()
 {
 	clear();
 }
@@ -15,7 +15,7 @@ ecsWorld::ecsWorld() noexcept
 {
 }
 
-ecsWorld::ecsWorld(const std::vector<char>& data) noexcept
+ecsWorld::ecsWorld(const std::vector<char>& data)
 {
 	if (!data.empty()) {
 		size_t dataRead(0ULL);
@@ -50,7 +50,7 @@ EntityHandle ecsWorld::makeEntity(const ecsBaseComponent* const* const component
 	return finalHandle;
 }
 
-void ecsWorld::makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* const component, ComponentHandle& UUID) noexcept
+void ecsWorld::makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* const component, ComponentHandle& UUID)
 {
 	makeComponent(entityHandle, component->m_runtimeID, component, UUID);
 }
@@ -107,7 +107,7 @@ bool ecsWorld::removeComponent(const ComponentHandle& componentHandle) noexcept
 	return false;
 }
 
-bool ecsWorld::removeEntityComponent(const EntityHandle& entityHandle, const ComponentID& componentID) noexcept
+bool ecsWorld::removeEntityComponent(const EntityHandle& entityHandle, const ComponentID& componentID)
 {
 	// Check if entity handle is valid
 	if (const auto entity = getEntity(entityHandle)) {
@@ -133,9 +133,9 @@ bool ecsWorld::removeEntityComponent(const EntityHandle& entityHandle, const Com
 /// PUBLIC GET FUNCTIONS ///
 ////////////////////////////
 
-std::shared_ptr<ecsEntity> ecsWorld::getEntity(const EntityHandle& UUID) const noexcept
+std::shared_ptr<ecsEntity> ecsWorld::getEntity(const EntityHandle& UUID) const
 {
-	std::function<std::shared_ptr<ecsEntity>(const EntityHandle&, const EntityMap&)> find_entity = [&](const EntityHandle& UUID, const EntityMap& entities) noexcept -> std::shared_ptr<ecsEntity> {
+	std::function<std::shared_ptr<ecsEntity>(const EntityHandle&, const EntityMap&)> find_entity = [&](const EntityHandle& UUID, const EntityMap& entities) -> std::shared_ptr<ecsEntity> {
 		// First try to find in main map using built-in algorithm
 		const auto pos = entities.find(UUID);
 		if (pos != entities.end())
@@ -177,9 +177,9 @@ ecsBaseComponent* ecsWorld::getComponent(const EntityHandle& entityHandle, const
 	return nullptr;
 }
 
-ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle) const noexcept
+ecsBaseComponent* ecsWorld::getComponent(const ComponentHandle& componentHandle) const
 {
-	std::function<ecsBaseComponent * (const EntityMap&, const ComponentHandle&)> find_component = [&](const EntityMap& entities, const ComponentHandle& componentHandle) noexcept -> ecsBaseComponent* {
+	std::function<ecsBaseComponent * (const EntityMap&, const ComponentHandle&)> find_component = [&](const EntityMap& entities, const ComponentHandle& componentHandle) -> ecsBaseComponent* {
 		// Search all entities in the list supplied
 		for (const auto& [entityHandle, entity] : entities) {
 			// Check if this entity contains the component handle
@@ -307,7 +307,7 @@ void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle
 	}
 }
 
-void ecsWorld::unparentEntity(const EntityHandle& entityHandle) noexcept
+void ecsWorld::unparentEntity(const EntityHandle& entityHandle)
 {
 	// Move entity up tree, making it a child of its old parent's parent
 	if (entityHandle.isValid())
@@ -351,7 +351,7 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 	}
 }
 
-std::vector<char> ecsWorld::serializeEntities(const std::vector<EntityHandle>& entityHandles) const noexcept
+std::vector<char> ecsWorld::serializeEntities(const std::vector<EntityHandle>& entityHandles) const
 {
 	return serializeEntities(getEntities(entityHandles));
 }
@@ -368,7 +368,7 @@ std::vector<char> ecsWorld::serializeEntities(const std::vector<std::shared_ptr<
 	return data;
 }
 
-std::vector<char> ecsWorld::serializeEntity(const EntityHandle& entityHandle) const noexcept
+std::vector<char> ecsWorld::serializeEntity(const EntityHandle& entityHandle) const
 {
 	if (const auto entity = getEntity(entityHandle))
 		return serializeEntity(*entity);

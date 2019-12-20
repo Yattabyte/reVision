@@ -12,7 +12,7 @@ ecsHandle::ecsHandle(const ecsHandle& other) noexcept
 	std::copy(&other.m_uuid[0], &other.m_uuid[32], &m_uuid[0]);
 }
 
-ecsHandle::ecsHandle(ecsHandle&& other) noexcept
+ecsHandle::ecsHandle(ecsHandle&& other)
 {
 	std::move(std::begin(other.m_uuid), std::end(other.m_uuid), m_uuid);
 }

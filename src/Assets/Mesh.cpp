@@ -16,7 +16,7 @@ Shared_Mesh::Shared_Mesh(Engine& engine, const std::string& filename, const bool
 	swap(newAsset);
 }
 
-Mesh::Mesh(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
+Mesh::Mesh(Engine& engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Mesh::initialize()
 {

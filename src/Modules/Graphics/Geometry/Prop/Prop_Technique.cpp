@@ -20,7 +20,7 @@ Prop_Technique::Prop_Technique(Engine& engine, std::vector<Camera*>& sceneCamera
 	m_auxilliarySystems.makeSystem<PropSync_System>(m_frameData);
 }
 
-void Prop_Technique::clearCache(const float&) 
+void Prop_Technique::clearCache(const float&) noexcept
 {
 	m_frameData.modelBuffer.endReading();
 	m_frameData.skeletonBuffer.endReading();
@@ -217,7 +217,7 @@ void Prop_Technique::cullShadows(const float&, const std::vector<std::pair<int, 
 	}
 }
 
-void Prop_Technique::renderShadows(const float&) 
+void Prop_Technique::renderShadows(const float&) noexcept
 {
 	// Exit Early
 	if (m_enabled && Asset::All_Ready(m_shapeCube, m_shaderShadowCull, m_shaderShadowGeometry)) {

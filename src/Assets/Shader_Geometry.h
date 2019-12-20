@@ -37,7 +37,7 @@ public:
 	/** Construct the Shader.
 	@param	engine			reference to the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Shader_Geometry(Engine& engine, const std::string& filename) noexcept;
+	Shader_Geometry(Engine& engine, const std::string& filename);
 
 
 	// Public Attributes

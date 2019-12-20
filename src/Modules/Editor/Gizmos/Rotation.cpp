@@ -260,9 +260,9 @@ bool Rotation_Gizmo::checkMousePress()
 			glm::quat m_oldRotation, m_newRotation;
 			const unsigned int m_axis = NONE;
 			const std::vector<EntityHandle> m_uuids;
-			Rotate_Selection_Command(Engine& engine, LevelEditor_Module& editor, glm::quat& oldRotation, const glm::quat& newRotation, const unsigned int& axis) noexcept
+			Rotate_Selection_Command(Engine& engine, LevelEditor_Module& editor, glm::quat& oldRotation, const glm::quat& newRotation, const unsigned int& axis)
 				: m_engine(engine), m_editor(editor), m_startingOrientation(oldRotation),  m_oldRotation(oldRotation), m_newRotation(newRotation), m_axis(axis), m_uuids(m_editor.getSelection()) {}
-			void rotate(const glm::quat& rotation) noexcept {
+			void rotate(const glm::quat& rotation) {
 				const auto& ecsWorld = m_editor.getWorld();
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
@@ -281,15 +281,15 @@ bool Rotation_Gizmo::checkMousePress()
 					transform->m_localTransform.update();
 				}
 			}
-			void execute() noexcept final {
+			void execute() final {
 				rotate(m_newRotation * glm::inverse(m_oldRotation));
 				m_startingOrientation = m_newRotation;
 			}
-			void undo() noexcept final {
+			void undo() final {
 				rotate(glm::inverse(m_newRotation) * m_oldRotation);
 				m_startingOrientation = m_oldRotation;
 			}
-			bool join(Editor_Command* other) noexcept final {
+			bool join(Editor_Command* other) final {
 				if (const auto& newCommand = dynamic_cast<Rotate_Selection_Command*>(other)) {
 					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 						m_newRotation = newCommand->m_newRotation;

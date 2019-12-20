@@ -14,7 +14,7 @@ Shared_Image::Shared_Image(Engine& engine, const std::string& filename, const st
 	swap(newAsset);
 }
 
-Image::Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize) noexcept : Asset(engine, filename), m_policyFill(policyFill), m_policyResize(policyResize)
+Image::Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize) : Asset(engine, filename), m_policyFill(policyFill), m_policyResize(policyResize)
 {
 	if (specificSize)
 		m_size = specificSize.value();

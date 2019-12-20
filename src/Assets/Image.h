@@ -41,7 +41,7 @@ public:
 	@param	specificSize	an optional size to force the image to.
 	@param	policyFill		the pixel fill policy.
 	@param	policyResize	the image resize policy. */
-	Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize) noexcept;
+	Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize);
 
 
 	// Public Attributes

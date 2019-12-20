@@ -36,7 +36,7 @@ void InputBinding::loadFile(const std::string& filename)
 	defaultBind(ActionState::Action::UI_ESCAPE, KeyboardEvent::Key::ESCAPE);
 }
 
-void InputBinding::save() noexcept
+void InputBinding::save()
 {
 	if (m_config->ready())
 		m_config->saveConfig();

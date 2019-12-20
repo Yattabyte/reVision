@@ -47,12 +47,12 @@ struct ShaderObj {
 	@param	engine				the active engine to use.
 	@param	filePath			the relative path to the file to read.
 	@return						true on success, false otherwise. */
-	bool loadDocument(Engine& engine, const std::string& filePath) noexcept;
+	bool loadDocument(Engine& engine, const std::string& filePath);
 	/** Create an OpenGL shader object from this class, using the document string loaded.
 	@param	engine				the active engine to use.
 	@param	filename			the shader file name (for reporting purposes).
 	@return						true on success, false otherwise. */
-	bool createGLShader(Engine& engine, const std::string& filename) noexcept;
+	bool createGLShader(Engine& engine, const std::string& filename);
 
 
 	// Attributes
@@ -74,7 +74,7 @@ public:
 	/** Construct the Shader.
 	@param	engine				reference to the engine to use. 
 	@param	filename			the asset file name (relative to engine directory). */
-	Shader(Engine& engine, const std::string& filename) noexcept;
+	Shader(Engine& engine, const std::string& filename);
 
 
 public:
@@ -108,29 +108,29 @@ public:
 	inline void setUniform(const GLuint& i, const double* o) noexcept { glProgramUniform1dv(m_glProgramID, i, 1, o); }
 	inline void setUniform(const GLuint& i, const float* o) noexcept { glProgramUniform1fv(m_glProgramID, i, 1, o); }
 	inline void setUniform(const GLuint& i, const GLuint64* o) noexcept { glProgramUniformHandleui64ARB(m_glProgramID, i, *o); }
-	inline void setUniform(const GLuint& i, const glm::vec2* o) noexcept { glProgramUniform2fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
-	inline void setUniform(const GLuint& i, const glm::vec3* o) noexcept { glProgramUniform3fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
-	inline void setUniform(const GLuint& i, const glm::vec4* o) noexcept { glProgramUniform4fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
-	inline void setUniform(const GLuint& i, const glm::mat3* o) noexcept { glProgramUniformMatrix3fv(m_glProgramID, i, 1, GL_FALSE, glm::value_ptr(*o)); }
-	inline void setUniform(const GLuint& i, const glm::mat4* o) noexcept { glProgramUniformMatrix4fv(m_glProgramID, i, 1, GL_FALSE, glm::value_ptr(*o)); }
+	inline void setUniform(const GLuint& i, const glm::vec2* o) { glProgramUniform2fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
+	inline void setUniform(const GLuint& i, const glm::vec3* o) { glProgramUniform3fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
+	inline void setUniform(const GLuint& i, const glm::vec4* o) { glProgramUniform4fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
+	inline void setUniform(const GLuint& i, const glm::mat3* o) { glProgramUniformMatrix3fv(m_glProgramID, i, 1, GL_FALSE, glm::value_ptr(*o)); }
+	inline void setUniform(const GLuint& i, const glm::mat4* o) { glProgramUniformMatrix4fv(m_glProgramID, i, 1, GL_FALSE, glm::value_ptr(*o)); }
 	inline void setUniformArray(const GLuint& i, const int& o, const int& count) noexcept { glProgramUniform1iv(m_glProgramID, i, count, &o); }
 	inline void setUniformArray(const GLuint& i, const unsigned int& o, const int& count) noexcept { glProgramUniform1uiv(m_glProgramID, i, count, &o); }
 	inline void setUniformArray(const GLuint& i, const double& o, const int& count) noexcept { glProgramUniform1dv(m_glProgramID, i, count, &o); }
 	inline void setUniformArray(const GLuint& i, const float& o, const int& count) noexcept { glProgramUniform1fv(m_glProgramID, i, count, &o); }
 	inline void setUniformArray(const GLuint& i, const GLuint64& o, const int& count) noexcept { glProgramUniformHandleui64vARB(m_glProgramID, i, count, &o); }
-	inline void setUniformArray(const GLuint& i, const glm::vec2& o, const int& count) noexcept { glProgramUniform2fv(m_glProgramID, i, count, glm::value_ptr(o)); }
-	inline void setUniformArray(const GLuint& i, const glm::vec3& o, const int& count) noexcept { glProgramUniform3fv(m_glProgramID, i, count, glm::value_ptr(o)); }
-	inline void setUniformArray(const GLuint& i, const glm::vec4& o, const int& count) noexcept { glProgramUniform4fv(m_glProgramID, i, count, glm::value_ptr(o)); }
-	inline void setUniformArray(const GLuint& i, const glm::mat4& o, const int& count) noexcept { glProgramUniformMatrix4fv(m_glProgramID, i, count, GL_FALSE, glm::value_ptr(o)); }
+	inline void setUniformArray(const GLuint& i, const glm::vec2& o, const int& count) { glProgramUniform2fv(m_glProgramID, i, count, glm::value_ptr(o)); }
+	inline void setUniformArray(const GLuint& i, const glm::vec3& o, const int& count) { glProgramUniform3fv(m_glProgramID, i, count, glm::value_ptr(o)); }
+	inline void setUniformArray(const GLuint& i, const glm::vec4& o, const int& count) { glProgramUniform4fv(m_glProgramID, i, count, glm::value_ptr(o)); }
+	inline void setUniformArray(const GLuint& i, const glm::mat4& o, const int& count) { glProgramUniformMatrix4fv(m_glProgramID, i, count, GL_FALSE, glm::value_ptr(o)); }
 	inline void setUniformArray(const GLuint& i, const int* o, const int& count) noexcept { glProgramUniform1iv(m_glProgramID, i, count, o); }
 	inline void setUniformArray(const GLuint& i, const unsigned int* o, const int& count) noexcept { glProgramUniform1uiv(m_glProgramID, i, count, o); }
 	inline void setUniformArray(const GLuint& i, const double* o, const int& count) noexcept { glProgramUniform1dv(m_glProgramID, i, count, o); }
 	inline void setUniformArray(const GLuint& i, const float* o, const int& count) noexcept { glProgramUniform1fv(m_glProgramID, i, count, o); }
 	inline void setUniformArray(const GLuint& i, const GLuint64* o, const int& count) noexcept { glProgramUniformHandleui64vARB(m_glProgramID, i, count, o); }
-	inline void setUniformArray(const GLuint& i, const glm::vec2* o, const int& count) noexcept { glProgramUniform2fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
-	inline void setUniformArray(const GLuint& i, const glm::vec3* o, const int& count) noexcept { glProgramUniform3fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
-	inline void setUniformArray(const GLuint& i, const glm::vec4* o, const int& count) noexcept { glProgramUniform4fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
-	inline void setUniformArray(const GLuint& i, const glm::mat4* o, const int& count) noexcept { glProgramUniformMatrix4fv(m_glProgramID, i, count, GL_FALSE, glm::value_ptr(*o)); }
+	inline void setUniformArray(const GLuint& i, const glm::vec2* o, const int& count) { glProgramUniform2fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
+	inline void setUniformArray(const GLuint& i, const glm::vec3* o, const int& count) { glProgramUniform3fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
+	inline void setUniformArray(const GLuint& i, const glm::vec4* o, const int& count) { glProgramUniform4fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
+	inline void setUniformArray(const GLuint& i, const glm::mat4* o, const int& count) { glProgramUniformMatrix4fv(m_glProgramID, i, count, GL_FALSE, glm::value_ptr(*o)); }
 	inline void setUniformMatrixArray(const GLuint& i, const float* o, const int& count, const GLboolean& transpose) noexcept { glProgramUniformMatrix4fv(m_glProgramID, i, count, transpose, o); }
 
 

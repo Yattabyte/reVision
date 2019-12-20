@@ -27,17 +27,17 @@ public:
 
 
 	// Public Interface Implementation
-	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
-	void userAction(ActionState& actionState) noexcept final;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) final;
+	void userAction(ActionState& actionState) final;
 
 
 	// Public Methods
 	/** Set this slider's text.
 	@param	text	the text to use. */
-	void setText(const std::string& text) noexcept;
+	void setText(const std::string& text);
 	/** Retrieve this slider's text.
 	@return			the text this label uses. */
-	std::string getText() const noexcept;
+	std::string getText() const;
 	/** Set the toggle state of this button.
 	@param	state	the new state to use. */
 	void setToggled(const bool& state);
@@ -49,7 +49,7 @@ public:
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */
-	void updateGeometry() noexcept;
+	void updateGeometry();
 
 
 	// Protected Attributes

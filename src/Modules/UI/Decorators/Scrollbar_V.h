@@ -27,7 +27,7 @@ public:
 
 	// Public Interface Implementation
 	void mouseAction(const MouseEvent& mouseEvent) final;
-	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept final;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) final;
 
 
 	// Public Methods
@@ -44,7 +44,7 @@ protected:
 	/** Update the data dependant on the scale of this element. */
 	void updateGeometry();
 	/** Update the position of all scrollbar elements. */
-	void updateElementPosition() noexcept;
+	void updateElementPosition();
 
 
 	// Protected Attributes

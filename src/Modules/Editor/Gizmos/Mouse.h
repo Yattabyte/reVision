@@ -34,7 +34,7 @@ public:
 	// Public Methods
 	/** Tick this gizmo, checking for input and rendering.
 	@param	deltaTime		the amount of time since the last frame. */
-	void frameTick(const float& deltaTime) noexcept;
+	void frameTick(const float& deltaTime);
 	/** Check for user input.
 	@param	deltaTime		the amount of time since the last frame. */
 	bool checkInput(const float& deltaTime);

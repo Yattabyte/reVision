@@ -19,18 +19,18 @@ public:
 	@param	screenPosition	the offset relative to the bottom left of the screen.
 	@param	dimensions		the size of the viewport.
 	@param	engine			reference to the engine to use. */
-	Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions, Engine& engine) noexcept;
+	Viewport(const glm::ivec2& screenPosition, const glm::ivec2& dimensions, Engine& engine);
 
 
 	// Public Methods
 	/** Change the size of this viewport.
 	@param	size			the new size to use.
 	@param	layerFaces		the number of layer faces to use. */
-	void resize(const glm::ivec2& size, const int& layerFaces) noexcept;
+	void resize(const glm::ivec2& size, const int& layerFaces);
 	/** Bind this viewport. */
 	void bind() noexcept;
 	/** Clear the data held by this viewport, such as it's frame-buffers. */
-	void clear() noexcept;
+	void clear();
 
 
 	// Public Attributes

@@ -37,7 +37,7 @@ float Layout_Horizontal::getSpacing() const noexcept
 	return m_spacing;
 }
 
-void Layout_Horizontal::alignChildren() noexcept
+void Layout_Horizontal::alignChildren()
 {
 	const float innerRectSize = m_scale.x;
 

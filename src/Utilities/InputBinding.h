@@ -29,7 +29,7 @@ public:
 	@param	filename	the relative path to the bindings file to load. */
 	void loadFile(const std::string& filename);
 	/** Saves the preference file to disk, using the same filename as when loaded. */
-	void save() noexcept;
+	void save();
 	/** Retrieve the key-bindings.
 	@return	the configuration asset used. */
 	Shared_Config getBindings() const noexcept;

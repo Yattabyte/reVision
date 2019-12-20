@@ -24,13 +24,13 @@ Slider::Slider(Engine& engine, const float& value, const glm::vec2& range) :
 	addElement(m_label);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { updateGeometry(); });
+	addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
 
 	// Configure THIS element
 	setValue(value);
 }
 
-void Slider::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
+void Slider::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
 {
 	// Update Colors
 	glm::vec4 color(0.75);
@@ -44,7 +44,7 @@ void Slider::renderElement(const float& deltaTime, const glm::vec2& position, co
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void Slider::mouseAction(const MouseEvent& mouseEvent) noexcept 
+void Slider::mouseAction(const MouseEvent& mouseEvent) 
 {
 	UI_Element::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -55,7 +55,7 @@ void Slider::mouseAction(const MouseEvent& mouseEvent) noexcept
 	}
 }
 
-void Slider::userAction(ActionState& actionState) noexcept 
+void Slider::userAction(ActionState& actionState) 
 {
 	const float offsetAmount = std::min<float>((m_upperRange - m_lowerRange) / 100.0f, 1.0f);
 	if (actionState.isAction(ActionState::Action::UI_LEFT) == ActionState::State::PRESS)
@@ -77,7 +77,7 @@ float Slider::getValue() const noexcept
 	return m_value;
 }
 
-void Slider::setRanges(const float& lowerRange, const float& upperRange) noexcept 
+void Slider::setRanges(const float& lowerRange, const float& upperRange) 
 {
 	m_lowerRange = lowerRange;
 	m_upperRange = upperRange;
@@ -87,7 +87,7 @@ void Slider::setRanges(const float& lowerRange, const float& upperRange) noexcep
 	updatePaddle();
 }
 
-void Slider::setText(const std::string& text) noexcept 
+void Slider::setText(const std::string& text) 
 {
 	m_label->setText(text);
 }
@@ -97,7 +97,7 @@ std::string Slider::getText() const noexcept
 	return m_label->getText();
 }
 
-void Slider::updateGeometry() noexcept
+void Slider::updateGeometry()
 {
 	// Shorten the back panel by 50 units, and it is offset to the right by 50 units
 	m_backPanel->setPosition({ 50, 0 });
@@ -109,7 +109,7 @@ void Slider::updateGeometry() noexcept
 	updatePaddle();
 }
 
-void Slider::updatePaddle() noexcept
+void Slider::updatePaddle()
 {
 	if (m_paddle) {
 		// The paddle fills a 6th of the back panel, or 10 pixels, whichever is bigger

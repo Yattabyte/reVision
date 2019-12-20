@@ -23,16 +23,16 @@ List::List(Engine& engine) :
 	glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), nullptr, GL_DYNAMIC_STORAGE_BIT);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept {
+	addCallback((int)UI_Element::Interact::on_resize, [&]() {
 		alignChildren();
 		updateSelectionGeometry();
 		});
-	addCallback((int)UI_Element::Interact::on_childrenChange, [&]() noexcept {
+	addCallback((int)UI_Element::Interact::on_childrenChange, [&]() {
 		alignChildren();
 		});
 }
 
-void List::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
+void List::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
 {
 	// Exit Early
 	if (!getVisible() || !m_children.size() || !m_shader->ready())
@@ -63,7 +63,7 @@ void List::renderElement(const float& deltaTime, const glm::vec2& position, cons
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void List::mouseAction(const MouseEvent& mouseEvent) noexcept 
+void List::mouseAction(const MouseEvent& mouseEvent) 
 {
 	UI_Element::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -89,7 +89,7 @@ void List::mouseAction(const MouseEvent& mouseEvent) noexcept
 	}
 }
 
-void List::userAction(ActionState& actionState) noexcept 
+void List::userAction(ActionState& actionState) 
 {
 	// User can go up or down the list with an input device
 	// User input wraps around, and if an item is selected, moving will deselect it
@@ -118,7 +118,7 @@ void List::userAction(ActionState& actionState) noexcept
 	}
 }
 
-void List::setHoverIndex(const int& newIndex) noexcept 
+void List::setHoverIndex(const int& newIndex) 
 {
 	m_hoverIndex = newIndex;
 	if (m_children.size()) {
@@ -164,7 +164,7 @@ float List::getMargin() const noexcept
 	return m_margin;
 }
 
-void List::setSpacing(const float& spacing) noexcept 
+void List::setSpacing(const float& spacing) 
 {
 	m_spacing = spacing;
 	alignChildren();
@@ -176,7 +176,7 @@ float List::getSpacing() const noexcept
 	return m_spacing;
 }
 
-void List::setBorderSize(const float& size) noexcept 
+void List::setBorderSize(const float& size) 
 {
 	m_borderSize = size;
 	updateSelectionGeometry();
@@ -187,7 +187,7 @@ float List::getBorderSize() const noexcept
 	return m_borderSize;
 }
 
-void List::alignChildren() noexcept 
+void List::alignChildren() 
 {
 	float positionFromTop = m_scale.y - m_margin;
 	const auto childrenCount = m_children.size();

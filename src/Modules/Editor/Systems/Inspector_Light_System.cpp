@@ -39,7 +39,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
 				std::vector<Light_Component::Light_Type> m_oldData, m_newData;
-				Type_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const Light_Component::Light_Type& data) noexcept
+				Type_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const Light_Component::Light_Type& data)
 					: m_ecsWorld(world), m_uuids(uuids) {
 					for (const auto& componentHandle : m_uuids) {
 						if (const auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle)) {
@@ -62,7 +62,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				bool join(Editor_Command* other) noexcept final {
+				bool join(Editor_Command* other) final {
 					if (const auto& newCommand = dynamic_cast<Type_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
@@ -81,7 +81,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
 				std::vector<glm::vec3> m_oldData, m_newData;
-				Color_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::vec3& data) noexcept
+				Color_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::vec3& data)
 					: m_ecsWorld(world), m_uuids(uuids) {
 					for (const auto& componentHandle : m_uuids) {
 						if (const auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle)) {
@@ -104,7 +104,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				bool join(Editor_Command* other) noexcept final {
+				bool join(Editor_Command* other) final {
 					if (const auto& newCommand = dynamic_cast<Color_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
@@ -123,7 +123,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
 				std::vector<float> m_oldData, m_newData;
-				Intensity_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const float& data) noexcept
+				Intensity_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const float& data)
 					: m_ecsWorld(world), m_uuids(uuids) {
 					for (const auto& componentHandle : m_uuids) {
 						if (const auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle)) {
@@ -147,7 +147,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				bool join(Editor_Command* other) noexcept final {
+				bool join(Editor_Command* other) final {
 					if (const auto& newCommand = dynamic_cast<Intensity_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
@@ -166,7 +166,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
 				std::vector<float> m_oldData, m_newData;
-				Radius_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const float& data) noexcept
+				Radius_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const float& data)
 					: m_ecsWorld(world), m_uuids(uuids) {
 					for (const auto& componentHandle : m_uuids) {
 						if (const auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle)) {
@@ -190,7 +190,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				bool join(Editor_Command* other) noexcept final {
+				bool join(Editor_Command* other) final {
 					if (const auto& newCommand = dynamic_cast<Radius_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
@@ -209,7 +209,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
 				std::vector<float> m_oldData, m_newData;
-				Cutoff_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const float& data) noexcept
+				Cutoff_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const float& data)
 					: m_ecsWorld(world), m_uuids(uuids) {
 					for (const auto& componentHandle : m_uuids) {
 						if (const auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle)) {
@@ -233,7 +233,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				bool join(Editor_Command* other) noexcept final {
+				bool join(Editor_Command* other) final {
 					if (const auto& newCommand = dynamic_cast<Cutoff_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;

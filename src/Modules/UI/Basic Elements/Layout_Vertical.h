@@ -38,7 +38,7 @@ public:
 protected:
 	// Protected Methods
 	/** Rearrange the position and scale of children, to uniformly fit in this layout. */
-	void alignChildren() noexcept;
+	void alignChildren();
 
 
 	// Protected Attributes

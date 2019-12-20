@@ -10,8 +10,8 @@
 // Forward Declarations
 static bool RayProp(const Transform_Component& transformComponent, const Prop_Component& prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence);
 static bool RayCollider(const Collider_Component& collider, const void* const closestPhysicsShape, const float& closetstPhysicsHit, float& distanceFromScreen, int& confidence) noexcept;
-static bool RayBBox(const Transform_Component& transformComponent, const BoundingBox_Component& bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept;
-static bool RayBSphere(const Transform_Component& transformComponent, const BoundingSphere_Component& bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept;
+static bool RayBBox(const Transform_Component& transformComponent, const BoundingBox_Component& bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence);
+static bool RayBSphere(const Transform_Component& transformComponent, const BoundingSphere_Component& bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence);
 static bool RayOrigin(const Transform_Component& transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine);
 
 MousePicker_System::~MousePicker_System() noexcept 
@@ -186,7 +186,7 @@ static bool RayCollider(const Collider_Component& collider, const void* const cl
 @param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
 @param	confidence				reference updated with the confidence level for this function.
 @return							true on successful intersection, false if disjoint. */
-static bool RayBBox(const Transform_Component& transformComponent, const BoundingBox_Component& bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept
+static bool RayBBox(const Transform_Component& transformComponent, const BoundingBox_Component& bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence)
 {
 	float distance(FLT_MAX);
 	const auto& scale = transformComponent.m_worldTransform.m_scale;
@@ -213,7 +213,7 @@ static bool RayBBox(const Transform_Component& transformComponent, const Boundin
 @param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
 @param	confidence				reference updated with the confidence level for this function.
 @return							true on successful intersection, false if disjoint. */
-static bool RayBSphere(const Transform_Component& transformComponent, const BoundingSphere_Component& bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) noexcept
+static bool RayBSphere(const Transform_Component& transformComponent, const BoundingSphere_Component& bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence)
 {
 	// Check if the distance is closer than the last entity found, so we can find the 'best' selection
 	if (auto distance = RaySphereIntersection(ray_origin, ray_direction, transformComponent.m_worldTransform.m_position + bSphere.m_positionOffset, bSphere.m_radius); distance >= 0.0f) {

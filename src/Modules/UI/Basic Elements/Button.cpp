@@ -11,17 +11,17 @@ Button::Button(Engine& engine, const std::string& text) :
 	addElement(m_label);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { m_label->setScale(getScale()); });
+	addCallback((int)UI_Element::Interact::on_resize, [&]() { m_label->setScale(getScale()); });
 }
 
-void Button::userAction(ActionState& actionState) noexcept 
+void Button::userAction(ActionState& actionState) 
 {
 	// Only thing a user can do is press the button
 	if (actionState.isAction(ActionState::Action::UI_ENTER) == ActionState::State::PRESS)
 		pressButton();
 }
 
-void Button::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
+void Button::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
 {
 	// Update Colors
 	glm::vec4 color(0.75);
@@ -40,7 +40,7 @@ void Button::pressButton()
 	enactCallback((int)UI_Element::Interact::on_clicked);
 }
 
-void Button::setText(const std::string& text) noexcept 
+void Button::setText(const std::string& text) 
 {
 	m_label->setText(text);
 }

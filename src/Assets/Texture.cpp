@@ -22,9 +22,9 @@ Texture::~Texture() noexcept
 		glDeleteTextures(1, &m_glTexID);	
 }
 
-Texture::Texture(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
+Texture::Texture(Engine& engine, const std::string& filename) : Asset(engine, filename) {}
 
-Texture::Texture(Engine& engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy) noexcept :
+Texture::Texture(Engine& engine, const std::string& filename, const GLuint& type, const bool& mipmap, const bool& anisotropy) :
 	Asset(engine, filename),
 	m_type(type),
 	m_mipmap(mipmap),

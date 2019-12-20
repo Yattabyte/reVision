@@ -22,7 +22,7 @@ public:
 	/** Construct this system.
 	@param	engine			reference to the engine to use.
 	@param	frameData		reference to of common data that changes frame-to-frame. */
-	PropUpload_System(Engine& engine, PropData& frameData) noexcept;
+	PropUpload_System(Engine& engine, PropData& frameData);
 
 
 	// Public Interface Implementations

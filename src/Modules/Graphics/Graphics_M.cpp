@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 
-Graphics_Module::Graphics_Module(Engine& engine) noexcept : 
+Graphics_Module::Graphics_Module(Engine& engine) : 
 	Engine_Module(engine),	
 	m_viewport(glm::ivec2(0), m_renderSize, engine),
 	m_pipeline(m_engine, m_clientCamera)
@@ -45,7 +45,7 @@ void Graphics_Module::initialize()
 		});
 	float farPlane = 1000.0F;
 	preferences.getOrSetValue(PreferenceState::Preference::C_DRAW_DISTANCE, farPlane);
-	preferences.addCallback(PreferenceState::Preference::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float& f) noexcept {
+	preferences.addCallback(PreferenceState::Preference::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float& f) {
 		if (m_clientCamera->FarPlane != f) {
 			m_clientCamera->FarPlane = f;
 			genPerspectiveMatrix();
@@ -53,7 +53,7 @@ void Graphics_Module::initialize()
 		});
 	float fov = 90.0F;
 	preferences.getOrSetValue(PreferenceState::Preference::C_FOV, fov);
-	preferences.addCallback(PreferenceState::Preference::C_FOV, m_aliveIndicator, [&](const float& f) noexcept {
+	preferences.addCallback(PreferenceState::Preference::C_FOV, m_aliveIndicator, [&](const float& f) {
 		if (m_clientCamera->FOV != f) {
 			m_clientCamera->FOV = f;
 			genPerspectiveMatrix();
@@ -89,7 +89,7 @@ void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, const
 	copyToFramebuffer(fboID);
 }
 
-void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, Viewport& viewport, std::vector<Camera>& cameras) noexcept
+void Graphics_Module::renderWorld(ecsWorld& world, const float& deltaTime, Viewport& viewport, std::vector<Camera>& cameras)
 {
 	if (!cameras.empty()) {
 		// Prepare rendering pipeline for a new frame, wait for buffers to free

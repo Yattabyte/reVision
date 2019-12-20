@@ -26,7 +26,7 @@ struct VertexBoneData {
 };
 struct Material_Strings {
 	std::string albedo = "", normal = "", metalness = "", roughness = "", height = "", ao = "";
-	inline Material_Strings(const std::string& al = "albedo", const std::string& n = "normal", const std::string& m = "metalness", const std::string& r = "roughness", const std::string& h = "height", const std::string& a = "ao")  noexcept
+	inline Material_Strings(const std::string& al = "albedo", const std::string& n = "normal", const std::string& m = "metalness", const std::string& r = "roughness", const std::string& h = "height", const std::string& a = "ao")
 		: albedo(al), normal(n), metalness(m), roughness(r), height(h), ao(a) {}
 };
 template<typename T>
@@ -41,14 +41,14 @@ struct Node_Animation {
 	std::vector<Animation_Time_Key<glm::vec3>> scalingKeys;
 	std::vector<Animation_Time_Key<glm::quat>> rotationKeys;
 	std::vector<Animation_Time_Key<glm::vec3>> positionKeys;
-	inline Node_Animation(const std::string& name = "") noexcept : nodeName(name) {}
+	inline Node_Animation(const std::string& name = "") : nodeName(name) {}
 };
 struct Node {
 	std::string name = "";
 	glm::mat4 transformation = glm::mat4(1);
 	std::vector<Node> children;
 	inline Node() {};
-	inline Node(const std::string& n, const glm::mat4& t) noexcept : name(n), transformation(t) {}
+	inline Node(const std::string& n, const glm::mat4& t) : name(n), transformation(t) {}
 };
 struct Animation {
 	unsigned int numChannels = 0;
@@ -101,13 +101,13 @@ public:
 	@param	relativePath	the path to the file.
 	@param	importedData	reference to the container to place the imported data within.
 	@return					true on successful import, false otherwise (error reported to engine). */
-	static bool Import_Model(Engine& engine, const std::string& relativePath, Mesh_Geometry& importedData) noexcept;
+	static bool Import_Model(Engine& engine, const std::string& relativePath, Mesh_Geometry& importedData);
 	/** Retrieve the plugin version.
 	@return					the plugin version. */
-	static std::string Get_Version() noexcept;
+	static std::string Get_Version();
 	/** Retrieve a list of all supported model extensions.
 	@return					list of supported file types. */
-	static std::vector<std::string> Get_Supported_Types() noexcept;
+	static std::vector<std::string> Get_Supported_Types();
 };
 
 #endif // MESH_IO_H

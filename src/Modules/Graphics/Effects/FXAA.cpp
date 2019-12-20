@@ -20,7 +20,7 @@ FXAA::~FXAA() noexcept
 	preferences.addCallback(PreferenceState::Preference::C_FXAA, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = (bool)f; });
 }
  
-void FXAA::clearCache(const float&) 
+void FXAA::clearCache(const float&) noexcept
 {
 	m_drawIndex = 0;
 }

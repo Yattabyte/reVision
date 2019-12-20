@@ -35,7 +35,7 @@ public:
 	/** Construct the Sound.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory). */
-	Sound(Engine& engine, const std::string& filename) noexcept;
+	Sound(Engine& engine, const std::string& filename);
 
 
 	// Public Attributes

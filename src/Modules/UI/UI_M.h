@@ -48,21 +48,21 @@ public:
 	/** Propagates mouse movement input to all UI elements.
 	@param	xPos				the 'x' axis position of the mouse
 	@param	yPos				the 'y' axis position of the mouse. */
-	void applyCursorPos(const double& xPos, const double& yPos) noexcept;
+	void applyCursorPos(const double& xPos, const double& yPos);
 	/** Propagates mouse button input to all UI elements.
 	@param	button				the mouse button used
 	@param	action				the mouse button action (pressed, released, etc)
 	@param	mods				any mouse modifiers used. */
-	void applyCursorButton(const int& button, const int& action, const int& mods) noexcept;
+	void applyCursorButton(const int& button, const int& action, const int& mods);
 	/** Propagates keyboard character input to all UI elements.
 	@param	character			the character inputed. */
-	void applyChar(const unsigned int& character) noexcept;
+	void applyChar(const unsigned int& character);
 	/** Propagates keyboard key input to all UI elements.
 	@param	key					the keyboard key that was pressed or released.
 	@param	scan-code			the system-specific scan-code of the key.
 	@param	action				PRESS, RELEASE or REPEAT.
 	@param	mods				bit field describing which modifier keys were held down. */
-	void applyKey(const int& key, const int& scancode, const int& action, const int& mods) noexcept;
+	void applyKey(const int& key, const int& scancode, const int& action, const int& mods);
 	/** Apply an action state to the current focused UI element.
 	@param	actionState			the action state to apply. */
 	void applyActionState(ActionState& actionState) noexcept;

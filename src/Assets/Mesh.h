@@ -35,7 +35,7 @@ public:
 	/** Construct the Mesh.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory). */
-	Mesh(Engine& engine, const std::string& filename) noexcept;
+	Mesh(Engine& engine, const std::string& filename);
 
 
 	// Public Attributes

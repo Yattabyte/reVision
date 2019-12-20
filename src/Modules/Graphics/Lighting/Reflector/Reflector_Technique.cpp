@@ -48,7 +48,7 @@ Reflector_Technique::Reflector_Technique(Engine& engine, std::vector<Camera*>& s
 		});
 }
 
-void Reflector_Technique::clearCache(const float&) 
+void Reflector_Technique::clearCache(const float&) noexcept
 {
 	m_frameData.lightBuffer.endReading();
 	m_frameData.viewInfo.clear();

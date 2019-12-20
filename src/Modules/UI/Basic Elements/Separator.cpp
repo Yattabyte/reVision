@@ -33,7 +33,7 @@ Separator::Separator(Engine& engine) :
 	setMinHeight(2.0f);
 }
 
-void Separator::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
+void Separator::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
 {
 	// Exit Early
 	if (!getVisible() || !m_shader->ready())

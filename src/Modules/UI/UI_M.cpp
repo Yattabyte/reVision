@@ -21,13 +21,13 @@ void UI_Module::initialize()
 	m_projectionBuffer = StaticBuffer(sizeof(glm::mat4), nullptr, GL_DYNAMIC_STORAGE_BIT);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.x = (int)f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
 		for (auto element : m_rootElement)
 			element->setScale(m_renderSize);
 		});
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
 		for (auto element : m_rootElement)
@@ -101,7 +101,7 @@ void UI_Module::clear() noexcept
 	m_focusMap.reset();
 }
 
-void UI_Module::applyCursorPos(const double& xPos, const double& yPos) noexcept
+void UI_Module::applyCursorPos(const double& xPos, const double& yPos)
 {
 	m_mouseEvent.m_xPos = xPos;
 	m_mouseEvent.m_yPos = m_renderSize.y - yPos;
@@ -111,7 +111,7 @@ void UI_Module::applyCursorPos(const double& xPos, const double& yPos) noexcept
 		m_rootElement.back()->mouseAction(m_mouseEvent);
 }
 
-void UI_Module::applyCursorButton(const int& button, const int& action, const int& mods) noexcept
+void UI_Module::applyCursorButton(const int& button, const int& action, const int& mods)
 {
 	m_mouseEvent.m_button = MouseEvent::Key(button);
 	m_mouseEvent.m_action = MouseEvent::Action(action);
@@ -121,7 +121,7 @@ void UI_Module::applyCursorButton(const int& button, const int& action, const in
 		m_rootElement.back()->mouseAction(m_mouseEvent);
 }
 
-void UI_Module::applyChar(const unsigned int& character) noexcept
+void UI_Module::applyChar(const unsigned int& character)
 {
 	m_keyboardEvent.setChar(character);
 	if (!m_rootElement.empty())
@@ -129,7 +129,7 @@ void UI_Module::applyChar(const unsigned int& character) noexcept
 	m_keyboardEvent.setChar(0);
 }
 
-void UI_Module::applyKey(const int& key, const int& /*unused*/, const int& action, const int& /*unused*/) noexcept
+void UI_Module::applyKey(const int& key, const int& /*unused*/, const int& action, const int& /*unused*/)
 {
 	m_keyboardEvent.setState(KeyboardEvent::Key((unsigned int)key), KeyboardEvent::Action(action));
 	if (!m_rootElement.empty())

@@ -49,7 +49,7 @@ SideList::SideList(Engine& engine) :
 	setIndex(0);
 }
 
-void SideList::mouseAction(const MouseEvent& mouseEvent) noexcept 
+void SideList::mouseAction(const MouseEvent& mouseEvent) 
 {
 	UI_Element::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -83,7 +83,7 @@ void SideList::mouseAction(const MouseEvent& mouseEvent) noexcept
 	}
 }
 
-void SideList::userAction(ActionState& actionState) noexcept 
+void SideList::userAction(ActionState& actionState) 
 {
 	// User can only change selection by using the left/right directional key actions
 	if (actionState.isAction(ActionState::Action::UI_LEFT) == ActionState::State::PRESS)
@@ -92,7 +92,7 @@ void SideList::userAction(ActionState& actionState) noexcept
 		setIndex(m_index + 1);
 }
 
-void SideList::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) noexcept 
+void SideList::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
 {
 	// Exit Early
 	if (!getVisible() || !m_shader->ready())
@@ -135,18 +135,18 @@ int SideList::getIndex() const noexcept
 	return m_index;
 }
 
-void SideList::setStrings(const std::vector<std::string>& strings) noexcept 
+void SideList::setStrings(const std::vector<std::string>& strings) 
 {
 	m_strings = strings;
 	setIndex(getIndex());
 }
 
-std::vector<std::string> SideList::getStrings() const noexcept
+std::vector<std::string> SideList::getStrings() const
 {
 	return m_strings;
 }
 
-void SideList::updateGeometry() noexcept 
+void SideList::updateGeometry() 
 {
 	// Shorten the back panel by the width of the arrows
 	const float arrowHeight = m_scale.y;

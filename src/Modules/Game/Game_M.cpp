@@ -7,7 +7,7 @@
 #include "Engine.h"
 
 
-Game_Module::Game_Module(Engine& engine) noexcept : 
+Game_Module::Game_Module(Engine& engine) : 
 	Engine_Module(engine), 
 	m_loadingRing(engine),
 	m_frameTime(engine)
@@ -41,7 +41,7 @@ void Game_Module::deinitialize()
 	m_engine.getManager_Messages().statement("Unloading Module: Game...");
 }
 
-void Game_Module::frameTick(const float& deltaTime) noexcept
+void Game_Module::frameTick(const float& deltaTime)
 {
 	auto& actionState = m_engine.getActionState();
 	if (m_gameState == Game_State::in_pauseMenu || m_gameState == Game_State::in_game) {
@@ -72,7 +72,7 @@ ecsWorld& Game_Module::getWorld() noexcept
 	return m_world;
 }
 
-void Game_Module::renderOverlays(const float& deltaTime) noexcept
+void Game_Module::renderOverlays(const float& deltaTime)
 {
 	m_loadingRing.applyEffect(deltaTime);
 	m_frameTime.applyEffect(deltaTime);
@@ -86,7 +86,7 @@ void Game_Module::showGame()
 		m_engine.getManager_Messages().error("Cannot open the level: Phys Test.bmap");
 }
 
-void Game_Module::showPauseMenu(const bool& show) noexcept
+void Game_Module::showPauseMenu(const bool& show)
 {
 	if (show) {
 		m_engine.setMouseInputMode(Engine::MouseInputMode::NORMAL);

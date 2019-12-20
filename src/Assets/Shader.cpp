@@ -33,7 +33,7 @@ Shader::~Shader() noexcept
 		glDeleteProgram(m_glProgramID);
 }
 
-Shader::Shader(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
+Shader::Shader(Engine& engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Shader::initialize()
 {
@@ -243,7 +243,7 @@ GLint ShaderObj::getShaderiv(const GLenum& parameterName) const noexcept
 	return param;
 }
 
-bool ShaderObj::loadDocument(Engine& engine, const std::string& filePath) noexcept
+bool ShaderObj::loadDocument(Engine& engine, const std::string& filePath)
 {
 	// Exit early if document not found or no text is found in the document
 	if (!Text_IO::Import_Text(engine, filePath, m_shaderText) || m_shaderText.empty())
@@ -270,7 +270,7 @@ bool ShaderObj::loadDocument(Engine& engine, const std::string& filePath) noexce
 	return true;
 }
 
-bool ShaderObj::createGLShader(Engine& engine, const std::string& filename) noexcept
+bool ShaderObj::createGLShader(Engine& engine, const std::string& filename)
 {
 	// Create shader object
 	const char* source = m_shaderText.c_str();

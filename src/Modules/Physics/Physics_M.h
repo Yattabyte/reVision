@@ -29,7 +29,7 @@ public:
 	@param	deltaTime	the amount of time since last frame. */
 	void frameTick(ecsWorld& world, const float& deltaTime);
 	/** Update generic physics based ECS systems using a specific ECS world. */
-	void updateSystems(ecsWorld& world, const float& deltaTime) noexcept;
+	void updateSystems(ecsWorld& world, const float& deltaTime);
 	/** Retrieves a pointer to the physics-world.
 	@return				reference to the physics world. */
 	btDiscreteDynamicsWorld& getWorld() noexcept;

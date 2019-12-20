@@ -37,7 +37,7 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 				LevelEditor_Module& m_editor;
 				const std::vector<ComponentHandle> m_uuids;
 				std::vector<glm::vec3> m_oldData, m_newData;
-				Move_Command(ecsWorld& world, LevelEditor_Module& editor, const std::vector<ComponentHandle>& uuids, const glm::vec3& newPosition) noexcept
+				Move_Command(ecsWorld& world, LevelEditor_Module& editor, const std::vector<ComponentHandle>& uuids, const glm::vec3& newPosition)
 					: m_ecsWorld(world), m_editor(editor), m_uuids(uuids) {
 					for (const auto& componentHandle : m_uuids) {
 						if (const auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
@@ -46,7 +46,7 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 						}
 					}
 				}
-				void setPosition(const std::vector<glm::vec3>& positions) noexcept {
+				void setPosition(const std::vector<glm::vec3>& positions) {
 					if (positions.size()) {
 						size_t index(0ull);
 						for (const auto& componentHandle : m_uuids) {
@@ -61,13 +61,13 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 						m_editor.setGizmoTransform(newTransform);
 					}
 				}
-				void execute() noexcept final {
+				void execute() final {
 					setPosition(m_newData);
 				}
-				void undo() noexcept final {
+				void undo() final {
 					setPosition(m_oldData);
 				}
-				bool join(Editor_Command* other) noexcept final {
+				bool join(Editor_Command* other) final {
 					if (const auto& newCommand = dynamic_cast<Move_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
@@ -87,7 +87,7 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
 				std::vector<glm::quat> m_oldData, m_newData;
-				Rotate_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::quat& newOrientation) noexcept
+				Rotate_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::quat& newOrientation)
 					: m_ecsWorld(world), m_uuids(uuids) {
 					for (const auto& componentHandle : m_uuids) {
 						if (const auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
@@ -96,7 +96,7 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 						}
 					}
 				}
-				void setOrientation(const std::vector<glm::quat>& orientations) noexcept {
+				void setOrientation(const std::vector<glm::quat>& orientations) {
 					size_t index(0ull);
 					for (const auto& componentHandle : m_uuids) {
 						if (auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
@@ -105,13 +105,13 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 						}
 					}
 				}
-				void execute() noexcept final {
+				void execute() final {
 					setOrientation(m_newData);
 				}
-				void undo() noexcept final {
+				void undo() final {
 					setOrientation(m_oldData);
 				}
-				bool join(Editor_Command* other) noexcept final {
+				bool join(Editor_Command* other) final {
 					if (const auto& newCommand = dynamic_cast<Rotate_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
@@ -131,7 +131,7 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
 				std::vector<glm::vec3> m_oldData, m_newData;
-				Scale_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::vec3& newScale) noexcept
+				Scale_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const glm::vec3& newScale)
 					: m_ecsWorld(world), m_uuids(uuids) {
 					for (const auto& componentHandle : m_uuids) {
 						if (const auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
@@ -140,7 +140,7 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 						}
 					}
 				}
-				void setScale(const std::vector<glm::vec3>& scales) noexcept {
+				void setScale(const std::vector<glm::vec3>& scales) {
 					if (scales.size()) {
 						size_t index(0ull);
 						for (const auto& componentHandle : m_uuids) {
@@ -151,13 +151,13 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 						}
 					}
 				}
-				void execute() noexcept final {
+				void execute() final {
 					setScale(m_newData);
 				}
-				void undo() noexcept final {
+				void undo() final {
 					setScale(m_oldData);
 				}
-				bool join(Editor_Command* other) noexcept final {
+				bool join(Editor_Command* other) final {
 					if (const auto& newCommand = dynamic_cast<Scale_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;

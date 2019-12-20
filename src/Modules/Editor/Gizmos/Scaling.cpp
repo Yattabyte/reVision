@@ -300,9 +300,9 @@ bool Scaling_Gizmo::checkMousePress()
 			glm::vec3 m_oldScale, m_newScale;
 			const unsigned int m_axis = NONE;
 			const std::vector<EntityHandle> m_uuids;
-			Scale_Selection_Command(Engine& engine, LevelEditor_Module& editor, const glm::vec3& newRotation, const unsigned int& axis) noexcept
+			Scale_Selection_Command(Engine& engine, LevelEditor_Module& editor, const glm::vec3& newRotation, const unsigned int& axis)
 				: m_engine(engine), m_editor(editor), m_oldScale(m_editor.getGizmoTransform().m_scale), m_newScale(newRotation), m_axis(axis), m_uuids(m_editor.getSelection()) {}
-			void scale(const glm::vec3& scale) noexcept {
+			void scale(const glm::vec3& scale) {
 				const auto& ecsWorld = m_editor.getWorld();
 				std::vector<Transform_Component*> transformComponents;
 				glm::vec3 center(0.0f);
@@ -323,13 +323,13 @@ bool Scaling_Gizmo::checkMousePress()
 				gizmoTransform.update();
 				m_editor.setGizmoTransform(gizmoTransform);
 			}
-			void execute() noexcept final {
+			void execute() final {
 				scale(m_newScale);
 			}
-			void undo() noexcept final {
+			void undo() final {
 				scale(m_oldScale);
 			}
-			bool join(Editor_Command* other) noexcept final {
+			bool join(Editor_Command* other) final {
 				if (const auto& newCommand = dynamic_cast<Scale_Selection_Command*>(other)) {
 					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 						m_newScale = newCommand->m_newScale;

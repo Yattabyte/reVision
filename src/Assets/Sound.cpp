@@ -22,7 +22,7 @@ Sound::~Sound() noexcept
 		delete reinterpret_cast<SoLoud::Wav*>(m_soundObj);
 }
 
-Sound::Sound(Engine& engine, const std::string& filename) noexcept : Asset(engine, filename) {}
+Sound::Sound(Engine& engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Sound::initialize()
 {

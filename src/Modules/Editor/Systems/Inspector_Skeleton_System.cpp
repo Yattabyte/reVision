@@ -39,7 +39,7 @@ void Inspector_Skeleton_System::updateComponents(const float&, const std::vector
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
 				std::vector<int> m_oldData, m_newData;
-				Animation_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const int& data) noexcept
+				Animation_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const int& data)
 					: m_ecsWorld(world), m_uuids(uuids) {
 					for (const auto& componentHandle : m_uuids) {
 						if (const auto* component = m_ecsWorld.getComponent<Skeleton_Component>(componentHandle)) {
@@ -63,7 +63,7 @@ void Inspector_Skeleton_System::updateComponents(const float&, const std::vector
 				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				bool join(Editor_Command* other) noexcept final {
+				bool join(Editor_Command* other) final {
 					if (const auto& newCommand = dynamic_cast<Animation_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;
@@ -82,7 +82,7 @@ void Inspector_Skeleton_System::updateComponents(const float&, const std::vector
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
 				std::vector<bool> m_oldData, m_newData;
-				PlayAnimation_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const bool& data) noexcept
+				PlayAnimation_Command(ecsWorld& world, const std::vector<ComponentHandle>& uuids, const bool& data)
 					: m_ecsWorld(world), m_uuids(uuids) {
 					for (const auto& componentHandle : m_uuids) {
 						if (const auto* component = m_ecsWorld.getComponent<Skeleton_Component>(componentHandle)) {
@@ -106,7 +106,7 @@ void Inspector_Skeleton_System::updateComponents(const float&, const std::vector
 				void undo() noexcept final {
 					setData(m_oldData);
 				}
-				bool join(Editor_Command* other) noexcept final {
+				bool join(Editor_Command* other) final {
 					if (const auto& newCommand = dynamic_cast<PlayAnimation_Command*>(other)) {
 						if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
 							m_newData = newCommand->m_newData;

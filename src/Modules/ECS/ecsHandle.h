@@ -20,7 +20,7 @@ public:
 	ecsHandle(const ecsHandle& other) noexcept;
 	/** Move Constructor. 
 	@param	other		an other handle to move from. */
-	ecsHandle(ecsHandle&& other) noexcept;
+	ecsHandle(ecsHandle&& other);
 	/** Copy from another handle.
 	@param	other		an other handle to copy from. 
 	@return				reference to this. */
