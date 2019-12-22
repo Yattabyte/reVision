@@ -31,7 +31,7 @@ class Collider final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Collider. */
-	inline ~Collider() noexcept = default;
+	inline ~Collider() = default;
 	/** Construct the Collider.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory). */

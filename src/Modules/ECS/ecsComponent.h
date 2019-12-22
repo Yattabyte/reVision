@@ -25,7 +25,7 @@ using ComponentFreeFunction = std::function<void(ecsBaseComponent * comp)>;
 struct ecsBaseComponent {
 	// Public (De)Constructors
 	/** Destroy this base ecsComponent. */
-	inline virtual ~ecsBaseComponent() noexcept = default;
+	inline virtual ~ecsBaseComponent() = default;
 	/** Construct a base ecsComponent.
 	@param	ID			the runtime ID for this component.
 	@param	size		the byte-size of this component.
@@ -40,7 +40,7 @@ struct ecsBaseComponent {
 	// Public Methods
 	/** Save this component to a char buffer. Fulfilled by sub-class using CRTP.
 	@return				serialized version of self. */
-	virtual std::vector<char> to_buffer() noexcept = 0;
+	virtual std::vector<char> to_buffer() = 0;
 	/** Recover and generate a component from a char buffer.
 	@param	data		serialized version of component.
 	@param	dataRead	reference updated with the number of bytes read.
@@ -73,7 +73,7 @@ protected:
 	static ComponentID registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string);
 	/** Recover and load component data into this component from a char buffer.
 	@param	data		serialized component data. */
-	virtual void recover_data(const std::vector<char>& data) noexcept = 0;
+	virtual void recover_data(const std::vector<char>& data) = 0;
 
 
 	// Protected Attributes
@@ -92,7 +92,7 @@ template <typename C, const char* chars>
 struct ecsComponent : public ecsBaseComponent {
 	// (De)Constructors
 	/** Destroy this component. */
-	inline ~ecsComponent() noexcept = default;
+	inline ~ecsComponent() = default;
 	/** Construct this specific component. */
 	inline ecsComponent() noexcept : ecsBaseComponent(ecsComponent::Runtime_ID, sizeof(C), chars) {}
 	/** Move an ecsComponent. */
@@ -110,7 +110,7 @@ struct ecsComponent : public ecsBaseComponent {
 	inline static void deserialize(const std::vector<char>&) noexcept {}
 	/** Save this component to a char buffer.
 	@return				serialized version of self. */
-	inline std::vector<char> to_buffer() noexcept final {
+	inline std::vector<char> to_buffer() final {
 		// Get portable name data
 		const auto charCount = (int)std::string(chars).size();
 		std::vector<char> nameData(sizeof(unsigned int) + (charCount * sizeof(char)));
@@ -142,7 +142,7 @@ protected:
 	// Protected Interface Implementation
 	/** Recover previously serialized data.
 	@param	data		serialized version of component. */
-	inline void recover_data(const std::vector<char>& data) noexcept final {
+	inline void recover_data(const std::vector<char>& data) final {
 		// Previously recovered type name, created this class
 		// Next recover data
 		static_cast<C&>(*this).deserialize(data);
@@ -163,15 +163,17 @@ protected:
 @param	memory			raw data vector representing all components of type <C>.
 @param	componentHandle	handle to the component.
 @param	entityHandle	handle to the component's parent entity, the one who'll own this component.
-@param	comp			temporary pre-constructed component to copy data from, or nullptr.
+@param	component		temporary pre-constructed component to copy data from, or nullptr.
 @return					the index into the memory array where this component was created at. */
 template <typename C>
-inline constexpr static int createFn(ComponentDataSpace& memory, const ComponentHandle& componentHandle, const EntityHandle& entityHandle, const ecsBaseComponent* comp = nullptr) noexcept {
+inline constexpr static int createFn(ComponentDataSpace& memory, const ComponentHandle& componentHandle, const EntityHandle& entityHandle, const ecsBaseComponent* component = nullptr) noexcept {
 	const size_t index = memory.size();
 	memory.resize(index + sizeof(C));
-	C* component = comp ? new(&memory[index])C(*(C*)comp) : new(&memory[index])C();
-	component->m_handle = componentHandle;
-	component->m_entity = entityHandle;
+	C* clone = component != nullptr 
+		? new(&memory[index])C(*(C*)component) 
+		: new(&memory[index])C();
+	clone->m_handle = componentHandle;
+	clone->m_entity = entityHandle;
 	return (int)index;
 }
 
@@ -183,10 +185,11 @@ inline constexpr static auto newFn() noexcept {
 }
 
 /** Destructs the supplied component, invalidating the memory range it occupied.
-@param	comp			the component to destruct. */
+@param	component		the component to destruct. */
 template <typename C>
-inline constexpr static void freeFn(ecsBaseComponent* comp) noexcept {
-	(dynamic_cast<C*>(comp))->~C();
+inline constexpr static void freeFn(ecsBaseComponent* component) noexcept {
+	if (auto * c = dynamic_cast<C*>(component))
+		c->~C();
 }
 
 /** Generate a static ID at run time for each type of component class used. */

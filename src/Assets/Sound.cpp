@@ -16,7 +16,7 @@ Shared_Sound::Shared_Sound(Engine& engine, const std::string& filename, const bo
 	swap(newAsset);
 }
 
-Sound::~Sound() noexcept
+Sound::~Sound()
 {
 	if (m_finalized)
 		delete reinterpret_cast<SoLoud::Wav*>(m_soundObj);

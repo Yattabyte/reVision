@@ -1,7 +1,7 @@
 #include "Utilities/PreferenceState.h"
 
 
-PreferenceState::~PreferenceState() noexcept 
+PreferenceState::~PreferenceState() 
 {
 	save();
 }

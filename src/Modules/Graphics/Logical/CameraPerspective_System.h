@@ -13,10 +13,10 @@ class CameraPerspective_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~CameraPerspective_System() noexcept = default;
+	inline ~CameraPerspective_System() = default;
 	/** Construct this system.
 	@param	sceneCameras	reference to the scene cameras to use. */
-	explicit CameraPerspective_System(std::vector<Camera*>& sceneCameras) noexcept;
+	explicit CameraPerspective_System(std::vector<Camera*>& sceneCameras);
 
 
 	// Public Interface Implementations

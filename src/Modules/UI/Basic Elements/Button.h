@@ -11,7 +11,7 @@ class Button final : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this button. */
-	inline ~Button() noexcept = default;
+	inline ~Button() = default;
 	/** Creates a button with specific text inside.
 	@param	engine		reference to the engine to use. 
 	@param	text		the button text. */
@@ -31,7 +31,7 @@ public:
 	void setText(const std::string& text);
 	/** Retrieve this buttons' labels text.
 	@return			the text this label uses. */
-	std::string getText() const noexcept;
+	std::string getText() const;
 	/** Set this label element's text scaling factor.
 	@param	text	the new scaling factor to use. */
 	void setTextScale(const float& textScale) noexcept;

@@ -33,10 +33,11 @@ std::shared_ptr<ecsBaseComponent> ecsBaseComponent::from_buffer(const std::vecto
 	// Create new component of class matching the name
 	if (const auto& componentID = m_nameRegistry.search(componentTypeName.c_str())) {
 		const auto& [createFn, freeFn, newFn, size] = m_componentRegistry[*componentID];
-		const auto& clone = newFn();
-		clone->recover_data(std::vector(data.begin() + dataRead, data.begin() + dataRead + classDataSize));
-		dataRead += classDataSize;
-		return clone;
+		if (const auto clone = newFn()) {
+			clone->recover_data(std::vector(data.begin() + dataRead, data.begin() + dataRead + classDataSize));
+			dataRead += classDataSize;
+			return clone;
+		}
 	}
 	dataRead += classDataSize;
 	return nullptr;

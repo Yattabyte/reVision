@@ -43,11 +43,11 @@ public:
 	@param	importedData	the container to place the imported data within.
 	@param	resizePolicy	the resize policy to use, such as nearest neighbor or linear interpolation.
 	@return					true on successful import, false otherwise (error reported to engine). */
-	static bool Import_Image(Engine& engine, const std::string& relativePath, Image_Data& importedData, const Resize_Policy& resizePolicy = Resize_Policy::LINEAR) noexcept;
+	static bool Import_Image(Engine& engine, const std::string& relativePath, Image_Data& importedData, const Resize_Policy& resizePolicy = Resize_Policy::LINEAR);
 	/** Load pixel data from a bitmap object.
 	@param	bitmap			the FreeImage bitmap to read from.
 	@param	importedData	the container to place the imported data within. */
-	static void Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData) noexcept;
+	static void Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData);
 	/** Resize and update an image.
 	@param	newSize			the desired image size.
 	@param	importedData	the container holding the image data (gets updated with new data).

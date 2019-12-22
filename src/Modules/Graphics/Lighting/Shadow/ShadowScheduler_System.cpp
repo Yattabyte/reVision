@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 
-ShadowScheduler_System::~ShadowScheduler_System() noexcept 
+ShadowScheduler_System::~ShadowScheduler_System() 
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -87,7 +87,8 @@ void ShadowScheduler_System::updateComponents(const float&, const std::vector<st
 
 		// Enable cameras in final set
 		for (auto& [importance, time, shadowSpot, camera] : m_frameData.shadowsToUpdate)
-			camera->setEnabled(true);
+			if (camera != nullptr)
+				camera->setEnabled(true);
 
 		// Resize the shadow map to fit number of entities this frame
 		m_frameData.shadowFBO.resize(glm::ivec2((int)m_frameData.shadowSize), (unsigned int)(cameraCount));

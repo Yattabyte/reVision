@@ -14,7 +14,7 @@ class SSR final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destroy this Effect. */
-	~SSR() noexcept;
+	~SSR();
 	/** Construct a screen-space reflection effect.
 	@param	engine			reference to the engine to use. */
 	explicit SSR(Engine& engine);
@@ -29,7 +29,7 @@ private:
 	// Private Methods
 	/** Convolute the lighting buffer into each of its MIP levels.
 	@param	viewport	the viewport to render from. */
-	void updateMIPChain(Viewport& viewport) noexcept;
+	void updateMIPChain(Viewport& viewport);
 
 
 	// Private Attributes

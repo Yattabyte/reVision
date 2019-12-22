@@ -14,7 +14,7 @@ class Inspector_Skeleton_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~Inspector_Skeleton_System() noexcept = default;
+	inline ~Inspector_Skeleton_System() = default;
 	/** Construct this system.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */

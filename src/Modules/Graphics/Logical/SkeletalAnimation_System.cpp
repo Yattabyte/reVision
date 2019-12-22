@@ -2,7 +2,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-Skeletal_Animation_System::Skeletal_Animation_System(Engine& engine) noexcept :
+Skeletal_Animation_System::Skeletal_Animation_System(Engine& engine) :
 	m_engine(engine)
 {
 	// Declare component types used

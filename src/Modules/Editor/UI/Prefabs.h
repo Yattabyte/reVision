@@ -16,7 +16,7 @@ class Prefabs final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this prefab UI element. */
-	~Prefabs() noexcept;
+	~Prefabs();
 	/** Construct a prefab UI element.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */

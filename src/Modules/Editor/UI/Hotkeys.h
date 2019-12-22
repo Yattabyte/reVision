@@ -10,7 +10,7 @@ class Hotkeys final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this element. */
-	inline ~Hotkeys() noexcept = default;
+	inline ~Hotkeys() = default;
 	/** Construct this element.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */

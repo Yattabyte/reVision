@@ -99,7 +99,7 @@ bool ecsWorld::removeEntity(const EntityHandle& entityHandle)
 	return false;
 }
 
-bool ecsWorld::removeComponent(const ComponentHandle& componentHandle) noexcept
+bool ecsWorld::removeComponent(const ComponentHandle& componentHandle)
 {
 	// Check if the component handle is valid
 	if (const auto& component = getComponent(componentHandle))
@@ -337,7 +337,7 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 			mem_array.resize(srcIndex);
 			return;
 		}
-		std::memcpy((void*)destComponent, srcComponent, typeSize);
+		std::memcpy(destComponent, srcComponent, typeSize);
 
 		// Update references
 		for (auto& srcComponent : getEntity(srcComponent->m_entity)->m_components) {
@@ -476,7 +476,7 @@ void ecsWorld::deserializeEntity(const std::vector<char>& data, const size_t& da
 	}
 }
 
-std::optional<ComponentID> ecsWorld::nameToComponentID(const char* name) noexcept
+std::optional<ComponentID> ecsWorld::nameToComponentID(const char* name)
 {
 	return ecsBaseComponent::m_nameRegistry.search(name);
 }

@@ -14,7 +14,7 @@ class FocusMap {
 public:
 	// Public (De)Constructors
 	/** Destroy this focus map. */
-	inline ~FocusMap() noexcept = default;
+	inline ~FocusMap() = default;
 	/** Construct a focus map. */
 	inline FocusMap() noexcept = default;
 

@@ -12,7 +12,7 @@ Takes in position, orientation, and scaling attributes, and calculates a transfo
 struct Transform {
 	// (De)Constructors
 	/** Default Destructor. */
-	inline ~Transform() noexcept = default;
+	inline ~Transform() = default;
 	/** Default Constructor. */
 	inline Transform() noexcept = default;
 	/** Move a transform. */
@@ -26,7 +26,7 @@ struct Transform {
 	Transform(const glm::vec3& position, const glm::quat& orientation, const glm::vec3& scale);
 	/** Constructs a transformation object with only orientation.
 	@param orientation	the desired orientation	*/
-	explicit Transform(const glm::quat& orientation) noexcept;
+	explicit Transform(const glm::quat& orientation);
 
 
 	// Public Methods

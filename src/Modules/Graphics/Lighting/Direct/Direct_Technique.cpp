@@ -4,7 +4,7 @@
 #include "Modules/Graphics/Common/Viewport.h"
 
 
-Direct_Technique::~Direct_Technique() noexcept 
+Direct_Technique::~Direct_Technique() 
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -32,9 +32,9 @@ Direct_Technique::Direct_Technique(Engine& engine, ShadowData& shadowData, Camer
 	m_auxilliarySystems.makeSystem<DirectSync_System>(m_frameData);
 
 	// Asset-finished callbacks
-	m_shapeCube->addCallback(m_aliveIndicator, [&]() { registerLightShapes(); });
-	m_shapeSphere->addCallback(m_aliveIndicator, [&]() { registerLightShapes(); });
-	m_shapeHemisphere->addCallback(m_aliveIndicator, [&]() { registerLightShapes(); });
+	m_shapeCube->addCallback(m_aliveIndicator, [&] { registerLightShapes(); });
+	m_shapeSphere->addCallback(m_aliveIndicator, [&] { registerLightShapes(); });
+	m_shapeHemisphere->addCallback(m_aliveIndicator, [&] { registerLightShapes(); });
 }
 
 void Direct_Technique::clearCache(const float&) noexcept

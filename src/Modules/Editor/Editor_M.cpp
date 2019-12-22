@@ -220,7 +220,8 @@ void LevelEditor_Module::showEditor()
 	for (const auto& item : std::filesystem::recursive_directory_iterator(Engine::Get_Current_Dir() + "\\Maps\\")) {
 		const auto& path = item.path();
 		if (path.has_extension() && path.extension().string() == ".autosave") {
-			std::dynamic_pointer_cast<RecoverDialogue>(m_editorInterface.m_uiRecoverDialogue)->setPath(path);
+			if (auto element = std::dynamic_pointer_cast<RecoverDialogue>(m_editorInterface.m_uiRecoverDialogue))
+				element->setPath(path);
 			m_editorInterface.m_uiRecoverDialogue->open();
 			break;
 		}
@@ -230,7 +231,8 @@ void LevelEditor_Module::showEditor()
 
 void LevelEditor_Module::exit()
 {
-	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface.m_uiUnsavedDialogue)->tryPrompt([&]() {
+	if (auto element = std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface.m_uiUnsavedDialogue))
+		element->tryPrompt([&] {
 		m_engine.goToMainMenu();
 		m_currentLevelName = "My Map.bmap";
 		m_unsavedChanges = false;
@@ -262,7 +264,8 @@ std::deque<std::string> LevelEditor_Module::getRecentLevels() const
 
 void LevelEditor_Module::newLevel()
 {
-	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface.m_uiUnsavedDialogue)->tryPrompt([&]() {
+	if (auto element = std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface.m_uiUnsavedDialogue))
+		element->tryPrompt([&] {
 		m_world.clear();
 		m_currentLevelName = "My Map.bmap";
 
@@ -277,7 +280,8 @@ void LevelEditor_Module::openLevel(const std::string& name)
 {
 	// If the level doesn't exist, remove it from the 'recent levels' list
 	if (!Level_IO::Level_Exists(name)) {
-		std::dynamic_pointer_cast<MissingFileDialogue>(m_editorInterface.m_uiMissingDialogue)->notifyMissing(name);
+		if (auto element = std::dynamic_pointer_cast<MissingFileDialogue>(m_editorInterface.m_uiMissingDialogue))
+			element->notifyMissing(name);
 		if (std::find(m_recentLevels.cbegin(), m_recentLevels.cend(), name) != m_recentLevels.cend())
 			m_recentLevels.erase(std::remove(m_recentLevels.begin(), m_recentLevels.end(), name));
 	}
@@ -297,7 +301,8 @@ void LevelEditor_Module::openLevel(const std::string& name)
 
 void LevelEditor_Module::openLevelDialogue()
 {
-	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface.m_uiUnsavedDialogue)->tryPrompt([&]() noexcept {
+	if (auto element = std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface.m_uiUnsavedDialogue))
+		element->tryPrompt([&]() noexcept {
 		m_editorInterface.m_uiOpenDialogue->open();
 		});
 }
@@ -362,11 +367,13 @@ void LevelEditor_Module::undo()
 {
 	if (m_undoStack.size()) {
 		// Undo the last action
-		m_undoStack.front()->undo();
+		if (auto& element = m_undoStack.front()) {
+			element->undo();
 
-		// Move the action onto the redo stack
-		m_redoStack.push_front(m_undoStack.front());
-		m_undoStack.pop_front();
+			// Move the action onto the redo stack
+			m_redoStack.push_front(element);
+			m_undoStack.pop_front();
+		}
 
 		// Set unsaved changes all the time
 		m_unsavedChanges = true;
@@ -377,11 +384,13 @@ void LevelEditor_Module::redo()
 {
 	if (m_redoStack.size()) {
 		// Redo the last action
-		m_redoStack.front()->execute();
+		if (auto& element = m_redoStack.front()) {
+			element->execute();
 
-		// Push the action onto the undo stack
-		m_undoStack.push_front(m_redoStack.front());
-		m_redoStack.pop_front();
+			// Push the action onto the undo stack
+			m_undoStack.push_front(element);
+			m_redoStack.pop_front();
+		}
 
 		// Set unsaved changes unless we have no more redo actions
 		m_unsavedChanges = bool(m_redoStack.size() != 0ull);
@@ -561,10 +570,10 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles)
 			newTransform.update();
 			m_editor.m_mouseGizmo.setTransform(newTransform);
 		};
-		void execute() noexcept final {
+		void execute() final {
 			switchSelection(m_uuids_new);
 		}
-		void undo() noexcept final {
+		void undo() final {
 			switchSelection(m_uuids_old);
 		}
 		bool join(Editor_Command* other) final {
@@ -608,7 +617,7 @@ void LevelEditor_Module::mergeSelection()
 				m_editor.m_mouseGizmo.getSelection() = { root };
 			}
 		}
-		void undo() noexcept final {
+		void undo() final {
 			auto& ecsWorld = m_editor.getWorld();
 			// Find the root element
 			if (const auto root = ecsWorld.getEntity(m_uuids[0])) {
@@ -661,7 +670,7 @@ void LevelEditor_Module::groupSelection()
 			rootTransform.m_worldTransform = rootTransform.m_localTransform;
 
 			// Make a new root entity for the selection
-			const ecsBaseComponent* entityComponents[] = { &rootTransform };
+			const ecsBaseComponent* const entityComponents[] = { &rootTransform };
 			m_rootUUID = ecsWorld.makeEntity(entityComponents, 1ull, "Group", m_rootUUID);
 
 			// Offset children by new center position
@@ -782,12 +791,12 @@ void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const c
 		ComponentHandle m_componentHandle;
 		Spawn_Component_Command(Engine& engine, LevelEditor_Module& editor, const EntityHandle& entityHandle, const char* name) noexcept
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentName(name) {}
-		void execute() noexcept final {
+		void execute() final {
 			auto& ecsWorld = m_editor.getWorld();
 			if (const auto& componentID = ecsWorld.nameToComponentID(m_componentName))
 				ecsWorld.makeComponent(m_entityHandle, *componentID, nullptr, m_componentHandle);
 		}
-		void undo() noexcept final {
+		void undo() final {
 			auto& ecsWorld = m_editor.getWorld();
 			if (const auto& componentID = ecsWorld.nameToComponentID(m_componentName)) {
 				for (auto& component : ecsWorld.getEntity(m_entityHandle)->m_components) {

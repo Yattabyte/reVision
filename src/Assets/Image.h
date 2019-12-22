@@ -34,7 +34,7 @@ class Image final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Image. */
-	inline ~Image() noexcept = default;
+	inline ~Image() = default;
 	/** Construct the Image.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory).

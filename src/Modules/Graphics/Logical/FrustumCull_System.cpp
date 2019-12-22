@@ -2,7 +2,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-FrustumCull_System::FrustumCull_System(std::vector<Camera*>& sceneCameras) noexcept :
+FrustumCull_System::FrustumCull_System(std::vector<Camera*>& sceneCameras) :
 	m_sceneCameras(sceneCameras)
 {
 	addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

@@ -5,7 +5,7 @@
 #include <random>
 
 
-Indirect_Technique::~Indirect_Technique() noexcept 
+Indirect_Technique::~Indirect_Technique() 
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -179,7 +179,7 @@ void Indirect_Technique::rebounceVolume(RH_Volume& rhVolume, const DynamicBuffer
 	indirectQuad.drawCall();
 }
 
-void Indirect_Technique::reconstructVolume(Viewport& viewport, const DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept 
+void Indirect_Technique::reconstructVolume(Viewport& viewport, const DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) 
 {
 	// Reconstruct indirect radiance
 	glViewport(0, 0, GLsizei(viewport.m_dimensions.x), GLsizei(viewport.m_dimensions.y));

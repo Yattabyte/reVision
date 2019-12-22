@@ -20,7 +20,7 @@ class Indirect_Technique final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destructor. */
-	~Indirect_Technique() noexcept;
+	~Indirect_Technique();
 	/** Construct an indirect lighting technique.
 	@param	engine			reference to the engine to use. 
 	@param	shadowData		reference to the shadow data to use. 
@@ -58,7 +58,7 @@ private:
 	@param	viewport			reference to the active viewport.
 	@param	camBufferRecon		reference to the buffer for reconstructing GI.
 	@param	indirectQuadRecon	reference to the indirect GI reconstruction draw call. */
-	void reconstructVolume(Viewport& viewport, const DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) noexcept;
+	void reconstructVolume(Viewport& viewport, const DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon);
 
 
 	// Private Attributes

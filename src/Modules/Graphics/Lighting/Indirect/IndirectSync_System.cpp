@@ -3,7 +3,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-IndirectSync_System::IndirectSync_System(Indirect_Light_Data& frameData) noexcept :
+IndirectSync_System::IndirectSync_System(Indirect_Light_Data& frameData) :
 	m_frameData(frameData)
 {
 	addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

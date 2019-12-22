@@ -19,7 +19,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy the start menu. */
-	inline ~PauseMenu() noexcept = default;
+	inline ~PauseMenu() = default;
 	/** Construct a start menu.
 	@param	engine		reference to the engine to use. */
 	explicit PauseMenu(Engine& engine);

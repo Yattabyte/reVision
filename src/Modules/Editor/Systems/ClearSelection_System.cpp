@@ -3,7 +3,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-ClearSelection_System::ClearSelection_System(Engine& engine, LevelEditor_Module& editor) noexcept :
+ClearSelection_System::ClearSelection_System(Engine& engine, LevelEditor_Module& editor) :
 	m_engine(engine),
 	m_editor(editor)
 {
@@ -11,7 +11,7 @@ ClearSelection_System::ClearSelection_System(Engine& engine, LevelEditor_Module&
 	addComponentType(Selected_Component::Runtime_ID);
 }
 
-void ClearSelection_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept 
+void ClearSelection_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	auto& ecsWorld = m_editor.getWorld();
 	for (const auto& componentParam : components)

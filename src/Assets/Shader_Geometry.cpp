@@ -18,7 +18,7 @@ Shared_Shader_Geometry::Shared_Shader_Geometry(Engine& engine, const std::string
 	swap(newAsset);
 }
 
-Shader_Geometry::~Shader_Geometry() noexcept
+Shader_Geometry::~Shader_Geometry()
 {
 	if (ready())
 		glDeleteProgram(m_glProgramID);

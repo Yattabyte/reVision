@@ -16,10 +16,10 @@ class Skeletal_Animation_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this skeletal animation system. */
-	inline ~Skeletal_Animation_System() noexcept = default;
+	inline ~Skeletal_Animation_System() = default;
 	/** Construct a skeletal animation system.
 	@param	engine		reference to the engine to use. */
-	explicit Skeletal_Animation_System(Engine& engine) noexcept;
+	explicit Skeletal_Animation_System(Engine& engine);
 
 
 	// Public Interface Implementation

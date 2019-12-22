@@ -14,11 +14,11 @@ class Inspector_Light_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~Inspector_Light_System() noexcept = default;
+	inline ~Inspector_Light_System() = default;
 	/** Construct this system. 
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
-	Inspector_Light_System(Engine& engine, LevelEditor_Module& editor) noexcept;
+	Inspector_Light_System(Engine& engine, LevelEditor_Module& editor);
 
 
 	// Public Interface Implementation

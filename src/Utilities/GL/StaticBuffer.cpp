@@ -2,7 +2,7 @@
 #include <utility>
 
 
-StaticBuffer::~StaticBuffer() noexcept
+StaticBuffer::~StaticBuffer()
 {
 	if (m_bufferID != 0)
 		glDeleteBuffers(1, &m_bufferID);

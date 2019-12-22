@@ -13,7 +13,7 @@ class GL_Vector final : public Buffer_Interface {
 public:
 	// Public (De)Constructors
 	/** Destroy this GL Vector. */
-	inline ~GL_Vector() noexcept {
+	inline ~GL_Vector() {
 		// Safely destroy each buffer this class owns
 		for (int x = 0; x < BufferCount; ++x) {
 			WaitForFence(m_writeFence[x]);

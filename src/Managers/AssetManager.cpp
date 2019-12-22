@@ -4,6 +4,10 @@
 #include <thread>
 
 
+AssetManager::AssetManager()
+{
+}
+
 Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& filename, const std::function<Shared_Asset(void)>& constructor, const bool& threaded)
 {
 	// Find out if the asset already exists

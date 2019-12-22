@@ -10,7 +10,7 @@ class Layout_Horizontal final : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this layout. */
-	inline ~Layout_Horizontal() noexcept = default;
+	inline ~Layout_Horizontal() = default;
 	/** Construct the layout.
 	@param	engine		reference to the engine to use. */
 	explicit Layout_Horizontal(Engine& engine);
@@ -23,13 +23,13 @@ public:
 	void addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio = 1.0f);
 	/** Set the margin distance between elements and the edge of this layout.
 	@param	margin		the margin for this layout. */
-	void setMargin(const float& margin) noexcept;
+	void setMargin(const float& margin);
 	/** Retrieve the margin distance between elements and the edge of this layout.
 	@return				the margin for this layout. */
 	float getMargin() const noexcept;
 	/** Set the spacing distance between elements in this layout.
 	@param	spacing		the spacing distance between elements. */
-	void setSpacing(const float& spacing) noexcept;
+	void setSpacing(const float& spacing);
 	/** Retrieve the spacing distance between elements in this layout.
 	@return				the spacing distance between elements. */
 	float getSpacing() const noexcept;

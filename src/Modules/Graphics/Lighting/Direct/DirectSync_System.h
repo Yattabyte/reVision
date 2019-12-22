@@ -13,10 +13,10 @@ class DirectSync_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~DirectSync_System() noexcept = default;
+	inline ~DirectSync_System() = default;
 	/** Construct this system.
 	@param	frameData	reference to common data that changes frame-to-frame. */
-	explicit DirectSync_System(Direct_Light_Data& frameData) noexcept;
+	explicit DirectSync_System(Direct_Light_Data& frameData);
 
 
 	// Public Interface Implementations

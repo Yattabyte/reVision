@@ -30,7 +30,7 @@ class Shader_Pkg final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Shader Package. */
-	~Shader_Pkg() noexcept = default;
+	~Shader_Pkg() = default;
 	/** Construct the Shader Package.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory). */

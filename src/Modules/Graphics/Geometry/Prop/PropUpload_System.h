@@ -18,7 +18,7 @@ class PropUpload_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	~PropUpload_System() noexcept;
+	~PropUpload_System();
 	/** Construct this system.
 	@param	engine			reference to the engine to use.
 	@param	frameData		reference to of common data that changes frame-to-frame. */

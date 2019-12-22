@@ -99,21 +99,21 @@ Window::Window(Engine& engine) :
 	glfwSwapInterval((int)m_vsync);
 	glfwSetInputMode(m_window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
 	glfwSetWindowUserPointer(m_window, &m_engine);
-	glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) noexcept {
+	glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
 		auto& preferences = static_cast<Engine*>(glfwGetWindowUserPointer(window))->getPreferenceState();
 		preferences.setValue(PreferenceState::Preference::C_WINDOW_WIDTH, width);
 		preferences.setValue(PreferenceState::Preference::C_WINDOW_HEIGHT, height);
 		});
-	glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xPos, double yPos) noexcept {
+	glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xPos, double yPos) {
 		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyCursorPos(xPos, yPos);
 		});
-	glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) noexcept {
+	glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) {
 		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyCursorButton(button, action, mods);
 		});
-	glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int character) noexcept {
+	glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int character) {
 		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyChar(character);
 		});
-	glfwSetKeyCallback(m_window, [](GLFWwindow* window, int a, int b, int c, int d)noexcept {
+	glfwSetKeyCallback(m_window, [](GLFWwindow* window, int a, int b, int c, int d) {
 		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyKey(a, b, c, d);
 		});
 #ifdef DEBUG
@@ -124,10 +124,10 @@ Window::Window(Engine& engine) :
 			glEnable(GL_DEBUG_OUTPUT);
 			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 			engine.getManager_Messages().statement(">>> KHR DEBUG MODE ENABLED <<<");
-			auto myCallback = [](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* msg, const void* data) {
-				char* _source;
-				char* _type;
-				char* _severity;
+			constexpr const static auto myCallback = [](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* msg, const void* data) {
+				char* _source = nullptr;
+				char* _type = nullptr;
+				char* _severity = nullptr;
 				switch (source) {
 				case GL_DEBUG_SOURCE_API:
 					_source = "API";
@@ -145,7 +145,7 @@ Window::Window(Engine& engine) :
 					_source = "APPLICATION";
 					break;
 				case GL_DEBUG_SOURCE_OTHER:
-					_source = "UNKNOWN";
+					_source = "OTHER";
 					break;
 				default:
 					_source = "UNKNOWN";
@@ -198,7 +198,7 @@ Window::Window(Engine& engine) :
 				}
 
 				if (severity != GL_DEBUG_SEVERITY_NOTIFICATION && severity != GL_DEBUG_SEVERITY_LOW)
-					(reinterpret_cast<MessageManager*>(const_cast<void*>(data)))->error(
+					static_cast<MessageManager*>(const_cast<void*>(data))->error(
 						std::to_string(id) + ": " + std::string(_type) + " of " + std::string(_severity) + " severity, raised from " + std::string(_source) + ": " + std::string(msg, length));
 			};
 			glDebugMessageCallbackKHR(myCallback, &engine.getManager_Messages());

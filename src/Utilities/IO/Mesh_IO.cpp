@@ -154,8 +154,9 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 
 			importedData.boneMap[BoneName] = BoneIndex;
 			importedData.boneTransforms[BoneIndex] = aiMatrix_to_Mat4x4(mesh->mBones[b]->mOffsetMatrix);
-
-			for (unsigned int j = 0U, numWeights = mesh->mBones[b]->mNumWeights; j < numWeights; ++j) {
+			
+			const auto weightCount = mesh->mBones[b]->mNumWeights;
+			for (unsigned int j = 0U; j < weightCount; ++j) {
 				const int VertexID = vertexOffset + mesh->mBones[b]->mWeights[j].mVertexId;
 				const float Weight = mesh->mBones[b]->mWeights[j].mWeight;
 				importedData.bones[VertexID].AddBoneData((int)BoneIndex, Weight);

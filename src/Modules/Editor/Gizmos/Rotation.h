@@ -17,7 +17,7 @@ class Rotation_Gizmo {
 public:
 	// Public (De)Constructors
 	/** Destroy this gizmo. */
-	~Rotation_Gizmo() noexcept;
+	~Rotation_Gizmo();
 	/** Construct this gizmo.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */

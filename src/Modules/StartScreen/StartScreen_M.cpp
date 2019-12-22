@@ -16,13 +16,13 @@ void StartScreen_Module::initialize()
 	// Create Main Menu
 	auto startMenu = std::make_shared<StartMenu>(m_engine);
 	m_startMenu = startMenu;
-	startMenu->addCallback((int)StartMenu::Interact::on_start_game, [&]() noexcept {
+	startMenu->addCallback((int)StartMenu::Interact::on_start_game, [&] {
 		m_engine.goToGame();
 		});
-	startMenu->addCallback((int)StartMenu::Interact::on_level_editor, [&]() noexcept {
+	startMenu->addCallback((int)StartMenu::Interact::on_level_editor, [&] {
 		m_engine.goToEditor();
 		});
-	startMenu->addCallback((int)StartMenu::Interact::on_quit, [&]() noexcept {
+	startMenu->addCallback((int)StartMenu::Interact::on_quit, [&] {
 		//
 		});
 }

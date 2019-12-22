@@ -33,7 +33,7 @@ class Model final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Model. */
-	inline ~Model() noexcept = default;
+	inline ~Model() = default;
 	/** Construct the Model.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory). */

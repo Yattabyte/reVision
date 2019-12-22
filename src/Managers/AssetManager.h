@@ -18,7 +18,7 @@ public:
 	/** Destroy the asset manager. */
 	inline ~AssetManager() = default;
 	/** Create the asset manager. */
-	inline AssetManager() = default;
+	AssetManager();
 
 
 	// Public Methods

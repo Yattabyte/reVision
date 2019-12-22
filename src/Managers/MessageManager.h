@@ -15,7 +15,7 @@ public:
 	/** Destroy the message manager. */
 	inline ~MessageManager() = default;
 	/** Construct the message manager. */
-	inline MessageManager() = default;
+	MessageManager() noexcept;
 
 
 	// Public Methods

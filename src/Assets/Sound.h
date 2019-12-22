@@ -31,7 +31,7 @@ class Sound : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Sound. */
-	~Sound() noexcept;
+	~Sound();
 	/** Construct the Sound.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory). */

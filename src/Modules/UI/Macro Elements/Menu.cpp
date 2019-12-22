@@ -15,7 +15,7 @@ Menu::Menu(Engine& engine) :
 
 	// Make a vertical layout to house list items
 	m_layout->setSpacing(10.0f);
-	m_layout->addCallback((int)List::Interact::on_selection, [&]() {
+	m_layout->addCallback((int)List::Interact::on_selection, [&] {
 		const auto index = m_layout->getSelectionIndex();
 		if (index >= 0 && index < m_selectionCallbacks.size())
 			m_selectionCallbacks[index]();
@@ -32,7 +32,7 @@ Menu::Menu(Engine& engine) :
 	m_backPanel->addElement(m_separator);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() {
+	addCallback((int)UI_Element::Interact::on_resize, [&] {
 		const auto scale = getScale();
 		m_backPanel->setScale({ 128, scale.y });
 		m_backPanel->setPosition(glm::vec2(256, scale.y));
@@ -45,7 +45,7 @@ Menu::Menu(Engine& engine) :
 		});
 }
 
-void Menu::userAction(ActionState& actionState) noexcept 
+void Menu::userAction(ActionState& actionState) 
 {
 	// Start menu doesn't implement any custom controls, focus is on the list
 	m_layout->userAction(actionState);

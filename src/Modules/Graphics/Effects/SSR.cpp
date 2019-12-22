@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-SSR::~SSR() noexcept 
+SSR::~SSR() 
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -96,7 +96,7 @@ void SSR::renderTechnique(const float&, Viewport& viewport, const std::vector<st
 	m_drawIndex++;
 }
 
-void SSR::updateMIPChain(Viewport& viewport) noexcept 
+void SSR::updateMIPChain(Viewport& viewport) 
 {
 	const auto mipFboID = viewport.m_gfxFBOS.getFboID("SSR_MIP");
 	const auto mipTexID = viewport.m_gfxFBOS.getTexID("SSR_MIP", 0);

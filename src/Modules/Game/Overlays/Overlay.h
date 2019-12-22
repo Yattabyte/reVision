@@ -8,7 +8,7 @@ class Overlay {
 public:
 	// Public (De)Constructors
 	/** Virtual Destructor. */
-	inline virtual ~Overlay() noexcept = default;
+	inline virtual ~Overlay() = default;
 	/** Constructor. */
 	inline Overlay() noexcept = default;
 

@@ -5,7 +5,7 @@
 #include <algorithm>
 
 
-DirectSync_System::DirectSync_System(Direct_Light_Data& frameData) noexcept :
+DirectSync_System::DirectSync_System(Direct_Light_Data& frameData) :
 	m_frameData(frameData)
 {
 	addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

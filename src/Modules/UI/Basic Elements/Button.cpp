@@ -11,7 +11,7 @@ Button::Button(Engine& engine, const std::string& text) :
 	addElement(m_label);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() { m_label->setScale(getScale()); });
+	addCallback((int)UI_Element::Interact::on_resize, [&] { m_label->setScale(getScale()); });
 }
 
 void Button::userAction(ActionState& actionState) 
@@ -45,7 +45,7 @@ void Button::setText(const std::string& text)
 	m_label->setText(text);
 }
 
-std::string Button::getText() const noexcept
+std::string Button::getText() const
 {
 	return m_label->getText();
 }

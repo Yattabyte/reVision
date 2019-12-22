@@ -24,7 +24,7 @@ Slider::Slider(Engine& engine, const float& value, const glm::vec2& range) :
 	addElement(m_label);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
+	addCallback((int)UI_Element::Interact::on_resize, [&] { updateGeometry(); });
 
 	// Configure THIS element
 	setValue(value);
@@ -92,7 +92,7 @@ void Slider::setText(const std::string& text)
 	m_label->setText(text);
 }
 
-std::string Slider::getText() const noexcept 
+std::string Slider::getText() const 
 {
 	return m_label->getText();
 }

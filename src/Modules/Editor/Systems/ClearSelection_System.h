@@ -14,15 +14,15 @@ class ClearSelection_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~ClearSelection_System() noexcept = default;
+	inline ~ClearSelection_System() = default;
 	/** Construct this system.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
-	ClearSelection_System(Engine& engine, LevelEditor_Module& editor) noexcept;
+	ClearSelection_System(Engine& engine, LevelEditor_Module& editor);
 
 
 	// Public Interface Implementation
-	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) noexcept final;
+	void updateComponents(const float& deltaTime, const std::vector<std::vector<ecsBaseComponent*>>& components) final;
 
 
 private:

@@ -15,7 +15,7 @@ class LoadingIndicator final : public Overlay {
 public:
 	// Public (De)Constructors
 	/** Destroy this overlay. */
-	~LoadingIndicator() noexcept;
+	~LoadingIndicator();
 	/** Construct a loading indicator.
 	@param	engine		reference to the engine to use. */
 	explicit LoadingIndicator(Engine& engine);

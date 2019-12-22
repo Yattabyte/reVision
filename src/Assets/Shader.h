@@ -29,7 +29,7 @@ public:
 struct ShaderObj {
 	// (De)Constructors
 	/** Destroy the shader object. */
-	~ShaderObj() noexcept;
+	~ShaderObj();
 	/** Construct a shader object. */
 	explicit ShaderObj(const GLenum& type) noexcept;
 	/** Move a shader object. */
@@ -70,7 +70,7 @@ class Shader : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Shader. */
-	~Shader() noexcept;
+	~Shader();
 	/** Construct the Shader.
 	@param	engine				reference to the engine to use. 
 	@param	filename			the asset file name (relative to engine directory). */

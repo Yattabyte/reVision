@@ -13,10 +13,10 @@ class IndirectVisibility_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~IndirectVisibility_System() noexcept = default;
+	inline ~IndirectVisibility_System() = default;
 	/** Construct this system.
 	@param	frameData	reference to common data that changes frame-to-frame. */
-	explicit IndirectVisibility_System(Indirect_Light_Data& frameData) noexcept;
+	explicit IndirectVisibility_System(Indirect_Light_Data& frameData);
 
 
 	// Public Interface Implementations

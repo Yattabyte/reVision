@@ -2,7 +2,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-CameraPerspective_System::CameraPerspective_System(std::vector<Camera*>& sceneCameras) noexcept :
+CameraPerspective_System::CameraPerspective_System(std::vector<Camera*>& sceneCameras) :
 	m_sceneCameras(sceneCameras)
 {
 	addComponentType(Camera_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

@@ -15,7 +15,7 @@ class Direct_Technique final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destroy this direct lighting technique. */
-	~Direct_Technique() noexcept;
+	~Direct_Technique();
 	/** Construct a direct lighting technique.
 	@param	engine			reference to the engine to use. 
 	@param	shadowData		reference to the shadow data to use. 

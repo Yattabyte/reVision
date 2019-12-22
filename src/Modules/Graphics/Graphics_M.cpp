@@ -32,13 +32,13 @@ void Graphics_Module::initialize()
 	// Preferences
 	auto& preferences = m_engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize = glm::ivec2(f, m_renderSize.y);
 		m_viewport.resize(m_renderSize, 1);
 		m_clientCamera->Dimensions = m_renderSize;
 		});
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize = glm::ivec2(m_renderSize.x, f);
 		m_viewport.resize(m_renderSize, 1);
 		m_clientCamera->Dimensions = m_renderSize;

@@ -10,7 +10,7 @@ class StaticBuffer final : public Buffer_Interface {
 public:
 	// Public (De)Constructors
 	/** Destroy this buffer. */
-	~StaticBuffer() noexcept;
+	~StaticBuffer();
 	/** Default Constructor. */
 	/** Construct a static buffer. */
 	inline StaticBuffer() noexcept = default;

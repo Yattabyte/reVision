@@ -15,7 +15,7 @@ class PreferenceState {
 public:
 	// (De)Constructors
 	/** Destroy the preference state. */
-	~PreferenceState() noexcept;
+	~PreferenceState();
 	/** Construct the preference state.
 	@param	engine		reference to the engine to use. 
 	@param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */

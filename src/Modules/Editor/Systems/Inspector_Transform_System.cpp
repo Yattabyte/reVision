@@ -5,7 +5,7 @@
 #include "imgui.h"
 
 
-Inspector_Transform_System::Inspector_Transform_System(Engine& engine, LevelEditor_Module& editor) noexcept :
+Inspector_Transform_System::Inspector_Transform_System(Engine& engine, LevelEditor_Module& editor) :
 	m_engine(engine),
 	m_editor(editor)
 {
@@ -20,7 +20,7 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 	const auto text = std::string(Transform_Component::Name) + ": (" + std::to_string(components.size()) + ")";
 	if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 		// Create list of handles for commands to use
-		const auto getUUIDS = [&]() {
+		const auto getUUIDS = [&] {
 			std::vector<ComponentHandle> uuids;
 			uuids.reserve(components.size());
 			for (const auto& componentParam : components)

@@ -21,7 +21,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy this game module. */
-	inline ~Game_Module() noexcept = default;
+	inline ~Game_Module() = default;
 	/** Construct a game module.
 	@param	engine		reference to the engine to use. */
 	explicit Game_Module(Engine& engine);

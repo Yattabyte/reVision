@@ -14,7 +14,7 @@ class FXAA final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destroy this effect. */
-	~FXAA() noexcept;
+	~FXAA();
 	/** Construct a FXAA effect.
 	@param	engine			reference to the engine to use. */
 	explicit FXAA(Engine& engine);

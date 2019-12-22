@@ -14,7 +14,7 @@ class Bloom final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destroy this effect. */
-	~Bloom() noexcept;
+	~Bloom();
 	/** Construct a bloom effect.
 	@param	engine			reference to the engine to use. */
 	explicit Bloom(Engine& engine);

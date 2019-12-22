@@ -17,7 +17,7 @@ class UI_Module final : public Engine_Module {
 public:
 	// Public (De)Constructors
 	/** Destroy the UI module. */
-	inline ~UI_Module() noexcept = default;
+	inline ~UI_Module() = default;
 	/** Construct a UI module.
 	@param	engine				reference to the engine to use. */
 	explicit UI_Module(Engine& engine);
@@ -65,7 +65,7 @@ public:
 	void applyKey(const int& key, const int& scancode, const int& action, const int& mods);
 	/** Apply an action state to the current focused UI element.
 	@param	actionState			the action state to apply. */
-	void applyActionState(ActionState& actionState) noexcept;
+	void applyActionState(ActionState& actionState);
 	/** Add a new callback to be called as-soon-as-possible.
 	@param	callback			the callback to call later. */
 	void pushCallback(const std::function<void()>& callback);

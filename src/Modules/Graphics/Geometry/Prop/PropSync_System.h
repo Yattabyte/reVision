@@ -13,10 +13,10 @@ class PropSync_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~PropSync_System() noexcept = default;
+	inline ~PropSync_System() = default;
 	/** Construct this system.
 	@param	frameData	reference to of common data that changes frame-to-frame. */
-	explicit PropSync_System(PropData& frameData) noexcept;
+	explicit PropSync_System(PropData& frameData);
 
 
 	// Public Interface Implementations

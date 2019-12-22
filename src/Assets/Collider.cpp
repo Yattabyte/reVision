@@ -27,11 +27,12 @@ void Collider::initialize()
 {
 	// Forward asset creation
 	m_mesh = Shared_Mesh(m_engine, DIRECTORY_COLLIDER + getFileName(), false);
-	auto shape = std::make_unique<btConvexHullShape>();
+
+	btConvexHullShape shape;
 	for (const auto& vertex : m_mesh->m_geometry.vertices)
-		shape->addPoint(btVector3(vertex.x, vertex.y, vertex.z));
-	shape->recalcLocalAabb();
-	m_shape = std::move(shape);
+		shape.addPoint(btVector3(vertex.x, vertex.y, vertex.z));
+	shape.recalcLocalAabb();
+	m_shape = std::make_unique<btConvexHullShape>(std::move(shape));
 
 	Asset::finalize();
 }

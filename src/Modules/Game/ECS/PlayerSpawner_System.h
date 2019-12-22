@@ -15,7 +15,7 @@ class PlayerSpawn_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this free-look system. */
-	inline ~PlayerSpawn_System() noexcept {
+	inline ~PlayerSpawn_System() {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}

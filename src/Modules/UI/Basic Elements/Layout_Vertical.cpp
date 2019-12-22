@@ -5,8 +5,8 @@ Layout_Vertical::Layout_Vertical(Engine& engine) :
 	UI_Element(engine)
 {
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { alignChildren(); });
-	addCallback((int)UI_Element::Interact::on_childrenChange, [&]() noexcept { alignChildren(); });
+	addCallback((int)UI_Element::Interact::on_resize, [&] { alignChildren(); });
+	addCallback((int)UI_Element::Interact::on_childrenChange, [&] { alignChildren(); });
 }
 
 void Layout_Vertical::addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio) 
@@ -15,7 +15,7 @@ void Layout_Vertical::addElement(const std::shared_ptr<UI_Element>& child, const
 	m_sizedChildren.push_back(std::pair(child, sizeRatio));
 }
 
-void Layout_Vertical::setMargin(const float& margin) noexcept
+void Layout_Vertical::setMargin(const float& margin)
 {
 	m_margin = margin;
 	alignChildren();
@@ -26,7 +26,7 @@ float Layout_Vertical::getMargin() const noexcept
 	return m_margin;
 }
 
-void Layout_Vertical::setSpacing(const float& spacing) noexcept 
+void Layout_Vertical::setSpacing(const float& spacing) 
 {
 	m_spacing = spacing;
 	alignChildren();

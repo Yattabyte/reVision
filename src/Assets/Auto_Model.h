@@ -15,7 +15,7 @@ class Shared_Auto_Model final : public std::shared_ptr<Auto_Model> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Auto_Model() noexcept = default;
+	inline Shared_Auto_Model() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
@@ -32,7 +32,7 @@ class Auto_Model final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Auto_Model. */
-	~Auto_Model() noexcept;
+	~Auto_Model();
 	/** Construct the Auto_Model.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory). */

@@ -56,7 +56,7 @@ void Image_IO::Deinitialize() noexcept
 	FreeImage_DeInitialise();
 }
 
-bool Image_IO::Import_Image(Engine& engine, const std::string& relativePath, Image_Data& importedData, const Resize_Policy& resizePolicy) noexcept
+bool Image_IO::Import_Image(Engine& engine, const std::string& relativePath, Image_Data& importedData, const Resize_Policy& resizePolicy)
 {
 	const glm::ivec2 containerSize = importedData.dimensions;
 	FIBITMAP* bitmap = Import_Bitmap(engine, relativePath);
@@ -69,7 +69,7 @@ bool Image_IO::Import_Image(Engine& engine, const std::string& relativePath, Ima
 	return true;
 }
 
-void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData) noexcept
+void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData)
 {
 	const glm::ivec2 dimensions(FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap));
 	const size_t size_mult = (size_t)(dimensions.x) * (size_t)(dimensions.y);

@@ -13,7 +13,7 @@ class PlayerFreeLook_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this free-look system. */
-	inline ~PlayerFreeLook_System() noexcept = default;
+	inline ~PlayerFreeLook_System() = default;
 	/** Construct a free-look system.
 	@param	engine		reference to the engine to use. */
 	explicit PlayerFreeLook_System(Engine& engine);

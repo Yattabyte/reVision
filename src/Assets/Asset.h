@@ -26,7 +26,7 @@ class Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the asset only when all references are destroyed. */
-	inline virtual ~Asset() noexcept = default;
+	inline virtual ~Asset() = default;
 
 
 	// Public Methods

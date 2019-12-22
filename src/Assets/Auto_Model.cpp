@@ -25,7 +25,7 @@ Shared_Auto_Model::Shared_Auto_Model(Engine& engine, const std::string& filename
 	swap(newAsset);
 }
 
-Auto_Model::~Auto_Model() noexcept
+Auto_Model::~Auto_Model()
 {
 	if (ready())
 		glDeleteBuffers(1, &m_vboID);

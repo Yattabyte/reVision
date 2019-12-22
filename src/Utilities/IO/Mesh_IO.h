@@ -17,7 +17,7 @@ class Engine;
 struct VertexBoneData {
 	int IDs[NUM_BONES_PER_VEREX]{};
 	float Weights[NUM_BONES_PER_VEREX]{};
-	inline ~VertexBoneData() noexcept = default;
+	inline ~VertexBoneData() = default;
 	VertexBoneData() noexcept;
 	VertexBoneData(const VertexBoneData& vbd) noexcept;
 	inline VertexBoneData(VertexBoneData&&) noexcept = default;
@@ -47,7 +47,7 @@ struct Node {
 	std::string name = "";
 	glm::mat4 transformation = glm::mat4(1);
 	std::vector<Node> children;
-	inline Node() {};
+	inline Node() noexcept {};
 	inline Node(const std::string& n, const glm::mat4& t) : name(n), transformation(t) {}
 };
 struct Animation {

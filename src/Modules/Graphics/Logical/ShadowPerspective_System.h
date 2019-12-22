@@ -13,10 +13,10 @@ class ShadowPerspective_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~ShadowPerspective_System() noexcept = default;
+	inline ~ShadowPerspective_System() = default;
 	/** Construct this system.
 	@param	sceneCameras	reference to the scene cameras to use. */
-	explicit ShadowPerspective_System(std::vector<Camera*>& sceneCameras) noexcept;
+	explicit ShadowPerspective_System(std::vector<Camera*>& sceneCameras);
 
 
 	// Public Interface Implementations

@@ -31,7 +31,7 @@ class Mesh final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Mesh. */
-	~Mesh() noexcept = default;
+	~Mesh() = default;
 	/** Construct the Mesh.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory). */

@@ -18,7 +18,7 @@ class Reflector_Technique final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destroy this reflector technique. */
-	~Reflector_Technique() noexcept;
+	~Reflector_Technique();
 	/** Construct a reflector technique.
 	@param	engine			reference to the engine to use. 
 	@param	sceneCameras	reference to the scene cameras to use. */
@@ -40,7 +40,7 @@ private:
 	/** Render all the lights
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	void renderReflectors(const float& deltaTime, Viewport& viewport) noexcept;
+	void renderReflectors(const float& deltaTime, Viewport& viewport);
 
 
 	// Private Attributes

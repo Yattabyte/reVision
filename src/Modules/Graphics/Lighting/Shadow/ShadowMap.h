@@ -11,7 +11,7 @@ class ShadowMap {
 public:
 	// Public (De)Constructors
 	/** Destroy this framebuffer. */
-	~ShadowMap() noexcept;
+	~ShadowMap();
 	/** Construct this framebuffer. */
 	ShadowMap() noexcept;
 

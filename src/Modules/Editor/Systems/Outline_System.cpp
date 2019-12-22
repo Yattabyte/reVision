@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 
-Outline_System::~Outline_System() noexcept 
+Outline_System::~Outline_System() 
 {
 	// Update indicator
 	*m_aliveIndicator = false;

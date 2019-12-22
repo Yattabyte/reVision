@@ -20,7 +20,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy this list. */
-	~List() noexcept;
+	~List();
 	/** Constructs a list.
 	@param	engine		reference to the engine to use. */
 	explicit List(Engine& engine);
@@ -50,7 +50,7 @@ public:
 	FocusMap& getFocusMap() noexcept;
 	/** Set the margin distance between elements and the edge of this layout.
 	@param	margin		the margin for this layout. */
-	void setMargin(const float& margin) noexcept;
+	void setMargin(const float& margin);
 	/** Retrieve the margin distance between elements and the edge of this layout.
 	@return				the margin for this layout. */
 	float getMargin() const noexcept;

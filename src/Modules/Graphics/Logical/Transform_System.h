@@ -14,10 +14,10 @@ class Transform_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~Transform_System() noexcept = default;
+	inline ~Transform_System() = default;
 	/** Construct this system.
 	@param	engine		reference to the engine to use. */
-	explicit Transform_System(Engine& engine) noexcept;
+	explicit Transform_System(Engine& engine);
 
 
 	// Public Interface Implementations

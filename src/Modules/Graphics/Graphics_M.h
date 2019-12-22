@@ -19,7 +19,7 @@ class Graphics_Module final : public Engine_Module {
 public:
 	// Public (De)Constructors
 	/** Destroy this graphics rendering module. */
-	inline ~Graphics_Module() noexcept = default;
+	inline ~Graphics_Module() = default;
 	/** Construct a graphics rendering module.
 	@param	engine		reference to the engine to use. */
 	explicit Graphics_Module(Engine& engine);

@@ -17,7 +17,7 @@ class Scaling_Gizmo {
 public:
 	// Public (De)Constructors
 	/** Destroy this gizmo. */
-	~Scaling_Gizmo() noexcept;
+	~Scaling_Gizmo();
 	/** Construct this gizmo.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */

@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-Bloom::~Bloom() noexcept
+Bloom::~Bloom()
 {
 	// Update indicator
 	*m_aliveIndicator = false;

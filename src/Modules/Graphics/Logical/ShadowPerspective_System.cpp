@@ -2,7 +2,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-ShadowPerspective_System::ShadowPerspective_System(std::vector<Camera*>& sceneCameras) noexcept :
+ShadowPerspective_System::ShadowPerspective_System(std::vector<Camera*>& sceneCameras) :
 	m_sceneCameras(sceneCameras)
 {
 	addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

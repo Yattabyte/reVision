@@ -2,7 +2,7 @@
 #include <algorithm>
 
 
-TextInput::~TextInput() noexcept
+TextInput::~TextInput()
 {
 	// Delete geometry
 	glDeleteBuffers(2, m_vboID);
@@ -20,7 +20,7 @@ TextInput::TextInput(Engine& engine) :
 	addElement(m_label);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() {
+	addCallback((int)UI_Element::Interact::on_resize, [&] {
 		m_label->setScale(getScale());
 		updateGeometry();
 		});

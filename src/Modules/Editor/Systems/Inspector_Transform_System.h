@@ -14,11 +14,11 @@ class Inspector_Transform_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~Inspector_Transform_System() noexcept = default;
+	inline ~Inspector_Transform_System() = default;
 	/** Construct this system.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
-	Inspector_Transform_System(Engine& engine, LevelEditor_Module& editor) noexcept;
+	Inspector_Transform_System(Engine& engine, LevelEditor_Module& editor);
 
 
 	// Public Interface Implementation

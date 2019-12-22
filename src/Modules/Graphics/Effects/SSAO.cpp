@@ -3,7 +3,7 @@
 #include <random>
 
 
-SSAO::~SSAO() noexcept
+SSAO::~SSAO()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -41,7 +41,7 @@ SSAO::SSAO(Engine& engine) :
 	glTextureParameteri(m_noiseID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTextureParameteri(m_noiseID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_noiseID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	m_shader->addCallback(m_aliveIndicator, [&]() {
+	m_shader->addCallback(m_aliveIndicator, [&] {
 		const std::uniform_real_distribution<GLfloat> rdmFloats(0.0, 1.0);
 		std::default_random_engine gen;
 		glm::vec4 new_kernel[MAX_KERNEL_SIZE]{};

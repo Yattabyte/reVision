@@ -12,7 +12,7 @@ class DynamicBuffer final : public Buffer_Interface {
 public:
 	// Public (De)Constructors
 	/** Wait for all fences to complete, then destroy this buffer. */
-	inline ~DynamicBuffer() noexcept {
+	inline ~DynamicBuffer() {
 		for (int x = 0; x < BufferCount; ++x) {
 			WaitForFence(m_writeFence[x]);
 			WaitForFence(m_readFence[x]);

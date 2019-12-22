@@ -3,7 +3,7 @@
 #include "Modules/ECS/ecsWorld.h"
 
 
-Transform_System::Transform_System(Engine& engine) noexcept :
+Transform_System::Transform_System(Engine& engine) :
 	m_engine(engine)
 {
 	addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

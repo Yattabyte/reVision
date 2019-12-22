@@ -27,7 +27,7 @@ public:
 	/** Destroy the map. */
 	inline ~MappedChar() = default;
 	/** Construct the map. */
-	inline MappedChar() = default;
+	inline MappedChar() noexcept {}
 	/** Move a map. */
 	inline MappedChar(MappedChar&&) noexcept = default;
 	/** Copy a map. */
@@ -44,7 +44,7 @@ public:
 	/** Insert or overwrite the value T at the index of key.
 	@param	key		the key to insert or use in the map.
 	@param	value	the value to newly insert or overwrite, pairing to the key. */
-	inline void insertOrAssign(const char* key, const T& value) noexcept {
+	inline void insertOrAssign(const char* key, const T& value) {
 		m_map.insert_or_assign(key, value);
 	}
 	/** Remove the element found in the map matching the key specified.
@@ -79,7 +79,7 @@ public:
 	@note			will insert the key into the map if they lookup fails, guaranteed to return a zero-initialized <T>.\nIf this is undesired, used .at().
 	@param	key		the key associated with the element to retrieve.
 	@return			the element paired with the key supplied. */
-	inline T& operator[](const char* key) noexcept {
+	inline T& operator[](const char* key) {
 		return m_map[key];
 	}
 
@@ -107,24 +107,24 @@ public:
 	}
 	/** Check if the given key exists in the map, and optionally return its value.
 	@return			true if the key exists, false otherwise. */
-	inline std::optional<T> search(const char* key) const noexcept {
+	inline std::optional<T> search(const char* key) const {
 		if (find_I(key) != end())
 			return m_map.at(key);
 		return {};
 	}
 	/** Check if the given key exists in the map.
 	@return			true if the key exists, false otherwise. */
-	inline bool find(const char* key) const noexcept {
+	inline bool find(const char* key) const {
 		return find_I(key) != end();
 	}
 	/** Retrieves an iterator of the element associated with the key given.
 	@return			the iterator to the element desired, or the terminating iterator ('end()') if not found. */
-	inline auto	find_I(const char* key) noexcept {
+	inline auto	find_I(const char* key) {
 		return m_map.find(key);
 	}
 	/** Retrieves a constant iterator of the element associated with the key given.
 	@return			the constant iterator to the element desired, or the terminating constant iterator ('end()') if not found. */
-	inline auto find_I(const char* key) const noexcept {
+	inline auto find_I(const char* key) const {
 		return m_map.find(key);
 	}
 };

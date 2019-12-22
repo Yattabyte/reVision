@@ -3,7 +3,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-PropVisibility_System::PropVisibility_System(PropData& frameData) noexcept :
+PropVisibility_System::PropVisibility_System(PropData& frameData) :
 	m_frameData(frameData)
 {
 	addComponentType(Prop_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

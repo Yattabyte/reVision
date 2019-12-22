@@ -13,7 +13,7 @@ class Physics_Module final : public Engine_Module {
 public:
 	// Public (De)Constructors
 	/** Destroy this physics module. */
-	inline ~Physics_Module() noexcept = default;
+	inline ~Physics_Module() = default;
 	/** Construct a physics module.
 	@param	engine		reference to the engine to use. */
 	explicit Physics_Module(Engine& engine);

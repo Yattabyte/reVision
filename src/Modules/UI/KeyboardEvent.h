@@ -19,7 +19,7 @@ public:
 	/** Destroy the keyboard event. */
 	inline ~KeyboardEvent() = default;
 	/** Construct a keyboard event. */
-	inline KeyboardEvent() = default;
+	KeyboardEvent() noexcept;
 
 
 	// Public Methods

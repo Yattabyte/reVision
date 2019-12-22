@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 
-PropUpload_System::~PropUpload_System() noexcept 
+PropUpload_System::~PropUpload_System() 
 {
 	glDeleteBuffers(1, &m_vboID);
 	glDeleteVertexArrays(1, &m_vaoID);

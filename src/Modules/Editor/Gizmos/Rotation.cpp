@@ -10,7 +10,7 @@ constexpr float DISK_VERTICES = 32.0F;
 constexpr float DISK_RADIUS = 8.0F;
 constexpr size_t DISK_MAX_POINTS = (size_t)(DISK_VERTICES) * 6ull;
 
-Rotation_Gizmo::~Rotation_Gizmo() noexcept
+Rotation_Gizmo::~Rotation_Gizmo()
 {
 	// Update indicator
 	*m_aliveIndicator = false;

@@ -3,7 +3,7 @@
 #include <algorithm>
 
 
-SideList::~SideList() noexcept 
+SideList::~SideList() 
 {
 	// Delete geometry
 	glDeleteBuffers(2, m_vboID);
@@ -43,7 +43,7 @@ SideList::SideList(Engine& engine) :
 	addElement(m_label);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() noexcept { updateGeometry(); });
+	addCallback((int)UI_Element::Interact::on_resize, [&] { updateGeometry(); });
 
 	// Configure THIS element
 	setIndex(0);

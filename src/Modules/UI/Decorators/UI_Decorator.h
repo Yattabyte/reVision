@@ -10,7 +10,7 @@ class UI_Decorator : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this decorator. */
-	inline ~UI_Decorator() noexcept = default;
+	inline ~UI_Decorator() = default;
 	/** Construct a decorator, decorating the supplied component.
 	@param	component		the component to decorate. */
 	UI_Decorator(Engine& engine, const std::shared_ptr<UI_Element>& component) noexcept;

@@ -12,7 +12,7 @@ class Panel final : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this panel. */
-	~Panel() noexcept;
+	~Panel();
 	/** Construct a panel.
 	@param	engine		reference to the engine to use. */
 	explicit Panel(Engine& engine);

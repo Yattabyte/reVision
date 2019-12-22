@@ -15,7 +15,7 @@ class ShadowScheduler_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	~ShadowScheduler_System() noexcept;
+	~ShadowScheduler_System();
 	/** Construct this system.
 	@param	engine		reference to the engine to use. 
 	@param	frameData	reference to common data that changes frame-to-frame. */

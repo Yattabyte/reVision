@@ -2,6 +2,10 @@
 #include <iostream>
 
 
+MessageManager::MessageManager() noexcept
+{
+}
+
 void MessageManager::statement(const std::string& input)
 {
 	textOutput(input);

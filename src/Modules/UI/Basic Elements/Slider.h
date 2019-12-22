@@ -19,7 +19,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy the slider. */
-	inline ~Slider() noexcept = default;
+	inline ~Slider() = default;
 	/** Construct a slider with a given starting value.
 	@param	engine		reference to the engine to use. 
 	@param	value		the starting value to use.
@@ -49,7 +49,7 @@ public:
 	void setText(const std::string& text);
 	/** Retrieve this slider's text.
 	@return				the text this label uses. */
-	std::string getText() const noexcept;
+	std::string getText() const;
 
 
 protected:

@@ -4,7 +4,7 @@
 #include <algorithm>
 
 
-RH_Volume::~RH_Volume() noexcept
+RH_Volume::~RH_Volume()
 {
 	// Update indicator
 	*m_aliveIndicator = false;

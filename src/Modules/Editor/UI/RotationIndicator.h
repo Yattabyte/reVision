@@ -14,7 +14,7 @@ class RotationIndicator final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy the rotation indicator. */
-	~RotationIndicator() noexcept;
+	~RotationIndicator();
 	/** Construct a rotation indicator.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */

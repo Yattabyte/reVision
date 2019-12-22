@@ -4,7 +4,7 @@
 #include "imgui.h"
 
 
-Inspector_Light_System::Inspector_Light_System(Engine& engine, LevelEditor_Module& editor) noexcept :
+Inspector_Light_System::Inspector_Light_System(Engine& engine, LevelEditor_Module& editor) :
 	m_engine(engine),
 	m_editor(editor)
 {
@@ -19,7 +19,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 	const auto text = std::string(Light_Component::Name) + ": (" + std::to_string(components.size()) + ")";
 	if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 		// Create list of handles for commands to use
-		const auto getUUIDS = [&]() {
+		const auto getUUIDS = [&] {
 			std::vector<ComponentHandle> uuids;
 			uuids.reserve(components.size());
 			for (const auto& componentParam : components)
@@ -48,7 +48,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 						}
 					}
 				}
-				void setData(const std::vector<Light_Component::Light_Type>& data) noexcept {
+				void setData(const std::vector<Light_Component::Light_Type>& data) {
 					if (data.size()) {
 						size_t index(0ull);
 						for (const auto& componentHandle : m_uuids)
@@ -56,10 +56,10 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 								component->m_type = data[index++];
 					}
 				}
-				void execute() noexcept final {
+				void execute() final {
 					setData(m_newData);
 				}
-				void undo() noexcept final {
+				void undo() final {
 					setData(m_oldData);
 				}
 				bool join(Editor_Command* other) final {
@@ -90,7 +90,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 						}
 					}
 				}
-				void setData(const std::vector<glm::vec3>& data) noexcept {
+				void setData(const std::vector<glm::vec3>& data) {
 					if (data.size()) {
 						size_t index(0ull);
 						for (const auto& componentHandle : m_uuids)
@@ -98,10 +98,10 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 								component->m_color = data[index++];
 					}
 				}
-				void execute() noexcept final {
+				void execute() final {
 					setData(m_newData);
 				}
-				void undo() noexcept final {
+				void undo() final {
 					setData(m_oldData);
 				}
 				bool join(Editor_Command* other) final {
@@ -132,7 +132,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 						}
 					}
 				}
-				void setData(const std::vector<float>& data) noexcept {
+				void setData(const std::vector<float>& data) {
 					if (data.size()) {
 						size_t index(0ull);
 						for (const auto& componentHandle : m_uuids) {
@@ -141,10 +141,10 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 						}
 					}
 				}
-				void execute() noexcept final {
+				void execute() final {
 					setData(m_newData);
 				}
-				void undo() noexcept final {
+				void undo() final {
 					setData(m_oldData);
 				}
 				bool join(Editor_Command* other) final {
@@ -175,7 +175,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 						}
 					}
 				}
-				void setData(const std::vector<float>& data) noexcept {
+				void setData(const std::vector<float>& data) {
 					if (data.size()) {
 						size_t index(0ull);
 						for (const auto& componentHandle : m_uuids) {
@@ -184,10 +184,10 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 						}
 					}
 				}
-				void execute() noexcept final {
+				void execute() final {
 					setData(m_newData);
 				}
-				void undo() noexcept final {
+				void undo() final {
 					setData(m_oldData);
 				}
 				bool join(Editor_Command* other) final {
@@ -218,7 +218,7 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 						}
 					}
 				}
-				void setData(const std::vector<float>& data) noexcept {
+				void setData(const std::vector<float>& data) {
 					if (data.size()) {
 						size_t index(0ull);
 						for (const auto& componentHandle : m_uuids) {
@@ -227,10 +227,10 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 						}
 					}
 				}
-				void execute() noexcept final {
+				void execute() final {
 					setData(m_newData);
 				}
-				void undo() noexcept final {
+				void undo() final {
 					setData(m_oldData);
 				}
 				bool join(Editor_Command* other) final {

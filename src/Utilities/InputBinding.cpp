@@ -3,7 +3,7 @@
 #include "Modules/UI/KeyboardEvent.h"
 
 
-InputBinding::~InputBinding() noexcept
+InputBinding::~InputBinding()
 {
 	save();
 }

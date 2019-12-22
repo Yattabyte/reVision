@@ -1,7 +1,7 @@
 #include "Modules/UI/Basic Elements/Separator.h"
 
 
-Separator::~Separator() noexcept 
+Separator::~Separator() 
 {
 	// Delete geometry
 	glDeleteBuffers(1, &m_vboID);

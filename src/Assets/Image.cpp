@@ -47,7 +47,7 @@ void Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondaryColor)
 	switch (m_policyFill) {
 	case Fill_Policy::SOLID: {
 		size_t pxComponent = 0;
-		std::generate(m_pixelData.begin(), m_pixelData.begin() + componentCount, [&]()->GLubyte {
+		std::generate(m_pixelData.begin(), m_pixelData.begin() + componentCount, [&] {
 			const unsigned int ID = (pxComponent++) % 4;
 			const auto component = GLubyte(primaryColor[ID]);
 			return component;

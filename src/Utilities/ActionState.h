@@ -12,9 +12,9 @@ class ActionState final {
 public:
 	// Public (De)Constructors
 	/** Destroy the action state. */
-	inline ~ActionState() noexcept = default;
+	inline ~ActionState() = default;
 	/** Construct the action state. */
-	ActionState();
+	ActionState() noexcept;
 	/** Move an action state. */
 	inline ActionState(ActionState&&) noexcept = default;
 	/** Copy an action state. */

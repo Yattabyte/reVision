@@ -14,7 +14,7 @@ class Frametime_Counter final : public Overlay {
 public:
 	// Public (De)Constructors
 	/** Destroy this overlay. */
-	~Frametime_Counter() noexcept;
+	~Frametime_Counter();
 	/** Construct a frame-time counter.
 	@param	engine		reference to the engine to use. */
 	explicit Frametime_Counter(Engine& engine);

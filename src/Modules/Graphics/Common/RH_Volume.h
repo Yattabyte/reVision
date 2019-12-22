@@ -16,7 +16,7 @@ class RH_Volume {
 public:
 	// Public (De)Constructors
 	/** Destroy the radiance hint volume. */
-	~RH_Volume() noexcept;
+	~RH_Volume();
 	/** Construct a radiance hint volume.
 	@param	engine			reference to the engine to use. */
 	explicit RH_Volume(Engine& engine);

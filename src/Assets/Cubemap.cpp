@@ -17,7 +17,7 @@ Shared_Cubemap::Shared_Cubemap(Engine& engine, const std::string& filename, cons
 	swap(newAsset);
 }
 
-Cubemap::~Cubemap() noexcept
+Cubemap::~Cubemap()
 {
 	if (ready()) 
 		glDeleteTextures(1, &m_glTexID);	

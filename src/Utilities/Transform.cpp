@@ -10,7 +10,7 @@ Transform::Transform(const glm::vec3& position, const glm::quat& orientation, co
 	update();
 }
 
-Transform::Transform(const glm::quat& orientation) noexcept : 
+Transform::Transform(const glm::quat& orientation) : 
 	Transform(glm::vec3(0.0f), orientation, glm::vec3(1.0f)) 
 {
 }

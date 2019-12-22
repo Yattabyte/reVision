@@ -94,7 +94,7 @@ void SaveDialogue::tickMainDialogue()
 				DELETE,
 			} option = DialogueOptions::NONE;
 			static char nameInput[256]{};
-			static auto setName = [&]() {
+			static auto setName = [&] {
 				if (m_selected != -1) {
 					const auto nameLength = m_levels[m_selected].name.length();
 					for (size_t x = 0; x < nameLength && x < IM_ARRAYSIZE(nameInput); ++x)
@@ -236,8 +236,8 @@ void SaveDialogue::tickMainDialogue()
 
 void SaveDialogue::tryToSave(const std::string& chosenName)
 {
-	constexpr const auto compareNCase = [](const std::string& str1, const std::string& str2) {
-		return ((str1.size() == str2.size()) && std::equal(str1.cbegin(), str1.cend(), str2.cbegin(), [](const char& c1, const char& c2) {
+	constexpr const auto compareNCase = [](const std::string& str1, const std::string& str2) noexcept {
+		return ((str1.size() == str2.size()) && std::equal(str1.cbegin(), str1.cend(), str2.cbegin(), [](const char& c1, const char& c2) noexcept {
 			return std::toupper(c1) == std::toupper(c2);
 			}));
 	};

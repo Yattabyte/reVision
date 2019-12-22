@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-Frametime_Counter::~Frametime_Counter() noexcept 
+Frametime_Counter::~Frametime_Counter() 
 {
 	// Update indicator
 	*m_aliveIndicator = false;

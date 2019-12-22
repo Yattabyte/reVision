@@ -14,7 +14,7 @@ class InputBinding {
 public:
 	// Public (De)Constructors
 	/** Destroy the binding (not from disk). */
-	~InputBinding() noexcept;
+	~InputBinding();
 	/** Construct a key-binding.
 	@param	engine		reference to the engine to use. */
 	explicit InputBinding(Engine& engine) noexcept;

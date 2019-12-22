@@ -1,7 +1,7 @@
 #include "Modules/UI/Basic Elements/List_Horizontal.h"
 
 
-List_Horizontal::~List_Horizontal() noexcept 
+List_Horizontal::~List_Horizontal() 
 {
 	// Delete geometry
 	glDeleteBuffers(1, &m_vboID);
@@ -23,11 +23,11 @@ List_Horizontal::List_Horizontal(Engine& engine) :
 	glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), nullptr, GL_DYNAMIC_STORAGE_BIT);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() {
+	addCallback((int)UI_Element::Interact::on_resize, [&] {
 		alignChildren();
 		updateSelectionGeometry();
 		});
-	addCallback((int)UI_Element::Interact::on_childrenChange, [&]() {
+	addCallback((int)UI_Element::Interact::on_childrenChange, [&] {
 		alignChildren();
 		});
 }
@@ -154,7 +154,7 @@ FocusMap& List_Horizontal::getFocusMap() noexcept
 	return m_focusMap;
 }
 
-void List_Horizontal::setMargin(const float& margin) noexcept 
+void List_Horizontal::setMargin(const float& margin) 
 {
 	m_margin = margin;
 	alignChildren();

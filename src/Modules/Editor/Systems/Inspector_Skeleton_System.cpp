@@ -24,7 +24,7 @@ void Inspector_Skeleton_System::updateComponents(const float&, const std::vector
 	const auto text = std::string(Skeleton_Component::Name) + ": (" + std::to_string(components.size()) + ")";
 	if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 		// Create list of handles for commands to use
-		const auto getUUIDS = [&]() {
+		const auto getUUIDS = [&] {
 			std::vector<ComponentHandle> uuids;
 			uuids.reserve(components.size());
 			for (const auto& componentParam : components)
@@ -48,7 +48,7 @@ void Inspector_Skeleton_System::updateComponents(const float&, const std::vector
 						}
 					}
 				}
-				void setData(const std::vector<int>& data) noexcept {
+				void setData(const std::vector<int>& data) {
 					if (data.size()) {
 						size_t index(0ull);
 						for (const auto& componentHandle : m_uuids) {
@@ -57,10 +57,10 @@ void Inspector_Skeleton_System::updateComponents(const float&, const std::vector
 						}
 					}
 				}
-				void execute() noexcept final {
+				void execute() final {
 					setData(m_newData);
 				}
-				void undo() noexcept final {
+				void undo() final {
 					setData(m_oldData);
 				}
 				bool join(Editor_Command* other) final {
@@ -91,7 +91,7 @@ void Inspector_Skeleton_System::updateComponents(const float&, const std::vector
 						}
 					}
 				}
-				void setData(const std::vector<bool>& data) noexcept {
+				void setData(const std::vector<bool>& data) {
 					if (data.size()) {
 						size_t index(0ull);
 						for (const auto& componentHandle : m_uuids) {
@@ -100,10 +100,10 @@ void Inspector_Skeleton_System::updateComponents(const float&, const std::vector
 						}
 					}
 				}
-				void execute() noexcept final {
+				void execute() final {
 					setData(m_newData);
 				}
-				void undo() noexcept final {
+				void undo() final {
 					setData(m_oldData);
 				}
 				bool join(Editor_Command* other) final {

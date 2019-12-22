@@ -3,7 +3,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-IndirectVisibility_System::IndirectVisibility_System(Indirect_Light_Data& frameData) noexcept :
+IndirectVisibility_System::IndirectVisibility_System(Indirect_Light_Data& frameData) :
 	m_frameData(frameData)
 {
 	addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

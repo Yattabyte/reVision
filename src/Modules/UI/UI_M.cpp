@@ -136,7 +136,7 @@ void UI_Module::applyKey(const int& key, const int& /*unused*/, const int& actio
 		m_rootElement.back()->keyboardAction(m_keyboardEvent);
 }
 
-void UI_Module::applyActionState(ActionState& actionState) noexcept
+void UI_Module::applyActionState(ActionState& actionState)
 {
 	if (m_focusMap)
 		m_focusMap->applyActionState(actionState);

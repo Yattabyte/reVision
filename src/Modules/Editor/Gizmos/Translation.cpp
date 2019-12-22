@@ -5,7 +5,7 @@
 #include "imgui.h"
 
 
-Translation_Gizmo::~Translation_Gizmo() noexcept
+Translation_Gizmo::~Translation_Gizmo()
 {
 	// Update indicator
 	*m_aliveIndicator = false;

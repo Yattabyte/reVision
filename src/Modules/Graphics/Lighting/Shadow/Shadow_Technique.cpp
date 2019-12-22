@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-Shadow_Technique::~Shadow_Technique() noexcept 
+Shadow_Technique::~Shadow_Technique() 
 {
 	// Update indicator
 	*m_aliveIndicator = false;

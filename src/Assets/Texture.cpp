@@ -16,7 +16,7 @@ Shared_Texture::Shared_Texture(Engine& engine, const std::string& filename, cons
 	swap(newAsset);
 }
 
-Texture::~Texture() noexcept
+Texture::~Texture()
 {
 	if (ready()) 
 		glDeleteTextures(1, &m_glTexID);	

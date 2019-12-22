@@ -4,7 +4,7 @@
 #include "imgui.h"
 
 
-RotationIndicator::~RotationIndicator() noexcept
+RotationIndicator::~RotationIndicator()
 {
 	// Update indicator
 	*m_aliveIndicator = false;

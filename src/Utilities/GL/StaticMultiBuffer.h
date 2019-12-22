@@ -12,7 +12,7 @@ class StaticMultiBuffer final : public Buffer_Interface {
 public:
 	// Public (De)Constructors
 	/** Wait on this buffers fences, then destroy it. */
-	inline ~StaticMultiBuffer() noexcept {
+	inline ~StaticMultiBuffer() {
 		for (int x = 0; x < BufferCount; ++x) {
 			WaitForFence(m_writeFence[x]);
 			WaitForFence(m_readFence[x]);

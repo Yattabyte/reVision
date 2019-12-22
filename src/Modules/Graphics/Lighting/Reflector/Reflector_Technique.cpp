@@ -5,7 +5,7 @@
 #include "Engine.h"
 
 
-Reflector_Technique::~Reflector_Technique() noexcept 
+Reflector_Technique::~Reflector_Technique() 
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -31,7 +31,7 @@ Reflector_Technique::Reflector_Technique(Engine& engine, std::vector<Camera*>& s
 	// Preferences
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_ENVMAP_SIZE, m_frameData.envmapSize.x);
-	preferences.addCallback(PreferenceState::Preference::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float& f) noexcept {
+	preferences.addCallback(PreferenceState::Preference::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float& f) {
 		m_frameData.envmapSize = glm::ivec2(std::max(1u, (unsigned int)f));
 		m_viewport.resize(glm::ivec2(m_frameData.envmapSize), (int)m_frameData.reflectorLayers);
 		});
@@ -187,7 +187,7 @@ void Reflector_Technique::updateReflectors(const float& deltaTime)
 	}
 }
 
-void Reflector_Technique::renderReflectors(const float&, Viewport& viewport) noexcept 
+void Reflector_Technique::renderReflectors(const float&, Viewport& viewport) 
 {
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_BLEND);

@@ -19,7 +19,7 @@ public:
 
 	// Public (De)Constructors
 	/** Virtual system destructor. */
-	inline virtual ~ecsBaseSystem() noexcept = default;
+	inline virtual ~ecsBaseSystem() = default;
 	/** Construct a base ecsSystem. */
 	inline ecsBaseSystem() noexcept = default;
 	/** Move an base system. */
@@ -69,8 +69,8 @@ public:
 	@param	<T>		the system class type.
 	@param	...Args	variadic arguments to forward to the system constructor. */
 	template <typename T, class...Args>
-	inline void makeSystem(Args & ...args) noexcept {
-		if (const auto& system = std::make_shared<T>(args...); system->isValid())
+	inline void makeSystem(Args & ...args) {
+		if (const auto& system = std::make_shared<T>(args...); system && system->isValid())
 			m_systems.push_back(system);
 	}
 	/** Adds a system to the list.

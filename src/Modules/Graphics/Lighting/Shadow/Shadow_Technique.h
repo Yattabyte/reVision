@@ -15,7 +15,7 @@ class Shadow_Technique final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destroy this shadow technique. */
-	~Shadow_Technique() noexcept;
+	~Shadow_Technique();
 	/** Construct a shadow technique.
 	@param	engine			reference to the engine to use. 
 	@param	sceneCameras	reference to the scene cameras to use. */

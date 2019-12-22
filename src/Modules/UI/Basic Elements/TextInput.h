@@ -20,7 +20,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy this text input. */
-	~TextInput() noexcept;
+	~TextInput();
 	/** Construct a text input.
 	@param	engine		reference to the engine to use. */
 	explicit TextInput(Engine& engine);

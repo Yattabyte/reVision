@@ -22,7 +22,7 @@ class LevelEditor_Module final : public Engine_Module {
 public:
 	// Public (De)Constructors
 	/** Destroy this game module. */
-	inline ~LevelEditor_Module() noexcept = default;
+	inline ~LevelEditor_Module() = default;
 	/** Construct a game module.
 	@param	engine		reference to the engine to use. */
 	explicit LevelEditor_Module(Engine& engine);
@@ -198,7 +198,7 @@ private:
 To be sub-classed where needed, typically within the scope of a specialized function. */
 struct Editor_Command {
 	// Public Interface
-	inline virtual ~Editor_Command() noexcept = default;
+	inline virtual ~Editor_Command() = default;
 	/** Perform the command. */
 	virtual void execute() = 0;
 	/** Perform the reverse, undo the command. */

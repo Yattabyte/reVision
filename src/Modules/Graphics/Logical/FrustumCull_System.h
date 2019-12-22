@@ -13,10 +13,10 @@ class FrustumCull_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	inline ~FrustumCull_System() noexcept = default;
+	inline ~FrustumCull_System() = default;
 	/** Construct this system.
 	@param	sceneCameras	reference to the scene cameras to use. */
-	explicit FrustumCull_System(std::vector<Camera*>& sceneCameras) noexcept;
+	explicit FrustumCull_System(std::vector<Camera*>& sceneCameras);
 
 
 	// Public Interface Implementations

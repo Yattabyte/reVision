@@ -45,14 +45,14 @@ void SceneInspector::tick(const float&)
 									 entityHandle) != selectedEntities.cend())
 							node_flags |= ImGuiTreeNodeFlags_Selected;
 
-						const auto tryLeftClickElement = [&]() {
+						const auto tryLeftClickElement = [&] {
 							if (ImGui::IsItemClicked())
 								if (ImGui::GetIO().KeyCtrl)
 									m_editor.toggleAddToSelection(entityHandle);
 								else
 									m_editor.setSelection({entityHandle});
 						};
-						const auto tryRightClickElement = [&]() {
+						const auto tryRightClickElement = [&] {
 							if (ImGui::BeginPopupContextItem("Entity Controls")) {
 								char entityNameChars[256]{'\0'};
 								const auto nameLength = std::min(256ull, entityName.size());
@@ -106,7 +106,7 @@ void SceneInspector::tick(const float&)
 								}
 							}
 						};
-						const auto tryDragElement = [&]() {
+						const auto tryDragElement = [&] {
 							if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
 								ImGui::SetDragDropPayload(
 									"Entity", &entityHandle,

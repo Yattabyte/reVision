@@ -34,7 +34,7 @@ class Texture final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Texture. */
-	~Texture() noexcept;
+	~Texture();
 	/** Construct the Texture.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory). */

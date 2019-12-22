@@ -15,7 +15,7 @@ class ReflectorScheduler_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	~ReflectorScheduler_System() noexcept;
+	~ReflectorScheduler_System();
 	/** Construct this system.
 	@param	engine		reference to the engine to use. 
 	@param	frameData	reference to common data that changes frame-to-frame. */

@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-LoadingIndicator::~LoadingIndicator() noexcept
+LoadingIndicator::~LoadingIndicator()
 {
 	// Update indicator
 	*m_aliveIndicator = false;

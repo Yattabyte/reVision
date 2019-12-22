@@ -23,7 +23,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy this side list. */
-	~SideList() noexcept;
+	~SideList();
 	/** Construct the side list.
 	@param	engine		reference to the engine to use. */
 	explicit SideList(Engine& engine);

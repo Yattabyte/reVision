@@ -12,7 +12,7 @@ class Border final : public UI_Decorator {
 public:
 	// Public (De)Constructors
 	/** Destroy the border. */
-	~Border() noexcept;
+	~Border();
 	/** Construct a border, decorating the supplied component.
 	@param	engine		reference to the engine to use. 
 	@param	component	the component to decorate. */

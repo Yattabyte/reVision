@@ -44,7 +44,7 @@ class Material final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Material. */
-	inline ~Material() noexcept = default;
+	inline ~Material() = default;
 	/** Construct the Material.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory).

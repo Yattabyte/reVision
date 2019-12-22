@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-FXAA::~FXAA() noexcept 
+FXAA::~FXAA() 
 {
 	// Update indicator
 	*m_aliveIndicator = false;

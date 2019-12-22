@@ -18,7 +18,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy this scrollbar. */
-	~Scrollbar_V() noexcept;
+	~Scrollbar_V();
 	/** Construct a vertical scrollbar, decorating the supplied component.
 	@param	engine		reference to the engine to use. 
 	@param	component	the component to decorate. */

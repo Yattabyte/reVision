@@ -2,7 +2,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-ReflectorPerspective_System::ReflectorPerspective_System(std::vector<Camera*>& sceneCameras) noexcept :
+ReflectorPerspective_System::ReflectorPerspective_System(std::vector<Camera*>& sceneCameras) :
 	m_sceneCameras(sceneCameras)
 {
 	addComponentType(Reflector_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

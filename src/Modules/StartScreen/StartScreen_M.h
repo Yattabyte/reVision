@@ -12,7 +12,7 @@ class StartScreen_Module final : public Engine_Module {
 public:
 	// Public (De)Constructors
 	/** Destroy this start screen module. */
-	inline ~StartScreen_Module() noexcept = default;
+	inline ~StartScreen_Module() = default;
 	/** Construct a start screen module.
 	@param	engine		reference to the engine to use. */
 	explicit StartScreen_Module(Engine& engine) noexcept;

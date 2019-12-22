@@ -11,7 +11,7 @@ class UnsavedChangesDialogue final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this Unsaved Changes dialogue. */
-	inline ~UnsavedChangesDialogue() noexcept = default;
+	inline ~UnsavedChangesDialogue() = default;
 	/** Construct a Unsaved Changes dialogue.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */

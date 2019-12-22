@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 
-ReflectorScheduler_System::~ReflectorScheduler_System() noexcept
+ReflectorScheduler_System::~ReflectorScheduler_System()
 {
 	// Update indicator
 	*m_aliveIndicator = false;

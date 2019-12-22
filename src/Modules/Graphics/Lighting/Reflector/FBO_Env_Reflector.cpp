@@ -1,13 +1,13 @@
 #include "Modules/Graphics/Lighting/Reflector/FBO_Env_Reflector.h"
 
 
-FBO_Env_Reflector::~FBO_Env_Reflector() noexcept
+FBO_Env_Reflector::~FBO_Env_Reflector()
 {
 	glDeleteFramebuffers(6, m_fboID);
 	glDeleteTextures(1, &m_textureID);
 }
 
-FBO_Env_Reflector::FBO_Env_Reflector()
+FBO_Env_Reflector::FBO_Env_Reflector() noexcept
 {
 	glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_textureID);
 	glTextureParameteri(m_textureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

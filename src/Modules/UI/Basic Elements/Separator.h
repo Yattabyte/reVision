@@ -12,7 +12,7 @@ class Separator final : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Destroy this separator. */
-	~Separator() noexcept;
+	~Separator();
 	/** Construct a separator.
 	@param	engine		reference to the engine to use. */
 	explicit Separator(Engine& engine);

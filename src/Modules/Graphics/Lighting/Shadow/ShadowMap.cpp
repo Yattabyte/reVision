@@ -2,7 +2,7 @@
 #include <algorithm>
 
 
-ShadowMap::~ShadowMap() noexcept 
+ShadowMap::~ShadowMap() 
 {
 	glDeleteFramebuffers(1, &m_fboID);
 	glDeleteTextures(3, m_textureIDS);

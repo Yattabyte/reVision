@@ -3,7 +3,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-DirectVisibility_System::DirectVisibility_System(Direct_Light_Data& frameData) noexcept :
+DirectVisibility_System::DirectVisibility_System(Direct_Light_Data& frameData) :
 	m_frameData(frameData)
 {
 	addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

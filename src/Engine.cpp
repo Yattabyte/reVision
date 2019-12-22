@@ -22,7 +22,7 @@ Engine::~Engine()
 	m_messageManager.statement("Shutting down...");
 }
 
-Engine::Engine() :
+Engine::Engine() noexcept :
 	// Initialize engine-dependent members first
 	m_preferenceState(*this),
 	m_inputBindings(*this),
@@ -137,7 +137,7 @@ void Engine::setMouseInputMode(const MouseInputMode& mode)
 	}
 }
 
-void Engine::goToMainMenu() noexcept
+void Engine::goToMainMenu()
 {
 	m_engineState = Engine_State::in_startMenu;
 	m_moduleStartScreen.showStartMenu();

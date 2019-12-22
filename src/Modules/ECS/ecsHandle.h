@@ -9,7 +9,7 @@ public:
 	/** The UUID container. */
 	char m_uuid[32] = { '\0' };
 	/** Destroy this handle. */
-	inline virtual ~ecsHandle() noexcept = default;
+	inline virtual ~ecsHandle() = default;
 	/** Construct an empty handle. */
 	inline ecsHandle() noexcept = default;
 	/** Construct a specific handle.
@@ -20,7 +20,7 @@ public:
 	ecsHandle(const ecsHandle& other) noexcept;
 	/** Move Constructor. 
 	@param	other		an other handle to move from. */
-	ecsHandle(ecsHandle&& other);
+	ecsHandle(ecsHandle&& other) noexcept;
 	/** Copy from another handle.
 	@param	other		an other handle to copy from. 
 	@return				reference to this. */
@@ -42,7 +42,7 @@ public:
 };
 
 struct EntityHandle final : ecsHandle {
-	inline ~EntityHandle() noexcept = default;
+	inline ~EntityHandle() = default;
 	inline EntityHandle() noexcept = default;
 	inline EntityHandle(EntityHandle&&) noexcept = default;
 	inline EntityHandle(const EntityHandle&) noexcept = default;
@@ -50,7 +50,7 @@ struct EntityHandle final : ecsHandle {
 	EntityHandle& operator=(const EntityHandle& other);
 };
 struct ComponentHandle final : ecsHandle {
-	inline ~ComponentHandle() noexcept = default;
+	inline ~ComponentHandle() = default;
 	inline ComponentHandle() noexcept = default;
 	inline ComponentHandle(ComponentHandle&&) noexcept = default;
 	inline ComponentHandle(const ComponentHandle&) noexcept = default;

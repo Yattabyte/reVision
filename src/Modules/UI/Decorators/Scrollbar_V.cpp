@@ -2,7 +2,7 @@
 #include <algorithm>
 
 
-Scrollbar_V::~Scrollbar_V() noexcept
+Scrollbar_V::~Scrollbar_V()
 {
 	// Delete geometry
 	glDeleteBuffers(1, &m_vboID);
@@ -41,7 +41,7 @@ Scrollbar_V::Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& comp
 	m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() { updateGeometry(); });
+	addCallback((int)UI_Element::Interact::on_resize, [&] { updateGeometry(); });
 }
 
 void Scrollbar_V::mouseAction(const MouseEvent& mouseEvent) 

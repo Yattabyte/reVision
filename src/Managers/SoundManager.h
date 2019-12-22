@@ -15,7 +15,7 @@ public:
 	/** Destroy the sound manager. */
 	~SoundManager();
 	/** Construct the sound manager. */
-	SoundManager();
+	SoundManager() noexcept;
 
 
 	// Public Methods

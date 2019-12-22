@@ -14,7 +14,7 @@ struct Viewport {
 public:
 	// Public (De)Constructors
 	/** Destroy this viewport. */
-	inline ~Viewport() noexcept = default;
+	inline ~Viewport() = default;
 	/** Construct a viewport, given an offset and size.
 	@param	screenPosition	the offset relative to the bottom left of the screen.
 	@param	dimensions		the size of the viewport.

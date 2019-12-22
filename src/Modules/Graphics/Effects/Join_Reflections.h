@@ -15,7 +15,7 @@ class Join_Reflections final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destroy this effect. */
-	~Join_Reflections() noexcept;
+	~Join_Reflections();
 	/** Construct a reflection joining effect.
 	@param	engine			reference to the engine to use. */
 	explicit Join_Reflections(Engine& engine);

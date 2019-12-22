@@ -11,7 +11,7 @@
 #include <filesystem>
 
 
-Prefabs::~Prefabs() noexcept
+Prefabs::~Prefabs()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -145,7 +145,7 @@ void Prefabs::populatePrefabs(const std::string& directory)
 			a.m_localTransform.m_scale = glm::vec3(15.0f);
 			a.m_localTransform.update();
 			c.m_modelName = "FireHydrant\\FireHydrantMesh.obj";
-			const ecsBaseComponent* entityComponents[] = { &a, &b, &c };
+			const ecsBaseComponent* const entityComponents[] = { &a, &b, &c };
 			Prefabs::Entry entry{ "Basic Model", "", Entry::Type::FILE, {m_previewWorld.makeEntity(entityComponents, 3ull, "Basic Model")} };
 			addPrefab(entry);
 		}
@@ -213,7 +213,7 @@ void Prefabs::populatePrefabs(const std::string& directory)
 		b.m_intensity = 10.0f;
 		b.m_radius = 1000.0f;
 		b.m_cutoff = 180.0f;
-		const ecsBaseComponent* entityComponents[] = { &a, &b };
+		const ecsBaseComponent* const entityComponents[] = { &a, &b };
 		m_sunHandle = m_previewWorld.makeEntity(entityComponents, 2ull, "Preview Sun");
 	}
 }

@@ -11,9 +11,9 @@ class FBO_Env_Reflector {
 public:
 	// Public (De)Constructors
 	/** Destroy this framebuffer. */
-	~FBO_Env_Reflector() noexcept;
+	~FBO_Env_Reflector();
 	/** Construct a framebuffer. */
-	FBO_Env_Reflector();
+	FBO_Env_Reflector() noexcept;
 
 
 	// Public Methods

@@ -11,7 +11,7 @@ class Options_Video final : public Options_Pane {
 public:
 	// Public (De)Constructors
 	/** Destroy the video pane. */
-	inline ~Options_Video() noexcept = default;
+	inline ~Options_Video() = default;
 	/** Construct a video pane.
 	@param	engine		reference to the engine to use. */
 	explicit Options_Video(Engine& engine);

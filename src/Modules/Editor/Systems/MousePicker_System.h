@@ -15,7 +15,7 @@ class MousePicker_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Destroy this system. */
-	~MousePicker_System() noexcept;
+	~MousePicker_System();
 	/** Construct this system.
 	@param	engine		reference to the engine to use. */
 	explicit MousePicker_System(Engine& engine);

@@ -27,7 +27,7 @@ public:
 
 	// Public (De)Constructors
 	/** Destroy this label. */
-	~Label() noexcept;
+	~Label();
 	/** Construct a label, giving it the desired text.
 	@param	engine		reference to the engine to use. 
 	@param	text		the label text. */

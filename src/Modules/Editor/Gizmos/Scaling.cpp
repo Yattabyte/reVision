@@ -5,7 +5,7 @@
 #include "imgui.h"
 
 
-Scaling_Gizmo::~Scaling_Gizmo() noexcept
+Scaling_Gizmo::~Scaling_Gizmo()
 {
 	// Update indicator
 	*m_aliveIndicator = false;

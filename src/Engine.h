@@ -24,7 +24,7 @@
 #include "Utilities/GL/Window.h"
 
 
-constexpr char ENGINE_VERSION[] = "4.20.9";
+constexpr char ENGINE_VERSION[] = "4.20.10";
 struct GLFWwindow;
 
 /** The main game engine object. Encapsulates the entire engine state. */
@@ -42,7 +42,7 @@ public:
 	/** Destroys the game engine. */
 	~Engine();
 	/** Construct the game engine. */
-	Engine();
+	Engine() noexcept;
 
 
 public:
@@ -58,7 +58,7 @@ public:
 	@param	mode		the new mouse input mode to use. */
 	void setMouseInputMode(const MouseInputMode& mode);
 	/** Switch the UI over to the main menu. */
-	void goToMainMenu() noexcept;
+	void goToMainMenu();
 	/** Switch the UI over to the game. */
 	void goToGame();
 	/** Switch the UI over to the level editor. */

@@ -2,7 +2,7 @@
 #include <algorithm>
 
 
-Label::~Label() noexcept 
+Label::~Label() 
 {
 	// Delete geometry
 	glDeleteBuffers(1, &m_vboID);

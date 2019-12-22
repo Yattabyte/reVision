@@ -33,7 +33,7 @@ class Shader_Geometry : public Shader {
 public:
 	// Public (De)Constructors
 	/** Destroy the Shader. */
-	~Shader_Geometry() noexcept;
+	~Shader_Geometry();
 	/** Construct the Shader.
 	@param	engine			reference to the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */

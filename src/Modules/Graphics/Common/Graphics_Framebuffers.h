@@ -35,11 +35,11 @@ public:
 	void createFBO(const char* name, const std::vector<std::tuple<GLenum, GLenum, GLenum>>& textureFormats, const bool& mipmapped = false);
 	/** Bind a framebuffer for writing.
 	@param	name			the name of the framebuffer to bind. */
-	void bindForWriting(const char* name) noexcept;
+	void bindForWriting(const char* name);
 	/** Bind a framebuffer for reading.
 	@param	name			the name of the framebuffer to bind.
 	@param	binding			the reading index which the framebuffer should bind to. */
-	void bindForReading(const char* name, const GLuint& binding = 0) noexcept;
+	void bindForReading(const char* name, const GLuint& binding = 0);
 	/** Clear all framebuffer color attachments of their data. */
 	void clear();
 	/** Resize all framebuffer textures.
@@ -48,11 +48,11 @@ public:
 	void resize(const glm::ivec2& newSize, const int& layerFaces);
 	/** Retrieve the FBO ID for a given framebuffer.
 	@param	name			the name of the framebuffer to retrieve from. */
-	GLuint getFboID(const char* name) noexcept;
+	GLuint getFboID(const char* name);
 	/** Retrieve the Texture ID for a given framebuffer at a given texture index.
 	@param	name			the name of the framebuffer to retrieve from.
 	@param	index			the index into this framebuffer to retrieve the texture ID from. (spot 0, spot 1, etc...) */
-	GLuint getTexID(const char* name, const size_t& index) noexcept;
+	GLuint getTexID(const char* name, const size_t& index);
 
 
 	// Public Attributes

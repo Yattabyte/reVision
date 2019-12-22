@@ -11,7 +11,7 @@ class IndirectDraw {
 public:
 	// Public (De)Constructors
 	/** Destroy this Indirect Draw Object. */
-	inline ~IndirectDraw() noexcept = default;
+	inline ~IndirectDraw() = default;
 	/** Default Constructor. */
 	inline IndirectDraw() noexcept = default;
 	/** Construct an Indirect Draw Object.

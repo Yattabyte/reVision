@@ -3,7 +3,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-PropSync_System::PropSync_System(PropData& frameData) noexcept :
+PropSync_System::PropSync_System(PropData& frameData) :
 	m_frameData(frameData) 
 {
 	addComponentType(Prop_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

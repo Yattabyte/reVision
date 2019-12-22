@@ -3,7 +3,7 @@
 #include "imgui.h"
 
 
-Mouse_Gizmo::~Mouse_Gizmo() noexcept
+Mouse_Gizmo::~Mouse_Gizmo()
 {
 	// Update indicator
 	*m_aliveIndicator = false;

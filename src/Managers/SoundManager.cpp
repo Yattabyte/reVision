@@ -10,7 +10,7 @@ SoundManager::~SoundManager()
 	delete se;
 }
 
-SoundManager::SoundManager()
+SoundManager::SoundManager() noexcept
 {
 	auto* soLoud = new SoLoud::Soloud();
 	soLoud->init();

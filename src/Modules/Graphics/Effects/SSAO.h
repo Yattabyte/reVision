@@ -15,7 +15,7 @@ class SSAO final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destroy this effect. */
-	~SSAO() noexcept;
+	~SSAO();
 	/** Construct a screen-space ambient occlusion effect.
 	@param	engine			reference to the engine to use. */
 	explicit SSAO(Engine& engine);

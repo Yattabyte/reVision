@@ -57,7 +57,7 @@ public:
 	/** Search for and remove a component matching the specific handle provided.
 	@param	componentHandle		handle to the component to be removed.
 	@return						true on successful removal, false otherwise. */
-	bool removeComponent(const ComponentHandle& componentHandle) noexcept;
+	bool removeComponent(const ComponentHandle& componentHandle);
 	/** Remove a specific component class from within a specific entity.
 	@param	entityHandle		handle to the entity to remove the component from.
 	@param	componentID			the runtime ID identifying the component class.
@@ -85,7 +85,7 @@ public:
 	@param	entityHandle		handle to the entity to retrieve from.
 	@return						the specific component of the type requested on success, nullptr otherwise. */
 	template <typename T>
-	inline T* getComponent(const EntityHandle& entityHandle) const noexcept {
+	inline T* getComponent(const EntityHandle& entityHandle) const {
 		if (auto* component = getComponent(entityHandle, T::Runtime_ID))
 			return dynamic_cast<T*>(component);
 		return nullptr;
@@ -100,7 +100,7 @@ public:
 	@param	componentHandle		the target component's handle.
 	@return						the specific component of the type requested on success, nullptr otherwise. */
 	template <typename T>
-	inline T* getComponent(const ComponentHandle& componentHandle) const noexcept {
+	inline T* getComponent(const ComponentHandle& componentHandle) const {
 		if (auto* component = getComponent(componentHandle))
 			return dynamic_cast<T*>(component);
 		return nullptr;
@@ -162,7 +162,7 @@ public:
 	/** Try to find a component ID based on the component ID.
 	@param	name				the component class name to search for.
 	@return						optional component ID on success, nullptr on failure. */
-	static std::optional<ComponentID> nameToComponentID(const char* name) noexcept;
+	static std::optional<ComponentID> nameToComponentID(const char* name);
 	/** Search for a component template with a matching class name.
 	@param	name				the component class name to search for.
 	@return						shared pointer to the a new component with a matching class name if successful, nullptr otherwise. */

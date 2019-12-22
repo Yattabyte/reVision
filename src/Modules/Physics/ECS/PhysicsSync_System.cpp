@@ -3,7 +3,7 @@
 #include "glm/glm.hpp"
 
 
-PhysicsSync_System::PhysicsSync_System(Engine& engine, btDiscreteDynamicsWorld& world) noexcept :
+PhysicsSync_System::PhysicsSync_System(Engine& engine, btDiscreteDynamicsWorld& world) :
 	ecsBaseSystem(),
 	m_engine(engine),
 	m_world(world)

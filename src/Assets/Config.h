@@ -31,7 +31,7 @@ class Config final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Destroy the Config. */
-	inline ~Config() noexcept = default;
+	inline ~Config() = default;
 	/** Construct the config with a particular set of variable names.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory).

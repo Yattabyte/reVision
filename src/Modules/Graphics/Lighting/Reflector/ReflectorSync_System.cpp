@@ -3,7 +3,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-ReflectorSync_System::ReflectorSync_System(ReflectorData& frameData) noexcept :
+ReflectorSync_System::ReflectorSync_System(ReflectorData& frameData) :
 	m_frameData(frameData)
 {
 	addComponentType(Reflector_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

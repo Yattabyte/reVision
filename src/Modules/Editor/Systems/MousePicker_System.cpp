@@ -14,7 +14,7 @@ static bool RayBBox(const Transform_Component& transformComponent, const Boundin
 static bool RayBSphere(const Transform_Component& transformComponent, const BoundingSphere_Component& bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence);
 static bool RayOrigin(const Transform_Component& transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine);
 
-MousePicker_System::~MousePicker_System() noexcept 
+MousePicker_System::~MousePicker_System() 
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -75,7 +75,7 @@ void MousePicker_System::updateComponents(const float&, const std::vector<std::v
 	int highestConfidence = 0;
 	bool found = false;
 	for (const auto& componentParam : components) {
-		auto transformComponent = static_cast<Transform_Component*>(componentParam[0]);
+		const auto* const transformComponent = static_cast<Transform_Component*>(componentParam[0]);
 		const auto* bBox = static_cast<BoundingBox_Component*>(componentParam[1]);
 		const auto* bSphere = static_cast<BoundingSphere_Component*>(componentParam[2]);
 		const auto* collider = static_cast<Collider_Component*>(componentParam[3]);

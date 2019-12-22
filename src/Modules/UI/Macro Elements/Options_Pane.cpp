@@ -19,7 +19,7 @@ Options_Pane::Options_Pane(Engine& engine) :
 	// Make a vertical layout to house list items
 	m_layout->setSpacing(1.0f);
 	m_layout->setMargin(50.0f);
-	m_layout->addCallback((int)List::Interact::on_selection, [&]() {
+	m_layout->addCallback((int)List::Interact::on_selection, [&] {
 		const auto index = m_layout->getSelectionIndex();
 		if (index > -1 && size_t(index) < m_descriptions.size())
 			std::dynamic_pointer_cast<Label>(m_description)->setText(m_descriptions[index]);
@@ -47,7 +47,7 @@ Options_Pane::Options_Pane(Engine& engine) :
 	m_backPanel->addElement(m_description);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&]() {
+	addCallback((int)UI_Element::Interact::on_resize, [&] {
 		const auto scale = getScale();
 		m_backPanel->setScale(scale);
 		m_layout->setScale(scale - glm::vec2(0, 50));
@@ -62,7 +62,7 @@ Options_Pane::Options_Pane(Engine& engine) :
 		});
 }
 
-void Options_Pane::userAction(ActionState& actionState) noexcept 
+void Options_Pane::userAction(ActionState& actionState) 
 {
 	// Options menu doesn't implement any custom controls, focus is on the list
 	m_layout->userAction(actionState);

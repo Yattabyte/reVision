@@ -1,7 +1,7 @@
 #include "Engine.h"
 
 
-int main() noexcept
+int main()
 {
 	Engine engine;
 

@@ -15,7 +15,7 @@ class Skybox final : public Graphics_Technique {
 public:
 	// Public (De)Constructors
 	/** Destroy this effect. */
-	~Skybox() noexcept;
+	~Skybox();
 	/** Construct a screen-space skybox effect.
 	@param	engine			reference to the engine to use. */
 	explicit Skybox(Engine& engine);

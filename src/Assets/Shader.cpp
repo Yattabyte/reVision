@@ -27,7 +27,7 @@ Shared_Shader::Shared_Shader(Engine& engine, const std::string& filename, const 
 	swap(newAsset);
 }
 
-Shader::~Shader() noexcept
+Shader::~Shader()
 {
 	if (ready())
 		glDeleteProgram(m_glProgramID);
@@ -208,7 +208,7 @@ bool Shader::validateProgram() noexcept
 	return true;
 }
 
-ShaderObj::~ShaderObj() noexcept 
+ShaderObj::~ShaderObj() 
 { 
 	glDeleteShader(m_shaderID); 
 }

@@ -88,12 +88,12 @@ void Graphics_Framebuffers::createFBO(const char* name, const std::vector<std::t
 	m_fbos[name] = { fboID, mipmapped, textures };
 }
 
-void Graphics_Framebuffers::bindForWriting(const char* name) noexcept
+void Graphics_Framebuffers::bindForWriting(const char* name)
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getFboID(name));
 }
 
-void Graphics_Framebuffers::bindForReading(const char* name, const GLuint& binding) noexcept
+void Graphics_Framebuffers::bindForReading(const char* name, const GLuint& binding)
 {
 	int counter(0);
 	for (const auto& [texID, internalFormat, format, type, attachment] : std::get<2>(m_fbos[name]))
@@ -145,12 +145,12 @@ void Graphics_Framebuffers::resize(const glm::ivec2& newSize, const int& layerFa
 	}
 }
 
-GLuint Graphics_Framebuffers::getFboID(const char* name) noexcept
+GLuint Graphics_Framebuffers::getFboID(const char* name)
 {
 	return std::get<0>(m_fbos[name]);
 }
 
-GLuint Graphics_Framebuffers::getTexID(const char* name, const size_t& index) noexcept
+GLuint Graphics_Framebuffers::getTexID(const char* name, const size_t& index)
 {
 	return std::get<0>(
 		(std::get<2>(m_fbos[name]))[index] // inner '() brackets' is the vector
