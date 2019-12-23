@@ -4,15 +4,11 @@
 #include <thread>
 
 
-AssetManager::AssetManager()
-{
-}
-
 Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& filename, const std::function<Shared_Asset(void)>& constructor, const bool& threaded)
 {
 	// Find out if the asset already exists
-	std::shared_lock<std::shared_mutex> asset_read_guard(m_Mutex_Assets);
-	for (const Shared_Asset asset : m_AssetMap[assetType])
+	std::shared_lock<std::shared_mutex> asset_read_guard(m_mutexAssets);
+	for (const Shared_Asset asset : m_assetMap[assetType])
 		if (asset->getFileName() == filename) {
 			asset_read_guard.unlock();
 			asset_read_guard.release();
@@ -27,16 +23,16 @@ Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& 
 	asset_read_guard.release();
 
 	// Create the asset
-	std::unique_lock<std::shared_mutex> asset_write_guard(m_Mutex_Assets);
+	std::unique_lock<std::shared_mutex> asset_write_guard(m_mutexAssets);
 	const auto& asset = constructor();
-	m_AssetMap[assetType].push_back(asset);
+	m_assetMap[assetType].push_back(asset);
 	asset_write_guard.unlock();
 	asset_write_guard.release();
 
 	// Initialize now or later, depending if we are threading this order or not
 	if (threaded) {
-		std::unique_lock<std::shared_mutex> worker_write_guard(m_Mutex_Workorders);
-		m_Workorders.emplace_back(std::bind(&Asset::initialize, asset));
+		std::unique_lock<std::shared_mutex> worker_write_guard(m_mutexWorkorders);
+		m_workOrders.emplace_back(std::bind(&Asset::initialize, asset));
 	}
 	else
 		asset->initialize();
@@ -46,11 +42,11 @@ Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& 
 void AssetManager::beginWorkOrder()
 {
 	// Start reading work orders
-	std::unique_lock<std::shared_mutex> writeGuard(m_Mutex_Workorders);
-	if (!m_Workorders.empty()) {
+	std::unique_lock<std::shared_mutex> writeGuard(m_mutexWorkorders);
+	if (!m_workOrders.empty()) {
 		// Remove front of queue
-		const Asset_Work_Order workOrder = m_Workorders.front();
-		m_Workorders.pop_front();
+		const Asset_Work_Order workOrder = m_workOrders.front();
+		m_workOrders.pop_front();
 		writeGuard.unlock();
 		writeGuard.release();
 
@@ -82,13 +78,13 @@ void AssetManager::notifyObservers()
 bool AssetManager::readyToUse()
 {
 	{
-		std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Workorders);
-		if (!m_Workorders.empty())
+		std::shared_lock<std::shared_mutex> readGuard(m_mutexWorkorders);
+		if (!m_workOrders.empty())
 			return false;
 	}
 	{
-		std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Assets);
-		return std::all_of(m_AssetMap.begin(), m_AssetMap.end(), [](const auto& assetCategory) {
+		std::shared_lock<std::shared_mutex> readGuard(m_mutexAssets);
+		return std::all_of(m_assetMap.begin(), m_assetMap.end(), [](const auto& assetCategory) {
 			return std::all_of(assetCategory.second.cbegin(), assetCategory.second.cend(), [](const auto& asset) {
 				return asset->ready();
 				});

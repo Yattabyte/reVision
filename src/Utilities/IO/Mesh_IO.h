@@ -25,8 +25,8 @@ struct VertexBoneData {
 	void AddBoneData(const int& BoneID, const float& Weight) noexcept;
 };
 struct Material_Strings {
-	std::string albedo = "", normal = "", metalness = "", roughness = "", height = "", ao = "";
-	inline Material_Strings(const std::string& al = "albedo", const std::string& n = "normal", const std::string& m = "metalness", const std::string& r = "roughness", const std::string& h = "height", const std::string& a = "ao")
+	std::string albedo = "albedo", normal = "normal", metalness = "metalness", roughness = "roughness", height = "height", ao = "ao";
+	inline Material_Strings(const std::string& al, const std::string& n, const std::string& m, const std::string& r, const std::string& h, const std::string& a)
 		: albedo(al), normal(n), metalness(m), roughness(r), height(h), ao(a) {}
 };
 template<typename T>
@@ -41,7 +41,12 @@ struct Node_Animation {
 	std::vector<Animation_Time_Key<glm::vec3>> scalingKeys;
 	std::vector<Animation_Time_Key<glm::quat>> rotationKeys;
 	std::vector<Animation_Time_Key<glm::vec3>> positionKeys;
-	inline Node_Animation(const std::string& name = "") : nodeName(name) {}
+	inline ~Node_Animation() = default;
+	inline Node_Animation() noexcept = default;
+	inline Node_Animation(const Node_Animation&) = default;
+	inline Node_Animation& operator=(const Node_Animation&) = default;
+	inline Node_Animation& operator=(Node_Animation&&) = default;
+	inline Node_Animation(const std::string& name) : nodeName(name) {}
 };
 struct Node {
 	std::string name = "";

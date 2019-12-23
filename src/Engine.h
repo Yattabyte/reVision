@@ -24,7 +24,7 @@
 #include "Utilities/GL/Window.h"
 
 
-constexpr char ENGINE_VERSION[] = "4.20.10";
+constexpr char ENGINE_VERSION[] = "4.20.11";
 struct GLFWwindow;
 
 /** The main game engine object. Encapsulates the entire engine state. */

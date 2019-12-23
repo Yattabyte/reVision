@@ -36,8 +36,6 @@ void PhysicsSync_System::updateComponents(const float&, const std::vector<std::v
 					}
 
 					// Build the collider from the transform info
-					if (!colliderComponent->m_motionState)
-						colliderComponent->m_motionState = std::make_shared<btDefaultMotionState>();
 					colliderComponent->m_motionState->setWorldTransform(btTransform(btTransform(btQuaternion(orientation.x, orientation.y, orientation.z, orientation.w), btVector3(position.x, position.y, position.z))));
 
 					// Resize the collider shape to fit

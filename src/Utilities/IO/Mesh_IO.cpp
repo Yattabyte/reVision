@@ -175,11 +175,11 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 	// Copy Texture Paths
 	if (materialCount > 1U)
 		for (auto x = 1U; x < materialCount; ++x) {
-			constexpr static auto getMaterial = [](const aiScene* scene, const unsigned int& materialIndex) -> Material_Strings {
-				constexpr static auto getTexture = [](const aiMaterial* sceneMaterial, const aiTextureType& textureType, std::string& texturePath) {
+			constexpr static auto getMaterial = [](const aiScene& scene, const unsigned int& materialIndex) -> Material_Strings {
+				constexpr static auto getTexture = [](const aiMaterial& sceneMaterial, const aiTextureType& textureType, std::string& texturePath) {
 					aiString path;
-					for (unsigned int x = 0; x < sceneMaterial->GetTextureCount(textureType); ++x) {
-						if (sceneMaterial->GetTexture(textureType, x, &path) == AI_SUCCESS) {
+					for (unsigned int x = 0; x < sceneMaterial.GetTextureCount(textureType); ++x) {
+						if (sceneMaterial.GetTexture(textureType, x, &path) == AI_SUCCESS) {
 							texturePath = path.C_Str();
 							return;
 						}
@@ -188,33 +188,34 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 				//std::string albedo = "albedo.png", normal = "normal.png", metalness = "metalness.png", roughness = "roughness.png", height = "height.png", AO = "ao.png";
 				std::string albedo, normal, metalness, roughness, height, ao;
 				if (materialIndex >= 0) {
-					const auto* sceneMaterial = scene->mMaterials[materialIndex];
-					getTexture(sceneMaterial, aiTextureType_DIFFUSE, albedo);
-					getTexture(sceneMaterial, aiTextureType_NORMALS, normal);
-					getTexture(sceneMaterial, aiTextureType_SPECULAR, metalness);
-					getTexture(sceneMaterial, aiTextureType_SHININESS, roughness);
-					getTexture(sceneMaterial, aiTextureType_HEIGHT, height);
-					getTexture(sceneMaterial, aiTextureType_AMBIENT, ao);
+					if (const auto* sceneMaterial = scene.mMaterials[materialIndex]) {
+						getTexture(*sceneMaterial, aiTextureType_DIFFUSE, albedo);
+						getTexture(*sceneMaterial, aiTextureType_NORMALS, normal);
+						getTexture(*sceneMaterial, aiTextureType_SPECULAR, metalness);
+						getTexture(*sceneMaterial, aiTextureType_SHININESS, roughness);
+						getTexture(*sceneMaterial, aiTextureType_HEIGHT, height);
+						getTexture(*sceneMaterial, aiTextureType_AMBIENT, ao);
 
-					constexpr static auto findStringIC = [](const std::string& strHaystack, const std::string& strNeedle) {
-						auto it = std::search(
-							strHaystack.begin(), strHaystack.end(),
-							strNeedle.begin(), strNeedle.end(),
-							[](char ch1, char ch2) noexcept { return std::toupper(ch1) == std::toupper(ch2); }
-						);
-						return (it != strHaystack.end());
-					};
-					if (normal.empty() && findStringIC(height, "normal")) {
-						auto temp = normal;
-						normal = height;
-						height = temp;
+						constexpr static auto findStringIC = [](const std::string& strHaystack, const std::string& strNeedle) {
+							auto it = std::search(
+								strHaystack.begin(), strHaystack.end(),
+								strNeedle.begin(), strNeedle.end(),
+								[](char ch1, char ch2) noexcept { return std::toupper(ch1) == std::toupper(ch2); }
+							);
+							return (it != strHaystack.end());
+						};
+						if (normal.empty() && findStringIC(height, "normal")) {
+							auto temp = normal;
+							normal = height;
+							height = temp;
+						}
 					}
 				}
 				return Material_Strings(albedo, normal, metalness, roughness, height, ao);
 			};
 
 			// Import Mesh Material
-			importedData.materials.push_back(getMaterial(scene, x));
+			importedData.materials.push_back(getMaterial(*scene, x));
 		}
 	else
 		//importedData.materials.push_back(Material_Strings("albedo.png", "normal.png", "metalness.png", "roughness.png", "height.png", "ao.png"));

@@ -31,7 +31,7 @@ struct ShaderObj {
 	/** Destroy the shader object. */
 	~ShaderObj();
 	/** Construct a shader object. */
-	explicit ShaderObj(const GLenum& type) noexcept;
+	explicit ShaderObj(const GLenum& type);
 	/** Move a shader object. */
 	ShaderObj(ShaderObj&&) noexcept;
 	/** Copy a shader object. */

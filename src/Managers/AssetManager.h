@@ -18,7 +18,7 @@ public:
 	/** Destroy the asset manager. */
 	inline ~AssetManager() = default;
 	/** Create the asset manager. */
-	AssetManager();
+	inline AssetManager() = default;
 
 
 	// Public Methods
@@ -56,10 +56,12 @@ private:
 
 
 	// Private Attributes
-	std::shared_mutex m_Mutex_Assets;
-	VectorMap<Shared_Asset> m_AssetMap;
-	std::shared_mutex m_Mutex_Workorders;
-	std::deque<Asset_Work_Order> m_Workorders;
+	std::shared_mutex m_mutexAssets;
+	VectorMap<Shared_Asset> m_assetMap;
+
+	std::shared_mutex m_mutexWorkorders;
+	std::deque<Asset_Work_Order> m_workOrders;
+
 	std::shared_mutex m_mutexNofications;
 	std::vector<std::pair<std::shared_ptr<bool>, std::function<void()>>> m_notifyees;
 	bool m_changed = true;

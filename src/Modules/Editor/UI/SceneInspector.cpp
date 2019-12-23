@@ -23,8 +23,7 @@ void SceneInspector::tick(const float&)
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
 			size_t displayCount(0ull);
-			std::function<void(const EntityHandle&)> displayEntity = [&](const EntityHandle&
-																			 entityHandle) {
+			std::function<void(const EntityHandle&)> displayEntity = [&](const EntityHandle& entityHandle) {
 				if (const auto entity = ecsWorld.getEntity(entityHandle)) {
 					bool entity_or_components_pass_filter = false;
 					auto& entityName = entity->m_name;
@@ -32,8 +31,9 @@ void SceneInspector::tick(const float&)
 					if (filter.PassFilter(entityName.c_str()))
 						entity_or_components_pass_filter = true;
 					for (const auto& [compID, fn, compHandle] : components)
-						if (filter.PassFilter(ecsWorld.getComponent(entityHandle, compID)->m_name))
-							entity_or_components_pass_filter = true;
+						if (const auto& component = ecsWorld.getComponent(entityHandle, compID))
+							if (filter.PassFilter(component->m_name))
+								entity_or_components_pass_filter = true;
 
 					// Check if the entity or its components matched search criteria
 					if (entity_or_components_pass_filter) {
@@ -140,24 +140,24 @@ void SceneInspector::tick(const float&)
 								displayEntity(subEntityHandle);
 							const auto componentCount = components.size();
 							for (int x = 0; x < componentCount; ++x) {
-								const auto& component = components[x];
-								const auto& componentID = std::get<0>(component);
-								ImGui::PushID(&component);
-								ImGui::AlignTextToFramePadding();
-								ImGui::PushStyleColor(ImGuiCol_Button,
-													  (ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
-								ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
-													  (ImVec4)ImColor::HSV(0, 0.7f, 0.7f));
-								ImGui::PushStyleColor(ImGuiCol_ButtonActive,
-													  (ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
-								const auto buttonPressed = ImGui::Button("-");
-								ImGui::PopStyleColor(3);
-								ImGui::SameLine();
-								ImGui::Text(
-									ecsWorld.getComponent(entityHandle, componentID)->m_name);
-								ImGui::PopID();
-								if (buttonPressed)
-									m_editor.deleteComponent(entityHandle, componentID);
+								const auto& componentID = std::get<0>(components[x]);
+								if (auto component = ecsWorld.getComponent(entityHandle, componentID)) {
+									ImGui::PushID(component);
+									ImGui::AlignTextToFramePadding();
+									ImGui::PushStyleColor(ImGuiCol_Button,
+										(ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
+									ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
+										(ImVec4)ImColor::HSV(0, 0.7f, 0.7f));
+									ImGui::PushStyleColor(ImGuiCol_ButtonActive,
+										(ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
+									const auto buttonPressed = ImGui::Button("-");
+									ImGui::PopStyleColor(3);
+									ImGui::SameLine();
+									ImGui::Text(component->m_name);
+									ImGui::PopID();
+									if (buttonPressed)
+										m_editor.deleteComponent(entityHandle, componentID);
+								}
 							}
 							ImGui::AlignTextToFramePadding();
 							ImGui::PushStyleColor(ImGuiCol_Button,

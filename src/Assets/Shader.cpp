@@ -213,7 +213,7 @@ ShaderObj::~ShaderObj()
 	glDeleteShader(m_shaderID); 
 }
 
-ShaderObj::ShaderObj(const GLenum& type) noexcept : 
+ShaderObj::ShaderObj(const GLenum& type) : 
 	m_type(type)
 {
 }
