@@ -36,6 +36,19 @@ private:
 	void registerLightShapes();
 
 
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Direct_Technique() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Direct_Technique(Direct_Technique&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Direct_Technique(const Direct_Technique&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Direct_Technique& operator =(Direct_Technique&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Direct_Technique& operator =(const Direct_Technique&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	Shared_Shader m_shader_Lighting, m_shader_Stencil;

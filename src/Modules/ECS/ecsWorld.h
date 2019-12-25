@@ -124,6 +124,8 @@ public:
 	@param	other		another ecsWorld to move the data from.
 	@return				reference to this. */
 	ecsWorld& operator=(ecsWorld&& other) noexcept;
+	/** Disallow ECS world copy assignment. */
+	inline ecsWorld& operator =(const ecsWorld&) noexcept = delete;
 	/** Clear the data out of this ecsWorld. */
 	void clear();
 	/** Generate a universally unique identifier for entities or components.

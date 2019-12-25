@@ -32,6 +32,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline MousePicker_System() noexcept = delete;
+	/** Disallow move constructor. */
+	inline MousePicker_System(MousePicker_System&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline MousePicker_System(const MousePicker_System&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline MousePicker_System& operator =(MousePicker_System&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline MousePicker_System& operator =(const MousePicker_System&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	EntityHandle m_selection;

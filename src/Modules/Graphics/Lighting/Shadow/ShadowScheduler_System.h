@@ -27,6 +27,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline ShadowScheduler_System() noexcept = delete;
+	/** Disallow move constructor. */
+	inline ShadowScheduler_System(ShadowScheduler_System&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline ShadowScheduler_System(const ShadowScheduler_System&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline ShadowScheduler_System& operator =(ShadowScheduler_System&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline ShadowScheduler_System& operator =(const ShadowScheduler_System&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	ShadowData& m_frameData;

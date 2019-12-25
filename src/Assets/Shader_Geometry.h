@@ -15,7 +15,7 @@ class Shared_Shader_Geometry final : public std::shared_ptr<Shader_Geometry> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Shader_Geometry() noexcept = default;
+	inline Shared_Shader_Geometry() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
@@ -56,9 +56,9 @@ private:
 	/** Disallow asset copy constructor. */
 	inline Shader_Geometry(const Shader_Geometry&) noexcept = delete;
 	/** Disallow asset move assignment. */
-	inline const Shader_Geometry& operator =(Shader_Geometry&&) noexcept = delete;
+	inline Shader_Geometry& operator =(Shader_Geometry&&) noexcept = delete;
 	/** Disallow asset copy assignment. */
-	inline const Shader_Geometry& operator =(const Shader_Geometry&) noexcept = delete;
+	inline Shader_Geometry& operator =(const Shader_Geometry&) noexcept = delete;
 
 
 	// Private Interface Implementation

@@ -93,14 +93,16 @@ protected:
 
 private:
 	// Private but deleted
+	/** Disallow asset default constructor. */
+	inline Asset() noexcept = delete;
 	/** Disallow asset move constructor. */
 	inline Asset(Asset&&) noexcept = delete;
 	/** Disallow asset copy constructor. */
 	inline Asset(const Asset&) noexcept = delete;
 	/** Disallow asset move assignment. */
-	inline const Asset& operator =(Asset&&) noexcept = delete;
+	inline Asset& operator =(Asset&&) noexcept = delete;
 	/** Disallow asset copy assignment. */
-	inline const Asset& operator =(const Asset&) noexcept = delete;
+	inline Asset& operator =(const Asset&) noexcept = delete;
 };
 
 #endif // ASSET_H

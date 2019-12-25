@@ -18,7 +18,7 @@ class Shared_Material final : public std::shared_ptr<Material> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Material() noexcept = default;
+	inline Shared_Material() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
@@ -43,8 +43,6 @@ A material is a collection of textures that are used to approximate a real surfa
 class Material final : public Asset {
 public:
 	// Public (De)Constructors
-	/** Destroy the Material. */
-	inline ~Material() = default;
 	/** Construct the Material.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory).
@@ -68,17 +66,6 @@ public:
 
 
 private:
-	// Private but deleted
-	/** Disallow asset move constructor. */
-	inline Material(Material&&) noexcept = delete;
-	/** Disallow asset copy constructor. */
-	inline Material(const Material&) noexcept = delete;
-	/** Disallow asset move assignment. */
-	inline const Material& operator =(Material&&) noexcept = delete;
-	/** Disallow asset copy assignment. */
-	inline const Material& operator =(const Material&) noexcept = delete;
-
-
 	// Private Interface Implementation
 	void initialize() final;
 

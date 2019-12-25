@@ -16,7 +16,7 @@ class Shared_Model final : public std::shared_ptr<Model> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Model() noexcept = default;
+	inline Shared_Model() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
@@ -32,8 +32,6 @@ Contains a formatted 3D mesh to be used for 3D rendering, including information 
 class Model final : public Asset {
 public:
 	// Public (De)Constructors
-	/** Destroy the Model. */
-	inline ~Model() = default;
 	/** Construct the Model.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory). */
@@ -49,17 +47,6 @@ public:
 
 
 private:
-	// Private but deleted
-	/** Disallow asset move constructor. */
-	inline Model(Model&&) noexcept = delete;
-	/** Disallow asset copy constructor. */
-	inline Model(const Model&) noexcept = delete;
-	/** Disallow asset move assignment. */
-	inline const Model& operator =(Model&&) noexcept = delete;
-	/** Disallow asset copy assignment. */
-	inline const Model& operator =(const Model&) noexcept = delete;
-
-
 	// Private Methods
 	/** Calculates a Axis Aligned Bounding Box from a set of vertices.
 	Returns it as updated minimum and maximum values &minOut and &maxOut respectively.

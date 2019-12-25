@@ -14,8 +14,6 @@ Made to be sub-classed and expanded upon. Provides a method for adding new setti
 class Options_Pane : public UI_Element {
 public:
 	// Public (De)Constructors
-	/** Destroy the options pane. */
-	inline ~Options_Pane() = default;
 	/** Construct a options pane.
 	@param	engine		reference to the engine to use. */
 	explicit Options_Pane(Engine& engine);

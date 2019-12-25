@@ -22,10 +22,14 @@ public:
 	inline virtual ~ecsBaseSystem() = default;
 	/** Construct a base ecsSystem. */
 	inline ecsBaseSystem() noexcept = default;
-	/** Move an base system. */
+	/** Move a base system. */
 	inline ecsBaseSystem(ecsBaseSystem&&) noexcept = default;
-	/** Copy an base system. */
+	/** Copy a base system. */
 	inline ecsBaseSystem(const ecsBaseSystem&) noexcept = default;
+	/** Move-assign a base system. */
+	inline ecsBaseSystem& operator =(ecsBaseSystem&&) noexcept = default;
+	/** Copy-assign a base system. */
+	inline ecsBaseSystem& operator =(const ecsBaseSystem&) noexcept = default;
 
 
 	// Public Methods

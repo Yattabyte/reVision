@@ -38,6 +38,20 @@ public:
 	glm::vec3 getBorderColor() const noexcept;
 
 
+private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Border() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Border(Border&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Border(const Border&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Border& operator =(Border&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Border& operator =(const Border&) noexcept = delete;
+
+
 protected:
 	// Protected Methods
 	void updateGeometry();

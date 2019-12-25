@@ -10,8 +10,6 @@
 class MissingFileDialogue final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
-	/** Destroy this missing file dialogue. */
-	inline ~MissingFileDialogue() = default;
 	/** Construct a missing file dialogue.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */

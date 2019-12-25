@@ -9,8 +9,6 @@
 class Options_Graphics final : public Options_Pane {
 public:
 	// Public (De)Constructors
-	/** Destroy the graphics panel. */
-	inline ~Options_Graphics() = default;
 	/** Construct a graphics panel.
 	@param	engine		reference to the engine to use. */
 	explicit Options_Graphics(Engine& engine);

@@ -35,30 +35,6 @@ Transform Transform::inverse()
 	return n;
 }
 
-Transform& Transform::operator=(const Transform& other) noexcept
-{
-	if (this != &other) {
-		m_position = other.m_position;
-		m_orientation = other.m_orientation;
-		m_scale = other.m_scale;
-		m_modelMatrix = other.m_modelMatrix;
-		m_inverseModelMatrix = other.m_inverseModelMatrix;
-	}
-	return *this;
-}
-
-Transform& Transform::operator=(Transform&& other) noexcept
-{
-	if (this != &other) {
-		m_position = std::move(other.m_position);
-		m_orientation = std::move(other.m_orientation);
-		m_scale = std::move(other.m_scale);
-		m_modelMatrix = std::move(other.m_modelMatrix);
-		m_inverseModelMatrix = std::move(other.m_inverseModelMatrix);
-	}
-	return *this;
-}
-
 bool Transform::operator==(const Transform& other) const noexcept 
 {
 	return (m_position == other.m_position && m_orientation == other.m_orientation && m_scale == other.m_scale);

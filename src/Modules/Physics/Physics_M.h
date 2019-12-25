@@ -12,8 +12,6 @@
 class Physics_Module final : public Engine_Module {
 public:
 	// Public (De)Constructors
-	/** Destroy this physics module. */
-	inline ~Physics_Module() = default;
 	/** Construct a physics module.
 	@param	engine		reference to the engine to use. */
 	explicit Physics_Module(Engine& engine);
@@ -36,17 +34,6 @@ public:
 
 
 private:
-	// Private and deleted
-	/** Disallow module move constructor. */
-	inline Physics_Module(Physics_Module&&) noexcept = delete;
-	/** Disallow module copy constructor. */
-	inline Physics_Module(const Physics_Module&) noexcept = delete;
-	/** Disallow module move assignment. */
-	inline const Physics_Module& operator =(Physics_Module&&) noexcept = delete;
-	/** Disallow module copy assignment. */
-	inline const Physics_Module& operator =(const Physics_Module&) noexcept = delete;
-
-
 	// Private Attributes
 	btDbvtBroadphase m_broadphase;
 	btDefaultCollisionConfiguration m_collisionConfiguration;

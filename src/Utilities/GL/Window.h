@@ -72,9 +72,9 @@ private:
 	/** Disallow window copy constructor. */
 	inline Window(const Window&) noexcept = delete;
 	/** Disallow window move assignment. */
-	inline const Window& operator =(Window&&) noexcept = delete;
+	inline Window& operator =(Window&&) noexcept = delete;
 	/** Disallow window copy assignment. */
-	inline const Window& operator =(const Window&) noexcept = delete;
+	inline Window& operator =(const Window&) noexcept = delete;
 
 
 	// Private Methods

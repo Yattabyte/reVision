@@ -9,8 +9,6 @@
 class Layout_Horizontal final : public UI_Element {
 public:
 	// Public (De)Constructors
-	/** Destroy this layout. */
-	inline ~Layout_Horizontal() = default;
 	/** Construct the layout.
 	@param	engine		reference to the engine to use. */
 	explicit Layout_Horizontal(Engine& engine);

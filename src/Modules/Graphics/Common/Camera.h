@@ -25,13 +25,6 @@ public:
 	};
 
 
-	// Public (De)Constructors
-	/** Destroy the camera buffer. */
-	inline ~Camera() = default;
-	/** Construct a camera buffer. */
-	inline Camera() noexcept = default;
-
-
 	// Public Methods
 	/** Set the enabled state for this camera.
 	@param	enabled		whether this camera should be enabled or not. */

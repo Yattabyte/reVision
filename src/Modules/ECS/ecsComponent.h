@@ -35,6 +35,10 @@ struct ecsBaseComponent {
 	inline ecsBaseComponent(ecsBaseComponent&&) noexcept = default;
 	/** Copy a base ecsComponent. */
 	inline ecsBaseComponent(const ecsBaseComponent&) noexcept = default;
+	/** Disallow base ecsComponent move assignment. */
+	inline ecsBaseComponent& operator =(ecsBaseComponent&&) noexcept = default;
+	/** Disallow base ecsComponent copy assignment. */
+	inline ecsBaseComponent& operator =(const ecsBaseComponent&) noexcept = default;
 
 
 	// Public Methods
@@ -91,14 +95,8 @@ protected:
 template <typename C, const char* chars>
 struct ecsComponent : public ecsBaseComponent {
 	// (De)Constructors
-	/** Destroy this component. */
-	inline ~ecsComponent() = default;
 	/** Construct this specific component. */
 	inline ecsComponent() noexcept : ecsBaseComponent(ecsComponent::Runtime_ID, sizeof(C), chars) {}
-	/** Move an ecsComponent. */
-	inline ecsComponent(ecsComponent&&) noexcept = default;
-	/** Copy an ecsComponent. */
-	inline ecsComponent(const ecsComponent&) noexcept = default;
 
 
 	// Public Methods

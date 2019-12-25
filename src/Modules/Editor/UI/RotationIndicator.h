@@ -26,6 +26,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline RotationIndicator() noexcept = delete;
+	/** Disallow move constructor. */
+	inline RotationIndicator(RotationIndicator&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline RotationIndicator(const RotationIndicator&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline RotationIndicator& operator =(RotationIndicator&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline RotationIndicator& operator =(const RotationIndicator&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	GLuint m_fboID, m_texID, m_depthID;

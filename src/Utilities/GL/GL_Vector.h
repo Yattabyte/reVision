@@ -43,10 +43,16 @@ public:
 			m_bufferPtr[x] = static_cast<T*>(glMapNamedBufferRange(m_bufferID[x], 0, bufferSize, BufferFlags));
 		}
 	}
-	/** Assignment constructor.
+	/** Move constructor.
 	@param	other			another buffer to move the data from, to here. */
 	inline GL_Vector(GL_Vector&& other) noexcept {
 		(*this) = std::move(other);
+	}
+	/** Copy constructor.
+	@param	other			another buffer to move the data from, to here. */
+	inline GL_Vector(const GL_Vector& other) noexcept : GL_Vector(other.m_capacity) {
+		for (int x = 0; x < BufferCount; ++x)
+			glCopyNamedBufferSubData(other.m_bufferID[x], m_bufferID[x], 0, 0, m_capacity);
 	}
 
 
@@ -143,6 +149,14 @@ public:
 		other.m_index = 0;
 		return *this;
 	}
+	/** Copy operator, for copying another buffer into this one.
+	@param	other			another buffer to copy the data from, to here. */
+	inline GL_Vector& operator=(const GL_Vector& other) noexcept {
+		m_capacity = other.m_capacity;
+		for (int x = 0; x < BufferCount; ++x)
+			glCopyNamedBufferSubData(other.m_bufferID[x], m_bufferID[x], 0, 0, m_capacity);
+		return *this;
+	}
 	/** Index operator, retrieve a reference to the element at the index specified.
 	@param	index			an index to the element desired.
 	@return					reference to the element desired. */
@@ -152,11 +166,6 @@ public:
 
 
 private:
-	// Private Disallowed Methods
-	/** Copy constructor. */
-	inline GL_Vector(const GL_Vector&) noexcept = delete;
-
-
 	// Private Methods
 	/** Wait for the fence at the supplied index to pass.
 	@param	fence			the fence belonging to a particular internal buffer. */

@@ -26,6 +26,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline FXAA() noexcept = delete;
+	/** Disallow move constructor. */
+	inline FXAA(FXAA&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline FXAA(const FXAA&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline FXAA& operator =(FXAA&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline FXAA operator =(const FXAA&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	Shared_Shader m_shaderFXAA;

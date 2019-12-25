@@ -12,8 +12,6 @@ struct PropData;
 class PropVisibility_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
-	/** Destroy this system. */
-	inline ~PropVisibility_System() = default;
 	/** Construct this system.
 	@param	frameData	reference to of common data that changes frame-to-frame. */
 	explicit PropVisibility_System(PropData& frameData);

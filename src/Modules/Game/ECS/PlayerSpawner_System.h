@@ -14,11 +14,6 @@ class Game_Module;
 class PlayerSpawn_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
-	/** Destroy this free-look system. */
-	inline ~PlayerSpawn_System() {
-		// Update indicator
-		*m_aliveIndicator = false;
-	}
 	/** Construct a free-look system.
 	@param	engine		reference to the engine to use. 
 	@param	game		reference to the game module to use. */
@@ -35,7 +30,6 @@ private:
 	Game_Module& m_game;
 	size_t m_playerCount = 0ull;
 	EntityHandle m_playerHandle;
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // PLAYERSPAWNER_SYSTEM_H

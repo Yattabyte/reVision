@@ -37,6 +37,12 @@ public:
 	/** Construct a UI element.
 	@param	engine		reference to the engine to use. */
 	explicit UI_Element(Engine& engine) noexcept;
+	/** Default constructor. */
+	inline UI_Element() noexcept = default;
+	/** Move constructor. */
+	inline UI_Element(UI_Element&&) noexcept = default;
+	/** Copy constructor. */
+	inline UI_Element(const UI_Element&) noexcept = default;
 
 
 	// Public Interface Declaration
@@ -55,6 +61,10 @@ public:
 
 
 	// Public Methods
+	/** Move assignment. */
+	inline UI_Element& operator =(UI_Element&&) noexcept = default;
+	/** Copy assignment. */
+	inline UI_Element& operator =(const UI_Element&) noexcept = default;
 	/** Add a child UI element to this one.
 	@param	child				the element to be chained to this one. */
 	void addElement(const std::shared_ptr<UI_Element>& child);

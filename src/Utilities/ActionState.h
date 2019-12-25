@@ -10,17 +10,6 @@
 /** A container class that holds the action state for the engine, such as forward/back/left/right and amount. */
 class ActionState final {
 public:
-	// Public (De)Constructors
-	/** Destroy the action state. */
-	inline ~ActionState() = default;
-	/** Construct the action state. */
-	ActionState() noexcept;
-	/** Move an action state. */
-	inline ActionState(ActionState&&) noexcept = default;
-	/** Copy an action state. */
-	inline ActionState(const ActionState&) noexcept = default;
-
-
 	// Public Static Enumerations
 	/** Enumeration for whether the action key was pressed, released, or repeating. */
 	enum class State : int {

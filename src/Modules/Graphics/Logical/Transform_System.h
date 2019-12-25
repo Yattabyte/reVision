@@ -13,8 +13,6 @@ class ecsWorld;
 class Transform_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
-	/** Destroy this system. */
-	inline ~Transform_System() = default;
 	/** Construct this system.
 	@param	engine		reference to the engine to use. */
 	explicit Transform_System(Engine& engine);

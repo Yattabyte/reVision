@@ -12,8 +12,6 @@ class Camera;
 class FrustumCull_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
-	/** Destroy this system. */
-	inline ~FrustumCull_System() = default;
 	/** Construct this system.
 	@param	sceneCameras	reference to the scene cameras to use. */
 	explicit FrustumCull_System(std::vector<Camera*>& sceneCameras);

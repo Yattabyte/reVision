@@ -29,6 +29,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Outline_System() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Outline_System(Outline_System&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Outline_System(const Outline_System&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Outline_System& operator =(Outline_System&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Outline_System& operator =(const Outline_System&) noexcept = delete;
+
+
 	// Private Methods
 	/** Attempt to insert the mesh supplied into the mesh map, failing only if it is already present.
 	@param	mesh		the mesh to insert only 1 copy of. */

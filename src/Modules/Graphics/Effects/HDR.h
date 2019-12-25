@@ -26,6 +26,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline HDR() noexcept = delete;
+	/** Disallow move constructor. */
+	inline HDR(HDR&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline HDR(const HDR&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline HDR& operator =(HDR&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline HDR& operator =(const HDR&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	float m_gamma = 1.0f;

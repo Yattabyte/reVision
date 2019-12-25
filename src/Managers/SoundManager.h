@@ -47,9 +47,9 @@ private:
 	/** Disallow manager copy constructor. */
 	inline SoundManager(const SoundManager&) noexcept = delete;
 	/** Disallow manager move assignment. */
-	inline const SoundManager& operator =(SoundManager&&) noexcept = delete;
+	inline SoundManager& operator =(SoundManager&&) noexcept = delete;
 	/** Disallow MessageManager copy assignment. */
-	inline const SoundManager& operator =(const SoundManager&) noexcept = delete;
+	inline SoundManager& operator =(const SoundManager&) noexcept = delete;
 
 
 	// Private Attributes

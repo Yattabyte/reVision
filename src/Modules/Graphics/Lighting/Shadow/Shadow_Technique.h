@@ -40,6 +40,19 @@ private:
 	void updateShadows(const float& deltaTime);
 
 
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Shadow_Technique() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Shadow_Technique(Shadow_Technique&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Shadow_Technique(const Shadow_Technique&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Shadow_Technique& operator =(Shadow_Technique&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Shadow_Technique& operator =(const Shadow_Technique&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	ShadowData m_frameData;

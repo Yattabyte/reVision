@@ -59,6 +59,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Mouse_Gizmo() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Mouse_Gizmo(Mouse_Gizmo&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Mouse_Gizmo(const Mouse_Gizmo&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Mouse_Gizmo& operator =(Mouse_Gizmo&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Mouse_Gizmo& operator =(const Mouse_Gizmo&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	LevelEditor_Module& m_editor;

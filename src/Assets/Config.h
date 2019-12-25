@@ -15,7 +15,7 @@ class Shared_Config final : public std::shared_ptr<Config> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Config() noexcept = default;
+	inline Shared_Config() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
@@ -30,8 +30,6 @@ Represents a series of values corresponding to strings, like user preferences or
 class Config final : public Asset {
 public:
 	// Public (De)Constructors
-	/** Destroy the Config. */
-	inline ~Config() = default;
 	/** Construct the config with a particular set of variable names.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory).
@@ -58,17 +56,6 @@ public:
 
 
 private:
-	// Private but deleted
-	/** Disallow asset move constructor. */
-	inline Config(Config&&) noexcept = delete;
-	/** Disallow asset copy constructor. */
-	inline Config(const Config&) noexcept = delete;
-	/** Disallow asset move assignment. */
-	inline const Config& operator =(Config&&) noexcept = delete;
-	/** Disallow asset copy assignment. */
-	inline const Config& operator =(const Config&) noexcept = delete;
-
-
 	// Private Interface Implementation
 	void initialize() final;
 

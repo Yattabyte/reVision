@@ -37,6 +37,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Rotation_Gizmo() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Rotation_Gizmo(Rotation_Gizmo&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Rotation_Gizmo(const Rotation_Gizmo&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Rotation_Gizmo& operator =(Rotation_Gizmo&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Rotation_Gizmo& operator =(const Rotation_Gizmo&) noexcept = delete;
+
+
 	// Private Methods
 	/** Check if the mouse is hovering over any particular element of this gizmo, highlighting it. */
 	void checkMouseHover();

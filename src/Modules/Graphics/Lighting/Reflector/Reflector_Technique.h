@@ -43,6 +43,19 @@ private:
 	void renderReflectors(const float& deltaTime, Viewport& viewport);
 
 
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Reflector_Technique() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Reflector_Technique(Reflector_Technique&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Reflector_Technique(const Reflector_Technique&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Reflector_Technique& operator =(Reflector_Technique&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Reflector_Technique& operator =(const Reflector_Technique&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

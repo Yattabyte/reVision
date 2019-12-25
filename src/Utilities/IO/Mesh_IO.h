@@ -17,10 +17,6 @@ class Engine;
 struct VertexBoneData {
 	int IDs[NUM_BONES_PER_VEREX]{};
 	float Weights[NUM_BONES_PER_VEREX]{};
-	inline ~VertexBoneData() = default;
-	VertexBoneData() noexcept;
-	VertexBoneData(const VertexBoneData& vbd) noexcept;
-	inline VertexBoneData(VertexBoneData&&) noexcept = default;
 	void Reset() noexcept;
 	void AddBoneData(const int& BoneID, const float& Weight) noexcept;
 };
@@ -41,18 +37,14 @@ struct Node_Animation {
 	std::vector<Animation_Time_Key<glm::vec3>> scalingKeys;
 	std::vector<Animation_Time_Key<glm::quat>> rotationKeys;
 	std::vector<Animation_Time_Key<glm::vec3>> positionKeys;
-	inline ~Node_Animation() = default;
-	inline Node_Animation() noexcept = default;
-	inline Node_Animation(const Node_Animation&) = default;
-	inline Node_Animation& operator=(const Node_Animation&) = default;
-	inline Node_Animation& operator=(Node_Animation&&) = default;
+	inline Node_Animation() {};
 	inline Node_Animation(const std::string& name) : nodeName(name) {}
 };
 struct Node {
 	std::string name = "";
 	glm::mat4 transformation = glm::mat4(1);
 	std::vector<Node> children;
-	inline Node() noexcept {};
+	inline Node() {};
 	inline Node(const std::string& n, const glm::mat4& t) : name(n), transformation(t) {}
 };
 struct Animation {

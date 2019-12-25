@@ -25,6 +25,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Frametime_Counter() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Frametime_Counter(Frametime_Counter&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Frametime_Counter(const Frametime_Counter&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Frametime_Counter& operator =(Frametime_Counter&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Frametime_Counter& operator =(const Frametime_Counter&) noexcept = delete;
+
+
 	// Private Methods
 	/** Resize this indicator.
 	@param	size		the new size to use. */

@@ -29,8 +29,6 @@ class Engine;
 class Graphics_Pipeline {
 public:
 	// Public (De)Constructors
-	/** Destroy this rendering pipeline. */
-	inline ~Graphics_Pipeline() = default;
 	/** Construct a PBR rendering pipeline.
 	@param	engine			reference to the engine to use. 
 	@param	clientCamera	the main camera. */

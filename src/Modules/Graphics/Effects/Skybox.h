@@ -33,6 +33,19 @@ private:
 	void convoluteSky(const Viewport& viewport) noexcept;
 
 
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Skybox() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Skybox(Skybox&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Skybox(const Skybox&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Skybox& operator =(Skybox&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Skybox& operator =(const Skybox&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	GLuint m_cubeFBO = 0, m_cubemapMipped = 0;

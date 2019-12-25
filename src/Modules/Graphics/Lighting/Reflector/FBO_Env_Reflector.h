@@ -35,6 +35,17 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow move constructor. */
+	inline FBO_Env_Reflector(FBO_Env_Reflector&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline FBO_Env_Reflector(const FBO_Env_Reflector&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline FBO_Env_Reflector& operator =(FBO_Env_Reflector&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline FBO_Env_Reflector& operator =(const FBO_Env_Reflector&) noexcept = delete;
+
+
 	// Private Attributes
 	GLuint m_fboID[6] = { 0,0,0,0,0,0 }, m_textureID = 0;
 	glm::ivec2 m_size = glm::ivec2(1);

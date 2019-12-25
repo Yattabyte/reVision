@@ -16,7 +16,7 @@ class Shared_Shader final : public std::shared_ptr<Shader> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Shader() noexcept = default;
+	inline Shared_Shader() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
@@ -36,6 +36,10 @@ struct ShaderObj {
 	ShaderObj(ShaderObj&&) noexcept;
 	/** Copy a shader object. */
 	ShaderObj(const ShaderObj&);
+	/** Disallow shader object move assignment. */
+	inline ShaderObj& operator =(ShaderObj&&) = delete;
+	/** Disallow shader object copy assignment. */
+	inline ShaderObj& operator =(const ShaderObj&) = delete;
 
 
 	// Functions
@@ -177,9 +181,9 @@ private:
 	/** Disallow asset copy constructor. */
 	inline Shader(const Shader&) noexcept = delete;
 	/** Disallow asset move assignment. */
-	inline const Shader& operator =(Shader&&) noexcept = delete;
+	inline Shader& operator =(Shader&&) noexcept = delete;
 	/** Disallow asset copy assignment. */
-	inline const Shader& operator =(const Shader&) noexcept = delete;
+	inline Shader& operator =(const Shader&) noexcept = delete;
 
 
 	// Private Interface Implementation

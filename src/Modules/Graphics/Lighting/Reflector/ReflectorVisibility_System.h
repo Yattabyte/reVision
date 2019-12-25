@@ -12,8 +12,6 @@ struct ReflectorData;
 class ReflectorVisibility_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
-	/** Destroy this system. */
-	inline ~ReflectorVisibility_System() = default;
 	/** Construct this system.
 	@param	frameData	reference to common data that changes frame-to-frame. */
 	explicit ReflectorVisibility_System(ReflectorData& frameData);

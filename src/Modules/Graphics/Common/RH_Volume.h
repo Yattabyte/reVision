@@ -49,6 +49,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline RH_Volume() noexcept = delete;
+	/** Disallow move constructor. */
+	inline RH_Volume(RH_Volume&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline RH_Volume(const RH_Volume&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline RH_Volume& operator =(RH_Volume&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline RH_Volume& operator =(const RH_Volume&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	GLuint m_fboIDS[2]{0}, m_textureIDS[2][RH_TEXTURE_COUNT] = { {0}, {0} };

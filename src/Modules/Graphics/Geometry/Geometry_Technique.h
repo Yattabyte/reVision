@@ -9,8 +9,6 @@
 class Geometry_Technique : public Graphics_Technique {
 public:
 	// Public (De)Constructors
-	/** Destroy this technique. */
-	inline ~Geometry_Technique() = default;
 	/** Construct this technique. */
 	Geometry_Technique() noexcept;
 

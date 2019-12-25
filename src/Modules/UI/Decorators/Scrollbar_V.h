@@ -39,6 +39,20 @@ public:
 	float getLinear() const noexcept;
 
 
+private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Scrollbar_V() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Scrollbar_V(Scrollbar_V&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Scrollbar_V(const Scrollbar_V&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Scrollbar_V& operator =(Scrollbar_V&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Scrollbar_V& operator =(const Scrollbar_V&) noexcept = delete;
+
+
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */

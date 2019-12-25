@@ -26,6 +26,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline LoadingIndicator() noexcept = delete;
+	/** Disallow move constructor. */
+	inline LoadingIndicator(LoadingIndicator&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline LoadingIndicator(const LoadingIndicator&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline LoadingIndicator& operator =(LoadingIndicator&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline LoadingIndicator& operator =(const LoadingIndicator&) noexcept = delete;
+
+
 	// Private Methods
 	/** Resize this indicator. 
 	@param	size		the new size to use. */

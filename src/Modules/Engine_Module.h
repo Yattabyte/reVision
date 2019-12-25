@@ -35,9 +35,9 @@ private:
 	/** Disallow module copy constructor. */
 	inline Engine_Module(const Engine_Module&) noexcept = delete;
 	/** Disallow module move assignment. */
-	inline const Engine_Module& operator =(Engine_Module&&) noexcept = delete;
+	inline Engine_Module& operator =(Engine_Module&&) noexcept = delete;
 	/** Disallow module copy assignment. */
-	inline const Engine_Module& operator =(const Engine_Module&) noexcept = delete;
+	inline Engine_Module& operator =(const Engine_Module&) noexcept = delete;
 };
 
 #endif // ENGINE_MODULE_H

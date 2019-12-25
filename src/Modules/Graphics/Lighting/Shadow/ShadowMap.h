@@ -36,6 +36,17 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow move constructor. */
+	inline ShadowMap(ShadowMap&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline ShadowMap(const ShadowMap&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline ShadowMap& operator =(ShadowMap&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline ShadowMap& operator =(const ShadowMap&) noexcept = delete;
+
+
 	// Private Attributes
 	GLuint m_fboID = 0, m_textureIDS[3] = { 0,0,0 };
 	glm::ivec2 m_size = glm::ivec2(1);

@@ -15,7 +15,7 @@ class Shared_Collider final : public std::shared_ptr<Collider> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Collider() noexcept = default;
+	inline Shared_Collider() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
@@ -30,8 +30,6 @@ Represents a 3D mesh asset tuned for use in physics simulations instead of rende
 class Collider final : public Asset {
 public:
 	// Public (De)Constructors
-	/** Destroy the Collider. */
-	inline ~Collider() = default;
 	/** Construct the Collider.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory). */
@@ -43,18 +41,7 @@ public:
 	std::unique_ptr<btCollisionShape> m_shape;
 
 
-protected:
-	// Private but deleted
-	/** Disallow asset move constructor. */
-	inline Collider(Collider&&) noexcept = delete;
-	/** Disallow asset copy constructor. */
-	inline Collider(const Collider&) noexcept = delete;
-	/** Disallow asset move assignment. */
-	inline const Collider& operator =(Collider&&) noexcept = delete;
-	/** Disallow asset copy assignment. */
-	inline const Collider& operator =(const Collider&) noexcept = delete;
-
-
+private:
 	// Private Interface Implementation
 	void initialize() final;
 

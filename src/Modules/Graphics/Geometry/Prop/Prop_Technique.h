@@ -15,8 +15,6 @@
 class Prop_Technique final : public Geometry_Technique {
 public:
 	// Public (De)Constructors
-	/** Destroy this technique. */
-	inline ~Prop_Technique() = default;
 	/** Construct a prop rendering technique.
 	@param	engine			reference to the engine to use.
 	@param	sceneCameras	reference to the scene cameras to use. */

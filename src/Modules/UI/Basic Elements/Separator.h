@@ -31,6 +31,20 @@ public:
 	glm::vec4 getColor() const noexcept;
 
 
+private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Separator() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Separator(Separator&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Separator(const Separator&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Separator& operator =(Separator&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Separator& operator =(const Separator&) noexcept = delete;
+
+
 protected:
 	// Protected Attributes
 	glm::vec4 m_color = glm::vec4(1.0f);

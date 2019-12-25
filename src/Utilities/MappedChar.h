@@ -23,17 +23,6 @@ private:
 
 
 public:
-	// Public (De)Constructors
-	/** Destroy the map. */
-	inline ~MappedChar() = default;
-	/** Construct the map. */
-	inline MappedChar() noexcept {}
-	/** Move a map. */
-	inline MappedChar(MappedChar&&) noexcept = default;
-	/** Copy a map. */
-	inline MappedChar(const MappedChar&) noexcept = default;
-
-
 	// Public Methods
 	/** Insert a new key into the map.
 	@brief	will auto-generate a new zero-initialized <T> to associate with the key.

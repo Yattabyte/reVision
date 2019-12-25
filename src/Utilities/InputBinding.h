@@ -25,6 +25,10 @@ public:
 
 
 	// Public Methods
+	/** Input binding move assignment. */
+	inline InputBinding& operator =(InputBinding&&) noexcept = default;
+	/** Input binding copy assignment. */
+	inline InputBinding& operator =(const InputBinding&) noexcept = default;
 	/** Loads a preference file from disk.
 	@param	filename	the relative path to the bindings file to load. */
 	void loadFile(const std::string& filename);

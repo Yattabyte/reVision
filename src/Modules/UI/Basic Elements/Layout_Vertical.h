@@ -9,8 +9,6 @@
 class Layout_Vertical final : public UI_Element {
 public:
 	// Public (De)Constructors
-	/** Destroy this layout. */
-	inline ~Layout_Vertical() = default;
 	/** Construct the layout.
 	@param	engine		reference to the engine to use. */
 	explicit Layout_Vertical(Engine& engine);

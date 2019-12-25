@@ -21,8 +21,6 @@ public:
 
 
 	// Public (De)Constructors
-	/** Destroy the options menu. */
-	inline ~OptionsMenu() = default;
 	/** Construct an options menu.
 	@param	engine		reference to the engine to use. */
 	explicit OptionsMenu(Engine& engine);

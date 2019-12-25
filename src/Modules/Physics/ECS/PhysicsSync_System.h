@@ -14,8 +14,6 @@ class btDiscreteDynamicsWorld;
 class PhysicsSync_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
-	/** Destroy this physics sync system. */
-	inline ~PhysicsSync_System() = default;
 	/** Construct a physics sync system.
 	@param	engine		reference to the engine to use.
 	@param	world		reference to the physics world to use. */

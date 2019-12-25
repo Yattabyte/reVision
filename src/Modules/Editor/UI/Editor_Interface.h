@@ -45,6 +45,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Editor_Interface() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Editor_Interface(Editor_Interface&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Editor_Interface(const Editor_Interface&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Editor_Interface& operator =(Editor_Interface&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Editor_Interface& operator =(const Editor_Interface&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	LevelEditor_Module& m_editor;
@@ -56,8 +69,6 @@ private:
 /** UI element representing an ImGUI element. */
 struct ImGUI_Element {
 	bool m_open = true;
-	inline virtual ~ImGUI_Element() = default;
-	inline ImGUI_Element() noexcept = default;
 	void open() noexcept;
 	void close() noexcept;
 	virtual void tick(const float& deltaTime);

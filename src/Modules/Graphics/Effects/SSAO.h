@@ -27,6 +27,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline SSAO() noexcept = delete;
+	/** Disallow move constructor. */
+	inline SSAO(SSAO&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline SSAO(const SSAO&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline SSAO& operator =(SSAO&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline SSAO& operator =(const SSAO&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	Shared_Shader m_shader, m_shaderCopyAO, m_shaderGB_A;

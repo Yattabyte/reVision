@@ -9,14 +9,20 @@
 class Buffer_Interface {
 public:
 	// Public (De)Constructors
-	/** Destroy this buffer. */
+	/** Virtual Destructor. */
 	inline virtual ~Buffer_Interface() = default;
-	/** Construct a buffer. */
+	/** Default constructor. */
 	inline Buffer_Interface() noexcept = default;
-	/** Move a buffer. */
+	/** Move constructor. */
 	inline Buffer_Interface(Buffer_Interface&&) noexcept = default;
-	/** Copy a buffer. */
+	/** Copy constructor. */
 	inline Buffer_Interface(const Buffer_Interface&) noexcept = default;
+
+	// Public Methods
+	/** Move assignment. */
+	inline Buffer_Interface& operator =(Buffer_Interface&&) noexcept = default;
+	/** Copy assignment. */
+	inline Buffer_Interface& operator =(const Buffer_Interface&) noexcept = default;
 
 
 	// Public Interface Declarations

@@ -14,8 +14,6 @@ Made to be sub-classed and expanded upon, provides a method for adding menu butt
 class Menu : public UI_Element {
 public:
 	// Public (De)Constructors
-	/** Destroy the menu. */
-	inline ~Menu() = default;
 	/** Construct a menu.
 	@param	engine		reference to the engine to use. */
 	explicit Menu(Engine& engine);

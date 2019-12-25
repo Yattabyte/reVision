@@ -1,10 +1,6 @@
 #include "Modules/UI/KeyboardEvent.h"
 
 
-KeyboardEvent::KeyboardEvent() noexcept
-{
-}
-
 unsigned int KeyboardEvent::getChar() const noexcept
 {
 	return m_currentChar;

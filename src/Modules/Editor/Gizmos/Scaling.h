@@ -37,6 +37,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Scaling_Gizmo() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Scaling_Gizmo(Scaling_Gizmo&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Scaling_Gizmo(const Scaling_Gizmo&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Scaling_Gizmo& operator =(Scaling_Gizmo&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Scaling_Gizmo& operator =(const Scaling_Gizmo&) noexcept = delete;
+
+
 	// Private Methods
 	/** Check if the mouse is hovering over any particular element of this gizmo, highlighting it. */
 	void checkMouseHover();

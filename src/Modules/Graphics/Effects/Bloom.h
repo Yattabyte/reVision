@@ -26,6 +26,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Bloom() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Bloom(Bloom&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Bloom(const Bloom&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Bloom& operator =(Bloom&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Bloom& operator =(const Bloom&) noexcept = delete;
+
+
 	// Private Methods
 	/** Change the strength of the bloom effect.
 	@param	strength		the new strength of the bloom effect. */

@@ -37,6 +37,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Translation_Gizmo() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Translation_Gizmo(Translation_Gizmo&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Translation_Gizmo(const Translation_Gizmo&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Translation_Gizmo& operator =(Translation_Gizmo&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Translation_Gizmo& operator =(const Translation_Gizmo&) noexcept = delete;
+
+
 	// Private Methods
 	/** Check if the mouse is hovering over any particular element of this gizmo, highlighting it. */
 	void checkMouseHover();

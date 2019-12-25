@@ -32,6 +32,19 @@ private:
 	void updateMIPChain(Viewport& viewport);
 
 
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline SSR() noexcept = delete;
+	/** Disallow move constructor. */
+	inline SSR(SSR&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline SSR(const SSR&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline SSR& operator =(SSR&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline SSR& operator =(const SSR&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	Shared_Shader m_shaderSSR1, m_shaderSSR2, m_shaderCopy, m_shaderConvMips;

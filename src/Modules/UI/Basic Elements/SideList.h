@@ -50,6 +50,20 @@ public:
 	std::vector<std::string> getStrings() const;
 
 
+private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline SideList() noexcept = delete;
+	/** Disallow move constructor. */
+	inline SideList(SideList&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline SideList(const SideList&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline SideList& operator =(SideList&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline SideList& operator =(const SideList&) noexcept = delete;
+
+
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */

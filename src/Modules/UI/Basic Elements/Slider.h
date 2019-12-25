@@ -18,8 +18,6 @@ public:
 
 
 	// Public (De)Constructors
-	/** Destroy the slider. */
-	inline ~Slider() = default;
 	/** Construct a slider with a given starting value.
 	@param	engine		reference to the engine to use. 
 	@param	value		the starting value to use.

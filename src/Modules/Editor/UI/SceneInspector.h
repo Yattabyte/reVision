@@ -9,8 +9,6 @@
 class SceneInspector final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
-	/** Destroy this scene inspector. */
-	inline ~SceneInspector() = default;
 	/** Construct a scene inspector.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */

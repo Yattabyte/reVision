@@ -5,7 +5,6 @@
 
 /** A structure used to uniquely identify elements in the engine's ECS 'system'. */
 struct ecsHandle {
-public:
 	/** The UUID container. */
 	char m_uuid[32] = { '\0' };
 	/** Destroy this handle. */
@@ -17,14 +16,18 @@ public:
 	explicit ecsHandle(const char id[32]);
 	/** Copy Constructor. 
 	@param	other		an other handle to copy from. */
-	ecsHandle(const ecsHandle& other) noexcept;
+	inline ecsHandle(const ecsHandle& other) noexcept = default;
 	/** Move Constructor. 
 	@param	other		an other handle to move from. */
-	ecsHandle(ecsHandle&& other) noexcept;
+	inline ecsHandle(ecsHandle&& other) noexcept = default;
+	/** Move from another handle.
+	@param	other		an other handle to move from.
+	@return				reference to this. */
+	inline ecsHandle& operator=(ecsHandle&& other) = default;
 	/** Copy from another handle.
 	@param	other		an other handle to copy from. 
 	@return				reference to this. */
-	ecsHandle& operator=(const ecsHandle& other);
+	inline ecsHandle& operator=(const ecsHandle& other) = default;
 	/** Compare against another handle.
 	@param	other		an other handle to compare against.
 	@return				true if this handle is the same as the other handle, false otherwise. */
@@ -47,7 +50,8 @@ struct EntityHandle final : ecsHandle {
 	inline EntityHandle(EntityHandle&&) noexcept = default;
 	inline EntityHandle(const EntityHandle&) noexcept = default;
 	explicit EntityHandle(const ecsHandle& handle) noexcept;
-	EntityHandle& operator=(const EntityHandle& other);
+	inline EntityHandle& operator=(EntityHandle&& other) noexcept = default;
+	inline EntityHandle& operator=(const EntityHandle& other) noexcept = default;
 };
 struct ComponentHandle final : ecsHandle {
 	inline ~ComponentHandle() = default;
@@ -55,7 +59,8 @@ struct ComponentHandle final : ecsHandle {
 	inline ComponentHandle(ComponentHandle&&) noexcept = default;
 	inline ComponentHandle(const ComponentHandle&) noexcept = default;
 	explicit ComponentHandle(const ecsHandle& handle) noexcept;
-	ComponentHandle& operator=(const ComponentHandle& other);
+	inline ComponentHandle& operator=(ComponentHandle&& other) noexcept = default;
+	inline ComponentHandle& operator=(const ComponentHandle& other) noexcept = default;
 };
 
 #endif // ECS_HANDLE_H

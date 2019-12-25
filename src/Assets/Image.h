@@ -17,7 +17,7 @@ class Shared_Image final : public std::shared_ptr<Image> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Image() noexcept = default;
+	inline Shared_Image() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
@@ -33,8 +33,6 @@ Responsible for fetching and processing an image from disk and optionally resizi
 class Image final : public Asset {
 public:
 	// Public (De)Constructors
-	/** Destroy the Image. */
-	inline ~Image() = default;
 	/** Construct the Image.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory).
@@ -54,17 +52,6 @@ public:
 
 
 private:
-	// Private but deleted
-	/** Disallow asset move constructor. */
-	inline Image(Image&&) noexcept = delete;
-	/** Disallow asset copy constructor. */
-	inline Image(const Image&) noexcept = delete;
-	/** Disallow asset move assignment. */
-	inline const Image& operator =(Image&&) noexcept = delete;
-	/** Disallow asset copy assignment. */
-	inline const Image& operator =(const Image&) noexcept = delete;
-
-
 	// Private Methods
 	/** Fill the image with the desired colors, in accordance with the fill policy.
 	@param	primaryColor	the primary color to use.

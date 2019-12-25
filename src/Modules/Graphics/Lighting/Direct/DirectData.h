@@ -35,6 +35,7 @@ struct Direct_Light_Data {
 	/** Construct this structure. */
 	Direct_Light_Data(ShadowData& shadowData, Camera& camera) noexcept : shadowData(shadowData), clientCamera(camera) {}
 
+
 	ShadowData& shadowData;
 	Camera& clientCamera;
 	GL_Vector<Direct_Light_Buffer> lightBuffer;

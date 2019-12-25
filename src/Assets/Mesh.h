@@ -15,7 +15,7 @@ class Shared_Mesh final : public std::shared_ptr<Mesh> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Mesh() noexcept = default;
+	inline Shared_Mesh() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
@@ -30,8 +30,6 @@ This asset contains raw unformatted geometric data. */
 class Mesh final : public Asset {
 public:
 	// Public (De)Constructors
-	/** Destroy the Mesh. */
-	~Mesh() = default;
 	/** Construct the Mesh.
 	@param	engine		reference to the engine to use. 
 	@param	filename	the asset file name (relative to engine directory). */
@@ -43,17 +41,6 @@ public:
 
 
 private:
-	// Private but deleted
-	/** Disallow asset move constructor. */
-	inline Mesh(Mesh&&) noexcept = delete;
-	/** Disallow asset copy constructor. */
-	inline Mesh(const Mesh&) noexcept = delete;
-	/** Disallow asset move assignment. */
-	inline const Mesh& operator =(Mesh&&) noexcept = delete;
-	/** Disallow asset copy assignment. */
-	inline const Mesh& operator =(const Mesh&) noexcept = delete;
-
-
 	// Private Interface Implementation
 	void initialize() final;
 

@@ -49,6 +49,19 @@ private:
 	void clear() noexcept;
 
 
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline PropUpload_System() noexcept = delete;
+	/** Disallow move constructor. */
+	inline PropUpload_System(PropUpload_System&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline PropUpload_System(const PropUpload_System&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline PropUpload_System& operator =(PropUpload_System&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline PropUpload_System& operator =(const PropUpload_System&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	PropData& m_frameData;

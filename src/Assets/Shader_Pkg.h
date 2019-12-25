@@ -14,7 +14,7 @@ class Shared_Shader_Pkg final : public std::shared_ptr<Shader_Pkg> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Shader_Pkg() noexcept = default;
+	inline Shared_Shader_Pkg() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
@@ -29,8 +29,6 @@ Provides no functionality on its own, but can recursively import more code block
 class Shader_Pkg final : public Asset {
 public:
 	// Public (De)Constructors
-	/** Destroy the Shader Package. */
-	~Shader_Pkg() = default;
 	/** Construct the Shader Package.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the asset file name (relative to engine directory). */
@@ -48,17 +46,6 @@ public:
 
 
 private:
-	// Private but deleted
-	/** Disallow asset move constructor. */
-	inline Shader_Pkg(Shader_Pkg&&) noexcept = delete;
-	/** Disallow asset copy constructor. */
-	inline Shader_Pkg(const Shader_Pkg&) noexcept = delete;
-	/** Disallow asset move assignment. */
-	inline const Shader_Pkg& operator =(Shader_Pkg&&) noexcept = delete;
-	/** Disallow asset copy assignment. */
-	inline const Shader_Pkg& operator =(const Shader_Pkg&) noexcept = delete;
-
-
 	// Private Interface Implementation
 	void initialize() final;
 

@@ -31,6 +31,20 @@ public:
 	glm::vec4 getColor() const noexcept;
 
 
+private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Panel() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Panel(Panel&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Panel(const Panel&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Panel& operator =(Panel&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Panel& operator =(const Panel&) noexcept = delete;
+
+
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */

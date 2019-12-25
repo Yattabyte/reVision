@@ -70,6 +70,20 @@ public:
 	int						m_layerFaces = 1;
 	RH_Volume				m_rhVolume;
 	std::shared_ptr<bool>	m_aliveIndicator = std::make_shared<bool>(true);
+
+
+private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Graphics_Framebuffers() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Graphics_Framebuffers(Graphics_Framebuffers&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Graphics_Framebuffers(const Graphics_Framebuffers&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Graphics_Framebuffers& operator =(Graphics_Framebuffers&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Graphics_Framebuffers& operator =(const Graphics_Framebuffers&) noexcept = delete;
 };
 
 #endif // GRAPHICS_FRAMEBUFFERS_H

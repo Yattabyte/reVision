@@ -21,8 +21,6 @@ struct Editor_Command;
 class LevelEditor_Module final : public Engine_Module {
 public:
 	// Public (De)Constructors
-	/** Destroy this game module. */
-	inline ~LevelEditor_Module() = default;
 	/** Construct a game module.
 	@param	engine		reference to the engine to use. */
 	explicit LevelEditor_Module(Engine& engine);
@@ -152,17 +150,6 @@ public:
 
 
 private:
-	// Private and deleted
-	/** Disallow module move constructor. */
-	inline LevelEditor_Module(LevelEditor_Module&&) noexcept = delete;
-	/** Disallow module copy constructor. */
-	inline LevelEditor_Module(const LevelEditor_Module&) noexcept = delete;
-	/** Disallow module move assignment. */
-	inline const LevelEditor_Module& operator =(LevelEditor_Module&&) noexcept = delete;
-	/** Disallow module copy assignment. */
-	inline const LevelEditor_Module& operator =(const LevelEditor_Module&) noexcept = delete;
-
-
 	// Private Methods
 	/** Add a level name to the 'recent maps' list.
 	@param	name			a level name to add to the recent maps list. */
@@ -199,6 +186,16 @@ To be sub-classed where needed, typically within the scope of a specialized func
 struct Editor_Command {
 	// Public Interface
 	inline virtual ~Editor_Command() = default;
+	/** Default constructor. */
+	inline Editor_Command() noexcept = default;
+	/** Move constructor. */
+	inline Editor_Command(Editor_Command&&) noexcept = default;
+	/** Copy constructor. */
+	inline Editor_Command(const Editor_Command&) noexcept = default;
+	/** Move assignment. */
+	inline Editor_Command& operator =(Editor_Command&&) noexcept = default;
+	/** Copy assignment. */
+	inline Editor_Command& operator =(const Editor_Command&) noexcept = default;
 	/** Perform the command. */
 	virtual void execute() = 0;
 	/** Perform the reverse, undo the command. */

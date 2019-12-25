@@ -10,8 +10,6 @@
 class Button final : public UI_Element {
 public:
 	// Public (De)Constructors
-	/** Destroy this button. */
-	inline ~Button() = default;
 	/** Creates a button with specific text inside.
 	@param	engine		reference to the engine to use. 
 	@param	text		the button text. */

@@ -10,10 +10,8 @@ template <int BufferCount = 3>
 class IndirectDraw {
 public:
 	// Public (De)Constructors
-	/** Destroy this Indirect Draw Object. */
-	inline ~IndirectDraw() = default;
 	/** Default Constructor. */
-	inline IndirectDraw() noexcept = default;
+	inline IndirectDraw() noexcept {}
 	/** Construct an Indirect Draw Object.
 	@param	count			the number of vertices to draw.
 	@param	primitiveCount	the number of times to draw this object.
@@ -28,45 +26,6 @@ public:
 		// Populate Buffer
 		const GLuint data[4] = { count, primitiveCount, first, 0 };
 		m_buffer = StaticMultiBuffer<BufferCount>(sizeof(GLuint) * 4, data, storageFlags);
-	}
-	/** Copy an Indirect Draw Object. 
-	@param	other			another buffer to copy from. */
-	inline IndirectDraw(const IndirectDraw& other) noexcept :
-		m_count(other.m_count),
-		m_primitiveCount(other.m_primitiveCount),
-		m_first(other.m_first),
-		m_storageFlags(other.m_storageFlags),
-		m_buffer(other.m_buffer) {}
-	/** Move an Indirect Draw Object. 
-	@param	other			another buffer to move from. */
-	inline IndirectDraw(IndirectDraw&& other) noexcept {
-		*this = std::move(other);
-	}
-	/** Copy an Indirect Draw Object.
-	@param	other			another buffer to copy from.
-	@return					reference to this. */
-	inline IndirectDraw& operator=(const IndirectDraw& other) noexcept {
-		if (this != &other) {
-			m_count = other.m_count;
-			m_primitiveCount = other.m_primitiveCount;
-			m_first = other.m_first;
-			m_storageFlags = other.m_storageFlags;
-			m_buffer = other.m_buffer;
-		}
-		return *this;
-	}
-	/** Move an Indirect Draw Object. 
-	@param	other			another buffer to move from. 
-	@return					reference to this. */
-	inline IndirectDraw& operator=(IndirectDraw&& other) noexcept {
-		if (this != &other) {
-			m_count = std::move(other.m_count);
-			m_primitiveCount = std::move(other.m_primitiveCount);
-			m_first = std::move(other.m_first);
-			m_storageFlags = std::move(other.m_storageFlags);
-			m_buffer = std::move(other.m_buffer);
-		}
-		return *this;
 	}
 
 

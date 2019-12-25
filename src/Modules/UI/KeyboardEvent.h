@@ -15,13 +15,6 @@ public:
 	enum class Key : unsigned int;
 
 
-	// Public (De)Constructors
-	/** Destroy the keyboard event. */
-	inline ~KeyboardEvent() = default;
-	/** Construct a keyboard event. */
-	KeyboardEvent() noexcept;
-
-
 	// Public Methods
 	/** Retrieve the key-code for the current key pressed.
 	@return					the current key pressed. */

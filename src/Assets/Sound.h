@@ -49,9 +49,9 @@ protected:
 	/** Disallow asset copy constructor. */
 	inline Sound(const Sound&) noexcept = delete;
 	/** Disallow asset move assignment. */
-	inline const Sound& operator =(Sound&&) noexcept = delete;
+	inline Sound& operator =(Sound&&) noexcept = delete;
 	/** Disallow asset copy assignment. */
-	inline const Sound& operator =(const Sound&) noexcept = delete;
+	inline Sound& operator =(const Sound&) noexcept = delete;
 
 
 	// Private Interface Implementation

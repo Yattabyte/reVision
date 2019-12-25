@@ -141,7 +141,7 @@ void SceneInspector::tick(const float&)
 							const auto componentCount = components.size();
 							for (int x = 0; x < componentCount; ++x) {
 								const auto& componentID = std::get<0>(components[x]);
-								if (auto component = ecsWorld.getComponent(entityHandle, componentID)) {
+								if (const auto* component = ecsWorld.getComponent(entityHandle, componentID)) {
 									ImGui::PushID(component);
 									ImGui::AlignTextToFramePadding();
 									ImGui::PushStyleColor(ImGuiCol_Button,

@@ -13,8 +13,6 @@ class LevelEditor_Module;
 class Inspector_Prop_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
-	/** Destroy this system. */
-	inline ~Inspector_Prop_System() = default;
 	/** Construct this system.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */

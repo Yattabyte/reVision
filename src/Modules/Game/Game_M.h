@@ -20,8 +20,6 @@ public:
 
 
 	// Public (De)Constructors
-	/** Destroy this game module. */
-	inline ~Game_Module() = default;
 	/** Construct a game module.
 	@param	engine		reference to the engine to use. */
 	explicit Game_Module(Engine& engine);
@@ -50,17 +48,6 @@ public:
 
 
 private:
-	// Private and deleted
-	/** Disallow module move constructor. */
-	inline Game_Module(Game_Module&&) noexcept = delete;
-	/** Disallow module copy constructor. */
-	inline Game_Module(const Game_Module&) noexcept = delete;
-	/** Disallow module move assignment. */
-	inline const Game_Module& operator =(Game_Module&&) noexcept = delete;
-	/** Disallow module copy assignment. */
-	inline const Game_Module& operator =(const Game_Module&) noexcept = delete;
-
-
 	// Private Attributes
 	Game_State m_gameState = Game_State::in_game;
 	ecsSystemList m_Systems;

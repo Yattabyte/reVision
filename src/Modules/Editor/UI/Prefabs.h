@@ -51,6 +51,19 @@ private:
 	void tickPopupDialogues(const float& deltaTime);
 
 
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Prefabs() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Prefabs(Prefabs&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Prefabs(const Prefabs&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Prefabs& operator =(Prefabs&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Prefabs& operator =(const Prefabs&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	LevelEditor_Module& m_editor;

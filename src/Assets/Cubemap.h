@@ -14,7 +14,7 @@ class Shared_Cubemap final : public std::shared_ptr<Cubemap> {
 public:
 	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Cubemap() noexcept = default;
+	inline Shared_Cubemap() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
@@ -55,9 +55,9 @@ private:
 	/** Disallow asset copy constructor. */
 	inline Cubemap(const Cubemap&) noexcept = delete;
 	/** Disallow asset move assignment. */
-	inline const Cubemap& operator =(Cubemap&&) noexcept = delete;
+	inline Cubemap& operator =(Cubemap&&) noexcept = delete;
 	/** Disallow asset copy assignment. */
-	inline const Cubemap& operator =(const Cubemap&) noexcept = delete;
+	inline Cubemap& operator =(const Cubemap&) noexcept = delete;
 
 
 	// Private Interface Implementation

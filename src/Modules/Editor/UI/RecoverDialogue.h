@@ -10,8 +10,6 @@
 class RecoverDialogue final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
-	/** Destroy this level dialogue. */
-	inline ~RecoverDialogue() = default;
 	/** Construct a level dialogue.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */

@@ -1,12 +1,6 @@
 #include "Utilities/ActionState.h"
 
 
-ActionState::ActionState() noexcept
-{
-	for (unsigned int x = 0; x < (unsigned int)Action::ACTION_COUNT; ++x)
-		m_keyStates.insert({ Action(x),{ false, 0.0f } });
-}
-
 float& ActionState::operator[](const ActionState::Action& index) 
 {
 	return std::get<1>(m_keyStates[index]);

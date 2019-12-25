@@ -27,6 +27,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline ReflectorScheduler_System() noexcept = delete;
+	/** Disallow move constructor. */
+	inline ReflectorScheduler_System(ReflectorScheduler_System&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline ReflectorScheduler_System(const ReflectorScheduler_System&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline ReflectorScheduler_System& operator =(ReflectorScheduler_System&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline ReflectorScheduler_System& operator =(const ReflectorScheduler_System&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	ReflectorData& m_frameData;

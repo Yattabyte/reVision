@@ -165,6 +165,15 @@ public:
 		other.m_index = 0;
 		return *this;
 	}
+	/** Copy operator, for copying another buffer into this one.
+	@param	other			another buffer to copy the data from, to here. */
+	inline DynamicBuffer& operator=(const DynamicBuffer& other) noexcept {
+		m_mapFlags = other.m_mapFlags;
+		m_maxCapacity = other.m_maxCapacity;
+		for (int x = 0; x < BufferCount; ++x)
+			glCopyNamedBufferSubData(other.m_bufferID[x], m_bufferID[x], 0, 0, m_maxCapacity);
+		return *this;
+	}
 
 
 private:

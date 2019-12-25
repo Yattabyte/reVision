@@ -14,13 +14,6 @@ using Asset_Work_Order = std::function<void(void)>;
 /** Manages the storage and retrieval of assets. */
 class AssetManager {
 public:
-	// Public (De)Constructors
-	/** Destroy the asset manager. */
-	inline ~AssetManager() = default;
-	/** Create the asset manager. */
-	inline AssetManager() = default;
-
-
 	// Public Methods
 	/** Checks if an asset already exists with the given filename, fetching if true.
 	@param	assetType			the name of the asset type to search for.
@@ -44,17 +37,6 @@ public:
 
 
 private:
-	// Private but deleted
-	/** Disallow manager move constructor. */
-	inline AssetManager(AssetManager&&) noexcept = delete;
-	/** Disallow manager copy constructor. */
-	inline AssetManager(const AssetManager&) noexcept = delete;
-	/** Disallow manager move assignment. */
-	inline const AssetManager& operator =(AssetManager&&) noexcept = delete;
-	/** Disallow manager copy assignment. */
-	inline const AssetManager& operator =(const AssetManager&) noexcept = delete;
-
-
 	// Private Attributes
 	std::shared_mutex m_mutexAssets;
 	VectorMap<Shared_Asset> m_assetMap;

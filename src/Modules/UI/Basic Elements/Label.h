@@ -65,6 +65,20 @@ public:
 	Alignment getAlignment() const noexcept;
 
 
+private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Label() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Label(Label&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Label(const Label&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Label& operator =(Label&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Label& operator =(const Label&) noexcept = delete;
+
+
 protected:
 	// Protected Attributes
 	std::string m_text = "";

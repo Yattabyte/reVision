@@ -18,8 +18,6 @@ struct Viewport;
 class Graphics_Module final : public Engine_Module {
 public:
 	// Public (De)Constructors
-	/** Destroy this graphics rendering module. */
-	inline ~Graphics_Module() = default;
 	/** Construct a graphics rendering module.
 	@param	engine		reference to the engine to use. */
 	explicit Graphics_Module(Engine& engine);
@@ -53,17 +51,6 @@ public:
 
 
 private:
-	// Private and deleted
-	/** Disallow module move constructor. */
-	inline Graphics_Module(Graphics_Module&&) noexcept = delete;
-	/** Disallow module copy constructor. */
-	inline Graphics_Module(const Graphics_Module&) noexcept = delete;
-	/** Disallow module move assignment. */
-	inline const Graphics_Module& operator =(Graphics_Module&&) noexcept = delete;
-	/** Disallow module copy assignment. */
-	inline const Graphics_Module& operator =(const Graphics_Module&) noexcept = delete;
-
-
 	// Private Methods
 	/** Copy the client camera's final color buffer to a specific framebuffer.
 	@param	fboID			the framebuffer ID. */

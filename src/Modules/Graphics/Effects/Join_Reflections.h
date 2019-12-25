@@ -27,6 +27,19 @@ public:
 
 
 private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Join_Reflections() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Join_Reflections(Join_Reflections&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Join_Reflections(const Join_Reflections&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Join_Reflections& operator =(Join_Reflections&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Join_Reflections& operator =(const Join_Reflections&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	Shared_Shader m_shader;

@@ -20,12 +20,17 @@ public:
 		ALL = 0b1111'1111,
 	};
 
-
 	// Public (De)Constructors
 	/** Virtual Destructor. */
 	inline virtual ~Graphics_Technique() = default;
+	/** Default constructor. */
+	inline Graphics_Technique() noexcept = default;
 	/** Constructor. */
 	explicit Graphics_Technique(const Technique_Category& category) noexcept;
+	/** Move constructor. */
+	inline Graphics_Technique(Graphics_Technique&&) noexcept = default;
+	/** Copy constructor. */
+	inline Graphics_Technique(const Graphics_Technique&) noexcept = default;
 
 
 	// Public Methods
@@ -34,6 +39,10 @@ public:
 	/** Turn this technique  on or off.
 	@param	state			whether this technique should be on or off. */
 	void setEnabled(const bool& state) noexcept;
+	/** Move assignment. */
+	inline Graphics_Technique& operator =(Graphics_Technique&&) noexcept = default;
+	/** Copy assignment. */
+	inline Graphics_Technique& operator =(const Graphics_Technique&) noexcept = default;
 
 
 	// Public Interface

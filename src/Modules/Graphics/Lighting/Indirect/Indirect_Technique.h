@@ -61,6 +61,19 @@ private:
 	void reconstructVolume(Viewport& viewport, const DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon);
 
 
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline Indirect_Technique() noexcept = delete;
+	/** Disallow move constructor. */
+	inline Indirect_Technique(Indirect_Technique&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline Indirect_Technique(const Indirect_Technique&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline Indirect_Technique& operator =(Indirect_Technique&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline Indirect_Technique& operator =(const Indirect_Technique&) noexcept = delete;
+
+
 	// Private Attributes
 	Engine& m_engine;
 	Shared_Shader m_shader_Bounce, m_shader_Recon, m_shader_Rebounce;

@@ -41,6 +41,20 @@ public:
 	std::string getText() const;
 
 
+private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline TextInput() noexcept = delete;
+	/** Disallow move constructor. */
+	inline TextInput(TextInput&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline TextInput(const TextInput&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline TextInput& operator =(TextInput&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline TextInput& operator =(const TextInput&) noexcept = delete;
+
+
 protected:
 	// Protected Methods
 	/** Set the caret position in this text box. */

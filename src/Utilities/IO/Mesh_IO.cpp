@@ -245,19 +245,6 @@ std::vector<std::string> Mesh_IO::Get_Supported_Types()
 	return extensions;
 }
 
-VertexBoneData::VertexBoneData() noexcept
-{
-	Reset();
-}
-
-VertexBoneData::VertexBoneData(const VertexBoneData& vbd) noexcept
-{
-	for (auto i = 0; i < NUM_BONES_PER_VEREX; ++i) {
-		IDs[i] = vbd.IDs[i];
-		Weights[i] = vbd.Weights[i];
-	}
-}
-
 void VertexBoneData::Reset() noexcept
 {
 	for (auto i = 0; i < NUM_BONES_PER_VEREX; ++i) {

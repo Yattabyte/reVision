@@ -12,8 +12,6 @@ struct Indirect_Light_Data;
 class IndirectSync_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
-	/** Destroy this system. */
-	inline ~IndirectSync_System() = default;
 	/** Construct this system.
 	@param	frameData	reference to common data that changes frame-to-frame. */
 	explicit IndirectSync_System(Indirect_Light_Data& frameData);

@@ -68,6 +68,20 @@ public:
 	float getBorderSize() const noexcept;
 
 
+private:
+	// Private but deleted
+	/** Disallow default constructor. */
+	inline List_Horizontal() noexcept = delete;
+	/** Disallow move constructor. */
+	inline List_Horizontal(List_Horizontal&&) noexcept = delete;
+	/** Disallow copy constructor. */
+	inline List_Horizontal(const List_Horizontal&) noexcept = delete;
+	/** Disallow move assignment. */
+	inline List_Horizontal& operator =(List_Horizontal&&) noexcept = delete;
+	/** Disallow copy assignment. */
+	inline List_Horizontal& operator =(const List_Horizontal&) noexcept = delete;
+
+
 protected:
 	// Protected Methods
 	/** Update position of each child element. */

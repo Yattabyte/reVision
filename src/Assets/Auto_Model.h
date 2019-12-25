@@ -60,9 +60,9 @@ private:
 	/** Disallow asset copy constructor. */
 	inline Auto_Model(const Auto_Model&) noexcept = delete;
 	/** Disallow asset move assignment. */
-	inline const Auto_Model& operator =(Auto_Model&&) noexcept = delete;
+	inline Auto_Model& operator =(Auto_Model&&) noexcept = delete;
 	/** Disallow asset copy assignment. */
-	inline const Auto_Model& operator =(const Auto_Model&) noexcept = delete;
+	inline Auto_Model& operator =(const Auto_Model&) noexcept = delete;
 
 
 	// Private Interface Implementation

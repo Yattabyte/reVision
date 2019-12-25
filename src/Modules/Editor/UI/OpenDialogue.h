@@ -12,8 +12,6 @@
 class OpenDialogue final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
-	/** Destroy this level opening dialogue. */
-	inline ~OpenDialogue() = default;
 	/** Construct a level opening dialogue.
 	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */

@@ -12,13 +12,6 @@ Focus can be changed manually, or by user input directly.
 Goal is to decouple basic UI elements from changing focus, and have more complex ones use FocusMap to standardize movement between them. */
 class FocusMap {
 public:
-	// Public (De)Constructors
-	/** Destroy this focus map. */
-	inline ~FocusMap() = default;
-	/** Construct a focus map. */
-	inline FocusMap() noexcept = default;
-
-
 	// Public Methods
 	/** Add an element to this focus map, setting it in focus.
 	@param	element			the new element to add to the map. */
