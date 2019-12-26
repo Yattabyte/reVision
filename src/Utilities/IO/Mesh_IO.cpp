@@ -135,8 +135,9 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 	}
 
 	// Copy Root Node and bones
+	const auto VertexCount = importedData.vertices.size();
 	importedData.rootNode = copy_node(scene->mRootNode);
-	importedData.bones.resize(importedData.vertices.size());
+	importedData.bones.resize(VertexCount);
 	int vertexOffset = 0;
 	for (unsigned int a = 0U; a < meshCount; ++a) {
 		const aiMesh* mesh = scene->mMeshes[a];
@@ -157,9 +158,10 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 			
 			const auto weightCount = mesh->mBones[b]->mNumWeights;
 			for (unsigned int j = 0U; j < weightCount; ++j) {
-				const int VertexID = vertexOffset + mesh->mBones[b]->mWeights[j].mVertexId;
-				const float Weight = mesh->mBones[b]->mWeights[j].mWeight;
-				importedData.bones[VertexID].AddBoneData((int)BoneIndex, Weight);
+				const int& VertexID = vertexOffset + mesh->mBones[b]->mWeights[j].mVertexId;
+				const float& Weight = mesh->mBones[b]->mWeights[j].mWeight;
+				if (VertexID < VertexCount)
+					importedData.bones[VertexID].AddBoneData((int)BoneIndex, Weight);
 			}
 		}
 
@@ -177,8 +179,8 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 		for (auto x = 1U; x < materialCount; ++x) {
 			constexpr static auto getMaterial = [](const aiScene& scene, const unsigned int& materialIndex) -> Material_Strings {
 				constexpr static auto getTexture = [](const aiMaterial& sceneMaterial, const aiTextureType& textureType, std::string& texturePath) {
-					aiString path;
 					for (unsigned int x = 0; x < sceneMaterial.GetTextureCount(textureType); ++x) {
+						aiString path;
 						if (sceneMaterial.GetTexture(textureType, x, &path) == AI_SUCCESS) {
 							texturePath = path.C_Str();
 							return;

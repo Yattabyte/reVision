@@ -10,7 +10,7 @@
 #include "Modules/Editor/Systems/Inspector_Light_System.h"
 
 
-EntityInspector::EntityInspector(Engine& engine, LevelEditor_Module& editor) noexcept :
+EntityInspector::EntityInspector(Engine& engine, LevelEditor_Module& editor) :
 	m_engine(engine),
 	m_editor(editor)
 {

@@ -33,18 +33,18 @@ struct Animation_Time_Key {
 	inline Animation_Time_Key(const double& t, const T& v) noexcept : time(t), value(v) {};
 };
 struct Node_Animation {
-	std::string nodeName = "";
+	std::string nodeName;
 	std::vector<Animation_Time_Key<glm::vec3>> scalingKeys;
 	std::vector<Animation_Time_Key<glm::quat>> rotationKeys;
 	std::vector<Animation_Time_Key<glm::vec3>> positionKeys;
-	inline Node_Animation() {};
+	inline Node_Animation() noexcept {};
 	inline Node_Animation(const std::string& name) : nodeName(name) {}
 };
 struct Node {
-	std::string name = "";
+	std::string name;
 	glm::mat4 transformation = glm::mat4(1);
 	std::vector<Node> children;
-	inline Node() {};
+	inline Node() noexcept {};
 	inline Node(const std::string& n, const glm::mat4& t) : name(n), transformation(t) {}
 };
 struct Animation {

@@ -75,39 +75,35 @@ void MousePicker_System::updateComponents(const float&, const std::vector<std::v
 	int highestConfidence = 0;
 	bool found = false;
 	for (const auto& componentParam : components) {
-		const auto* const transformComponent = static_cast<Transform_Component*>(componentParam[0]);
-		const auto* bBox = static_cast<BoundingBox_Component*>(componentParam[1]);
-		const auto* bSphere = static_cast<BoundingSphere_Component*>(componentParam[2]);
-		const auto* collider = static_cast<Collider_Component*>(componentParam[3]);
-		const auto* prop = static_cast<Prop_Component*>(componentParam[4]);
+		const auto& transformComponent = *static_cast<Transform_Component*>(componentParam[0]);
 		float distanceFromScreen = FLT_MAX;
 		int confidence = 0;
-		const bool hasBoundingShape = bSphere || bBox;
+		const bool hasBoundingShape = componentParam[1] || componentParam[2];
 		bool result = false;
 
 		// Attempt cheap tests first
-		result = RayOrigin(*transformComponent, ray_origin, ray_direction, distanceFromScreen, confidence, m_engine);
-		if (bBox)
-			result = RayBBox(*transformComponent, *bBox, ray_origin, ray_direction, distanceFromScreen, confidence);
-		else if (bSphere)
-			result = RayBSphere(*transformComponent, *bSphere, ray_origin, ray_direction, distanceFromScreen, confidence);
+		result = RayOrigin(transformComponent, ray_origin, ray_direction, distanceFromScreen, confidence, m_engine);
+		if (const auto& bBox = static_cast<BoundingBox_Component*>(componentParam[1]))
+			result = RayBBox(transformComponent, *bBox, ray_origin, ray_direction, distanceFromScreen, confidence);
+		else if (const auto& bSphere = static_cast<BoundingSphere_Component*>(componentParam[2]))
+			result = RayBSphere(transformComponent, *bSphere, ray_origin, ray_direction, distanceFromScreen, confidence);
 
 		// Attempt more complex tests
-		if (collider && ((hasBoundingShape && result) || (!hasBoundingShape))) {
+		if (const auto& collider = static_cast<Collider_Component*>(componentParam[3]); ((hasBoundingShape && result) || (!hasBoundingShape))) {
 			distanceFromScreen = FLT_MAX;
 			result = RayCollider(*collider, closestPhysicsShape, closetstPhysicsHit, distanceFromScreen, confidence);
 		}
-		else if (prop && ((hasBoundingShape && result) || (!hasBoundingShape))) {
+		else if (const auto& prop = static_cast<Prop_Component*>(componentParam[4]); ((hasBoundingShape && result) || (!hasBoundingShape))) {
 			distanceFromScreen = FLT_MAX;
-			result = RayProp(*transformComponent, *prop, ray_origin, ray_direction, intersectionNormal, distanceFromScreen, confidence);
+			result = RayProp(transformComponent, *prop, ray_origin, ray_direction, intersectionNormal, distanceFromScreen, confidence);
 		}
 
 		// Find the closest best match
 		if (result && ((distanceFromScreen < closestDistance) || (confidence > highestConfidence))) {
 			closestDistance = distanceFromScreen;
 			highestConfidence = confidence;
-			m_selection = transformComponent->m_entity;
-			m_selectionTransform = transformComponent->m_worldTransform;
+			m_selection = transformComponent.m_entity;
+			m_selectionTransform = transformComponent.m_worldTransform;
 			found = true;
 		}
 	}

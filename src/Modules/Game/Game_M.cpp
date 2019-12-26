@@ -24,16 +24,17 @@ void Game_Module::initialize()
 	m_Systems.makeSystem<PlayerFreeLook_System>(m_engine);
 
 	// Create Pause Menu
-	auto pauseMenu = std::make_shared<PauseMenu>(m_engine);
-	m_pauseMenu = pauseMenu;
-	pauseMenu->addCallback((int)PauseMenu::Interact::on_resume_game, [&] {
-		showPauseMenu(false);
-		pauseMenu->setVisible(true);
-		});
-	pauseMenu->addCallback((int)PauseMenu::Interact::on_end, [&] {
-		showPauseMenu(false);
-		m_engine.goToMainMenu();
-		});
+	if (auto pauseMenu = std::make_shared<PauseMenu>(m_engine)) {
+		pauseMenu->addCallback((int)PauseMenu::Interact::on_resume_game, [&] {
+			showPauseMenu(false);
+			pauseMenu->setVisible(true);
+			});
+		pauseMenu->addCallback((int)PauseMenu::Interact::on_end, [&] {
+			showPauseMenu(false);
+			m_engine.goToMainMenu();
+			});
+		m_pauseMenu = pauseMenu;
+	}
 }
 
 void Game_Module::deinitialize()

@@ -163,9 +163,12 @@ std::vector<std::shared_ptr<ecsEntity>> ecsWorld::getEntities(const std::vector<
 std::vector<EntityHandle> ecsWorld::getEntityHandles(const EntityHandle& rootHandle) const
 {
 	std::vector<EntityHandle> entityHandles;
-	auto& root = rootHandle != EntityHandle() ? getEntity(rootHandle)->m_children : m_entities;
-	entityHandles.reserve(root.size());
-	for (const auto& [handle, entity] : root)
+	const EntityMap* root = &m_entities;
+	if (rootHandle != EntityHandle())
+		if (const auto entity = getEntity(rootHandle))
+			root = &entity->m_children;
+	entityHandles.reserve(root->size());
+	for (const auto& [handle, entity] : *root)
 		entityHandles.push_back(handle);
 	return entityHandles;
 }

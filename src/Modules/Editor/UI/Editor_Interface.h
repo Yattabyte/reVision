@@ -68,10 +68,35 @@ private:
 
 /** UI element representing an ImGUI element. */
 struct ImGUI_Element {
-	bool m_open = true;
+	// Public (De)Constructors
+	/** Virtual Destructor. */
+	inline virtual ~ImGUI_Element() = default;
+	/** Default constructor. */
+	inline ImGUI_Element() noexcept = default;
+	/** Move constructor. */
+	inline ImGUI_Element(ImGUI_Element&&) noexcept = default;
+	/** Copy constructor. */
+	inline ImGUI_Element(const ImGUI_Element&) noexcept = default;
+
+	
+	// Public Methods
+	/** Move assignment. */
+	inline ImGUI_Element& operator =(ImGUI_Element&&) noexcept = default;
+	/** Copy assignment. */
+	inline ImGUI_Element& operator =(const ImGUI_Element&) noexcept = default;
+	/** Open this element. */
 	void open() noexcept;
+	/** Close this element. */
 	void close() noexcept;
+
+	// Public Interface Declaration
+	/** Tick this element, updating it and rendering it. 
+	@param	deltaTime		the amount of time since last frame. */
 	virtual void tick(const float& deltaTime);
+
+
+	// Public Attributes
+	bool m_open = true;
 };
 
 #endif // EDITOR_INTERFACE_H
