@@ -59,7 +59,7 @@ struct Camera_Component final : public ecsComponent<Camera_Component, cameraName
 };
 
 constexpr static const char boundingSphereName[] = "BoundingSphere_Component";
-struct [[deprecated]] BoundingSphere_Component final : public ecsComponent<BoundingSphere_Component, boundingSphereName>{
+struct BoundingSphere_Component final : public ecsComponent<BoundingSphere_Component, boundingSphereName>{
 	glm::vec3 m_positionOffset = glm::vec3(0.0f);
 	float m_radius = 1.0f;
 	enum class CameraCollision {
@@ -83,7 +83,7 @@ struct [[deprecated]] BoundingSphere_Component final : public ecsComponent<Bound
 };
 
 constexpr static const char boundingBoxName[] = "BoundingBox_Component";
-struct [[deprecated]] BoundingBox_Component final : public ecsComponent<BoundingBox_Component, boundingBoxName>{
+struct BoundingBox_Component final : public ecsComponent<BoundingBox_Component, boundingBoxName>{
 	glm::vec3 m_positionOffset = glm::vec3(0.0f), m_extent = glm::vec3(0), m_min = glm::vec3(0.0f), m_max = glm::vec3(0.0f);
 	enum class CameraCollision {
 		OUTSIDE, INSIDE

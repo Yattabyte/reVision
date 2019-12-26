@@ -42,4 +42,4 @@ struct Direct_Light_Data {
 	std::vector<Direct_Light_ViewInfo> viewInfo;
 };
 
-#endif DIRECTDATA_H
+#endif // DIRECTDATA_H

@@ -15,4 +15,4 @@ struct ShadowData {
 	float shadowSize = 1.0f, shadowSizeRCP = 1.0f;
 };
 
-#endif SHADOWDATA_H
+#endif // SHADOWDATA_H

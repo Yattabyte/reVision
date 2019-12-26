@@ -35,4 +35,4 @@ struct PropData {
 	GLuint m_geometryVAOID = 0u, m_materialArrayID = 0u;
 };
 
-#endif PROPDATA_H
+#endif // PROPDATA_H

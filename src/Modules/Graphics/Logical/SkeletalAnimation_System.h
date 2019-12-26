@@ -17,7 +17,7 @@ public:
 	// Public (De)Constructors
 	/** Construct a skeletal animation system.
 	@param	engine		reference to the engine to use. */
-	explicit Skeletal_Animation_System(Engine& engine);
+	explicit Skeletal_Animation_System();
 
 
 	// Public Interface Implementation
@@ -34,11 +34,6 @@ protected:
 	@param	model			the model to process the animations from.
 	@param	ParentTransform	parent transform in the node hierarchy. */
 	static void ReadNodeHeirarchy(std::vector<glm::mat4>& transforms, const float& AnimationTime, const int& animation_ID, const Node& parentNode, const Shared_Mesh& model, const glm::mat4& ParentTransform);
-
-
-private:
-	// Private Attributes
-	Engine& m_engine;
 };
 
 #endif // SKELETALANIMATION_SYSTEM_H

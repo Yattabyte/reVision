@@ -30,7 +30,7 @@ void LevelEditor_Module::initialize()
 
 	// Systems
 	m_systemOutline = std::make_shared<Outline_System>(m_engine, *this);
-	m_systemSelClearer = std::make_shared<ClearSelection_System>(m_engine, *this);
+	m_systemSelClearer = std::make_shared<ClearSelection_System>(*this);
 
 	// Assets
 	m_shader = Shared_Shader(m_engine, "Editor\\editorCopy");

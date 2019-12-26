@@ -28,7 +28,7 @@ Graphics_Pipeline::Graphics_Pipeline(Engine& engine, Camera& clientCamera) :
 	// Create Systems
 	m_worldSystems.addSystem(m_transHierachy);
 	m_worldSystems.makeSystem<FrustumCull_System>(m_sceneCameras);
-	m_worldSystems.makeSystem<Skeletal_Animation_System>(engine);
+	m_worldSystems.makeSystem<Skeletal_Animation_System>();
 	m_cameraSystems.makeSystem<CameraPerspective_System>(m_sceneCameras);
 	m_cameraSystems.makeSystem<ShadowPerspective_System>(m_sceneCameras);
 	m_cameraSystems.makeSystem<ReflectorPerspective_System>(m_sceneCameras);

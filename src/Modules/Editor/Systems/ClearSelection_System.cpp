@@ -3,8 +3,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-ClearSelection_System::ClearSelection_System(Engine& engine, LevelEditor_Module& editor) :
-	m_engine(engine),
+ClearSelection_System::ClearSelection_System(LevelEditor_Module& editor) :
 	m_editor(editor)
 {
 	// Declare component types used

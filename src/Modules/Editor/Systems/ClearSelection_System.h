@@ -14,9 +14,8 @@ class ClearSelection_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Construct this system.
-	@param	engine		reference to the engine to use. 
 	@param	editor		reference to the level-editor to use. */
-	ClearSelection_System(Engine& engine, LevelEditor_Module& editor);
+	ClearSelection_System(LevelEditor_Module& editor);
 
 
 	// Public Interface Implementation
@@ -25,7 +24,6 @@ public:
 
 private:
 	// Private Attributes
-	Engine& m_engine;
 	LevelEditor_Module& m_editor;
 };
 

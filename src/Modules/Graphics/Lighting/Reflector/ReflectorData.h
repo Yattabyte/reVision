@@ -32,4 +32,4 @@ struct ReflectorData {
 	size_t reflectorLayers = 0ull;
 };
 
-#endif REFLECTORDATA_H
+#endif // REFLECTORDATA_H

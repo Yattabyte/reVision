@@ -119,10 +119,10 @@ public:
 
 
 	// Public Methods
-	/** Preference state move assignment. */
-	inline PreferenceState& operator =(PreferenceState&&) noexcept = default;
-	/** Preference state copy assignment. */
-	inline PreferenceState& operator =(const PreferenceState&) noexcept = default;
+	/** Disallow Preference state move assignment. */
+	inline PreferenceState& operator =(PreferenceState&&) noexcept = delete;
+	/** Disallow Preference state copy assignment. */
+	inline PreferenceState& operator =(const PreferenceState&) noexcept = delete;
 	/** Loads a preference file from disk.
 	@param	filename	the relative path to the preference file to load. */
 	void loadFile(const std::string& filename);

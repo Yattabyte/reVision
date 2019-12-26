@@ -37,4 +37,4 @@ struct Indirect_Light_Data {
 	std::vector<Indirect_Light_ViewInfo> viewInfo;
 };
 
-#endif INDIRECTDATA_H
+#endif // INDIRECTDATA_H

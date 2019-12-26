@@ -11,8 +11,8 @@ TextInput::~TextInput()
 
 TextInput::TextInput(Engine& engine) :
 	UI_Element(engine),
-	m_shader(Shared_Shader(engine, "UI\\TextInput")),
-	m_label(std::make_shared<Label>(engine))
+	m_label(std::make_shared<Label>(engine)),
+	m_shader(Shared_Shader(engine, "UI\\TextInput"))
 {
 	// Label
 	m_label->setAlignment(Label::Alignment::align_left);

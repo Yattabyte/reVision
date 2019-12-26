@@ -2,8 +2,7 @@
 #include "Modules/ECS/component_types.h"
 
 
-Skeletal_Animation_System::Skeletal_Animation_System(Engine& engine) :
-	m_engine(engine)
+Skeletal_Animation_System::Skeletal_Animation_System()
 {
 	// Declare component types used
 	addComponentType(Skeleton_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);

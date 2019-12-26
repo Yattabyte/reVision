@@ -101,38 +101,6 @@ public:
 		*reinterpret_cast<Memory_Structure*>(&dataBuffer[0]) = outputData;
 		return dataBuffer;
 	}
-	/** Serialize a labeled pair of data into a char buffer.
-	@param	<>				template specialization for std::string.
-	@param	name			the label for the data (i.e. the variable name).
-	@param	data			the value to serialize.
-	@return					a char buffer containing serialized data. */
-	template <>
-	inline static std::vector<char> Serialize_Value(const std::string& name, const std::string& data) {
-		// For convenience sake, wrap our output data into a memory-copyable struct
-		struct Memory_Structure {
-			int struct_size = (int)sizeof(Memory_Structure);
-			char payload_name[MAX_NAME_CHARS]{ '\0' };
-			int payload_size;
-
-			/** Fill this memory structure. */
-			Memory_Structure(const std::string& name, const std::string& data) {
-				// Update size variables with data size
-				payload_size = (int)(sizeof(char) * data.size());
-				struct_size += payload_size;
-
-				// Copy-in the variable name, clamped to a max of MAX_NAME_CHARS)
-				std::copy(name.begin(), name.size() <= (size_t)(MAX_NAME_CHARS) ? name.end() : name.begin() + MAX_NAME_CHARS, std::begin(payload_name));
-			}
-		} const outputData(name, data);
-
-		// Allocate a buffer for our data, copy into it, and write pass it back
-		std::vector<char> dataBuffer(outputData.struct_size);
-		*reinterpret_cast<Memory_Structure*>(&dataBuffer[0]) = outputData;
-		// Copy-in the variable data
-		std::copy(data.begin(), data.end(), dataBuffer.begin() + sizeof(Memory_Structure));
-		return dataBuffer;
-	}
-
 	/** De-serialize a char buffer into a labeled pair of data.
 	@param	<T>				the data type to de-serialize.
 	@param	dataBuffer		a char buffer containing serialized data.
@@ -160,32 +128,6 @@ public:
 		}
 		return {};
 	}
-	/** De-serialize a char buffer into a labeled pair of data.
-	@param	<>				template specialization for std::string.
-	@param	dataBuffer		a char buffer containing serialized data.
-	@return					an optional pair containing a label and value <T> if successful. */
-	template <>
-	inline static std::optional<std::pair<std::string, std::string>> Deserialize_Value(const std::vector<char>& dataBuffer) {
-		// The expected structure of the input data
-		struct Memory_Structure {
-			int struct_size = (int)sizeof(Memory_Structure);
-			char payload_name[MAX_NAME_CHARS]{ '\0' };
-			int payload_size;
-		};
-
-		// Ensure the data buffer is of the expected size
-		if (dataBuffer.size() >= (int)sizeof(Memory_Structure)) {
-			// Cast the memory back into the structure
-			const auto& inputData = *reinterpret_cast<const Memory_Structure*>(&dataBuffer[0]);
-			// Ensure internal memory size matches
-			if (dataBuffer.size() == inputData.struct_size) {
-				const std::string name(inputData.payload_name, MAX_NAME_CHARS);
-				std::string payload_string(&dataBuffer[sizeof(Memory_Structure)], inputData.payload_size);
-				return { { name, payload_string } };
-			}
-		}
-		return {};
-	}
 
 
 private:
@@ -202,7 +144,7 @@ private:
 		const auto memberNameSpot = memberMap.find(std::string(MemberName));
 		if (memberNameSpot != memberMap.end()) {
 			// Found member, de-serialize data
-			if (const auto qwe = Deserialize_Value<std::remove_pointer<decltype(MemberPointer)>::type>(memberMap.at(MemberName)))
+			if (const auto qwe = Deserialize_Value<typename std::remove_pointer<decltype(MemberPointer)>::type>(memberMap.at(MemberName)))
 				*MemberPointer = qwe->second; // assign it
 		}
 
@@ -215,5 +157,54 @@ private:
 	// Private Variables
 	constexpr static int MAX_NAME_CHARS = 32;
 };
+
+template <>
+inline std::vector<char> Serializer::Serialize_Value(const std::string& name, const std::string& data) {
+	// For convenience sake, wrap our output data into a memory-copyable struct
+	struct Memory_Structure {
+		int struct_size = (int)sizeof(Memory_Structure);
+		char payload_name[MAX_NAME_CHARS]{ '\0' };
+		int payload_size;
+
+		/** Fill this memory structure. */
+		Memory_Structure(const std::string& name, const std::string& data) {
+			// Update size variables with data size
+			payload_size = (int)(sizeof(char) * data.size());
+			struct_size += payload_size;
+
+			// Copy-in the variable name, clamped to a max of MAX_NAME_CHARS)
+			std::copy(name.begin(), name.size() <= (size_t)(MAX_NAME_CHARS) ? name.end() : name.begin() + MAX_NAME_CHARS, std::begin(payload_name));
+		}
+	} const outputData(name, data);
+
+	// Allocate a buffer for our data, copy into it, and write pass it back
+	std::vector<char> dataBuffer(outputData.struct_size);
+	*reinterpret_cast<Memory_Structure*>(&dataBuffer[0]) = outputData;
+	// Copy-in the variable data
+	std::copy(data.begin(), data.end(), dataBuffer.begin() + sizeof(Memory_Structure));
+	return dataBuffer;
+}
+template <>
+inline std::optional<std::pair<std::string, std::string>> Serializer::Deserialize_Value(const std::vector<char>& dataBuffer) {
+	// The expected structure of the input data
+	struct Memory_Structure {
+		int struct_size = (int)sizeof(Memory_Structure);
+		char payload_name[MAX_NAME_CHARS]{ '\0' };
+		int payload_size;
+	};
+
+	// Ensure the data buffer is of the expected size
+	if (dataBuffer.size() >= (int)sizeof(Memory_Structure)) {
+		// Cast the memory back into the structure
+		const auto& inputData = *reinterpret_cast<const Memory_Structure*>(&dataBuffer[0]);
+		// Ensure internal memory size matches
+		if (dataBuffer.size() == inputData.struct_size) {
+			const std::string name(inputData.payload_name, MAX_NAME_CHARS);
+			std::string payload_string(&dataBuffer[sizeof(Memory_Structure)], inputData.payload_size);
+			return { { name, payload_string } };
+		}
+	}
+	return {};
+}
 
 #endif // SERIALIZER_H
