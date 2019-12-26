@@ -28,6 +28,7 @@ void Transform_System::updateComponents(const float&, const std::vector<std::vec
 			}
 		}
 	};
-	for (const auto& entity : m_world->getEntityHandles())
+	EntityHandle rootHandle;
+	for (const auto& entity : m_world->getEntityHandles(rootHandle))
 		transformHierarchy(entity);
 }

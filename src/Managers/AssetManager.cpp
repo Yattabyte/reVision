@@ -90,7 +90,6 @@ bool AssetManager::readyToUse()
 				});
 			});
 	}
-	return true;
 }
 
 bool AssetManager::hasChanged()

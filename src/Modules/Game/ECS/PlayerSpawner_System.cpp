@@ -28,7 +28,8 @@ void PlayerSpawn_System::updateComponents(const float&, const std::vector<std::v
 			trans.m_localTransform = transformComponent->m_worldTransform;
 
 			const ecsBaseComponent* const entityComponents[] = { &player, &trans };
-			m_playerHandle = m_game.getWorld().makeEntity(entityComponents, 2ull, "Player");
+			EntityHandle parentHandle;
+			m_game.getWorld().makeEntity(entityComponents, 2ull, "Player", m_playerHandle, parentHandle);
 			m_playerCount++;
 		}
 	}

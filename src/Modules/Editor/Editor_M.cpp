@@ -465,8 +465,10 @@ void LevelEditor_Module::clearSelection()
 
 			// Add selection component to new selection
 			m_editor.m_mouseGizmo.setSelection(uuids);
-			for (const auto& entityHandle : uuids)
-				ecsWorld.makeComponent(entityHandle, Selected_Component::Runtime_ID);
+			for (const auto& entityHandle : uuids) {
+				ComponentHandle componentHandle;
+				ecsWorld.makeComponent(entityHandle, Selected_Component::Runtime_ID, nullptr, componentHandle);
+			}
 
 			// Transform gizmo to center of group
 			Transform newTransform;
@@ -498,8 +500,10 @@ void LevelEditor_Module::clearSelection()
 
 			// Add selection component to new selection
 			m_editor.m_mouseGizmo.setSelection(m_uuids_old);
-			for (const auto& entityHandle : m_uuids_old)
-				ecsWorld.makeComponent(entityHandle, Selected_Component::Runtime_ID);
+			for (const auto& entityHandle : m_uuids_old) {
+				ComponentHandle componentHandle;
+				ecsWorld.makeComponent(entityHandle, Selected_Component::Runtime_ID, nullptr, componentHandle);
+			}
 
 			// Transform gizmo to center of group
 			Transform newTransform;
@@ -531,7 +535,8 @@ void LevelEditor_Module::clearSelection()
 
 void LevelEditor_Module::selectAll()
 {
-	setSelection(getWorld().getEntityHandles());
+	EntityHandle rootHandle;
+	setSelection(getWorld().getEntityHandles(rootHandle));
 }
 
 void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles)
@@ -550,8 +555,10 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles)
 
 			// Add selection component to new selection
 			m_editor.m_mouseGizmo.setSelection(uuids);
-			for (const auto& entityHandle : uuids)
-				ecsWorld.makeComponent(entityHandle, Selected_Component::Runtime_ID);
+			for (const auto& entityHandle : uuids) {
+				ComponentHandle componentHandle;
+				ecsWorld.makeComponent(entityHandle, Selected_Component::Runtime_ID, nullptr, componentHandle);
+			}
 
 			// Transform gizmo to center of group
 			Transform newTransform;
@@ -671,7 +678,8 @@ void LevelEditor_Module::groupSelection()
 
 			// Make a new root entity for the selection
 			const ecsBaseComponent* const entityComponents[] = { &rootTransform };
-			m_rootUUID = ecsWorld.makeEntity(entityComponents, 1ull, "Group", m_rootUUID);
+			EntityHandle parentHandle;
+			ecsWorld.makeEntity(entityComponents, 1ull, "Group", m_rootUUID, parentHandle);
 
 			// Offset children by new center position
 			for (auto& uuid : m_uuids)
@@ -771,8 +779,10 @@ void LevelEditor_Module::deleteSelection()
 		void undo() final {
 			auto& ecsWorld = m_editor.getWorld();
 			size_t dataRead(0ull), uuidIndex(0ull);
-			while (dataRead < m_data.size() && uuidIndex < m_uuids.size())
-				ecsWorld.deserializeEntity(m_data, m_data.size(), dataRead, m_uuids[uuidIndex++]);
+			while (dataRead < m_data.size() && uuidIndex < m_uuids.size()) {
+				EntityHandle &desiredHandle = m_uuids[uuidIndex++], parentHandle;
+				ecsWorld.deserializeEntity(m_data, m_data.size(), dataRead, desiredHandle, parentHandle);
+			}
 		}
 	};
 
@@ -793,7 +803,7 @@ void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const c
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentName(name) {}
 		void execute() final {
 			auto& ecsWorld = m_editor.getWorld();
-			if (const auto& componentID = ecsWorld.nameToComponentID(m_componentName))
+			if (const auto& componentID = ecsWorld.nameToComponentID(m_componentName)) 
 				ecsWorld.makeComponent(m_entityHandle, *componentID, nullptr, m_componentHandle);
 		}
 		void undo() final {

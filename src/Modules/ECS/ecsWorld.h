@@ -30,21 +30,20 @@ public:
 	@param	components			array of component pointers, whom will be hard copied.
 	@param	numComponents		the number of components in the array.
 	@param	name				optional entity name, more for use in the level editor.
-	@param	UUID				optional entity UUID, if empty will auto-generate.
-	@param	parentUUID			optional parent entity UUID, if not at the level root.
-	@return						handle to the entity on success, empty on failure. */
-	[[maybe_unused]] EntityHandle makeEntity(const ecsBaseComponent* const *const components, const size_t& numComponents, const std::string& name = "Entity", const EntityHandle& UUID = EntityHandle(), const EntityHandle& parentUUID = EntityHandle());
+	@param	UUID				reference to the entity UUID, if empty will auto-generate.
+	@param	parentUUID			optional parent entity UUID, if not at the level root. */
+	void makeEntity(const ecsBaseComponent* const *const components, const size_t& numComponents, const std::string& name, EntityHandle& UUID, const EntityHandle& parentUUID);
 	/** Adds a component to an entity.
 	@param	entityHandle		handle to the entity to add the component to.
 	@param	component			the component being added.
-	@param	UUID				optional reference to the component UUID, if empty will auto-generate. */
-	void makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* const component, ComponentHandle& UUID = ComponentHandle());
+	@param	UUID				reference to the component UUID, if empty will auto-generate. */
+	void makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* const component, ComponentHandle& UUID);
 	/** Adds a component to an entity.
 	@param	entityHandle		handle to the entity to add the component to.
 	@param	componentID			the runtime component class.
 	@param	component			the component being added.
 	@param	UUID				optional reference to the component UUID, if empty will auto-generate. */
-	void makeComponent(const EntityHandle& entityHandle, const ComponentID& componentID, const ecsBaseComponent* const component = nullptr, ComponentHandle& UUID = ComponentHandle());
+	void makeComponent(const EntityHandle& entityHandle, const ComponentID& componentID, const ecsBaseComponent* const component, ComponentHandle& UUID);
 
 
 	///////////////////////////////
@@ -77,9 +76,9 @@ public:
 	@return						list of pointers to the found entities. Dimensions may not match input list (nullptr's omitted). */
 	std::vector<std::shared_ptr<ecsEntity>> getEntities(const std::vector<EntityHandle>& uuids) const;
 	/** Retrieve a list of entity handles, given a root node.
-	@param	rootHandle			an optional root element to start fetching at (empty == map root).
+	@param	rootHandle			an root element to start fetching at (empty == map root).
 	@return						a vector of all level entities. */
-	std::vector<EntityHandle> getEntityHandles(const EntityHandle& rootHandle = EntityHandle()) const;
+	std::vector<EntityHandle> getEntityHandles(const EntityHandle& rootHandle) const;
 	/** Try to retrieve a component of a specific type from an entity matching the handle supplied.
 	@param	<T>					the category of component being retrieved.
 	@param	entityHandle		handle to the entity to retrieve from.
@@ -160,7 +159,7 @@ public:
 	@param	dataRead			reference to number of elements or bytes read in data so far.
 	@param	desiredHandle		specific handle to use. If empty will be updated with serialized value instead.
 	@param	parentHandle		optional handle to parent entity, designed to be called recursively if entity has children. */
-	void deserializeEntity(const std::vector<char>& data, const size_t& dataSize, size_t& dataRead, EntityHandle& desiredHandle = EntityHandle(),  const EntityHandle& parentHandle = EntityHandle());
+	void deserializeEntity(const std::vector<char>& data, const size_t& dataSize, size_t& dataRead, EntityHandle& desiredHandle, const EntityHandle& parentHandle);
 	/** Try to find a component ID based on the component ID.
 	@param	name				the component class name to search for.
 	@return						optional component ID on success, nullptr on failure. */

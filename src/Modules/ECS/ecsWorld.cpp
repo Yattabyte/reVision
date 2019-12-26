@@ -19,8 +19,10 @@ ecsWorld::ecsWorld(const std::vector<char>& data)
 {
 	if (!data.empty()) {
 		size_t dataRead(0ULL);
-		while (dataRead < data.size())
-			deserializeEntity(data, data.size(), dataRead);
+		while (dataRead < data.size()) {
+			EntityHandle desiredHandle, parentHandle;
+			deserializeEntity(data, data.size(), dataRead, desiredHandle, parentHandle);
+		}
 	}
 }
 
@@ -34,20 +36,22 @@ ecsWorld::ecsWorld(ecsWorld&& other) noexcept
 /// PUBLIC MAKE FUNCTIONS ///
 /////////////////////////////
 
-EntityHandle ecsWorld::makeEntity(const ecsBaseComponent* const* const components, const size_t& numComponents, const std::string& name, const EntityHandle& UUID, const EntityHandle& parentUUID)
+void ecsWorld::makeEntity(const ecsBaseComponent* const* const components, const size_t& numComponents, const std::string& name, EntityHandle& UUID, const EntityHandle& parentUUID)
 {
-	const auto finalHandle = UUID == EntityHandle() ? (EntityHandle)(generateUUID()) : UUID;
+	if (!UUID.isValid())
+		UUID = (EntityHandle)(generateUUID());
+
 	auto newEntity = std::make_shared<ecsEntity>();
 	auto& root = parentUUID.isValid() ? (getEntity(parentUUID)->m_children) : m_entities;
 	newEntity->m_name = name;
 	newEntity->m_entityIndex = (int)root.size();
 	newEntity->m_parent = parentUUID;
-	root.insert_or_assign(finalHandle, newEntity);
+	root.insert_or_assign(UUID, newEntity);
 
-	for (size_t i = 0; i < numComponents; ++i)
-		makeComponent(finalHandle, components[i]);
-
-	return finalHandle;
+	for (size_t i = 0; i < numComponents; ++i) {
+		ComponentHandle componentHandle;
+		makeComponent(UUID, components[i], componentHandle);
+	}
 }
 
 void ecsWorld::makeComponent(const EntityHandle& entityHandle, const ecsBaseComponent* const component, ComponentHandle& UUID)
@@ -340,11 +344,11 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 			mem_array.resize(srcIndex);
 			return;
 		}
-		std::memcpy(destComponent, srcComponent, typeSize);
+		*destComponent = *srcComponent;
 
 		// Update references
-		for (auto& srcComponent : getEntity(srcComponent->m_entity)->m_components) {
-			auto& [compID, fn, compHandle] = srcComponent;
+		for (auto& component : getEntity(srcComponent->m_entity)->m_components) {
+			auto& [compID, fn, compHandle] = component;
 			if (componentID == compID && (ComponentID)(srcIndex) == fn) {
 				fn = index;
 				break;
@@ -467,14 +471,15 @@ void ecsWorld::deserializeEntity(const std::vector<char>& data, const size_t& da
 	}
 
 	// Make the entity
-	desiredHandle = makeEntity(&components[0], components.size(), std::string(entityNameChars, nameSize), desiredHandle, parentHandle);
+	makeEntity(&components[0], components.size(), std::string(entityNameChars, nameSize), desiredHandle, parentHandle);
 	pointers.clear();
 	components.clear();
 
 	// Make all child entities
 	unsigned int childEntitiesRead(0ULL);
 	while (childEntitiesRead < entityChildCount && dataRead < dataSize) {
-		deserializeEntity(data, dataSize, dataRead, EntityHandle(), desiredHandle);
+		EntityHandle childHandle;
+		deserializeEntity(data, dataSize, dataRead, childHandle, desiredHandle);
 		childEntitiesRead++;
 	}
 }

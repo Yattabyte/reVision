@@ -221,7 +221,8 @@ void SceneInspector::tick(const float&)
 			};
 
 			ImGui::Separator();
-			for (const auto& entityHandle : ecsWorld.getEntityHandles())
+			EntityHandle rootHandle;
+			for (const auto& entityHandle : ecsWorld.getEntityHandles(rootHandle))
 				displayEntity(entityHandle);
 
 			// Special case to allow dragging to end of scene list

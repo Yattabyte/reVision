@@ -99,8 +99,8 @@ void Prefabs::addPrefab(const std::vector<char>& entityData)
 
 	size_t dataRead(0ull);
 	while(dataRead < entityData.size()) {
-		EntityHandle newPrefabHandle;
-		m_previewWorld.deserializeEntity(entityData, entityData.size(), dataRead, newPrefabHandle);
+		EntityHandle newPrefabHandle, parentHandle;
+		m_previewWorld.deserializeEntity(entityData, entityData.size(), dataRead, newPrefabHandle, parentHandle);
 		newPrefab.entityHandles.push_back(newPrefabHandle);
 	}
 	addPrefab(newPrefab);
@@ -146,7 +146,9 @@ void Prefabs::populatePrefabs(const std::string& directory)
 			a.m_localTransform.update();
 			c.m_modelName = "FireHydrant\\FireHydrantMesh.obj";
 			const ecsBaseComponent* const entityComponents[] = { &a, &b, &c };
-			Prefabs::Entry entry{ "Basic Model", "", Entry::Type::FILE, {m_previewWorld.makeEntity(entityComponents, 3ull, "Basic Model")} };
+			EntityHandle entityHandle, parentHandle;
+			m_previewWorld.makeEntity(entityComponents, 3ull, "Basic Model", entityHandle, parentHandle);
+			Prefabs::Entry entry{ "Basic Model", "", Entry::Type::FILE, {entityHandle} };
 			addPrefab(entry);
 		}
 		/*// Basic Sun Prefab
@@ -192,8 +194,8 @@ void Prefabs::populatePrefabs(const std::string& directory)
 				prefabFile.read(&data[0], (std::streamsize)size);
 				size_t dataRead(0ull);
 				while(dataRead < data.size()) {
-					EntityHandle newPrefabHandle;
-					m_previewWorld.deserializeEntity(data, size, dataRead, newPrefabHandle);
+					EntityHandle newPrefabHandle, parentHandle;
+					m_previewWorld.deserializeEntity(data, size, dataRead, newPrefabHandle, parentHandle);
 					newPrefab.entityHandles.push_back(newPrefabHandle);
 				}
 			}
@@ -214,7 +216,8 @@ void Prefabs::populatePrefabs(const std::string& directory)
 		b.m_radius = 1000.0f;
 		b.m_cutoff = 180.0f;
 		const ecsBaseComponent* const entityComponents[] = { &a, &b };
-		m_sunHandle = m_previewWorld.makeEntity(entityComponents, 2ull, "Preview Sun");
+		EntityHandle parentHandle;
+		m_previewWorld.makeEntity(entityComponents, 2ull, "Preview Sun", m_sunHandle, parentHandle);
 	}
 }
 

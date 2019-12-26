@@ -38,7 +38,7 @@ struct Node_Animation {
 	std::vector<Animation_Time_Key<glm::quat>> rotationKeys;
 	std::vector<Animation_Time_Key<glm::vec3>> positionKeys;
 	inline Node_Animation() noexcept {};
-	inline Node_Animation(const std::string& name) : nodeName(name) {}
+	inline explicit Node_Animation(const std::string& name) : nodeName(name) {}
 };
 struct Node {
 	std::string name;

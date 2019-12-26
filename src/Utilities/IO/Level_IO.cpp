@@ -40,7 +40,8 @@ bool Level_IO::Export_BMap(const std::string& relativePath, const ecsWorld& worl
 		return false;
 
 	// Write ECS data to disk
-	const auto data = world.serializeEntities(world.getEntityHandles());
+	EntityHandle rootHandle;
+	const auto data = world.serializeEntities(world.getEntityHandles(rootHandle));
 	mapFile.write(data.data(), (std::streamsize)data.size());
 	mapFile.close();
 	return true;
