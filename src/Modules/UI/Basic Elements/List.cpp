@@ -23,11 +23,11 @@ List::List(Engine& engine) :
 	glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), nullptr, GL_DYNAMIC_STORAGE_BIT);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&] {
+	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] {
 		alignChildren();
 		updateSelectionGeometry();
 		});
-	addCallback((int)UI_Element::Interact::on_childrenChange, [&] {
+	addCallback(static_cast<int>(UI_Element::Interact::on_childrenChange), [&] {
 		alignChildren();
 		});
 }
@@ -140,7 +140,7 @@ void List::setSelectionIndex(const int& newIndex)
 	m_selectionIndex = newIndex;
 	m_focusMap.focusIndex(m_selectionIndex);
 	updateSelectionGeometry();
-	enactCallback((int)List::Interact::on_selection);
+	enactCallback(static_cast<int>(List::Interact::on_selection));
 }
 
 int List::getSelectionIndex() const noexcept 

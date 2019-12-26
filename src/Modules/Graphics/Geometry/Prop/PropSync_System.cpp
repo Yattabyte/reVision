@@ -57,7 +57,7 @@ void PropSync_System::updateComponents(const float&, const std::vector<std::vect
 			if (skeletonComponent) {
 				skeletonComponent->m_mesh = propComponent->m_model->m_mesh;
 				auto& bones = m_frameData.skeletonBuffer[index].bones;
-				const auto total = std::min(skeletonComponent->m_transforms.size(), (size_t)NUM_MAX_BONES);
+				const auto total = std::min(skeletonComponent->m_transforms.size(), static_cast<size_t>(NUM_MAX_BONES));
 				for (size_t i = 0; i < total; ++i)
 					bones[i] = skeletonComponent->m_transforms[i];
 			}

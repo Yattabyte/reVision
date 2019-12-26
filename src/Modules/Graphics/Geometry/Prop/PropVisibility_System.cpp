@@ -28,7 +28,7 @@ void PropVisibility_System::updateComponents(const float&, const std::vector<std
 			const auto& count = propComponent->m_count;
 
 			if (count && propComponent->m_uploadModel && propComponent->m_uploadMaterial) {
-				viewInfo.visibleIndices.push_back((GLuint)index);
+				viewInfo.visibleIndices.push_back(static_cast<GLuint>(index));
 				viewInfo.skeletonData.push_back(skeletonComponent ? index : -1); // get skeleton ID if this entity has one
 
 				// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere

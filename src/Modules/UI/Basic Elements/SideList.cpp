@@ -29,7 +29,7 @@ SideList::SideList(Engine& engine) :
 	constexpr auto num_data = 2 * 3;
 	glNamedBufferStorage(m_vboID[0], num_data * sizeof(glm::vec3), nullptr, GL_DYNAMIC_STORAGE_BIT);
 	glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), nullptr, GL_DYNAMIC_STORAGE_BIT);
-	m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
+	m_indirect = IndirectDraw<1>(static_cast<GLuint>(num_data), 1, 0, GL_CLIENT_STORAGE_BIT);
 
 	// Make a background panel for cosmetic purposes
 	auto panel = std::make_shared<Panel>(engine);
@@ -43,7 +43,7 @@ SideList::SideList(Engine& engine) :
 	addElement(m_label);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&] { updateGeometry(); });
+	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] { updateGeometry(); });
 
 	// Configure THIS element
 	setIndex(0);
@@ -125,8 +125,8 @@ void SideList::setIndex(const int& index)
 		m_label->setText(m_strings[m_index]);
 
 		m_lEnabled = (index > 0);
-		m_rEnabled = (index < (int)(m_strings.size() - 1ull));
-		enactCallback((int)SideList::Interact::on_index_changed);
+		m_rEnabled = (index < static_cast<int>(m_strings.size() - 1ull));
+		enactCallback(static_cast<int>(SideList::Interact::on_index_changed));
 	}
 }
 

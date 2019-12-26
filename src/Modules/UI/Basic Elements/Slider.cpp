@@ -24,7 +24,7 @@ Slider::Slider(Engine& engine, const float& value, const glm::vec2& range) :
 	addElement(m_label);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&] { updateGeometry(); });
+	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] { updateGeometry(); });
 
 	// Configure THIS element
 	setValue(value);
@@ -67,9 +67,9 @@ void Slider::userAction(ActionState& actionState)
 void Slider::setValue(const float& amount) 
 {
 	m_value = std::clamp<float>(amount, m_lowerRange, m_upperRange);
-	setText(std::to_string((int)std::round(m_value)));
+	setText(std::to_string(static_cast<int>(std::round(m_value))));
 	updatePaddle();
-	enactCallback((int)Slider::Interact::on_value_change);
+	enactCallback(static_cast<int>(Slider::Interact::on_value_change));
 }
 
 float Slider::getValue() const noexcept 

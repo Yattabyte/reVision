@@ -38,10 +38,10 @@ Scrollbar_V::Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& comp
 	glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
 	constexpr auto num_data = 2 * 3;
 	glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), nullptr, GL_DYNAMIC_STORAGE_BIT);
-	m_indirect = IndirectDraw<1>((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
+	m_indirect = IndirectDraw<1>(static_cast<GLuint>(num_data), 1, 0, GL_CLIENT_STORAGE_BIT);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&] { updateGeometry(); });
+	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] { updateGeometry(); });
 }
 
 void Scrollbar_V::mouseAction(const MouseEvent& mouseEvent) 
@@ -55,11 +55,11 @@ void Scrollbar_V::mouseAction(const MouseEvent& mouseEvent)
 			if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed() && mouseEvent.m_action == MouseEvent::Action::MOVE)
 				setLinear(float(subEvent.m_yPos) / (m_scale.y - 25.0f - 12.5f));
 		}
-		enactCallback((int)UI_Element::Interact::on_hover_start);
+		enactCallback(static_cast<int>(UI_Element::Interact::on_hover_start));
 		if (mouseEvent.m_action == MouseEvent::Action::PRESS)
-			enactCallback((int)UI_Element::Interact::on_press);
+			enactCallback(static_cast<int>(UI_Element::Interact::on_press));
 		else
-			enactCallback((int)UI_Element::Interact::on_release);
+			enactCallback(static_cast<int>(UI_Element::Interact::on_release));
 	}
 }
 
@@ -87,7 +87,7 @@ void Scrollbar_V::setLinear(const float& linear)
 {
 	m_linear = std::clamp<float>(linear, -1.0f, 1.0f);
 	updateElementPosition();
-	enactCallback((int)Scrollbar_V::Interact::on_scroll_change);
+	enactCallback(static_cast<int>(Scrollbar_V::Interact::on_scroll_change));
 }
 
 float Scrollbar_V::getLinear() const noexcept 

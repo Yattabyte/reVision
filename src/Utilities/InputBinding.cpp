@@ -19,8 +19,8 @@ void InputBinding::loadFile(const std::string& filename)
 
 	// Hard-code default binds here
 	static auto defaultBind = [&](const ActionState::Action& bind, const KeyboardEvent::Key& key) {
-		if (m_config->m_configuration.find((unsigned int)bind) == m_config->m_configuration.end())
-			m_config->m_configuration[(unsigned int)bind] = (float)key;
+		if (m_config->m_configuration.find(static_cast<unsigned int>(bind)) == m_config->m_configuration.end())
+			m_config->m_configuration[static_cast<unsigned int>(bind)] = (float)key;
 	};
 	defaultBind(ActionState::Action::UI_UP, KeyboardEvent::Key::W);
 	defaultBind(ActionState::Action::UI_DOWN, KeyboardEvent::Key::S);

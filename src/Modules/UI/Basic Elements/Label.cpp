@@ -31,7 +31,7 @@ Label::Label(Engine& engine, const std::string& text) :
 	data[4] = { -1,  1, 0 };
 	data[5] = { -1, -1, 0 };
 	glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &data[0]);
-	m_indirect = IndirectDraw<>((GLuint)num_data, 1, 0, GL_DYNAMIC_STORAGE_BIT);
+	m_indirect = IndirectDraw<>(static_cast<GLuint>(num_data), 1, 0, GL_DYNAMIC_STORAGE_BIT);
 
 	// Configure THIS element
 	setText(text);
@@ -56,7 +56,7 @@ void Label::renderElement(const float& deltaTime, const glm::vec2& position, con
 	m_shader->setUniform(0, newPosition);
 	m_shader->setUniform(1, newScale);
 	m_shader->setUniform(2, std::clamp<float>((getScale().x / getText().size()) * 2.0f, 5.0f, m_textScale));
-	m_shader->setUniform(3, (int)m_textAlignment);
+	m_shader->setUniform(3, static_cast<int>(m_textAlignment));
 	m_shader->setUniform(4, m_enabled);
 	m_shader->setUniform(5, m_color);
 	m_textureFont->bind(0);
@@ -77,14 +77,14 @@ void Label::setText(const std::string& text)
 	// Write letters to a buffer
 	const auto count = m_text.size();
 	std::vector<int> data(count + 1ull);
-	data[0] = (int)count;
+	data[0] = static_cast<int>(count);
 	for (size_t x = 0; x < count; ++x)
-		data[x + 1ull] = (int)(m_text[x]) - 32;
+		data[x + 1ull] = static_cast<int>(m_text[x]) - 32;
 	m_bufferString.write_immediate(0, sizeof(int) * (count + 1ull), data.data());
-	m_charCount = (GLuint)count;
+	m_charCount = static_cast<GLuint>(count);
 
 	// Notify text changed
-	enactCallback((int)Label::Interact::on_textChanged);
+	enactCallback(static_cast<int>(Label::Interact::on_textChanged));
 }
 
 std::string Label::getText() const 

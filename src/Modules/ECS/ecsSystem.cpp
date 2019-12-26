@@ -9,7 +9,7 @@ std::vector<std::pair<ComponentID, ecsBaseSystem::RequirementsFlag>> ecsBaseSyst
 bool ecsBaseSystem::isValid() const noexcept 
 {
 	for (const auto& [componentID, componentFlag] : m_componentTypes)
-		if (((unsigned int)componentFlag & (unsigned int)RequirementsFlag::FLAG_OPTIONAL) == 0)
+		if ((static_cast<unsigned int>(componentFlag) & static_cast<unsigned int>(RequirementsFlag::FLAG_OPTIONAL)) == 0)
 			return true;
 	return false;
 }

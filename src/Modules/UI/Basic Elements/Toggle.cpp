@@ -23,8 +23,8 @@ Toggle::Toggle(Engine& engine, const bool& state) :
 	addElement(m_label);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_clicked, [&] { setToggled(!m_toggledOn); });
-	addCallback((int)UI_Element::Interact::on_resize, [&] { updateGeometry(); });
+	addCallback(static_cast<int>(UI_Element::Interact::on_clicked), [&] { setToggled(!m_toggledOn); });
+	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] { updateGeometry(); });
 
 	// Configure THIS element
 	setToggled(state);
@@ -69,7 +69,7 @@ void Toggle::setToggled(const bool& state)
 	m_toggledOn = state;
 	setText(m_toggledOn ? "ON" : "OFF");
 	updateGeometry();
-	enactCallback((int)Toggle::Interact::on_toggle);
+	enactCallback(static_cast<int>(Toggle::Interact::on_toggle));
 }
 
 bool Toggle::isToggled() const noexcept 

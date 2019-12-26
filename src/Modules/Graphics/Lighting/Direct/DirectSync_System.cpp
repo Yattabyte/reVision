@@ -44,7 +44,7 @@ void DirectSync_System::updateComponents(const float&, const std::vector<std::ve
 
 		// Sync Shadow Attributes
 		if (shadow) {
-			const auto updateCamera = [&](Camera& camera, const glm::mat4& pMatrix, const glm::mat4& vMatrix, const glm::vec3& position, const float& nearPlane = -Camera::ConstNearPlane, const float& farPlane = 1.0f, const float& fov = 90.0f) {
+			const auto updateCamera = [&](Camera& camera, const glm::mat4& pMatrix, const glm::mat4& vMatrix, const glm::vec3& position, const float& nearPlane, const float& farPlane, const float& fov) {
 				auto& camData = *camera.get();
 				camData.pMatrix = pMatrix;
 				camData.pMatrixInverse = glm::inverse(pMatrix);
@@ -52,7 +52,7 @@ void DirectSync_System::updateComponents(const float&, const std::vector<std::ve
 				camData.vMatrixInverse = glm::inverse(vMatrix);
 				camData.pvMatrix = pMatrix * vMatrix;
 				camData.EyePosition = position;
-				camData.Dimensions = glm::ivec2((int)m_frameData.shadowData.shadowSize);
+				camData.Dimensions = glm::ivec2(static_cast<int>(m_frameData.shadowData.shadowSize));
 				camData.NearPlane = nearPlane;
 				camData.FarPlane = farPlane;
 				camData.FOV = fov;
@@ -75,7 +75,7 @@ void DirectSync_System::updateComponents(const float&, const std::vector<std::ve
 				constexpr float lambda = 0.75f;
 				cascadeEnd[0] = near_plane;
 				for (int x = 1; x < NUM_CASCADES + 1; ++x) {
-					const float xDivM = (float)x / (float)NUM_CASCADES;
+					const float xDivM = static_cast<float>(x) / static_cast<float>(NUM_CASCADES);
 					const float cLog = near_plane * powf((far_plane / near_plane), xDivM);
 					const float cUni = near_plane + (far_plane - near_plane) * xDivM;
 					cascadeEnd[x] = (lambda * cLog) + (1.0f - lambda) * cUni;

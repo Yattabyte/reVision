@@ -33,7 +33,7 @@ void FBO_Env_Reflector::resize(const glm::ivec2 newSize, const GLuint& depth)
 		m_size = newSize;
 		m_depth = depth;
 		for (int x = 0; x < 6; ++x) {
-			const glm::ivec2 size(glm::floor(glm::vec2(m_size) / glm::vec2(powf(2.0f, (float)x))));
+			const glm::ivec2 size(glm::floor(glm::vec2(m_size) / glm::vec2(powf(2.0f, static_cast<float>(x)))));
 			glTextureImage3DEXT(m_textureID, GL_TEXTURE_CUBE_MAP_ARRAY, x, GL_RGB16F, size.x, size.y, m_depth, 0, GL_RGB, GL_FLOAT, nullptr);
 		}
 	}

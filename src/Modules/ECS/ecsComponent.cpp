@@ -4,7 +4,7 @@
 
 ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const ComponentNewFunction& newFn, const size_t& size, const char* string)
 {
-	const auto componentID = (ComponentID)(m_componentRegistry.size());
+	const auto componentID = static_cast<ComponentID>(m_componentRegistry.size());
 	m_componentRegistry.emplace_back(createFn, freeFn, newFn, size);
 	m_nameRegistry.insertOrAssign(string, componentID);
 

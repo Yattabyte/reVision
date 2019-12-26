@@ -23,11 +23,11 @@ List_Horizontal::List_Horizontal(Engine& engine) :
 	glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), nullptr, GL_DYNAMIC_STORAGE_BIT);
 
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&] {
+	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] {
 		alignChildren();
 		updateSelectionGeometry();
 		});
-	addCallback((int)UI_Element::Interact::on_childrenChange, [&] {
+	addCallback(static_cast<int>(UI_Element::Interact::on_childrenChange), [&] {
 		alignChildren();
 		});
 }
@@ -100,7 +100,7 @@ void List_Horizontal::userAction(ActionState& actionState)
 
 		// After, process remaining input for the list_Horizontal
 		if (actionState.isAction(ActionState::Action::UI_UP) == ActionState::State::PRESS) {
-			setHoverIndex(int(size_t(m_hoverIndex) - 1) < 0 ? (int)(m_children.size() - 1ull) : int(size_t(m_hoverIndex) - 1));
+			setHoverIndex(int(size_t(m_hoverIndex) - 1) < 0 ? static_cast<int>(m_children.size() - 1ull) : int(size_t(m_hoverIndex) - 1));
 
 			if (m_selectionIndex != -1)
 				setSelectionIndex(-1);
@@ -141,7 +141,7 @@ void List_Horizontal::setSelectionIndex(const int& newIndex)
 	m_selectionIndex = newIndex;
 	m_focusMap.focusIndex(m_selectionIndex);
 	updateSelectionGeometry();
-	enactCallback((int)List_Horizontal::Interact::on_selection);
+	enactCallback(static_cast<int>(List_Horizontal::Interact::on_selection));
 }
 
 int List_Horizontal::getSelectionIndex() const noexcept 

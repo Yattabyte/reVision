@@ -21,7 +21,7 @@ void DirectVisibility_System::updateComponents(const float&, const std::vector<s
 		for (const auto& componentParam : components) {
 			// Render lights and shadows for all directional lights
 			const auto& lightComponent = static_cast<Light_Component*>(componentParam[0]);
-			viewInfo.lightIndices.push_back((GLuint)index++);
+			viewInfo.lightIndices.push_back(static_cast<GLuint>(index++));
 			viewInfo.lightTypes.push_back(lightComponent->m_type);
 		}
 	}

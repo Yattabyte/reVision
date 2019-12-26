@@ -5,8 +5,8 @@ Layout_Horizontal::Layout_Horizontal(Engine& engine) :
 	UI_Element(engine)
 {
 	// Add Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&] { alignChildren(); });
-	addCallback((int)UI_Element::Interact::on_childrenChange, [&] { alignChildren(); });
+	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] { alignChildren(); });
+	addCallback(static_cast<int>(UI_Element::Interact::on_childrenChange), [&] { alignChildren(); });
 }
 
 void Layout_Horizontal::addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio) 
@@ -55,7 +55,7 @@ void Layout_Horizontal::alignChildren()
 
 	// Available space -= spacing factor between elements
 	if (m_sizedChildren.size() > 1)
-		sizeUsed += (float)(m_sizedChildren.size() - 1ULL) * m_spacing;
+		sizeUsed += static_cast<float>(m_sizedChildren.size() - 1ULL) * m_spacing;
 
 	// Remaining space divvied up between remaining elements
 	const float remainder = innerRectSize - sizeUsed;

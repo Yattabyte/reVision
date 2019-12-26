@@ -15,7 +15,7 @@ Menu::Menu(Engine& engine) :
 
 	// Make a vertical layout to house list items
 	m_layout->setSpacing(10.0f);
-	m_layout->addCallback((int)List::Interact::on_selection, [&] {
+	m_layout->addCallback(static_cast<int>(List::Interact::on_selection), [&] {
 		const auto index = m_layout->getSelectionIndex();
 		if (index >= 0 && index < m_selectionCallbacks.size())
 			m_selectionCallbacks[index]();
@@ -32,7 +32,7 @@ Menu::Menu(Engine& engine) :
 	m_backPanel->addElement(m_separator);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&] {
+	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] {
 		const auto scale = getScale();
 		m_backPanel->setScale({ 128, scale.y });
 		m_backPanel->setPosition(glm::vec2(256, scale.y));
@@ -60,7 +60,7 @@ void Menu::addButton(Engine& engine, const char* buttonText, const std::function
 {
 	auto button = std::make_shared<Button>(engine, buttonText);
 	button->setScale({ 120, 20 });
-	button->addCallback((int)Button::Interact::on_clicked, callback);
+	button->addCallback(static_cast<int>(Button::Interact::on_clicked), callback);
 	m_selectionCallbacks.push_back(callback);
 	m_layout->addElement(button);
 	m_layout->getFocusMap().addElement(button);

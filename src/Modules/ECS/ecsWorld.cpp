@@ -39,12 +39,12 @@ ecsWorld::ecsWorld(ecsWorld&& other) noexcept
 void ecsWorld::makeEntity(const ecsBaseComponent* const* const components, const size_t& numComponents, const std::string& name, EntityHandle& UUID, const EntityHandle& parentUUID)
 {
 	if (!UUID.isValid())
-		UUID = (EntityHandle)(generateUUID());
+		UUID = EntityHandle(generateUUID());
 
 	auto newEntity = std::make_shared<ecsEntity>();
 	auto& root = parentUUID.isValid() ? (getEntity(parentUUID)->m_children) : m_entities;
 	newEntity->m_name = name;
-	newEntity->m_entityIndex = (int)root.size();
+	newEntity->m_entityIndex = static_cast<int>(root.size());
 	newEntity->m_parent = parentUUID;
 	root.insert_or_assign(UUID, newEntity);
 
@@ -72,7 +72,7 @@ void ecsWorld::makeComponent(const EntityHandle& entityHandle, const ComponentID
 					return;
 				}
 			if (!UUID.isValid())
-				UUID = (ComponentHandle)(generateUUID());
+				UUID = ComponentHandle(generateUUID());
 			const auto& createfn = std::get<0>(ecsBaseComponent::m_componentRegistry[componentID]);
 			entity->m_components.emplace_back(componentID, createfn(m_components[componentID], UUID, entityHandle, component), UUID);
 		}
@@ -303,7 +303,7 @@ void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle
 
 	// Make this child a child of the new parent, change its index
 	childEntity->m_parent = parentHandle;
-	childEntity->m_entityIndex = (int)newRoot->size();
+	childEntity->m_entityIndex = static_cast<int>(newRoot->size());
 	newRoot->insert_or_assign(childHandle, childEntity);
 	if (const auto& transform = getComponent<Transform_Component>(childHandle)) {
 		// Transform the child entity, moving it into its new parent's space
@@ -340,7 +340,7 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 		auto* destComponent = reinterpret_cast<ecsBaseComponent*>(&mem_array[index]);
 		freeFn(destComponent);
 
-		if ((size_t)index == srcIndex) {
+		if (static_cast<size_t>(index) == srcIndex) {
 			mem_array.resize(srcIndex);
 			return;
 		}
@@ -349,7 +349,7 @@ void ecsWorld::deleteComponent(const ComponentID& componentID, const ComponentID
 		// Update references
 		for (auto& component : getEntity(srcComponent->m_entity)->m_components) {
 			auto& [compID, fn, compHandle] = component;
-			if (componentID == compID && (ComponentID)(srcIndex) == fn) {
+			if (componentID == compID && static_cast<ComponentID>(srcIndex) == fn) {
 				fn = index;
 				break;
 			}
@@ -394,7 +394,7 @@ std::vector<char> ecsWorld::serializeEntity(const ecsEntity& entity) const
 	}*/
 	size_t dataIndex(0ULL);
 	const auto& entityName = entity.m_name;
-	const auto nameSize = (unsigned int)(entityName.size());
+	const auto nameSize = static_cast<unsigned int>(entityName.size());
 	const auto ENTITY_HEADER_SIZE = (sizeof(unsigned int) + (entityName.size() * sizeof(char))) + sizeof(size_t) + sizeof(unsigned int);
 	std::vector<char> data(ENTITY_HEADER_SIZE);
 
@@ -409,7 +409,7 @@ std::vector<char> ecsWorld::serializeEntity(const ecsEntity& entity) const
 	const size_t entityDataCountIndex(dataIndex);
 	dataIndex += sizeof(size_t);
 	// Write entity child count
-	const auto entityChildCount = (unsigned int)entity.m_children.size();
+	const auto entityChildCount = static_cast<unsigned int>(entity.m_children.size());
 	std::memcpy(&data[dataIndex], &entityChildCount, sizeof(unsigned int));
 	// dataIndex += sizeof(unsigned int); // dataIndex unused, so this can be omitted
 
@@ -560,7 +560,7 @@ std::vector<std::vector<ecsBaseComponent*>> ecsWorld::getRelevantComponents(cons
 						if (j == minSizeIndex)
 							continue;
 						componentParam[j] = getComponent(entityComponents, *componentArrays[j], componentID);
-						if ((componentParam[j] == nullptr) && ((unsigned int)componentFlag & (unsigned int)ecsBaseSystem::RequirementsFlag::FLAG_OPTIONAL) == 0) {
+						if ((componentParam[j] == nullptr) && (static_cast<unsigned int>(componentFlag) & static_cast<unsigned int>(ecsBaseSystem::RequirementsFlag::FLAG_OPTIONAL)) == 0) {
 							isValid = false;
 							break;
 						}
@@ -581,7 +581,7 @@ size_t ecsWorld::findLeastCommonComponent(const std::vector<std::pair<ComponentI
 	const auto componentTypesCount = componentTypes.size();
 	for (size_t i = 0; i < componentTypesCount; ++i) {
 		const auto& [componentID, componentFlag] = componentTypes[i];
-		if (((unsigned int)componentFlag & (unsigned int)ecsBaseSystem::RequirementsFlag::FLAG_OPTIONAL) != 0)
+		if ((static_cast<unsigned int>(componentFlag) & static_cast<unsigned int>(ecsBaseSystem::RequirementsFlag::FLAG_OPTIONAL)) != 0)
 			continue;
 
 		const auto& [createFn, freeFn, newFn, typeSize] = ecsBaseComponent::m_componentRegistry[componentID];

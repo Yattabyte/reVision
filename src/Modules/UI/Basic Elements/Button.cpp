@@ -11,7 +11,7 @@ Button::Button(Engine& engine, const std::string& text) :
 	addElement(m_label);
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&] { m_label->setScale(getScale()); });
+	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] { m_label->setScale(getScale()); });
 }
 
 void Button::userAction(ActionState& actionState) 
@@ -37,7 +37,7 @@ void Button::renderElement(const float& deltaTime, const glm::vec2& position, co
 
 void Button::pressButton() 
 {
-	enactCallback((int)UI_Element::Interact::on_clicked);
+	enactCallback(static_cast<int>(UI_Element::Interact::on_clicked));
 }
 
 void Button::setText(const std::string& text) 
