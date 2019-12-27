@@ -89,7 +89,7 @@ void Model::loadMaterial(const std::string& relativePath, Shared_Material& model
 	const size_t slash2Index = relativePath.find_last_of('\\');
 	const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
 	const std::string meshDirectory = relativePath.substr(0, furthestFolderIndex + 1);
-	std::vector<std::string> textures(materials.size() * (size_t)MAX_PHYSICAL_IMAGES);
+	std::vector<std::string> textures(materials.size() * static_cast<size_t>(MAX_PHYSICAL_IMAGES));
 	const auto texturesSize = textures.size(), materialsSize = materials.size();
 	for (size_t tx = 0, mx = 0; tx < texturesSize && mx < materialsSize; tx += MAX_PHYSICAL_IMAGES, ++mx) {
 		if (!materials[mx].albedo.empty())

@@ -41,7 +41,7 @@ private:
 
 	// Private Attributes
 	Engine& m_engine;
-	GLuint m_fboID, m_texID, m_depthID;
+	GLuint m_fboID = 0, m_texID = 0, m_depthID = 0;
 	Shared_Texture m_colorPalette;
 	Shared_Auto_Model m_3dIndicator;
 	Shared_Shader m_shader;

@@ -22,7 +22,7 @@ void Graphics_Module::initialize()
 
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() noexcept {
-		m_indirectQuad = IndirectDraw<1>((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirectQuad = IndirectDraw<1>(static_cast<GLuint>(m_shapeQuad->getSize()), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 
 	// GL settings

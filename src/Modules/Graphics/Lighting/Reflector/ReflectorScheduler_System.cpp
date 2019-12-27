@@ -19,7 +19,7 @@ ReflectorScheduler_System::ReflectorScheduler_System(Engine& engine, ReflectorDa
 	auto& preferences = engine.getPreferenceState();
 	m_maxReflectionCasters = 1u;
 	preferences.getOrSetValue(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_maxReflectionCasters);
-	preferences.addCallback(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) noexcept { m_maxReflectionCasters = (unsigned int)f; });
+	preferences.addCallback(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) noexcept { m_maxReflectionCasters = static_cast<unsigned int>(f); });
 }
 
 void ReflectorScheduler_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
@@ -32,7 +32,7 @@ void ReflectorScheduler_System::updateComponents(const float&, const std::vector
 	const auto& clientPosition = clientCamera->EyePosition;
 	const auto& clientFarPlane = clientCamera->FarPlane;
 	const auto clientTime = m_engine.GetSystemTime();
-	if (const int availableRoom = (int)m_maxReflectionCasters - (int)m_frameData.reflectorsToUpdate.size()) {
+	if (const int availableRoom = static_cast<int>(m_maxReflectionCasters) - static_cast<int>(m_frameData.reflectorsToUpdate.size())) {
 		int cameraCount = 0;
 		for (const auto& componentParam : components) {
 			auto* reflectorComponent = static_cast<Reflector_Component*>(componentParam[0]);
@@ -79,7 +79,7 @@ void ReflectorScheduler_System::updateComponents(const float&, const std::vector
 				reflectorComponent->m_cameras[x].setEnabled(false);
 				tryToAddReflector(reflectorComponent->m_cubeSpot + x, &reflectorComponent->m_cameras[x], &reflectorComponent->m_updateTimes[x]);
 			}
-			cameraCount += (int)reflectorComponent->m_cameras.size();
+			cameraCount += static_cast<int>(reflectorComponent->m_cameras.size());
 		}
 
 		// Enable cameras in final set
@@ -87,7 +87,7 @@ void ReflectorScheduler_System::updateComponents(const float&, const std::vector
 			camera->setEnabled(true);
 
 		// Resize the reflector map to fit number of entities this frame
-		m_frameData.envmapFBO.resize(m_frameData.envmapSize, (unsigned int)(cameraCount));
+		m_frameData.envmapFBO.resize(m_frameData.envmapSize, static_cast<unsigned int>(cameraCount));
 		m_frameData.reflectorLayers = cameraCount;
 	}
 }

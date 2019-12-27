@@ -8,7 +8,7 @@
 
 constexpr float DISK_VERTICES = 32.0F;
 constexpr float DISK_RADIUS = 8.0F;
-constexpr size_t DISK_MAX_POINTS = (size_t)(DISK_VERTICES) * 6ull;
+constexpr size_t DISK_MAX_POINTS = static_cast<size_t>(DISK_VERTICES) * 6ull;
 
 Rotation_Gizmo::~Rotation_Gizmo()
 {
@@ -31,7 +31,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine& engine, LevelEditor_Module& editor) :
 
 	// Asset-Finished Callbacks
 	m_model->addCallback(m_aliveIndicator, [&]() noexcept {
-		m_indirectIndicator = IndirectDraw<1>((GLuint)m_model->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirectIndicator = IndirectDraw<1>(static_cast<GLuint>(m_model->getSize()), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 
 	// Preferences
@@ -39,10 +39,10 @@ Rotation_Gizmo::Rotation_Gizmo(Engine& engine, LevelEditor_Module& editor) :
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
-		m_renderSize.x = (int)f;
+		m_renderSize.x = static_cast<int>(f);
 		});
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
-		m_renderSize.y = (int)f;
+		m_renderSize.y = static_cast<int>(f);
 		});
 	preferences.getOrSetValue(PreferenceState::Preference::E_GIZMO_SCALE, m_renderScale);
 	preferences.addCallback(PreferenceState::Preference::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) noexcept {
@@ -309,7 +309,7 @@ bool Rotation_Gizmo::checkMousePress()
 void Rotation_Gizmo::updateDisk()
 {
 	const auto fourthAxisMat = glm::inverse(glm::mat4_cast(glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->vMatrix)));
-	const int steps = (int)ceilf((abs(m_deltaAngle) / 360.0f) * DISK_VERTICES);
+	const int steps = static_cast<int>(ceilf((abs(m_deltaAngle) / 360.0f) * DISK_VERTICES));
 	std::vector<glm::vec3> points(size_t(steps) * 6ull, glm::vec3(0.0f));
 	for (size_t n = 0ull, v = 0ull; n < steps; ++n, v += 6ull) {
 		const auto startAngle = glm::radians(float(n) * (m_deltaAngle / float(steps))) + m_startingAngle;

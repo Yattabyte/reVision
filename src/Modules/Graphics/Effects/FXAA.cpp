@@ -17,7 +17,7 @@ FXAA::~FXAA()
 	// Preferences
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_FXAA, m_enabled);
-	preferences.addCallback(PreferenceState::Preference::C_FXAA, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = (bool)f; });
+	preferences.addCallback(PreferenceState::Preference::C_FXAA, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = static_cast<bool>(f); });
 }
  
 void FXAA::clearCache(const float&) noexcept
@@ -40,7 +40,7 @@ void FXAA::renderTechnique(const float&, Viewport& viewport, const std::vector<s
 	for (auto& [camIndex, layer] : perspectives)
 		camIndices.push_back({ camIndex, layer });
 	camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
-	indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
+	indirectQuad.setPrimitiveCount(static_cast<GLuint>(perspectives.size()));
 	camBufferIndex.endWriting();
 	indirectQuad.endWriting();
 

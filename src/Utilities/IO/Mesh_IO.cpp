@@ -161,7 +161,7 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 				const int& VertexID = vertexOffset + mesh->mBones[b]->mWeights[j].mVertexId;
 				const float& Weight = mesh->mBones[b]->mWeights[j].mWeight;
 				if (VertexID < VertexCount)
-					importedData.bones[VertexID].AddBoneData((int)BoneIndex, Weight);
+					importedData.bones[VertexID].AddBoneData(static_cast<int>(BoneIndex), Weight);
 			}
 		}
 

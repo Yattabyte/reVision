@@ -69,7 +69,7 @@ private:
 	LevelEditor_Module& m_editor;
 	Shared_Texture m_texBack, m_texFolder, m_texMissingThumb, m_texIconRefresh;
 	std::string m_prefabSubDirectory = "";
-	glm::ivec2 m_renderSize;
+	glm::ivec2 m_renderSize{};
 	int m_thumbSize = 256;
 	int m_selectedIndex = -1, m_hoverIndex = -1;
 	struct Entry {

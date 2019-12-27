@@ -52,8 +52,8 @@ void Inspector_Collider_System::updateComponents(const float&, const std::vector
 		}
 		if (entries.empty())
 			entries.resize(1ull);
-		static int item_current = (int)(typeInput);
-		if (ImGui::Combo("Model File", &item_current, &entries[0], (int)entries.size())) {
+		static int item_current = static_cast<int>(typeInput);
+		if (ImGui::Combo("Model File", &item_current, &entries[0], static_cast<int>(entries.size()))) {
 			struct Name_Command final : Editor_Command {
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
@@ -93,7 +93,7 @@ void Inspector_Collider_System::updateComponents(const float&, const std::vector
 					return false;
 				}
 			};
-			item_current = std::clamp(item_current, 0, (int)m_entries.size());
+			item_current = std::clamp(item_current, 0, static_cast<int>(m_entries.size()));
 			m_editor.doReversableAction(std::make_shared<Name_Command>(m_editor.getWorld(), getUUIDS(), m_entries[item_current]));
 		}
 

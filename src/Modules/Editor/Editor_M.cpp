@@ -36,7 +36,7 @@ void LevelEditor_Module::initialize()
 	m_shader = Shared_Shader(m_engine, "Editor\\editorCopy");
 	m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() noexcept {
-		m_indirectQuad = IndirectDraw<1>((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirectQuad = IndirectDraw<1>(static_cast<GLuint>(m_shapeQuad->getSize()), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 
 	// Preferences
@@ -44,12 +44,12 @@ void LevelEditor_Module::initialize()
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
-		m_renderSize.x = (int)f;
+		m_renderSize.x = static_cast<int>(f);
 		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, nullptr);
 		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 		});
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
-		m_renderSize.y = (int)f;
+		m_renderSize.y = static_cast<int>(f);
 		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, nullptr);
 		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 		});
@@ -873,7 +873,7 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const En
 			while (dataRead < m_data.size()) {
 				// Ensure we have a vector large enough to hold all UUIDs, but maintain previous data
 				m_uuids.resize(std::max<size_t>(m_uuids.size(), handleCount + 1ull));
-				auto entityHandle = m_uuids[handleCount].isValid() ? m_uuids[handleCount] : (EntityHandle)(ecsWorld.generateUUID());
+				auto entityHandle = m_uuids[handleCount].isValid() ? m_uuids[handleCount] : EntityHandle(ecsWorld.generateUUID());
 				ecsWorld.deserializeEntity(m_data, m_data.size(), dataRead, entityHandle, m_parentUUID);
 				if (entityHandle.isValid() && ecsWorld.getEntity(entityHandle)) {
 					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {

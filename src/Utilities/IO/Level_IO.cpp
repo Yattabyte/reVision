@@ -26,7 +26,7 @@ bool Level_IO::Import_BMap(const std::string& relativePath, ecsWorld& world)
 
 	// Read ecsData from disk
 	std::vector<char> ecsData(std::filesystem::file_size(path));
-	mapFile.read(ecsData.data(), (std::streamsize)ecsData.size());
+	mapFile.read(ecsData.data(), static_cast<std::streamsize>(ecsData.size()));
 	mapFile.close();
 	world = ecsWorld(ecsData);
 	return true;
@@ -42,7 +42,7 @@ bool Level_IO::Export_BMap(const std::string& relativePath, const ecsWorld& worl
 	// Write ECS data to disk
 	EntityHandle rootHandle;
 	const auto data = world.serializeEntities(world.getEntityHandles(rootHandle));
-	mapFile.write(data.data(), (std::streamsize)data.size());
+	mapFile.write(data.data(), static_cast<std::streamsize>(data.size()));
 	mapFile.close();
 	return true;
 }

@@ -110,7 +110,7 @@ void SceneInspector::tick(const float&)
 							if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
 								ImGui::SetDragDropPayload(
 									"Entity", &entityHandle,
-									sizeof(EntityHandle*)); // Set payload to carry the index of our
+									sizeof(EntityHandle)); // Set payload to carry the index of our
 															// item (could be anything)
 								const auto text = "Move \"" + entityName + "\" into...";
 								ImGui::Text(text.c_str());
@@ -119,7 +119,7 @@ void SceneInspector::tick(const float&)
 							if (ImGui::BeginDragDropTarget()) {
 								if (const ImGuiPayload* payload =
 									   ImGui::AcceptDragDropPayload("Entity")) {
-									IM_ASSERT(payload->DataSize == sizeof(EntityHandle*));
+									IM_ASSERT(payload->DataSize == sizeof(EntityHandle));
 									m_editor.setSelection(
 										{entityHandle,
 										 (*static_cast<EntityHandle*>(payload->Data))});
@@ -145,11 +145,11 @@ void SceneInspector::tick(const float&)
 									ImGui::PushID(component);
 									ImGui::AlignTextToFramePadding();
 									ImGui::PushStyleColor(ImGuiCol_Button,
-										(ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
+										ImVec4(ImColor::HSV(0, 0.6f, 0.6f)));
 									ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
-										(ImVec4)ImColor::HSV(0, 0.7f, 0.7f));
+										ImVec4(ImColor::HSV(0, 0.7f, 0.7f)));
 									ImGui::PushStyleColor(ImGuiCol_ButtonActive,
-										(ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
+										ImVec4(ImColor::HSV(0, 0.8f, 0.8f)));
 									const auto buttonPressed = ImGui::Button("-");
 									ImGui::PopStyleColor(3);
 									ImGui::SameLine();
@@ -161,11 +161,11 @@ void SceneInspector::tick(const float&)
 							}
 							ImGui::AlignTextToFramePadding();
 							ImGui::PushStyleColor(ImGuiCol_Button,
-												  (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f));
+												  ImVec4(ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f)));
 							ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
-												  (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f));
+												  ImVec4(ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f)));
 							ImGui::PushStyleColor(ImGuiCol_ButtonActive,
-												  (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f));
+												  ImVec4(ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f)));
 							ImGui::Button("Add New Component");
 							ImGui::PopStyleColor(3);
 							if (ImGui::BeginPopupContextItem("Add New Component", 0)) {
@@ -183,13 +183,13 @@ void SceneInspector::tick(const float&)
 								static int item_current = 0;
 								ImGui::Combo("", &item_current, items, IM_ARRAYSIZE(items));
 								ImGui::PushStyleColor(
-									ImGuiCol_Button, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f));
+									ImGuiCol_Button, ImVec4(ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f)));
 								ImGui::PushStyleColor(
 									ImGuiCol_ButtonHovered,
-									(ImVec4)ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f));
+									ImVec4(ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f)));
 								ImGui::PushStyleColor(
 									ImGuiCol_ButtonActive,
-									(ImVec4)ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f));
+									ImVec4(ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f)));
 								ImGui::Spacing();
 								ImGui::Spacing();
 								const bool isOk = ImGui::Button("Add Type");
@@ -228,7 +228,7 @@ void SceneInspector::tick(const float&)
 			// Special case to allow dragging to end of scene list
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity")) {
-					IM_ASSERT(payload->DataSize == sizeof(EntityHandle*));
+					IM_ASSERT(payload->DataSize == sizeof(EntityHandle));
 					m_editor.setSelection(
 						{EntityHandle(), (*static_cast<EntityHandle*>(payload->Data))});
 					m_editor.mergeSelection();

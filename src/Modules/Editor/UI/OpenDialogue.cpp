@@ -35,14 +35,14 @@ void OpenDialogue::populateLevels(const std::string& directory)
 		m_levels.push_back(LevelEntry{ "..", std::filesystem::relative(path.parent_path(), rootPath).string(), "", "", "", "", LevelEntry::Type::BACK });
 	for (auto& entry : std::filesystem::directory_iterator(path)) {
 		std::string timeString = "";
-		struct _stat64 fileInfo;
+		struct _stat64 fileInfo{};
 		if (_wstati64(entry.path().wstring().c_str(), &fileInfo) == 0) {
 			const auto* const t = std::localtime(&fileInfo.st_mtime);
 			timeString = std::to_string(t->tm_hour > 12 ? 24 - t->tm_hour : t->tm_hour) + ":" + std::to_string(t->tm_min)
 				+ (t->tm_hour >= 12 ? "PM " : "AM ") + std::to_string(t->tm_mday) + "/" + std::to_string(t->tm_mon) + "/" + std::to_string(t->tm_year - 100);
 		}
 		constexpr static auto readableFileSize = [](const size_t& size) -> std::string {
-			auto remainingSize = (double)size;
+			auto remainingSize = static_cast<double>(size);
 			constexpr static char* units[] = { " B", " KB", " MB", " GB", " TB", " PB", " EB" };
 			int i = 0;
 			while (remainingSize > 1024.00) {
@@ -149,9 +149,9 @@ void OpenDialogue::tickMainDialogue()
 		ImGui::Spacing();
 
 		// Display an open button
-		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f)));
 		ImGui::PushItemFlag(ImGuiItemFlags_Disabled, m_selected == -1);
 		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * ((m_selected == -1) ? 0.25f : 1.0f));
 		if (ImGui::Button("Open", { 75, 20 }))
@@ -249,9 +249,9 @@ void OpenDialogue::tickDeleteDialogue()
 	if (ImGui::BeginPopupModal("Delete Level", &openDelete, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 		ImGui::TextWrapped("Are you sure you want to delete this item?\r\nThis action is irreversible.\r\n");
 		ImGui::Spacing(); ImGui::Spacing();
-		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0, 0.7f, 0.7f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(0, 0.6f, 0.6f)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(0, 0.7f, 0.7f)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(0, 0.8f, 0.8f)));
 		if (ImGui::Button("Delete", { 75, 20 })) {
 			const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\" + m_levels[m_selected].path);
 			std::error_code ec;

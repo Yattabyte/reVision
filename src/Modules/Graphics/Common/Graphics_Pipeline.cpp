@@ -86,7 +86,7 @@ void Graphics_Pipeline::render(const float& deltaTime, Viewport& viewport, const
 {
 	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for (auto& tech : m_allTechniques)
-		if (((unsigned int)categories & (unsigned int)tech->getCategory()) != 0u)
+		if ((categories & static_cast<unsigned int>(tech->getCategory())) != 0u)
 			tech->renderTechnique(deltaTime, viewport, perspectives);
 }
 

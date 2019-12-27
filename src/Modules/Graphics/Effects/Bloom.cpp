@@ -19,9 +19,9 @@ Bloom::Bloom(Engine& engine) :
 	// Preference Callbacks
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_BLOOM, m_enabled);
-	preferences.addCallback(PreferenceState::Preference::C_BLOOM, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = (bool)f; });
+	preferences.addCallback(PreferenceState::Preference::C_BLOOM, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = static_cast<bool>(f); });
 	preferences.getOrSetValue(PreferenceState::Preference::C_BLOOM_STRENGTH, m_bloomStrength);
-	preferences.addCallback(PreferenceState::Preference::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float& f) noexcept { setBloomStrength((int)f); });
+	preferences.addCallback(PreferenceState::Preference::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float& f) noexcept { setBloomStrength(static_cast<int>(f)); });
 }
 
 void Bloom::clearCache(const float&) noexcept
@@ -44,7 +44,7 @@ void Bloom::renderTechnique(const float&, Viewport& viewport, const std::vector<
 	for (auto& [camIndex, layer] : perspectives)
 		camIndices.push_back({ camIndex, layer });
 	camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
-	indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
+	indirectQuad.setPrimitiveCount(static_cast<GLuint>(perspectives.size()));
 	camBufferIndex.endWriting();
 	indirectQuad.endWriting();
 
@@ -64,7 +64,7 @@ void Bloom::renderTechnique(const float&, Viewport& viewport, const std::vector<
 		bool horizontal = false;
 		glBindTextureUnit(0, viewport.m_gfxFBOS.getTexID("BLOOM", 0));
 		glBindTextureUnit(1, viewport.m_gfxFBOS.getTexID("BLOOM", 1));
-		glDrawBuffer(GL_COLOR_ATTACHMENT0 + (int)(horizontal));
+		glDrawBuffer(GL_COLOR_ATTACHMENT0 + static_cast<int>(horizontal));
 		m_shaderGB->bind();
 		m_shaderGB->setUniform(0, horizontal);
 		m_shaderGB->setUniform(1, glm::vec2(viewport.m_dimensions));
@@ -72,7 +72,7 @@ void Bloom::renderTechnique(const float&, Viewport& viewport, const std::vector<
 		// Blur remainder of the times
 		for (int i = 0; i < m_bloomStrength; i++) {
 			horizontal = !horizontal;
-			glDrawBuffer(GL_COLOR_ATTACHMENT0 + (int)(horizontal));
+			glDrawBuffer(GL_COLOR_ATTACHMENT0 + static_cast<int>(horizontal));
 			m_shaderGB->setUniform(0, horizontal);
 			glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 		}

@@ -110,7 +110,7 @@ std::vector<GLchar> Shader::getErrorLog() const
 	const auto size = getProgramiv(GL_INFO_LOG_LENGTH);
 	std::vector<GLchar> infoLog(size);
 	if (size != 0)
-		glGetProgramInfoLog(m_glProgramID, (GLsizei)infoLog.size(), nullptr, &infoLog[0]);
+		glGetProgramInfoLog(m_glProgramID, static_cast<GLsizei>(infoLog.size()), nullptr, &infoLog[0]);
 	return infoLog;
 }
 
@@ -230,7 +230,7 @@ ShaderObj::ShaderObj(const ShaderObj& other) :
 	m_type(other.m_type)
 {
 	const char* source = m_shaderText.c_str();
-	const auto length = (GLint)m_shaderText.length();
+	const auto length = static_cast<GLint>(m_shaderText.length());
 	m_shaderID = glCreateShader(m_type);
 	glShaderSource(m_shaderID, 1, &source, &length);
 	glCompileShader(m_shaderID);
@@ -274,7 +274,7 @@ bool ShaderObj::createGLShader(Engine& engine, const std::string& filename)
 {
 	// Create shader object
 	const char* source = m_shaderText.c_str();
-	const auto length = (GLint)m_shaderText.length();
+	const auto length = static_cast<GLint>(m_shaderText.length());
 	m_shaderID = glCreateShader(m_type);
 	glShaderSource(m_shaderID, 1, &source, &length);
 	glCompileShader(m_shaderID);
@@ -283,7 +283,7 @@ bool ShaderObj::createGLShader(Engine& engine, const std::string& filename)
 	if (getShaderiv(GL_COMPILE_STATUS) == 0) {
 		// Report any errors
 		std::vector<GLchar> infoLog(getShaderiv(GL_INFO_LOG_LENGTH));
-		glGetShaderInfoLog(m_shaderID, (GLsizei)infoLog.size(), nullptr, &infoLog[0]);
+		glGetShaderInfoLog(m_shaderID, static_cast<GLsizei>(infoLog.size()), nullptr, &infoLog[0]);
 		engine.getManager_Messages().error("ShaderObj \"" + filename + "\" failed to compile. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
 		return false;
 	}

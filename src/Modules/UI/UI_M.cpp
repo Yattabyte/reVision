@@ -15,20 +15,20 @@ void UI_Module::initialize()
 	// Preferences
 	auto& preferences = m_engine.getPreferenceState();
 	constexpr static auto calcOthoProj = [](const glm::ivec2& renderSize, StaticBuffer& projectionBuffer) {
-		const glm::mat4 proj = glm::ortho<float>(0.0f, (float)renderSize.x, 0.0f, (float)renderSize.y, -1.0f, 1.0f);
+		const glm::mat4 proj = glm::ortho<float>(0.0f, static_cast<float>(renderSize.x), 0.0f, static_cast<float>(renderSize.y), -1.0f, 1.0f);
 		projectionBuffer.write(0, sizeof(glm::mat4), &proj[0][0]);
 	};
 	m_projectionBuffer = StaticBuffer(sizeof(glm::mat4), nullptr, GL_DYNAMIC_STORAGE_BIT);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
-		m_renderSize.x = (int)f;
+		m_renderSize.x = static_cast<int>(f);
 		calcOthoProj(m_renderSize, m_projectionBuffer);
 		for (auto element : m_rootElement)
 			element->setScale(m_renderSize);
 		});
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
-		m_renderSize.y = (int)f;
+		m_renderSize.y = static_cast<int>(f);
 		calcOthoProj(m_renderSize, m_projectionBuffer);
 		for (auto element : m_rootElement)
 			element->setScale(m_renderSize);
@@ -48,7 +48,7 @@ void UI_Module::deinitialize()
 
 void UI_Module::frameTick(const float& deltaTime)
 {
-	glViewport(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
+	glViewport(0, 0, static_cast<GLsizei>(m_renderSize.x), static_cast<GLsizei>(m_renderSize.y));
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// Copy the list of callbacks, execute a copy of them
@@ -131,7 +131,7 @@ void UI_Module::applyChar(const unsigned int& character)
 
 void UI_Module::applyKey(const int& key, const int& /*unused*/, const int& action, const int& /*unused*/)
 {
-	m_keyboardEvent.setState(KeyboardEvent::Key((unsigned int)key), KeyboardEvent::Action(action));
+	m_keyboardEvent.setState(KeyboardEvent::Key(static_cast<unsigned int>(key)), KeyboardEvent::Action(action));
 	if (!m_rootElement.empty())
 		m_rootElement.back()->keyboardAction(m_keyboardEvent);
 }

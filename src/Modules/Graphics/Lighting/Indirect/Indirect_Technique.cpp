@@ -41,7 +41,7 @@ Indirect_Technique::Indirect_Technique(Engine& engine, ShadowData& shadowData, C
 	// Preferences
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_bounceSize);
-	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) noexcept { m_bounceSize = (GLuint)f; });
+	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) noexcept { m_bounceSize = static_cast<GLuint>(f); });
 }
 
 void Indirect_Technique::clearCache(const float&) noexcept
@@ -114,10 +114,10 @@ void Indirect_Technique::updateDrawParams(std::vector<glm::ivec2>& camIndicesGen
 	camBufferRebounce.write(0, sizeof(glm::ivec2) * camIndiciesRebounce.size(), camIndiciesRebounce.data());
 	camBufferRecon.write(0, sizeof(glm::ivec2) * camIndiciesRecon.size(), camIndiciesRecon.data());
 	visLights.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
-	const GLuint dataBounce[] = { (GLuint)m_shapeQuad->getSize(), (GLuint)(shadowCount * m_bounceSize), 0, 0 };
+	const GLuint dataBounce[] = { static_cast<GLuint>(m_shapeQuad->getSize()), static_cast<GLuint>(shadowCount * m_bounceSize), 0, 0 };
 	indirectBounce.write(0, sizeof(GLuint) * 4, &dataBounce);
 	indirectQuad.setPrimitiveCount(m_bounceSize);
-	indirectQuadRecon.setPrimitiveCount((GLuint)perspectivesSize);
+	indirectQuadRecon.setPrimitiveCount(static_cast<GLuint>(perspectivesSize));
 	camBufferIndex.endWriting();
 	camBufferRebounce.endWriting();
 	camBufferRecon.endWriting();
@@ -132,13 +132,13 @@ void Indirect_Technique::fillBounceVolume(const size_t& shadowCount, RH_Volume& 
 	// Prepare rendering state
 	glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
 	glBindVertexArray(m_shapeQuad->m_vaoID);
-	m_shader_Bounce->setUniform(0, (GLint)(shadowCount));
+	m_shader_Bounce->setUniform(0, static_cast<GLint>(shadowCount));
 	m_shader_Bounce->setUniform(1, rhVolume.m_max);
 	m_shader_Bounce->setUniform(2, rhVolume.m_min);
 	m_shader_Bounce->setUniform(4, rhVolume.m_resolution);
 	m_shader_Bounce->setUniform(6, rhVolume.m_unitSize);
 
-	glViewport(0, 0, (GLsizei)rhVolume.m_resolution, (GLsizei)rhVolume.m_resolution);
+	glViewport(0, 0, static_cast<GLsizei>(rhVolume.m_resolution), static_cast<GLsizei>(rhVolume.m_resolution));
 	m_shader_Bounce->bind();
 	rhVolume.writePrimary();
 	glBindTextureUnit(0, m_frameData.shadowData.shadowFBO.m_texNormal);
@@ -173,7 +173,7 @@ void Indirect_Technique::rebounceVolume(RH_Volume& rhVolume, const DynamicBuffer
 	m_shader_Rebounce->bind();
 	rhVolume.readPrimary(0);
 	rhVolume.writeSecondary();
-	glViewport(0, 0, (GLsizei)rhVolume.m_resolution, (GLsizei)rhVolume.m_resolution);
+	glViewport(0, 0, static_cast<GLsizei>(rhVolume.m_resolution), static_cast<GLsizei>(rhVolume.m_resolution));
 	camBufferRebounce.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 	indirectQuad.drawCall();
 }

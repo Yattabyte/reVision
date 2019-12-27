@@ -40,13 +40,13 @@ void CameraController::tick(const float& deltaTime)
 		constexpr float velocity = 25.0f;
 		const float moveAmount = velocity * deltaTime;
 		glm::vec3 deltaPosition(0.0f);
-		if ((int)actionState.isAction(ActionState::Action::FORWARD))
+		if (static_cast<int>(actionState.isAction(ActionState::Action::FORWARD)))
 			deltaPosition += glm::vec3(0, 0, -moveAmount);
-		if ((int)actionState.isAction(ActionState::Action::BACKWARD))
+		if (static_cast<int>(actionState.isAction(ActionState::Action::BACKWARD)))
 			deltaPosition += glm::vec3(0, 0, moveAmount);
-		if ((int)actionState.isAction(ActionState::Action::LEFT))
+		if (static_cast<int>(actionState.isAction(ActionState::Action::LEFT)))
 			deltaPosition += glm::vec3(-moveAmount, 0, 0);
-		if ((int)actionState.isAction(ActionState::Action::RIGHT))
+		if (static_cast<int>(actionState.isAction(ActionState::Action::RIGHT)))
 			deltaPosition += glm::vec3(moveAmount, 0, 0);
 
 		// Integrate rotation and translation into a new set of matrices

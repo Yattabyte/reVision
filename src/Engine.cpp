@@ -230,14 +230,14 @@ std::string Engine::Get_Current_Dir()
 	// Technique to return the running directory of the application
 	char cCurrentPath[FILENAME_MAX];
 	if (_getcwd(cCurrentPath, sizeof(cCurrentPath)))
-		cCurrentPath[sizeof(cCurrentPath) - 1ull] = (char)'\0';
+		cCurrentPath[sizeof(cCurrentPath) - 1ull] = '\0';
 	return std::string(cCurrentPath);
 }
 
 bool Engine::File_Exists(const std::string& name)
 {
 	// Technique to return whether or not a given file or folder exists
-	struct stat buffer;
+	struct stat buffer{};
 	return (stat((Engine::Get_Current_Dir() + name).c_str(), &buffer) == 0);
 }
 
@@ -246,8 +246,8 @@ void Engine::processInputs()
 	// Updated mouse states, manually
 	auto& actionState = getActionState();
 	const auto cursorPos = m_window.getMousePos();
-	actionState[ActionState::Action::MOUSE_L] = (float)m_window.getMouseKey(0);
-	actionState[ActionState::Action::MOUSE_R] = (float)m_window.getMouseKey(1);
+	actionState[ActionState::Action::MOUSE_L] = static_cast<float>(m_window.getMouseKey(0));
+	actionState[ActionState::Action::MOUSE_R] = static_cast<float>(m_window.getMouseKey(1));
 	actionState[ActionState::Action::MOUSE_X] = cursorPos.x;
 	actionState[ActionState::Action::MOUSE_Y] = cursorPos.y;
 	if (m_mouseInputMode == MouseInputMode::FREE_LOOK)
@@ -257,5 +257,5 @@ void Engine::processInputs()
 	if (const auto& bindings = m_inputBindings.getBindings())
 		if (bindings->ready())
 			for (const auto& pair : bindings.get()->m_configuration)
-				m_actionState[ActionState::Action(pair.first)] = (float)(m_window.getKey((int)pair.second));
+				m_actionState[ActionState::Action(pair.first)] = static_cast<float>(m_window.getKey(static_cast<int>(pair.second)));
 }

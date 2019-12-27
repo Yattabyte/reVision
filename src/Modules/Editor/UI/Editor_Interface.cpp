@@ -50,10 +50,10 @@ Editor_Interface::Editor_Interface(Engine& engine, LevelEditor_Module& editor) :
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
-		m_renderSize.x = (int)f;
+		m_renderSize.x = static_cast<int>(f);
 		});
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
-		m_renderSize.y = (int)f;
+		m_renderSize.y = static_cast<int>(f);
 		});
 
 	// Initialize ImGUI
@@ -87,7 +87,7 @@ void Editor_Interface::tick(const float& deltaTime)
 	ImGui::ShowDemoWindow(&show_demo_window);
 
 	// Prepare the docking regions
-	const auto dockspace_size = ImVec2((float)m_renderSize.x / 5.0F, (float)m_renderSize.y);
+	const auto dockspace_size = ImVec2(static_cast<float>(m_renderSize.x) / 5.0F, static_cast<float>(m_renderSize.y));
 	constexpr auto window_flags = ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_MenuBar |
 		ImGuiWindowFlags_NoMove |

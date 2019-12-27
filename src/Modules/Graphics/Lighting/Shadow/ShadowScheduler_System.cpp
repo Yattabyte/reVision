@@ -20,7 +20,7 @@ ShadowScheduler_System::ShadowScheduler_System(Engine& engine, ShadowData& frame
 	auto& preferences = engine.getPreferenceState();
 	m_maxShadowsCasters = 1u;
 	preferences.getOrSetValue(PreferenceState::Preference::C_SHADOW_MAX_PER_FRAME, m_maxShadowsCasters);
-	preferences.addCallback(PreferenceState::Preference::C_SHADOW_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) noexcept { m_maxShadowsCasters = (unsigned int)f; });
+	preferences.addCallback(PreferenceState::Preference::C_SHADOW_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) noexcept { m_maxShadowsCasters = static_cast<unsigned int>(f); });
 }
 
 void ShadowScheduler_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
@@ -33,10 +33,10 @@ void ShadowScheduler_System::updateComponents(const float&, const std::vector<st
 	const auto& clientPosition = clientCamera->EyePosition;
 	const auto& clientFarPlane = clientCamera->FarPlane;
 	const auto clientTime = m_engine.GetSystemTime();
-	if (const int availableRoom = (int)m_maxShadowsCasters - (int)m_frameData.shadowsToUpdate.size()) {
+	if (const int availableRoom = static_cast<int>(m_maxShadowsCasters) - static_cast<int>(m_frameData.shadowsToUpdate.size())) {
 		int cameraCount = 0;
 		for (const auto& componentParam : components) {
-			auto* shadow = static_cast<Shadow_Component*>(componentParam[0]);
+			auto* shadow = dynamic_cast<Shadow_Component*>(componentParam[0]);
 			//const auto* light = static_cast<Light_Component*>(componentParam[1]);
 
 			const auto tryToAddShadow = [&shadows, &maxShadows, &clientPosition, &clientFarPlane, &clientTime](const int& shadowSpot, Camera* cb, float* updateTime) {
@@ -82,7 +82,7 @@ void ShadowScheduler_System::updateComponents(const float&, const std::vector<st
 				shadow->m_cameras[x].setEnabled(false);
 				tryToAddShadow(shadow->m_shadowSpot + x, &shadow->m_cameras[x], &shadow->m_updateTimes[x]);
 			}
-			cameraCount += (int)shadowCameraCount;
+			cameraCount += static_cast<int>(shadowCameraCount);
 		}
 
 		// Enable cameras in final set
@@ -91,6 +91,6 @@ void ShadowScheduler_System::updateComponents(const float&, const std::vector<st
 				camera->setEnabled(true);
 
 		// Resize the shadow map to fit number of entities this frame
-		m_frameData.shadowFBO.resize(glm::ivec2((int)m_frameData.shadowSize), (unsigned int)(cameraCount));
+		m_frameData.shadowFBO.resize(glm::ivec2(static_cast<int>(m_frameData.shadowSize)), static_cast<unsigned int>(cameraCount));
 	}
 }

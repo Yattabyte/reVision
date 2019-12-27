@@ -26,7 +26,7 @@ RH_Volume::RH_Volume(Engine& engine) :
 	for (int bounce = 0; bounce < 2; ++bounce) {
 		glCreateTextures(GL_TEXTURE_3D, RH_TEXTURE_COUNT, m_textureIDS[bounce]);
 		for (int channel = 0; channel < RH_TEXTURE_COUNT; ++channel) {
-			glTextureImage3DEXT(m_textureIDS[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, nullptr);
+			glTextureImage3DEXT(m_textureIDS[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, static_cast<GLsizei>(m_resolution), static_cast<GLsizei>(m_resolution), static_cast<GLsizei>(m_resolution), 0, GL_RGBA, GL_FLOAT, nullptr);
 			glTextureParameteri(m_textureIDS[bounce][channel], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTextureParameteri(m_textureIDS[bounce][channel], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glTextureParameteri(m_textureIDS[bounce][channel], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -77,7 +77,7 @@ void RH_Volume::resize(const float& resolution) noexcept
 	m_resolution = resolution;
 	for (auto& bounce : m_textureIDS)
 		for (const unsigned int channel : bounce)
-			glTextureImage3DEXT(channel, GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, nullptr);
+			glTextureImage3DEXT(channel, GL_TEXTURE_3D, 0, GL_RGBA16F, static_cast<GLsizei>(m_resolution), static_cast<GLsizei>(m_resolution), static_cast<GLsizei>(m_resolution), 0, GL_RGBA, GL_FLOAT, nullptr);
 }
 
 void RH_Volume::clear() noexcept

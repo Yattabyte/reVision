@@ -35,10 +35,10 @@ MousePicker_System::MousePicker_System(Engine& engine) :
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
-		m_renderSize.x = (int)f;
+		m_renderSize.x = static_cast<int>(f);
 		});
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
-		m_renderSize.y = (int)f;
+		m_renderSize.y = static_cast<int>(f);
 		});
 }
 

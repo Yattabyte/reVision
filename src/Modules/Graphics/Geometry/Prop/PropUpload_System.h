@@ -65,7 +65,7 @@ private:
 	// Private Attributes
 	Engine& m_engine;
 	PropData& m_frameData;
-	GLuint m_vaoID = 0, m_vboID = 0, m_matID;
+	GLuint m_vaoID = 0, m_vboID = 0, m_matID = 0;
 	size_t m_currentSize = 0ull, m_maxCapacity = 256ull, m_matCount = 0ull;
 	GLsizei m_materialSize = 512u;
 	GLint m_maxTextureLayers = 6, m_maxMips = 1;

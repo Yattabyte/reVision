@@ -54,7 +54,7 @@ void Shadow_Technique::updateShadows(const float& deltaTime)
 	const auto clientTime = m_engine.GetSystemTime();
 	if (m_frameData.shadowsToUpdate.size()) {
 		// Prepare Viewport
-		glViewport(0, 0, (GLsizei)m_frameData.shadowSize, (GLsizei)m_frameData.shadowSize);
+		glViewport(0, 0, static_cast<GLsizei>(m_frameData.shadowSize), static_cast<GLsizei>(m_frameData.shadowSize));
 		m_frameData.shadowFBO.bindForWriting();
 
 		// Accumulate Perspective Data

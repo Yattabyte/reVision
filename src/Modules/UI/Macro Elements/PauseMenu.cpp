@@ -14,13 +14,13 @@ PauseMenu::PauseMenu(Engine& engine) :
 	// Add 'Options' button
 	m_optionsMenu = std::make_shared<OptionsMenu>(engine);
 	addButton(engine, "  OPTIONS >", [&] { goToOptions(); });
-	m_optionsMenu->addCallback((int)OptionsMenu::Interact::on_back, [&]() noexcept { returnFromOptions(); });
+	m_optionsMenu->addCallback(static_cast<int>(OptionsMenu::Interact::on_back), [&]() noexcept { returnFromOptions(); });
 
 	// Add 'Quit' button
 	addButton(engine, "END GAME", [&] { quit(); });
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&] {
+	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] {
 		const auto scale = getScale();
 		m_optionsMenu->setScale(scale);
 		});
@@ -33,7 +33,7 @@ PauseMenu::PauseMenu(Engine& engine) :
 
 void PauseMenu::resume()
 {
-	enactCallback((int)PauseMenu::Interact::on_resume_game);
+	enactCallback(static_cast<int>(PauseMenu::Interact::on_resume_game));
 }
 
 void PauseMenu::goToOptions() 
@@ -43,7 +43,7 @@ void PauseMenu::goToOptions()
 	ui.pushRootElement(m_optionsMenu);
 	ui.setFocusMap(m_optionsMenu->getFocusMap());
 	m_layout->setSelectionIndex(-1);
-	enactCallback((int)PauseMenu::Interact::on_options);
+	enactCallback(static_cast<int>(PauseMenu::Interact::on_options));
 }
 
 void PauseMenu::returnFromOptions() noexcept
@@ -55,5 +55,5 @@ void PauseMenu::returnFromOptions() noexcept
 void PauseMenu::quit() 
 {
 	m_engine.getModule_UI().clear();
-	enactCallback((int)PauseMenu::Interact::on_end);
+	enactCallback(static_cast<int>(PauseMenu::Interact::on_end));
 }

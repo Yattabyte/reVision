@@ -76,7 +76,7 @@ void UI_Element::userAction(ActionState& /*unused*/)
 void UI_Element::addElement(const std::shared_ptr<UI_Element>& child)
 {
 	m_children.push_back(child);
-	enactCallback((int)UI_Element::Interact::on_childrenChange);
+	enactCallback(static_cast<int>(UI_Element::Interact::on_childrenChange));
 }
 
 std::shared_ptr<UI_Element> UI_Element::getElement(const size_t& index) const noexcept
@@ -87,7 +87,7 @@ std::shared_ptr<UI_Element> UI_Element::getElement(const size_t& index) const no
 void UI_Element::clearElements()
 {
 	m_children.clear();
-	enactCallback((int)UI_Element::Interact::on_childrenChange);
+	enactCallback(static_cast<int>(UI_Element::Interact::on_childrenChange));
 }
 
 void UI_Element::addCallback(const int& interactionEventID, const std::function<void()>& func)
@@ -98,7 +98,7 @@ void UI_Element::addCallback(const int& interactionEventID, const std::function<
 void UI_Element::setPosition(const glm::vec2& position)
 {
 	m_position = position;
-	enactCallback((int)UI_Element::Interact::on_reposition);
+	enactCallback(static_cast<int>(UI_Element::Interact::on_reposition));
 }
 
 glm::vec2 UI_Element::getPosition() const noexcept
@@ -120,7 +120,7 @@ void UI_Element::setScale(const glm::vec2& scale)
 	if (!std::isnan(m_maxScale.y))
 		m_scale.y = std::min<float>(m_scale.y, m_maxScale.y);
 
-	enactCallback((int)UI_Element::Interact::on_resize);
+	enactCallback(static_cast<int>(UI_Element::Interact::on_resize));
 }
 
 glm::vec2 UI_Element::getScale() const noexcept
@@ -138,7 +138,7 @@ void UI_Element::setMaxScale(const glm::vec2& scale)
 	if (!std::isnan(m_maxScale.y))
 		m_scale.y = std::min<float>(m_scale.y, m_maxScale.y);
 
-	enactCallback((int)UI_Element::Interact::on_resize);
+	enactCallback(static_cast<int>(UI_Element::Interact::on_resize));
 }
 
 glm::vec2 UI_Element::getMaxScale() const noexcept
@@ -149,13 +149,13 @@ glm::vec2 UI_Element::getMaxScale() const noexcept
 void UI_Element::setMaxWidth(const float& width)
 {
 	m_maxScale.x = width;
-	enactCallback((int)UI_Element::Interact::on_resize);
+	enactCallback(static_cast<int>(UI_Element::Interact::on_resize));
 }
 
 void UI_Element::setMaxHeight(const float& height)
 {
 	m_maxScale.y = height;
-	enactCallback((int)UI_Element::Interact::on_resize);
+	enactCallback(static_cast<int>(UI_Element::Interact::on_resize));
 }
 
 void UI_Element::setMinScale(const glm::vec2& scale)
@@ -168,7 +168,7 @@ void UI_Element::setMinScale(const glm::vec2& scale)
 	if (!std::isnan(m_minScale.y))
 		m_scale.y = std::max<float>(m_scale.y, m_minScale.y);
 
-	enactCallback((int)UI_Element::Interact::on_resize);
+	enactCallback(static_cast<int>(UI_Element::Interact::on_resize));
 }
 
 glm::vec2 UI_Element::getMinScale() const noexcept
@@ -179,13 +179,13 @@ glm::vec2 UI_Element::getMinScale() const noexcept
 void UI_Element::setMinWidth(const float& width)
 {
 	m_minScale.x = width;
-	enactCallback((int)UI_Element::Interact::on_resize);
+	enactCallback(static_cast<int>(UI_Element::Interact::on_resize));
 }
 
 void UI_Element::setMinHeight(const float& height)
 {
 	m_minScale.y = height;
-	enactCallback((int)UI_Element::Interact::on_resize);
+	enactCallback(static_cast<int>(UI_Element::Interact::on_resize));
 }
 
 void UI_Element::setVisible(const bool& visible) noexcept
@@ -214,7 +214,7 @@ void UI_Element::setHovered()
 {
 	if (!m_hovered) {
 		m_hovered = true;
-		enactCallback((int)UI_Element::Interact::on_hover_start);
+		enactCallback(static_cast<int>(UI_Element::Interact::on_hover_start));
 	}
 }
 
@@ -227,7 +227,7 @@ void UI_Element::setPressed()
 {
 	if (!m_pressed) {
 		m_pressed = true;
-		enactCallback((int)UI_Element::Interact::on_press);
+		enactCallback(static_cast<int>(UI_Element::Interact::on_press));
 	}
 }
 
@@ -241,7 +241,7 @@ void UI_Element::setReleased()
 	if (m_pressed)
 		setClicked();
 	m_pressed = false;
-	enactCallback((int)UI_Element::Interact::on_release);
+	enactCallback(static_cast<int>(UI_Element::Interact::on_release));
 }
 
 bool UI_Element::getReleased() const noexcept
@@ -253,7 +253,7 @@ void UI_Element::setClicked()
 {
 	m_hovered = true;
 	m_clicked = true;
-	enactCallback((int)UI_Element::Interact::on_clicked);
+	enactCallback(static_cast<int>(UI_Element::Interact::on_clicked));
 }
 
 bool UI_Element::getClicked() noexcept
@@ -267,7 +267,7 @@ void UI_Element::clearFocus()
 	m_clicked = false;
 	if (m_hovered) {
 		m_hovered = false;
-		enactCallback((int)UI_Element::Interact::on_hover_stop);
+		enactCallback(static_cast<int>(UI_Element::Interact::on_hover_stop));
 	}
 }
 

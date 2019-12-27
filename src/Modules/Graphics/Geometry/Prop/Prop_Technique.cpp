@@ -105,7 +105,7 @@ void Prop_Technique::renderTechnique(const float&, Viewport& viewport, const std
 			glBindVertexArray(m_shapeCube->m_vaoID);
 			propCullingBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			propRenderBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, (GLsizei)visibleIndices.size(), 0);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, static_cast<GLsizei>(visibleIndices.size()), 0);
 			glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 8, 0);
 
@@ -119,7 +119,7 @@ void Prop_Technique::renderTechnique(const float&, Viewport& viewport, const std
 			glBindVertexArray(m_frameData.m_geometryVAOID);
 			glBindTextureUnit(0, m_frameData.m_materialArrayID);
 			propRenderBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, (GLsizei)visibleIndices.size(), 0);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, static_cast<GLsizei>(visibleIndices.size()), 0);
 
 			// Copy depth for next frame
 			viewport.m_gfxFBOS.bindForWriting("DEPTH-ONLY");
@@ -207,7 +207,7 @@ void Prop_Technique::cullShadows(const float&, const std::vector<std::pair<int, 
 			glBindVertexArray(m_shapeCube->m_vaoID);
 			propCullingBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			propRenderBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, (GLsizei)visibleIndices.size(), 0);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, static_cast<GLsizei>(visibleIndices.size()), 0);
 			glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 8, 0);
 			m_count = visibleIndices.size();
@@ -232,7 +232,7 @@ void Prop_Technique::renderShadows(const float&) noexcept
 			glBindVertexArray(m_frameData.m_geometryVAOID);
 			glBindTextureUnit(0, m_frameData.m_materialArrayID);
 			m_drawData[m_drawIndex].bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, (GLsizei)m_count, 0);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, static_cast<GLsizei>(m_count), 0);
 			glFrontFace(GL_CCW);
 			glCullFace(GL_BACK);
 			auto& drawBuffer = m_drawData[m_drawIndex];

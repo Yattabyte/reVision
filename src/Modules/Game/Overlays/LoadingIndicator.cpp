@@ -24,7 +24,7 @@ LoadingIndicator::LoadingIndicator(Engine& engine) :
 
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() noexcept {
-		m_indirectQuad = IndirectDraw<1>((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirectQuad = IndirectDraw<1>(static_cast<GLuint>(m_shapeQuad->getSize()), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 }
 
@@ -61,5 +61,5 @@ void LoadingIndicator::applyEffect(const float& deltaTime)
 void LoadingIndicator::resize(const glm::ivec2& size) 
 {
 	m_renderSize = size;
-	m_projMatrix = glm::ortho(0.0f, (float)size.x, 0.0f, (float)size.y);
+	m_projMatrix = glm::ortho(0.0f, static_cast<float>(size.x), 0.0f, static_cast<float>(size.y));
 }

@@ -23,7 +23,7 @@ SSR::SSR(Engine& engine) :
 	// Preferences
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_SSR, m_enabled);
-	preferences.addCallback(PreferenceState::Preference::C_SSR, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = (bool)f; });
+	preferences.addCallback(PreferenceState::Preference::C_SSR, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = static_cast<bool>(f); });
 
 	// Bayer matrix
 	constexpr GLubyte data[16] = { 0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5 };
@@ -61,7 +61,7 @@ void SSR::renderTechnique(const float&, Viewport& viewport, const std::vector<st
 	for (auto& [camIndex, layer] : perspectives)
 		camIndices.push_back({ camIndex, layer });
 	camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
-	indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
+	indirectQuad.setPrimitiveCount(static_cast<GLuint>(perspectives.size()));
 	camBufferIndex.endWriting();
 	indirectQuad.endWriting();
 
@@ -142,6 +142,6 @@ void SSR::updateMIPChain(Viewport& viewport)
 	glTextureParameteri(mipTexID, GL_TEXTURE_BASE_LEVEL, 0);
 	glTextureParameteri(mipTexID, GL_TEXTURE_MAX_LEVEL, 5);
 	glNamedFramebufferTexture(mipFboID, GL_COLOR_ATTACHMENT0, mipTexID, 0);
-	glViewport(0, 0, (GLsizei)dimensions.x, (GLsizei)dimensions.y);
+	glViewport(0, 0, static_cast<GLsizei>(dimensions.x), static_cast<GLsizei>(dimensions.y));
 	Shader::Release();
 }

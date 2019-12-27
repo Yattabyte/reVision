@@ -32,17 +32,17 @@ Reflector_Technique::Reflector_Technique(Engine& engine, std::vector<Camera*>& s
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_ENVMAP_SIZE, m_frameData.envmapSize.x);
 	preferences.addCallback(PreferenceState::Preference::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float& f) {
-		m_frameData.envmapSize = glm::ivec2(std::max(1u, (unsigned int)f));
-		m_viewport.resize(glm::ivec2(m_frameData.envmapSize), (int)m_frameData.reflectorLayers);
+		m_frameData.envmapSize = glm::ivec2(std::max(1u, static_cast<unsigned int>(f)));
+		m_viewport.resize(glm::ivec2(m_frameData.envmapSize), static_cast<int>(m_frameData.reflectorLayers));
 		});
 	// Environment Map
-	m_frameData.envmapSize = glm::ivec2(std::max(1u, (unsigned int)m_frameData.envmapSize.x));
-	m_viewport.resize(m_frameData.envmapSize, (int)m_frameData.reflectorLayers);
+	m_frameData.envmapSize = glm::ivec2(std::max(1u, static_cast<unsigned int>(m_frameData.envmapSize.x)));
+	m_viewport.resize(m_frameData.envmapSize, static_cast<int>(m_frameData.reflectorLayers));
 
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() noexcept {
 		// count, primCount, first, reserved
-		const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 };
+		const GLuint quadData[4] = { static_cast<GLuint>(m_shapeQuad->getSize()), 1, 0, 0 };
 		m_indirectQuad = StaticMultiBuffer(sizeof(GLuint) * 4, quadData);
 		m_indirectQuadConvolute = StaticMultiBuffer(sizeof(GLuint) * 4, quadData);
 		});
@@ -98,7 +98,7 @@ void Reflector_Technique::renderTechnique(const float& deltaTime, Viewport& view
 			drawBuffer.indirectShape.beginWriting();
 			camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 			lightBufferIndex.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
-			const GLuint dataShape[] = { (GLuint)m_shapeCube->getSize(), (GLuint)lightIndices.size(), 0,0 };
+			const GLuint dataShape[] = { static_cast<GLuint>(m_shapeCube->getSize()), static_cast<GLuint>(lightIndices.size()), 0,0 };
 			drawBuffer.indirectShape.write(0, sizeof(GLuint) * 4, &dataShape);
 			camBufferIndex.endWriting();
 			lightBufferIndex.endWriting();
@@ -119,7 +119,7 @@ void Reflector_Technique::updateReflectors(const float& deltaTime)
 {
 	auto clientTime = m_engine.GetSystemTime();
 	if (m_frameData.reflectorsToUpdate.size()) {
-		m_viewport.resize(m_frameData.envmapSize, (int)m_frameData.reflectorLayers);
+		m_viewport.resize(m_frameData.envmapSize, static_cast<int>(m_frameData.reflectorLayers));
 		m_viewport.bind();
 		m_viewport.clear();
 
@@ -144,14 +144,14 @@ void Reflector_Technique::updateReflectors(const float& deltaTime)
 		}
 		m_indirectQuad.beginWriting();
 		m_indirectQuadConvolute.beginWriting();
-		const auto instanceCount = (GLuint)perspectives.size(), convoluteCount = (GLuint)m_frameData.reflectorLayers;
+		const auto instanceCount = static_cast<GLuint>(perspectives.size()), convoluteCount = static_cast<GLuint>(m_frameData.reflectorLayers);
 		m_indirectQuad.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
 		m_indirectQuadConvolute.write(sizeof(GLuint), sizeof(GLuint), &convoluteCount);
 		m_indirectQuad.endWriting();
 		m_indirectQuadConvolute.endWriting();
 
 		// Update all reflectors at once
-		constexpr unsigned int categories = (unsigned int)Graphics_Technique::Technique_Category::GEOMETRY | (unsigned int)Graphics_Technique::Technique_Category::PRIMARY_LIGHTING | (unsigned int)Graphics_Technique::Technique_Category::SECONDARY_LIGHTING;
+		constexpr unsigned int categories = static_cast<unsigned int>(Graphics_Technique::Technique_Category::GEOMETRY) | static_cast<unsigned int>(Graphics_Technique::Technique_Category::PRIMARY_LIGHTING) | static_cast<unsigned int>(Graphics_Technique::Technique_Category::SECONDARY_LIGHTING);
 		m_engine.getModule_Graphics().getPipeline().render(deltaTime, m_viewport, perspectives, categories);
 
 		// Copy all lighting results into cube faces, generating cubemap's
@@ -172,9 +172,9 @@ void Reflector_Technique::updateReflectors(const float& deltaTime)
 		m_frameData.envmapFBO.bindForReading(0);
 		for (unsigned int r = 1; r < 6; ++r) {
 			// Ensure we are writing to MIP level r
-			const unsigned int write_size = (unsigned int)std::max(1.0f, (floor((float)m_frameData.envmapSize.x / pow(2.0f, (float)r))));
+			const unsigned int write_size = static_cast<unsigned int>(std::max(1.0f, (floor(static_cast<float>(m_frameData.envmapSize.x) / pow(2.0f, static_cast<float>(r))))));
 			glViewport(0, 0, write_size, write_size);
-			m_shaderConvolute->setUniform(1, (float)r / 5.0f);
+			m_shaderConvolute->setUniform(1, static_cast<float>(r) / 5.0f);
 			m_frameData.envmapFBO.bindForWriting(r);
 
 			// Convolute the 6 faces for this roughness level

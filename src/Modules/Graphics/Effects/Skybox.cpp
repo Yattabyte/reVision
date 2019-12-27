@@ -72,7 +72,7 @@ void Skybox::renderTechnique(const float&, Viewport& viewport, const std::vector
 	for (auto& [camIndex, layer] : perspectives)
 		camIndices.push_back({ camIndex, layer });
 	camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
-	indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
+	indirectQuad.setPrimitiveCount(static_cast<GLuint>(perspectives.size()));
 	camBufferIndex.endWriting();
 	indirectQuad.endWriting();
 
@@ -123,9 +123,9 @@ void Skybox::convoluteSky(const Viewport& viewport) noexcept
 
 	for (unsigned int r = 1; r < 6; ++r) {
 		// Ensure we are writing to MIP level r
-		const unsigned int write_size = (unsigned int)std::max(1.0f, (floor((float)m_skySize.x / pow(2.0f, (float)r))));
+		const unsigned int write_size = static_cast<unsigned int>(std::max(1.0f, (floor(static_cast<float>(m_skySize.x) / pow(2.0f, static_cast<float>(r))))));
 		glViewport(0, 0, write_size, write_size);
-		m_shaderConvolute->setUniform(1, (float)r / 5.0f);
+		m_shaderConvolute->setUniform(1, static_cast<float>(r) / 5.0f);
 		glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, r);
 
 		// Ensure we are reading from MIP level r - 1

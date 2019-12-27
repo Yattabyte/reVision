@@ -106,8 +106,8 @@ void PropUpload_System::tryInsertModel(const Shared_Model& model)
 		// Check if we can fit the desired data
 		waitOnFence();
 		tryToExpand(arraySize);
-		const auto offset = (GLuint)(m_currentSize / sizeof(SingleVertex));
-		const auto count = (GLuint)(arraySize / sizeof(SingleVertex));
+		const auto offset = static_cast<GLuint>(m_currentSize / sizeof(SingleVertex));
+		const auto count = static_cast<GLuint>(arraySize / sizeof(SingleVertex));
 
 		// Upload vertex data
 		glNamedBufferSubData(m_vboID, m_currentSize, arraySize, &model->m_data.m_vertices[0]);
@@ -165,8 +165,8 @@ void PropUpload_System::tryInsertMaterial(const Shared_Material& material)
 {
 	if (m_materialMap.find(material) == m_materialMap.end()) {
 		// Get spot in the material array
-		const auto imageCount = (GLsizei)((material->m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES);
-		const auto materialID = (GLuint)m_matCount;
+		const auto imageCount = static_cast<GLsizei>((material->m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES);
+		const auto materialID = static_cast<GLuint>(m_matCount);
 		m_materialMap[material] = materialID;
 		m_matCount += imageCount;
 		if (m_matCount >= m_maxTextureLayers)
@@ -183,7 +183,7 @@ void PropUpload_System::tryInsertMaterial(const Shared_Material& material)
 
 			// Upload material data
 			for (int m = 0; m < m_maxMips; ++m) {
-				const GLsizei mipsize = (GLsizei)std::max(1.0f, (floor(m_materialSize / pow(2.0f, (float)m))));
+				const GLsizei mipsize = static_cast<GLsizei>(std::max(1.0f, (floor(m_materialSize / pow(2.0f, static_cast<float>(m))))));
 				glTexturePageCommitmentEXT(m_matID, m, 0, 0, materialID, mipsize, mipsize, imageCount, GL_TRUE);
 			}
 			glTextureSubImage3D(m_matID, 0, 0, 0, materialID + (x * MAX_DIGITAL_IMAGES), m_materialSize, m_materialSize, MAX_DIGITAL_IMAGES, GL_RGBA, GL_UNSIGNED_BYTE, (void*)nullptr);

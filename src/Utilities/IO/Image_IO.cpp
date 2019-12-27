@@ -72,11 +72,11 @@ bool Image_IO::Import_Image(Engine& engine, const std::string& relativePath, Ima
 void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData)
 {
 	const glm::ivec2 dimensions(FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap));
-	const size_t size_mult = (size_t)(dimensions.x) * (size_t)(dimensions.y);
+	const size_t size_mult = static_cast<size_t>(dimensions.x) * static_cast<size_t>(dimensions.y);
 
 	// Always create RGBA format
 	importedData.pixelData.resize(size_mult * 4ULL);
-	const GLubyte* pixels = (GLubyte*)FreeImage_GetBits(bitmap);
+	const GLubyte* pixels = static_cast<GLubyte*>(FreeImage_GetBits(bitmap));
 
 	for (size_t i = 0; i < size_mult; ++i) {
 		importedData.pixelData[i * 4 + 2] = pixels[i * 4 + 0];
@@ -86,7 +86,7 @@ void Image_IO::Load_Pixel_Data(FIBITMAP* bitmap, Image_Data& importedData)
 	}
 
 	importedData.dimensions = dimensions;
-	importedData.pitch = (int)FreeImage_GetPitch(bitmap);
+	importedData.pitch = static_cast<int>(FreeImage_GetPitch(bitmap));
 	importedData.bpp = FreeImage_GetBPP(bitmap);
 }
 

@@ -20,13 +20,13 @@ SSAO::SSAO(Engine& engine) :
 	// Preferences
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_SSAO, m_enabled);
-	preferences.addCallback(PreferenceState::Preference::C_SSAO, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = (bool)f; });
+	preferences.addCallback(PreferenceState::Preference::C_SSAO, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = static_cast<bool>(f); });
 	preferences.getOrSetValue(PreferenceState::Preference::C_SSAO_RADIUS, m_radius);
 	preferences.addCallback(PreferenceState::Preference::C_SSAO_RADIUS, m_aliveIndicator, [&](const float& f) noexcept { m_radius = f; if (m_shader->ready()) m_shader->setUniform(0, m_radius); });
 	preferences.getOrSetValue(PreferenceState::Preference::C_SSAO_QUALITY, m_quality);
-	preferences.addCallback(PreferenceState::Preference::C_SSAO_QUALITY, m_aliveIndicator, [&](const float& f) noexcept { m_quality = (int)f; if (m_shader->ready()) m_shader->setUniform(1, m_quality); });
+	preferences.addCallback(PreferenceState::Preference::C_SSAO_QUALITY, m_aliveIndicator, [&](const float& f) noexcept { m_quality = static_cast<int>(f); if (m_shader->ready()) m_shader->setUniform(1, m_quality); });
 	preferences.getOrSetValue(PreferenceState::Preference::C_SSAO_BLUR_STRENGTH, m_blurStrength);
-	preferences.addCallback(PreferenceState::Preference::C_SSAO_BLUR_STRENGTH, m_aliveIndicator, [&](const float& f) noexcept { m_blurStrength = (int)f; });
+	preferences.addCallback(PreferenceState::Preference::C_SSAO_BLUR_STRENGTH, m_aliveIndicator, [&](const float& f) noexcept { m_blurStrength = static_cast<int>(f); });
 
 	// Prepare the noise texture and kernel
 	const std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
@@ -53,7 +53,7 @@ SSAO::SSAO(Engine& engine) :
 			);
 			sample = glm::normalize(sample);
 			sample *= rdmFloats(gen);
-			GLfloat scale = GLfloat(i) / (GLfloat)(MAX_KERNEL_SIZE);
+			GLfloat scale = GLfloat(i) / static_cast<GLfloat>(MAX_KERNEL_SIZE);
 			scale = 0.1f + (scale * scale) * (1.0f - 0.1f);
 			sample *= scale;
 			new_kernel[t] = glm::vec4(sample, 1);
@@ -89,7 +89,7 @@ void SSAO::renderTechnique(const float&, Viewport& viewport, const std::vector<s
 	for (auto& [camIndex, layer] : perspectives)
 		camIndices.push_back({ camIndex, layer });
 	camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
-	indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
+	indirectQuad.setPrimitiveCount(static_cast<GLuint>(perspectives.size()));
 	camBufferIndex.endWriting();
 	indirectQuad.endWriting();
 
@@ -117,7 +117,7 @@ void SSAO::renderTechnique(const float&, Viewport& viewport, const std::vector<s
 		bool horizontal = false;
 		glBindTextureUnit(0, viewport.m_gfxFBOS.getTexID("SSAO", 0));
 		glBindTextureUnit(1, viewport.m_gfxFBOS.getTexID("SSAO", 1));
-		glDrawBuffer(GL_COLOR_ATTACHMENT0 + (int)(horizontal));
+		glDrawBuffer(GL_COLOR_ATTACHMENT0 + static_cast<int>(horizontal));
 		m_shaderGB_A->bind();
 		m_shaderGB_A->setUniform(0, horizontal);
 		m_shaderGB_A->setUniform(1, glm::vec2(viewport.m_dimensions));
@@ -125,7 +125,7 @@ void SSAO::renderTechnique(const float&, Viewport& viewport, const std::vector<s
 		// Blur remainder of the times
 		for (int i = 0; i < m_blurStrength; i++) {
 			horizontal = !horizontal;
-			glDrawBuffer(GL_COLOR_ATTACHMENT0 + (int)(horizontal));
+			glDrawBuffer(GL_COLOR_ATTACHMENT0 + static_cast<int>(horizontal));
 			m_shaderGB_A->setUniform(0, horizontal);
 			glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 		}

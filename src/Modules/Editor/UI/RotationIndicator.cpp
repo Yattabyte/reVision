@@ -23,10 +23,10 @@ RotationIndicator::RotationIndicator(Engine& engine) :
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept {
-		m_renderSize.x = (int)f;
+		m_renderSize.x = static_cast<int>(f);
 		});
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept {
-		m_renderSize.y = (int)f;
+		m_renderSize.y = static_cast<int>(f);
 		});
 
 	// Assets
@@ -36,7 +36,7 @@ RotationIndicator::RotationIndicator(Engine& engine) :
 
 	// Asset-Finished Callbacks
 	m_3dIndicator->addCallback(m_aliveIndicator, [&]() noexcept {
-		m_indirectIndicator = IndirectDraw<1>((GLuint)m_3dIndicator->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirectIndicator = IndirectDraw<1>(static_cast<GLuint>(m_3dIndicator->getSize()), 1, 0, GL_CLIENT_STORAGE_BIT);
 		});
 
 	// GL structures
@@ -93,7 +93,7 @@ void RotationIndicator::tick(const float&)
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::SetNextWindowPos(ImVec2(((float)m_renderSize.x / 5.0F), 18.0F), ImGuiCond_Appearing);
+		ImGui::SetNextWindowPos(ImVec2((static_cast<float>(m_renderSize.x) / 5.0F), 18.0F), ImGuiCond_Appearing);
 		if (ImGui::Begin("Rotation Indicator", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground))
 			ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_texID), { 128.0f, 128.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 		ImGui::End();

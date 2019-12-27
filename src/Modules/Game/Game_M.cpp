@@ -25,11 +25,11 @@ void Game_Module::initialize()
 
 	// Create Pause Menu
 	if (auto pauseMenu = std::make_shared<PauseMenu>(m_engine)) {
-		pauseMenu->addCallback((int)PauseMenu::Interact::on_resume_game, [&] {
+		pauseMenu->addCallback(static_cast<int>(PauseMenu::Interact::on_resume_game), [&] {
 			showPauseMenu(false);
 			pauseMenu->setVisible(true);
 			});
-		pauseMenu->addCallback((int)PauseMenu::Interact::on_end, [&] {
+		pauseMenu->addCallback(static_cast<int>(PauseMenu::Interact::on_end), [&] {
 			showPauseMenu(false);
 			m_engine.goToMainMenu();
 			});

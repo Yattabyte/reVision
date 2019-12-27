@@ -27,7 +27,7 @@ OptionsMenu::OptionsMenu(Engine& engine) :
 	addButton(engine, "< BACK  ", [&] { back(); });
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&] {
+	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] {
 		const auto scale = getScale();
 		m_videoMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f });
 		m_gfxMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f });
@@ -51,7 +51,7 @@ void OptionsMenu::video()
 	m_focusMap->addElement(m_layout);
 	m_focusMap->addElement(m_videoMenu);
 	m_focusMap->focusElement(m_videoMenu);
-	enactCallback((int)OptionsMenu::Interact::on_video);
+	enactCallback(static_cast<int>(OptionsMenu::Interact::on_video));
 }
 
 void OptionsMenu::graphics() 
@@ -65,12 +65,12 @@ void OptionsMenu::graphics()
 	m_focusMap->addElement(m_layout);
 	m_focusMap->addElement(m_gfxMenu);
 	m_focusMap->focusElement(m_gfxMenu);
-	enactCallback((int)OptionsMenu::Interact::on_graphics);
+	enactCallback(static_cast<int>(OptionsMenu::Interact::on_graphics));
 }
 
 void OptionsMenu::controls() 
 {
-	enactCallback((int)OptionsMenu::Interact::on_controls);
+	enactCallback(static_cast<int>(OptionsMenu::Interact::on_controls));
 }
 
 void OptionsMenu::back() 
@@ -83,5 +83,5 @@ void OptionsMenu::back()
 	// Revert appearance and control back to previous element (start menu, pause menu, etc)
 	m_engine.getModule_UI().popRootElement();
 	m_layout->setSelectionIndex(-1);
-	enactCallback((int)OptionsMenu::Interact::on_back);
+	enactCallback(static_cast<int>(OptionsMenu::Interact::on_back));
 }

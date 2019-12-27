@@ -155,8 +155,8 @@ void Outline_System::tryInsertModel(const Shared_Mesh& mesh)
 		// Check if we can fit the desired data
 		waitOnFence();
 		tryToExpand(arraySize);
-		auto offset = (GLuint)(m_currentSize / (sizeof(glm::vec3) * 2));
-		auto count = (GLuint)(arraySize / (sizeof(glm::vec3) * 2));
+		auto offset = static_cast<GLuint>(m_currentSize / (sizeof(glm::vec3) * 2));
+		auto count = static_cast<GLuint>(arraySize / (sizeof(glm::vec3) * 2));
 
 		// Upload vertex data
 		std::vector<glm::vec3> mergedData;

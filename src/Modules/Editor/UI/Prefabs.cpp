@@ -24,7 +24,7 @@ Prefabs::Prefabs(Engine& engine, LevelEditor_Module& editor) :
 	m_texFolder(engine, "Editor//folder.png"),
 	m_texMissingThumb(engine, "Editor//prefab.png"),
 	m_texIconRefresh(engine, "Editor//iconRefresh.png"),
-	m_viewport(glm::vec2(0.0f), glm::vec2((float)m_thumbSize), engine)
+	m_viewport(glm::vec2(0.0f), glm::vec2(static_cast<float>(m_thumbSize)), engine)
 {
 	m_open = true;
 
@@ -32,8 +32,8 @@ Prefabs::Prefabs(Engine& engine, LevelEditor_Module& editor) :
 	auto& preferences = engine.getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::Preference::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept { m_renderSize.x = (int)f; });
-	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept { m_renderSize.y = (int)f; });
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) noexcept { m_renderSize.x = static_cast<int>(f); });
+	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) noexcept { m_renderSize.y = static_cast<int>(f); });
 
 	// Load prefabs
 	populatePrefabs();
@@ -72,7 +72,7 @@ void Prefabs::addPrefab(Prefabs::Entry& prefab)
 
 	// Create the camera and move it to where the entity is located
 	Camera camera;
-	camera->Dimensions = glm::vec2((float)m_thumbSize);
+	camera->Dimensions = glm::vec2(static_cast<float>(m_thumbSize));
 	camera->FarPlane = 250.0f;
 	camera->FOV = 90.0F;
 	camera->vMatrix = glm::translate(glm::mat4(1.0f), cursorPos);
@@ -104,14 +104,14 @@ void Prefabs::addPrefab(const std::vector<char>& entityData)
 		newPrefab.entityHandles.push_back(newPrefabHandle);
 	}
 	addPrefab(newPrefab);
-	m_selectedIndex = (int)(m_prefabs.size()) - 1;
+	m_selectedIndex = static_cast<int>(m_prefabs.size()) - 1;
 
 	// Save Prefab to disk
 	std::ofstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path, std::ios::binary | std::ios::out);
 	if (!mapFile.is_open())
 		m_engine.getManager_Messages().error("Cannot write the binary map file to disk!");
 	else
-		mapFile.write(entityData.data(), (std::streamsize)entityData.size());
+		mapFile.write(entityData.data(), static_cast<std::streamsize>(entityData.size()));
 	mapFile.close();
 }
 
@@ -191,7 +191,7 @@ void Prefabs::populatePrefabs(const std::string& directory)
 			if (prefabFile.is_open()) {
 				const auto size = std::filesystem::file_size(entry);
 				std::vector<char> data(size);
-				prefabFile.read(&data[0], (std::streamsize)size);
+				prefabFile.read(&data[0], static_cast<std::streamsize>(size));
 				size_t dataRead(0ull);
 				while(dataRead < data.size()) {
 					EntityHandle newPrefabHandle, parentHandle;
@@ -274,7 +274,7 @@ void Prefabs::tickThumbnails(const float& deltaTime)
 
 	GLint previousFBO(0);
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousFBO);
-	m_viewport.resize(glm::vec2((float)m_thumbSize), (int)m_prefabs.size());
+	m_viewport.resize(glm::vec2(static_cast<float>(m_thumbSize)), static_cast<int>(m_prefabs.size()));
 	m_engine.getModule_Graphics().renderWorld(m_previewWorld, deltaTime, m_viewport, m_prefabCameras);
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
@@ -358,7 +358,7 @@ void Prefabs::tickWindow(const float&)
 					ImGui::BeginTooltip();
 					ImGui::ImageButton(
 						(ImTextureID)static_cast<uintptr_t>(textureID),
-						ImVec2((float)m_thumbSize, (float)m_thumbSize),
+						ImVec2(static_cast<float>(m_thumbSize), static_cast<float>(m_thumbSize)),
 						{ 0.0f, 1.0f }, { 1.0f, 0.0f },
 						0,
 						color
@@ -397,9 +397,9 @@ void Prefabs::tickPopupDialogues(const float&)
 			"This won't remove the prefab from any levels."
 		);
 		ImGui::Spacing();
-		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0, 0.7f, 0.7f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(0, 0.6f, 0.6f)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(0, 0.7f, 0.7f)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(0, 0.8f, 0.8f)));
 		if (ImGui::Button("Delete", { 50, 20 })) {
 			const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path);
 			if (m_prefabs[m_selectedIndex].path.size()) {

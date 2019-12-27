@@ -149,11 +149,11 @@ void Direct_Technique::registerLightShapes()
 		combinedData.reserve(m_shapeCube->m_geometry.vertices.size() + m_shapeSphere->m_geometry.vertices.size() + m_shapeHemisphere->m_geometry.vertices.size());
 
 		// Join all vertex sets together, note the offset and count of each
-		m_cubeParams = { (unsigned int)combinedData.size(),  (unsigned int)m_shapeCube->m_geometry.vertices.size() };
+		m_cubeParams = { static_cast<unsigned int>(combinedData.size()),  static_cast<unsigned int>(m_shapeCube->m_geometry.vertices.size()) };
 		combinedData.insert(combinedData.end(), m_shapeCube->m_geometry.vertices.cbegin(), m_shapeCube->m_geometry.vertices.cend());
-		m_sphereParams = { (unsigned int)combinedData.size(),  (unsigned int)m_shapeSphere->m_geometry.vertices.size() };
+		m_sphereParams = { static_cast<unsigned int>(combinedData.size()),  static_cast<unsigned int>(m_shapeSphere->m_geometry.vertices.size()) };
 		combinedData.insert(combinedData.end(), m_shapeSphere->m_geometry.vertices.cbegin(), m_shapeSphere->m_geometry.vertices.cend());
-		m_hemisphereParams = { (unsigned int)combinedData.size(),  (unsigned int)m_shapeHemisphere->m_geometry.vertices.size() };
+		m_hemisphereParams = { static_cast<unsigned int>(combinedData.size()),  static_cast<unsigned int>(m_shapeHemisphere->m_geometry.vertices.size()) };
 		combinedData.insert(combinedData.end(), m_shapeHemisphere->m_geometry.vertices.cbegin(), m_shapeHemisphere->m_geometry.vertices.cend());
 
 		// Create VBO's

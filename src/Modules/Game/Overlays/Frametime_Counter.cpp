@@ -66,5 +66,5 @@ void Frametime_Counter::applyEffect(const float& deltaTime)
 void Frametime_Counter::resize(const glm::ivec2& size)
 {
 	m_renderSize = size;
-	m_projMatrix = glm::ortho(0.0f, (float)size.x, 0.0f, (float)size.y);
+	m_projMatrix = glm::ortho(0.0f, static_cast<float>(size.x), 0.0f, static_cast<float>(size.y));
 }

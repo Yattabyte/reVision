@@ -17,13 +17,13 @@ StartMenu::StartMenu(Engine& engine) : Menu(engine)
 	// Add 'Options' button
 	m_optionsMenu = std::make_shared<OptionsMenu>(engine);
 	addButton(engine, "  OPTIONS >", [&] { goToOptions(); });
-	m_optionsMenu->addCallback((int)OptionsMenu::Interact::on_back, [&]() noexcept { returnFromOptions(); });
+	m_optionsMenu->addCallback(static_cast<int>(OptionsMenu::Interact::on_back), [&]() noexcept { returnFromOptions(); });
 
 	// Add 'Quit' button
 	addButton(engine, "QUIT", [&] { quit(); });
 
 	// Callbacks
-	addCallback((int)UI_Element::Interact::on_resize, [&] {
+	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] {
 		const auto scale = getScale();
 		m_optionsMenu->setScale(scale);
 		});
@@ -38,13 +38,13 @@ StartMenu::StartMenu(Engine& engine) : Menu(engine)
 void StartMenu::startGame()
 {
 	m_engine.getModule_UI().clear();
-	enactCallback((int)StartMenu::Interact::on_start_game);
+	enactCallback(static_cast<int>(StartMenu::Interact::on_start_game));
 }
 
 void StartMenu::startEditor()
 {
 	m_engine.getModule_UI().clear();
-	enactCallback((int)StartMenu::Interact::on_level_editor);
+	enactCallback(static_cast<int>(StartMenu::Interact::on_level_editor));
 }
 
 void StartMenu::goToOptions() 
@@ -54,7 +54,7 @@ void StartMenu::goToOptions()
 	ui.pushRootElement(m_optionsMenu);
 	ui.setFocusMap(m_optionsMenu->getFocusMap());
 	m_layout->setSelectionIndex(-1);
-	enactCallback((int)StartMenu::Interact::on_options);
+	enactCallback(static_cast<int>(StartMenu::Interact::on_options));
 }
 
 void StartMenu::returnFromOptions() noexcept 
@@ -67,5 +67,5 @@ void StartMenu::quit()
 {
 	m_engine.getModule_UI().clear();
 	m_engine.shutDown();
-	enactCallback((int)StartMenu::Interact::on_quit);
+	enactCallback(static_cast<int>(StartMenu::Interact::on_quit));
 }

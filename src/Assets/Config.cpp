@@ -36,7 +36,7 @@ inline int find_CFG_Property(const std::string& s, const std::vector<std::string
 		x = char(toupper(int(x)));
 	for (auto value = begin(m_strings); value != end(m_strings); value++)
 		if ((*value) == upperCase)
-			return (int)std::distance(m_strings.begin(), value);
+			return static_cast<int>(std::distance(m_strings.begin(), value));
 	return -1;
 }
 
@@ -63,7 +63,7 @@ void Config::initialize()
 				const auto spot = find_CFG_Property(cfg_property, m_strings);
 				if (spot >= 0) {
 					auto cfg_value = get_between_quotes(line);
-					setValue((unsigned int)spot, (float)atof(cfg_value.c_str()));
+					setValue(static_cast<unsigned int>(spot), static_cast<float>(atof(cfg_value.c_str())));
 				}
 			}
 		}

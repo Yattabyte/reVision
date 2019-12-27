@@ -57,7 +57,7 @@ Window::Window(Engine& engine) :
 	glfwSetCursorPos(m_window, 0, 0);
 
 	// Initialize GLAD
-	if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 0) {
+	if (gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == 0) {
 		engine.getManager_Messages().error("GLAD unable to initialize, shutting down...");
 		glfwTerminate();
 		exit(-1);
@@ -93,10 +93,10 @@ Window::Window(Engine& engine) :
 		});
 	preferenceState.addCallback(PreferenceState::Preference::C_VSYNC, m_aliveIndicator, [&](const float& f) noexcept {
 		m_vsync = f;
-		glfwSwapInterval((int)f);
+		glfwSwapInterval(static_cast<int>(f));
 		});
 	configureWindow();
-	glfwSwapInterval((int)m_vsync);
+	glfwSwapInterval(static_cast<int>(m_vsync));
 	glfwSetInputMode(m_window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
 	glfwSetWindowUserPointer(m_window, &m_engine);
 	glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
@@ -267,12 +267,12 @@ void Window::setMousePos(const glm::vec2& position) noexcept
 
 bool Window::getMouseKey(const int& buttonID) const noexcept
 {
-	return (bool)(glfwGetMouseButton(m_window, buttonID));
+	return static_cast<bool>(glfwGetMouseButton(m_window, buttonID));
 }
 
 bool Window::getKey(const int& buttonID) const noexcept
 {
-	return (bool)(glfwGetKey(m_window, buttonID));
+	return static_cast<bool>(glfwGetKey(m_window, buttonID));
 }
 
 void Window::setMouseMode3D(const bool& use3DMouse) noexcept
@@ -292,7 +292,7 @@ void Window::MakeCurrent(GLFWwindow* context) noexcept
 
 float Window::GetSystemTime() noexcept
 {
-	return (float)glfwGetTime();
+	return static_cast<float>(glfwGetTime());
 }
 
 std::string Window::GetVersion()
@@ -321,6 +321,6 @@ void Window::configureWindow() noexcept
 		m_useFullscreen ? glfwGetPrimaryMonitor() : nullptr,
 		0, 0,
 		m_windowSize.x, m_windowSize.y,
-		(int)m_refreshRate
+		static_cast<int>(m_refreshRate)
 	);
 }
