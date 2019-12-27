@@ -83,7 +83,7 @@ void Graphics_Framebuffers::createFBO(const char* name, const std::vector<std::t
 		glNamedFramebufferTexture(fboID, attachment, texID, 0);
 		textures.emplace_back( texID, internalFormat, format, type, attachment );
 	}
-	if (drawBuffers.size() != 0u)
+	if (!drawBuffers.empty())
 		glNamedFramebufferDrawBuffers(fboID, static_cast<GLsizei>(drawBuffers.size()), &drawBuffers[0]);
 	m_fbos[name] = { fboID, mipmapped, textures };
 }

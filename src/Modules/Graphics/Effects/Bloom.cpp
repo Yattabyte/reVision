@@ -24,24 +24,25 @@ Bloom::Bloom(Engine& engine) :
 	preferences.addCallback(PreferenceState::Preference::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float& f) noexcept { setBloomStrength(static_cast<int>(f)); });
 }
 
-void Bloom::clearCache(const float&) noexcept
+void Bloom::clearCache(const float& /*deltaTime*/) noexcept
 {
 	m_drawIndex = 0;
 }
 
-void Bloom::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
+void Bloom::renderTechnique(const float& /*deltaTime*/, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderBloomExtract, m_shaderCopy, m_shaderGB))
 		return;
 
 	// Prepare camera index
 	if (m_drawIndex >= m_drawData.size())
-		m_drawData.resize(size_t(m_drawIndex) + 1ull);
+		m_drawData.resize(size_t(m_drawIndex) + 1ULL);
 	auto& [camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
 	camBufferIndex.beginWriting();
 	indirectQuad.beginWriting();
 	std::vector<glm::ivec2> camIndices;
-	for (auto& [camIndex, layer] : perspectives)
+	camIndices.reserve(perspectives.size());
+for (auto& [camIndex, layer] : perspectives)
 		camIndices.push_back({ camIndex, layer });
 	camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 	indirectQuad.setPrimitiveCount(static_cast<GLuint>(perspectives.size()));
@@ -76,7 +77,7 @@ void Bloom::renderTechnique(const float&, Viewport& viewport, const std::vector<
 			m_shaderGB->setUniform(0, horizontal);
 			glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 		}
-		bloomSpot = horizontal ? 1ull : 0ull;
+		bloomSpot = horizontal ? 1ULL : 0ULL;
 	}
 
 	// Copy to lighting buffer

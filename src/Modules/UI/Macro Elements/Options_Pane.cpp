@@ -17,8 +17,8 @@ Options_Pane::Options_Pane(Engine& engine) :
 	addElement(m_backPanel);
 
 	// Make a vertical layout to house list items
-	m_layout->setSpacing(1.0f);
-	m_layout->setMargin(50.0f);
+	m_layout->setSpacing(1.0F);
+	m_layout->setMargin(50.0F);
 	m_layout->addCallback(static_cast<int>(List::Interact::on_selection), [&] {
 		const auto index = m_layout->getSelectionIndex();
 		if (index > -1 && size_t(index) < m_descriptions.size())
@@ -29,7 +29,7 @@ Options_Pane::Options_Pane(Engine& engine) :
 	m_backPanel->addElement(m_layout);
 
 	// Title
-	m_title->setTextScale(20.0f);
+	m_title->setTextScale(20.0F);
 	m_title->setAlignment(Label::Alignment::align_left);
 	m_backPanel->addElement(m_title);
 
@@ -41,7 +41,7 @@ Options_Pane::Options_Pane(Engine& engine) :
 
 	// Bottom Description Label
 	m_description->setAlignment(Label::Alignment::align_left);
-	m_description->setTextScale(10.0f);
+	m_description->setTextScale(10.0F);
 	m_description->setColor(glm::vec3(0.8, 0.6, 0.1));
 	m_description->setText("");
 	m_backPanel->addElement(m_description);
@@ -70,14 +70,14 @@ void Options_Pane::userAction(ActionState& actionState)
 		m_engine.getModule_UI().getFocusMap()->back();
 }
 
-void Options_Pane::addOption(Engine& engine, std::shared_ptr<UI_Element> element, const float& ratio, const std::string& text, const std::string& description, const int& eventType, const std::function<void()>& callback) 
+void Options_Pane::addOption(Engine& engine, const std::shared_ptr<UI_Element>& element, const float& ratio, const std::string& text, const std::string& description, const int& eventType, const std::function<void()>& callback) 
 {
 	auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
 	auto label = std::make_shared<Label>(engine, text);
-	label->setColor(glm::vec3(0.75f));
+	label->setColor(glm::vec3(0.75F));
 	element->addCallback(eventType, callback);
-	element->setMaxHeight(14.0f);
-	horizontalLayout->addElement(label, (1.0f - ratio) + 1.0f);
+	element->setMaxHeight(14.0F);
+	horizontalLayout->addElement(label, (1.0F - ratio) + 1.0F);
 	horizontalLayout->addElement(element, ratio);
 	horizontalLayout->setScale({ 0, 30 });
 	m_layout->addElement(horizontalLayout);

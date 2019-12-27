@@ -7,20 +7,20 @@ Slider::Slider(Engine& engine, const float& value, const glm::vec2& range) :
 {
 	// Make a background panel for cosmetic purposes
 	auto panel = std::make_shared<Panel>(engine);
-	panel->setColor(glm::vec4(0.3f));
+	panel->setColor(glm::vec4(0.3F));
 	m_backPanel = std::make_shared<Border>(engine, panel);
 	addElement(m_backPanel);
 
 	// Create the sliding paddle
 	m_paddle = std::make_shared<Panel>(engine);
-	m_paddle->setColor(glm::vec4(0.75f));
+	m_paddle->setColor(glm::vec4(0.75F));
 	panel->addElement(m_paddle);
 
 	// Add a label indicating the toggle state
 	m_label = std::make_shared<Label>(engine, std::to_string(value));
 	m_label->setAlignment(Label::Alignment::align_right);
-	m_label->setTextScale(12.0f);
-	m_label->setColor(glm::vec3(0.75f));
+	m_label->setTextScale(12.0F);
+	m_label->setColor(glm::vec3(0.75F));
 	addElement(m_label);
 
 	// Callbacks
@@ -35,9 +35,9 @@ void Slider::renderElement(const float& deltaTime, const glm::vec2& position, co
 	// Update Colors
 	glm::vec4 color(0.75);
 	if (m_pressed)
-		color *= 0.5f;
+		color *= 0.5F;
 	if (m_hovered)
-		color *= 1.5f;
+		color *= 1.5F;
 	m_paddle->setColor(color);
 
 	// Render Children
@@ -50,14 +50,14 @@ void Slider::mouseAction(const MouseEvent& mouseEvent)
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 		if (m_pressed && mouseEvent.m_action == MouseEvent::Action::MOVE) {
 			const float mx = float(mouseEvent.m_xPos) - m_position.x - m_backPanel->getPosition().x + m_backPanel->getScale().x;
-			setValue(((mx / (m_backPanel->getScale().x * 2.0f)) * (m_upperRange - m_lowerRange)) + m_lowerRange);
+			setValue(((mx / (m_backPanel->getScale().x * 2.0F)) * (m_upperRange - m_lowerRange)) + m_lowerRange);
 		}
 	}
 }
 
 void Slider::userAction(ActionState& actionState) 
 {
-	const float offsetAmount = std::min<float>((m_upperRange - m_lowerRange) / 100.0f, 1.0f);
+	const float offsetAmount = std::min<float>((m_upperRange - m_lowerRange) / 100.0F, 1.0F);
 	if (actionState.isAction(ActionState::Action::UI_LEFT) == ActionState::State::PRESS)
 		setValue(getValue() - offsetAmount);
 	else if (actionState.isAction(ActionState::Action::UI_RIGHT) == ActionState::State::PRESS)
@@ -113,7 +113,7 @@ void Slider::updatePaddle()
 {
 	if (m_paddle) {
 		// The paddle fills a 6th of the back panel, or 10 pixels, whichever is bigger
-		m_paddle->setScale(glm::vec2(std::max<float>((getScale().x - 50) / 6.0f, 10.0), getScale().y - 2.0f) - 2.0f);
-		m_paddle->setPosition({ (2.0f * ((m_value - m_lowerRange) / (m_upperRange - m_lowerRange)) - 1.0f) * (getScale().x - 54.0f - m_paddle->getScale().x), 0 });
+		m_paddle->setScale(glm::vec2(std::max<float>((getScale().x - 50) / 6.0F, 10.0), getScale().y - 2.0F) - 2.0F);
+		m_paddle->setPosition({ (2.0F * ((m_value - m_lowerRange) / (m_upperRange - m_lowerRange)) - 1.0F) * (getScale().x - 54.0F - m_paddle->getScale().x), 0 });
 	}
 }

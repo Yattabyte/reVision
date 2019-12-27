@@ -60,25 +60,25 @@ Scaling_Gizmo::Scaling_Gizmo(Engine& engine, LevelEditor_Module& editor) :
 	glVertexArrayVertexBuffer(m_axisVAO, 0, m_axisVBO, 0, sizeof(glm::vec3));
 }
 
-bool Scaling_Gizmo::checkMouseInput(const float&)
+bool Scaling_Gizmo::checkMouseInput(const float& /*unused*/)
 {
 	// See if the mouse intersects any entities.
 	checkMouseHover();
 	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(0))
 		return checkMousePress();
-	else {
+	
 		if (m_selectedAxes != NONE) {
 			m_selectedAxes = NONE;
 			return true; // block input as we just finished doing an action here
 		}
-	}
+	
 	return false;
 }
 
-void Scaling_Gizmo::render(const float&)
+void Scaling_Gizmo::render(const float& /*unused*/)
 {
 	// Safety check first
-	if (Asset::All_Ready(m_model, m_gizmoShader) && m_editor.getSelection().size()) {
+	if (Asset::All_Ready(m_model, m_gizmoShader) && (!m_editor.getSelection().empty())) {
 		// Set up state
 		m_editor.bindFBO();
 
@@ -87,9 +87,9 @@ void Scaling_Gizmo::render(const float&)
 		const auto& position = m_transform.m_position;
 		const auto& pMatrix = clientCamera->pMatrix;
 		const auto& vMatrix = clientCamera->vMatrix;
-		const auto trans = glm::translate(glm::mat4(1.0f), position);
-		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, clientCamera->EyePosition) * m_renderScale));
-		const auto aScale = glm::scale(glm::mat4(1.0f), glm::vec3(clientCamera->FarPlane * 2.0f));
+		const auto trans = glm::translate(glm::mat4(1.0F), position);
+		const auto mScale = glm::scale(glm::mat4(1.0F), glm::vec3(glm::distance(position, clientCamera->EyePosition) * m_renderScale));
+		const auto aScale = glm::scale(glm::mat4(1.0F), glm::vec3(clientCamera->FarPlane * 2.0F));
 
 		// Render Gizmo Model
 		m_model->bind();
@@ -102,19 +102,19 @@ void Scaling_Gizmo::render(const float&)
 		// Render Axis Lines
 		m_axisShader->bind();
 		glBindVertexArray(m_axisVAO);
-		if (m_selectedAxes & X_AXIS) {
+		if ((m_selectedAxes & X_AXIS) != 0U) {
 			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * aScale);
 			m_axisShader->setUniform(4, glm::vec3(1, 0, 0));
 			glDrawArrays(GL_LINES, 0, 2);
 		}
-		if (m_selectedAxes & Y_AXIS) {
-			const auto rot = glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0, 0, 1));
+		if ((m_selectedAxes & Y_AXIS) != 0U) {
+			const auto rot = glm::rotate(glm::mat4(1.0F), glm::radians(-90.0F), glm::vec3(0, 0, 1));
 			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * rot * aScale);
 			m_axisShader->setUniform(4, glm::vec3(0, 1, 0));
 			glDrawArrays(GL_LINES, 0, 2);
 		}
-		if (m_selectedAxes & Z_AXIS) {
-			const auto rot = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0, 1, 0));
+		if ((m_selectedAxes & Z_AXIS) != 0U) {
+			const auto rot = glm::rotate(glm::mat4(1.0F), glm::radians(90.0F), glm::vec3(0, 1, 0));
 			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * rot * aScale);
 			m_axisShader->setUniform(4, glm::vec3(0, 0, 1));
 			glDrawArrays(GL_LINES, 0, 2);
@@ -136,25 +136,29 @@ void Scaling_Gizmo::checkMouseHover()
 	const auto& position = m_transform.m_position;
 	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
 	const auto ray_origin = clientCamera->EyePosition;
-	const auto ray_nds = glm::vec2(2.0f * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
-	const auto ray_eye = glm::vec4(glm::vec2(clientCamera->pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
+	const auto ray_nds = glm::vec2(2.0F * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0F, 1.0F - (2.0F * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
+	const auto ray_eye = glm::vec4(glm::vec2(clientCamera->pMatrixInverse * glm::vec4(ray_nds, -1.0F, 1.0F)), -1.0F, 0.0F);
 	const auto ray_world = glm::normalize(glm::vec3(clientCamera->vMatrixInverse * ray_eye));
 
 	const auto scalingFactor = glm::distance(position, clientCamera->EyePosition) * m_renderScale;
-	const auto mMatrix = glm::translate(glm::mat4(1.0f), position);
-	glm::vec3 arrowAxes_min[3]{}, arrowAxes_max[3]{}, doubleAxes_min[3]{}, doubleAxes_max[3]{}, plane_normals[3]{};
+	const auto mMatrix = glm::translate(glm::mat4(1.0F), position);
+	glm::vec3 arrowAxes_min[3]{};
+	glm::vec3 arrowAxes_max[3]{};
+	glm::vec3 doubleAxes_min[3]{};
+	glm::vec3 doubleAxes_max[3]{};
+	glm::vec3 plane_normals[3]{};
 	arrowAxes_min[0] = glm::vec3(2, -0.5, -0.5) * scalingFactor;
 	arrowAxes_max[0] = glm::vec3(8, 0.5, 0.5) * scalingFactor;
 	arrowAxes_min[1] = glm::vec3(-0.5, 2, -0.5) * scalingFactor;
 	arrowAxes_max[1] = glm::vec3(0.5, 8, 0.5) * scalingFactor;
 	arrowAxes_min[2] = glm::vec3(-0.5, -0.5, 2) * scalingFactor;
 	arrowAxes_max[2] = glm::vec3(0.5, 0.5, 8) * scalingFactor;
-	doubleAxes_min[0] = glm::vec3(0.0f) * scalingFactor;
-	doubleAxes_max[0] = glm::vec3(2.0f, 2.0f, 0.5f) * scalingFactor;
-	doubleAxes_min[1] = glm::vec3(0.0f) * scalingFactor;
-	doubleAxes_max[1] = glm::vec3(2.0f, 0.5f, 2.0f) * scalingFactor;
-	doubleAxes_min[2] = glm::vec3(0.0f) * scalingFactor;
-	doubleAxes_max[2] = glm::vec3(0.5, 2.0f, 2.0f) * scalingFactor;
+	doubleAxes_min[0] = glm::vec3(0.0F) * scalingFactor;
+	doubleAxes_max[0] = glm::vec3(2.0F, 2.0F, 0.5F) * scalingFactor;
+	doubleAxes_min[1] = glm::vec3(0.0F) * scalingFactor;
+	doubleAxes_max[1] = glm::vec3(2.0F, 0.5F, 2.0F) * scalingFactor;
+	doubleAxes_min[2] = glm::vec3(0.0F) * scalingFactor;
+	doubleAxes_max[2] = glm::vec3(0.5, 2.0F, 2.0F) * scalingFactor;
 	plane_normals[0] = glm::vec3(0, 0, 1);
 	plane_normals[1] = glm::vec3(0, 1, 0);
 	plane_normals[2] = glm::vec3(1, 0, 0);
@@ -249,10 +253,10 @@ bool Scaling_Gizmo::checkMousePress()
 	}
 
 	// An axis is now selected, perform dragging operation
-	else {
+	
 		constexpr auto gridSnapValue = [](const float& value, const float& delta, const float& prevValue, const float& startingValue, const float& snapAmt) -> float {
 			const float scale = prevValue + (((value - delta) - startingValue) * 2.0f);
-			return snapAmt ? (float(int((scale + (snapAmt / 2.0F)) / snapAmt)) * snapAmt) : scale;
+			return snapAmt != 0.0f ? (float(int((scale + (snapAmt / 2.0F)) / snapAmt)) * snapAmt) : scale;
 		};
 		auto scale = m_prevScale;
 		if (m_selectedAxes == X_AXIS) {
@@ -274,23 +278,23 @@ bool Scaling_Gizmo::checkMousePress()
 			else
 				scale.z = gridSnapValue(m_hoveredEnds[2].z, m_axisDelta.z, m_prevScale.z, m_startingPosition.z, m_gridSnap);
 		}
-		else if ((m_selectedAxes & X_AXIS) && (m_selectedAxes & Y_AXIS)) {
+		else if (((m_selectedAxes & X_AXIS) != 0U) && ((m_selectedAxes & Y_AXIS) != 0U)) {
 			scale.x = gridSnapValue(m_hoveredEnds[0].x, m_axisDelta.x, m_prevScale.x, m_startingPosition.x, m_gridSnap);
 			scale.y = gridSnapValue(m_hoveredEnds[0].y, m_axisDelta.y, m_prevScale.y, m_startingPosition.y, m_gridSnap);
 		}
-		else if ((m_selectedAxes & X_AXIS) && (m_selectedAxes & Z_AXIS)) {
+		else if (((m_selectedAxes & X_AXIS) != 0U) && ((m_selectedAxes & Z_AXIS) != 0U)) {
 			scale.x = gridSnapValue(m_hoveredEnds[1].x, m_axisDelta.x, m_prevScale.x, m_startingPosition.x, m_gridSnap);
 			scale.z = gridSnapValue(m_hoveredEnds[1].z, m_axisDelta.z, m_prevScale.z, m_startingPosition.z, m_gridSnap);
 		}
-		else if ((m_selectedAxes & Y_AXIS) && (m_selectedAxes & Z_AXIS)) {
+		else if (((m_selectedAxes & Y_AXIS) != 0U) && ((m_selectedAxes & Z_AXIS) != 0U)) {
 			scale.y = gridSnapValue(m_hoveredEnds[2].y, m_axisDelta.y, m_prevScale.y, m_startingPosition.y, m_gridSnap);
 			scale.z = gridSnapValue(m_hoveredEnds[2].z, m_axisDelta.z, m_prevScale.z, m_startingPosition.z, m_gridSnap);
 		}
-		if (scale.x == 0.0f)
+		if (scale.x == 0.0F)
 			scale.x += 0.0001F;
-		if (scale.y == 0.0f)
+		if (scale.y == 0.0F)
 			scale.y += 0.0001F;
-		if (scale.z == 0.0f)
+		if (scale.z == 0.0F)
 			scale.z += 0.0001F;
 		m_transform.m_scale = scale;
 
@@ -305,7 +309,7 @@ bool Scaling_Gizmo::checkMousePress()
 			void scale(const glm::vec3& scale) {
 				const auto& ecsWorld = m_editor.getWorld();
 				std::vector<Transform_Component*> transformComponents;
-				glm::vec3 center(0.0f);
+				glm::vec3 center(0.0F);
 				for (const auto& entityHandle : m_uuids)
 					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
@@ -341,5 +345,5 @@ bool Scaling_Gizmo::checkMousePress()
 		};
 		m_editor.doReversableAction(std::make_shared<Scale_Selection_Command>(m_engine, m_editor, scale, m_selectedAxes));
 		return true;
-	}
+	
 }

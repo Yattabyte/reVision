@@ -9,7 +9,7 @@ Transform_System::Transform_System(Engine& engine) :
 	addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 }
 
-void Transform_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components)
+void Transform_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	// Reset the world transform to be the local transform of all components
 	for (const auto& componentParam : components) {

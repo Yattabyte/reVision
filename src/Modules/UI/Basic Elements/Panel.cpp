@@ -70,6 +70,6 @@ void Panel::updateGeometry()
 	data[4] = { -1,  1, 0 };
 	data[5] = { -1, -1, 0 };
 	for (int x = 0; x < 6; ++x)
-		data[x] *= glm::vec3(m_scale, 0.0f);
+		data[x] *= glm::vec3(m_scale, 0.0F);
 	glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &data[0]);
 }

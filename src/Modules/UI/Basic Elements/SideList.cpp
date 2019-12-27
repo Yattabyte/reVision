@@ -33,13 +33,13 @@ SideList::SideList(Engine& engine) :
 
 	// Make a background panel for cosmetic purposes
 	auto panel = std::make_shared<Panel>(engine);
-	panel->setColor(glm::vec4(0.3f));
+	panel->setColor(glm::vec4(0.3F));
 	m_backPanel = std::make_shared<Border>(engine, panel);
 	addElement(m_backPanel);
 
 	// Other UI elements
 	m_label->setAlignment(Label::Alignment::align_center);
-	m_label->setColor(glm::vec3(1.0f));
+	m_label->setColor(glm::vec3(1.0F));
 	addElement(m_label);
 
 	// Add Callbacks
@@ -125,7 +125,7 @@ void SideList::setIndex(const int& index)
 		m_label->setText(m_strings[m_index]);
 
 		m_lEnabled = (index > 0);
-		m_rEnabled = (index < static_cast<int>(m_strings.size() - 1ull));
+		m_rEnabled = (index < static_cast<int>(m_strings.size() - 1ULL));
 		enactCallback(static_cast<int>(SideList::Interact::on_index_changed));
 	}
 }
@@ -150,7 +150,7 @@ void SideList::updateGeometry()
 {
 	// Shorten the back panel by the width of the arrows
 	const float arrowHeight = m_scale.y;
-	m_backPanel->setScale(glm::vec2(getScale().x - (arrowHeight * 2.0f), getScale().y));
+	m_backPanel->setScale(glm::vec2(getScale().x - (arrowHeight * 2.0F), getScale().y));
 
 	// Adjust the size of the text font, ensuring it at least fits within bounds (automatic when setting scale)
 	m_label->setScale(m_backPanel->getScale());

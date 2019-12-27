@@ -17,12 +17,12 @@ ReflectorScheduler_System::ReflectorScheduler_System(Engine& engine, ReflectorDa
 	addComponentType(Reflector_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 
 	auto& preferences = engine.getPreferenceState();
-	m_maxReflectionCasters = 1u;
+	m_maxReflectionCasters = 1U;
 	preferences.getOrSetValue(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_maxReflectionCasters);
 	preferences.addCallback(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) noexcept { m_maxReflectionCasters = static_cast<unsigned int>(f); });
 }
 
-void ReflectorScheduler_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void ReflectorScheduler_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	// Maintain list of reflectors, update with oldest within range
 	// Technique will clear list when ready
@@ -31,7 +31,7 @@ void ReflectorScheduler_System::updateComponents(const float&, const std::vector
 	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
 	const auto& clientPosition = clientCamera->EyePosition;
 	const auto& clientFarPlane = clientCamera->FarPlane;
-	const auto clientTime = m_engine.GetSystemTime();
+	const auto clientTime = Engine::GetSystemTime();
 	if (const int availableRoom = static_cast<int>(m_maxReflectionCasters) - static_cast<int>(m_frameData.reflectorsToUpdate.size())) {
 		int cameraCount = 0;
 		for (const auto& componentParam : components) {

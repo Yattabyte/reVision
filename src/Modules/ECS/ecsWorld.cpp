@@ -20,7 +20,8 @@ ecsWorld::ecsWorld(const std::vector<char>& data)
 	if (!data.empty()) {
 		size_t dataRead(0ULL);
 		while (dataRead < data.size()) {
-			EntityHandle desiredHandle, parentHandle;
+			EntityHandle desiredHandle;
+			EntityHandle parentHandle;
 			deserializeEntity(data, data.size(), dataRead, desiredHandle, parentHandle);
 		}
 	}
@@ -269,7 +270,8 @@ void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle
 		return;
 
 	// Variables
-	auto parentEntity = getEntity(parentHandle), childEntity = getEntity(childHandle);
+	auto parentEntity = getEntity(parentHandle);
+	auto childEntity = getEntity(childHandle);
 	auto* root = &m_entities, * newRoot = parentEntity != nullptr ? &parentEntity->m_children : &m_entities;
 	Transform newParentTransform;
 	Transform oldParentTransform;
@@ -277,7 +279,7 @@ void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle
 	// Check for parent transformations
 	if (childEntity == nullptr)
 		return;
-	else
+	
 		if (childEntity->m_parent.isValid()) {
 			const auto& oldParentHandle = childEntity->m_parent;
 			if (auto oldParent = getEntity(oldParentHandle)) {

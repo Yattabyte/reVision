@@ -8,7 +8,7 @@ Shared_Asset AssetManager::shareAsset(const char* assetType, const std::string& 
 {
 	// Find out if the asset already exists
 	std::shared_lock<std::shared_mutex> asset_read_guard(m_mutexAssets);
-	for (const Shared_Asset asset : m_assetMap[assetType])
+	for (const auto& asset : m_assetMap[assetType])
 		if (asset->getFileName() == filename) {
 			asset_read_guard.unlock();
 			asset_read_guard.release();

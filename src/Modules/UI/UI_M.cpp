@@ -24,13 +24,13 @@ void UI_Module::initialize()
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.x = static_cast<int>(f);
 		calcOthoProj(m_renderSize, m_projectionBuffer);
-		for (auto element : m_rootElement)
+		for (const auto& element : m_rootElement)
 			element->setScale(m_renderSize);
 		});
 	preferences.addCallback(PreferenceState::Preference::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = static_cast<int>(f);
 		calcOthoProj(m_renderSize, m_projectionBuffer);
-		for (auto element : m_rootElement)
+		for (const auto& element : m_rootElement)
 			element->setScale(m_renderSize);
 		});
 	calcOthoProj(m_renderSize, m_projectionBuffer);

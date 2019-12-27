@@ -10,7 +10,7 @@ ReflectorSync_System::ReflectorSync_System(ReflectorData& frameData) :
 	addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 }
 
-void ReflectorSync_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components)
+void ReflectorSync_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	// Resize light buffers to match number of entities this frame
 	m_frameData.lightBuffer.resize(components.size());
@@ -25,12 +25,12 @@ void ReflectorSync_System::updateComponents(const float&, const std::vector<std:
 		const auto& scale = transformComponent->m_worldTransform.m_scale;
 		const auto& modelMatrix = transformComponent->m_worldTransform.m_modelMatrix;
 		const auto matRot = glm::mat4_cast(orientation);
-		const float largest = pow(std::max(std::max(scale.x, scale.y), scale.z), 2.0f);
+		const float largest = pow(std::max(std::max(scale.x, scale.y), scale.z), 2.0F);
 		m_frameData.lightBuffer[index].mMatrix = modelMatrix;
 		m_frameData.lightBuffer[index].rotMatrix = glm::inverse(matRot);
 		m_frameData.lightBuffer[index].BoxCamPos = position;
 		m_frameData.lightBuffer[index].BoxScale = scale;
-		const glm::mat4 pMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, largest);
+		const glm::mat4 pMatrix = glm::perspective(glm::radians(90.0F), 1.0F, 0.01F, largest);
 		const glm::mat4 pMatrixInverse = glm::inverse(pMatrix);
 		const glm::mat4 vMatrices[6] = {
 			glm::lookAt(position, position + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)),
@@ -45,7 +45,7 @@ void ReflectorSync_System::updateComponents(const float&, const std::vector<std:
 		for (int x = 0; x < 6; ++x) {
 			auto& camData = *reflectorComponent->m_cameras[x].get();
 			camData.Dimensions = m_frameData.envmapSize;
-			camData.FOV = 90.0f;
+			camData.FOV = 90.0F;
 			camData.FarPlane = largest;
 			camData.EyePosition = position;
 			camData.pMatrix = pMatrix;

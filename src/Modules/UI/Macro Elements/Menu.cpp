@@ -14,7 +14,7 @@ Menu::Menu(Engine& engine) :
 	addElement(m_backPanel);
 
 	// Make a vertical layout to house list items
-	m_layout->setSpacing(10.0f);
+	m_layout->setSpacing(10.0F);
 	m_layout->addCallback(static_cast<int>(List::Interact::on_selection), [&] {
 		const auto index = m_layout->getSelectionIndex();
 		if (index >= 0 && index < m_selectionCallbacks.size())
@@ -23,7 +23,7 @@ Menu::Menu(Engine& engine) :
 	m_backPanel->addElement(m_layout);
 
 	// Title
-	m_title->setTextScale(15.0f);
+	m_title->setTextScale(15.0F);
 	m_title->setAlignment(Label::Alignment::align_center);
 	m_title->setColor(glm::vec3(0.8, 0.6, 0.1));
 	m_backPanel->addElement(m_title);

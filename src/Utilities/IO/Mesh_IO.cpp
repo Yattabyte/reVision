@@ -188,7 +188,12 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 					}
 				};
 				//std::string albedo = "albedo.png", normal = "normal.png", metalness = "metalness.png", roughness = "roughness.png", height = "height.png", AO = "ao.png";
-				std::string albedo, normal, metalness, roughness, height, ao;
+				std::string albedo;
+				std::string normal;
+				std::string metalness;
+				std::string roughness;
+				std::string height;
+				std::string ao;
 				if (materialIndex >= 0) {
 					if (const auto* sceneMaterial = scene.mMaterials[materialIndex]) {
 						getTexture(*sceneMaterial, aiTextureType_DIFFUSE, albedo);
@@ -251,14 +256,14 @@ void VertexBoneData::Reset() noexcept
 {
 	for (auto i = 0; i < NUM_BONES_PER_VEREX; ++i) {
 		IDs[i] = 0;
-		Weights[i] = 0.0f;
+		Weights[i] = 0.0F;
 	}
 }
 
 void VertexBoneData::AddBoneData(const int& BoneID, const float& Weight) noexcept
 {
 	for (auto i = 0; i < NUM_BONES_PER_VEREX; ++i)
-		if (Weights[i] == 0.0f) {
+		if (Weights[i] == 0.0F) {
 			IDs[i] = BoneID;
 			Weights[i] = Weight;
 			return;

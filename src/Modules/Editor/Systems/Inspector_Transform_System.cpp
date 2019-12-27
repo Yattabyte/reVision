@@ -14,7 +14,7 @@ Inspector_Transform_System::Inspector_Transform_System(Engine& engine, LevelEdit
 	addComponentType(Transform_Component::Runtime_ID);
 }
 
-void Inspector_Transform_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void Inspector_Transform_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	ImGui::PushID(this);
 	const auto text = std::string(Transform_Component::Name) + ": (" + std::to_string(components.size()) + ")";
@@ -47,8 +47,8 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 					}
 				}
 				void setPosition(const std::vector<glm::vec3>& positions) {
-					if (positions.size()) {
-						size_t index(0ull);
+					if (!positions.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
 								component->m_localTransform.m_position = positions[index++];
@@ -97,7 +97,7 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 					}
 				}
 				void setOrientation(const std::vector<glm::quat>& orientations) {
-					size_t index(0ull);
+					size_t index(0ULL);
 					for (const auto& componentHandle : m_uuids) {
 						if (auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
 							component->m_localTransform.m_orientation = orientations[index++];
@@ -141,8 +141,8 @@ void Inspector_Transform_System::updateComponents(const float&, const std::vecto
 					}
 				}
 				void setScale(const std::vector<glm::vec3>& scales) {
-					if (scales.size()) {
-						size_t index(0ull);
+					if (!scales.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Transform_Component>(componentHandle)) {
 								component->m_localTransform.m_scale = scales[index++];

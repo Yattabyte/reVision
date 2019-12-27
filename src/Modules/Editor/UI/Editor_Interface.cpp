@@ -66,7 +66,7 @@ Editor_Interface::Editor_Interface(Engine& engine, LevelEditor_Module& editor) :
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 	io.ConfigDockingWithShift = true;
 	ImGuiStyle& style = ImGui::GetStyle();
-	style.FrameRounding = 6.0f;
+	style.FrameRounding = 6.0F;
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
@@ -96,9 +96,9 @@ void Editor_Interface::tick(const float& deltaTime)
 		ImGuiWindowFlags_NoDocking |
 		ImGuiWindowFlags_NoBackground;
 
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::SetNextWindowBgAlpha(0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0F);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0F, 0.0F));
+	ImGui::SetNextWindowBgAlpha(0.0F);
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Appearing);
 	ImGui::SetNextWindowSize(dockspace_size, ImGuiCond_Appearing);
 	ImGui::Begin("Docking Area A", nullptr, window_flags);
@@ -109,7 +109,7 @@ void Editor_Interface::tick(const float& deltaTime)
 		ImGui::DockBuilderSetNodeSize(dockspace_id_a, dockspace_size);
 
 		auto dock_id_top = dockspace_id_a;
-		const auto dock_id_bottom = ImGui::DockBuilderSplitNode(dock_id_top, ImGuiDir_Down, 0.50f, nullptr, &dock_id_top);
+		const auto dock_id_bottom = ImGui::DockBuilderSplitNode(dock_id_top, ImGuiDir_Down, 0.50F, nullptr, &dock_id_top);
 
 		ImGui::DockBuilderDockWindow("Prefabs", dock_id_top);
 		ImGui::DockBuilderDockWindow("Preferences", dock_id_bottom);
@@ -128,7 +128,7 @@ void Editor_Interface::tick(const float& deltaTime)
 		ImGui::DockBuilderSetNodeSize(dockspace_id_b, dockspace_size);
 
 		auto dock_id_top = dockspace_id_b;
-		const auto dock_id_bottom = ImGui::DockBuilderSplitNode(dock_id_top, ImGuiDir_Down, 0.50f, nullptr, &dock_id_top);
+		const auto dock_id_bottom = ImGui::DockBuilderSplitNode(dock_id_top, ImGuiDir_Down, 0.50F, nullptr, &dock_id_top);
 
 		ImGui::DockBuilderDockWindow("Scene Inspector", dock_id_top);
 		ImGui::DockBuilderDockWindow("Entity Inspector", dock_id_bottom);
@@ -161,6 +161,6 @@ void ImGUI_Element::close() noexcept
 	m_open = false;
 }
 
-void ImGUI_Element::tick(const float&)
+void ImGUI_Element::tick(const float& /*unused*/)
 {
 }

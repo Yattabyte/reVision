@@ -167,7 +167,7 @@ public:
 	/** Search for a component template with a matching class name.
 	@param	name				the component class name to search for.
 	@return						shared pointer to the a new component with a matching class name if successful, nullptr otherwise. */
-	[[nodiscard]] std::shared_ptr<ecsBaseComponent> makeComponentType(const char* name);
+	[[nodiscard]] static std::shared_ptr<ecsBaseComponent> makeComponentType(const char* name);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */

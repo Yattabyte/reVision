@@ -15,14 +15,14 @@ ActionState::State ActionState::isAction(const ActionState::Action& actionEnum)
 {
 	if (m_keyStates.find(actionEnum) != m_keyStates.end()) {
 		auto& [state, amount] = m_keyStates[actionEnum];
-		if (m_keyStates.at(actionEnum).second > 0.5f) {
+		if (m_keyStates.at(actionEnum).second > 0.5F) {
 			if (!state) {
 				state = true;
 				return ActionState::State::PRESS;
 			}
 			return ActionState::State::REPEAT;
 		}
-		else
+		
 			state = false;
 	}
 	return ActionState::State::RELEASE;

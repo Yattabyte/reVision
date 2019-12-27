@@ -60,25 +60,25 @@ Translation_Gizmo::Translation_Gizmo(Engine& engine, LevelEditor_Module& editor)
 	glVertexArrayVertexBuffer(m_axisVAO, 0, m_axisVBO, 0, sizeof(glm::vec3));
 }
 
-bool Translation_Gizmo::checkMouseInput(const float&)
+bool Translation_Gizmo::checkMouseInput(const float& /*unused*/)
 {
 	// See if the mouse intersects any entities.
 	checkMouseHover();
 	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(0))
 		return checkMousePress();
-	else {
+	
 		if (m_selectedAxes != NONE) {
 			m_selectedAxes = NONE;
 			return true; // block input as we just finished doing an action here
 		}
-	}
+	
 	return false;
 }
 
-void Translation_Gizmo::render(const float&)
+void Translation_Gizmo::render(const float& /*unused*/)
 {
 	// Safety check first
-	if (Asset::All_Ready(m_model, m_gizmoShader) && m_editor.getSelection().size()) {
+	if (Asset::All_Ready(m_model, m_gizmoShader) && (!m_editor.getSelection().empty())) {
 		// Set up state
 		m_editor.bindFBO();
 
@@ -87,9 +87,9 @@ void Translation_Gizmo::render(const float&)
 		const auto& position = m_transform.m_position;
 		const auto& pMatrix = clientCamera->pMatrix;
 		const auto& vMatrix = clientCamera->vMatrix;
-		const auto trans = glm::translate(glm::mat4(1.0f), position);
-		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, clientCamera->EyePosition) * m_renderScale));
-		const auto aScale = glm::scale(glm::mat4(1.0f), glm::vec3(clientCamera->FarPlane * 2.0f));
+		const auto trans = glm::translate(glm::mat4(1.0F), position);
+		const auto mScale = glm::scale(glm::mat4(1.0F), glm::vec3(glm::distance(position, clientCamera->EyePosition) * m_renderScale));
+		const auto aScale = glm::scale(glm::mat4(1.0F), glm::vec3(clientCamera->FarPlane * 2.0F));
 
 		// Render Gizmo Model
 		m_model->bind();
@@ -102,19 +102,19 @@ void Translation_Gizmo::render(const float&)
 		// Render Axis Lines
 		m_axisShader->bind();
 		glBindVertexArray(m_axisVAO);
-		if (m_selectedAxes & X_AXIS) {
+		if ((m_selectedAxes & X_AXIS) != 0U) {
 			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * aScale);
 			m_axisShader->setUniform(4, glm::vec3(1, 0, 0));
 			glDrawArrays(GL_LINES, 0, 2);
 		}
-		if (m_selectedAxes & Y_AXIS) {
-			const auto rot = glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0, 0, 1));
+		if ((m_selectedAxes & Y_AXIS) != 0U) {
+			const auto rot = glm::rotate(glm::mat4(1.0F), glm::radians(-90.0F), glm::vec3(0, 0, 1));
 			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * rot * aScale);
 			m_axisShader->setUniform(4, glm::vec3(0, 1, 0));
 			glDrawArrays(GL_LINES, 0, 2);
 		}
-		if (m_selectedAxes & Z_AXIS) {
-			const auto rot = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0, 1, 0));
+		if ((m_selectedAxes & Z_AXIS) != 0U) {
+			const auto rot = glm::rotate(glm::mat4(1.0F), glm::radians(90.0F), glm::vec3(0, 1, 0));
 			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * rot * aScale);
 			m_axisShader->setUniform(4, glm::vec3(0, 0, 1));
 			glDrawArrays(GL_LINES, 0, 2);
@@ -136,25 +136,29 @@ void Translation_Gizmo::checkMouseHover()
 	const auto& position = m_transform.m_position;
 	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
 	const auto ray_origin = clientCamera->EyePosition;
-	const auto ray_nds = glm::vec2(2.0f * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
-	const auto ray_eye = glm::vec4(glm::vec2(clientCamera->pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
+	const auto ray_nds = glm::vec2(2.0F * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0F, 1.0F - (2.0F * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
+	const auto ray_eye = glm::vec4(glm::vec2(clientCamera->pMatrixInverse * glm::vec4(ray_nds, -1.0F, 1.0F)), -1.0F, 0.0F);
 	const auto ray_world = glm::normalize(glm::vec3(clientCamera->vMatrixInverse * ray_eye));
 
 	const auto scalingFactor = m_direction * glm::distance(position, m_engine.getModule_Graphics().getClientCamera()->EyePosition) * m_renderScale;
-	const auto mMatrix = glm::translate(glm::mat4(1.0f), position);
-	glm::vec3 arrowAxes_min[3]{}, arrowAxes_max[3]{}, doubleAxes_min[3]{}, doubleAxes_max[3]{}, plane_normals[3]{};
+	const auto mMatrix = glm::translate(glm::mat4(1.0F), position);
+	glm::vec3 arrowAxes_min[3]{};
+	glm::vec3 arrowAxes_max[3]{};
+	glm::vec3 doubleAxes_min[3]{};
+	glm::vec3 doubleAxes_max[3]{};
+	glm::vec3 plane_normals[3]{};
 	arrowAxes_min[0] = glm::vec3(2, -0.5, -0.5) * scalingFactor;
 	arrowAxes_max[0] = glm::vec3(8, 0.5, 0.5) * scalingFactor;
 	arrowAxes_min[1] = glm::vec3(-0.5, 2, -0.5) * scalingFactor;
 	arrowAxes_max[1] = glm::vec3(0.5, 8, 0.5) * scalingFactor;
 	arrowAxes_min[2] = glm::vec3(-0.5, -0.5, 2) * scalingFactor;
 	arrowAxes_max[2] = glm::vec3(0.5, 0.5, 8) * scalingFactor;
-	doubleAxes_min[0] = glm::vec3(0.0f) * scalingFactor;
-	doubleAxes_max[0] = glm::vec3(2.0f, 2.0f, 0.5f) * scalingFactor;
-	doubleAxes_min[1] = glm::vec3(0.0f) * scalingFactor;
-	doubleAxes_max[1] = glm::vec3(2.0f, 0.5f, 2.0f) * scalingFactor;
-	doubleAxes_min[2] = glm::vec3(0.0f) * scalingFactor;
-	doubleAxes_max[2] = glm::vec3(0.5, 2.0f, 2.0f) * scalingFactor;
+	doubleAxes_min[0] = glm::vec3(0.0F) * scalingFactor;
+	doubleAxes_max[0] = glm::vec3(2.0F, 2.0F, 0.5F) * scalingFactor;
+	doubleAxes_min[1] = glm::vec3(0.0F) * scalingFactor;
+	doubleAxes_max[1] = glm::vec3(2.0F, 0.5F, 2.0F) * scalingFactor;
+	doubleAxes_min[2] = glm::vec3(0.0F) * scalingFactor;
+	doubleAxes_max[2] = glm::vec3(0.5, 2.0F, 2.0F) * scalingFactor;
 	plane_normals[0] = glm::vec3(0, 0, 1) * m_direction; // XY
 	plane_normals[1] = glm::vec3(0, 1, 0) * m_direction; // XZ
 	plane_normals[2] = glm::vec3(1, 0, 0) * m_direction; // YZ
@@ -247,10 +251,10 @@ bool Translation_Gizmo::checkMousePress()
 	}
 
 	// An axis is now selected, perform dragging operation
-	else if ((m_selectedAxes != NONE) && ImGui::IsMouseDragging(0)) {
+	if ((m_selectedAxes != NONE) && ImGui::IsMouseDragging(0)) {
 		constexpr auto gridSnapValue = [](const float& value, const float& delta, const float& snapAmt) -> float {
 			const float position = value - delta;
-			return snapAmt ? (float(int((position + (snapAmt / 2.0F)) / snapAmt)) * snapAmt) : position;
+			return snapAmt != 0.0f ? (float(int((position + (snapAmt / 2.0F)) / snapAmt)) * snapAmt) : position;
 		};
 
 		auto position = m_startingOffset;
@@ -273,15 +277,15 @@ bool Translation_Gizmo::checkMousePress()
 			else
 				position.z = gridSnapValue(m_hoveredEnds[2].z, m_axisDelta.z, m_gridSnap);
 		}
-		else if ((m_selectedAxes & X_AXIS) && (m_selectedAxes & Y_AXIS)) {
+		else if (((m_selectedAxes & X_AXIS) != 0U) && ((m_selectedAxes & Y_AXIS) != 0U)) {
 			position.x = gridSnapValue(m_hoveredEnds[0].x, m_axisDelta.x, m_gridSnap);
 			position.y = gridSnapValue(m_hoveredEnds[0].y, m_axisDelta.y, m_gridSnap);
 		}
-		else if ((m_selectedAxes & X_AXIS) && (m_selectedAxes & Z_AXIS)) {
+		else if (((m_selectedAxes & X_AXIS) != 0U) && ((m_selectedAxes & Z_AXIS) != 0U)) {
 			position.x = gridSnapValue(m_hoveredEnds[1].x, m_axisDelta.x, m_gridSnap);
 			position.z = gridSnapValue(m_hoveredEnds[1].z, m_axisDelta.z, m_gridSnap);
 		}
-		else if ((m_selectedAxes & Y_AXIS) && (m_selectedAxes & Z_AXIS)) {
+		else if (((m_selectedAxes & Y_AXIS) != 0U) && ((m_selectedAxes & Z_AXIS) != 0U)) {
 			position.y = gridSnapValue(m_hoveredEnds[2].y, m_axisDelta.y, m_gridSnap);
 			position.z = gridSnapValue(m_hoveredEnds[2].z, m_axisDelta.z, m_gridSnap);
 		}
@@ -301,7 +305,7 @@ bool Translation_Gizmo::checkMousePress()
 			void move(const glm::vec3& position) {
 				const auto& ecsWorld = m_editor.getWorld();
 				std::vector<Transform_Component*> transformComponents;
-				glm::vec3 center(0.0f);
+				glm::vec3 center(0.0F);
 				for (const auto& entityHandle : m_uuids)
 					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);

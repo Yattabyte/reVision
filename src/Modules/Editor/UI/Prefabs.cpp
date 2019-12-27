@@ -24,7 +24,7 @@ Prefabs::Prefabs(Engine& engine, LevelEditor_Module& editor) :
 	m_texFolder(engine, "Editor//folder.png"),
 	m_texMissingThumb(engine, "Editor//prefab.png"),
 	m_texIconRefresh(engine, "Editor//iconRefresh.png"),
-	m_viewport(glm::vec2(0.0f), glm::vec2(static_cast<float>(m_thumbSize)), engine)
+	m_viewport(glm::vec2(0.0F), glm::vec2(static_cast<float>(m_thumbSize)), engine)
 {
 	m_open = true;
 
@@ -50,7 +50,7 @@ void Prefabs::tick(const float& deltaTime)
 
 void Prefabs::addPrefab(Prefabs::Entry& prefab)
 {
-	glm::vec3 center(0.0f);
+	glm::vec3 center(0.0F);
 	std::vector<Transform_Component*> transformComponents;
 	for (const auto& entityHandle : prefab.entityHandles) {
 		if (auto* transform = m_previewWorld.getComponent<Transform_Component>(entityHandle)) {
@@ -60,8 +60,8 @@ void Prefabs::addPrefab(Prefabs::Entry& prefab)
 	}
 
 	// Move the entities in this prefab by 500 units on each axis
-	const auto cursorPos = glm::vec3(m_prefabs.size() * 1000.0f * glm::vec3(0, -1, 0));
-	if (transformComponents.size()) {
+	const auto cursorPos = glm::vec3(m_prefabs.size() * 1000.0F * glm::vec3(0, -1, 0));
+	if (!transformComponents.empty()) {
 		center /= transformComponents.size();
 		for (auto* transform : transformComponents) {
 			transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + cursorPos;
@@ -73,13 +73,13 @@ void Prefabs::addPrefab(Prefabs::Entry& prefab)
 	// Create the camera and move it to where the entity is located
 	Camera camera;
 	camera->Dimensions = glm::vec2(static_cast<float>(m_thumbSize));
-	camera->FarPlane = 250.0f;
+	camera->FarPlane = 250.0F;
 	camera->FOV = 90.0F;
-	camera->vMatrix = glm::translate(glm::mat4(1.0f), cursorPos);
+	camera->vMatrix = glm::translate(glm::mat4(1.0F), cursorPos);
 	camera->vMatrixInverse = glm::inverse(camera->vMatrix);
-	camera->EyePosition = glm::vec3(0, 0, -25.0f);
-	const float verticalRad = 2.0f * atanf(tanf(glm::radians(90.0f) / 2.0f) / 1.0F);
-	camera->pMatrix = glm::perspective(verticalRad, 1.0f, Camera::ConstNearPlane, camera->FarPlane);
+	camera->EyePosition = glm::vec3(0, 0, -25.0F);
+	const float verticalRad = 2.0F * atanf(tanf(glm::radians(90.0F) / 2.0F) / 1.0F);
+	camera->pMatrix = glm::perspective(verticalRad, 1.0F, Camera::ConstNearPlane, camera->FarPlane);
 	camera->pMatrixInverse = glm::inverse(camera->pMatrix);
 	camera->pvMatrix = camera->pMatrix * camera->vMatrix;
 	m_prefabCameras.push_back(camera);
@@ -97,9 +97,10 @@ void Prefabs::addPrefab(const std::vector<char>& entityData)
 {
 	Prefabs::Entry newPrefab = { "New Entity", m_prefabSubDirectory + "\\New Entity", Entry::Type::FILE };
 
-	size_t dataRead(0ull);
+	size_t dataRead(0ULL);
 	while(dataRead < entityData.size()) {
-		EntityHandle newPrefabHandle, parentHandle;
+		EntityHandle newPrefabHandle;
+		EntityHandle parentHandle;
 		m_previewWorld.deserializeEntity(entityData, entityData.size(), dataRead, newPrefabHandle, parentHandle);
 		newPrefab.entityHandles.push_back(newPrefabHandle);
 	}
@@ -131,23 +132,24 @@ void Prefabs::populatePrefabs(const std::string& directory)
 	const auto path = std::filesystem::path(rootPath + directory);
 
 	// Add an entry to go back a folder
-	if (directory != "" && directory != "." && directory != "..")
+	if (!directory.empty() && directory != "." && directory != "..")
 		m_prefabs.emplace_back(Entry{ "back", std::filesystem::relative(path.parent_path(), rootPath).string(), Entry::Type::BACK, {} });
 
 
 	// If in the root folder, add hard-coded prefab entries
-	if (directory == "" || directory == ".") {
+	if (directory.empty() || directory == ".") {
 		// Basic Model Prefab
 		{
 			Transform_Component a;
 			BoundingBox_Component b;
 			Prop_Component c;
-			a.m_localTransform.m_scale = glm::vec3(15.0f);
+			a.m_localTransform.m_scale = glm::vec3(15.0F);
 			a.m_localTransform.update();
 			c.m_modelName = "FireHydrant\\FireHydrantMesh.obj";
 			const ecsBaseComponent* const entityComponents[] = { &a, &b, &c };
-			EntityHandle entityHandle, parentHandle;
-			m_previewWorld.makeEntity(entityComponents, 3ull, "Basic Model", entityHandle, parentHandle);
+			EntityHandle entityHandle;
+			EntityHandle parentHandle;
+			m_previewWorld.makeEntity(entityComponents, 3ULL, "Basic Model", entityHandle, parentHandle);
 			Prefabs::Entry entry{ "Basic Model", "", Entry::Type::FILE, {entityHandle} };
 			addPrefab(entry);
 		}
@@ -192,9 +194,10 @@ void Prefabs::populatePrefabs(const std::string& directory)
 				const auto size = std::filesystem::file_size(entry);
 				std::vector<char> data(size);
 				prefabFile.read(&data[0], static_cast<std::streamsize>(size));
-				size_t dataRead(0ull);
+				size_t dataRead(0ULL);
 				while(dataRead < data.size()) {
-					EntityHandle newPrefabHandle, parentHandle;
+					EntityHandle newPrefabHandle;
+					EntityHandle parentHandle;
 					m_previewWorld.deserializeEntity(data, size, dataRead, newPrefabHandle, parentHandle);
 					newPrefab.entityHandles.push_back(newPrefabHandle);
 				}
@@ -212,12 +215,12 @@ void Prefabs::populatePrefabs(const std::string& directory)
 		Light_Component b;
 		b.m_type = Light_Component::Light_Type::DIRECTIONAL;
 		b.m_color = glm::vec3(1.0, 0.9, 0.8);
-		b.m_intensity = 10.0f;
-		b.m_radius = 1000.0f;
-		b.m_cutoff = 180.0f;
+		b.m_intensity = 10.0F;
+		b.m_radius = 1000.0F;
+		b.m_cutoff = 180.0F;
 		const ecsBaseComponent* const entityComponents[] = { &a, &b };
 		EntityHandle parentHandle;
-		m_previewWorld.makeEntity(entityComponents, 2ull, "Preview Sun", m_sunHandle, parentHandle);
+		m_previewWorld.makeEntity(entityComponents, 2ULL, "Preview Sun", m_sunHandle, parentHandle);
 	}
 }
 
@@ -239,14 +242,15 @@ void Prefabs::tickThumbnails(const float& deltaTime)
 	const auto rotation = glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->vMatrix);
 	const auto rotMat = glm::mat4_cast(rotation);
 	auto& trans = *m_previewWorld.getComponent<Transform_Component>(m_sunHandle);
-	trans.m_localTransform.m_orientation = glm::inverse(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(45.0f), glm::vec3(1, 0, 0)) * rotation);
+	trans.m_localTransform.m_orientation = glm::inverse(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(45.0F), glm::vec3(1, 0, 0)) * rotation);
 	trans.m_localTransform.update();
 
 	int count(0);
 	for (auto& prefab : m_prefabs) {
-		glm::vec3 minExtents(FLT_MAX), maxExtents(FLT_MIN);
+		glm::vec3 minExtents(FLT_MAX);
+		glm::vec3 maxExtents(FLT_MIN);
 		for (const auto& entityHandle : prefab.entityHandles) {
-			glm::vec3 scale(1.0f);
+			glm::vec3 scale(1.0F);
 			if (auto* transComponent = m_previewWorld.getComponent<Transform_Component>(entityHandle))
 				scale = transComponent->m_worldTransform.m_scale;
 			if (auto* prop = m_previewWorld.getComponent<Prop_Component>(entityHandle))
@@ -255,18 +259,19 @@ void Prefabs::tickThumbnails(const float& deltaTime)
 					maxExtents = glm::max(maxExtents, prop->m_model->m_bboxMax * scale);
 				}
 		}
-		const auto extents = (maxExtents - minExtents) / 2.0f, center = ((maxExtents - minExtents) / 2.0f) + minExtents;
+		const auto extents = (maxExtents - minExtents) / 2.0F;
+		const auto center = ((maxExtents - minExtents) / 2.0F) + minExtents;
 
 		auto& camera = m_prefabCameras[count];
 		const auto objectSize = glm::compMax(extents);
-		const auto cameraView = 2.0f * tanf(0.5f * glm::radians(90.0f)); // Visible height 1 meter in front
-		auto distance = 3.0f * objectSize / cameraView; // Combined wanted distance from the object
-		distance += 0.5f * objectSize; // Estimated offset from the center to the outside of the object
+		const auto cameraView = 2.0F * tanf(0.5F * glm::radians(90.0F)); // Visible height 1 meter in front
+		auto distance = 3.0F * objectSize / cameraView; // Combined wanted distance from the object
+		distance += 0.5F * objectSize; // Estimated offset from the center to the outside of the object
 		// Rotate distance based on editor camera rotation
 		const auto rotatedPosition = glm::inverse(rotMat) * glm::vec4(0, 0, distance, 1);
 		const auto newPosition = prefab.spawnPoint + center + glm::vec3(rotatedPosition);
 		camera->EyePosition = newPosition;
-		camera->vMatrix = rotMat * glm::translate(glm::mat4(1.0f), -glm::vec3(newPosition));
+		camera->vMatrix = rotMat * glm::translate(glm::mat4(1.0F), -glm::vec3(newPosition));
 		camera->vMatrixInverse = glm::inverse(camera->vMatrix);
 		camera->pvMatrix = camera->pMatrix * camera->vMatrix;
 		count++;
@@ -285,7 +290,7 @@ void Prefabs::tickThumbnails(const float& deltaTime)
 		glCopyImageSubData(m_viewport.m_gfxFBOS.getTexID("FXAA", 0), GL_TEXTURE_2D_ARRAY, 0, 0, 0, count++, prefab.texID, GL_TEXTURE_2D, 0, 0, 0, 0, m_thumbSize, m_thumbSize, 1);
 }
 
-void Prefabs::tickWindow(const float&)
+void Prefabs::tickWindow(const float& /*unused*/)
 {
 	enum class PrefabOptions {
 		NONE,
@@ -298,12 +303,12 @@ void Prefabs::tickWindow(const float&)
 	if (ImGui::Begin("Prefabs", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
 		// Draw a search box with a refresh button
 		static ImGuiTextFilter filter;
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0F);
 		filter.Draw("Search");
-		auto alignOffset = ImGui::GetWindowContentRegionMax().x - 19.0f;
-		alignOffset = alignOffset < 0.0f ? 0.0f : alignOffset;
+		auto alignOffset = ImGui::GetWindowContentRegionMax().x - 19.0F;
+		alignOffset = alignOffset < 0.0F ? 0.0F : alignOffset;
 		ImGui::SameLine(alignOffset);
-		if (ImGui::ImageButton((ImTextureID)static_cast<uintptr_t>(m_texIconRefresh->ready() ? m_texIconRefresh->m_glTexID : 0), { 15, 15 }, { 0.0f, 1.0f }, { 1.0f, 0.0f }))
+		if (ImGui::ImageButton((ImTextureID)static_cast<uintptr_t>(m_texIconRefresh->ready() ? m_texIconRefresh->m_glTexID : 0), { 15, 15 }, { 0.0F, 1.0F }, { 1.0F, 0.0F }))
 			populatePrefabs(m_prefabSubDirectory);
 		ImGui::PopStyleVar();
 		ImGui::Separator();
@@ -333,7 +338,7 @@ void Prefabs::tickWindow(const float&)
 				ImGui::ImageButton(
 					(ImTextureID)static_cast<uintptr_t>(textureID),
 					ImVec2(50, 50),
-					{ 0.0f, 1.0f }, { 1.0f, 0.0f },
+					{ 0.0F, 1.0F }, { 1.0F, 0.0F },
 					-1,
 					color
 				);
@@ -359,7 +364,7 @@ void Prefabs::tickWindow(const float&)
 					ImGui::ImageButton(
 						(ImTextureID)static_cast<uintptr_t>(textureID),
 						ImVec2(static_cast<float>(m_thumbSize), static_cast<float>(m_thumbSize)),
-						{ 0.0f, 1.0f }, { 1.0f, 0.0f },
+						{ 0.0F, 1.0F }, { 1.0F, 0.0F },
 						0,
 						color
 					);
@@ -387,7 +392,7 @@ void Prefabs::tickWindow(const float&)
 	}
 }
 
-void Prefabs::tickPopupDialogues(const float&)
+void Prefabs::tickPopupDialogues(const float& /*unused*/)
 {
 	// Draw 'Delete Prefab' confirmation
 	ImGui::SetNextWindowSize({ 350, 90 }, ImGuiCond_Appearing);
@@ -397,12 +402,12 @@ void Prefabs::tickPopupDialogues(const float&)
 			"This won't remove the prefab from any levels."
 		);
 		ImGui::Spacing();
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(0, 0.6f, 0.6f)));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(0, 0.7f, 0.7f)));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(0, 0.8f, 0.8f)));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(0, 0.6F, 0.6F)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(0, 0.7F, 0.7F)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(0, 0.8F, 0.8F)));
 		if (ImGui::Button("Delete", { 50, 20 })) {
 			const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path);
-			if (m_prefabs[m_selectedIndex].path.size()) {
+			if (!m_prefabs[m_selectedIndex].path.empty()) {
 				std::filesystem::remove(fullPath);
 				populatePrefabs(m_prefabSubDirectory);
 			}
@@ -428,7 +433,7 @@ void Prefabs::tickPopupDialogues(const float&)
 		const auto nameLength = m_prefabs[m_selectedIndex].name.length();
 		for (size_t x = 0; x < nameLength && x < IM_ARRAYSIZE(nameInput); ++x)
 			nameInput[x] = m_prefabs[m_selectedIndex].name[x];
-		nameInput[std::min(256ull, m_prefabs[m_selectedIndex].name.length())] = '\0';
+		nameInput[std::min(256ULL, m_prefabs[m_selectedIndex].name.length())] = '\0';
 		if (ImGui::IsAnyWindowFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
 			ImGui::SetKeyboardFocusHere(0);
 		if (ImGui::InputText("", nameInput, IM_ARRAYSIZE(nameInput), ImGuiInputTextFlags_EnterReturnsTrue)) {

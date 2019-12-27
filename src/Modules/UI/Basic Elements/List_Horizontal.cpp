@@ -35,7 +35,7 @@ List_Horizontal::List_Horizontal(Engine& engine) :
 void List_Horizontal::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
 {
 	// Exit Early
-	if (!getVisible() || !m_children.size() || !m_shader->ready())
+	if (!getVisible() || m_children.empty() || !m_shader->ready())
 		return;
 
 	// Render
@@ -79,12 +79,12 @@ void List_Horizontal::mouseAction(const MouseEvent& mouseEvent)
 					setSelectionIndex(index); // Set selected item to whatever is beneath mouse
 				break;
 			}
-			else
+			
 				index++;
 		}
 
 		// Force current selection to stay highlighted
-		if (m_children.size() && m_hoverIndex > -1)
+		if (!m_children.empty() && m_hoverIndex > -1)
 			m_children[m_hoverIndex]->setHovered();
 	}
 }
@@ -93,20 +93,20 @@ void List_Horizontal::userAction(ActionState& actionState)
 {
 	// User can go up or down the list_Horizontal with an input device
 	// User input wraps around, and if an item is selected, moving will deselect it
-	if (m_children.size()) {
+	if (!m_children.empty()) {
 		// Allow selected child to receive input first
 		if (m_selectionIndex >= 0 && m_selectionIndex < m_children.size())
 			m_focusMap.applyActionState(actionState);
 
 		// After, process remaining input for the list_Horizontal
 		if (actionState.isAction(ActionState::Action::UI_UP) == ActionState::State::PRESS) {
-			setHoverIndex(int(size_t(m_hoverIndex) - 1) < 0 ? static_cast<int>(m_children.size() - 1ull) : int(size_t(m_hoverIndex) - 1));
+			setHoverIndex(int(size_t(m_hoverIndex) - 1) < 0 ? static_cast<int>(m_children.size() - 1ULL) : int(size_t(m_hoverIndex) - 1));
 
 			if (m_selectionIndex != -1)
 				setSelectionIndex(-1);
 		}
 		else if (actionState.isAction(ActionState::Action::UI_DOWN) == ActionState::State::PRESS) {
-			setHoverIndex(int(size_t(m_hoverIndex) + 1) > m_children.size() - 1ull ? 0 : int(size_t(m_hoverIndex) + 1));
+			setHoverIndex(int(size_t(m_hoverIndex) + 1) > m_children.size() - 1ULL ? 0 : int(size_t(m_hoverIndex) + 1));
 
 			if (m_selectionIndex != -1)
 				setSelectionIndex(-1);
@@ -122,7 +122,7 @@ void List_Horizontal::setHoverIndex(const int& newIndex)
 {
 	m_hoverIndex = newIndex;
 	const auto childrenCount = m_children.size();
-	if (childrenCount) {
+	if (childrenCount != 0U) {
 		for (auto& child : m_children)
 			child->clearFocus();
 		if (m_hoverIndex > -1 && m_hoverIndex < childrenCount)
@@ -195,18 +195,18 @@ void List_Horizontal::alignChildren()
 		const float size = m_children[x]->getScale().x;
 		m_children[x]->setScale(glm::vec2(size, m_scale.y - m_margin));
 		if (m_children.size() == 1) {
-			m_children[x]->setPosition(glm::vec2(0.0f));
+			m_children[x]->setPosition(glm::vec2(0.0F));
 			continue;
 		}
 		positionFromLeft += size;
 		m_children[x]->setPosition(glm::vec2(positionFromLeft, 0));
-		positionFromLeft += size + (m_spacing * 2.0f);
+		positionFromLeft += size + (m_spacing * 2.0F);
 	}
 }
 
 void List_Horizontal::updateSelectionGeometry() 
 {
-	if (m_children.size() < 1) return;
+	if (m_children.empty()) return;
 	constexpr auto num_data = 8 * 6;
 	std::vector<glm::vec3> m_data(num_data);
 

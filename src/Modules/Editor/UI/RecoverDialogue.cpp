@@ -10,7 +10,7 @@ RecoverDialogue::RecoverDialogue(Engine& engine, LevelEditor_Module& editor) noe
 	m_open = false;
 }
 
-void RecoverDialogue::tick(const float&)
+void RecoverDialogue::tick(const float& /*deltaTime*/)
 {
 	tickMainDialogue();
 }
@@ -35,9 +35,9 @@ void RecoverDialogue::tickMainDialogue()
 			ImGui::Spacing();
 
 			// Display an open button
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f)));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f)));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f)));
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(2.0F / 7.0F, 0.6F, 0.6F)));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(2.0F / 7.0F, 0.7F, 0.7F)));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(2.0F / 7.0F, 0.8F, 0.8F)));
 			if (ImGui::Button("Open", { 75, 20 })) {
 				const auto relative = std::filesystem::relative(m_recoveredPath, Engine::Get_Current_Dir() + "\\Maps\\").filename().string();
 				m_editor.openLevel(relative);
@@ -47,7 +47,7 @@ void RecoverDialogue::tickMainDialogue()
 			ImGui::PopStyleColor(3);
 
 			// Display a cancel button
-			ImGui::SameLine(175.5f);
+			ImGui::SameLine(175.5F);
 			if (ImGui::Button("Cancel", { 100, 20 })) {
 				ImGui::CloseCurrentPopup();
 				m_open = false;
@@ -56,9 +56,9 @@ void RecoverDialogue::tickMainDialogue()
 
 			// Display a delete button
 			ImGui::SameLine(368);
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(0, 0.6f, 0.6f)));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(0, 0.7f, 0.7f)));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(0, 0.8f, 0.8f)));
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(0, 0.6F, 0.6F)));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(0, 0.7F, 0.7F)));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(0, 0.8F, 0.8F)));
 			if (ImGui::Button("Delete", { 75, 20 }))
 				ImGui::OpenPopup("Confirm Delete");
 			ImGui::PopStyleColor(3);
@@ -75,9 +75,9 @@ void RecoverDialogue::tickDeleteDialogue()
 	if (ImGui::BeginPopupModal("Confirm Delete", &openDelete, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 		ImGui::TextWrapped("Are you sure you want to delete this item?\r\nThis action is irreversible.\r\n");
 		ImGui::Spacing(); ImGui::Spacing();
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(0, 0.6f, 0.6f)));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(0, 0.7f, 0.7f)));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(0, 0.8f, 0.8f)));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(0, 0.6F, 0.6F)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(0, 0.7F, 0.7F)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(0, 0.8F, 0.8F)));
 		if (ImGui::Button("Delete", { 75, 20 })) {
 			std::error_code ec;
 			std::filesystem::remove_all(m_recoveredPath, ec);

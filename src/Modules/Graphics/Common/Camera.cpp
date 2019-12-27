@@ -13,7 +13,7 @@ bool Camera::getEnabled() const noexcept
 
 void Camera::updateFrustum() 
 {
-	glm::vec4 posB = m_localData.vMatrixInverse * glm::vec4(0, 0, -m_localData.FarPlane / 2.0f, 1.0f);
+	glm::vec4 posB = m_localData.vMatrixInverse * glm::vec4(0, 0, -m_localData.FarPlane / 2.0F, 1.0F);
 	posB /= posB.w;
 	m_frustumCenter = glm::vec3(posB) + m_localData.EyePosition;
 }

@@ -9,12 +9,12 @@ ecsHandle::ecsHandle(const char id[32])
 
 bool ecsHandle::operator==(const ecsHandle& other) const noexcept
 {
-	return bool(std::strncmp(m_uuid, other.m_uuid, 32ull) == 0);
+	return bool(std::strncmp(m_uuid, other.m_uuid, 32ULL) == 0);
 }
 
 bool ecsHandle::operator<(const ecsHandle& other) const noexcept
 {
-	return bool(std::strncmp(m_uuid, other.m_uuid, 32ull) < 0);
+	return bool(std::strncmp(m_uuid, other.m_uuid, 32ULL) < 0);
 }
 
 ecsHandle::operator bool() const noexcept

@@ -44,7 +44,7 @@ Indirect_Technique::Indirect_Technique(Engine& engine, ShadowData& shadowData, C
 	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) noexcept { m_bounceSize = static_cast<GLuint>(f); });
 }
 
-void Indirect_Technique::clearCache(const float&) noexcept
+void Indirect_Technique::clearCache(const float& /*deltaTime*/) noexcept
 {
 	m_frameData.lightBuffer.endReading();
 	m_frameData.viewInfo.clear();
@@ -58,17 +58,19 @@ void Indirect_Technique::updateCache(const float& deltaTime, ecsWorld& world)
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Indirect_Technique::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
+void Indirect_Technique::renderTechnique(const float& /*deltaTime*/, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	// Update light-bounce volume
-	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeQuad, m_shader_Bounce, m_shader_Recon, m_shader_Rebounce)) {
+	if (m_enabled && (!m_frameData.viewInfo.empty()) && Asset::All_Ready(m_shapeQuad, m_shader_Bounce, m_shader_Recon, m_shader_Rebounce)) {
 		// Light bounce using client camera
 		if (m_drawIndex >= m_drawData.size())
-			m_drawData.resize(size_t(m_drawIndex) + 1ull);
+			m_drawData.resize(size_t(m_drawIndex) + 1ULL);
 		auto& [camBufferIndex, camBufferRebounce, camBufferRecon, visLights, indirectBounce, indirectQuad, indirectQuadRecon] = m_drawData[m_drawIndex];
 
 		// Accumulate all visibility info for the cameras passed in
-		std::vector<glm::ivec2> camIndicesGen, camIndiciesRebounce, camIndiciesRecon;
+		std::vector<glm::ivec2> camIndicesGen;
+		std::vector<glm::ivec2> camIndiciesRebounce;
+		std::vector<glm::ivec2> camIndiciesRecon;
 		std::vector<GLint> lightIndices;
 		for (auto& [camIndex, layer] : perspectives) {
 			const std::vector<glm::ivec2> tempIndices(m_frameData.viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
@@ -80,7 +82,7 @@ void Indirect_Technique::renderTechnique(const float&, Viewport& viewport, const
 		}
 		const auto shadowCount = camIndicesGen.size();
 
-		if (lightIndices.size()) {
+		if (!lightIndices.empty()) {
 			updateDrawParams(camIndicesGen, camIndiciesRebounce, camIndiciesRecon, lightIndices, shadowCount, perspectives.size());
 			fillBounceVolume(shadowCount, viewport.m_gfxFBOS.m_rhVolume);
 			rebounceVolume(viewport.m_gfxFBOS.m_rhVolume, camBufferRebounce, indirectQuad);

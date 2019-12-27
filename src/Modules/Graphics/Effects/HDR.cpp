@@ -20,24 +20,25 @@ HDR::HDR(Engine& engine) :
 	preferences.addCallback(PreferenceState::Preference::C_GAMMA, m_aliveIndicator, [&](const float& f) noexcept { m_gamma = f; });
 }
 
-void HDR::clearCache(const float&) noexcept
+void HDR::clearCache(const float& /*deltaTime*/) noexcept
 {
 	m_drawIndex = 0;
 }
 
-void HDR::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
+void HDR::renderTechnique(const float& /*deltaTime*/, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderHDR))
 		return;
 
 	// Prepare camera index
 	if (m_drawIndex >= m_drawData.size())
-		m_drawData.resize(size_t(m_drawIndex) + 1ull);
+		m_drawData.resize(size_t(m_drawIndex) + 1ULL);
 	auto& [camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
 	camBufferIndex.beginWriting();
 	indirectQuad.beginWriting();
 	std::vector<glm::ivec2> camIndices;
-	for (auto& [camIndex, layer] : perspectives)
+	camIndices.reserve(perspectives.size());
+for (auto& [camIndex, layer] : perspectives)
 		camIndices.push_back({ camIndex, layer });
 	camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 	indirectQuad.setPrimitiveCount(static_cast<GLuint>(perspectives.size()));
@@ -49,7 +50,7 @@ void HDR::renderTechnique(const float&, Viewport& viewport, const std::vector<st
 	viewport.m_gfxFBOS.bindForWriting("HDR");
 	viewport.m_gfxFBOS.bindForReading("LIGHTING", 0);
 	m_shaderHDR->bind();
-	m_shaderHDR->setUniform(0, 1.0f);
+	m_shaderHDR->setUniform(0, 1.0F);
 	m_shaderHDR->setUniform(1, m_gamma);
 
 	// Use the currently bound framebuffer from the prior effect

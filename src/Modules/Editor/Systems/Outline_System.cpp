@@ -53,7 +53,7 @@ Outline_System::Outline_System(Engine& engine, LevelEditor_Module& editor) :
 	m_hemisphere = Shared_Mesh(engine, "//Models//hemisphere.obj");
 }
 
-void Outline_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void Outline_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	if (m_shader->ready()) {
 		// Collate all component data to generate a draw call
@@ -73,14 +73,14 @@ void Outline_System::updateComponents(const float&, const std::vector<std::vecto
 				tryInsertModel(mesh);
 				m_geometryParams.insert_or_assign(componentHandle, m_meshMap[mesh]);
 			};
-			if (prop && prop->m_model->ready()) {
+			if ((prop != nullptr) && prop->m_model->ready()) {
 				tryRegisterComponentModel(prop->m_handle, prop->m_model->m_mesh);
 				const auto& [offset, count] = m_geometryParams[prop->m_handle];
 				drawData.push_back({ count, 1, offset, 1 });
 				baseTransforms.push_back(pMatrix * vMatrix * trans->m_worldTransform.m_modelMatrix);
 				baseScales.push_back(glm::vec4(trans->m_worldTransform.m_scale, 1));
 			}
-			if (light) {
+			if (light != nullptr) {
 				if (light->m_type == Light_Component::Light_Type::DIRECTIONAL)
 					tryRegisterComponentModel(light->m_handle, m_cube);
 				else if (light->m_type == Light_Component::Light_Type::POINT)
@@ -108,7 +108,7 @@ void Outline_System::updateComponents(const float&, const std::vector<std::vecto
 		// Stencil-out the shapes themselves
 		m_editor.bindFBO();
 		m_shader->bind();
-		m_shader->setUniform(0, 0.0f);
+		m_shader->setUniform(0, 0.0F);
 		m_shader->setUniform(1, camera->EyePosition);
 		m_shader->setUniform(2, camera->pMatrixInverse);
 		m_shader->setUniform(3, glm::vec4(0.33, 0.66, 0.99, 0.125));
@@ -129,7 +129,7 @@ void Outline_System::updateComponents(const float&, const std::vector<std::vecto
 		glMultiDrawArraysIndirect(GL_TRIANGLES, nullptr, GLsizei(drawData.size()), 0);
 
 		// Render the shapes larger, cutting out previous region
-		m_shader->setUniform(0, 0.1f * m_renderScale);
+		m_shader->setUniform(0, 0.1F * m_renderScale);
 		m_shader->setUniform(3, glm::vec4(1, 0.8, 0.1, 1.0));
 		glStencilMask(0x00);
 		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
@@ -177,7 +177,7 @@ void Outline_System::tryInsertModel(const Shared_Mesh& mesh)
 
 void Outline_System::waitOnFence() noexcept
 {
-	if (m_fence) {
+	if (m_fence != nullptr) {
 		// Wait for data fence to be passed
 		GLenum state = GL_UNSIGNALED;
 		while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED)

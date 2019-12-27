@@ -18,7 +18,7 @@ Inspector_Collider_System::Inspector_Collider_System(Engine& engine, LevelEditor
 	populateModels();
 }
 
-void Inspector_Collider_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components)
+void Inspector_Collider_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	ImGui::PushID(this);
 	const auto text = std::string(Collider_Component::Name) + ": (" + std::to_string(components.size()) + ")";
@@ -34,14 +34,14 @@ void Inspector_Collider_System::updateComponents(const float&, const std::vector
 		const auto* colliderComponent = static_cast<Collider_Component*>(components[0][1]);
 
 		static ImGuiTextFilter filter;
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0F);
 		filter.Draw("Filter");
 		ImGui::PopStyleVar();
 
-		auto typeInput = 0ull;
+		auto typeInput = 0ULL;
 		std::vector<const char*> entries;
 		entries.reserve(m_entries.size());
-		auto x = 0ull;
+		auto x = 0ULL;
 		for (const auto& entry : m_entries) {
 			if (filter.PassFilter(entry.c_str())) {
 				entries.push_back(entry.c_str());
@@ -51,7 +51,7 @@ void Inspector_Collider_System::updateComponents(const float&, const std::vector
 			++x;
 		}
 		if (entries.empty())
-			entries.resize(1ull);
+			entries.resize(1ULL);
 		static int item_current = static_cast<int>(typeInput);
 		if (ImGui::Combo("Model File", &item_current, &entries[0], static_cast<int>(entries.size()))) {
 			struct Name_Command final : Editor_Command {
@@ -68,8 +68,8 @@ void Inspector_Collider_System::updateComponents(const float&, const std::vector
 					}
 				}
 				void setData(const std::vector<std::string>& data) {
-					if (data.size()) {
-						size_t index(0ull);
+					if (!data.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle)) {
 								component->m_modelName = data[index++];
@@ -98,7 +98,7 @@ void Inspector_Collider_System::updateComponents(const float&, const std::vector
 		}
 
 		auto restitutionInput = colliderComponent->m_restitution;
-		if (ImGui::DragFloat("Restitution", &restitutionInput, 0.1f, 0.0f, 1.0f)) {
+		if (ImGui::DragFloat("Restitution", &restitutionInput, 0.1F, 0.0F, 1.0F)) {
 			struct Restitution_Command final : Editor_Command {
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
@@ -113,8 +113,8 @@ void Inspector_Collider_System::updateComponents(const float&, const std::vector
 					}
 				}
 				void setData(const std::vector<float>& data) {
-					if (data.size()) {
-						size_t index(0ull);
+					if (!data.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Collider_Component>(componentHandle))
 								component->m_restitution = data[index++];
@@ -141,7 +141,7 @@ void Inspector_Collider_System::updateComponents(const float&, const std::vector
 		}
 
 		auto frictionInput = colliderComponent->m_friction;
-		if (ImGui::DragFloat("Friction", &frictionInput, 0.1f, 0.0f, 1.0f)) {
+		if (ImGui::DragFloat("Friction", &frictionInput, 0.1F, 0.0F, 1.0F)) {
 			struct Friction_Command final : Editor_Command {
 				ecsWorld& m_ecsWorld;
 				const std::vector<ComponentHandle> m_uuids;
@@ -156,8 +156,8 @@ void Inspector_Collider_System::updateComponents(const float&, const std::vector
 					}
 				}
 				void setData(const std::vector<float>& data) {
-					if (data.size()) {
-						size_t index(0ull);
+					if (!data.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Collider_Component>(componentHandle))
 								component->m_friction = data[index++];
@@ -199,8 +199,8 @@ void Inspector_Collider_System::updateComponents(const float&, const std::vector
 					}
 				}
 				void setData(const std::vector<float>& data) {
-					if (data.size()) {
-						size_t index(0ull);
+					if (!data.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Collider_Component>(componentHandle))
 								component->m_mass = data[index++];

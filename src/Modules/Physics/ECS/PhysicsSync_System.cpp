@@ -4,7 +4,7 @@
 
 
 PhysicsSync_System::PhysicsSync_System(Engine& engine, btDiscreteDynamicsWorld& world) :
-	ecsBaseSystem(),
+	
 	m_engine(engine),
 	m_world(world)
 {
@@ -13,7 +13,7 @@ PhysicsSync_System::PhysicsSync_System(Engine& engine, btDiscreteDynamicsWorld& 
 	addComponentType(Collider_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 }
 
-void PhysicsSync_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void PhysicsSync_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	for (const auto& componentParam : components) {
 		auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
@@ -23,7 +23,7 @@ void PhysicsSync_System::updateComponents(const float&, const std::vector<std::v
 		const auto& orientation = transformComponent->m_worldTransform.m_orientation;
 		const auto& scale = transformComponent->m_worldTransform.m_scale;
 
-		if (colliderComponent) {
+		if (colliderComponent != nullptr) {
 			if (!colliderComponent->m_collider)
 				colliderComponent->m_collider = Shared_Collider(m_engine, colliderComponent->m_modelName);
 			else if (colliderComponent->m_collider->ready()) {

@@ -36,10 +36,10 @@ void LoadingIndicator::applyEffect(const float& deltaTime)
 		m_blendAmt += deltaTime;
 	else
 		m_blendAmt -= deltaTime;
-	if (!m_show && m_blendAmt <= 0.0f)
+	if (!m_show && m_blendAmt <= 0.0F)
 		return;
-	m_blendAmt = std::max<float>(0.0f, std::min<float>(1.0f, m_blendAmt));
-	if (m_blendAmt > -0.0001f || m_blendAmt < 1.0001f) {
+	m_blendAmt = std::max<float>(0.0F, std::min<float>(1.0F, m_blendAmt));
+	if (m_blendAmt > -0.0001F || m_blendAmt < 1.0001F) {
 		m_time += deltaTime;
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
@@ -49,7 +49,7 @@ void LoadingIndicator::applyEffect(const float& deltaTime)
 		m_texture->bind(0);
 		m_shader->bind();
 		m_shader->setUniform(1, m_projMatrix);
-		m_shader->setUniform(2, glm::translate(glm::mat4(1.0f), glm::vec3(m_renderSize.x - 64, 64, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(32)));
+		m_shader->setUniform(2, glm::translate(glm::mat4(1.0F), glm::vec3(m_renderSize.x - 64, 64, 0)) * glm::scale(glm::mat4(1.0F), glm::vec3(32)));
 		m_shader->setUniform(3, m_time);
 		m_shader->setUniform(4, m_blendAmt);
 		m_indirectQuad.drawCall();
@@ -61,5 +61,5 @@ void LoadingIndicator::applyEffect(const float& deltaTime)
 void LoadingIndicator::resize(const glm::ivec2& size) 
 {
 	m_renderSize = size;
-	m_projMatrix = glm::ortho(0.0f, static_cast<float>(size.x), 0.0f, static_cast<float>(size.y));
+	m_projMatrix = glm::ortho(0.0F, static_cast<float>(size.x), 0.0F, static_cast<float>(size.y));
 }

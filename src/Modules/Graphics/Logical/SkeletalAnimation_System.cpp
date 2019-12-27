@@ -16,18 +16,18 @@ void Skeletal_Animation_System::updateComponents(const float& deltaTime, const s
 		// Animate if the mesh has finished loading
 		if (skeletonComponent->m_mesh->ready()) {
 			// Animate if there exists an animation & bones
-			if (skeletonComponent->m_animation != -1 && skeletonComponent->m_mesh->m_geometry.boneTransforms.size() > 0 && skeletonComponent->m_animation < skeletonComponent->m_mesh->m_geometry.animations.size()) {
+			if (skeletonComponent->m_animation != -1 && !skeletonComponent->m_mesh->m_geometry.boneTransforms.empty() && skeletonComponent->m_animation < skeletonComponent->m_mesh->m_geometry.animations.size()) {
 				skeletonComponent->m_transforms.resize(skeletonComponent->m_mesh->m_geometry.boneTransforms.size());
 				if (skeletonComponent->m_playAnim)
 					skeletonComponent->m_animTime += deltaTime;
 				const float TicksPerSecond = skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond != 0.00
 					? static_cast<float>(skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond)
-					: 25.0f;
+					: 25.0F;
 				const float TimeInTicks = skeletonComponent->m_animTime * TicksPerSecond;
 				const float AnimationTime = fmodf(TimeInTicks, float(skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].duration));
 				skeletonComponent->m_animStart = skeletonComponent->m_animStart == -1 ? TimeInTicks : skeletonComponent->m_animStart;
 
-				ReadNodeHeirarchy(skeletonComponent->m_transforms, AnimationTime, skeletonComponent->m_animation, skeletonComponent->m_mesh->m_geometry.rootNode, skeletonComponent->m_mesh, glm::mat4(1.0f));
+				ReadNodeHeirarchy(skeletonComponent->m_transforms, AnimationTime, skeletonComponent->m_animation, skeletonComponent->m_mesh->m_geometry.rootNode, skeletonComponent->m_mesh, glm::mat4(1.0F));
 			}
 		}
 	}
@@ -95,7 +95,7 @@ void Skeletal_Animation_System::ReadNodeHeirarchy(std::vector<glm::mat4>& transf
 		const glm::quat Rotation = InterpolateKeys(AnimationTime, pNodeAnim->rotationKeys);
 		const glm::vec3 Translation = InterpolateKeys(AnimationTime, pNodeAnim->positionKeys);
 
-		NodeTransformation = glm::translate(glm::mat4(1.0f), Translation) * glm::mat4_cast(Rotation) * glm::scale(glm::mat4(1.0f), Scaling);
+		NodeTransformation = glm::translate(glm::mat4(1.0F), Translation) * glm::mat4_cast(Rotation) * glm::scale(glm::mat4(1.0F), Scaling);
 	}
 
 	const glm::mat4 GlobalTransformation = ParentTransform * NodeTransformation;

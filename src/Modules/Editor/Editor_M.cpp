@@ -57,7 +57,7 @@ void LevelEditor_Module::initialize()
 	preferences.addCallback(PreferenceState::Preference::E_AUTOSAVE_INTERVAL, m_aliveIndicator, [&](const float& f) noexcept {
 		m_autosaveInterval = f;
 		});
-	float undoStacksize = 500.0f;
+	float undoStacksize = 500.0F;
 	preferences.getOrSetValue(PreferenceState::Preference::E_UNDO_STACKSIZE, undoStacksize);
 	m_maxUndo = int(undoStacksize);
 	preferences.addCallback(PreferenceState::Preference::E_UNDO_STACKSIZE, m_aliveIndicator, [&](const float& f) noexcept {
@@ -100,8 +100,8 @@ void LevelEditor_Module::deinitialize()
 void LevelEditor_Module::frameTick(const float& deltaTime)
 {
 	if (m_active) {
-		constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		constexpr GLfloat clearDepth = 1.0f;
+		constexpr GLfloat clearColor[] = { 0.0F, 0.0F, 0.0F, 0.0F };
+		constexpr GLfloat clearDepth = 1.0F;
 		constexpr GLint clearStencil = 0;
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_STENCIL_TEST);
@@ -154,7 +154,7 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 			}
 		}
 		else
-			m_autoSaveCounter = 0.0f;
+			m_autoSaveCounter = 0.0F;
 	}
 }
 
@@ -194,7 +194,7 @@ void LevelEditor_Module::toggleAddToSelection(const EntityHandle& entityHandle)
 
 bool LevelEditor_Module::hasCopy() const noexcept
 {
-	return m_copiedData.size() ? true : false;
+	return m_copiedData.size() != 0u;
 }
 
 void LevelEditor_Module::openSceneInspector() noexcept
@@ -311,7 +311,7 @@ void LevelEditor_Module::saveLevel(const std::string& name)
 {
 	// Make sure the level has a valid name, otherwise open the naming dialogue
 	m_currentLevelName = name;
-	if (name == "")
+	if (name.empty())
 		saveLevelDialogue();
 	else {
 		saveLevel_Internal(m_currentLevelName);
@@ -355,17 +355,17 @@ void LevelEditor_Module::openSettingsDialogue() noexcept
 
 bool LevelEditor_Module::canUndo() const noexcept
 {
-	return m_undoStack.size();
+	return !m_undoStack.empty();
 }
 
 bool LevelEditor_Module::canRedo() const noexcept
 {
-	return m_redoStack.size();
+	return !m_redoStack.empty();
 }
 
 void LevelEditor_Module::undo()
 {
-	if (m_undoStack.size()) {
+	if (canUndo()) {
 		// Undo the last action
 		if (auto& element = m_undoStack.front()) {
 			element->undo();
@@ -382,7 +382,7 @@ void LevelEditor_Module::undo()
 
 void LevelEditor_Module::redo()
 {
-	if (m_redoStack.size()) {
+	if (canRedo()) {
 		// Redo the last action
 		if (auto& element = m_redoStack.front()) {
 			element->execute();
@@ -393,7 +393,7 @@ void LevelEditor_Module::redo()
 		}
 
 		// Set unsaved changes unless we have no more redo actions
-		m_unsavedChanges = bool(m_redoStack.size() != 0ull);
+		m_unsavedChanges = canRedo();
 	}
 }
 
@@ -406,7 +406,7 @@ void LevelEditor_Module::doReversableAction(const std::shared_ptr<Editor_Command
 	command->execute();
 
 	// Try to join the new command into the previous one if the types match
-	if (m_undoStack.size() && typeid(m_undoStack.front()) == typeid(command) && m_undoStack.front()->join(command.get())) {}
+	if (!m_undoStack.empty() && typeid(m_undoStack.front()) == typeid(command) && m_undoStack.front()->join(command.get())) {}
 	// Otherwise add action to the undo stack
 	else
 		m_undoStack.push_front(command);
@@ -460,7 +460,7 @@ void LevelEditor_Module::clearSelection()
 		void switchSelection(const std::vector<EntityHandle>& uuids) {
 			// Remove all selection components from world
 			auto& ecsWorld = m_editor.getWorld();
-			ecsWorld.updateSystem(m_editor.m_systemSelClearer.get(), 0.0f);
+			ecsWorld.updateSystem(m_editor.m_systemSelClearer.get(), 0.0F);
 			m_editor.m_mouseGizmo.getSelection().clear();
 
 			// Add selection component to new selection
@@ -472,8 +472,9 @@ void LevelEditor_Module::clearSelection()
 
 			// Transform gizmo to center of group
 			Transform newTransform;
-			size_t count(0ull);
-			glm::vec3 center(0.0f), scale(0.0f);
+			size_t count(0ULL);
+			glm::vec3 center(0.0F);
+			glm::vec3 scale(0.0F);
 			for (const auto& entityHandle : uuids)
 				if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 					center += transform->m_localTransform.m_position;
@@ -489,13 +490,13 @@ void LevelEditor_Module::clearSelection()
 		};
 		void execute() final {
 			// Remove all selection components from world
-			m_editor.getWorld().updateSystem(m_editor.m_systemSelClearer.get(), 0.0f);
+			m_editor.getWorld().updateSystem(m_editor.m_systemSelClearer.get(), 0.0F);
 			m_editor.m_mouseGizmo.getSelection().clear();
 		}
 		void undo() final {
 			// Remove all selection components from world
 			auto& ecsWorld = m_editor.getWorld();
-			ecsWorld.updateSystem(m_editor.m_systemSelClearer.get(), 0.0f);
+			ecsWorld.updateSystem(m_editor.m_systemSelClearer.get(), 0.0F);
 			m_editor.m_mouseGizmo.getSelection().clear();
 
 			// Add selection component to new selection
@@ -507,8 +508,9 @@ void LevelEditor_Module::clearSelection()
 
 			// Transform gizmo to center of group
 			Transform newTransform;
-			size_t count(0ull);
-			glm::vec3 center(0.0f), scale(0.0f);
+			size_t count(0ULL);
+			glm::vec3 center(0.0F);
+			glm::vec3 scale(0.0F);
 			for (const auto& entityHandle : m_uuids_old)
 				if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 					center += transform->m_localTransform.m_position;
@@ -523,13 +525,11 @@ void LevelEditor_Module::clearSelection()
 			m_editor.m_mouseGizmo.setTransform(newTransform);
 		}
 		bool join(Editor_Command* other) noexcept final {
-			if (const auto& newCommand = dynamic_cast<Clear_Selection_Command*>(other))
-				return true;
-			return false;
+			return dynamic_cast<Clear_Selection_Command*>(other) != nullptr;
 		}
 	};
 
-	if (getSelection().size())
+	if (!getSelection().empty())
 		doReversableAction(std::make_shared<Clear_Selection_Command>(m_engine, *this));
 }
 
@@ -550,7 +550,7 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles)
 		void switchSelection(const std::vector<EntityHandle>& uuids) {
 			// Remove all selection components from world
 			auto& ecsWorld = m_editor.getWorld();
-			ecsWorld.updateSystem(m_editor.m_systemSelClearer.get(), 0.0f);
+			ecsWorld.updateSystem(m_editor.m_systemSelClearer.get(), 0.0F);
 			m_editor.m_mouseGizmo.getSelection().clear();
 
 			// Add selection component to new selection
@@ -562,8 +562,9 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles)
 
 			// Transform gizmo to center of group
 			Transform newTransform;
-			size_t count(0ull);
-			glm::vec3 center(0.0f), scale(0.0f);
+			size_t count(0ULL);
+			glm::vec3 center(0.0F);
+			glm::vec3 scale(0.0F);
 			for (const auto& entityHandle : uuids)
 				if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 					center += transform->m_localTransform.m_position;
@@ -594,7 +595,7 @@ void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& handles)
 		}
 	};
 
-	if (handles.size())
+	if (!handles.empty())
 		doReversableAction(std::make_shared<Set_Selection_Command>(m_engine, *this, handles));
 }
 
@@ -618,7 +619,7 @@ void LevelEditor_Module::mergeSelection()
 			if (root.isValid()) {
 				// Parent remaining entities in the selection to the root
 				const auto selSize = m_uuids.size();
-				for (size_t x = 1ull; x < selSize; ++x)
+				for (size_t x = 1ULL; x < selSize; ++x)
 					if (const auto& entityHandle = m_uuids[x])
 						ecsWorld.parentEntity(root, entityHandle);
 				m_editor.m_mouseGizmo.getSelection() = { root };
@@ -630,7 +631,7 @@ void LevelEditor_Module::mergeSelection()
 			if (const auto root = ecsWorld.getEntity(m_uuids[0])) {
 				// Un-parent remaining entities from the root
 				const auto selSize = m_uuids.size();
-				for (size_t x = 1ull; x < selSize; ++x)
+				for (size_t x = 1ULL; x < selSize; ++x)
 					if (const auto& entityHandle = m_uuids[x])
 						ecsWorld.unparentEntity(entityHandle);
 			}
@@ -649,7 +650,7 @@ void LevelEditor_Module::mergeSelection()
 		}
 	};
 
-	if (m_mouseGizmo.getSelection().size())
+	if (!m_mouseGizmo.getSelection().empty())
 		doReversableAction(std::make_shared<Merge_Selection_Command>(m_engine, *this));
 }
 
@@ -666,7 +667,7 @@ void LevelEditor_Module::groupSelection()
 			// Determine a new central transform for the whole group
 			auto& ecsWorld = m_editor.getWorld();
 			Transform_Component rootTransform;
-			size_t posCount(0ull);
+			size_t posCount(0ULL);
 			for (const auto& entityHandle : m_uuids)
 				if (const auto& transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 					rootTransform.m_localTransform.m_position += transform->m_localTransform.m_position;
@@ -679,7 +680,7 @@ void LevelEditor_Module::groupSelection()
 			// Make a new root entity for the selection
 			const ecsBaseComponent* const entityComponents[] = { &rootTransform };
 			EntityHandle parentHandle;
-			ecsWorld.makeEntity(entityComponents, 1ull, "Group", m_rootUUID, parentHandle);
+			ecsWorld.makeEntity(entityComponents, 1ULL, "Group", m_rootUUID, parentHandle);
 
 			// Offset children by new center position
 			for (auto& uuid : m_uuids)
@@ -699,7 +700,7 @@ void LevelEditor_Module::groupSelection()
 		}
 	};
 
-	if (m_mouseGizmo.getSelection().size())
+	if (!m_mouseGizmo.getSelection().empty())
 		doReversableAction(std::make_shared<Group_Selection_Command>(m_engine, *this));
 }
 
@@ -724,14 +725,14 @@ void LevelEditor_Module::ungroupSelection()
 		}
 		void undo() final {
 			auto& ecsWorld = m_editor.getWorld();
-			size_t childIndex(0ull);
+			size_t childIndex(0ULL);
 			for (const auto& enityUUID : m_uuids)
 				for (const auto& childUUID : m_children[childIndex++])
 					ecsWorld.parentEntity(enityUUID, childUUID);
 		}
 	};
 
-	if (m_mouseGizmo.getSelection().size())
+	if (!m_mouseGizmo.getSelection().empty())
 		doReversableAction(std::make_shared<Ungroup_Selection_Command>(m_engine, *this));
 }
 
@@ -758,7 +759,7 @@ void LevelEditor_Module::copySelection()
 
 void LevelEditor_Module::paste()
 {
-	if (m_copiedData.size())
+	if (!m_copiedData.empty())
 		addEntity(m_copiedData);
 }
 
@@ -778,16 +779,18 @@ void LevelEditor_Module::deleteSelection()
 		}
 		void undo() final {
 			auto& ecsWorld = m_editor.getWorld();
-			size_t dataRead(0ull), uuidIndex(0ull);
+			size_t dataRead(0ULL);
+			size_t uuidIndex(0ULL);
 			while (dataRead < m_data.size() && uuidIndex < m_uuids.size()) {
-				EntityHandle &desiredHandle = m_uuids[uuidIndex++], parentHandle;
+				EntityHandle &desiredHandle = m_uuids[uuidIndex++];
+				EntityHandle parentHandle;
 				ecsWorld.deserializeEntity(m_data, m_data.size(), dataRead, desiredHandle, parentHandle);
 			}
 		}
 	};
 
 	auto& selection = m_mouseGizmo.getSelection();
-	if (selection.size())
+	if (!selection.empty())
 		doReversableAction(std::make_shared<Delete_Selection_Command>(m_engine, *this, selection));
 }
 
@@ -803,12 +806,12 @@ void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const c
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentName(name) {}
 		void execute() final {
 			auto& ecsWorld = m_editor.getWorld();
-			if (const auto& componentID = ecsWorld.nameToComponentID(m_componentName)) 
+			if (const auto& componentID = ecsWorld::nameToComponentID(m_componentName)) 
 				ecsWorld.makeComponent(m_entityHandle, *componentID, nullptr, m_componentHandle);
 		}
 		void undo() final {
 			auto& ecsWorld = m_editor.getWorld();
-			if (const auto& componentID = ecsWorld.nameToComponentID(m_componentName)) {
+			if (const auto& componentID = ecsWorld::nameToComponentID(m_componentName)) {
 				for (auto& component : ecsWorld.getEntity(m_entityHandle)->m_components) {
 					const auto& [compID, fn, compHandle] = component;
 					if (compID == componentID) {
@@ -842,8 +845,8 @@ void LevelEditor_Module::deleteComponent(const EntityHandle& entityHandle, const
 			m_editor.getWorld().removeEntityComponent(m_entityHandle, m_componentID);
 		}
 		void undo() final {
-			if (m_componentData.size()) {
-				size_t dataRead(0ull);
+			if (!m_componentData.empty()) {
+				size_t dataRead(0ULL);
 				const auto& copy = ecsBaseComponent::from_buffer(m_componentData, dataRead);
 				m_editor.getWorld().makeComponent(m_entityHandle, copy.get(), m_componentHandle);
 			}
@@ -867,13 +870,14 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const En
 			: m_engine(engine), m_editor(editor), m_data(data), m_parentUUID(pUUID), m_cursor(m_editor.getSpawnTransform()) {}
 		void execute() final {
 			auto& ecsWorld = m_editor.getWorld();
-			size_t dataRead(0ull), handleCount(0ull);
-			glm::vec3 center(0.0f);
+			size_t dataRead(0ULL);
+			size_t handleCount(0ULL);
+			glm::vec3 center(0.0F);
 			std::vector<Transform_Component*> transformComponents;
 			while (dataRead < m_data.size()) {
 				// Ensure we have a vector large enough to hold all UUIDs, but maintain previous data
-				m_uuids.resize(std::max<size_t>(m_uuids.size(), handleCount + 1ull));
-				auto entityHandle = m_uuids[handleCount].isValid() ? m_uuids[handleCount] : EntityHandle(ecsWorld.generateUUID());
+				m_uuids.resize(std::max<size_t>(m_uuids.size(), handleCount + 1ULL));
+				auto entityHandle = m_uuids[handleCount].isValid() ? m_uuids[handleCount] : EntityHandle(ecsWorld::generateUUID());
 				ecsWorld.deserializeEntity(m_data, m_data.size(), dataRead, entityHandle, m_parentUUID);
 				if (entityHandle.isValid() && ecsWorld.getEntity(entityHandle)) {
 					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
@@ -899,7 +903,7 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const En
 		}
 	};
 
-	if (entityData.size())
+	if (!entityData.empty())
 		doReversableAction(std::make_shared<Spawn_Command>(m_engine, *this, entityData, parentUUID));
 }
 
@@ -913,7 +917,7 @@ void LevelEditor_Module::bindTexture(const GLuint& offset) noexcept
 	glBindTextureUnit(offset, m_texID);
 }
 
-bool Editor_Command::join(Editor_Command*)
+bool Editor_Command::join(Editor_Command* /*unused*/)
 {
 	return false;
 }

@@ -10,19 +10,19 @@ SceneInspector::SceneInspector(Engine& engine, LevelEditor_Module& editor) noexc
 	m_open = true;
 }
 
-void SceneInspector::tick(const float&)
+void SceneInspector::tick(const float& /*deltaTime*/)
 {
 	if (m_open) {
 		auto& ecsWorld = m_editor.getWorld();
 		const auto& selectedEntities = m_editor.getSelection();
 		if (ImGui::Begin("Scene Inspector", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
 			static ImGuiTextFilter filter;
-			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0F);
 			filter.Draw("Search");
 			ImGui::PopStyleVar();
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
-			size_t displayCount(0ull);
+			size_t displayCount(0ULL);
 			std::function<void(const EntityHandle&)> displayEntity = [&](const EntityHandle& entityHandle) {
 				if (const auto entity = ecsWorld.getEntity(entityHandle)) {
 					bool entity_or_components_pass_filter = false;
@@ -77,12 +77,11 @@ void SceneInspector::tick(const float&)
 										}
 										ImGui::Separator();
 									}
-									if (ImGui::MenuItem("Make Prefab", "CTRL+G", nullptr,
-													   selectedEntities.size())) {
+									if (ImGui::MenuItem("Make Prefab", "CTRL+G", nullptr, !selectedEntities.empty())) {
 										m_editor.makePrefab();
 									}
 									for (const auto& entityHandle : selectedEntities)
-										if (ecsWorld.getEntity(entityHandle)->m_children.size()) {
+										if (!ecsWorld.getEntity(entityHandle)->m_children.empty()) {
 											if (ImGui::MenuItem("Ungroup")) {
 												m_editor.ungroupSelection();
 											}
@@ -238,7 +237,7 @@ void SceneInspector::tick(const float&)
 			}
 
 			// Display message when no filtered results
-			if (displayCount == 0ull) {
+			if (displayCount == 0ULL) {
 				ImGui::Separator();
 				ImGui::Spacing();
 				ImGui::TextWrapped(

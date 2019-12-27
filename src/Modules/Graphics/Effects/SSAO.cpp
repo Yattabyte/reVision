@@ -33,7 +33,7 @@ SSAO::SSAO(Engine& engine) :
 	std::default_random_engine generator;
 	glm::vec3 noiseArray[16]{};
 	for (GLuint i = 0; i < 16; i++) 
-		noiseArray[i] = glm::vec3(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f);	
+		noiseArray[i] = glm::vec3(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0F);	
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_noiseID);
 	glTextureStorage2D(m_noiseID, 1, GL_RGB16F, 4, 4);
 	glTextureSubImage2D(m_noiseID, 0, 0, 0, 4, 4, GL_RGB, GL_FLOAT, &noiseArray[0]);
@@ -69,24 +69,25 @@ SSAO::SSAO(Engine& engine) :
 		msgMgr.error("SSAO Noise Texture is incomplete.");
 }
 
-void SSAO::clearCache(const float&) noexcept
+void SSAO::clearCache(const float& /*deltaTime*/) noexcept
 {
 	m_drawIndex = 0;
 }
 
-void SSAO::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
+void SSAO::renderTechnique(const float& /*deltaTime*/, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shader, m_shaderCopyAO, m_shaderGB_A))
 		return;
 
 	// Prepare camera index
 	if (m_drawIndex >= m_drawData.size())
-		m_drawData.resize(size_t(m_drawIndex) + 1ull);
+		m_drawData.resize(size_t(m_drawIndex) + 1ULL);
 	auto& [camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
 	camBufferIndex.beginWriting();
 	indirectQuad.beginWriting();
 	std::vector<glm::ivec2> camIndices;
-	for (auto& [camIndex, layer] : perspectives)
+	camIndices.reserve(perspectives.size());
+for (auto& [camIndex, layer] : perspectives)
 		camIndices.push_back({ camIndex, layer });
 	camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 	indirectQuad.setPrimitiveCount(static_cast<GLuint>(perspectives.size()));
@@ -110,7 +111,7 @@ void SSAO::renderTechnique(const float&, Viewport& viewport, const std::vector<s
 	size_t aoSpot = 0;
 	if (m_blurStrength > 0) {
 		// Clear the second attachment
-		constexpr GLfloat clearRed = 0.0f;
+		constexpr GLfloat clearRed = 0.0F;
 		glClearTexImage(viewport.m_gfxFBOS.getTexID("SSAO", 1), 0, GL_RED, GL_FLOAT, &clearRed);
 
 		// Read from desired texture, blur into this frame buffer
@@ -129,7 +130,7 @@ void SSAO::renderTechnique(const float&, Viewport& viewport, const std::vector<s
 			m_shaderGB_A->setUniform(0, horizontal);
 			glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 		}
-		aoSpot = horizontal ? 1ull : 0ull;
+		aoSpot = horizontal ? 1ULL : 0ULL;
 	}
 
 	// Overlay SSAO on top of AO channel of Geometry Buffer

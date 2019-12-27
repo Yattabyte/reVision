@@ -9,7 +9,7 @@
 
 // Forward Declarations
 static bool RayProp(const Transform_Component& transformComponent, const Prop_Component& prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence);
-static bool RayCollider(const Collider_Component& collider, const void* const closestPhysicsShape, const float& closetstPhysicsHit, float& distanceFromScreen, int& confidence) noexcept;
+static bool RayCollider(const Collider_Component& collider, const void* closestPhysicsShape, const float& closetstPhysicsHit, float& distanceFromScreen, int& confidence) noexcept;
 static bool RayBBox(const Transform_Component& transformComponent, const BoundingBox_Component& bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence);
 static bool RayBSphere(const Transform_Component& transformComponent, const BoundingSphere_Component& bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence);
 static bool RayOrigin(const Transform_Component& transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine);
@@ -42,17 +42,17 @@ MousePicker_System::MousePicker_System(Engine& engine) :
 		});
 }
 
-void MousePicker_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void MousePicker_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	const auto& actionState = m_engine.getActionState();
 	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
 	const auto ray_origin = clientCamera->EyePosition;
-	const auto ray_nds = glm::vec2(2.0f * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
-	const auto ray_eye = glm::vec4(glm::vec2(clientCamera->pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
+	const auto ray_nds = glm::vec2(2.0F * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0F, 1.0F - (2.0F * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
+	const auto ray_eye = glm::vec4(glm::vec2(clientCamera->pMatrixInverse * glm::vec4(ray_nds, -1.0F, 1.0F)), -1.0F, 0.0F);
 	const auto ray_direction = glm::normalize(glm::vec3(clientCamera->vMatrixInverse * ray_eye));
 
 	// Set the selection position for the worst-case scenario
-	const auto ray_end = ray_origin + (ray_direction * glm::vec3(50.0f));
+	const auto ray_end = ray_origin + (ray_direction * glm::vec3(50.0F));
 	const auto ray_end_far = ray_origin + (ray_direction * clientCamera->FarPlane);
 	m_selectionTransform.m_position = ray_end;
 	m_intersectionTransform.m_position = ray_end;
@@ -78,7 +78,7 @@ void MousePicker_System::updateComponents(const float&, const std::vector<std::v
 		const auto& transformComponent = *static_cast<Transform_Component*>(componentParam[0]);
 		float distanceFromScreen = FLT_MAX;
 		int confidence = 0;
-		const bool hasBoundingShape = componentParam[1] || componentParam[2];
+		const bool hasBoundingShape = (componentParam[1] != nullptr) || (componentParam[2] != nullptr);
 		bool result = false;
 
 		// Attempt cheap tests first
@@ -188,7 +188,7 @@ static bool RayBBox(const Transform_Component& transformComponent, const Boundin
 	const auto& scale = transformComponent.m_worldTransform.m_scale;
 	Transform newTransform = transformComponent.m_worldTransform;
 	newTransform.m_position += bBox.m_positionOffset;
-	newTransform.m_scale = glm::vec3(1.0f);
+	newTransform.m_scale = glm::vec3(1.0F);
 	newTransform.update();
 	const auto matrixWithoutScale = newTransform.m_modelMatrix;
 
@@ -212,7 +212,7 @@ static bool RayBBox(const Transform_Component& transformComponent, const Boundin
 static bool RayBSphere(const Transform_Component& transformComponent, const BoundingSphere_Component& bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence)
 {
 	// Check if the distance is closer than the last entity found, so we can find the 'best' selection
-	if (auto distance = RaySphereIntersection(ray_origin, ray_direction, transformComponent.m_worldTransform.m_position + bSphere.m_positionOffset, bSphere.m_radius); distance >= 0.0f) {
+	if (auto distance = RaySphereIntersection(ray_origin, ray_direction, transformComponent.m_worldTransform.m_position + bSphere.m_positionOffset, bSphere.m_radius); distance >= 0.0F) {
 		distanceFromScreen = distance;
 		confidence = 2;
 		return true;
@@ -231,10 +231,10 @@ static bool RayBSphere(const Transform_Component& transformComponent, const Boun
 static bool RayOrigin(const Transform_Component& transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine)
 {
 	// Create scaling factor to keep all origins same screen size
-	const auto radius = glm::distance(transformComponent.m_worldTransform.m_position, engine.getModule_Graphics().getClientCamera()->EyePosition) * 0.033f;
+	const auto radius = glm::distance(transformComponent.m_worldTransform.m_position, engine.getModule_Graphics().getClientCamera()->EyePosition) * 0.033F;
 
 	// Check if the distance is closer than the last entity found, so we can find the 'best' selection
-	if (auto distance = RaySphereIntersection(ray_origin, ray_direction, transformComponent.m_worldTransform.m_position, radius); distance >= 0.0f) {
+	if (auto distance = RaySphereIntersection(ray_origin, ray_direction, transformComponent.m_worldTransform.m_position, radius); distance >= 0.0F) {
 		distanceFromScreen = distance;
 		confidence = 2;
 		return true;

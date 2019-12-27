@@ -219,10 +219,11 @@ ShaderObj::ShaderObj(const GLenum& type) :
 }
 
 ShaderObj::ShaderObj(ShaderObj&& other) noexcept :
-	m_shaderID(std::move(other.m_shaderID)),
+	m_shaderID(other.m_shaderID),
 	m_shaderText(std::move(other.m_shaderText)),
-	m_type(std::move(other.m_type))
+	m_type(other.m_type)
 {
+	other.m_shaderID = 0;
 }
 
 ShaderObj::ShaderObj(const ShaderObj& other) :

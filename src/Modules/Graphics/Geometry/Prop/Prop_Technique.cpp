@@ -20,7 +20,7 @@ Prop_Technique::Prop_Technique(Engine& engine, std::vector<Camera*>& sceneCamera
 	m_auxilliarySystems.makeSystem<PropSync_System>(m_frameData);
 }
 
-void Prop_Technique::clearCache(const float&) noexcept
+void Prop_Technique::clearCache(const float& /*deltaTime*/) noexcept
 {
 	m_frameData.modelBuffer.endReading();
 	m_frameData.skeletonBuffer.endReading();
@@ -35,16 +35,17 @@ void Prop_Technique::updateCache(const float& deltaTime, ecsWorld& world)
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Prop_Technique::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
+void Prop_Technique::renderTechnique(const float& /*deltaTime*/, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	// Exit Early
-	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shaderCull, m_shaderGeometry)) {
+	if (m_enabled && (!m_frameData.viewInfo.empty()) && Asset::All_Ready(m_shapeCube, m_shaderCull, m_shaderGeometry)) {
 		if (m_drawIndex >= m_drawData.size())
-			m_drawData.resize(size_t(m_drawIndex) + 1ull);
+			m_drawData.resize(size_t(m_drawIndex) + 1ULL);
 
 		// Accumulate all visibility info for the cameras passed in
 		std::vector<glm::ivec2> camIndices;
-		std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
+		std::vector<glm::ivec4> cullingDrawData;
+		std::vector<glm::ivec4> renderingDrawData;
 		std::vector<GLuint> visibleIndices;
 		std::vector<int> skeletonData;
 		for (auto& [camIndex, layer] : perspectives) {
@@ -57,7 +58,7 @@ void Prop_Technique::renderTechnique(const float&, Viewport& viewport, const std
 		}
 
 		// Write all visibility info to a set of buffers
-		if (visibleIndices.size()) {
+		if (!visibleIndices.empty()) {
 			auto& drawBuffer = m_drawData[m_drawIndex];
 			auto& camBufferIndex = drawBuffer.bufferCamIndex;
 			auto& propIndexBuffer = drawBuffer.bufferPropIndex;
@@ -138,16 +139,17 @@ void Prop_Technique::renderTechnique(const float&, Viewport& viewport, const std
 	}
 }
 
-void Prop_Technique::cullShadows(const float&, const std::vector<std::pair<int, int>>& perspectives) 
+void Prop_Technique::cullShadows(const float& /*deltaTime*/, const std::vector<std::pair<int, int>>& perspectives) 
 {
 	// Exit Early
-	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shaderShadowCull, m_shaderShadowGeometry)) {
+	if (m_enabled && (!m_frameData.viewInfo.empty()) && Asset::All_Ready(m_shapeCube, m_shaderShadowCull, m_shaderShadowGeometry)) {
 		if (m_drawIndex >= m_drawData.size())
-			m_drawData.resize(size_t(m_drawIndex) + 1ull);
+			m_drawData.resize(size_t(m_drawIndex) + 1ULL);
 
 		// Accumulate all visibility info for the cameras passed in
 		std::vector<glm::ivec2> camIndices;
-		std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
+		std::vector<glm::ivec4> cullingDrawData;
+		std::vector<glm::ivec4> renderingDrawData;
 		std::vector<GLuint> visibleIndices;
 		std::vector<int> skeletonData;
 		for (auto& [camIndex, layer] : perspectives) {
@@ -160,7 +162,7 @@ void Prop_Technique::cullShadows(const float&, const std::vector<std::pair<int, 
 		}
 
 		// Write all visibility info to a set of buffers
-		if (visibleIndices.size()) {
+		if (!visibleIndices.empty()) {
 			auto& drawBuffer = m_drawData[m_drawIndex];
 			auto& camBufferIndex = drawBuffer.bufferCamIndex;
 			auto& propIndexBuffer = drawBuffer.bufferPropIndex;
@@ -217,11 +219,11 @@ void Prop_Technique::cullShadows(const float&, const std::vector<std::pair<int, 
 	}
 }
 
-void Prop_Technique::renderShadows(const float&) noexcept
+void Prop_Technique::renderShadows(const float& /*deltaTime*/) noexcept
 {
 	// Exit Early
 	if (m_enabled && Asset::All_Ready(m_shapeCube, m_shaderShadowCull, m_shaderShadowGeometry)) {
-		if (m_count) {
+		if (m_count != 0U) {
 			// Draw geometry using the populated render buffer
 			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 			glDepthMask(GL_TRUE);

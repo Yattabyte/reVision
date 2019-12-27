@@ -10,7 +10,7 @@ ReflectorVisibility_System::ReflectorVisibility_System(ReflectorData& frameData)
 	addComponentType(Transform_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 }
 
-void ReflectorVisibility_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void ReflectorVisibility_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	// Compile results PER viewport
 	for (auto& viewInfo : m_frameData.viewInfo) {

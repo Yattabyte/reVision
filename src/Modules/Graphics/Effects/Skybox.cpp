@@ -46,19 +46,19 @@ Skybox::Skybox(Engine& engine) :
 		});
 }
 
-void Skybox::clearCache(const float&) noexcept
+void Skybox::clearCache(const float& /*deltaTime*/) noexcept
 {
 	m_drawIndex = 0;
 }
 
-void Skybox::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
+void Skybox::renderTechnique(const float& /*deltaTime*/, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderSky, m_shaderSkyReflect, m_shaderConvolute, m_cubemapSky))
 		return;
 
 	// Prepare camera index
 	if (m_drawIndex >= m_drawData.size())
-		m_drawData.resize(size_t(m_drawIndex) + 1ull);
+		m_drawData.resize(size_t(m_drawIndex) + 1ULL);
 
 	if (m_skyOutOfDate) {
 		convoluteSky(viewport);
@@ -69,7 +69,8 @@ void Skybox::renderTechnique(const float&, Viewport& viewport, const std::vector
 	camBufferIndex.beginWriting();
 	indirectQuad.beginWriting();
 	std::vector<glm::ivec2> camIndices;
-	for (auto& [camIndex, layer] : perspectives)
+	camIndices.reserve(perspectives.size());
+for (auto& [camIndex, layer] : perspectives)
 		camIndices.push_back({ camIndex, layer });
 	camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 	indirectQuad.setPrimitiveCount(static_cast<GLuint>(perspectives.size()));
@@ -123,9 +124,9 @@ void Skybox::convoluteSky(const Viewport& viewport) noexcept
 
 	for (unsigned int r = 1; r < 6; ++r) {
 		// Ensure we are writing to MIP level r
-		const unsigned int write_size = static_cast<unsigned int>(std::max(1.0f, (floor(static_cast<float>(m_skySize.x) / pow(2.0f, static_cast<float>(r))))));
+		const unsigned int write_size = static_cast<unsigned int>(std::max(1.0F, (floor(static_cast<float>(m_skySize.x) / pow(2.0F, static_cast<float>(r))))));
 		glViewport(0, 0, write_size, write_size);
-		m_shaderConvolute->setUniform(1, static_cast<float>(r) / 5.0f);
+		m_shaderConvolute->setUniform(1, static_cast<float>(r) / 5.0F);
 		glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, r);
 
 		// Ensure we are reading from MIP level r - 1

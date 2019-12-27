@@ -37,7 +37,7 @@ TitleBar::TitleBar(Engine& engine, LevelEditor_Module& editor) :
 	m_iconSettings = Shared_Texture(engine, "Editor//iconOptions.png");
 }
 
-void TitleBar::tick(const float&)
+void TitleBar::tick(const float& /*deltaTime*/)
 {
 	if (m_open) {
 		constexpr static auto BeginMenuWIcon = [](const char* string, const Shared_Texture& iconTexture, const char* shortcut = nullptr, bool* selected = nullptr, const bool& enabled = true) -> bool {
@@ -54,10 +54,10 @@ void TitleBar::tick(const float&)
 				ImGui::Separator();
 				if (BeginMenuWIcon("Open Level", m_iconOpen, "CTRL+O")) { m_editor.openLevelDialogue(); }
 				{
-					ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_iconRecent->ready() ? m_iconRecent->m_glTexID : 0), ImVec2(15, 15), { 0.0f, 1.0f }, { 1.0f, 0.0f });
+					ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_iconRecent->ready() ? m_iconRecent->m_glTexID : 0), ImVec2(15, 15), { 0.0F, 1.0F }, { 1.0F, 0.0F });
 					ImGui::SameLine();
 					const auto recentLevels = m_editor.getRecentLevels();
-					if (ImGui::BeginMenu("Open Recent", recentLevels.size())) {
+					if (ImGui::BeginMenu("Open Recent", !recentLevels.empty())) {
 						for (const auto& levelName : recentLevels) {
 							ImGui::PushID(&levelName);
 							if (ImGui::MenuItem(levelName.c_str()))
@@ -79,9 +79,9 @@ void TitleBar::tick(const float&)
 				if (BeginMenuWIcon("Redo", m_iconRedo, "CTRL+Y", nullptr, m_editor.canRedo())) { m_editor.redo(); }
 				ImGui::Separator();
 				if (ImGui::MenuItem("Select All", "CTRL+A")) { m_editor.selectAll(); }
-				const bool hasSelection = m_editor.getSelection().size() ? true : false;
+				const bool hasSelection = m_editor.getSelection().size() != 0u;
 				if (ImGui::MenuItem("Clear Selection", "CTRL+D", nullptr, hasSelection)) { m_editor.clearSelection(); }
-				const bool canGroup = m_editor.getSelection().size() > 1 ? true : false;
+				const bool canGroup = m_editor.getSelection().size() > 1;
 				if (ImGui::MenuItem("Group Selection", "CTRL+G", nullptr, canGroup)) { m_editor.groupSelection(); }
 				if (ImGui::MenuItem("Make Prefab", nullptr, hasSelection)) { m_editor.makePrefab(); }
 				ImGui::Separator();

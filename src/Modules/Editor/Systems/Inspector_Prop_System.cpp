@@ -18,7 +18,7 @@ Inspector_Prop_System::Inspector_Prop_System(Engine& engine, LevelEditor_Module&
 	populateModels();
 }
 
-void Inspector_Prop_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void Inspector_Prop_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	ImGui::PushID(this);
 	const auto text = std::string(Prop_Component::Name) + ": (" + std::to_string(components.size()) + ")";
@@ -34,14 +34,14 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 		const auto* propComponent = static_cast<Prop_Component*>(components[0][1]);
 
 		static ImGuiTextFilter filter;
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0F);
 		filter.Draw("Filter");
 		ImGui::PopStyleVar();
 
-		auto typeInput = 0ull;
+		auto typeInput = 0ULL;
 		std::vector<const char*> entries;
 		entries.reserve(m_entries.size());
-		auto x = 0ull;
+		auto x = 0ULL;
 		for (const auto& entry : m_entries) {
 			if (filter.PassFilter(entry.c_str())) {
 				entries.push_back(entry.c_str());
@@ -51,7 +51,7 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 			++x;
 		}
 		if (entries.empty())
-			entries.resize(1ull);
+			entries.resize(1ULL);
 		static int item_current = static_cast<int>(typeInput);
 		if (ImGui::Combo("Model File", &item_current, &entries[0], static_cast<int>(entries.size()))) {
 			struct Name_Command final : Editor_Command {
@@ -68,17 +68,17 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 					}
 				}
 				void setData(const std::vector<std::string>& data) {
-					if (data.size()) {
-						size_t index(0ull);
+					if (!data.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle)) {
 								component->m_modelName = data[index++];
 								component->m_model.reset();
 								component->m_uploadModel = false;
 								component->m_uploadMaterial = false;
-								component->m_offset = 0ull;
-								component->m_count = 0ull;
-								component->m_materialID = 0u;
+								component->m_offset = 0ULL;
+								component->m_count = 0ULL;
+								component->m_materialID = 0U;
 							}
 						}
 					}
@@ -119,8 +119,8 @@ void Inspector_Prop_System::updateComponents(const float&, const std::vector<std
 					}
 				}
 				void setData(const std::vector<unsigned int>& data) {
-					if (data.size()) {
-						size_t index(0ull);
+					if (!data.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Prop_Component>(componentHandle))
 								component->m_skin = data[index++];

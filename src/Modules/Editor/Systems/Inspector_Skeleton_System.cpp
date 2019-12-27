@@ -18,7 +18,7 @@ Inspector_Skeleton_System::Inspector_Skeleton_System(Engine& engine, LevelEditor
 	populateModels();
 }
 
-void Inspector_Skeleton_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components)
+void Inspector_Skeleton_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	ImGui::PushID(this);
 	const auto text = std::string(Skeleton_Component::Name) + ": (" + std::to_string(components.size()) + ")";
@@ -49,8 +49,8 @@ void Inspector_Skeleton_System::updateComponents(const float&, const std::vector
 					}
 				}
 				void setData(const std::vector<int>& data) {
-					if (data.size()) {
-						size_t index(0ull);
+					if (!data.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Skeleton_Component>(componentHandle))
 								component->m_animation = data[index++];
@@ -92,8 +92,8 @@ void Inspector_Skeleton_System::updateComponents(const float&, const std::vector
 					}
 				}
 				void setData(const std::vector<bool>& data) {
-					if (data.size()) {
-						size_t index(0ull);
+					if (!data.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Skeleton_Component>(componentHandle))
 								component->m_playAnim = data[index++];

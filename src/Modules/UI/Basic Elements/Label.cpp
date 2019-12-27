@@ -55,7 +55,7 @@ void Label::renderElement(const float& deltaTime, const glm::vec2& position, con
 	m_shader->bind();
 	m_shader->setUniform(0, newPosition);
 	m_shader->setUniform(1, newScale);
-	m_shader->setUniform(2, std::clamp<float>((getScale().x / getText().size()) * 2.0f, 5.0f, m_textScale));
+	m_shader->setUniform(2, std::clamp<float>((getScale().x / getText().size()) * 2.0F, 5.0F, m_textScale));
 	m_shader->setUniform(3, static_cast<int>(m_textAlignment));
 	m_shader->setUniform(4, m_enabled);
 	m_shader->setUniform(5, m_color);
@@ -76,11 +76,11 @@ void Label::setText(const std::string& text)
 
 	// Write letters to a buffer
 	const auto count = m_text.size();
-	std::vector<int> data(count + 1ull);
+	std::vector<int> data(count + 1ULL);
 	data[0] = static_cast<int>(count);
 	for (size_t x = 0; x < count; ++x)
-		data[x + 1ull] = static_cast<int>(m_text[x]) - 32;
-	m_bufferString.write_immediate(0, sizeof(int) * (count + 1ull), data.data());
+		data[x + 1ULL] = static_cast<int>(m_text[x]) - 32;
+	m_bufferString.write_immediate(0, sizeof(int) * (count + 1ULL), data.data());
 	m_charCount = static_cast<GLuint>(count);
 
 	// Notify text changed

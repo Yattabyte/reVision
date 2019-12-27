@@ -10,7 +10,7 @@ Hotkeys::Hotkeys(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_open = true;
 }
 
-void Hotkeys::tick(const float&)
+void Hotkeys::tick(const float& /*deltaTime*/)
 {
 	if (m_open && !ImGui::IsAnyItemActive()) {
 		// Check keyboard input

@@ -35,9 +35,9 @@ void Frametime_Counter::applyEffect(const float& deltaTime)
 	m_numberTexture->bind(0);
 	m_shader->bind();
 	m_shader->setUniform(1, m_projMatrix);
-	const glm::mat4 scale = glm::translate(glm::mat4(1.0f), glm::vec3(12, 12, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(12));
+	const glm::mat4 scale = glm::translate(glm::mat4(1.0F), glm::vec3(12, 12, 0)) * glm::scale(glm::mat4(1.0F), glm::vec3(12));
 
-	const float dt_seconds = deltaTime * 1000.0f;
+	const float dt_seconds = deltaTime * 1000.0F;
 	std::string test = std::to_string(dt_seconds);
 	bool foundDecimal = false;
 	int decimalCount = 0;
@@ -56,7 +56,7 @@ void Frametime_Counter::applyEffect(const float& deltaTime)
 		else
 			m_shader->setUniform(3, number - 48); // remove the ASCII encoding, convert to int
 
-		m_shader->setUniform(2, glm::translate(glm::mat4(1.0f), glm::vec3(x * 24, 24, 0)) * scale);
+		m_shader->setUniform(2, glm::translate(glm::mat4(1.0F), glm::vec3(x * 24, 24, 0)) * scale);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 	glDisable(GL_BLEND);
@@ -66,5 +66,5 @@ void Frametime_Counter::applyEffect(const float& deltaTime)
 void Frametime_Counter::resize(const glm::ivec2& size)
 {
 	m_renderSize = size;
-	m_projMatrix = glm::ortho(0.0f, static_cast<float>(size.x), 0.0f, static_cast<float>(size.y));
+	m_projMatrix = glm::ortho(0.0F, static_cast<float>(size.x), 0.0F, static_cast<float>(size.y));
 }

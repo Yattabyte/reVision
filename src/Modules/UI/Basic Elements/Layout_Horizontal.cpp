@@ -67,15 +67,15 @@ void Layout_Horizontal::alignChildren()
 	for (const auto& [child, ratio] : m_sizedChildren) {
 		child->setScale(glm::vec2(elementSize * ratio, m_scale.y - m_margin));
 		if (childrenCount == 1) {
-			child->setPosition(glm::vec2(0.0f));
+			child->setPosition(glm::vec2(0.0F));
 			continue;
 		}
 		const float size = child->getScale().x;
 		positionFromLeft += size;
 		child->setPosition(glm::vec2(positionFromLeft, 0));
-		positionFromLeft += size + (m_spacing * 2.0f);
+		positionFromLeft += size + (m_spacing * 2.0F);
 	}
-	const float right = positionFromLeft - (m_spacing * 2.0f);
+	const float right = positionFromLeft - (m_spacing * 2.0F);
 
 	// Edge Case: all elements are fixed size, gap may be present
 	// Solution: change spacing to fit all elements within bounds

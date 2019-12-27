@@ -20,7 +20,7 @@ SaveDialogue::SaveDialogue(Engine& engine, LevelEditor_Module& editor) :
 	m_open = false;
 }
 
-void SaveDialogue::tick(const float&)
+void SaveDialogue::tick(const float& /*deltaTime*/)
 {
 	tickMainDialogue();
 }
@@ -32,10 +32,10 @@ void SaveDialogue::populateLevels(const std::string& directory)
 
 	const auto rootPath = Engine::Get_Current_Dir() + "\\Maps\\";
 	const auto path = std::filesystem::path(rootPath + directory);
-	if (directory != "" && directory != "." && directory != "..")
+	if (!directory.empty() && directory != "." && directory != "..")
 		m_levels.push_back(LevelEntry{ "..", std::filesystem::relative(path.parent_path(), rootPath).string(), "", "", "", "", LevelEntry::Type::BACK });
 	for (auto& entry : std::filesystem::directory_iterator(path)) {
-		std::string timeString = "";
+		std::string timeString = timeString;
 		struct _stat64 fileInfo{};
 		if (_wstati64(entry.path().wstring().c_str(), &fileInfo) == 0) {
 			const auto& t = std::localtime(&fileInfo.st_mtime);
@@ -109,8 +109,8 @@ void SaveDialogue::tickMainDialogue()
 
 			// Header
 			ImGui::Text("Choose a name to save the level as...");
-			ImGui::SameLine(std::max(ImGui::GetWindowContentRegionMax().x - 28.0f, 0.0f));
-			if (ImGui::ImageButton((ImTextureID)static_cast<uintptr_t>(m_iconRefresh->ready() ? m_iconRefresh->m_glTexID : 0), { 15, 15 }, { 0.0f, 1.0f }, { 1.0f, 0.0f }))
+			ImGui::SameLine(std::max(ImGui::GetWindowContentRegionMax().x - 28.0F, 0.0F));
+			if (ImGui::ImageButton((ImTextureID)static_cast<uintptr_t>(m_iconRefresh->ready() ? m_iconRefresh->m_glTexID : 0), { 15, 15 }, { 0.0F, 1.0F }, { 1.0F, 0.0F }))
 				populateLevels(m_subDirectory);
 			ImGui::Spacing();
 
@@ -130,7 +130,7 @@ void SaveDialogue::tickMainDialogue()
 					(level.type == LevelEntry::Type::FOLDER && m_iconFolder->ready()) ? m_iconFolder->m_glTexID :
 					(level.type == LevelEntry::Type::BACK && m_iconBack->ready()) ? m_iconBack->m_glTexID : 0;
 				ImGui::PushID(index);
-				ImGui::Image((ImTextureID)static_cast<uintptr_t>(icon), ImVec2(15, 15), { 0.0f, 1.0f }, { 1.0f, 0.0f });
+				ImGui::Image((ImTextureID)static_cast<uintptr_t>(icon), ImVec2(15, 15), { 0.0F, 1.0F }, { 1.0F, 0.0F });
 				ImGui::SameLine(0);
 				const auto name = level.name + level.extension;
 				ImGui::Selectable(name.c_str(), m_selected == index);
@@ -169,11 +169,11 @@ void SaveDialogue::tickMainDialogue()
 			ImGui::Spacing();
 
 			// Display a save button
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f)));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f)));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f)));
-			ImGui::PushItemFlag(ImGuiItemFlags_Disabled, std::string(nameInput) == "");
-			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * (std::string(nameInput) == "" ? 0.25f : 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(2.0F / 7.0F, 0.6F, 0.6F)));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(2.0F / 7.0F, 0.7F, 0.7F)));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(2.0F / 7.0F, 0.8F, 0.8F)));
+			ImGui::PushItemFlag(ImGuiItemFlags_Disabled, std::string(nameInput).empty());
+			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * (std::string(nameInput).empty() ? 0.25F : 1.0F));
 			if (ImGui::Button("Save", { 75, 20 }))
 				option = DialogueOptions::SAVE;
 			ImGui::PopItemFlag();
@@ -267,9 +267,9 @@ void SaveDialogue::tickOverwriteDialogue()
 	if (ImGui::BeginPopupModal("Overwrite Level", &openOverwrite, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 		ImGui::TextWrapped("This is a different file, are you sure you want to overwrite it?\r\nThis action is irreversible.\r\n");
 		ImGui::Spacing(); ImGui::Spacing();
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f)));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f)));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f)));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(2.0F / 7.0F, 0.6F, 0.6F)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(2.0F / 7.0F, 0.7F, 0.7F)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(2.0F / 7.0F, 0.8F, 0.8F)));
 		if (ImGui::Button("Overwrite", { 75, 20 })) {
 			m_editor.saveLevel(m_chosen + ".bmap");
 			populateLevels();
@@ -297,7 +297,7 @@ void SaveDialogue::tickRenameDialogue()
 		const auto nameLength = m_levels[m_selected].name.length();
 		for (size_t x = 0; x < nameLength && x < IM_ARRAYSIZE(nameInput); ++x)
 			nameInput[x] = m_levels[m_selected].name[x];
-		nameInput[std::min(256ull, nameLength)] = '\0';
+		nameInput[std::min(256ULL, nameLength)] = '\0';
 		if (ImGui::IsAnyWindowFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
 			ImGui::SetKeyboardFocusHere(0);
 		if (ImGui::InputText("", nameInput, IM_ARRAYSIZE(nameInput), ImGuiInputTextFlags_EnterReturnsTrue)) {
@@ -322,13 +322,13 @@ void SaveDialogue::tickDeleteDialogue()
 	if (ImGui::BeginPopupModal("Delete Level", &openDelete, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 		ImGui::TextWrapped("Are you sure you want to delete this item?\r\nThis action is irreversible.\r\n");
 		ImGui::Spacing(); ImGui::Spacing();
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(0, 0.6f, 0.6f)));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(0, 0.7f, 0.7f)));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(0, 0.8f, 0.8f)));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(0, 0.6F, 0.6F)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(0, 0.7F, 0.7F)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(0, 0.8F, 0.8F)));
 		if (ImGui::Button("Delete", { 75, 20 })) {
 			const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\" + m_levels[m_selected].path);
 			std::error_code ec;
-			if (std::filesystem::remove_all(fullPath, ec))
+			if (std::filesystem::remove_all(fullPath, ec) != 0U)
 				m_selected = -1;
 			populateLevels(m_subDirectory);
 			ImGui::CloseCurrentPopup();

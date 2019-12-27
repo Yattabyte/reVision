@@ -16,9 +16,9 @@ PlayerSpawn_System::PlayerSpawn_System(Engine& engine, Game_Module& game)
 		engine.getManager_Messages().error("Invalid ECS System: PlayerSpawn_System");
 }
 
-void PlayerSpawn_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void PlayerSpawn_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
-	if (m_playerCount == 0ull) {
+	if (m_playerCount == 0ULL) {
 		for (const auto& componentParam : components) {
 			//auto* spawnComponent = static_cast<PlayerSpawn_Component*>(componentParam[0]);
 			const auto* transformComponent = static_cast<Transform_Component*>(componentParam[1]);
@@ -29,7 +29,7 @@ void PlayerSpawn_System::updateComponents(const float&, const std::vector<std::v
 
 			const ecsBaseComponent* const entityComponents[] = { &player, &trans };
 			EntityHandle parentHandle;
-			m_game.getWorld().makeEntity(entityComponents, 2ull, "Player", m_playerHandle, parentHandle);
+			m_game.getWorld().makeEntity(entityComponents, 2ULL, "Player", m_playerHandle, parentHandle);
 			m_playerCount++;
 		}
 	}

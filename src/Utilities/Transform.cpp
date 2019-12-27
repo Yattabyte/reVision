@@ -11,16 +11,16 @@ Transform::Transform(const glm::vec3& position, const glm::quat& orientation, co
 }
 
 Transform::Transform(const glm::quat& orientation) : 
-	Transform(glm::vec3(0.0f), orientation, glm::vec3(1.0f)) 
+	Transform(glm::vec3(0.0F), orientation, glm::vec3(1.0F)) 
 {
 }
 
 void Transform::update() 
 {
 	m_modelMatrix = 
-		glm::translate(glm::mat4(1.0f), m_position) *
+		glm::translate(glm::mat4(1.0F), m_position) *
 		glm::mat4_cast(m_orientation) *
-		glm::scale(glm::mat4(1.0f), m_scale);
+		glm::scale(glm::mat4(1.0F), m_scale);
 	m_inverseModelMatrix = glm::inverse(m_modelMatrix);
 }
 

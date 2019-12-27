@@ -11,7 +11,7 @@ IndirectSync_System::IndirectSync_System(Indirect_Light_Data& frameData) :
 	addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 }
 
-void IndirectSync_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void IndirectSync_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	// Resize light buffers to match number of entities this frame
 	m_frameData.lightBuffer.resize(components.size());
@@ -24,7 +24,7 @@ void IndirectSync_System::updateComponents(const float&, const std::vector<std::
 
 		// Sync Common Buffer Attributes
 		const auto radiusSquared = (light->m_radius * light->m_radius);
-		trans->m_localTransform.m_scale = glm::vec3(radiusSquared * 1.1f);
+		trans->m_localTransform.m_scale = glm::vec3(radiusSquared * 1.1F);
 		trans->m_localTransform.update();
 		m_frameData.lightBuffer[index].LightColor = light->m_color;
 		m_frameData.lightBuffer[index].LightPosition = trans->m_worldTransform.m_position;

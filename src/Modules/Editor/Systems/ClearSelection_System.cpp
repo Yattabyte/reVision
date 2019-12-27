@@ -10,7 +10,7 @@ ClearSelection_System::ClearSelection_System(LevelEditor_Module& editor) :
 	addComponentType(Selected_Component::Runtime_ID);
 }
 
-void ClearSelection_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void ClearSelection_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	auto& ecsWorld = m_editor.getWorld();
 	for (const auto& componentParam : components)

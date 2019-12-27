@@ -36,7 +36,7 @@ Reflector_Technique::Reflector_Technique(Engine& engine, std::vector<Camera*>& s
 		m_viewport.resize(glm::ivec2(m_frameData.envmapSize), static_cast<int>(m_frameData.reflectorLayers));
 		});
 	// Environment Map
-	m_frameData.envmapSize = glm::ivec2(std::max(1u, static_cast<unsigned int>(m_frameData.envmapSize.x)));
+	m_frameData.envmapSize = glm::ivec2(std::max(1U, static_cast<unsigned int>(m_frameData.envmapSize.x)));
 	m_viewport.resize(m_frameData.envmapSize, static_cast<int>(m_frameData.reflectorLayers));
 
 	// Asset-Finished Callbacks
@@ -48,7 +48,7 @@ Reflector_Technique::Reflector_Technique(Engine& engine, std::vector<Camera*>& s
 		});
 }
 
-void Reflector_Technique::clearCache(const float&) noexcept
+void Reflector_Technique::clearCache(const float& /*deltaTime*/) noexcept
 {
 	m_frameData.lightBuffer.endReading();
 	m_frameData.viewInfo.clear();
@@ -74,9 +74,9 @@ void Reflector_Technique::updatePass(const float& deltaTime)
 void Reflector_Technique::renderTechnique(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	// Exit Early
-	if (m_enabled && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shaderLighting, m_shaderStencil)) {
+	if (m_enabled && (!m_frameData.viewInfo.empty()) && Asset::All_Ready(m_shapeCube, m_shaderLighting, m_shaderStencil)) {
 		if (m_drawIndex >= m_drawData.size())
-			m_drawData.resize(size_t(m_drawIndex) + 1ull);
+			m_drawData.resize(size_t(m_drawIndex) + 1ULL);
 
 		// Accumulate all visibility info for the cameras passed in
 		std::vector<glm::ivec2> camIndices;
@@ -87,7 +87,7 @@ void Reflector_Technique::renderTechnique(const float& deltaTime, Viewport& view
 			lightIndices.insert(lightIndices.end(), m_frameData.viewInfo[camIndex].lightIndices.begin(), m_frameData.viewInfo[camIndex].lightIndices.end());
 		}
 
-		if (lightIndices.size()) {
+		if (!lightIndices.empty()) {
 			auto& drawBuffer = m_drawData[m_drawIndex];
 			auto& camBufferIndex = drawBuffer.bufferCamIndex;
 			auto& lightBufferIndex = drawBuffer.visLights;
@@ -117,8 +117,8 @@ void Reflector_Technique::renderTechnique(const float& deltaTime, Viewport& view
 
 void Reflector_Technique::updateReflectors(const float& deltaTime) 
 {
-	auto clientTime = m_engine.GetSystemTime();
-	if (m_frameData.reflectorsToUpdate.size()) {
+	auto clientTime = Engine::GetSystemTime();
+	if (!m_frameData.reflectorsToUpdate.empty()) {
 		m_viewport.resize(m_frameData.envmapSize, static_cast<int>(m_frameData.reflectorLayers));
 		m_viewport.bind();
 		m_viewport.clear();
@@ -144,7 +144,8 @@ void Reflector_Technique::updateReflectors(const float& deltaTime)
 		}
 		m_indirectQuad.beginWriting();
 		m_indirectQuadConvolute.beginWriting();
-		const auto instanceCount = static_cast<GLuint>(perspectives.size()), convoluteCount = static_cast<GLuint>(m_frameData.reflectorLayers);
+		const auto instanceCount = static_cast<GLuint>(perspectives.size());
+		const auto convoluteCount = static_cast<GLuint>(m_frameData.reflectorLayers);
 		m_indirectQuad.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
 		m_indirectQuadConvolute.write(sizeof(GLuint), sizeof(GLuint), &convoluteCount);
 		m_indirectQuad.endWriting();
@@ -172,9 +173,9 @@ void Reflector_Technique::updateReflectors(const float& deltaTime)
 		m_frameData.envmapFBO.bindForReading(0);
 		for (unsigned int r = 1; r < 6; ++r) {
 			// Ensure we are writing to MIP level r
-			const unsigned int write_size = static_cast<unsigned int>(std::max(1.0f, (floor(static_cast<float>(m_frameData.envmapSize.x) / pow(2.0f, static_cast<float>(r))))));
+			const unsigned int write_size = static_cast<unsigned int>(std::max(1.0F, (floor(static_cast<float>(m_frameData.envmapSize.x) / pow(2.0F, static_cast<float>(r))))));
 			glViewport(0, 0, write_size, write_size);
-			m_shaderConvolute->setUniform(1, static_cast<float>(r) / 5.0f);
+			m_shaderConvolute->setUniform(1, static_cast<float>(r) / 5.0F);
 			m_frameData.envmapFBO.bindForWriting(r);
 
 			// Convolute the 6 faces for this roughness level
@@ -187,7 +188,7 @@ void Reflector_Technique::updateReflectors(const float& deltaTime)
 	}
 }
 
-void Reflector_Technique::renderReflectors(const float&, Viewport& viewport) 
+void Reflector_Technique::renderReflectors(const float& /*unused*/, Viewport& viewport) 
 {
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_BLEND);

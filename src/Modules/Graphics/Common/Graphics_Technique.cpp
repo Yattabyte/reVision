@@ -16,18 +16,18 @@ void Graphics_Technique::setEnabled(const bool& state) noexcept
 	m_enabled = state;
 }
 
-void Graphics_Technique::clearCache(const float&) 
+void Graphics_Technique::clearCache(const float& /*unused*/) 
 {
 }
 
-void Graphics_Technique::updateCache(const float&, ecsWorld&) 
+void Graphics_Technique::updateCache(const float& /*unused*/, ecsWorld& /*unused*/) 
 {
 }
 
-void Graphics_Technique::updatePass(const float&) 
+void Graphics_Technique::updatePass(const float& /*unused*/) 
 {
 }
 
-void Graphics_Technique::renderTechnique(const float& , Viewport&, const std::vector<std::pair<int, int>>&)
+void Graphics_Technique::renderTechnique(const float&  /*unused*/, Viewport& /*unused*/, const std::vector<std::pair<int, int>>& /*unused*/)
 {
 }

@@ -13,7 +13,7 @@ DirectSync_System::DirectSync_System(Direct_Light_Data& frameData) :
 	addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 }
 
-void DirectSync_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void DirectSync_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	// Resize light buffers to match number of entities this frame
 	m_frameData.lightBuffer.resize(components.size());
@@ -27,23 +27,23 @@ void DirectSync_System::updateComponents(const float&, const std::vector<std::ve
 		// Sync Common Buffer Attributes
 		const auto radiusSquared = (light->m_radius * light->m_radius);
 		const auto& position = trans->m_worldTransform.m_position;
-		const auto transM = glm::translate(glm::mat4(1.0f), position);
+		const auto transM = glm::translate(glm::mat4(1.0F), position);
 		const auto rotM = glm::mat4_cast(trans->m_worldTransform.m_orientation);
-		const auto sclM = glm::scale(glm::mat4(1.0f), glm::vec3(radiusSquared * 1.1f));
-		trans->m_localTransform.m_scale = glm::vec3(radiusSquared * 1.1f);
+		const auto sclM = glm::scale(glm::mat4(1.0F), glm::vec3(radiusSquared * 1.1F));
+		trans->m_localTransform.m_scale = glm::vec3(radiusSquared * 1.1F);
 		trans->m_localTransform.update();
 		m_frameData.lightBuffer[index].mMatrix = transM * rotM * sclM;
 		m_frameData.lightBuffer[index].LightColor = light->m_color;
 		m_frameData.lightBuffer[index].LightPosition = trans->m_worldTransform.m_position;
-		m_frameData.lightBuffer[index].LightDirection = glm::normalize(rotM * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
+		m_frameData.lightBuffer[index].LightDirection = glm::normalize(rotM * glm::vec4(0.0F, 0.0F, 1.0F, 0.0F));
 		m_frameData.lightBuffer[index].LightIntensity = light->m_intensity;
 		m_frameData.lightBuffer[index].LightRadius = light->m_radius;
-		m_frameData.lightBuffer[index].LightCutoff = cosf(glm::radians(light->m_cutoff / 2.0f));
-		m_frameData.lightBuffer[index].Shadow_Spot = shadow ? shadow->m_shadowSpot : -1;
+		m_frameData.lightBuffer[index].LightCutoff = cosf(glm::radians(light->m_cutoff / 2.0F));
+		m_frameData.lightBuffer[index].Shadow_Spot = shadow != nullptr ? shadow->m_shadowSpot : -1;
 		m_frameData.lightBuffer[index].Light_Type = static_cast<int>(light->m_type);
 
 		// Sync Shadow Attributes
-		if (shadow) {
+		if (shadow != nullptr) {
 			const auto updateCamera = [&](Camera& camera, const glm::mat4& pMatrix, const glm::mat4& vMatrix, const glm::vec3& position, const float& nearPlane, const float& farPlane, const float& fov) {
 				auto& camData = *camera.get();
 				camData.pMatrix = pMatrix;
@@ -65,24 +65,24 @@ void DirectSync_System::updateComponents(const float&, const std::vector<std::ve
 				const auto& CamInv = ClientCamera.vMatrixInverse;
 				const auto& CamP = ClientCamera.pMatrix;
 				const auto& size = ClientCamera.Dimensions;
-				const auto sunModelMatrix = glm::inverse(glm::mat4_cast(trans->m_worldTransform.m_orientation) * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(180.0f), glm::vec3(0, 1.0f, 0))));
+				const auto sunModelMatrix = glm::inverse(glm::mat4_cast(trans->m_worldTransform.m_orientation) * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(180.0F), glm::vec3(0, 1.0F, 0))));
 				const auto ar = size.x / size.y;
-				const auto tanHalfHFOV = glm::radians(ClientCamera.FOV) / 2.0f;
+				const auto tanHalfHFOV = glm::radians(ClientCamera.FOV) / 2.0F;
 				const auto tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
 				constexpr auto near_plane = -Camera::ConstNearPlane;
 				const auto far_plane = -std::min(light->m_radius * light->m_radius, ClientCamera.FarPlane);
 				float cascadeEnd[NUM_CASCADES + 1]{};
-				constexpr float lambda = 0.75f;
+				constexpr float lambda = 0.75F;
 				cascadeEnd[0] = near_plane;
 				for (int x = 1; x < NUM_CASCADES + 1; ++x) {
 					const float xDivM = static_cast<float>(x) / static_cast<float>(NUM_CASCADES);
 					const float cLog = near_plane * powf((far_plane / near_plane), xDivM);
 					const float cUni = near_plane + (far_plane - near_plane) * xDivM;
-					cascadeEnd[x] = (lambda * cLog) + (1.0f - lambda) * cUni;
+					cascadeEnd[x] = (lambda * cLog) + (1.0F - lambda) * cUni;
 				}
 				for (int x = 0; x < NUM_CASCADES; ++x) {
 					// Find the middle of current view frustum chunk
-					const auto middle = glm::vec3(0, 0, ((cascadeEnd[x + 1] - cascadeEnd[x]) / 2.0f) + cascadeEnd[x]);
+					const auto middle = glm::vec3(0, 0, ((cascadeEnd[x + 1] - cascadeEnd[x]) / 2.0F) + cascadeEnd[x]);
 
 					// Measure distance from middle to the furthest point of frustum slice
 					// Use to make a bounding sphere, but then convert into a bounding box
@@ -97,17 +97,22 @@ void DirectSync_System::updateComponents(const float&, const std::vector<std::ve
 
 					// Calculate orthographic projection variables
 					const auto volumeUnitSize = (aabb - -aabb) / m_frameData.shadowData.shadowSize;
-					const auto frustumpos = glm::vec3(sunModelMatrix * CamInv * glm::vec4(middle, 1.0f));
-					const auto clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
+					const auto frustumpos = glm::vec3(sunModelMatrix * CamInv * glm::vec4(middle, 1.0F));
+					const auto clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0F)) / volumeUnitSize) * volumeUnitSize;
 					const auto newMin = -aabb + clampedPos;
 					const auto newMax = aabb + clampedPos;
-					const auto l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
+					const auto l = newMin.x;
+					const auto r = newMax.x;
+					const auto b = newMax.y;
+					const auto t = newMin.y;
+					const auto n = -newMin.z;
+					const auto f = -newMax.z;
 					const auto pMatrix = glm::ortho(l, r, b, t, n, f);
-					const auto v_near = CamP * glm::vec4(0, 0, cascadeEnd[x], 1.0f);
-					const auto v_far = CamP * glm::vec4(0, 0, cascadeEnd[x + 1], 1.0f);
-					const auto pos = CamInv * glm::vec4(0, 0, -v_far.z / 2.0f, 1.0f);
+					const auto v_near = CamP * glm::vec4(0, 0, cascadeEnd[x], 1.0F);
+					const auto v_far = CamP * glm::vec4(0, 0, cascadeEnd[x + 1], 1.0F);
+					const auto pos = CamInv * glm::vec4(0, 0, -v_far.z / 2.0F, 1.0F);
 
-					updateCamera(shadow->m_cameras[x], pMatrix, sunModelMatrix, glm::vec3(pos / pos.w), v_near.z, v_far.z, 180.0f);
+					updateCamera(shadow->m_cameras[x], pMatrix, sunModelMatrix, glm::vec3(pos / pos.w), v_near.z, v_far.z, 180.0F);
 					if (shadow->m_cameras[x].getEnabled()) {
 						m_frameData.lightBuffer[index].lightVP[x] = shadow->m_cameras[x].get()->pvMatrix;
 						m_frameData.lightBuffer[index].CascadeEndClipSpace[x] = v_far.z;
@@ -116,7 +121,7 @@ void DirectSync_System::updateComponents(const float&, const std::vector<std::ve
 			}
 			else if (light->m_type == Light_Component::Light_Type::POINT) {
 				shadow->m_cameras.resize(6);
-				const auto pMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, radiusSquared);
+				const auto pMatrix = glm::perspective(glm::radians(90.0F), 1.0F, 0.01F, radiusSquared);
 				const glm::mat4 vMatrices[6] = {
 					glm::lookAt(position, position + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)),
 					glm::lookAt(position, position + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)),
@@ -126,14 +131,14 @@ void DirectSync_System::updateComponents(const float&, const std::vector<std::ve
 					glm::lookAt(position, position + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0))
 				};
 				for (int x = 0; x < 6; ++x) {
-					updateCamera(shadow->m_cameras[x], pMatrix, vMatrices[x], position, -Camera::ConstNearPlane, radiusSquared, 90.0f);
+					updateCamera(shadow->m_cameras[x], pMatrix, vMatrices[x], position, -Camera::ConstNearPlane, radiusSquared, 90.0F);
 					if (shadow->m_cameras[x].getEnabled())
 						m_frameData.lightBuffer[index].lightVP[x] = shadow->m_cameras[x].get()->pvMatrix;
 				}
 			}
 			else if (light->m_type == Light_Component::Light_Type::SPOT) {
 				shadow->m_cameras.resize(1);
-				const auto pMatrix = glm::perspective(glm::radians(light->m_cutoff), 1.0f, 0.01f, radiusSquared);
+				const auto pMatrix = glm::perspective(glm::radians(light->m_cutoff), 1.0F, 0.01F, radiusSquared);
 				const auto vMatrix = glm::inverse(transM * rotM);
 				updateCamera(shadow->m_cameras[0], pMatrix, vMatrix, position, -Camera::ConstNearPlane, radiusSquared, light->m_cutoff);
 				if (shadow->m_cameras[0].getEnabled())

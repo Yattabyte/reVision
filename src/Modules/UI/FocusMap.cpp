@@ -8,7 +8,7 @@ void FocusMap::addElement(const std::shared_ptr<UI_Element>& element)
 
 bool FocusMap::removeElement(const std::shared_ptr<UI_Element>& element) 
 {
-	size_t index(0ull);
+	size_t index(0ULL);
 	bool found = false;
 	for (const auto& e : m_elements) {
 		if (e.get() == element.get()) {
@@ -54,7 +54,7 @@ bool FocusMap::focusElement(const std::shared_ptr<UI_Element>& element) noexcept
 
 void FocusMap::applyActionState(ActionState& actionState) 
 {
-	if (m_elements.size() && m_index >= 0) {
+	if (!m_elements.empty() && m_index >= 0) {
 		if (elementFocusable(m_elements[m_index]))
 			m_elements[m_index]->userAction(actionState);
 

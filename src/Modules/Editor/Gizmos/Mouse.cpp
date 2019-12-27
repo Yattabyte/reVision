@@ -66,9 +66,9 @@ bool Mouse_Gizmo::checkInput(const float& deltaTime)
 				}
 				else
 					m_editor.setSelection({ entityHandle });
-			return m_editor.getSelection().size();
+			return !m_editor.getSelection().empty();
 		}
-		else if (ImGui::IsMouseClicked(2)) {
+		if (ImGui::IsMouseClicked(2)) {
 			m_editor.getWorld().updateSystem(&m_pickerSystem, deltaTime);
 			const auto& [entityHandle, selectionTransform, intersectionTransform] = m_pickerSystem.getSelection();
 			m_spawnTransform = intersectionTransform;
@@ -93,7 +93,7 @@ void Mouse_Gizmo::render(const float& deltaTime)
 		const auto pMatrix = clientCamera->pMatrix;
 		const auto vMatrix = clientCamera->vMatrix;
 		const auto trans = m_spawnTransform.m_modelMatrix;
-		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(m_spawnTransform.m_position, clientCamera->EyePosition) * 0.02f));
+		const auto mScale = glm::scale(glm::mat4(1.0F), glm::vec3(glm::distance(m_spawnTransform.m_position, clientCamera->EyePosition) * 0.02F));
 
 		// Render Gizmo Model
 		m_spawnModel->bind();

@@ -12,7 +12,7 @@ PropSync_System::PropSync_System(PropData& frameData) :
 	addComponentType(BoundingBox_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 }
 
-void PropSync_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void PropSync_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	// Resize BOTH buffers to match number of entities this frame, even though not all models have skeletons
 	m_frameData.modelBuffer.resize(components.size());
@@ -29,7 +29,7 @@ void PropSync_System::updateComponents(const float&, const std::vector<std::vect
 		// Synchronize the component if it is visible
 		if (propComponent->m_model->ready()) {
 			// Sync Transform Attributes
-			if (transformComponent) {
+			if (transformComponent != nullptr) {
 				const auto& position = transformComponent->m_worldTransform.m_position;
 				const auto& orientation = transformComponent->m_worldTransform.m_orientation;
 				const auto& scale = transformComponent->m_worldTransform.m_scale;
@@ -39,14 +39,14 @@ void PropSync_System::updateComponents(const float&, const std::vector<std::vect
 				// Update bounding sphere
 				const glm::vec3 bboxMax_World = (propComponent->m_model->m_bboxMax * scale) + position;
 				const glm::vec3 bboxMin_World = (propComponent->m_model->m_bboxMin * scale) + position;
-				const glm::vec3 bboxCenter = (bboxMax_World + bboxMin_World) / 2.0f;
-				const glm::vec3 bboxScale = (bboxMax_World - bboxMin_World) / 2.0f;
-				const glm::mat4 matTrans = glm::translate(glm::mat4(1.0f), bboxCenter);
-				const glm::mat4 matScale = glm::scale(glm::mat4(1.0f), bboxScale);
+				const glm::vec3 bboxCenter = (bboxMax_World + bboxMin_World) / 2.0F;
+				const glm::vec3 bboxScale = (bboxMax_World - bboxMin_World) / 2.0F;
+				const glm::mat4 matTrans = glm::translate(glm::mat4(1.0F), bboxCenter);
+				const glm::mat4 matScale = glm::scale(glm::mat4(1.0F), bboxScale);
 				const glm::mat4 matFinal = (matTrans * matRot * matScale);
 				m_frameData.modelBuffer[index].bBoxMatrix = matFinal;
 			}
-			if (bboxComponent) {
+			if (bboxComponent != nullptr) {
 				bboxComponent->m_extent = propComponent->m_model->m_bboxScale;
 				bboxComponent->m_min = propComponent->m_model->m_bboxMin;
 				bboxComponent->m_max = propComponent->m_model->m_bboxMax;
@@ -54,7 +54,7 @@ void PropSync_System::updateComponents(const float&, const std::vector<std::vect
 			}
 
 			// Sync Animation Attributes
-			if (skeletonComponent) {
+			if (skeletonComponent != nullptr) {
 				skeletonComponent->m_mesh = propComponent->m_model->m_mesh;
 				auto& bones = m_frameData.skeletonBuffer[index].bones;
 				const auto total = std::min(skeletonComponent->m_transforms.size(), static_cast<size_t>(NUM_MAX_BONES));

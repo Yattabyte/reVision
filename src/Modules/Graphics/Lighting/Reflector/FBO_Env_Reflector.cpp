@@ -33,7 +33,7 @@ void FBO_Env_Reflector::resize(const glm::ivec2 newSize, const GLuint& depth)
 		m_size = newSize;
 		m_depth = depth;
 		for (int x = 0; x < 6; ++x) {
-			const glm::ivec2 size(glm::floor(glm::vec2(m_size) / glm::vec2(powf(2.0f, static_cast<float>(x)))));
+			const glm::ivec2 size(glm::floor(glm::vec2(m_size) / glm::vec2(powf(2.0F, static_cast<float>(x)))));
 			glTextureImage3DEXT(m_textureID, GL_TEXTURE_CUBE_MAP_ARRAY, x, GL_RGB16F, size.x, size.y, m_depth, 0, GL_RGB, GL_FLOAT, nullptr);
 		}
 	}
@@ -41,14 +41,14 @@ void FBO_Env_Reflector::resize(const glm::ivec2 newSize, const GLuint& depth)
 
 void FBO_Env_Reflector::clear() noexcept 
 {
-	constexpr GLfloat clearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	constexpr GLfloat clearColor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
 	for (int x = 0; x < 6; ++x)
 		glClearNamedFramebufferfv(m_fboID[x], GL_COLOR, 0, clearColor);
 }
 
 void FBO_Env_Reflector::clear(const GLint& zOffset) noexcept 
 {
-	constexpr static const glm::vec3 clear(0.0f);
+	constexpr static const glm::vec3 clear(0.0F);
 	glClearTexSubImage(m_textureID, 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_RGB, GL_FLOAT, &clear);
 }
 

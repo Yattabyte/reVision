@@ -10,7 +10,7 @@ FrustumCull_System::FrustumCull_System(std::vector<Camera*>& sceneCameras) :
 	addComponentType(BoundingSphere_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 }
 
-void FrustumCull_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void FrustumCull_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	for (const auto& componentParam : components) {
 		const auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
@@ -29,11 +29,11 @@ void FrustumCull_System::updateComponents(const float&, const std::vector<std::v
 			const auto objScale = transformComponent->m_worldTransform.m_scale;
 
 			// If FOV is 360, it can see everything
-			if (camera->get()->FOV < 359.9f) {
-				if (bboxComponent) {
+			if (camera->get()->FOV < 359.9F) {
+				if (bboxComponent != nullptr) {
 					objPosition += bboxComponent->m_positionOffset;
 					// Treat it like a sphere
-					const auto radius = glm::distance(bboxComponent->m_min * objScale, bboxComponent->m_max * objScale) / 2.0f;
+					const auto radius = glm::distance(bboxComponent->m_min * objScale, bboxComponent->m_max * objScale) / 2.0F;
 					// Update BSphere with whether or not the camera is within it
 					if (glm::distance(camPosition, objPosition) > radius)
 						bboxComponent->m_cameraCollision = BoundingBox_Component::CameraCollision::OUTSIDE;
@@ -41,7 +41,7 @@ void FrustumCull_System::updateComponents(const float&, const std::vector<std::v
 						bboxComponent->m_cameraCollision = BoundingBox_Component::CameraCollision::INSIDE;
 				}
 				// Frustum x Bounding-Sphere Test
-				if (bsphereComponent) {
+				if (bsphereComponent != nullptr) {
 					objPosition += bsphereComponent->m_positionOffset;
 					const auto radius = bsphereComponent->m_radius;
 					// Update BSphere with whether or not the camera is within it

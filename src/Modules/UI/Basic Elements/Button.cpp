@@ -7,7 +7,7 @@ Button::Button(Engine& engine, const std::string& text) :
 {
 	// All buttons have labels
 	m_label->setAlignment(Label::Alignment::align_center);
-	m_label->setTextScale(12.5f);
+	m_label->setTextScale(12.5F);
 	addElement(m_label);
 
 	// Callbacks
@@ -26,9 +26,9 @@ void Button::renderElement(const float& deltaTime, const glm::vec2& position, co
 	// Update Colors
 	glm::vec4 color(0.75);
 	if (m_pressed)
-		color *= 0.5f;
+		color *= 0.5F;
 	if (m_hovered)
-		color *= 1.5f;
+		color *= 1.5F;
 	m_label->setColor(color);
 
 	// Render Children

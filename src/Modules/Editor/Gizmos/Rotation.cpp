@@ -8,7 +8,7 @@
 
 constexpr float DISK_VERTICES = 32.0F;
 constexpr float DISK_RADIUS = 8.0F;
-constexpr size_t DISK_MAX_POINTS = static_cast<size_t>(DISK_VERTICES) * 6ull;
+constexpr size_t DISK_MAX_POINTS = static_cast<size_t>(DISK_VERTICES) * 6ULL;
 
 Rotation_Gizmo::~Rotation_Gizmo()
 {
@@ -74,25 +74,25 @@ Rotation_Gizmo::Rotation_Gizmo(Engine& engine, LevelEditor_Module& editor) :
 	glVertexArrayVertexBuffer(m_diskVAO, 0, m_diskVBO, 0, sizeof(glm::vec3));
 }
 
-bool Rotation_Gizmo::checkMouseInput(const float&)
+bool Rotation_Gizmo::checkMouseInput(const float& /*unused*/)
 {
 	// See if the mouse intersects any entities
 	checkMouseHover();
 	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(0))
 		return checkMousePress();
-	else {
+	
 		if (m_selectedAxes != NONE) {
 			m_selectedAxes = NONE;
 			return true; // block input as we just finished doing an action here
 		}
-	}
+	
 	return false;
 }
 
-void Rotation_Gizmo::render(const float&)
+void Rotation_Gizmo::render(const float& /*unused*/)
 {
 	// Safety check first
-	if (Asset::All_Ready(m_model, m_gizmoShader) && m_editor.getSelection().size()) {
+	if (Asset::All_Ready(m_model, m_gizmoShader) && (!m_editor.getSelection().empty())) {
 		// Set up state
 		m_editor.bindFBO();
 
@@ -105,13 +105,13 @@ void Rotation_Gizmo::render(const float&)
 
 		const auto trans = glm::translate(position);
 		const auto mScale = glm::scale(glm::vec3(glm::distance(position, clientCamera->EyePosition) * m_renderScale));
-		const auto aScale = glm::scale(glm::vec3(clientCamera->FarPlane * 2.0f));
+		const auto aScale = glm::scale(glm::vec3(clientCamera->FarPlane * 2.0F));
 
 		// Render Gizmo Model
 		m_model->bind();
 		m_gizmoShader->bind();
 		m_gizmoShader->setUniform(0, pMatrix * vMatrix * trans * mScale);
-		m_gizmoShader->setUniform(4, pMatrix * vMatrix * (trans * glm::inverse(camRotation)) * mScale * glm::scale(glm::mat4(1.0f), glm::vec3(1.15f)));
+		m_gizmoShader->setUniform(4, pMatrix * vMatrix * (trans * glm::inverse(camRotation)) * mScale * glm::scale(glm::mat4(1.0F), glm::vec3(1.15F)));
 		m_gizmoShader->setUniform(8, GLuint(m_selectedAxes));
 		m_gizmoShader->setUniform(9, GLuint(m_hoveredAxes));
 		m_indirectIndicator.drawCall();
@@ -121,7 +121,7 @@ void Rotation_Gizmo::render(const float&)
 			m_indirectDisk.beginWriting();
 			updateDisk();
 			m_indirectDisk.endWriting();
-			const auto diskScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, clientCamera->EyePosition) * m_renderScale)) * glm::scale(glm::mat4(1.0f), glm::vec3(m_selectedAxes == ALL_AXES ? 1.15f : 1.0F));
+			const auto diskScale = glm::scale(glm::mat4(1.0F), glm::vec3(glm::distance(position, clientCamera->EyePosition) * m_renderScale)) * glm::scale(glm::mat4(1.0F), glm::vec3(m_selectedAxes == ALL_AXES ? 1.15F : 1.0F));
 			m_axisShader->bind();
 			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * diskScale);
 			m_axisShader->setUniform(4, glm::vec3(1, 0.8, 0));
@@ -132,19 +132,19 @@ void Rotation_Gizmo::render(const float&)
 
 		// Render Axis Lines
 		glBindVertexArray(m_axisVAO);
-		if (m_selectedAxes & X_AXIS) {
+		if ((m_selectedAxes & X_AXIS) != 0U) {
 			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * aScale);
 			m_axisShader->setUniform(4, glm::vec3(1, 0, 0));
 			glDrawArrays(GL_LINES, 0, 2);
 		}
-		if (m_selectedAxes & Y_AXIS) {
-			const auto rot = glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0, 0, 1));
+		if ((m_selectedAxes & Y_AXIS) != 0U) {
+			const auto rot = glm::rotate(glm::mat4(1.0F), glm::radians(-90.0F), glm::vec3(0, 0, 1));
 			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * rot * aScale);
 			m_axisShader->setUniform(4, glm::vec3(0, 1, 0));
 			glDrawArrays(GL_LINES, 0, 2);
 		}
-		if (m_selectedAxes & Z_AXIS) {
-			const auto rot = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0, 1, 0));
+		if ((m_selectedAxes & Z_AXIS) != 0U) {
+			const auto rot = glm::rotate(glm::mat4(1.0F), glm::radians(90.0F), glm::vec3(0, 1, 0));
 			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * rot * aScale);
 			m_axisShader->setUniform(4, glm::vec3(0, 0, 1));
 			glDrawArrays(GL_LINES, 0, 2);
@@ -166,8 +166,8 @@ void Rotation_Gizmo::checkMouseHover()
 	const auto& position = m_transform.m_position;
 	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
 	const auto ray_origin = clientCamera->EyePosition;
-	const auto ray_nds = glm::vec2(2.0f * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
-	const auto ray_eye = glm::vec4(glm::vec2(clientCamera->pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
+	const auto ray_nds = glm::vec2(2.0F * actionState[ActionState::Action::MOUSE_X] / m_renderSize.x - 1.0F, 1.0F - (2.0F * actionState[ActionState::Action::MOUSE_Y]) / m_renderSize.y);
+	const auto ray_eye = glm::vec4(glm::vec2(clientCamera->pMatrixInverse * glm::vec4(ray_nds, -1.0F, 1.0F)), -1.0F, 0.0F);
 	const auto ray_world = glm::normalize(glm::vec3(clientCamera->vMatrixInverse * ray_eye));
 
 	const auto scalingFactor = glm::distance(position, clientCamera->EyePosition) * m_renderScale;
@@ -185,13 +185,14 @@ void Rotation_Gizmo::checkMouseHover()
 	// Find the closest axis that the user may have hovered over
 	int hoveredAxis = -1;
 	float closestIntersection = FLT_MAX;
-	constexpr float OUTER_DIAMETER = 10.0F, INNER_DIAMETER = 7.5F;
+	constexpr float OUTER_DIAMETER = 10.0F;
+	constexpr float INNER_DIAMETER = 7.5F;
 	for (int x = 0; x < 4; ++x) {
 		float intDistance = FLT_MAX;
 		if (!RayPlaneIntersection(ray_origin, ray_world, position, disk_normals[x], intDistance))
 			RayPlaneIntersection(ray_origin, ray_world, position, -disk_normals[x], intDistance);
 		m_hoveredEnds[x] = ray_origin + intDistance * ray_world;
-		const auto distance = fabsf(glm::distance(m_hoveredEnds[x], position) * (1.0f / scalingFactor));
+		const auto distance = fabsf(glm::distance(m_hoveredEnds[x], position) * (1.0F / scalingFactor));
 		if ((intDistance < closestIntersection) && (distance <= OUTER_DIAMETER) && (distance >= INNER_DIAMETER)) {
 			closestIntersection = intDistance;
 			hoveredAxis = x;
@@ -214,8 +215,8 @@ void Rotation_Gizmo::checkMouseHover()
 bool Rotation_Gizmo::checkMousePress()
 {
 	const auto& position = m_transform.m_position;
-	m_startingAngle = 0.0f;
-	m_deltaAngle = 0.0f;
+	m_startingAngle = 0.0F;
+	m_deltaAngle = 0.0F;
 
 	// Check if the user selected an axis
 	if ((m_selectedAxes == NONE) && !ImGui::IsMouseDragging(0)) {
@@ -226,17 +227,18 @@ bool Rotation_Gizmo::checkMousePress()
 	}
 
 	// An axis is now selected, perform dragging operation
-	else if ((m_selectedAxes != NONE) && ImGui::IsMouseDragging(0)) {
-		const auto index = (m_selectedAxes & X_AXIS) ? 0 : (m_selectedAxes & Y_AXIS) ? 1 : (m_selectedAxes & Z_AXIS) ? 2 : 3;
+	if ((m_selectedAxes != NONE) && ImGui::IsMouseDragging(0)) {
+		const auto index = (m_selectedAxes & X_AXIS) != 0U ? 0 : (m_selectedAxes & Y_AXIS) != 0U ? 1 : (m_selectedAxes & Z_AXIS) != 0U ? 2 : 3;
 		const auto fourthAxisMat = glm::inverse(glm::mat4_cast(glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->vMatrix)));
 		const auto fourthAxisNormal = fourthAxisMat * glm::vec4(0, 0, 1, 1);
 		const glm::vec3 normals[4] = { glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::normalize(glm::vec3(fourthAxisNormal / fourthAxisNormal.w)) };
 		const auto endPoint = m_hoveredEnds[index];
-		const auto a = glm::normalize(m_startPoint - position), b = glm::normalize(endPoint - position);
+		const auto a = glm::normalize(m_startPoint - position);
+		const auto b = glm::normalize(endPoint - position);
 
 		// Measure the angle between the first point we clicked and the spot we've dragged to, then snap to grid
 		const auto angle = glm::degrees(glm::orientedAngle(a, b, normals[index]));
-		const auto gridSnappedAngle = m_angleSnapping ? glm::radians(float(int((angle + (m_angleSnapping / 2.0f)) / m_angleSnapping) * m_angleSnapping)) : angle;
+		const auto gridSnappedAngle = m_angleSnapping != 0.0F ? glm::radians(float(int((angle + (m_angleSnapping / 2.0F)) / m_angleSnapping) * m_angleSnapping)) : angle;
 		const auto newQuat = glm::rotate(glm::quat(1, 0, 0, 0), gridSnappedAngle, normals[index]);
 		if (m_selectedAxes == X_AXIS)
 			m_startingAngle = glm::atan(m_startPoint.z - position.z, m_startPoint.y - position.y);
@@ -265,7 +267,7 @@ bool Rotation_Gizmo::checkMousePress()
 			void rotate(const glm::quat& rotation) {
 				const auto& ecsWorld = m_editor.getWorld();
 				std::vector<Transform_Component*> transformComponents;
-				glm::vec3 center(0.0f);
+				glm::vec3 center(0.0F);
 				for (const auto& entityHandle : m_uuids)
 					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
@@ -274,7 +276,7 @@ bool Rotation_Gizmo::checkMousePress()
 				center /= transformComponents.size();
 				for (auto* transform : transformComponents) {
 					const auto delta = transform->m_localTransform.m_position - center;
-					auto rotatedDelta = glm::mat4_cast(rotation) * glm::vec4(delta, 1.0f);
+					auto rotatedDelta = glm::mat4_cast(rotation) * glm::vec4(delta, 1.0F);
 					rotatedDelta /= rotatedDelta.w;
 					transform->m_localTransform.m_position = glm::vec3(rotatedDelta) + center;
 					transform->m_localTransform.m_orientation = rotation * transform->m_localTransform.m_orientation;
@@ -309,16 +311,19 @@ bool Rotation_Gizmo::checkMousePress()
 void Rotation_Gizmo::updateDisk()
 {
 	const auto fourthAxisMat = glm::inverse(glm::mat4_cast(glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->vMatrix)));
-	const int steps = static_cast<int>(ceilf((abs(m_deltaAngle) / 360.0f) * DISK_VERTICES));
-	std::vector<glm::vec3> points(size_t(steps) * 6ull, glm::vec3(0.0f));
-	for (size_t n = 0ull, v = 0ull; n < steps; ++n, v += 6ull) {
+	const int steps = static_cast<int>(ceilf((abs(m_deltaAngle) / 360.0F) * DISK_VERTICES));
+	std::vector<glm::vec3> points(size_t(steps) * 6ULL, glm::vec3(0.0F));
+	for (size_t n = 0ULL, v = 0ULL; n < steps; ++n, v += 6ULL) {
 		const auto startAngle = glm::radians(float(n) * (m_deltaAngle / float(steps))) + m_startingAngle;
 		const auto endAngle = glm::radians(float(n + 1) * (m_deltaAngle / float(steps))) + m_startingAngle;
 
-		const auto x1 = 8.0f * cosf(startAngle), y1 = 8.0f * sinf(startAngle),
-			x2 = 8.0f * cosf(endAngle), y2 = 8.0f * sinf(endAngle);
+		const auto x1 = 8.0F * cosf(startAngle);
+		const auto y1 = 8.0F * sinf(startAngle);
+		const auto x2 = 8.0F * cosf(endAngle);
+		const auto y2 = 8.0F * sinf(endAngle);
 
-		glm::vec3 v1(0.0f), v2(0.0f);
+		glm::vec3 v1(0.0F);
+		glm::vec3 v2(0.0F);
 		if (m_selectedAxes == X_AXIS) {
 			v1 = glm::vec3(0, x1, y1);
 			v2 = glm::vec3(0, x2, y2);
@@ -332,16 +337,17 @@ void Rotation_Gizmo::updateDisk()
 			v2 = glm::vec3(x2, y2, 0);
 		}
 		else if (m_selectedAxes == ALL_AXES) {
-			const auto t1 = fourthAxisMat * glm::vec4(x1, y1, 0, 1.0f), t2 = fourthAxisMat * glm::vec4(x2, y2, 0, 1.0f);
+			const auto t1 = fourthAxisMat * glm::vec4(x1, y1, 0, 1.0F);
+			const auto t2 = fourthAxisMat * glm::vec4(x2, y2, 0, 1.0F);
 			v1 = glm::vec3(t1 / t1.w);
 			v2 = glm::vec3(t2 / t2.w);
 		}
-		points[v + 0ull] = glm::vec3(0);
-		points[v + 1ull] = v1;
-		points[v + 2ull] = v2;
-		points[v + 3ull] = glm::vec3(0);
-		points[v + 4ull] = v2;
-		points[v + 5ull] = v1;
+		points[v + 0ULL] = glm::vec3(0);
+		points[v + 1ULL] = v1;
+		points[v + 2ULL] = v2;
+		points[v + 3ULL] = glm::vec3(0);
+		points[v + 4ULL] = v2;
+		points[v + 5ULL] = v1;
 	}
 	m_indirectDisk.setCount(GLuint(points.size()));
 	glNamedBufferSubData(m_diskVBO, 0, sizeof(glm::vec3) * points.size(), points.data());

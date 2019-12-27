@@ -23,11 +23,11 @@ Shadow_Technique::Shadow_Technique(Engine& engine, std::vector<Camera*>& sceneCa
 		m_frameData.shadowSize = std::max(1.0f, f);
 		m_frameData.shadowSizeRCP = 1.0f / m_frameData.shadowSize;
 		});
-	m_frameData.shadowSize = std::max(1.0f, m_frameData.shadowSize);
-	m_frameData.shadowSizeRCP = 1.0f / m_frameData.shadowSize;
+	m_frameData.shadowSize = std::max(1.0F, m_frameData.shadowSize);
+	m_frameData.shadowSizeRCP = 1.0F / m_frameData.shadowSize;
 }
 
-void Shadow_Technique::clearCache(const float&) noexcept
+void Shadow_Technique::clearCache(const float& /*deltaTime*/) noexcept
 {
 	m_frameData.shadowsToUpdate.clear();
 }
@@ -51,8 +51,8 @@ ShadowData& Shadow_Technique::getShadowData() noexcept
 
 void Shadow_Technique::updateShadows(const float& deltaTime) 
 {
-	const auto clientTime = m_engine.GetSystemTime();
-	if (m_frameData.shadowsToUpdate.size()) {
+	const auto clientTime = Engine::GetSystemTime();
+	if (!m_frameData.shadowsToUpdate.empty()) {
 		// Prepare Viewport
 		glViewport(0, 0, static_cast<GLsizei>(m_frameData.shadowSize), static_cast<GLsizei>(m_frameData.shadowSize));
 		m_frameData.shadowFBO.bindForWriting();

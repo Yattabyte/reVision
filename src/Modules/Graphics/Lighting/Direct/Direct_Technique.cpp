@@ -37,7 +37,7 @@ Direct_Technique::Direct_Technique(Engine& engine, ShadowData& shadowData, Camer
 	m_shapeHemisphere->addCallback(m_aliveIndicator, [&] { registerLightShapes(); });
 }
 
-void Direct_Technique::clearCache(const float&) noexcept
+void Direct_Technique::clearCache(const float& /*deltaTime*/) noexcept
 {
 	m_frameData.lightBuffer.endReading();
 	m_frameData.viewInfo.clear();
@@ -51,12 +51,12 @@ void Direct_Technique::updateCache(const float& deltaTime, ecsWorld& world)
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Direct_Technique::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
+void Direct_Technique::renderTechnique(const float& /*deltaTime*/, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	// Exit Early
-	if (m_enabled && m_geometryReady && m_frameData.viewInfo.size() && Asset::All_Ready(m_shapeCube, m_shader_Lighting)) {
+	if (m_enabled && m_geometryReady && (!m_frameData.viewInfo.empty()) && Asset::All_Ready(m_shapeCube, m_shader_Lighting)) {
 		if (m_drawIndex >= m_drawData.size())
-			m_drawData.resize(size_t(m_drawIndex) + 1ull);
+			m_drawData.resize(size_t(m_drawIndex) + 1ULL);
 		// Accumulate all visibility info for the cameras passed in
 		std::vector<glm::ivec2> camIndices;
 		std::vector<GLint> lightIndices;
@@ -76,7 +76,7 @@ void Direct_Technique::renderTechnique(const float&, Viewport& viewport, const s
 		}
 
 		// Render lights
-		if (lightIndices.size()) {
+		if (!lightIndices.empty()) {
 			// Write accumulated data
 			auto& drawBuffer = m_drawData[m_drawIndex];
 			drawBuffer.bufferCamIndex.beginWriting();

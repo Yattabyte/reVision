@@ -13,7 +13,7 @@ Inspector_Light_System::Inspector_Light_System(Engine& engine, LevelEditor_Modul
 	addComponentType(Light_Component::Runtime_ID);
 }
 
-void Inspector_Light_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void Inspector_Light_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	ImGui::PushID(this);
 	const auto text = std::string(Light_Component::Name) + ": (" + std::to_string(components.size()) + ")";
@@ -49,8 +49,8 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 					}
 				}
 				void setData(const std::vector<Light_Component::Light_Type>& data) {
-					if (data.size()) {
-						size_t index(0ull);
+					if (!data.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids)
 							if (auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle))
 								component->m_type = data[index++];
@@ -91,8 +91,8 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 					}
 				}
 				void setData(const std::vector<glm::vec3>& data) {
-					if (data.size()) {
-						size_t index(0ull);
+					if (!data.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids)
 							if (auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle))
 								component->m_color = data[index++];
@@ -133,8 +133,8 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 					}
 				}
 				void setData(const std::vector<float>& data) {
-					if (data.size()) {
-						size_t index(0ull);
+					if (!data.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle))
 								component->m_intensity = data[index++];
@@ -176,8 +176,8 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 					}
 				}
 				void setData(const std::vector<float>& data) {
-					if (data.size()) {
-						size_t index(0ull);
+					if (!data.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle))
 								component->m_radius = data[index++];
@@ -219,8 +219,8 @@ void Inspector_Light_System::updateComponents(const float&, const std::vector<st
 					}
 				}
 				void setData(const std::vector<float>& data) {
-					if (data.size()) {
-						size_t index(0ull);
+					if (!data.empty()) {
+						size_t index(0ULL);
 						for (const auto& componentHandle : m_uuids) {
 							if (auto* component = m_ecsWorld.getComponent<Light_Component>(componentHandle))
 								component->m_cutoff = data[index++];

@@ -37,8 +37,8 @@ void ShadowMap::resize(const glm::ivec2& newSize, const int& depth) noexcept
 	if (m_size != newSize || m_layerFaces != depth) {
 		m_size = glm::max(glm::ivec2(1), newSize);
 		m_layerFaces = std::max<int>(1, depth);
-		constexpr float clearDepth(1.0f);
-		constexpr glm::vec3 clearColor(0.0f);
+		constexpr float clearDepth(1.0F);
+		constexpr glm::vec3 clearColor(0.0F);
 		glTextureImage3DEXT(m_textureIDS[0], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, m_layerFaces, 0, GL_RGB, GL_FLOAT, nullptr);
 		glTextureImage3DEXT(m_textureIDS[1], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, m_layerFaces, 0, GL_RGB, GL_FLOAT, nullptr);
 		glTextureImage3DEXT(m_textureIDS[2], GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, m_size.x, m_size.y, m_layerFaces, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
@@ -50,8 +50,8 @@ void ShadowMap::resize(const glm::ivec2& newSize, const int& depth) noexcept
 
 void ShadowMap::clear(const GLint& zOffset, const GLsizei& amount) noexcept 
 {
-	constexpr float clearDepth(1.0f);
-	constexpr glm::vec3 clear(0.0f);
+	constexpr float clearDepth(1.0F);
+	constexpr glm::vec3 clear(0.0F);
 	glClearTexSubImage(m_textureIDS[0], 0, 0, 0, zOffset, m_size.x, m_size.y, amount, GL_RGB, GL_FLOAT, &clear);
 	glClearTexSubImage(m_textureIDS[1], 0, 0, 0, zOffset, m_size.x, m_size.y, amount, GL_RGB, GL_FLOAT, &clear);
 	glClearTexSubImage(m_textureIDS[2], 0, 0, 0, zOffset, m_size.x, m_size.y, amount, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);

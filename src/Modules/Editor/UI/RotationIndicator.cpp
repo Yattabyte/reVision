@@ -58,7 +58,7 @@ RotationIndicator::RotationIndicator(Engine& engine) :
 	glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 }
 
-void RotationIndicator::tick(const float&)
+void RotationIndicator::tick(const float& /*deltaTime*/)
 {
 	if (m_open && Asset::All_Ready(m_3dIndicator, m_colorPalette, m_shader)) {
 		// Set up state
@@ -69,8 +69,8 @@ void RotationIndicator::tick(const float&)
 		glDepthMask(true);
 
 		glViewport(0, 0, 256, 256);
-		constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		constexpr GLfloat clearDepth = 1.0f;
+		constexpr GLfloat clearColor[] = { 0.0F, 0.0F, 0.0F, 0.0F };
+		constexpr GLfloat clearDepth = 1.0F;
 		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
 		glClearNamedFramebufferfv(m_fboID, GL_DEPTH, 0, &clearDepth);
 		GLint previousFBO(0);
@@ -78,9 +78,9 @@ void RotationIndicator::tick(const float&)
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 
 		// Generate matrices
-		const auto pMatrix = glm::ortho(-4.2f, 4.2f, -4.2f, 4.2f, -10.0f, 10.0f);
+		const auto pMatrix = glm::ortho(-4.2F, 4.2F, -4.2F, 4.2F, -10.0F, 10.0F);
 		const auto camMatrix = glm::mat4_cast(glm::quat_cast(m_engine.getModule_Graphics().getClientCamera()->vMatrix));
-		const auto vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -5.0f)) * camMatrix;
+		const auto vMatrix = glm::translate(glm::mat4(1.0F), glm::vec3(0, 0, -5.0F)) * camMatrix;
 		m_shader->setUniform(0, pMatrix * vMatrix);
 
 		m_indirectIndicator.drawCall();
@@ -91,11 +91,11 @@ void RotationIndicator::tick(const float&)
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 		glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0F);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0F, 0.0F));
 		ImGui::SetNextWindowPos(ImVec2((static_cast<float>(m_renderSize.x) / 5.0F), 18.0F), ImGuiCond_Appearing);
 		if (ImGui::Begin("Rotation Indicator", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground))
-			ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_texID), { 128.0f, 128.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+			ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_texID), { 128.0F, 128.0F }, { 0.0F, 1.0F }, { 1.0F, 0.0F });
 		ImGui::End();
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();

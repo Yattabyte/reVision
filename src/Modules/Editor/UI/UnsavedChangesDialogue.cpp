@@ -10,7 +10,7 @@ UnsavedChangesDialogue::UnsavedChangesDialogue(Engine& engine, LevelEditor_Modul
 	m_open = false;
 }
 
-void UnsavedChangesDialogue::tick(const float&)
+void UnsavedChangesDialogue::tick(const float& /*deltaTime*/)
 {
 	// Draw 'Delete Level' confirmation
 	if (m_open) {
@@ -19,9 +19,9 @@ void UnsavedChangesDialogue::tick(const float&)
 		if (ImGui::BeginPopupModal("Unsaved Changes", &m_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 			ImGui::TextWrapped("This level has unsaved changes, discard them?\r\n");
 			ImGui::Spacing(); ImGui::Spacing();
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(0, 0.6f, 0.6f)));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(0, 0.7f, 0.7f)));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(0, 0.8f, 0.8f)));
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor::HSV(0, 0.6F, 0.6F)));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor::HSV(0, 0.7F, 0.7F)));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor::HSV(0, 0.8F, 0.8F)));
 			if (ImGui::Button("Discard", { 66, 20 })) {
 				m_open = false;
 				ImGui::CloseCurrentPopup();

@@ -11,7 +11,7 @@ Settings::Settings(Engine& engine, LevelEditor_Module& editor) noexcept :
 	m_open = true;
 }
 
-void Settings::tick(const float&)
+void Settings::tick(const float& /*deltaTime*/)
 {
 	tickMainDialogue();
 }
@@ -26,12 +26,12 @@ void Settings::tickMainDialogue()
 
 			// Editor Settings
 			if (ImGui::CollapsingHeader("Settings", ImGuiTreeNodeFlags_DefaultOpen)) {
-				static float autoSaveInterval = 60.0f;
+				static float autoSaveInterval = 60.0F;
 				m_engine.getPreferenceState().getOrSetValue(PreferenceState::Preference::E_AUTOSAVE_INTERVAL, autoSaveInterval);
-				autoSaveInterval /= 60.0f;
-				if (ImGui::DragFloat("Autosave Time", &autoSaveInterval, 0.5f, 0.0f, 0.0f, "%.0f Minutes")) {
-					autoSaveInterval = std::max(1.0f, autoSaveInterval);
-					m_engine.getPreferenceState().setValue(PreferenceState::Preference::E_AUTOSAVE_INTERVAL, float(autoSaveInterval * 60.0f));
+				autoSaveInterval /= 60.0F;
+				if (ImGui::DragFloat("Autosave Time", &autoSaveInterval, 0.5F, 0.0F, 0.0F, "%.0f Minutes")) {
+					autoSaveInterval = std::max(1.0F, autoSaveInterval);
+					m_engine.getPreferenceState().setValue(PreferenceState::Preference::E_AUTOSAVE_INTERVAL, float(autoSaveInterval * 60.0F));
 				}
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
@@ -40,10 +40,10 @@ void Settings::tickMainDialogue()
 					ImGui::EndTooltip();
 				}
 
-				static float floatStackSize = 500.0f;
+				static float floatStackSize = 500.0F;
 				m_engine.getPreferenceState().getOrSetValue(PreferenceState::Preference::E_UNDO_STACKSIZE, floatStackSize);
 				static int intStackSize = int(floatStackSize);
-				if (ImGui::DragInt("Max Undo/Redo", &intStackSize, 1.0f, 0, 1000, "%d Actions")) {
+				if (ImGui::DragInt("Max Undo/Redo", &intStackSize, 1.0F, 0, 1000, "%d Actions")) {
 					intStackSize = std::max(1, intStackSize);
 					m_engine.getPreferenceState().setValue(PreferenceState::Preference::E_UNDO_STACKSIZE, float(intStackSize));
 				}
@@ -54,12 +54,12 @@ void Settings::tickMainDialogue()
 					ImGui::EndTooltip();
 				}
 
-				static float outlineScale = 0.05f;
+				static float outlineScale = 0.05F;
 				m_engine.getPreferenceState().getOrSetValue(PreferenceState::Preference::E_OUTLINE_SCALE, outlineScale);
-				outlineScale *= 1000.0f;
+				outlineScale *= 1000.0F;
 				if (ImGui::DragFloat("Outline Size", &outlineScale, 1, 0, 100, "%.0f%%")) {
-					outlineScale = std::clamp(outlineScale, 0.0f, 100.0f);
-					m_engine.getPreferenceState().setValue(PreferenceState::Preference::E_OUTLINE_SCALE, outlineScale / 1000.0f);
+					outlineScale = std::clamp(outlineScale, 0.0F, 100.0F);
+					m_engine.getPreferenceState().setValue(PreferenceState::Preference::E_OUTLINE_SCALE, outlineScale / 1000.0F);
 				}
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
@@ -68,12 +68,12 @@ void Settings::tickMainDialogue()
 					ImGui::EndTooltip();
 				}
 
-				static float gizmoScale = 0.02f;
+				static float gizmoScale = 0.02F;
 				m_engine.getPreferenceState().getOrSetValue(PreferenceState::Preference::E_GIZMO_SCALE, gizmoScale);
-				gizmoScale *= 1000.0f;
+				gizmoScale *= 1000.0F;
 				if (ImGui::DragFloat("Gizmo Size", &gizmoScale, 1, 0, 100, "%.0f%%")) {
-					gizmoScale = std::clamp(gizmoScale, 0.0f, 100.0f);
-					m_engine.getPreferenceState().setValue(PreferenceState::Preference::E_GIZMO_SCALE, gizmoScale / 1000.0f);
+					gizmoScale = std::clamp(gizmoScale, 0.0F, 100.0F);
+					m_engine.getPreferenceState().setValue(PreferenceState::Preference::E_GIZMO_SCALE, gizmoScale / 1000.0F);
 				}
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
@@ -82,10 +82,10 @@ void Settings::tickMainDialogue()
 					ImGui::EndTooltip();
 				}
 
-				static float gridSnap = 1.0f;
+				static float gridSnap = 1.0F;
 				m_engine.getPreferenceState().getOrSetValue(PreferenceState::Preference::E_GRID_SNAP, gridSnap);
-				if (ImGui::DragFloat("Grid Snap", &gridSnap, 1, 0, 1000.0f, "%.3f Units")) {
-					gridSnap = std::clamp(gridSnap, 0.0f, 1000.0f);
+				if (ImGui::DragFloat("Grid Snap", &gridSnap, 1, 0, 1000.0F, "%.3f Units")) {
+					gridSnap = std::clamp(gridSnap, 0.0F, 1000.0F);
 					m_engine.getPreferenceState().setValue(PreferenceState::Preference::E_GRID_SNAP, gridSnap);
 				}
 				if (ImGui::IsItemHovered()) {
@@ -95,10 +95,10 @@ void Settings::tickMainDialogue()
 					ImGui::EndTooltip();
 				}
 
-				static float angleSnapping = 1.0f;
+				static float angleSnapping = 1.0F;
 				m_engine.getPreferenceState().getOrSetValue(PreferenceState::Preference::E_ANGLE_SNAP, angleSnapping);
-				if (ImGui::DragFloat("Angle Snap", &angleSnapping, 1, 0, 360.0f, "%.3f Degrees")) {
-					angleSnapping = std::clamp(angleSnapping, 0.0f, 360.0f);
+				if (ImGui::DragFloat("Angle Snap", &angleSnapping, 1, 0, 360.0F, "%.3f Degrees")) {
+					angleSnapping = std::clamp(angleSnapping, 0.0F, 360.0F);
 					m_engine.getPreferenceState().setValue(PreferenceState::Preference::E_ANGLE_SNAP, angleSnapping);
 				}
 				if (ImGui::IsItemHovered()) {

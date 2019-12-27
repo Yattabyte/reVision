@@ -17,24 +17,25 @@ Join_Reflections::Join_Reflections(Engine& engine) :
 {
 }
 
-void Join_Reflections::clearCache(const float&) noexcept
+void Join_Reflections::clearCache(const float& /*deltaTime*/) noexcept
 {
 	m_drawIndex = 0;
 }
 
-void Join_Reflections::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
+void Join_Reflections::renderTechnique(const float& /*deltaTime*/, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shader))
 		return;
 
 	// Prepare camera index
 	if (m_drawIndex >= m_drawData.size())
-		m_drawData.resize(size_t(m_drawIndex) + 1ull);
+		m_drawData.resize(size_t(m_drawIndex) + 1ULL);
 	auto& [camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
 	camBufferIndex.beginWriting();
 	indirectQuad.beginWriting();
 	std::vector<glm::ivec2> camIndices;
-	for (auto& [camIndex, layer] : perspectives)
+	camIndices.reserve(perspectives.size());
+for (auto& [camIndex, layer] : perspectives)
 		camIndices.push_back({ camIndex, layer });
 	camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 	indirectQuad.setPrimitiveCount(static_cast<GLuint>(perspectives.size()));

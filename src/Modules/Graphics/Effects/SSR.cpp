@@ -41,24 +41,25 @@ SSR::SSR(Engine& engine) :
 		msgMgr.error("SSR Bayer Matrix Texture is incomplete.");
 }
 
-void SSR::clearCache(const float&) noexcept
+void SSR::clearCache(const float& /*deltaTime*/) noexcept
 {
 	m_drawIndex = 0;
 }
 
-void SSR::renderTechnique(const float&, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
+void SSR::renderTechnique(const float& /*deltaTime*/, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives)
 {
 	if (!m_enabled || !Asset::All_Ready(m_shapeQuad, m_shaderCopy, m_shaderConvMips, m_shaderSSR1, m_shaderSSR2))
 		return;
 
 	// Prepare camera index
 	if (m_drawIndex >= m_drawData.size())
-		m_drawData.resize(size_t(m_drawIndex) + 1ull);
+		m_drawData.resize(size_t(m_drawIndex) + 1ULL);
 	auto& [camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
 	camBufferIndex.beginWriting();
 	indirectQuad.beginWriting();
 	std::vector<glm::ivec2> camIndices;
-	for (auto& [camIndex, layer] : perspectives)
+	camIndices.reserve(perspectives.size());
+for (auto& [camIndex, layer] : perspectives)
 		camIndices.push_back({ camIndex, layer });
 	camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 	indirectQuad.setPrimitiveCount(static_cast<GLuint>(perspectives.size()));
@@ -109,7 +110,7 @@ void SSR::updateMIPChain(Viewport& viewport)
 	m_shaderCopy->bind();
 	viewport.m_gfxFBOS.bindForReading("LIGHTING", 0);
 	viewport.m_gfxFBOS.bindForWriting("SSR_MIP");
-	constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	constexpr GLfloat clearColor[] = { 0.0F, 0.0F, 0.0F, 0.0F };
 	glClearNamedFramebufferfv(mipFboID, GL_COLOR, 0, clearColor);
 	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 

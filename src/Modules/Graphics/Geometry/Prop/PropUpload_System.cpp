@@ -47,12 +47,12 @@ PropUpload_System::PropUpload_System(Engine& engine, PropData& frameData) :
 	engine.getPreferenceState().getOrSetValue(PreferenceState::Preference::C_MATERIAL_SIZE, m_materialSize);
 
 	// Size-dependent variable set up
-	m_maxMips = GLsizei(floor(log2f(float(m_materialSize)) + 1.0f));
+	m_maxMips = GLsizei(floor(log2f(float(m_materialSize)) + 1.0F));
 	glGetIntegerv(GL_MAX_SPARSE_ARRAY_TEXTURE_LAYERS, &m_maxTextureLayers);
 
 	// Initialize the material array
 	glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &m_matID);
-	glTextureParameterf(m_matID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+	glTextureParameterf(m_matID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0F);
 	glTextureParameteri(m_matID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTextureParameteri(m_matID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTextureParameteri(m_matID, GL_TEXTURE_SPARSE_ARB, GL_TRUE);
@@ -63,14 +63,14 @@ PropUpload_System::PropUpload_System(Engine& engine, PropData& frameData) :
 
 	// Initialize all our pixel buffers
 	for (auto& [pboID, fence] : m_pixelBuffers) {
-		pboID = 0ull;
+		pboID = 0ULL;
 		fence = nullptr;
 		glCreateBuffers(1, &pboID); 
-		glNamedBufferStorage(pboID, size_t(m_materialSize) * size_t(m_materialSize) * MAX_DIGITAL_IMAGES * 4ull, nullptr, GL_DYNAMIC_STORAGE_BIT);
+		glNamedBufferStorage(pboID, size_t(m_materialSize) * size_t(m_materialSize) * MAX_DIGITAL_IMAGES * 4ULL, nullptr, GL_DYNAMIC_STORAGE_BIT);
 	}
 }
 
-void PropUpload_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components)
+void PropUpload_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	for (const auto& componentParam : components) {
 		auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
@@ -121,7 +121,7 @@ void PropUpload_System::tryInsertModel(const Shared_Model& model)
 
 void PropUpload_System::waitOnFence() noexcept 
 {
-	if (m_fence) {
+	if (m_fence != nullptr) {
 		// Wait for data fence to be passed
 		GLenum state = GL_UNSIGNALED;
 		while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED)
@@ -173,21 +173,21 @@ void PropUpload_System::tryInsertMaterial(const Shared_Material& material)
 			m_engine.getManager_Messages().error("Out of room for more materials!");
 
 		// Try to upload the images piece-meal
-		size_t offset(0ull);
+		size_t offset(0ULL);
 		const auto materialCount = int(material->m_textures.size() / MAX_PHYSICAL_IMAGES);
 		for (int x = 0; x < materialCount; ++x) {
 			// Find a free pixel buffer
 			const auto [pboID, fence] = getFreePBO();
 			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, *pboID);
-			glNamedBufferSubData(*pboID, 0, size_t(m_materialSize) * size_t(m_materialSize) * MAX_DIGITAL_IMAGES * 4ull, &material->m_materialData[offset]);
+			glNamedBufferSubData(*pboID, 0, size_t(m_materialSize) * size_t(m_materialSize) * MAX_DIGITAL_IMAGES * 4ULL, &material->m_materialData[offset]);
 
 			// Upload material data
 			for (int m = 0; m < m_maxMips; ++m) {
-				const GLsizei mipsize = static_cast<GLsizei>(std::max(1.0f, (floor(m_materialSize / pow(2.0f, static_cast<float>(m))))));
+				const GLsizei mipsize = static_cast<GLsizei>(std::max(1.0F, (floor(m_materialSize / pow(2.0F, static_cast<float>(m))))));
 				glTexturePageCommitmentEXT(m_matID, m, 0, 0, materialID, mipsize, mipsize, imageCount, GL_TRUE);
 			}
 			glTextureSubImage3D(m_matID, 0, 0, 0, materialID + (x * MAX_DIGITAL_IMAGES), m_materialSize, m_materialSize, MAX_DIGITAL_IMAGES, GL_RGBA, GL_UNSIGNED_BYTE, (void*)nullptr);
-			offset += size_t(m_materialSize) * size_t(m_materialSize) * MAX_DIGITAL_IMAGES * 4ull;
+			offset += size_t(m_materialSize) * size_t(m_materialSize) * MAX_DIGITAL_IMAGES * 4ULL;
 
 			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 			*fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
@@ -219,8 +219,8 @@ std::pair<GLuint*, GLsync*> PropUpload_System::getFreePBO() noexcept
 void PropUpload_System::clear() noexcept 
 {
 	// Reset size, and half the capacity
-	m_currentSize = 0ull;
-	m_maxCapacity = std::max<size_t>(256ull, m_maxCapacity / 2ull);
+	m_currentSize = 0ULL;
+	m_maxCapacity = std::max<size_t>(256ULL, m_maxCapacity / 2ULL);
 	m_modelMap.clear();
 
 	// Replace old VBO

@@ -71,7 +71,7 @@ void Engine::printBoilerPlate()
 	m_messageManager.statement("  GLAD         " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor));
 	m_messageManager.statement("  GLFW         " + Window::GetVersion());
 	m_messageManager.statement("  GLM          " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
-	m_messageManager.statement("  SoLoud       " + std::to_string(m_soundManager.GetVersion()));
+	m_messageManager.statement("  SoLoud       " + std::to_string(SoundManager::GetVersion()));
 	m_messageManager.statement("");
 	m_messageManager.statement("  > Graphics Info:");
 	m_messageManager.statement("  -------------------------------");
@@ -83,7 +83,8 @@ void Engine::printBoilerPlate()
 
 void Engine::tick()
 {
-	const float thisTime = GetSystemTime(), deltaTime = thisTime - m_lastTime;
+	const float thisTime = GetSystemTime();
+	const float deltaTime = thisTime - m_lastTime;
 	m_lastTime = thisTime;
 
 	processInputs();
@@ -229,8 +230,8 @@ std::string Engine::Get_Current_Dir()
 {
 	// Technique to return the running directory of the application
 	char cCurrentPath[FILENAME_MAX];
-	if (_getcwd(cCurrentPath, sizeof(cCurrentPath)))
-		cCurrentPath[sizeof(cCurrentPath) - 1ull] = '\0';
+	if (_getcwd(cCurrentPath, sizeof(cCurrentPath)) != nullptr)
+		cCurrentPath[sizeof(cCurrentPath) - 1ULL] = '\0';
 	return std::string(cCurrentPath);
 }
 

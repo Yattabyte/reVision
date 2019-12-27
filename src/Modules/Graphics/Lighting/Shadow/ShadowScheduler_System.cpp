@@ -18,12 +18,12 @@ ShadowScheduler_System::ShadowScheduler_System(Engine& engine, ShadowData& frame
 	addComponentType(Light_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 
 	auto& preferences = engine.getPreferenceState();
-	m_maxShadowsCasters = 1u;
+	m_maxShadowsCasters = 1U;
 	preferences.getOrSetValue(PreferenceState::Preference::C_SHADOW_MAX_PER_FRAME, m_maxShadowsCasters);
 	preferences.addCallback(PreferenceState::Preference::C_SHADOW_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) noexcept { m_maxShadowsCasters = static_cast<unsigned int>(f); });
 }
 
-void ShadowScheduler_System::updateComponents(const float&, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void ShadowScheduler_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
 {
 	// Maintain list of shadows, update with oldest within range
 	// Technique will clear list when ready
@@ -32,7 +32,7 @@ void ShadowScheduler_System::updateComponents(const float&, const std::vector<st
 	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
 	const auto& clientPosition = clientCamera->EyePosition;
 	const auto& clientFarPlane = clientCamera->FarPlane;
-	const auto clientTime = m_engine.GetSystemTime();
+	const auto clientTime = Engine::GetSystemTime();
 	if (const int availableRoom = static_cast<int>(m_maxShadowsCasters) - static_cast<int>(m_frameData.shadowsToUpdate.size())) {
 		int cameraCount = 0;
 		for (const auto& componentParam : components) {

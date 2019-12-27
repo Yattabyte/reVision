@@ -25,7 +25,7 @@ Window::Window(Engine& engine) :
 	m_engine(engine)
 {
 	// Initialize GLFW
-	if (!glfwInit()) {
+	if (glfwInit() == 0) {
 		engine.getManager_Messages().error("GLFW unable to initialize, shutting down...");
 		glfwTerminate();
 		exit(-1);
@@ -49,7 +49,7 @@ Window::Window(Engine& engine) :
 	glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
 	glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
 #ifdef DEBUG
-	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1);
 #endif
 	m_window = glfwCreateWindow(1, 1, "", nullptr, nullptr);
 	glfwMakeContextCurrent(m_window);
@@ -117,10 +117,10 @@ Window::Window(Engine& engine) :
 		static_cast<Engine*>(glfwGetWindowUserPointer(window))->getModule_UI().applyKey(a, b, c, d);
 		});
 #ifdef DEBUG
-	if (GLAD_GL_KHR_debug) {
+	if (GLAD_GL_KHR_debug != 0) {
 		GLint v;
 		glGetIntegerv(GL_CONTEXT_FLAGS, &v);
-		if (v && GL_CONTEXT_FLAG_DEBUG_BIT) {
+		if ((v != 0) && GL_CONTEXT_FLAG_DEBUG_BIT) {
 			glEnable(GL_DEBUG_OUTPUT);
 			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 			engine.getManager_Messages().statement(">>> KHR DEBUG MODE ENABLED <<<");
@@ -211,7 +211,7 @@ Window::Window(Engine& engine) :
 
 void Window::initThreads()
 {
-	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());
+	const unsigned int maxThreads = std::max(1U, std::thread::hardware_concurrency());
 	for (unsigned int x = 0; x < maxThreads; ++x) {
 		std::promise<void> exitSignal;
 		std::future<void> exitObject = exitSignal.get_future();
@@ -239,7 +239,7 @@ void Window::initThreads()
 
 bool Window::shouldClose() const noexcept
 {
-	return glfwWindowShouldClose(m_window);
+	return glfwWindowShouldClose(m_window) != 0;
 }
 
 void Window::close() noexcept
@@ -255,7 +255,8 @@ void Window::swapBuffers() noexcept
 
 glm::vec2 Window::getMousePos() const noexcept
 {
-	double mouseX, mouseY;
+	double mouseX;
+	double mouseY;
 	glfwGetCursorPos(m_window, &mouseX, &mouseY);
 	return glm::vec2(mouseX, mouseY);
 }
@@ -313,12 +314,13 @@ std::vector<glm::ivec3> Window::GetResolutions()
 void Window::configureWindow() noexcept
 {
 	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	const int maxWidth = mainMode->width, maxHeight = mainMode->height;
+	const int maxWidth = mainMode->width;
+	const int maxHeight = mainMode->height;
 	glfwSetWindowSize(m_window, m_windowSize.x, m_windowSize.y);
 	glfwSetWindowPos(m_window, (maxWidth - m_windowSize.x) / 2, (maxHeight - m_windowSize.y) / 2);
 	glfwSetWindowMonitor(
 		m_window,
-		m_useFullscreen ? glfwGetPrimaryMonitor() : nullptr,
+		m_useFullscreen != 0.0F ? glfwGetPrimaryMonitor() : nullptr,
 		0, 0,
 		m_windowSize.x, m_windowSize.y,
 		static_cast<int>(m_refreshRate)

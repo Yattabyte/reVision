@@ -6,14 +6,14 @@ Geometry_Technique::Geometry_Technique() noexcept :
 {
 }
 
-void Geometry_Technique::renderTechnique(const float&, Viewport&, const std::vector<std::pair<int, int>>&)
+void Geometry_Technique::renderTechnique(const float& /*deltaTime*/, Viewport& /*viewport*/, const std::vector<std::pair<int, int>>& /*perspectives*/)
 {
 }
 
-void Geometry_Technique::cullShadows(const float&, const std::vector<std::pair<int, int>>&) 
+void Geometry_Technique::cullShadows(const float& /*unused*/, const std::vector<std::pair<int, int>>& /*unused*/) 
 {
 }
 
-void Geometry_Technique::renderShadows(const float&) 
+void Geometry_Technique::renderShadows(const float& /*unused*/) 
 {
 }

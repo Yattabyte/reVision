@@ -59,6 +59,6 @@ void Asset::finalize()
 	m_callbacks.clear();
 
 	AssetManager& assetManager = m_engine.getManager_Assets();
-	for (const auto qwe : copyCallbacks)
+	for (const auto& qwe : copyCallbacks)
 		assetManager.submitNotifyee(qwe);
 }
