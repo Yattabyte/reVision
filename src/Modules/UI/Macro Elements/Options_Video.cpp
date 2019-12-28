@@ -70,9 +70,9 @@ Options_Video::Options_Video(Engine& engine) :
 	const auto fov_slider = std::make_shared<Slider>(engine, fov, glm::vec2(0.0F, 180));
 	addOption(engine, fov_slider, 0.75F, "Field of view:", "Changes how wide of an angle the scene can be viewed from.", static_cast<int>(Slider::Interact::on_value_change), [&, fov_slider]() {
 		// Get a round version of the input
-		const int round_value = static_cast<int>(std::round(fov_slider->getValue()));
+		const float round_value = static_cast<float>(static_cast<int>(std::round(fov_slider->getValue())));
 		// We store as a float, but we want to ensure round numbers
-		m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_FOV, float(static_cast<int>(std::round(fov_slider->getValue()))));
+		m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_FOV, round_value);
 		});
 
 	// VSync Option

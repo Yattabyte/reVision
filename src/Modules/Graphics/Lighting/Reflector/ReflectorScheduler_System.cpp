@@ -88,6 +88,6 @@ void ReflectorScheduler_System::updateComponents(const float& /*deltaTime*/, con
 
 		// Resize the reflector map to fit number of entities this frame
 		m_frameData.envmapFBO.resize(m_frameData.envmapSize, static_cast<unsigned int>(cameraCount));
-		m_frameData.reflectorLayers = cameraCount;
+		m_frameData.reflectorLayers = static_cast<size_t>(cameraCount);
 	}
 }

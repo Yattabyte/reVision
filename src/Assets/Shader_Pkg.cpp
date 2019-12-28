@@ -25,8 +25,8 @@ inline static void parse(Engine& engine, Shader_Pkg& userAsset)
 		directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
 
 		Shared_Shader_Pkg package = Shared_Shader_Pkg(engine, directory, false);
-		std::string left = input.substr(0, spot);
-		std::string right = input.substr(spot + 1 + qspot2);
+		const auto left = input.substr(0, spot);
+		const auto right = input.substr(spot + 1 + qspot2);
 		input = left + package->getPackageText() + right;
 		spot = input.find("#package");
 	}

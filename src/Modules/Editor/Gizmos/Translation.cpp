@@ -67,10 +67,10 @@ bool Translation_Gizmo::checkMouseInput(const float& /*unused*/)
 	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(0))
 		return checkMousePress();
 	
-		if (m_selectedAxes != NONE) {
-			m_selectedAxes = NONE;
-			return true; // block input as we just finished doing an action here
-		}
+	if (m_selectedAxes != NONE) {
+		m_selectedAxes = NONE;
+		return true; // block input as we just finished doing an action here
+	}
 	
 	return false;
 }

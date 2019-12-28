@@ -155,7 +155,7 @@ void TextInput::updateGeometry()
 	}
 	for (auto x = 6; x < 12; ++x) {
 		data[x] *= glm::vec3(1.0, 10, 1);
-		data[x].x = (data[x].x - m_scale.x) + (10.0F * m_caretIndex);
+		data[x].x = (data[x].x - m_scale.x) + (10.0F * static_cast<float>(m_caretIndex));
 		objIndices[x] = 1;
 	}
 

@@ -81,10 +81,10 @@ bool Rotation_Gizmo::checkMouseInput(const float& /*unused*/)
 	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(0))
 		return checkMousePress();
 	
-		if (m_selectedAxes != NONE) {
-			m_selectedAxes = NONE;
-			return true; // block input as we just finished doing an action here
-		}
+	if (m_selectedAxes != NONE) {
+		m_selectedAxes = NONE;
+		return true; // block input as we just finished doing an action here
+	}
 	
 	return false;
 }
@@ -317,10 +317,10 @@ void Rotation_Gizmo::updateDisk()
 		const auto startAngle = glm::radians(float(n) * (m_deltaAngle / float(steps))) + m_startingAngle;
 		const auto endAngle = glm::radians(float(n + 1) * (m_deltaAngle / float(steps))) + m_startingAngle;
 
-		const auto x1 = 8.0F * cosf(startAngle);
-		const auto y1 = 8.0F * sinf(startAngle);
-		const auto x2 = 8.0F * cosf(endAngle);
-		const auto y2 = 8.0F * sinf(endAngle);
+		const auto x1 = DISK_RADIUS * cosf(startAngle);
+		const auto y1 = DISK_RADIUS * sinf(startAngle);
+		const auto x2 = DISK_RADIUS * cosf(endAngle);
+		const auto y2 = DISK_RADIUS * sinf(endAngle);
 
 		glm::vec3 v1(0.0F);
 		glm::vec3 v2(0.0F);

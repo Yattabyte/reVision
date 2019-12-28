@@ -79,7 +79,7 @@ void TitleBar::tick(const float& /*deltaTime*/)
 				if (BeginMenuWIcon("Redo", m_iconRedo, "CTRL+Y", nullptr, m_editor.canRedo())) { m_editor.redo(); }
 				ImGui::Separator();
 				if (ImGui::MenuItem("Select All", "CTRL+A")) { m_editor.selectAll(); }
-				const bool hasSelection = m_editor.getSelection().size() != 0u;
+				const bool hasSelection = !m_editor.getSelection().empty();
 				if (ImGui::MenuItem("Clear Selection", "CTRL+D", nullptr, hasSelection)) { m_editor.clearSelection(); }
 				const bool canGroup = m_editor.getSelection().size() > 1;
 				if (ImGui::MenuItem("Group Selection", "CTRL+G", nullptr, canGroup)) { m_editor.groupSelection(); }

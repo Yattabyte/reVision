@@ -186,7 +186,7 @@ void PropUpload_System::tryInsertMaterial(const Shared_Material& material)
 				const GLsizei mipsize = static_cast<GLsizei>(std::max(1.0F, (floor(m_materialSize / pow(2.0F, static_cast<float>(m))))));
 				glTexturePageCommitmentEXT(m_matID, m, 0, 0, materialID, mipsize, mipsize, imageCount, GL_TRUE);
 			}
-			glTextureSubImage3D(m_matID, 0, 0, 0, materialID + (x * MAX_DIGITAL_IMAGES), m_materialSize, m_materialSize, MAX_DIGITAL_IMAGES, GL_RGBA, GL_UNSIGNED_BYTE, (void*)nullptr);
+			glTextureSubImage3D(m_matID, 0, 0, 0, materialID + (x * MAX_DIGITAL_IMAGES), m_materialSize, m_materialSize, MAX_DIGITAL_IMAGES, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 			offset += size_t(m_materialSize) * size_t(m_materialSize) * MAX_DIGITAL_IMAGES * 4ULL;
 
 			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);

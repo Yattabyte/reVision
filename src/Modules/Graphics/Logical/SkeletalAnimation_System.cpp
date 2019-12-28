@@ -53,7 +53,7 @@ constexpr auto FindNodeAnim = [](const Animation& pAnimation, const std::string&
 constexpr auto FindKey = [](const float& AnimationTime, const size_t& count, const auto& keyVector) noexcept 
 {
 	for (size_t i = 0; i < count; i++)
-		if (AnimationTime < (float)(keyVector[i + 1]).time)
+		if (AnimationTime < static_cast<float>((keyVector[i + 1]).time))
 			return i;
 	return 0ULL;
 };
@@ -72,8 +72,8 @@ constexpr auto InterpolateKeys = [](const float& AnimationTime, const auto& keyV
 		const size_t NextIndex = (Index + 1) > keyCount ? 0 : (Index + 1);
 		const auto& Key = keyVector[Index];
 		const auto& NextKey = keyVector[NextIndex];
-		const float DeltaTime = (float)(NextKey.time - Key.time);
-		const float Factor = glm::clamp((AnimationTime - (float)Key.time) / DeltaTime, 0.0f, 1.0f);
+		const float DeltaTime = static_cast<float>(NextKey.time - Key.time);
+		const float Factor = glm::clamp((AnimationTime - static_cast<float>(Key.time)) / DeltaTime, 0.0f, 1.0f);
 		if constexpr (std::is_same<decltype(Key.value), glm::quat>::value)
 			return glm::slerp(Key.value, NextKey.value, Factor);
 		else

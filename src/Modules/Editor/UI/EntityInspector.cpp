@@ -29,7 +29,7 @@ void EntityInspector::tick(const float& deltaTime)
 		if (ImGui::Begin("Entity Inspector", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
 			// Render the selected component attributes that we have widgets for
 			const auto text = std::string("Entities Selected: (" + std::to_string(selectedEntities.size()) + ")");
-			ImGui::Text(text.c_str());
+			ImGui::Text("%s", text.c_str());
 			m_editor.getWorld().updateSystems(m_inspectorSystems, deltaTime);
 		}
 		ImGui::End();

@@ -194,7 +194,7 @@ void LevelEditor_Module::toggleAddToSelection(const EntityHandle& entityHandle)
 
 bool LevelEditor_Module::hasCopy() const noexcept
 {
-	return m_copiedData.size() != 0u;
+	return !m_copiedData.empty();
 }
 
 void LevelEditor_Module::openSceneInspector() noexcept

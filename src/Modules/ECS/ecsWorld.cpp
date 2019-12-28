@@ -272,7 +272,8 @@ void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle
 	// Variables
 	auto parentEntity = getEntity(parentHandle);
 	auto childEntity = getEntity(childHandle);
-	auto* root = &m_entities, * newRoot = parentEntity != nullptr ? &parentEntity->m_children : &m_entities;
+	auto* root = &m_entities;
+	auto* newRoot = parentEntity != nullptr ? &parentEntity->m_children : &m_entities;
 	Transform newParentTransform;
 	Transform oldParentTransform;
 
@@ -280,14 +281,14 @@ void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle
 	if (childEntity == nullptr)
 		return;
 	
-		if (childEntity->m_parent.isValid()) {
-			const auto& oldParentHandle = childEntity->m_parent;
-			if (auto oldParent = getEntity(oldParentHandle)) {
-				root = &oldParent->m_children;
-				if (const auto& transformComponent = getComponent<Transform_Component>(oldParentHandle))
-					oldParentTransform = transformComponent->m_worldTransform;
-			}
+	if (childEntity->m_parent.isValid()) {
+		const auto& oldParentHandle = childEntity->m_parent;
+		if (auto oldParent = getEntity(oldParentHandle)) {
+			root = &oldParent->m_children;
+			if (const auto& transformComponent = getComponent<Transform_Component>(oldParentHandle))
+				oldParentTransform = transformComponent->m_worldTransform;
 		}
+	}
 	if (parentEntity != nullptr)
 		if (const auto& transformComponent = getComponent<Transform_Component>(parentHandle))
 			newParentTransform = transformComponent->m_worldTransform;

@@ -261,8 +261,8 @@ bool ShaderObj::loadDocument(Engine& engine, const std::string& filePath)
 		directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
 
 		Shared_Shader_Pkg package = Shared_Shader_Pkg(engine, directory, false);
-		std::string left = m_shaderText.substr(0, spot);
-		std::string right = m_shaderText.substr(spot + 1 + qspot2);
+		const auto left = m_shaderText.substr(0, spot);
+		const auto right = m_shaderText.substr(spot + 1 + qspot2);
 		m_shaderText = left + package->getPackageText() + right;
 		spot = m_shaderText.find("#package");
 	}

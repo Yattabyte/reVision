@@ -29,7 +29,7 @@ void RecoverDialogue::tickMainDialogue()
 			const auto message = "The following map file has been recovered:\r\n\t"
 				+ std::filesystem::relative(m_recoveredPath, Engine::Get_Current_Dir() + "\\Maps\\").filename().string() + "\r\n\r\n"
 				+ "Do you want to open it, ignore it, or delete it?";
-			ImGui::TextWrapped(message.c_str());
+			ImGui::TextWrapped("%s", message.c_str());
 			ImGui::Spacing();
 			ImGui::Separator();
 			ImGui::Spacing();

@@ -35,7 +35,7 @@ void SaveDialogue::populateLevels(const std::string& directory)
 	if (!directory.empty() && directory != "." && directory != "..")
 		m_levels.push_back(LevelEntry{ "..", std::filesystem::relative(path.parent_path(), rootPath).string(), "", "", "", "", LevelEntry::Type::BACK });
 	for (auto& entry : std::filesystem::directory_iterator(path)) {
-		std::string timeString = timeString;
+		std::string timeString;
 		struct _stat64 fileInfo{};
 		if (_wstati64(entry.path().wstring().c_str(), &fileInfo) == 0) {
 			const auto& t = std::localtime(&fileInfo.st_mtime);
@@ -151,11 +151,11 @@ void SaveDialogue::tickMainDialogue()
 					ImGui::EndPopup();
 				}
 				ImGui::SameLine(250);
-				ImGui::Text(level.extType.c_str());
+				ImGui::Text("%s", level.extType.c_str());
 				ImGui::SameLine(350);
-				ImGui::Text(level.date.c_str());
+				ImGui::Text("%s", level.date.c_str());
 				ImGui::SameLine(475);
-				ImGui::Text(level.size.c_str());
+				ImGui::Text("%s", level.size.c_str());
 				ImGui::PopID();
 				index++;
 			}

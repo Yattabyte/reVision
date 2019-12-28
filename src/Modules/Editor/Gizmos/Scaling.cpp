@@ -67,10 +67,10 @@ bool Scaling_Gizmo::checkMouseInput(const float& /*unused*/)
 	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(0))
 		return checkMousePress();
 	
-		if (m_selectedAxes != NONE) {
-			m_selectedAxes = NONE;
-			return true; // block input as we just finished doing an action here
-		}
+	if (m_selectedAxes != NONE) {
+		m_selectedAxes = NONE;
+		return true; // block input as we just finished doing an action here
+	}
 	
 	return false;
 }
@@ -252,98 +252,96 @@ bool Scaling_Gizmo::checkMousePress()
 		return (m_selectedAxes != NONE);
 	}
 
-	// An axis is now selected, perform dragging operation
-	
-		constexpr auto gridSnapValue = [](const float& value, const float& delta, const float& prevValue, const float& startingValue, const float& snapAmt) -> float {
-			const float scale = prevValue + (((value - delta) - startingValue) * 2.0f);
-			return snapAmt != 0.0f ? (float(int((scale + (snapAmt / 2.0F)) / snapAmt)) * snapAmt) : scale;
-		};
-		auto scale = m_prevScale;
-		if (m_selectedAxes == X_AXIS) {
-			// Check which of the ray-plane inter. point from XY and XZ planes is closest to the camera
-			if (glm::distance(m_hoveredEnds[0], ray_origin) < glm::distance(m_hoveredEnds[1], ray_origin))
-				scale.x = gridSnapValue(m_hoveredEnds[0].x, m_axisDelta.x, m_prevScale.x, m_startingPosition.x, m_gridSnap);
-			else
-				scale.x = gridSnapValue(m_hoveredEnds[1].x, m_axisDelta.x, m_prevScale.x, m_startingPosition.x, m_gridSnap);
-		}
-		else if (m_selectedAxes == Y_AXIS) {
-			if (glm::distance(m_hoveredEnds[0], ray_origin) < glm::distance(m_hoveredEnds[2], ray_origin))
-				scale.y = gridSnapValue(m_hoveredEnds[0].y, m_axisDelta.y, m_prevScale.y, m_startingPosition.y, m_gridSnap);
-			else
-				scale.y = gridSnapValue(m_hoveredEnds[2].y, m_axisDelta.y, m_prevScale.y, m_startingPosition.y, m_gridSnap);
-		}
-		else if (m_selectedAxes == Z_AXIS) {
-			if (glm::distance(m_hoveredEnds[1], ray_origin) < glm::distance(m_hoveredEnds[2], ray_origin))
-				scale.z = gridSnapValue(m_hoveredEnds[1].z, m_axisDelta.z, m_prevScale.z, m_startingPosition.z, m_gridSnap);
-			else
-				scale.z = gridSnapValue(m_hoveredEnds[2].z, m_axisDelta.z, m_prevScale.z, m_startingPosition.z, m_gridSnap);
-		}
-		else if (((m_selectedAxes & X_AXIS) != 0U) && ((m_selectedAxes & Y_AXIS) != 0U)) {
+	// An axis is now selected, perform dragging operation	
+	constexpr auto gridSnapValue = [](const float& value, const float& delta, const float& prevValue, const float& startingValue, const float& snapAmt) -> float {
+		const float scale = prevValue + (((value - delta) - startingValue) * 2.0f);
+		return snapAmt != 0.0f ? (float(int((scale + (snapAmt / 2.0F)) / snapAmt)) * snapAmt) : scale;
+	};
+	auto scale = m_prevScale;
+	if (m_selectedAxes == X_AXIS) {
+		// Check which of the ray-plane inter. point from XY and XZ planes is closest to the camera
+		if (glm::distance(m_hoveredEnds[0], ray_origin) < glm::distance(m_hoveredEnds[1], ray_origin))
 			scale.x = gridSnapValue(m_hoveredEnds[0].x, m_axisDelta.x, m_prevScale.x, m_startingPosition.x, m_gridSnap);
-			scale.y = gridSnapValue(m_hoveredEnds[0].y, m_axisDelta.y, m_prevScale.y, m_startingPosition.y, m_gridSnap);
-		}
-		else if (((m_selectedAxes & X_AXIS) != 0U) && ((m_selectedAxes & Z_AXIS) != 0U)) {
+		else
 			scale.x = gridSnapValue(m_hoveredEnds[1].x, m_axisDelta.x, m_prevScale.x, m_startingPosition.x, m_gridSnap);
-			scale.z = gridSnapValue(m_hoveredEnds[1].z, m_axisDelta.z, m_prevScale.z, m_startingPosition.z, m_gridSnap);
-		}
-		else if (((m_selectedAxes & Y_AXIS) != 0U) && ((m_selectedAxes & Z_AXIS) != 0U)) {
+	}
+	else if (m_selectedAxes == Y_AXIS) {
+		if (glm::distance(m_hoveredEnds[0], ray_origin) < glm::distance(m_hoveredEnds[2], ray_origin))
+			scale.y = gridSnapValue(m_hoveredEnds[0].y, m_axisDelta.y, m_prevScale.y, m_startingPosition.y, m_gridSnap);
+		else
 			scale.y = gridSnapValue(m_hoveredEnds[2].y, m_axisDelta.y, m_prevScale.y, m_startingPosition.y, m_gridSnap);
+	}
+	else if (m_selectedAxes == Z_AXIS) {
+		if (glm::distance(m_hoveredEnds[1], ray_origin) < glm::distance(m_hoveredEnds[2], ray_origin))
+			scale.z = gridSnapValue(m_hoveredEnds[1].z, m_axisDelta.z, m_prevScale.z, m_startingPosition.z, m_gridSnap);
+		else
 			scale.z = gridSnapValue(m_hoveredEnds[2].z, m_axisDelta.z, m_prevScale.z, m_startingPosition.z, m_gridSnap);
-		}
-		if (scale.x == 0.0F)
-			scale.x += 0.0001F;
-		if (scale.y == 0.0F)
-			scale.y += 0.0001F;
-		if (scale.z == 0.0F)
-			scale.z += 0.0001F;
-		m_transform.m_scale = scale;
+	}
+	else if (((m_selectedAxes & X_AXIS) != 0U) && ((m_selectedAxes & Y_AXIS) != 0U)) {
+		scale.x = gridSnapValue(m_hoveredEnds[0].x, m_axisDelta.x, m_prevScale.x, m_startingPosition.x, m_gridSnap);
+		scale.y = gridSnapValue(m_hoveredEnds[0].y, m_axisDelta.y, m_prevScale.y, m_startingPosition.y, m_gridSnap);
+	}
+	else if (((m_selectedAxes & X_AXIS) != 0U) && ((m_selectedAxes & Z_AXIS) != 0U)) {
+		scale.x = gridSnapValue(m_hoveredEnds[1].x, m_axisDelta.x, m_prevScale.x, m_startingPosition.x, m_gridSnap);
+		scale.z = gridSnapValue(m_hoveredEnds[1].z, m_axisDelta.z, m_prevScale.z, m_startingPosition.z, m_gridSnap);
+	}
+	else if (((m_selectedAxes & Y_AXIS) != 0U) && ((m_selectedAxes & Z_AXIS) != 0U)) {
+		scale.y = gridSnapValue(m_hoveredEnds[2].y, m_axisDelta.y, m_prevScale.y, m_startingPosition.y, m_gridSnap);
+		scale.z = gridSnapValue(m_hoveredEnds[2].z, m_axisDelta.z, m_prevScale.z, m_startingPosition.z, m_gridSnap);
+	}
+	if (scale.x == 0.0F)
+		scale.x += 0.0001F;
+	if (scale.y == 0.0F)
+		scale.y += 0.0001F;
+	if (scale.z == 0.0F)
+		scale.z += 0.0001F;
+	m_transform.m_scale = scale;
 
-		struct Scale_Selection_Command final : Editor_Command {
-			Engine& m_engine;
-			LevelEditor_Module& m_editor;
-			glm::vec3 m_oldScale, m_newScale;
-			const unsigned int m_axis = NONE;
-			const std::vector<EntityHandle> m_uuids;
-			Scale_Selection_Command(Engine& engine, LevelEditor_Module& editor, const glm::vec3& newRotation, const unsigned int& axis)
-				: m_engine(engine), m_editor(editor), m_oldScale(m_editor.getGizmoTransform().m_scale), m_newScale(newRotation), m_axis(axis), m_uuids(m_editor.getSelection()) {}
-			void scale(const glm::vec3& scale) {
-				const auto& ecsWorld = m_editor.getWorld();
-				std::vector<Transform_Component*> transformComponents;
-				glm::vec3 center(0.0F);
-				for (const auto& entityHandle : m_uuids)
-					if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
-						transformComponents.push_back(transform);
-						center += transform->m_localTransform.m_position;
-					}
-				center /= transformComponents.size();
-				for (auto* transform : transformComponents) {
-					const auto delta = transform->m_localTransform.m_position - center;
-					transform->m_localTransform.m_position = ((delta / transform->m_localTransform.m_scale) * scale) + center;
-					transform->m_localTransform.m_scale = scale;
-					transform->m_localTransform.update();
+	struct Scale_Selection_Command final : Editor_Command {
+		Engine& m_engine;
+		LevelEditor_Module& m_editor;
+		glm::vec3 m_oldScale, m_newScale;
+		const unsigned int m_axis = NONE;
+		const std::vector<EntityHandle> m_uuids;
+		Scale_Selection_Command(Engine& engine, LevelEditor_Module& editor, const glm::vec3& newRotation, const unsigned int& axis)
+			: m_engine(engine), m_editor(editor), m_oldScale(m_editor.getGizmoTransform().m_scale), m_newScale(newRotation), m_axis(axis), m_uuids(m_editor.getSelection()) {}
+		void scale(const glm::vec3& scale) {
+			const auto& ecsWorld = m_editor.getWorld();
+			std::vector<Transform_Component*> transformComponents;
+			glm::vec3 center(0.0F);
+			for (const auto& entityHandle : m_uuids)
+				if (auto* transform = ecsWorld.getComponent<Transform_Component>(entityHandle)) {
+					transformComponents.push_back(transform);
+					center += transform->m_localTransform.m_position;
 				}
-				auto gizmoTransform = m_editor.getGizmoTransform();
-				gizmoTransform.m_scale = scale;
-				gizmoTransform.update();
-				m_editor.setGizmoTransform(gizmoTransform);
+			center /= transformComponents.size();
+			for (auto* transform : transformComponents) {
+				const auto delta = transform->m_localTransform.m_position - center;
+				transform->m_localTransform.m_position = ((delta / transform->m_localTransform.m_scale) * scale) + center;
+				transform->m_localTransform.m_scale = scale;
+				transform->m_localTransform.update();
 			}
-			void execute() final {
-				scale(m_newScale);
-			}
-			void undo() final {
-				scale(m_oldScale);
-			}
-			bool join(Editor_Command* other) final {
-				if (const auto& newCommand = dynamic_cast<Scale_Selection_Command*>(other)) {
-					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
-						m_newScale = newCommand->m_newScale;
-						return true;
-					}
+			auto gizmoTransform = m_editor.getGizmoTransform();
+			gizmoTransform.m_scale = scale;
+			gizmoTransform.update();
+			m_editor.setGizmoTransform(gizmoTransform);
+		}
+		void execute() final {
+			scale(m_newScale);
+		}
+		void undo() final {
+			scale(m_oldScale);
+		}
+		bool join(Editor_Command* other) final {
+			if (const auto& newCommand = dynamic_cast<Scale_Selection_Command*>(other)) {
+				if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
+					m_newScale = newCommand->m_newScale;
+					return true;
 				}
-				return false;
 			}
-		};
-		m_editor.doReversableAction(std::make_shared<Scale_Selection_Command>(m_engine, m_editor, scale, m_selectedAxes));
-		return true;
-	
+			return false;
+		}
+	};
+	m_editor.doReversableAction(std::make_shared<Scale_Selection_Command>(m_engine, m_editor, scale, m_selectedAxes));
+	return true;	
 }

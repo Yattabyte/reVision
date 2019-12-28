@@ -46,11 +46,12 @@ void SceneInspector::tick(const float& /*deltaTime*/)
 							node_flags |= ImGuiTreeNodeFlags_Selected;
 
 						const auto tryLeftClickElement = [&] {
-							if (ImGui::IsItemClicked())
+							if (ImGui::IsItemClicked()) {
 								if (ImGui::GetIO().KeyCtrl)
 									m_editor.toggleAddToSelection(entityHandle);
 								else
-									m_editor.setSelection({entityHandle});
+									m_editor.setSelection({ entityHandle });
+							}
 						};
 						const auto tryRightClickElement = [&] {
 							if (ImGui::BeginPopupContextItem("Entity Controls")) {
@@ -112,7 +113,7 @@ void SceneInspector::tick(const float& /*deltaTime*/)
 									sizeof(EntityHandle)); // Set payload to carry the index of our
 															// item (could be anything)
 								const auto text = "Move \"" + entityName + "\" into...";
-								ImGui::Text(text.c_str());
+								ImGui::Text("%s", text.c_str());
 								ImGui::EndDragDropSource();
 							}
 							if (ImGui::BeginDragDropTarget()) {
@@ -152,7 +153,7 @@ void SceneInspector::tick(const float& /*deltaTime*/)
 									const auto buttonPressed = ImGui::Button("-");
 									ImGui::PopStyleColor(3);
 									ImGui::SameLine();
-									ImGui::Text(component->m_name);
+									ImGui::Text("%s", component->m_name);
 									ImGui::PopID();
 									if (buttonPressed)
 										m_editor.deleteComponent(entityHandle, componentID);

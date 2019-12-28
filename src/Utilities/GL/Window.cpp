@@ -125,9 +125,9 @@ Window::Window(Engine& engine) :
 			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 			engine.getManager_Messages().statement(">>> KHR DEBUG MODE ENABLED <<<");
 			constexpr const static auto myCallback = [](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* msg, const void* data) {
-				char* _source = nullptr;
-				char* _type = nullptr;
-				char* _severity = nullptr;
+				std::string _source = nullptr;
+				std::string _type = nullptr;
+				std::string _severity = nullptr;
 				switch (source) {
 				case GL_DEBUG_SOURCE_API:
 					_source = "API";
@@ -199,7 +199,7 @@ Window::Window(Engine& engine) :
 
 				if (severity != GL_DEBUG_SEVERITY_NOTIFICATION && severity != GL_DEBUG_SEVERITY_LOW)
 					static_cast<MessageManager*>(const_cast<void*>(data))->error(
-						std::to_string(id) + ": " + std::string(_type) + " of " + std::string(_severity) + " severity, raised from " + std::string(_source) + ": " + std::string(msg, length));
+						std::to_string(id) + ": " + _type + " of " + _severity + " severity, raised from " + _source + ": " + std::string(msg, length));
 			};
 			glDebugMessageCallbackKHR(myCallback, &engine.getManager_Messages());
 		}
@@ -212,9 +212,9 @@ Window::Window(Engine& engine) :
 void Window::initThreads()
 {
 	const unsigned int maxThreads = std::max(1U, std::thread::hardware_concurrency());
-	for (unsigned int x = 0; x < maxThreads; ++x) {
-		std::promise<void> exitSignal;
-		std::future<void> exitObject = exitSignal.get_future();
+	m_threads.resize(maxThreads);
+	for (auto& threadEntry : m_threads) {
+		auto& [workerThread, exitSignal, sharedContext] = threadEntry;
 		const auto& mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
 		glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
@@ -230,10 +230,9 @@ void Window::initThreads()
 		glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-		auto sharedContext = glfwCreateWindow(1, 1, "", nullptr, m_window);
-		std::thread workerThread(&Engine::tickThreaded, &m_engine, std::move(exitObject), sharedContext);
+		sharedContext = glfwCreateWindow(1, 1, "", nullptr, m_window);
+		workerThread = std::thread(&Engine::tickThreaded, &m_engine, exitSignal.get_future(), sharedContext);
 		workerThread.detach();
-		m_threads.push_back(std::move(std::tuple(std::move(workerThread), std::move(exitSignal), sharedContext)));
 	}
 }
 

@@ -63,7 +63,7 @@ void Config::initialize()
 				const auto spot = find_CFG_Property(cfg_property, m_strings);
 				if (spot >= 0) {
 					auto cfg_value = get_between_quotes(line);
-					setValue(static_cast<unsigned int>(spot), static_cast<float>(atof(cfg_value.c_str())));
+					setValue(static_cast<unsigned int>(spot), static_cast<float>(strtof(cfg_value.c_str(), nullptr)));
 				}
 			}
 		}

@@ -20,7 +20,7 @@ void MissingFileDialogue::tick(const float& /*deltaTime*/)
 			ImGui::TextWrapped("The following file is corrupted or does not exist:");
 			ImGui::Spacing();
 			ImGui::Indent();
-			ImGui::TextWrapped(m_fileName.c_str());
+			ImGui::TextWrapped("%s", m_fileName.c_str());
 			ImGui::Spacing(); ImGui::Spacing();
 			ImGui::Unindent();
 			if (ImGui::Button("OK", { 90, 20 })) {

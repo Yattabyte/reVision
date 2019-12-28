@@ -171,7 +171,7 @@ void Reflector_Technique::updateReflectors(const float& deltaTime)
 		m_shaderConvolute->bind();
 		m_indirectQuadConvolute.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_frameData.envmapFBO.bindForReading(0);
-		for (unsigned int r = 1; r < 6; ++r) {
+		for (int r = 1; r < 6; ++r) {
 			// Ensure we are writing to MIP level r
 			const unsigned int write_size = static_cast<unsigned int>(std::max(1.0F, (floor(static_cast<float>(m_frameData.envmapSize.x) / pow(2.0F, static_cast<float>(r))))));
 			glViewport(0, 0, write_size, write_size);

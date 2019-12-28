@@ -15,7 +15,7 @@ void Hotkeys::tick(const float& /*deltaTime*/)
 	if (m_open && !ImGui::IsAnyItemActive()) {
 		// Check keyboard input
 		const auto& io = ImGui::GetIO();
-		const auto pressedKey = [&](const auto& c) -> bool {
+		const auto pressedKey = [&](const auto& c) {
 			return (io.KeyCtrl && ImGui::IsKeyPressed(c));
 		};
 		if (pressedKey('N'))

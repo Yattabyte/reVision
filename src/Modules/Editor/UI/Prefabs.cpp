@@ -316,7 +316,7 @@ void Prefabs::tickWindow(const float& /*unused*/)
 
 		// Display list of prefabs
 		const auto directory = "\\Prefabs\\" + m_prefabSubDirectory;
-		ImGui::Text(directory.c_str());
+		ImGui::Text("%s", directory.c_str());
 		ImGui::Spacing();
 		auto columnCount = int(float(ImGui::GetWindowContentRegionMax().x) / float((ImGui::GetStyle().ItemSpacing.x * 2) + 50));
 		columnCount = columnCount < 1 ? 1 : columnCount;
@@ -342,7 +342,7 @@ void Prefabs::tickWindow(const float& /*unused*/)
 					-1,
 					color
 				);
-				ImGui::TextWrapped(prefab.name.c_str());
+				ImGui::TextWrapped("%s", prefab.name.c_str());
 				ImGui::EndGroup();
 				if (ImGui::IsItemClicked()) {
 					m_selectedIndex = count;
@@ -380,6 +380,8 @@ void Prefabs::tickWindow(const float& /*unused*/)
 
 	// Do something with the option chosen
 	switch (prefabOption) {
+	default:
+		break;
 	case PrefabOptions::OPEN:
 		openPrefabEntry();
 		break;

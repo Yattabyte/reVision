@@ -36,7 +36,7 @@ void Settings::tickMainDialogue()
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
 					const auto description = "Backup the current level every " + std::to_string(autoSaveInterval) + " minutes.";
-					ImGui::Text(description.c_str());
+					ImGui::Text("%s", description.c_str());
 					ImGui::EndTooltip();
 				}
 
@@ -50,7 +50,7 @@ void Settings::tickMainDialogue()
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
 					const auto description = "Save a list of the previous " + std::to_string(intStackSize) + " undo-able actions.";
-					ImGui::Text(description.c_str());
+					ImGui::Text("%s", description.c_str());
 					ImGui::EndTooltip();
 				}
 
@@ -64,7 +64,7 @@ void Settings::tickMainDialogue()
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
 					const auto description = "Set the outline size of selected objects to " + std::to_string(outlineScale) + ".";
-					ImGui::Text(description.c_str());
+					ImGui::Text("%s", description.c_str());
 					ImGui::EndTooltip();
 				}
 
@@ -78,7 +78,7 @@ void Settings::tickMainDialogue()
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
 					const auto description = "Set the screen-size scale to " + std::to_string(gizmoScale) + " for level editor gizmos.";
-					ImGui::Text(description.c_str());
+					ImGui::Text("%s", description.c_str());
 					ImGui::EndTooltip();
 				}
 
@@ -91,7 +91,7 @@ void Settings::tickMainDialogue()
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
 					const auto description = "Snap object translation/scaling to a grid of " + std::to_string(gridSnap) + " units.\r\nNot retroactive.";
-					ImGui::Text(description.c_str());
+					ImGui::Text("%s", description.c_str());
 					ImGui::EndTooltip();
 				}
 
@@ -104,7 +104,7 @@ void Settings::tickMainDialogue()
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
 					const auto description = "Snap object rotations every " + std::to_string(angleSnapping) + " degrees.\r\nNot retroactive.";
-					ImGui::Text(description.c_str());
+					ImGui::Text("%s", description.c_str());
 					ImGui::EndTooltip();
 				}
 			}
