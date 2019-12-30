@@ -3,6 +3,7 @@
 #define STARTMENU_H
 
 #include "Modules/UI/Macro Elements/Menu.h"
+#include "Modules/UI/Macro Elements/GameMenu.h"
 #include "Modules/UI/Macro Elements/OptionsMenu.h"
 
 
@@ -32,13 +33,12 @@ protected:
 	void startEditor();
 	/** Choose 'options' from the main menu. */
 	void goToOptions();
-	/** Chosen when control is returned from the options menu. */
-	void returnFromOptions() noexcept;
 	/** Choose 'quit' from the main menu. */
 	void quit();
 
 
 	// Protected Attributes
+	std::shared_ptr<GameMenu> m_gameMenu;
 	std::shared_ptr<OptionsMenu> m_optionsMenu;
 };
 

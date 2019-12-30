@@ -4,6 +4,8 @@
 
 #include "Modules/Engine_Module.h"
 #include "Modules/UI/Basic Elements/UI_Element.h"
+#include "Modules/UI/Overlays/LoadingIndicator.h"
+#include "Modules/UI/Overlays/Frametime_Counter.h"
 #include "Modules/UI/FocusMap.h"
 #include "Modules/UI/MouseEvent.h"
 #include "Modules/UI/KeyboardEvent.h"
@@ -70,6 +72,12 @@ public:
 
 
 private:
+	// Private Methods
+	/** Render any and all of the game module's overlays to the screen.
+	@param	deltaTime		the amount of time passed since last frame. */
+	void renderOverlays(const float& deltaTime);
+
+
 	// Private Attributes
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	glm::ivec2 m_renderSize = glm::ivec2(1);
@@ -79,6 +87,8 @@ private:
 	std::shared_ptr<FocusMap> m_focusMap;
 	MouseEvent m_mouseEvent;
 	KeyboardEvent m_keyboardEvent;
+	LoadingIndicator m_loadingRing;
+	Frametime_Counter m_frameTime;
 };
 
 #endif // UI_MODULE_H

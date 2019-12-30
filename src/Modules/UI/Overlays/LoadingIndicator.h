@@ -1,23 +1,24 @@
 #pragma once
-#ifndef FRAMETIME_COUNTER_H
-#define FRAMETIME_COUNTER_H
+#ifndef LOADINGINDICATOR_H
+#define LOADINGINDICATOR_H
 
-#include "Modules/Game/Overlays/Overlay.h"
+#include "Modules/UI/Overlays/Overlay.h"
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
 #include "Assets/Texture.h"
+#include "Utilities/GL/IndirectDraw.h"
 #include "glm/glm.hpp"
 
 
-/** A post-processing technique for writing the frame time to the screen. */
-class Frametime_Counter final : public Overlay {
+/** Graphics effect responsible for showing a loading spinner ring while the engine is loading. */
+class LoadingIndicator final : public Overlay {
 public:
 	// Public (De)Constructors
 	/** Destroy this overlay. */
-	~Frametime_Counter();
-	/** Construct a frame-time counter.
+	~LoadingIndicator();
+	/** Construct a loading indicator.
 	@param	engine		reference to the engine to use. */
-	explicit Frametime_Counter(Engine& engine);
+	explicit LoadingIndicator(Engine& engine);
 
 
 	// Public Interface Implementations.
@@ -27,19 +28,19 @@ public:
 private:
 	// Private but deleted
 	/** Disallow default constructor. */
-	inline Frametime_Counter() noexcept = delete;
+	inline LoadingIndicator() noexcept = delete;
 	/** Disallow move constructor. */
-	inline Frametime_Counter(Frametime_Counter&&) noexcept = delete;
+	inline LoadingIndicator(LoadingIndicator&&) noexcept = delete;
 	/** Disallow copy constructor. */
-	inline Frametime_Counter(const Frametime_Counter&) noexcept = delete;
+	inline LoadingIndicator(const LoadingIndicator&) noexcept = delete;
 	/** Disallow move assignment. */
-	inline Frametime_Counter& operator =(Frametime_Counter&&) noexcept = delete;
+	inline LoadingIndicator& operator =(LoadingIndicator&&) noexcept = delete;
 	/** Disallow copy assignment. */
-	inline Frametime_Counter& operator =(const Frametime_Counter&) noexcept = delete;
+	inline LoadingIndicator& operator =(const LoadingIndicator&) noexcept = delete;
 
 
 	// Private Methods
-	/** Resize this indicator.
+	/** Resize this indicator. 
 	@param	size		the new size to use. */
 	void resize(const glm::ivec2& size);
 
@@ -47,11 +48,14 @@ private:
 	// Private Attributes
 	Engine& m_engine;
 	Shared_Shader m_shader;
-	Shared_Texture m_numberTexture;
+	Shared_Texture m_texture;
 	Shared_Auto_Model m_shapeQuad;
+	IndirectDraw<1> m_indirectQuad;
+	bool m_show = false;
+	float m_time = 0.0f, m_blendAmt = 1.0f;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	glm::mat4 m_projMatrix = glm::mat4(1.0f);
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
-#endif // FRAMETIME_COUNTER_H
+#endif // LOADINGINDICATOR_H

@@ -1,4 +1,4 @@
-#include "Modules/Game/Overlays/LoadingIndicator.h"
+#include "Modules/UI/Overlays/LoadingIndicator.h"
 #include "Engine.h"
 
 
@@ -32,6 +32,7 @@ void LoadingIndicator::applyEffect(const float& deltaTime)
 {
 	if (!Asset::All_Ready(m_shapeQuad, m_shader, m_texture))
 		return;
+	m_show = !m_engine.getManager_Assets().readyToUse();
 	if (m_show)
 		m_blendAmt += deltaTime;
 	else

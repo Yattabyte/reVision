@@ -155,8 +155,10 @@ void SceneInspector::tick(const float& /*deltaTime*/)
 									ImGui::SameLine();
 									ImGui::Text("%s", component->m_name);
 									ImGui::PopID();
-									if (buttonPressed)
+									if (buttonPressed) {
 										m_editor.deleteComponent(entityHandle, componentID);
+										break;
+									}
 								}
 							}
 							ImGui::AlignTextToFramePadding();

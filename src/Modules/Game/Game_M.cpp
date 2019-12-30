@@ -8,9 +8,7 @@
 
 
 Game_Module::Game_Module(Engine& engine) : 
-	Engine_Module(engine), 
-	m_loadingRing(engine),
-	m_frameTime(engine)
+	Engine_Module(engine)
 {
 }
 
@@ -65,7 +63,6 @@ void Game_Module::frameTick(const float& deltaTime)
 	m_world.updateSystems(m_Systems, deltaTime);
 	m_engine.getModule_Physics().frameTick(m_world, deltaTime);
 	m_engine.getModule_Graphics().renderWorld(m_world, deltaTime);
-	renderOverlays(deltaTime);
 }
 
 ecsWorld& Game_Module::getWorld() noexcept
@@ -73,18 +70,16 @@ ecsWorld& Game_Module::getWorld() noexcept
 	return m_world;
 }
 
-void Game_Module::renderOverlays(const float& deltaTime)
-{
-	m_loadingRing.applyEffect(deltaTime);
-	m_frameTime.applyEffect(deltaTime);
-}
-
 void Game_Module::showGame()
 {
 	m_gameState = Game_State::in_game;
 	m_engine.setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
-	if (!Level_IO::Import_BMap("Phys Test.bmap", m_world))
-		m_engine.getManager_Messages().error("Cannot open the level: Phys Test.bmap");
+}
+
+void Game_Module::loadLevel(const std::string& levelName)
+{
+	if (!Level_IO::Import_BMap(levelName, m_world))
+		m_engine.getManager_Messages().error("Cannot open the level: " + levelName);
 }
 
 void Game_Module::showPauseMenu(const bool& show)

@@ -17,7 +17,7 @@ void PhysicsSync_System::updateComponents(const float& /*deltaTime*/, const std:
 {
 	for (const auto& componentParam : components) {
 		auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
-		auto* colliderComponent = static_cast<Collider_Component*>(componentParam[1]);
+		auto* colliderComponent = dynamic_cast<Collider_Component*>(componentParam[1]);
 
 		const auto& position = transformComponent->m_worldTransform.m_position;
 		const auto& orientation = transformComponent->m_worldTransform.m_orientation;

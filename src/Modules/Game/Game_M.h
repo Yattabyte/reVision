@@ -4,8 +4,6 @@
 
 #include "Modules/Engine_Module.h"
 #include "Modules/ECS/ecsWorld.h"
-#include "Modules/Game/Overlays/LoadingIndicator.h"
-#include "Modules/Game/Overlays/Frametime_Counter.h"
 #include "Modules/UI/Basic Elements/UI_Element.h"
 
 
@@ -37,11 +35,11 @@ public:
 	/** Retrieve a reference to the currently active ecsWorld in the editor.
 	@return					reference to the currently active ecsWorld. */
 	ecsWorld& getWorld() noexcept;
-	/** Render any and all of the game module's overlays to the screen.
-	@param	deltaTime		the amount of time passed since last frame. */
-	void renderOverlays(const float& deltaTime);
-	/** Show the game. */
+	/** Show the game.*/
 	void showGame();
+	/** Specify a level to load.
+	@param	levelName		the level path to open. */
+	void loadLevel(const std::string& levelName);
 	/** Either show or hide the pause menu.
 	@param	show			whether to show or hide the pause menu. */
 	void showPauseMenu(const bool& show);
@@ -52,8 +50,6 @@ private:
 	Game_State m_gameState = Game_State::in_game;
 	ecsSystemList m_Systems;
 	ecsWorld m_world;
-	LoadingIndicator m_loadingRing;
-	Frametime_Counter m_frameTime;
 	std::shared_ptr<UI_Element> m_pauseMenu;
 };
 

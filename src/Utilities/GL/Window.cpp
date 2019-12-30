@@ -125,9 +125,9 @@ Window::Window(Engine& engine) :
 			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 			engine.getManager_Messages().statement(">>> KHR DEBUG MODE ENABLED <<<");
 			constexpr const static auto myCallback = [](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* msg, const void* data) {
-				std::string _source = nullptr;
-				std::string _type = nullptr;
-				std::string _severity = nullptr;
+				std::string _source;
+				std::string _type;
+				std::string _severity;
 				switch (source) {
 				case GL_DEBUG_SOURCE_API:
 					_source = "API";

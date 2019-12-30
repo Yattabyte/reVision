@@ -22,7 +22,7 @@ void DirectSync_System::updateComponents(const float& /*deltaTime*/, const std::
 	for (const auto& componentParam : components) {
 		auto* trans = static_cast<Transform_Component*>(componentParam[0]);
 		const auto* light = static_cast<Light_Component*>(componentParam[1]);
-		auto* shadow = static_cast<Shadow_Component*>(componentParam[2]);
+		auto* shadow = dynamic_cast<Shadow_Component*>(componentParam[2]);
 
 		// Sync Common Buffer Attributes
 		const auto radiusSquared = (light->m_radius * light->m_radius);

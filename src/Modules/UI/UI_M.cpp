@@ -3,7 +3,9 @@
 
 
 UI_Module::UI_Module(Engine& engine) : 
-	Engine_Module(engine)
+	Engine_Module(engine),
+	m_loadingRing(engine),
+	m_frameTime(engine)
 {
 }
 
@@ -58,6 +60,7 @@ void UI_Module::frameTick(const float& deltaTime)
 	for (const auto& func : copySelection)
 		func();
 
+	// Render root element if it is in focus
 	if (!m_rootElement.empty() && m_rootElement.back()) {
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
@@ -70,6 +73,14 @@ void UI_Module::frameTick(const float& deltaTime)
 		glDisable(GL_BLEND);
 		Shader::Release();
 	}
+
+	renderOverlays(deltaTime);
+}
+
+void UI_Module::renderOverlays(const float& deltaTime)
+{
+	m_loadingRing.applyEffect(deltaTime);
+	m_frameTime.applyEffect(deltaTime);
 }
 
 void UI_Module::pushRootElement(const std::shared_ptr<UI_Element>& rootElement)

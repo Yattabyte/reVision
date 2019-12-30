@@ -76,24 +76,28 @@ void MousePicker_System::updateComponents(const float& /*deltaTime*/, const std:
 	bool found = false;
 	for (const auto& componentParam : components) {
 		const auto& transformComponent = *static_cast<Transform_Component*>(componentParam[0]);
+		const auto bBox = dynamic_cast<BoundingBox_Component*>(componentParam[1]);
+		const auto bSphere = dynamic_cast<BoundingSphere_Component*>(componentParam[2]);
+		const auto collider = dynamic_cast<Collider_Component*>(componentParam[3]);
+		const auto prop = dynamic_cast<Prop_Component*>(componentParam[4]);
+		const bool hasBoundingShape = (componentParam[1] != nullptr) || (componentParam[2] != nullptr);
 		float distanceFromScreen = FLT_MAX;
 		int confidence = 0;
-		const bool hasBoundingShape = (componentParam[1] != nullptr) || (componentParam[2] != nullptr);
 		bool result = false;
 
 		// Attempt cheap tests first
 		result = RayOrigin(transformComponent, ray_origin, ray_direction, distanceFromScreen, confidence, m_engine);
-		if (const auto& bBox = static_cast<BoundingBox_Component*>(componentParam[1]))
+		if (bBox)
 			result = RayBBox(transformComponent, *bBox, ray_origin, ray_direction, distanceFromScreen, confidence);
-		else if (const auto& bSphere = static_cast<BoundingSphere_Component*>(componentParam[2]))
+		else if (bSphere)
 			result = RayBSphere(transformComponent, *bSphere, ray_origin, ray_direction, distanceFromScreen, confidence);
 
 		// Attempt more complex tests
-		if (const auto& collider = static_cast<Collider_Component*>(componentParam[3]); ((hasBoundingShape && result) || (!hasBoundingShape))) {
+		if (collider && ((hasBoundingShape && result) || (!hasBoundingShape))) {
 			distanceFromScreen = FLT_MAX;
-			result = RayCollider(*collider, closestPhysicsShape, closetstPhysicsHit, distanceFromScreen, confidence);
+			result = RayCollider(*collider, closestPhysicsShape, closetstPhysicsHit, distanceFromScreen, confidence);			
 		}
-		else if (const auto& prop = static_cast<Prop_Component*>(componentParam[4]); ((hasBoundingShape && result) || (!hasBoundingShape))) {
+		else if (prop && ((hasBoundingShape && result) || (!hasBoundingShape))) {
 			distanceFromScreen = FLT_MAX;
 			result = RayProp(transformComponent, *prop, ray_origin, ray_direction, intersectionNormal, distanceFromScreen, confidence);
 		}

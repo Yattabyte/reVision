@@ -22,9 +22,9 @@ void PropSync_System::updateComponents(const float& /*deltaTime*/, const std::ve
 	int index = 0;
 	for (const auto& componentParam : components) {
 		const auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
-		auto* skeletonComponent = static_cast<Skeleton_Component*>(componentParam[1]);
-		const auto* transformComponent = static_cast<Transform_Component*>(componentParam[2]);
-		auto* bboxComponent = static_cast<BoundingBox_Component*>(componentParam[3]);
+		auto* skeletonComponent = dynamic_cast<Skeleton_Component*>(componentParam[1]);
+		const auto* transformComponent = dynamic_cast<Transform_Component*>(componentParam[2]);
+		auto* bboxComponent = dynamic_cast<BoundingBox_Component*>(componentParam[3]);
 
 		// Synchronize the component if it is visible
 		if (propComponent->m_model->ready()) {

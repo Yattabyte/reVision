@@ -9,7 +9,15 @@ StartMenu::StartMenu(Engine& engine) : Menu(engine)
 	m_title->setText("MAIN MENU");
 
 	// Add 'Start Game' button
+	m_gameMenu = std::make_shared<GameMenu>(engine);
 	addButton(engine, "START GAME", [&] { startGame(); });
+	m_gameMenu->addCallback(static_cast<int>(GameMenu::Interact::on_back), [&]() noexcept { m_engine.getModule_UI().setFocusMap(getFocusMap()); });
+	m_gameMenu->addCallback(static_cast<int>(GameMenu::Interact::on_levelSelect), [&]() noexcept {
+		m_engine.getModule_UI().clear();
+		m_engine.getModule_Game().loadLevel(m_gameMenu->getLevel());
+		m_engine.goToGame();
+		enactCallback(static_cast<int>(StartMenu::Interact::on_start_game));
+		});
 
 	// Add 'Level Editor' button
 	addButton(engine, "LEVEL EDITOR", [&] { startEditor(); });
@@ -17,7 +25,7 @@ StartMenu::StartMenu(Engine& engine) : Menu(engine)
 	// Add 'Options' button
 	m_optionsMenu = std::make_shared<OptionsMenu>(engine);
 	addButton(engine, "  OPTIONS >", [&] { goToOptions(); });
-	m_optionsMenu->addCallback(static_cast<int>(OptionsMenu::Interact::on_back), [&]() noexcept { returnFromOptions(); });
+	m_optionsMenu->addCallback(static_cast<int>(OptionsMenu::Interact::on_back), [&]() noexcept {m_engine.getModule_UI().setFocusMap(getFocusMap()); });
 
 	// Add 'Quit' button
 	addButton(engine, "QUIT", [&] { quit(); });
@@ -37,13 +45,17 @@ StartMenu::StartMenu(Engine& engine) : Menu(engine)
 
 void StartMenu::startGame()
 {
-	m_engine.getModule_UI().clear();
-	enactCallback(static_cast<int>(StartMenu::Interact::on_start_game));
+	// Transfer appearance and control to game menu
+	auto& ui = m_engine.getModule_UI();
+	ui.pushRootElement(m_gameMenu);
+	ui.setFocusMap(m_gameMenu->getFocusMap());
+	m_layout->setSelectionIndex(-1);
 }
 
 void StartMenu::startEditor()
 {
 	m_engine.getModule_UI().clear();
+	m_engine.goToEditor();
 	enactCallback(static_cast<int>(StartMenu::Interact::on_level_editor));
 }
 
@@ -55,12 +67,6 @@ void StartMenu::goToOptions()
 	ui.setFocusMap(m_optionsMenu->getFocusMap());
 	m_layout->setSelectionIndex(-1);
 	enactCallback(static_cast<int>(StartMenu::Interact::on_options));
-}
-
-void StartMenu::returnFromOptions() noexcept 
-{
-	// Transfer control back to this menu
-	m_engine.getModule_UI().setFocusMap(getFocusMap());
 }
 
 void StartMenu::quit() 

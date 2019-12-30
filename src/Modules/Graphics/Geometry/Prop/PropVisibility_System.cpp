@@ -22,8 +22,8 @@ void PropVisibility_System::updateComponents(const float& /*deltaTime*/, const s
 		int index = 0;
 		for (const auto& componentParam : components) {
 			const auto* propComponent = static_cast<Prop_Component*>(componentParam[0]);
-			const auto* skeletonComponent = static_cast<Skeleton_Component*>(componentParam[1]);
-			const auto* bboxComponent = static_cast<BoundingBox_Component*>(componentParam[2]);
+			const auto* skeletonComponent = dynamic_cast<Skeleton_Component*>(componentParam[1]);
+			const auto* bboxComponent = dynamic_cast<BoundingBox_Component*>(componentParam[2]);
 			const auto& offset = propComponent->m_offset;
 			const auto& count = propComponent->m_count;
 

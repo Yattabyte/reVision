@@ -66,8 +66,8 @@ void Outline_System::updateComponents(const float& /*deltaTime*/, const std::vec
 		for (const auto& componentParam : components) {
 			//auto* selectedComponent = static_cast<Selected_Component*>(componentParam[0]);
 			const auto* trans = static_cast<Transform_Component*>(componentParam[1]);
-			const auto* prop = static_cast<Prop_Component*>(componentParam[2]);
-			const auto* light = static_cast<Light_Component*>(componentParam[3]);
+			const auto* prop = dynamic_cast<Prop_Component*>(componentParam[2]);
+			const auto* light = dynamic_cast<Light_Component*>(componentParam[3]);
 
 			const auto tryRegisterComponentModel = [&](const ComponentHandle& componentHandle, const Shared_Mesh& mesh) {
 				tryInsertModel(mesh);

@@ -14,8 +14,8 @@ void FrustumCull_System::updateComponents(const float& /*deltaTime*/, const std:
 {
 	for (const auto& componentParam : components) {
 		const auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);
-		auto* bboxComponent = static_cast<BoundingBox_Component*>(componentParam[1]);
-		auto* bsphereComponent = static_cast<BoundingSphere_Component*>(componentParam[2]);
+		auto* bboxComponent = dynamic_cast<BoundingBox_Component*>(componentParam[1]);
+		auto* bsphereComponent = dynamic_cast<BoundingSphere_Component*>(componentParam[2]);
 
 		// Update the visibility status for each camera this entity is visible in
 		const auto sceneCameraCount = m_sceneCameras.size();
