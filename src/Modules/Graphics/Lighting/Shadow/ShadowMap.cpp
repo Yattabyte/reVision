@@ -2,13 +2,13 @@
 #include <algorithm>
 
 
-ShadowMap::~ShadowMap() 
+ShadowMap::~ShadowMap()
 {
 	glDeleteFramebuffers(1, &m_fboID);
 	glDeleteTextures(3, m_textureIDS);
 }
 
-ShadowMap::ShadowMap() noexcept 
+ShadowMap::ShadowMap() noexcept
 {
 	glCreateFramebuffers(1, &m_fboID);
 	glCreateTextures(GL_TEXTURE_2D_ARRAY, 3, m_textureIDS);
@@ -32,7 +32,7 @@ ShadowMap::ShadowMap() noexcept
 	glNamedFramebufferDrawBuffers(m_fboID, 2, drawBuffers);
 }
 
-void ShadowMap::resize(const glm::ivec2& newSize, const int& depth) noexcept 
+void ShadowMap::resize(const glm::ivec2& newSize, const int& depth) noexcept
 {
 	if (m_size != newSize || m_layerFaces != depth) {
 		m_size = glm::max(glm::ivec2(1), newSize);
@@ -48,7 +48,7 @@ void ShadowMap::resize(const glm::ivec2& newSize, const int& depth) noexcept
 	}
 }
 
-void ShadowMap::clear(const GLint& zOffset, const GLsizei& amount) noexcept 
+void ShadowMap::clear(const GLint& zOffset, const GLsizei& amount) noexcept
 {
 	constexpr float clearDepth(1.0F);
 	constexpr glm::vec3 clear(0.0F);
@@ -57,7 +57,7 @@ void ShadowMap::clear(const GLint& zOffset, const GLsizei& amount) noexcept
 	glClearTexSubImage(m_textureIDS[2], 0, 0, 0, zOffset, m_size.x, m_size.y, amount, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
 }
 
-void ShadowMap::bindForWriting() noexcept 
+void ShadowMap::bindForWriting() noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 }

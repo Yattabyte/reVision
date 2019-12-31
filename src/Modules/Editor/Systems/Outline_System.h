@@ -19,7 +19,7 @@ public:
 	/** Destroy this system. */
 	~Outline_System();
 	/** Construct this system.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	editor		reference to the level-editor to use. */
 	Outline_System(Engine& engine, LevelEditor_Module& editor);
 

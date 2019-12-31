@@ -67,10 +67,10 @@ public:
 	void saveLevelDialogue() noexcept;
 	/** Display the 'settings' dialogue for the level editor. */
 	void openSettingsDialogue() noexcept;
-	/** Retrieve if we have any undo-able actions. 
+	/** Retrieve if we have any undo-able actions.
 	@return					true if able to undo, false otherwise. */
 	bool canUndo() const noexcept;
-	/** Retrieve if we have any redo-able actions. 
+	/** Retrieve if we have any redo-able actions.
 	@return					true if able to redo, false otherwise. */
 	bool canRedo() const noexcept;
 	/** Undo the previous action in the undo stack. */

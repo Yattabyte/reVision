@@ -15,7 +15,7 @@ class PlayerSpawn_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Construct a free-look system.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	game		reference to the game module to use. */
 	PlayerSpawn_System(Engine& engine, Game_Module& game);
 

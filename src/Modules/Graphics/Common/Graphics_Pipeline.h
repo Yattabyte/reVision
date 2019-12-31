@@ -30,7 +30,7 @@ class Graphics_Pipeline {
 public:
 	// Public (De)Constructors
 	/** Construct a PBR rendering pipeline.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	clientCamera	the main camera. */
 	Graphics_Pipeline(Engine& engine, Camera& clientCamera);
 

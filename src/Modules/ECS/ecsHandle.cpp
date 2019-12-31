@@ -23,18 +23,18 @@ ecsHandle::operator bool() const noexcept
 	return !bool((*this) == empty);
 }
 
-bool ecsHandle::isValid() const noexcept 
+bool ecsHandle::isValid() const noexcept
 {
 	static const ecsHandle empty;
 	return !bool((*this) == empty);
 }
 
-EntityHandle::EntityHandle(const ecsHandle& handle) noexcept 
-	: ecsHandle(handle) 
+EntityHandle::EntityHandle(const ecsHandle& handle) noexcept
+	: ecsHandle(handle)
 {
 }
 
-ComponentHandle::ComponentHandle(const ecsHandle& handle) noexcept 
-	: ecsHandle(handle) 
+ComponentHandle::ComponentHandle(const ecsHandle& handle) noexcept
+	: ecsHandle(handle)
 {
 }

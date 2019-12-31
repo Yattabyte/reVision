@@ -66,12 +66,12 @@ bool Scaling_Gizmo::checkMouseInput(const float& /*unused*/)
 	checkMouseHover();
 	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(0))
 		return checkMousePress();
-	
+
 	if (m_selectedAxes != NONE) {
 		m_selectedAxes = NONE;
 		return true; // block input as we just finished doing an action here
 	}
-	
+
 	return false;
 }
 
@@ -252,7 +252,7 @@ bool Scaling_Gizmo::checkMousePress()
 		return (m_selectedAxes != NONE);
 	}
 
-	// An axis is now selected, perform dragging operation	
+	// An axis is now selected, perform dragging operation
 	constexpr auto gridSnapValue = [](const float& value, const float& delta, const float& prevValue, const float& startingValue, const float& snapAmt) -> float {
 		const float scale = prevValue + (((value - delta) - startingValue) * 2.0f);
 		return snapAmt != 0.0f ? (float(int((scale + (snapAmt / 2.0F)) / snapAmt)) * snapAmt) : scale;
@@ -343,5 +343,5 @@ bool Scaling_Gizmo::checkMousePress()
 		}
 	};
 	m_editor.doReversableAction(std::make_shared<Scale_Selection_Command>(m_engine, m_editor, scale, m_selectedAxes));
-	return true;	
+	return true;
 }

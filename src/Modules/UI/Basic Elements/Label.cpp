@@ -2,7 +2,7 @@
 #include <algorithm>
 
 
-Label::~Label() 
+Label::~Label()
 {
 	// Delete geometry
 	glDeleteBuffers(1, &m_vboID);
@@ -38,10 +38,10 @@ Label::Label(Engine& engine, const std::string& text) :
 	setTextScale(m_textScale);
 }
 
-void Label::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
+void Label::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Exit Early
-	if (!getVisible() || !Asset::All_Ready(m_shader, m_textureFont)) 
+	if (!getVisible() || !Asset::All_Ready(m_shader, m_textureFont))
 		return;
 
 	// Update indirect draw call
@@ -70,7 +70,7 @@ void Label::renderElement(const float& deltaTime, const glm::vec2& position, con
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void Label::setText(const std::string& text) 
+void Label::setText(const std::string& text)
 {
 	m_text = text;
 
@@ -87,7 +87,7 @@ void Label::setText(const std::string& text)
 	enactCallback(static_cast<int>(Label::Interact::on_textChanged));
 }
 
-std::string Label::getText() const 
+std::string Label::getText() const
 {
 	return m_text;
 }
@@ -98,12 +98,12 @@ void Label::setTextScale(const float& textScale) noexcept
 	m_maxScale.y = textScale;
 }
 
-float Label::getTextScale() const noexcept 
+float Label::getTextScale() const noexcept
 {
 	return m_textScale;
 }
 
-void Label::setColor(const glm::vec3& color) noexcept 
+void Label::setColor(const glm::vec3& color) noexcept
 {
 	m_color = color;
 }

@@ -4,7 +4,7 @@
 
 
 PhysicsSync_System::PhysicsSync_System(Engine& engine, btDiscreteDynamicsWorld& world) :
-	
+
 	m_engine(engine),
 	m_world(world)
 {
@@ -13,7 +13,7 @@ PhysicsSync_System::PhysicsSync_System(Engine& engine, btDiscreteDynamicsWorld& 
 	addComponentType(Collider_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 }
 
-void PhysicsSync_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void PhysicsSync_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	for (const auto& componentParam : components) {
 		auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);

@@ -5,7 +5,7 @@
 
 
 PlayerSpawn_System::PlayerSpawn_System(Engine& engine, Game_Module& game)
-	: m_engine(engine), m_game(game) 
+	: m_engine(engine), m_game(game)
 {
 	// Declare component types used
 	addComponentType(PlayerSpawn_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
@@ -16,7 +16,7 @@ PlayerSpawn_System::PlayerSpawn_System(Engine& engine, Game_Module& game)
 		engine.getManager_Messages().error("Invalid ECS System: PlayerSpawn_System");
 }
 
-void PlayerSpawn_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void PlayerSpawn_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	if (m_playerCount == 0ULL) {
 		for (const auto& componentParam : components) {

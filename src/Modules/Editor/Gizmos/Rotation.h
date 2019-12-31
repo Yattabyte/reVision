@@ -19,7 +19,7 @@ public:
 	/** Destroy this gizmo. */
 	~Rotation_Gizmo();
 	/** Construct this gizmo.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	editor		reference to the level-editor to use. */
 	Rotation_Gizmo(Engine& engine, LevelEditor_Module& editor);
 

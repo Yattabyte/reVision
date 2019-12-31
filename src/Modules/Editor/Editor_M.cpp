@@ -715,7 +715,7 @@ void LevelEditor_Module::ungroupSelection()
 			: m_engine(engine), m_editor(editor), m_uuids(m_editor.getSelection()) {
 			const auto& ecsWorld = m_editor.getWorld();
 			for (const auto& entityHandle : m_uuids)
-				m_children.push_back(ecsWorld.getEntityHandles(entityHandle));			
+				m_children.push_back(ecsWorld.getEntityHandles(entityHandle));
 		}
 		void execute() final {
 			auto& ecsWorld = m_editor.getWorld();
@@ -806,7 +806,7 @@ void LevelEditor_Module::makeComponent(const EntityHandle& entityHandle, const c
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentName(name) {}
 		void execute() final {
 			auto& ecsWorld = m_editor.getWorld();
-			if (const auto& componentID = ecsWorld::nameToComponentID(m_componentName)) 
+			if (const auto& componentID = ecsWorld::nameToComponentID(m_componentName))
 				ecsWorld.makeComponent(m_entityHandle, *componentID, nullptr, m_componentHandle);
 		}
 		void undo() final {

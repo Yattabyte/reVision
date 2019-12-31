@@ -38,7 +38,7 @@ public:
 	/** Retrieve the center of this camera's frustum.
 	@return				the center of this frustum. */
 	glm::vec3 getFrustumCenter() const noexcept;
-	/** Retrieve a const pointer to the underlying data structure. 
+	/** Retrieve a const pointer to the underlying data structure.
 	@return				const pointer to camera data. */
 	const GPUData* operator-> () const noexcept;
 	/** Retrieve a pointer to the underlying data structure.

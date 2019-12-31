@@ -11,7 +11,7 @@ class UnsavedChangesDialogue final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Construct a Unsaved Changes dialogue.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	editor		reference to the level-editor to use. */
 	UnsavedChangesDialogue(Engine& engine, LevelEditor_Module& editor) noexcept;
 
@@ -21,7 +21,7 @@ public:
 
 
 	// Public Methods
-	/** Checks if the editor has unsaved changes, otherwise executes the supplied function. Prompts user to save. 
+	/** Checks if the editor has unsaved changes, otherwise executes the supplied function. Prompts user to save.
 	@param	funcAfterPrompt		the function to call if the editor is safe to do so. */
 	void tryPrompt(const std::function<void()>& funcAfterPrompt);
 

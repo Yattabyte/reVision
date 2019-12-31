@@ -17,7 +17,7 @@ public:
 	/** Constructs an empty asset. */
 	inline Shared_Shader_Geometry() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */

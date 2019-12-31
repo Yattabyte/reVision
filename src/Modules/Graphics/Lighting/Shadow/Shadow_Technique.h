@@ -17,7 +17,7 @@ public:
 	/** Destroy this shadow technique. */
 	~Shadow_Technique();
 	/** Construct a shadow technique.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	sceneCameras	reference to the scene cameras to use. */
 	Shadow_Technique(Engine& engine, std::vector<Camera*>& sceneCameras);
 
@@ -28,7 +28,7 @@ public:
 
 
 	// Public Methods
-	/** Retrieve this technique's shadow data. 
+	/** Retrieve this technique's shadow data.
 	@return			the shadow data for this frame. */
 	ShadowData& getShadowData() noexcept;
 

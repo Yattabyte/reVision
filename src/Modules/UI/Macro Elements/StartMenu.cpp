@@ -59,7 +59,7 @@ void StartMenu::startEditor()
 	enactCallback(static_cast<int>(StartMenu::Interact::on_level_editor));
 }
 
-void StartMenu::goToOptions() 
+void StartMenu::goToOptions()
 {
 	// Transfer appearance and control to options menu
 	auto& ui = m_engine.getModule_UI();
@@ -69,7 +69,7 @@ void StartMenu::goToOptions()
 	enactCallback(static_cast<int>(StartMenu::Interact::on_options));
 }
 
-void StartMenu::quit() 
+void StartMenu::quit()
 {
 	m_engine.getModule_UI().clear();
 	m_engine.shutDown();

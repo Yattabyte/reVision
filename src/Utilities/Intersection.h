@@ -146,8 +146,8 @@ inline static bool RayOOBBIntersection(
 			float t1 = (e + aabb_min.z) / f;
 			float t2 = (e + aabb_max.z) / f;
 
-			if (t1 > t2) 
-				std::swap(t1, t2);			
+			if (t1 > t2)
+				std::swap(t1, t2);
 
 			if (t2 < tMax)
 				tMax = t2;

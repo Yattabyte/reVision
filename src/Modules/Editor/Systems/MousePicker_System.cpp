@@ -14,7 +14,7 @@ static bool RayBBox(const Transform_Component& transformComponent, const Boundin
 static bool RayBSphere(const Transform_Component& transformComponent, const BoundingSphere_Component& bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence);
 static bool RayOrigin(const Transform_Component& transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence, Engine& engine);
 
-MousePicker_System::~MousePicker_System() 
+MousePicker_System::~MousePicker_System()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -42,7 +42,7 @@ MousePicker_System::MousePicker_System(Engine& engine) :
 		});
 }
 
-void MousePicker_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void MousePicker_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	const auto& actionState = m_engine.getActionState();
 	const auto& clientCamera = m_engine.getModule_Graphics().getClientCamera();
@@ -95,7 +95,7 @@ void MousePicker_System::updateComponents(const float& /*deltaTime*/, const std:
 		// Attempt more complex tests
 		if (collider && ((hasBoundingShape && result) || (!hasBoundingShape))) {
 			distanceFromScreen = FLT_MAX;
-			result = RayCollider(*collider, closestPhysicsShape, closetstPhysicsHit, distanceFromScreen, confidence);			
+			result = RayCollider(*collider, closestPhysicsShape, closetstPhysicsHit, distanceFromScreen, confidence);
 		}
 		else if (prop && ((hasBoundingShape && result) || (!hasBoundingShape))) {
 			distanceFromScreen = FLT_MAX;
@@ -132,7 +132,7 @@ std::tuple<EntityHandle, Transform, Transform> MousePicker_System::getSelection(
 @param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
 @param	confidence				reference updated with the confidence level for this function.
 @return							true on successful intersection, false if disjoint. */
-static bool RayProp(const Transform_Component& transformComponent, const Prop_Component& prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence) 
+static bool RayProp(const Transform_Component& transformComponent, const Prop_Component& prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, glm::vec3& normal, float& distanceFromScreen, int& confidence)
 {
 	bool intersection = false;
 	if (prop.m_model->ready()) {

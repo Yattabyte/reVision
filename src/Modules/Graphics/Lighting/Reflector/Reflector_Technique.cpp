@@ -5,7 +5,7 @@
 #include "Engine.h"
 
 
-Reflector_Technique::~Reflector_Technique() 
+Reflector_Technique::~Reflector_Technique()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -57,7 +57,7 @@ void Reflector_Technique::clearCache(const float& /*deltaTime*/) noexcept
 	m_drawData.clear();
 }
 
-void Reflector_Technique::updateCache(const float& deltaTime, ecsWorld& world) 
+void Reflector_Technique::updateCache(const float& deltaTime, ecsWorld& world)
 {
 	// Link together the dimensions of view info to that of the viewport vectors
 	m_frameData.viewInfo.resize(m_sceneCameras.size());
@@ -115,7 +115,7 @@ void Reflector_Technique::renderTechnique(const float& deltaTime, Viewport& view
 	}
 }
 
-void Reflector_Technique::updateReflectors(const float& deltaTime) 
+void Reflector_Technique::updateReflectors(const float& deltaTime)
 {
 	auto clientTime = Engine::GetSystemTime();
 	if (!m_frameData.reflectorsToUpdate.empty()) {
@@ -188,7 +188,7 @@ void Reflector_Technique::updateReflectors(const float& deltaTime)
 	}
 }
 
-void Reflector_Technique::renderReflectors(const float& /*unused*/, Viewport& viewport) 
+void Reflector_Technique::renderReflectors(const float& /*unused*/, Viewport& viewport)
 {
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_BLEND);

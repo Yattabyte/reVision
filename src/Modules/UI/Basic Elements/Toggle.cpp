@@ -30,7 +30,7 @@ Toggle::Toggle(Engine& engine, const bool& state) :
 	setToggled(state);
 }
 
-void Toggle::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
+void Toggle::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Update Colors
 	glm::vec4 color(0.75);
@@ -54,17 +54,17 @@ void Toggle::userAction(ActionState& actionState)
 		setToggled(!m_toggledOn);
 }
 
-void Toggle::setText(const std::string& text) 
+void Toggle::setText(const std::string& text)
 {
 	m_label->setText(text);
 }
 
-std::string Toggle::getText() const 
+std::string Toggle::getText() const
 {
 	return m_label->getText();
 }
 
-void Toggle::setToggled(const bool& state) 
+void Toggle::setToggled(const bool& state)
 {
 	m_toggledOn = state;
 	setText(m_toggledOn ? "ON" : "OFF");
@@ -72,7 +72,7 @@ void Toggle::setToggled(const bool& state)
 	enactCallback(static_cast<int>(Toggle::Interact::on_toggle));
 }
 
-bool Toggle::isToggled() const noexcept 
+bool Toggle::isToggled() const noexcept
 {
 	return m_toggledOn;
 }

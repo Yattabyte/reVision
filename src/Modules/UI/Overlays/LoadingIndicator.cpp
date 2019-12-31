@@ -28,7 +28,7 @@ LoadingIndicator::LoadingIndicator(Engine& engine) :
 		});
 }
 
-void LoadingIndicator::applyEffect(const float& deltaTime) 
+void LoadingIndicator::applyEffect(const float& deltaTime)
 {
 	if (!Asset::All_Ready(m_shapeQuad, m_shader, m_texture))
 		return;
@@ -59,7 +59,7 @@ void LoadingIndicator::applyEffect(const float& deltaTime)
 	}
 }
 
-void LoadingIndicator::resize(const glm::ivec2& size) 
+void LoadingIndicator::resize(const glm::ivec2& size)
 {
 	m_renderSize = size;
 	m_projMatrix = glm::ortho(0.0F, static_cast<float>(size.x), 0.0F, static_cast<float>(size.y));

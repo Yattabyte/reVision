@@ -32,8 +32,8 @@ SSAO::SSAO(Engine& engine) :
 	const std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 	std::default_random_engine generator;
 	glm::vec3 noiseArray[16]{};
-	for (GLuint i = 0; i < 16; i++) 
-		noiseArray[i] = glm::vec3(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0F);	
+	for (GLuint i = 0; i < 16; i++)
+		noiseArray[i] = glm::vec3(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0F);
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_noiseID);
 	glTextureStorage2D(m_noiseID, 1, GL_RGB16F, 4, 4);
 	glTextureSubImage2D(m_noiseID, 0, 0, 0, 4, 4, GL_RGB, GL_FLOAT, &noiseArray[0]);

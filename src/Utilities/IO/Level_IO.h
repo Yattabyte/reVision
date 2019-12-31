@@ -10,7 +10,7 @@
 class Level_IO {
 public:
 	/** Check if a given level file-path exists.
-	@param	relativePath		the relative path to a level file. 
+	@param	relativePath		the relative path to a level file.
 	@return						true if the level file exists, false otherwise. */
 	static bool Level_Exists(const std::string& relativePath);
 	/** Read a binary level map into the ecsWorld specified.

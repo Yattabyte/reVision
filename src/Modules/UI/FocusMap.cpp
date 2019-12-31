@@ -1,12 +1,12 @@
 #include "Modules/UI/FocusMap.h"
 
 
-void FocusMap::addElement(const std::shared_ptr<UI_Element>& element) 
+void FocusMap::addElement(const std::shared_ptr<UI_Element>& element)
 {
 	m_elements.push_back(element);
 }
 
-bool FocusMap::removeElement(const std::shared_ptr<UI_Element>& element) 
+bool FocusMap::removeElement(const std::shared_ptr<UI_Element>& element)
 {
 	size_t index(0ULL);
 	bool found = false;
@@ -29,7 +29,7 @@ void FocusMap::clear() noexcept
 	m_index = -1;
 }
 
-void FocusMap::focusIndex(const int& newIndex) noexcept 
+void FocusMap::focusIndex(const int& newIndex) noexcept
 {
 	if (newIndex >= 0 && newIndex < m_elements.size() && elementFocusable(m_elements[newIndex]))
 		m_index = newIndex;
@@ -52,7 +52,7 @@ bool FocusMap::focusElement(const std::shared_ptr<UI_Element>& element) noexcept
 	return found;
 }
 
-void FocusMap::applyActionState(ActionState& actionState) 
+void FocusMap::applyActionState(ActionState& actionState)
 {
 	if (!m_elements.empty() && m_index >= 0) {
 		if (elementFocusable(m_elements[m_index]))
@@ -66,17 +66,17 @@ void FocusMap::applyActionState(ActionState& actionState)
 	}
 }
 
-void FocusMap::back() noexcept 
+void FocusMap::back() noexcept
 {
 	focusIndex(m_index - 1);
 }
 
-void FocusMap::forward() noexcept 
+void FocusMap::forward() noexcept
 {
 	focusIndex(m_index + 1);
 }
 
-bool FocusMap::elementFocusable(const std::shared_ptr<UI_Element>& element) noexcept 
+bool FocusMap::elementFocusable(const std::shared_ptr<UI_Element>& element) noexcept
 {
 	return element->getVisible() && element->getEnabled();
 }

@@ -51,7 +51,7 @@ public:
 	@param	deltaTime		the amount of time passed since last frame. */
 	virtual void clearCache(const float& deltaTime);
 	/** Update any data needed before rendering this frame.
-	@param	deltaTime		the amount of time passed since last frame. 
+	@param	deltaTime		the amount of time passed since last frame.
 	@param	world			the ecsWorld to source data from. */
 	virtual void updateCache(const float& deltaTime, ecsWorld& world);
 	/** Perform any pre-requisite rendering passes.

@@ -27,7 +27,7 @@ FBO_Env_Reflector::FBO_Env_Reflector() noexcept
 	}
 }
 
-void FBO_Env_Reflector::resize(const glm::ivec2 newSize, const GLuint& depth) 
+void FBO_Env_Reflector::resize(const glm::ivec2 newSize, const GLuint& depth)
 {
 	if (m_size != newSize || m_depth != depth) {
 		m_size = newSize;
@@ -39,20 +39,20 @@ void FBO_Env_Reflector::resize(const glm::ivec2 newSize, const GLuint& depth)
 	}
 }
 
-void FBO_Env_Reflector::clear() noexcept 
+void FBO_Env_Reflector::clear() noexcept
 {
 	constexpr GLfloat clearColor[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
 	for (int x = 0; x < 6; ++x)
 		glClearNamedFramebufferfv(m_fboID[x], GL_COLOR, 0, clearColor);
 }
 
-void FBO_Env_Reflector::clear(const GLint& zOffset) noexcept 
+void FBO_Env_Reflector::clear(const GLint& zOffset) noexcept
 {
 	constexpr static const glm::vec3 clear(0.0F);
 	glClearTexSubImage(m_textureID, 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_RGB, GL_FLOAT, &clear);
 }
 
-void FBO_Env_Reflector::bindForWriting(const int& index) noexcept 
+void FBO_Env_Reflector::bindForWriting(const int& index) noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID[index]);
 }

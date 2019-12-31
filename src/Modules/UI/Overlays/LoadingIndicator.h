@@ -40,7 +40,7 @@ private:
 
 
 	// Private Methods
-	/** Resize this indicator. 
+	/** Resize this indicator.
 	@param	size		the new size to use. */
 	void resize(const glm::ivec2& size);
 

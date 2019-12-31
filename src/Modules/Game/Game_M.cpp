@@ -7,7 +7,7 @@
 #include "Engine.h"
 
 
-Game_Module::Game_Module(Engine& engine) : 
+Game_Module::Game_Module(Engine& engine) :
 	Engine_Module(engine)
 {
 }

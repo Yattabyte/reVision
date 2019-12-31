@@ -1,7 +1,7 @@
 #include "Modules/UI/Basic Elements/List_Horizontal.h"
 
 
-List_Horizontal::~List_Horizontal() 
+List_Horizontal::~List_Horizontal()
 {
 	// Delete geometry
 	glDeleteBuffers(1, &m_vboID);
@@ -32,7 +32,7 @@ List_Horizontal::List_Horizontal(Engine& engine) :
 		});
 }
 
-void List_Horizontal::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
+void List_Horizontal::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Exit Early
 	if (!getVisible() || m_children.empty() || !m_shader->ready())
@@ -63,7 +63,7 @@ void List_Horizontal::renderElement(const float& deltaTime, const glm::vec2& pos
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void List_Horizontal::mouseAction(const MouseEvent& mouseEvent) 
+void List_Horizontal::mouseAction(const MouseEvent& mouseEvent)
 {
 	UI_Element::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -79,7 +79,7 @@ void List_Horizontal::mouseAction(const MouseEvent& mouseEvent)
 					setSelectionIndex(index); // Set selected item to whatever is beneath mouse
 				break;
 			}
-			
+
 				index++;
 		}
 
@@ -89,7 +89,7 @@ void List_Horizontal::mouseAction(const MouseEvent& mouseEvent)
 	}
 }
 
-void List_Horizontal::userAction(ActionState& actionState) 
+void List_Horizontal::userAction(ActionState& actionState)
 {
 	// User can go up or down the list_Horizontal with an input device
 	// User input wraps around, and if an item is selected, moving will deselect it
@@ -118,7 +118,7 @@ void List_Horizontal::userAction(ActionState& actionState)
 	}
 }
 
-void List_Horizontal::setHoverIndex(const int& newIndex) 
+void List_Horizontal::setHoverIndex(const int& newIndex)
 {
 	m_hoverIndex = newIndex;
 	const auto childrenCount = m_children.size();
@@ -131,12 +131,12 @@ void List_Horizontal::setHoverIndex(const int& newIndex)
 	updateSelectionGeometry();
 }
 
-int List_Horizontal::getHoverIndex() const noexcept 
+int List_Horizontal::getHoverIndex() const noexcept
 {
 	return m_hoverIndex;
 }
 
-void List_Horizontal::setSelectionIndex(const int& newIndex) 
+void List_Horizontal::setSelectionIndex(const int& newIndex)
 {
 	m_selectionIndex = newIndex;
 	m_focusMap.focusIndex(m_selectionIndex);
@@ -144,51 +144,51 @@ void List_Horizontal::setSelectionIndex(const int& newIndex)
 	enactCallback(static_cast<int>(List_Horizontal::Interact::on_selection));
 }
 
-int List_Horizontal::getSelectionIndex() const noexcept 
+int List_Horizontal::getSelectionIndex() const noexcept
 {
 	return m_selectionIndex;
 }
 
-FocusMap& List_Horizontal::getFocusMap() noexcept 
+FocusMap& List_Horizontal::getFocusMap() noexcept
 {
 	return m_focusMap;
 }
 
-void List_Horizontal::setMargin(const float& margin) 
+void List_Horizontal::setMargin(const float& margin)
 {
 	m_margin = margin;
 	alignChildren();
 }
 
-float List_Horizontal::getMargin() const noexcept 
+float List_Horizontal::getMargin() const noexcept
 {
 	return m_margin;
 }
 
-void List_Horizontal::setSpacing(const float& spacing) 
+void List_Horizontal::setSpacing(const float& spacing)
 {
 	m_spacing = spacing;
 	alignChildren();
 	updateSelectionGeometry();
 }
 
-float List_Horizontal::getSpacing() const noexcept 
+float List_Horizontal::getSpacing() const noexcept
 {
 	return m_spacing;
 }
 
-void List_Horizontal::setBorderSize(const float& size) 
+void List_Horizontal::setBorderSize(const float& size)
 {
 	m_borderSize = size;
 	updateSelectionGeometry();
 }
 
-float List_Horizontal::getBorderSize() const noexcept 
+float List_Horizontal::getBorderSize() const noexcept
 {
 	return m_borderSize;
 }
 
-void List_Horizontal::alignChildren() 
+void List_Horizontal::alignChildren()
 {
 	float positionFromLeft = m_margin;
 	for (size_t x = 0; x < m_children.size(); ++x) {
@@ -204,7 +204,7 @@ void List_Horizontal::alignChildren()
 	}
 }
 
-void List_Horizontal::updateSelectionGeometry() 
+void List_Horizontal::updateSelectionGeometry()
 {
 	if (m_children.empty()) return;
 	constexpr auto num_data = 8 * 6;

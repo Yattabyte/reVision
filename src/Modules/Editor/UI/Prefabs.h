@@ -18,7 +18,7 @@ public:
 	/** Destroy this prefab UI element. */
 	~Prefabs();
 	/** Construct a prefab UI element.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	editor		reference to the level-editor to use. */
 	Prefabs(Engine& engine, LevelEditor_Module& editor);
 

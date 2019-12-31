@@ -10,7 +10,7 @@ class SceneInspector final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Construct a scene inspector.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	editor		reference to the level-editor to use. */
 	SceneInspector(Engine& engine, LevelEditor_Module& editor) noexcept;
 

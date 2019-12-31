@@ -22,7 +22,7 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d) noexcept
 		d.a4, d.b4, d.c4, d.d4);
 }
 
-/** Copy a node into a new node. 
+/** Copy a node into a new node.
 @param	oldNode		the old node to copy from.
 @return				the new node. */
 [[nodiscard]] inline Node copy_node(const aiNode* oldNode)
@@ -156,7 +156,7 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 
 			importedData.boneMap[BoneName] = BoneIndex;
 			importedData.boneTransforms[BoneIndex] = aiMatrix_to_Mat4x4(mesh->mBones[b]->mOffsetMatrix);
-			
+
 			const auto weightCount = mesh->mBones[b]->mNumWeights;
 			for (unsigned int j = 0U; j < weightCount; ++j) {
 				const int& VertexID = vertexOffset + mesh->mBones[b]->mWeights[j].mVertexId;

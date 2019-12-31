@@ -13,8 +13,8 @@ class LevelEditor_Module;
 class Inspector_Light_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
-	/** Construct this system. 
-	@param	engine		reference to the engine to use. 
+	/** Construct this system.
+	@param	engine		reference to the engine to use.
 	@param	editor		reference to the level-editor to use. */
 	Inspector_Light_System(Engine& engine, LevelEditor_Module& editor);
 

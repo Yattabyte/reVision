@@ -2,7 +2,7 @@
 
 
 ECS_Module::ECS_Module(Engine& engine) noexcept :
-	Engine_Module(engine) 
+	Engine_Module(engine)
 {
 }
 

@@ -178,7 +178,7 @@ std::vector<EntityHandle> ecsWorld::getEntityHandles(const EntityHandle& rootHan
 	return entityHandles;
 }
 
-ecsBaseComponent* ecsWorld::getComponent(const EntityHandle& entityHandle, const ComponentID& componentID) const 
+ecsBaseComponent* ecsWorld::getComponent(const EntityHandle& entityHandle, const ComponentID& componentID) const
 {
 	if (const auto entity = getEntity(entityHandle))
 		return getComponent(entity->m_components, m_components.at(componentID), componentID);
@@ -280,7 +280,7 @@ void ecsWorld::parentEntity(const EntityHandle& parentHandle, const EntityHandle
 	// Check for parent transformations
 	if (childEntity == nullptr)
 		return;
-	
+
 	if (childEntity->m_parent.isValid()) {
 		const auto& oldParentHandle = childEntity->m_parent;
 		if (auto oldParent = getEntity(oldParentHandle)) {

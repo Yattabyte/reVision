@@ -1,7 +1,7 @@
 #include "Modules/UI/Basic Elements/List.h"
 
 
-List::~List() 
+List::~List()
 {
 	// Delete geometry
 	glDeleteBuffers(1, &m_vboID);
@@ -32,7 +32,7 @@ List::List(Engine& engine) :
 		});
 }
 
-void List::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
+void List::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Exit Early
 	if (!getVisible() || m_children.empty() || !m_shader->ready())
@@ -63,7 +63,7 @@ void List::renderElement(const float& deltaTime, const glm::vec2& position, cons
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void List::mouseAction(const MouseEvent& mouseEvent) 
+void List::mouseAction(const MouseEvent& mouseEvent)
 {
 	UI_Element::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -79,7 +79,7 @@ void List::mouseAction(const MouseEvent& mouseEvent)
 					setSelectionIndex(index); // Set selected item to whatever is beneath mouse
 				break;
 			}
-			
+
 				index++;
 		}
 
@@ -89,7 +89,7 @@ void List::mouseAction(const MouseEvent& mouseEvent)
 	}
 }
 
-void List::userAction(ActionState& actionState) 
+void List::userAction(ActionState& actionState)
 {
 	// User can go up or down the list with an input device
 	// User input wraps around, and if an item is selected, moving will deselect it
@@ -118,7 +118,7 @@ void List::userAction(ActionState& actionState)
 	}
 }
 
-void List::setHoverIndex(const int& newIndex) 
+void List::setHoverIndex(const int& newIndex)
 {
 	m_hoverIndex = newIndex;
 	if (!m_children.empty()) {
@@ -130,12 +130,12 @@ void List::setHoverIndex(const int& newIndex)
 	updateSelectionGeometry();
 }
 
-int List::getHoverIndex() const noexcept 
+int List::getHoverIndex() const noexcept
 {
 	return m_hoverIndex;
 }
 
-void List::setSelectionIndex(const int& newIndex) 
+void List::setSelectionIndex(const int& newIndex)
 {
 	m_selectionIndex = newIndex;
 	m_focusMap.focusIndex(m_selectionIndex);
@@ -143,12 +143,12 @@ void List::setSelectionIndex(const int& newIndex)
 	enactCallback(static_cast<int>(List::Interact::on_selection));
 }
 
-int List::getSelectionIndex() const noexcept 
+int List::getSelectionIndex() const noexcept
 {
 	return m_selectionIndex;
 }
 
-FocusMap& List::getFocusMap() noexcept 
+FocusMap& List::getFocusMap() noexcept
 {
 	return m_focusMap;
 }
@@ -159,35 +159,35 @@ void List::setMargin(const float& margin)
 	alignChildren();
 }
 
-float List::getMargin() const noexcept 
+float List::getMargin() const noexcept
 {
 	return m_margin;
 }
 
-void List::setSpacing(const float& spacing) 
+void List::setSpacing(const float& spacing)
 {
 	m_spacing = spacing;
 	alignChildren();
 	updateSelectionGeometry();
 }
 
-float List::getSpacing() const noexcept 
+float List::getSpacing() const noexcept
 {
 	return m_spacing;
 }
 
-void List::setBorderSize(const float& size) 
+void List::setBorderSize(const float& size)
 {
 	m_borderSize = size;
 	updateSelectionGeometry();
 }
 
-float List::getBorderSize() const noexcept 
+float List::getBorderSize() const noexcept
 {
 	return m_borderSize;
 }
 
-void List::alignChildren() 
+void List::alignChildren()
 {
 	float positionFromTop = m_scale.y - m_margin;
 	const auto childrenCount = m_children.size();
@@ -204,7 +204,7 @@ void List::alignChildren()
 	}
 }
 
-void List::updateSelectionGeometry() 
+void List::updateSelectionGeometry()
 {
 	if (m_children.empty()) return;
 	constexpr auto num_data = 8 * 6;

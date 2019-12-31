@@ -22,9 +22,9 @@ public:
 	/** Destructor. */
 	~Indirect_Technique();
 	/** Construct an indirect lighting technique.
-	@param	engine			reference to the engine to use. 
-	@param	shadowData		reference to the shadow data to use. 
-	@param	clientCamera	reference to the client camera to use. 
+	@param	engine			reference to the engine to use.
+	@param	shadowData		reference to the shadow data to use.
+	@param	clientCamera	reference to the client camera to use.
 	@param	sceneCameras	reference to the scene cameras to use. */
 	Indirect_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras);
 
@@ -37,7 +37,7 @@ public:
 
 private:
 	// Private Methods
-	/** Update the draw parameters for a draw call.	
+	/** Update the draw parameters for a draw call.
 	@param	camIndicesGen			the camera indexes for GI generation.
 	@param	camIndiciesRebounce		the camera indexes for GI re-bounce.
 	@param	camIndiciesRecon		the camera indexes for GI reconstruction.
@@ -54,7 +54,7 @@ private:
 	@param	camBufferRebounce	reference to the buffer for re-bouncing GI.
 	@param	indirectQuad		reference to the indirect quad draw call. */
 	void rebounceVolume(RH_Volume& rhVolume, const DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) noexcept;
-	/** Reconstruct GI from the RH volume. 
+	/** Reconstruct GI from the RH volume.
 	@param	viewport			reference to the active viewport.
 	@param	camBufferRecon		reference to the buffer for reconstructing GI.
 	@param	indirectQuadRecon	reference to the indirect GI reconstruction draw call. */

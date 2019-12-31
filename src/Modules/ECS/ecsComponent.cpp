@@ -12,7 +12,7 @@ ComponentID ecsBaseComponent::registerType(const ComponentCreateFunction& create
 }
 
 ecsBaseComponent::ecsBaseComponent(const ComponentID& ID, const size_t& size, const char* name) noexcept
-	: m_runtimeID(ID), m_size(size), m_name(name) 
+	: m_runtimeID(ID), m_size(size), m_name(name)
 {
 }
 

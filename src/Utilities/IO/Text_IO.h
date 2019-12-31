@@ -13,7 +13,7 @@ class Engine;
 class Text_IO {
 public:
 	/** Import a text document from disk.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	relativePath	the relative path to the file.
 	@param	importedData	the container to place the imported data within.
 	@param	mode			file importing mode.

@@ -2,8 +2,8 @@
 #include "Engine.h"
 
 
-OptionsMenu::OptionsMenu(Engine& engine) : 
-	Menu(engine) 
+OptionsMenu::OptionsMenu(Engine& engine) :
+	Menu(engine)
 {
 	// Title
 	m_title->setText("OPTIONS");
@@ -40,7 +40,7 @@ OptionsMenu::OptionsMenu(Engine& engine) :
 	m_focusMap->focusElement(m_layout);
 }
 
-void OptionsMenu::video() 
+void OptionsMenu::video()
 {
 	// Remove control from the graphics menu
 	m_gfxMenu->setVisible(false);
@@ -54,7 +54,7 @@ void OptionsMenu::video()
 	enactCallback(static_cast<int>(OptionsMenu::Interact::on_video));
 }
 
-void OptionsMenu::graphics() 
+void OptionsMenu::graphics()
 {
 	// Remove control from the video menu
 	m_videoMenu->setVisible(false);
@@ -68,12 +68,12 @@ void OptionsMenu::graphics()
 	enactCallback(static_cast<int>(OptionsMenu::Interact::on_graphics));
 }
 
-void OptionsMenu::controls() 
+void OptionsMenu::controls()
 {
 	enactCallback(static_cast<int>(OptionsMenu::Interact::on_controls));
 }
 
-void OptionsMenu::back() 
+void OptionsMenu::back()
 {
 	m_videoMenu->setVisible(false);
 	m_gfxMenu->setVisible(false);

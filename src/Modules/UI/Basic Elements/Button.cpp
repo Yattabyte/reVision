@@ -14,14 +14,14 @@ Button::Button(Engine& engine, const std::string& text) :
 	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] { m_label->setScale(getScale()); });
 }
 
-void Button::userAction(ActionState& actionState) 
+void Button::userAction(ActionState& actionState)
 {
 	// Only thing a user can do is press the button
 	if (actionState.isAction(ActionState::Action::UI_ENTER) == ActionState::State::PRESS)
 		pressButton();
 }
 
-void Button::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
+void Button::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Update Colors
 	glm::vec4 color(0.75);
@@ -35,12 +35,12 @@ void Button::renderElement(const float& deltaTime, const glm::vec2& position, co
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void Button::pressButton() 
+void Button::pressButton()
 {
 	enactCallback(static_cast<int>(UI_Element::Interact::on_clicked));
 }
 
-void Button::setText(const std::string& text) 
+void Button::setText(const std::string& text)
 {
 	m_label->setText(text);
 }
@@ -50,7 +50,7 @@ std::string Button::getText() const
 	return m_label->getText();
 }
 
-void Button::setTextScale(const float& textScale) noexcept 
+void Button::setTextScale(const float& textScale) noexcept
 {
 	m_label->setTextScale(textScale);
 }
@@ -59,12 +59,12 @@ float Button::getTextScale() const noexcept {
 	return m_label->getTextScale();
 }
 
-void Button::setBevelRadius(const float& radius) noexcept 
+void Button::setBevelRadius(const float& radius) noexcept
 {
 	m_bevelRadius = radius;
 }
 
-float Button::getBevelRadius() const noexcept 
+float Button::getBevelRadius() const noexcept
 {
 	return m_bevelRadius;
 }

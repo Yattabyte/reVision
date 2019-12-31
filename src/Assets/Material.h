@@ -20,7 +20,7 @@ public:
 	/** Constructs an empty asset. */
 	inline Shared_Material() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	filename		the filename to use.
 	@param	textures		the textures to use.
 	@param	threaded		create in a separate thread.
@@ -44,7 +44,7 @@ class Material final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Construct the Material.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	filename		the asset file name (relative to engine directory).
 	@param	textures		the textures to use. */
 	Material(Engine& engine, const std::string& filename, const std::vector<std::string>& textures);

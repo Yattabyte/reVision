@@ -109,7 +109,7 @@ void Engine::tickThreaded(std::future<void> exitObject, GLFWwindow* const auxCon
 
 	// Check if thread should shutdown
 	while (exitObject.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
-		m_assetManager.beginWorkOrder();	
+		m_assetManager.beginWorkOrder();
 }
 
 bool Engine::shouldClose() const noexcept
@@ -156,8 +156,8 @@ void Engine::goToEditor()
 	m_moduleEditor.showEditor();
 }
 
-Engine::MouseInputMode Engine::getMouseInputMode() const noexcept 
-{ 
+Engine::MouseInputMode Engine::getMouseInputMode() const noexcept
+{
 	return m_mouseInputMode;
 }
 
@@ -171,59 +171,59 @@ float Engine::GetSystemTime() noexcept
 	return Window::GetSystemTime();
 }
 
-ActionState& Engine::getActionState() noexcept 
+ActionState& Engine::getActionState() noexcept
 {
-	return m_actionState; 
+	return m_actionState;
 }
 
-PreferenceState& Engine::getPreferenceState() noexcept 
-{ 
-	return m_preferenceState; 
+PreferenceState& Engine::getPreferenceState() noexcept
+{
+	return m_preferenceState;
 }
 
-AssetManager& Engine::getManager_Assets() noexcept 
-{ 
+AssetManager& Engine::getManager_Assets() noexcept
+{
 	return m_assetManager;
 }
 
 MessageManager& Engine::getManager_Messages() noexcept
 {
-	return m_messageManager; 
+	return m_messageManager;
 }
 
-SoundManager& Engine::getManager_Sounds() noexcept 
+SoundManager& Engine::getManager_Sounds() noexcept
 {
 	return m_soundManager;
 }
 
-ECS_Module& Engine::getModule_ECS() noexcept 
+ECS_Module& Engine::getModule_ECS() noexcept
 {
 	return m_moduleECS;
 }
 
-Game_Module& Engine::getModule_Game() noexcept 
+Game_Module& Engine::getModule_Game() noexcept
 {
-	return m_moduleGame; 
+	return m_moduleGame;
 }
 
 LevelEditor_Module& Engine::getModule_LevelEditor() noexcept
-{ 
+{
 	return m_moduleEditor;
 }
 
 Graphics_Module& Engine::getModule_Graphics() noexcept
-{ 
-	return m_moduleGraphics; 
+{
+	return m_moduleGraphics;
 }
 
-UI_Module& Engine::getModule_UI() noexcept 
-{ 
+UI_Module& Engine::getModule_UI() noexcept
+{
 	return m_moduleUI;
 }
 
-Physics_Module& Engine::getModule_Physics() noexcept 
+Physics_Module& Engine::getModule_Physics() noexcept
 {
-	return m_modulePhysics; 
+	return m_modulePhysics;
 }
 
 std::string Engine::Get_Current_Dir()

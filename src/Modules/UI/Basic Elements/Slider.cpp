@@ -30,7 +30,7 @@ Slider::Slider(Engine& engine, const float& value, const glm::vec2& range) :
 	setValue(value);
 }
 
-void Slider::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
+void Slider::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Update Colors
 	glm::vec4 color(0.75);
@@ -44,7 +44,7 @@ void Slider::renderElement(const float& deltaTime, const glm::vec2& position, co
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void Slider::mouseAction(const MouseEvent& mouseEvent) 
+void Slider::mouseAction(const MouseEvent& mouseEvent)
 {
 	UI_Element::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -55,7 +55,7 @@ void Slider::mouseAction(const MouseEvent& mouseEvent)
 	}
 }
 
-void Slider::userAction(ActionState& actionState) 
+void Slider::userAction(ActionState& actionState)
 {
 	const float offsetAmount = std::min<float>((m_upperRange - m_lowerRange) / 100.0F, 1.0F);
 	if (actionState.isAction(ActionState::Action::UI_LEFT) == ActionState::State::PRESS)
@@ -64,7 +64,7 @@ void Slider::userAction(ActionState& actionState)
 		setValue(getValue() + offsetAmount);
 }
 
-void Slider::setValue(const float& amount) 
+void Slider::setValue(const float& amount)
 {
 	m_value = std::clamp<float>(amount, m_lowerRange, m_upperRange);
 	setText(std::to_string(static_cast<int>(std::round(m_value))));
@@ -72,12 +72,12 @@ void Slider::setValue(const float& amount)
 	enactCallback(static_cast<int>(Slider::Interact::on_value_change));
 }
 
-float Slider::getValue() const noexcept 
+float Slider::getValue() const noexcept
 {
 	return m_value;
 }
 
-void Slider::setRanges(const float& lowerRange, const float& upperRange) 
+void Slider::setRanges(const float& lowerRange, const float& upperRange)
 {
 	m_lowerRange = lowerRange;
 	m_upperRange = upperRange;
@@ -87,12 +87,12 @@ void Slider::setRanges(const float& lowerRange, const float& upperRange)
 	updatePaddle();
 }
 
-void Slider::setText(const std::string& text) 
+void Slider::setText(const std::string& text)
 {
 	m_label->setText(text);
 }
 
-std::string Slider::getText() const 
+std::string Slider::getText() const
 {
 	return m_label->getText();
 }

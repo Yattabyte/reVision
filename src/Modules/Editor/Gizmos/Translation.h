@@ -19,7 +19,7 @@ public:
 	/** Destroy this gizmo. */
 	~Translation_Gizmo();
 	/** Construct this gizmo.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	editor		reference to the level-editor to use. */
 	Translation_Gizmo(Engine& engine, LevelEditor_Module& editor);
 

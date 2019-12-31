@@ -9,7 +9,7 @@ Layout_Vertical::Layout_Vertical(Engine& engine) :
 	addCallback(static_cast<int>(UI_Element::Interact::on_childrenChange), [&] { alignChildren(); });
 }
 
-void Layout_Vertical::addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio) 
+void Layout_Vertical::addElement(const std::shared_ptr<UI_Element>& child, const float& sizeRatio)
 {
 	UI_Element::addElement(child);
 	m_sizedChildren.push_back(std::pair(child, sizeRatio));
@@ -21,23 +21,23 @@ void Layout_Vertical::setMargin(const float& margin)
 	alignChildren();
 }
 
-float Layout_Vertical::getMargin() const noexcept 
+float Layout_Vertical::getMargin() const noexcept
 {
 	return m_margin;
 }
 
-void Layout_Vertical::setSpacing(const float& spacing) 
+void Layout_Vertical::setSpacing(const float& spacing)
 {
 	m_spacing = spacing;
 	alignChildren();
 }
 
-float Layout_Vertical::getSpacing() const noexcept 
+float Layout_Vertical::getSpacing() const noexcept
 {
 	return m_spacing;
 }
 
-void Layout_Vertical::alignChildren() 
+void Layout_Vertical::alignChildren()
 {
 	const float innerRectSize = m_scale.y;
 

@@ -2,7 +2,7 @@
 #include "Modules/Graphics/Common/Viewport.h"
 
 
-Join_Reflections::~Join_Reflections() 
+Join_Reflections::~Join_Reflections()
 {
 	// Update indicator
 	*m_aliveIndicator = false;

@@ -4,7 +4,7 @@
 #include "Modules/Graphics/Common/Viewport.h"
 
 
-Direct_Technique::~Direct_Technique() 
+Direct_Technique::~Direct_Technique()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -44,7 +44,7 @@ void Direct_Technique::clearCache(const float& /*deltaTime*/) noexcept
 	m_drawIndex = 0;
 }
 
-void Direct_Technique::updateCache(const float& deltaTime, ecsWorld& world) 
+void Direct_Technique::updateCache(const float& deltaTime, ecsWorld& world)
 {
 	// Link together the dimensions of view info to that of the viewport vectors
 	m_frameData.viewInfo.resize(m_sceneCameras.size());
@@ -141,7 +141,7 @@ void Direct_Technique::renderTechnique(const float& /*deltaTime*/, Viewport& vie
 	}
 }
 
-void Direct_Technique::registerLightShapes() 
+void Direct_Technique::registerLightShapes()
 {
 	if (Asset::All_Ready(m_shapeCube, m_shapeSphere, m_shapeHemisphere)) {
 		// Create a container to store all vertices

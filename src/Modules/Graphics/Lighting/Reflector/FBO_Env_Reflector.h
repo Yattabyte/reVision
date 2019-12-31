@@ -26,7 +26,7 @@ public:
 	/** Clear the data out of a specific layer in the framebuffer.
 	@param	zOffset		the layer to clear out of. */
 	void clear(const GLint& zOffset) noexcept;
-	/** Bind this framebuffer for writing, at the specific mipmap index. 
+	/** Bind this framebuffer for writing, at the specific mipmap index.
 	@param	index		the FBO index to bind. */
 	void bindForWriting(const int& index) noexcept;
 	/** Bind this framebuffer for reading, with the binding offset specified.

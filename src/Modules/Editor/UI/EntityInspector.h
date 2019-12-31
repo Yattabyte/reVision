@@ -11,7 +11,7 @@ class EntityInspector final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Construct a component inspector.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	editor		reference to the level-editor to use. */
 	EntityInspector(Engine& engine, LevelEditor_Module& editor);
 

@@ -18,7 +18,7 @@ Inspector_Prop_System::Inspector_Prop_System(Engine& engine, LevelEditor_Module&
 	populateModels();
 }
 
-void Inspector_Prop_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void Inspector_Prop_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	ImGui::PushID(this);
 	const auto text = std::string(Prop_Component::Name) + ": (" + std::to_string(components.size()) + ")";
@@ -149,7 +149,7 @@ void Inspector_Prop_System::updateComponents(const float& /*deltaTime*/, const s
 	ImGui::PopID();
 }
 
-void Inspector_Prop_System::populateModels() 
+void Inspector_Prop_System::populateModels()
 {
 	// Delete the entries
 	m_entries.clear();

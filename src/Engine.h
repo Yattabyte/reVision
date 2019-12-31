@@ -73,28 +73,28 @@ public:
 	/** Retrieve the mouse input mode.
 	@return				the mouse input mode, such as free-look or normal cursor. */
 	MouseInputMode getMouseInputMode() const noexcept;
-	/** Retrieve the application window for this engine. 
+	/** Retrieve the application window for this engine.
 	@return				the engine's window. */
 	Window& getWindow() noexcept;
-	/** Retrieve the current time. 
+	/** Retrieve the current time.
 	@return				the current time. */
 	static float GetSystemTime() noexcept;
 	/** Retrieve this engine's action state.
 	@return				the engine's action state. */
 	ActionState& getActionState() noexcept;
-	/** Retrieve this engine's preference state. 
+	/** Retrieve this engine's preference state.
 	@return				this engine's preference state. */
 	PreferenceState& getPreferenceState() noexcept;
 
 
 	// Manager Accessors
-	/** Retrieve this engine's asset manager. 
+	/** Retrieve this engine's asset manager.
 	@return				this engine's asset manager. */
 	AssetManager& getManager_Assets() noexcept;
-	/** Retrieve this engine's message manager. 
+	/** Retrieve this engine's message manager.
 	@return				this engine's message manager. */
 	MessageManager& getManager_Messages() noexcept;
-	/** Retrieve this engine's sound manager. 
+	/** Retrieve this engine's sound manager.
 	@return				this engine's sound manager. */
 	SoundManager& getManager_Sounds() noexcept;
 

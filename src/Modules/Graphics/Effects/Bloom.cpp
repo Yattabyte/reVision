@@ -14,7 +14,7 @@ Bloom::Bloom(Engine& engine) :
 	m_shaderBloomExtract(Shared_Shader(engine, "Effects\\Bloom Extraction")),
 	m_shaderCopy(Shared_Shader(engine, "Effects\\Copy Texture")),
 	m_shaderGB(Shared_Shader(engine, "Effects\\Gaussian Blur")),
-	m_shapeQuad(Shared_Auto_Model(engine, "quad")) 
+	m_shapeQuad(Shared_Auto_Model(engine, "quad"))
 {
 	// Preference Callbacks
 	auto& preferences = engine.getPreferenceState();
@@ -95,7 +95,7 @@ for (auto& [camIndex, layer] : perspectives)
 	m_drawIndex++;
 }
 
-void Bloom::setBloomStrength(const int& strength) noexcept 
+void Bloom::setBloomStrength(const int& strength) noexcept
 {
 	m_bloomStrength = strength;
 }

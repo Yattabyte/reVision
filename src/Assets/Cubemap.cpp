@@ -19,8 +19,8 @@ Shared_Cubemap::Shared_Cubemap(Engine& engine, const std::string& filename, cons
 
 Cubemap::~Cubemap()
 {
-	if (ready()) 
-		glDeleteTextures(1, &m_glTexID);	
+	if (ready())
+		glDeleteTextures(1, &m_glTexID);
 }
 
 Cubemap::Cubemap(Engine& engine, const std::string& filename) : Asset(engine, filename) {}
@@ -57,7 +57,7 @@ void Cubemap::initialize()
 
 	// Load the final texture
 	glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_images[0]->m_size.x, m_images[0]->m_size.x);
-	for (auto x = 0; x < CUBEMAP_SIDE_COUNT; ++x) 
+	for (auto x = 0; x < CUBEMAP_SIDE_COUNT; ++x)
 		glTextureSubImage3D(m_glTexID, 0, 0, 0, x, m_images[x]->m_size.x, m_images[x]->m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, &m_images[x]->m_pixelData[0]);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

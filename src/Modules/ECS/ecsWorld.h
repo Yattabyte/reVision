@@ -15,10 +15,10 @@ public:
 	~ecsWorld();
 	/** Construct an empty ECS World. */
 	ecsWorld() noexcept;
-	/** Construct an ECS world from a serial data buffer. 
+	/** Construct an ECS world from a serial data buffer.
 	@param	data				serialized world data. */
 	explicit ecsWorld(const std::vector<char>& data);
-	/** Move an ECS world. 
+	/** Move an ECS world.
 	@param	other				another ecsWorld to move to here. */
 	ecsWorld(ecsWorld&& other) noexcept;
 

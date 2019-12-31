@@ -42,7 +42,7 @@ TextInput::TextInput(Engine& engine) :
 	m_indirect = IndirectDraw<1>(static_cast<GLuint>(num_data), 1, 0, GL_CLIENT_STORAGE_BIT);
 }
 
-void TextInput::mouseAction(const MouseEvent& mouseEvent) 
+void TextInput::mouseAction(const MouseEvent& mouseEvent)
 {
 	UI_Element::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -61,7 +61,7 @@ void TextInput::mouseAction(const MouseEvent& mouseEvent)
 		m_edit = false;
 }
 
-void TextInput::keyboardAction(const KeyboardEvent& keyboardEvent) 
+void TextInput::keyboardAction(const KeyboardEvent& keyboardEvent)
 {
 	if (m_edit) {
 		// Check for a text stream
@@ -118,24 +118,24 @@ void TextInput::renderElement(const float& deltaTime, const glm::vec2& position,
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void TextInput::setText(const std::string& text) 
+void TextInput::setText(const std::string& text)
 {
 	m_text = text;
 	m_label->setText(text);
 }
 
-std::string TextInput::getText() const 
+std::string TextInput::getText() const
 {
 	return m_text;
 }
 
-void TextInput::setCaret(const size_t& index) 
+void TextInput::setCaret(const size_t& index)
 {
 	m_caretIndex = static_cast<int>(std::clamp<size_t>(index, 0, m_text.size()));
 	updateGeometry();
 }
 
-void TextInput::updateGeometry() 
+void TextInput::updateGeometry()
 {
 	constexpr auto num_data = 4 * 3;
 	std::vector<glm::vec3> data(num_data);

@@ -53,8 +53,8 @@ void Shader::initialize()
 			glLinkProgram(m_glProgramID);
 			success = validateProgram();
 #ifdef NDEBUG
-			if (success) 
-				saveCachedBinary(DIRECTORY_SHADER_CACHE + getFileName());			
+			if (success)
+				saveCachedBinary(DIRECTORY_SHADER_CACHE + getFileName());
 #endif
 		}
 		// If we ever failed, initialize default shader
@@ -142,9 +142,9 @@ bool Shader::loadCachedBinary(const std::string& relativePath)
 		deleteCachedBinary(relativePath);
 		return false;
 	}
-	
+
 	glValidateProgram(m_glProgramID);
-	return true;	
+	return true;
 }
 
 bool Shader::saveCachedBinary(const std::string& relativePath)
@@ -163,12 +163,12 @@ bool Shader::saveCachedBinary(const std::string& relativePath)
 		m_engine.getManager_Messages().error("Shader \"" + m_filename + "\" failed to write to binary cache.");
 		return false;
 	}
-	
+
 	// Write the file to disk and return
 	file.write(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
 	file.write(binary.data(), header.length);
 	file.close();
-	return true;	
+	return true;
 }
 
 bool Shader::deleteCachedBinary(const std::string& relativePath)
@@ -198,7 +198,7 @@ bool Shader::initShaders(const std::string& relativePath)
 bool Shader::validateProgram() noexcept
 {
 	// Check Validation
-	if (getProgramiv(GL_LINK_STATUS) == 0) 
+	if (getProgramiv(GL_LINK_STATUS) == 0)
 		return false;
 
 	// Detach the shaders now that the program is complete
@@ -209,12 +209,12 @@ bool Shader::validateProgram() noexcept
 	return true;
 }
 
-ShaderObj::~ShaderObj() 
-{ 
-	glDeleteShader(m_shaderID); 
+ShaderObj::~ShaderObj()
+{
+	glDeleteShader(m_shaderID);
 }
 
-ShaderObj::ShaderObj(const GLenum& type) : 
+ShaderObj::ShaderObj(const GLenum& type) :
 	m_type(type)
 {
 }
@@ -290,5 +290,5 @@ bool ShaderObj::createGLShader(Engine& engine, const std::string& filename)
 		return false;
 	}
 
-	return true;	
+	return true;
 }

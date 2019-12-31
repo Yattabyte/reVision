@@ -4,8 +4,8 @@
 #include "Engine.h"
 
 
-Graphics_Module::Graphics_Module(Engine& engine) : 
-	Engine_Module(engine),	
+Graphics_Module::Graphics_Module(Engine& engine) :
+	Engine_Module(engine),
 	m_viewport(glm::ivec2(0), m_renderSize, engine),
 	m_pipeline(m_engine, m_clientCamera)
 {
@@ -77,7 +77,7 @@ void Graphics_Module::deinitialize()
 	*m_aliveIndicator = false;
 }
 
-Graphics_Pipeline& Graphics_Module::getPipeline() noexcept 
+Graphics_Pipeline& Graphics_Module::getPipeline() noexcept
 {
 	return m_pipeline;
 }
@@ -115,7 +115,7 @@ void Graphics_Module::genPerspectiveMatrix()
 	m_clientCamera->pvMatrix = m_clientCamera->pMatrix * m_clientCamera->vMatrix;
 }
 
-Camera& Graphics_Module::getClientCamera() noexcept 
+Camera& Graphics_Module::getClientCamera() noexcept
 {
 	return m_clientCamera;
 }

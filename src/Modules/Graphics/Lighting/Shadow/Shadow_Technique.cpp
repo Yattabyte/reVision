@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-Shadow_Technique::~Shadow_Technique() 
+Shadow_Technique::~Shadow_Technique()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -32,24 +32,24 @@ void Shadow_Technique::clearCache(const float& /*deltaTime*/) noexcept
 	m_frameData.shadowsToUpdate.clear();
 }
 
-void Shadow_Technique::updateCache(const float& deltaTime, ecsWorld& world) 
+void Shadow_Technique::updateCache(const float& deltaTime, ecsWorld& world)
 {
 	world.updateSystems(m_auxilliarySystems, deltaTime);
 }
 
-void Shadow_Technique::updatePass(const float& deltaTime) 
+void Shadow_Technique::updatePass(const float& deltaTime)
 {
 	// Render important shadows
 	if (m_enabled)
 		updateShadows(deltaTime);
 }
 
-ShadowData& Shadow_Technique::getShadowData() noexcept 
+ShadowData& Shadow_Technique::getShadowData() noexcept
 {
 	return m_frameData;
 }
 
-void Shadow_Technique::updateShadows(const float& deltaTime) 
+void Shadow_Technique::updateShadows(const float& deltaTime)
 {
 	const auto clientTime = Engine::GetSystemTime();
 	if (!m_frameData.shadowsToUpdate.empty()) {

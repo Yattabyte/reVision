@@ -38,7 +38,7 @@ struct Transform {
 	@return				true if this transform is not equal the other transform, false otherwise. */
 	bool operator!=(const Transform& other) const noexcept;
 	/** Concatenate this transform with another transform.
-	@param	other		the other transform to apply to this transform. 
+	@param	other		the other transform to apply to this transform.
 	@return				reference to this transform. */
 	Transform& operator*=(const Transform& other);
 	/** Concatenate this transform with another transform, returning its product.

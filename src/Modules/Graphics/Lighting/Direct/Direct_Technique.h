@@ -17,9 +17,9 @@ public:
 	/** Destroy this direct lighting technique. */
 	~Direct_Technique();
 	/** Construct a direct lighting technique.
-	@param	engine			reference to the engine to use. 
-	@param	shadowData		reference to the shadow data to use. 
-	@param	clientCamera	reference to the client camera to use. 
+	@param	engine			reference to the engine to use.
+	@param	shadowData		reference to the shadow data to use.
+	@param	clientCamera	reference to the client camera to use.
 	@param	sceneCameras	reference to the scene cameras to use. */
 	Direct_Technique(Engine& engine, ShadowData& shadowData, Camera& clientCamera, std::vector<Camera*>& sceneCameras);
 

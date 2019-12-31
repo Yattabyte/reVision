@@ -116,42 +116,42 @@ Options_Graphics::Options_Graphics(Engine& engine) :
 	addOption(engine, element_fxaa, 0.5F, "FXAA:", "Turns fast approximate anti-aliasing on or off.", static_cast<int>(Toggle::Interact::on_toggle), [&, element_fxaa]() { setFXAA(element_fxaa->isToggled()); });
 }
 
-void Options_Graphics::setTextureResolution(const size_t& index) 
+void Options_Graphics::setTextureResolution(const size_t& index)
 {
 	m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_MATERIAL_SIZE, m_materialSizes[index]);
 }
 
-void Options_Graphics::setShadowSize(const size_t& index) 
+void Options_Graphics::setShadowSize(const size_t& index)
 {
 	m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_SHADOW_SIZE, m_shadowSizes[index]);
 }
 
-void Options_Graphics::setReflectionSize(const size_t& index) 
+void Options_Graphics::setReflectionSize(const size_t& index)
 {
 	m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_ENVMAP_SIZE, m_reflectionSizes[index]);
 }
 
-void Options_Graphics::setBounceQuality(const size_t& index) 
+void Options_Graphics::setBounceQuality(const size_t& index)
 {
 	m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_bounceQuality[index]);
 }
 
-void Options_Graphics::setBloom(const bool& b) 
+void Options_Graphics::setBloom(const bool& b)
 {
 	m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_BLOOM, b ? 1.0F : 0.0F);
 }
 
-void Options_Graphics::setSSAO(const bool& b) 
+void Options_Graphics::setSSAO(const bool& b)
 {
 	m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_SSAO, b ? 1.0F : 0.0F);
 }
 
-void Options_Graphics::setSSR(const bool& b) 
+void Options_Graphics::setSSR(const bool& b)
 {
 	m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_SSR, b ? 1.0F : 0.0F);
 }
 
-void Options_Graphics::setFXAA(const bool& b) 
+void Options_Graphics::setFXAA(const bool& b)
 {
 	m_engine.getPreferenceState().setValue(PreferenceState::Preference::C_FXAA, b ? 1.0F : 0.0F);
 }

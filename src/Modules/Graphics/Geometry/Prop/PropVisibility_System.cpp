@@ -11,7 +11,7 @@ PropVisibility_System::PropVisibility_System(PropData& frameData) :
 	addComponentType(BoundingBox_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 }
 
-void PropVisibility_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void PropVisibility_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	// Compile results PER viewport
 	for (auto& viewInfo : m_frameData.viewInfo) {

@@ -10,7 +10,7 @@ FrustumCull_System::FrustumCull_System(std::vector<Camera*>& sceneCameras) :
 	addComponentType(BoundingSphere_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 }
 
-void FrustumCull_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void FrustumCull_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	for (const auto& componentParam : components) {
 		const auto* transformComponent = static_cast<Transform_Component*>(componentParam[0]);

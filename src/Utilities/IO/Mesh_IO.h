@@ -30,7 +30,7 @@ struct Material_Strings {
 	std::string albedo, normal, metalness, roughness, height, ao;
 };
 
-/** Container for model animation key frames. 
+/** Container for model animation key frames.
 @tparam	T		the data type for the key frame (vec3, quat, etc). */
 template<typename T = glm::vec3>
 struct Animation_Time_Key {
@@ -99,7 +99,7 @@ Uses the Assimp library: http://assimp.sourceforge.net/ */
 class Mesh_IO {
 public:
 	/** Import a model from disk.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	relativePath	the path to the file.
 	@param	importedData	reference to the container to place the imported data within.
 	@return					true on successful import, false otherwise (error reported to engine). */

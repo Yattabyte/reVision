@@ -36,7 +36,7 @@ void PauseMenu::resume()
 	enactCallback(static_cast<int>(PauseMenu::Interact::on_resume_game));
 }
 
-void PauseMenu::goToOptions() 
+void PauseMenu::goToOptions()
 {
 	// Transfer appearance and control to options menu
 	auto& ui = m_engine.getModule_UI();
@@ -52,7 +52,7 @@ void PauseMenu::returnFromOptions() noexcept
 	m_engine.getModule_UI().setFocusMap(getFocusMap());
 }
 
-void PauseMenu::quit() 
+void PauseMenu::quit()
 {
 	m_engine.getModule_UI().clear();
 	enactCallback(static_cast<int>(PauseMenu::Interact::on_end));

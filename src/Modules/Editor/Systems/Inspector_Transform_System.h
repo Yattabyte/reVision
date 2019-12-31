@@ -14,7 +14,7 @@ class Inspector_Transform_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
 	/** Construct this system.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	editor		reference to the level-editor to use. */
 	Inspector_Transform_System(Engine& engine, LevelEditor_Module& editor);
 

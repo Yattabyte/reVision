@@ -22,7 +22,7 @@ ReflectorScheduler_System::ReflectorScheduler_System(Engine& engine, ReflectorDa
 	preferences.addCallback(PreferenceState::Preference::C_ENVMAP_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) noexcept { m_maxReflectionCasters = static_cast<unsigned int>(f); });
 }
 
-void ReflectorScheduler_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void ReflectorScheduler_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	// Maintain list of reflectors, update with oldest within range
 	// Technique will clear list when ready

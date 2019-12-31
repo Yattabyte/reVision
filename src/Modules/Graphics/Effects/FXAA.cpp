@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-FXAA::~FXAA() 
+FXAA::~FXAA()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -19,7 +19,7 @@ FXAA::~FXAA()
 	preferences.getOrSetValue(PreferenceState::Preference::C_FXAA, m_enabled);
 	preferences.addCallback(PreferenceState::Preference::C_FXAA, m_aliveIndicator, [&](const float& f) noexcept { m_enabled = static_cast<bool>(f); });
 }
- 
+
 void FXAA::clearCache(const float& /*deltaTime*/) noexcept
 {
 	m_drawIndex = 0;

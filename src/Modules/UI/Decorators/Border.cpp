@@ -1,7 +1,7 @@
 #include "Modules/UI/Decorators/Border.h"
 
 
-Border::~Border() 
+Border::~Border()
 {
 	// Delete geometry
 	glDeleteBuffers(1, &m_vboID);
@@ -27,7 +27,7 @@ Border::Border(Engine& engine, const std::shared_ptr<UI_Element>& component) :
 	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] { updateGeometry(); });
 }
 
-void Border::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
+void Border::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Exit Early
 	if (!getVisible() || !m_shader->ready())
@@ -48,28 +48,28 @@ void Border::renderElement(const float& deltaTime, const glm::vec2& position, co
 	UI_Decorator::renderElement(deltaTime, position, newScale);
 }
 
-void Border::setBorderSize(const float& size) 
+void Border::setBorderSize(const float& size)
 {
 	m_borderSize = size;
 	updateGeometry();
 }
 
-float Border::getBorderSize() const noexcept 
+float Border::getBorderSize() const noexcept
 {
 	return m_borderSize;
 }
 
-void Border::setBorderColor(const glm::vec3& color) noexcept 
+void Border::setBorderColor(const glm::vec3& color) noexcept
 {
 	m_borderColor = color;
 }
 
-glm::vec3 Border::getBorderColor() const noexcept 
+glm::vec3 Border::getBorderColor() const noexcept
 {
 	return m_borderColor;
 }
 
-void Border::updateGeometry() 
+void Border::updateGeometry()
 {
 	constexpr auto num_data = 8 * 3;
 	std::vector<glm::vec3> data(num_data);

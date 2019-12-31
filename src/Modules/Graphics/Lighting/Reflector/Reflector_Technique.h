@@ -20,7 +20,7 @@ public:
 	/** Destroy this reflector technique. */
 	~Reflector_Technique();
 	/** Construct a reflector technique.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	sceneCameras	reference to the scene cameras to use. */
 	Reflector_Technique(Engine& engine, std::vector<Camera*>& sceneCameras);
 

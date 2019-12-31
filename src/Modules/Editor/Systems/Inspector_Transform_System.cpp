@@ -14,7 +14,7 @@ Inspector_Transform_System::Inspector_Transform_System(Engine& engine, LevelEdit
 	addComponentType(Transform_Component::Runtime_ID);
 }
 
-void Inspector_Transform_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void Inspector_Transform_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	ImGui::PushID(this);
 	const auto text = std::string(Transform_Component::Name) + ": (" + std::to_string(components.size()) + ")";

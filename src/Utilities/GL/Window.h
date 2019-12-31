@@ -32,10 +32,10 @@ public:
 	void close() noexcept;
 	/** Finish processing a new frame. */
 	void swapBuffers() noexcept;
-	/** Retrieve the XY coordinates of the mouse relative to this window. 
+	/** Retrieve the XY coordinates of the mouse relative to this window.
 	@return				the coordinates of the mouse. */
 	glm::vec2 getMousePos() const noexcept;
-	/** Set the XY coordinates of the mouse relative to this window. 
+	/** Set the XY coordinates of the mouse relative to this window.
 	@param	position	the coordinates of the mouse. */
 	void setMousePos(const glm::vec2& position) noexcept;
 	/** Retrieve the button-press state of a mouse button.
@@ -46,13 +46,13 @@ public:
 	@param	buttonID	the enumerated button of the keyboard.
 	@return				true if pressed, false otherwise. */
 	bool getKey(const int& buttonID) const noexcept;
-	/** Set whether or not the mouse should be clamped to the center of the window for 3D movement. 
+	/** Set whether or not the mouse should be clamped to the center of the window for 3D movement.
 	@param	use3DMouse	set to true to clamp the mouse to the center. */
 	void setMouseMode3D(const bool& use3DMouse) noexcept;
 	/** Retrieve this engine's rendering context.
 	@return				this engine's rendering context. */
 	GLFWwindow* getContext() const noexcept;
-	/** Make the supplied context current for OpenGL functions. 
+	/** Make the supplied context current for OpenGL functions.
 	@param	context		pointer to the desired context. */
 	static void MakeCurrent(GLFWwindow* const context) noexcept;
 	/** Retrieve the current time.

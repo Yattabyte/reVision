@@ -17,7 +17,7 @@ public:
 	/** Constructs an empty asset. */
 	inline Shared_Collider() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
@@ -31,7 +31,7 @@ class Collider final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Construct the Collider.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
 	Collider(Engine& engine, const std::string& filename);
 

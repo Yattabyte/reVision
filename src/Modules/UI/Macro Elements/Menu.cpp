@@ -45,18 +45,18 @@ Menu::Menu(Engine& engine) :
 		});
 }
 
-void Menu::userAction(ActionState& actionState) 
+void Menu::userAction(ActionState& actionState)
 {
 	// Start menu doesn't implement any custom controls, focus is on the list
 	m_layout->userAction(actionState);
 }
 
-std::shared_ptr<FocusMap> Menu::getFocusMap() const noexcept 
+std::shared_ptr<FocusMap> Menu::getFocusMap() const noexcept
 {
 	return m_focusMap;
 }
 
-void Menu::addButton(Engine& engine, const char* buttonText, const std::function<void()>& callback) 
+void Menu::addButton(Engine& engine, const char* buttonText, const std::function<void()>& callback)
 {
 	auto button = std::make_shared<Button>(engine, buttonText);
 	button->setScale({ 120, 20 });

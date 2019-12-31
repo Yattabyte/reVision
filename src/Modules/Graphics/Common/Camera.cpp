@@ -1,7 +1,7 @@
 #include "Modules/Graphics/Common/Camera.h"
 
 
-void Camera::setEnabled(const bool& enabled) noexcept 
+void Camera::setEnabled(const bool& enabled) noexcept
 {
 	m_enabled = enabled;
 }
@@ -11,7 +11,7 @@ bool Camera::getEnabled() const noexcept
 	return m_enabled;
 }
 
-void Camera::updateFrustum() 
+void Camera::updateFrustum()
 {
 	glm::vec4 posB = m_localData.vMatrixInverse * glm::vec4(0, 0, -m_localData.FarPlane / 2.0F, 1.0F);
 	posB /= posB.w;

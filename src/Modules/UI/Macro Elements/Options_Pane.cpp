@@ -62,7 +62,7 @@ Options_Pane::Options_Pane(Engine& engine) :
 		});
 }
 
-void Options_Pane::userAction(ActionState& actionState) 
+void Options_Pane::userAction(ActionState& actionState)
 {
 	// Options menu doesn't implement any custom controls, focus is on the list
 	m_layout->userAction(actionState);
@@ -70,7 +70,7 @@ void Options_Pane::userAction(ActionState& actionState)
 		m_engine.getModule_UI().getFocusMap()->back();
 }
 
-void Options_Pane::addOption(Engine& engine, const std::shared_ptr<UI_Element>& element, const float& ratio, const std::string& text, const std::string& description, const int& eventType, const std::function<void()>& callback) 
+void Options_Pane::addOption(Engine& engine, const std::shared_ptr<UI_Element>& element, const float& ratio, const std::string& text, const std::string& description, const int& eventType, const std::function<void()>& callback)
 {
 	auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
 	auto label = std::make_shared<Label>(engine, text);

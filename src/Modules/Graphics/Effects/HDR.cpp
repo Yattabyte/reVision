@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-HDR::~HDR() 
+HDR::~HDR()
 {
 	// Update indicator
 	*m_aliveIndicator = false;

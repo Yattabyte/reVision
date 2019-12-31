@@ -8,8 +8,8 @@ StaticBuffer::~StaticBuffer()
 		glDeleteBuffers(1, &m_bufferID);
 }
 
-StaticBuffer::StaticBuffer(const GLsizeiptr& size, const void* data, const GLbitfield& storageFlags) noexcept : 
-	m_size(size), 
+StaticBuffer::StaticBuffer(const GLsizeiptr& size, const void* data, const GLbitfield& storageFlags) noexcept :
+	m_size(size),
 	m_storageFlags(storageFlags)
 {
 	glCreateBuffers(1, &m_bufferID);
@@ -22,7 +22,7 @@ StaticBuffer::StaticBuffer(const StaticBuffer& other) noexcept :
 	glCopyNamedBufferSubData(other.m_bufferID, m_bufferID, 0, 0, other.m_size);
 }
 
-StaticBuffer::StaticBuffer(StaticBuffer&& other) noexcept 
+StaticBuffer::StaticBuffer(StaticBuffer&& other) noexcept
 {
 	(*this) = std::move(other);
 }
@@ -60,7 +60,7 @@ void StaticBuffer::bindBufferBase(const GLenum& target, const GLuint& index) con
 	glBindBufferBase(target, index, m_bufferID);
 }
 
-void StaticBuffer::write(const GLsizeiptr& offset, const GLsizeiptr& size, const void* data) noexcept 
+void StaticBuffer::write(const GLsizeiptr& offset, const GLsizeiptr& size, const void* data) noexcept
 {
 	glNamedBufferSubData(m_bufferID, offset, size, data);
 }

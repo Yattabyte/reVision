@@ -2,12 +2,12 @@
 
 
 UI_Decorator::UI_Decorator(Engine& engine, const std::shared_ptr<UI_Element>& component) noexcept :
-	UI_Element(engine), 
+	UI_Element(engine),
 	m_component(component)
 {
 }
 
-void UI_Decorator::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
+void UI_Decorator::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	UI_Element::renderElement(deltaTime, position, scale);
 	const glm::vec2 newPosition = position + m_position;
@@ -15,7 +15,7 @@ void UI_Decorator::renderElement(const float& deltaTime, const glm::vec2& positi
 	m_component->renderElement(deltaTime, newPosition, newScale);
 }
 
-void UI_Decorator::mouseAction(const MouseEvent& mouseEvent) 
+void UI_Decorator::mouseAction(const MouseEvent& mouseEvent)
 {
 	UI_Element::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {

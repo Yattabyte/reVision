@@ -20,7 +20,7 @@ public:
 
 	// Public (De)Constructors
 	/** Construct a slider with a given starting value.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	value		the starting value to use.
 	@param	range		the starting range to use. */
 	explicit Slider(Engine& engine, const float& value = 0.0f, const glm::vec2& range = { 0.0f, 1.0f });

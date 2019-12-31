@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-Frametime_Counter::~Frametime_Counter() 
+Frametime_Counter::~Frametime_Counter()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -23,7 +23,7 @@ Frametime_Counter::Frametime_Counter(Engine& engine) :
 	resize(m_renderSize);
 }
 
-void Frametime_Counter::applyEffect(const float& deltaTime) 
+void Frametime_Counter::applyEffect(const float& deltaTime)
 {
 	if (!Asset::All_Ready(m_shapeQuad, m_shader, m_numberTexture))
 		return;

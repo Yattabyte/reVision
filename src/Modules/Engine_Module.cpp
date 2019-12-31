@@ -2,14 +2,14 @@
 
 
 Engine_Module::Engine_Module(Engine& engine) noexcept :
-	m_engine(engine) 
+	m_engine(engine)
 {
 }
 
-void Engine_Module::initialize() 
+void Engine_Module::initialize()
 {
 }
 
-void Engine_Module::deinitialize() 
+void Engine_Module::deinitialize()
 {
 }

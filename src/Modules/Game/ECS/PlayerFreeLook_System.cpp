@@ -5,7 +5,7 @@
 
 
 PlayerFreeLook_System::PlayerFreeLook_System(Engine& engine)
-	: m_engine(engine) 
+	: m_engine(engine)
 {
 	// Declare component types used
 	addComponentType(Transform_Component::Runtime_ID);

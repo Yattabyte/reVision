@@ -8,8 +8,8 @@ InputBinding::~InputBinding()
 	save();
 }
 
-InputBinding::InputBinding(Engine& engine) noexcept : 
-	m_engine(engine) 
+InputBinding::InputBinding(Engine& engine) noexcept :
+	m_engine(engine)
 {
 }
 

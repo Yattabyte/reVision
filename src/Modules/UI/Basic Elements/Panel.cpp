@@ -1,7 +1,7 @@
 #include "Modules/UI/Basic Elements/Panel.h"
 
 
-Panel::~Panel() 
+Panel::~Panel()
 {
 	// Delete geometry
 	glDeleteBuffers(1, &m_vboID);
@@ -28,7 +28,7 @@ Panel::Panel(Engine& engine) :
 	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] { updateGeometry(); });
 }
 
-void Panel::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
+void Panel::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Exit Early
 	if (!getVisible() || !m_shader->ready())
@@ -47,17 +47,17 @@ void Panel::renderElement(const float& deltaTime, const glm::vec2& position, con
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void Panel::setColor(const glm::vec4& color) noexcept 
+void Panel::setColor(const glm::vec4& color) noexcept
 {
 	m_color = color;
 }
 
-glm::vec4 Panel::getColor() const noexcept 
+glm::vec4 Panel::getColor() const noexcept
 {
 	return m_color;
 }
 
-void Panel::updateGeometry() 
+void Panel::updateGeometry()
 {
 	constexpr auto num_data = 2 * 3;
 	std::vector<glm::vec3> data(num_data);

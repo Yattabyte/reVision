@@ -17,7 +17,7 @@ public:
 	/** Destroy this system. */
 	~ShadowScheduler_System();
 	/** Construct this system.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	frameData	reference to common data that changes frame-to-frame. */
 	ShadowScheduler_System(Engine& engine, ShadowData& frameData);
 

@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-Physics_Module::Physics_Module(Engine& engine) : 
+Physics_Module::Physics_Module(Engine& engine) :
 	Engine_Module(engine),
 	m_dispatcher(&m_collisionConfiguration),
 	m_world(&m_dispatcher, &m_broadphase, &m_solver, &m_collisionConfiguration)
@@ -38,7 +38,7 @@ void Physics_Module::updateSystems(ecsWorld& world, const float& deltaTime)
 	world.updateSystems(m_physicsSystems, deltaTime);
 }
 
-btDiscreteDynamicsWorld& Physics_Module::getWorld() noexcept 
-{ 
-	return m_world; 
+btDiscreteDynamicsWorld& Physics_Module::getWorld() noexcept
+{
+	return m_world;
 }

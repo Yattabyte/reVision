@@ -151,9 +151,9 @@ void Editor_Interface::tick(const float& deltaTime)
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void ImGUI_Element::open() noexcept 
-{ 
-	m_open = true; 
+void ImGUI_Element::open() noexcept
+{
+	m_open = true;
 }
 
 void ImGUI_Element::close() noexcept

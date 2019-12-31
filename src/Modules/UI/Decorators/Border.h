@@ -14,7 +14,7 @@ public:
 	/** Destroy the border. */
 	~Border();
 	/** Construct a border, decorating the supplied component.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	component	the component to decorate. */
 	Border(Engine& engine, const std::shared_ptr<UI_Element>& component);
 

@@ -20,7 +20,7 @@ public:
 
 	// Public (De)Constructors
 	/** Construct a toggle switch with a given on/off state.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	state		the on/off state to use. */
 	explicit Toggle(Engine& engine, const bool& state = true);
 

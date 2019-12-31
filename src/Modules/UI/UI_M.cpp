@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 
-UI_Module::UI_Module(Engine& engine) : 
+UI_Module::UI_Module(Engine& engine) :
 	Engine_Module(engine),
 	m_loadingRing(engine),
 	m_frameTime(engine)

@@ -18,7 +18,7 @@ public:
 	/** Constructs an empty asset. */
 	inline Shared_Shader() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
@@ -76,7 +76,7 @@ public:
 	/** Destroy the Shader. */
 	~Shader();
 	/** Construct the Shader.
-	@param	engine				reference to the engine to use. 
+	@param	engine				reference to the engine to use.
 	@param	filename			the asset file name (relative to engine directory). */
 	Shader(Engine& engine, const std::string& filename);
 
@@ -161,7 +161,7 @@ protected:
 	@param	relativePath		the relative path of the binary file.
 	@return						true on success, false otherwise. */
 	bool saveCachedBinary(const std::string& relativePath);
-	/** Attempt to delete a shader program's cached binary file. 
+	/** Attempt to delete a shader program's cached binary file.
 	@param	relativePath		the relative path of the binary file.
 	@return						true on success, false otherwise. */
 	static bool deleteCachedBinary(const std::string& relativePath);

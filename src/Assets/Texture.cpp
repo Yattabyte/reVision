@@ -18,8 +18,8 @@ Shared_Texture::Shared_Texture(Engine& engine, const std::string& filename, cons
 
 Texture::~Texture()
 {
-	if (ready()) 
-		glDeleteTextures(1, &m_glTexID);	
+	if (ready())
+		glDeleteTextures(1, &m_glTexID);
 }
 
 Texture::Texture(Engine& engine, const std::string& filename) : Asset(engine, filename) {}

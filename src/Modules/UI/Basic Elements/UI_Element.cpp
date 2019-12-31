@@ -3,8 +3,8 @@
 #include "Engine.h"
 
 
-UI_Element::UI_Element(Engine& engine) noexcept : 
-	m_engine(engine) 
+UI_Element::UI_Element(Engine& engine) noexcept :
+	m_engine(engine)
 {
 }
 

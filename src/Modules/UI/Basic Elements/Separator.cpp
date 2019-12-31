@@ -1,7 +1,7 @@
 #include "Modules/UI/Basic Elements/Separator.h"
 
 
-Separator::~Separator() 
+Separator::~Separator()
 {
 	// Delete geometry
 	glDeleteBuffers(1, &m_vboID);
@@ -33,7 +33,7 @@ Separator::Separator(Engine& engine) :
 	setMinHeight(2.0F);
 }
 
-void Separator::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
+void Separator::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Exit Early
 	if (!getVisible() || !m_shader->ready())
@@ -54,12 +54,12 @@ void Separator::renderElement(const float& deltaTime, const glm::vec2& position,
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void Separator::setColor(const glm::vec4& color) noexcept 
+void Separator::setColor(const glm::vec4& color) noexcept
 {
 	m_color = color;
 }
 
-glm::vec4 Separator::getColor() const noexcept 
+glm::vec4 Separator::getColor() const noexcept
 {
 	return m_color;
 }

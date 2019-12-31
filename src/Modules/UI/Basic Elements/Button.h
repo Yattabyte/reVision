@@ -11,7 +11,7 @@ class Button final : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Creates a button with specific text inside.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	text		the button text. */
 	explicit Button(Engine& engine, const std::string& text = "Button");
 

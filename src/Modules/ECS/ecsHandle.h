@@ -14,10 +14,10 @@ struct ecsHandle {
 	/** Construct a specific handle.
 	@param	id			specific handle name as char array of size 32. */
 	explicit ecsHandle(const char id[32]);
-	/** Copy Constructor. 
+	/** Copy Constructor.
 	@param	other		an other handle to copy from. */
 	inline ecsHandle(const ecsHandle& other) noexcept = default;
-	/** Move Constructor. 
+	/** Move Constructor.
 	@param	other		an other handle to move from. */
 	inline ecsHandle(ecsHandle&& other) noexcept = default;
 	/** Move from another handle.
@@ -25,14 +25,14 @@ struct ecsHandle {
 	@return				reference to this. */
 	inline ecsHandle& operator=(ecsHandle&& other) = default;
 	/** Copy from another handle.
-	@param	other		an other handle to copy from. 
+	@param	other		an other handle to copy from.
 	@return				reference to this. */
 	inline ecsHandle& operator=(const ecsHandle& other) = default;
 	/** Compare against another handle.
 	@param	other		an other handle to compare against.
 	@return				true if this handle is the same as the other handle, false otherwise. */
 	bool operator==(const ecsHandle& other) const noexcept;
-	/** Compare if this should be ordered before another handle. 
+	/** Compare if this should be ordered before another handle.
 	@param	other		an other handle to compare against.
 	@return				true if this handle is the less than the other handle, false otherwise. */
 	bool operator<(const ecsHandle& other) const noexcept;

@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 
-PropUpload_System::~PropUpload_System() 
+PropUpload_System::~PropUpload_System()
 {
 	glDeleteBuffers(1, &m_vboID);
 	glDeleteVertexArrays(1, &m_vaoID);
@@ -65,7 +65,7 @@ PropUpload_System::PropUpload_System(Engine& engine, PropData& frameData) :
 	for (auto& [pboID, fence] : m_pixelBuffers) {
 		pboID = 0ULL;
 		fence = nullptr;
-		glCreateBuffers(1, &pboID); 
+		glCreateBuffers(1, &pboID);
 		glNamedBufferStorage(pboID, size_t(m_materialSize) * size_t(m_materialSize) * MAX_DIGITAL_IMAGES * 4ULL, nullptr, GL_DYNAMIC_STORAGE_BIT);
 	}
 }
@@ -98,7 +98,7 @@ void PropUpload_System::updateComponents(const float& /*deltaTime*/, const std::
 	}
 }
 
-void PropUpload_System::tryInsertModel(const Shared_Model& model) 
+void PropUpload_System::tryInsertModel(const Shared_Model& model)
 {
 	if (m_modelMap.find(model) == m_modelMap.end()) {
 		// Prop hasn't been uploaded yet
@@ -119,7 +119,7 @@ void PropUpload_System::tryInsertModel(const Shared_Model& model)
 	}
 }
 
-void PropUpload_System::waitOnFence() noexcept 
+void PropUpload_System::waitOnFence() noexcept
 {
 	if (m_fence != nullptr) {
 		// Wait for data fence to be passed
@@ -131,7 +131,7 @@ void PropUpload_System::waitOnFence() noexcept
 	}
 }
 
-void PropUpload_System::tryToExpand(const size_t& arraySize) noexcept 
+void PropUpload_System::tryToExpand(const size_t& arraySize) noexcept
 {
 	if (m_currentSize + arraySize > m_maxCapacity) {
 		// Create new set of VBO's large enough to fit old data + desired data
@@ -216,7 +216,7 @@ std::pair<GLuint*, GLsync*> PropUpload_System::getFreePBO() noexcept
 	return { nullptr, nullptr };
 }
 
-void PropUpload_System::clear() noexcept 
+void PropUpload_System::clear() noexcept
 {
 	// Reset size, and half the capacity
 	m_currentSize = 0ULL;

@@ -229,7 +229,7 @@ void Inspector_Collider_System::updateComponents(const float& /*deltaTime*/, con
 	ImGui::PopID();
 }
 
-void Inspector_Collider_System::populateModels() 
+void Inspector_Collider_System::populateModels()
 {
 	// Delete the entries
 	m_entries.clear();

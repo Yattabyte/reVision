@@ -17,7 +17,7 @@ public:
 	/** Constructs an empty asset. */
 	inline Shared_Auto_Model() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
@@ -34,7 +34,7 @@ public:
 	/** Destroy the Auto_Model. */
 	~Auto_Model();
 	/** Construct the Auto_Model.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
 	Auto_Model(Engine& engine, const std::string& filename);
 

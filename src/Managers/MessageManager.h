@@ -26,7 +26,7 @@ public:
 
 private:
 	// Private Methods
-	/** A helper function that writes the message to a log and to the console. 
+	/** A helper function that writes the message to a log and to the console.
 	@param	output	the text to write to the log. */
 	void textOutput(const std::string& output);
 

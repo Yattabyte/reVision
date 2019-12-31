@@ -3,7 +3,7 @@
 #include <algorithm>
 
 
-SideList::~SideList() 
+SideList::~SideList()
 {
 	// Delete geometry
 	glDeleteBuffers(2, m_vboID);
@@ -49,7 +49,7 @@ SideList::SideList(Engine& engine) :
 	setIndex(0);
 }
 
-void SideList::mouseAction(const MouseEvent& mouseEvent) 
+void SideList::mouseAction(const MouseEvent& mouseEvent)
 {
 	UI_Element::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -83,7 +83,7 @@ void SideList::mouseAction(const MouseEvent& mouseEvent)
 	}
 }
 
-void SideList::userAction(ActionState& actionState) 
+void SideList::userAction(ActionState& actionState)
 {
 	// User can only change selection by using the left/right directional key actions
 	if (actionState.isAction(ActionState::Action::UI_LEFT) == ActionState::State::PRESS)
@@ -92,7 +92,7 @@ void SideList::userAction(ActionState& actionState)
 		setIndex(m_index + 1);
 }
 
-void SideList::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) 
+void SideList::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Exit Early
 	if (!getVisible() || !m_shader->ready())
@@ -118,7 +118,7 @@ void SideList::renderElement(const float& deltaTime, const glm::vec2& position, 
 	UI_Element::renderElement(deltaTime, position, scale);
 }
 
-void SideList::setIndex(const int& index) 
+void SideList::setIndex(const int& index)
 {
 	if (m_index != index) {
 		m_index = std::clamp<int>(index, 0, int(m_strings.size()) - 1);
@@ -130,12 +130,12 @@ void SideList::setIndex(const int& index)
 	}
 }
 
-int SideList::getIndex() const noexcept 
+int SideList::getIndex() const noexcept
 {
 	return m_index;
 }
 
-void SideList::setStrings(const std::vector<std::string>& strings) 
+void SideList::setStrings(const std::vector<std::string>& strings)
 {
 	m_strings = strings;
 	setIndex(getIndex());
@@ -146,7 +146,7 @@ std::vector<std::string> SideList::getStrings() const
 	return m_strings;
 }
 
-void SideList::updateGeometry() 
+void SideList::updateGeometry()
 {
 	// Shorten the back panel by the width of the arrows
 	const float arrowHeight = m_scale.y;

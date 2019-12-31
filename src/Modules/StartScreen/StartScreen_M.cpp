@@ -3,8 +3,8 @@
 #include "Engine.h"
 
 
-StartScreen_Module::StartScreen_Module(Engine& engine) noexcept : 
-	Engine_Module(engine) 
+StartScreen_Module::StartScreen_Module(Engine& engine) noexcept :
+	Engine_Module(engine)
 {
 }
 

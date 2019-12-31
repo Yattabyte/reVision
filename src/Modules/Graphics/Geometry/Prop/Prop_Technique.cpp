@@ -28,7 +28,7 @@ void Prop_Technique::clearCache(const float& /*deltaTime*/) noexcept
 	clear();
 }
 
-void Prop_Technique::updateCache(const float& deltaTime, ecsWorld& world) 
+void Prop_Technique::updateCache(const float& deltaTime, ecsWorld& world)
 {
 	// Link together the dimensions of view info to that of the viewport vectors
 	m_frameData.viewInfo.resize(m_sceneCameras.size());
@@ -139,7 +139,7 @@ void Prop_Technique::renderTechnique(const float& /*deltaTime*/, Viewport& viewp
 	}
 }
 
-void Prop_Technique::cullShadows(const float& /*deltaTime*/, const std::vector<std::pair<int, int>>& perspectives) 
+void Prop_Technique::cullShadows(const float& /*deltaTime*/, const std::vector<std::pair<int, int>>& perspectives)
 {
 	// Exit Early
 	if (m_enabled && (!m_frameData.viewInfo.empty()) && Asset::All_Ready(m_shapeCube, m_shaderShadowCull, m_shaderShadowGeometry)) {
@@ -249,7 +249,7 @@ void Prop_Technique::renderShadows(const float& /*deltaTime*/) noexcept
 	}
 }
 
-void Prop_Technique::clear() noexcept 
+void Prop_Technique::clear() noexcept
 {
 	m_frameData.viewInfo.clear();
 }

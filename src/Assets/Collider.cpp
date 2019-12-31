@@ -18,8 +18,8 @@ Shared_Collider::Shared_Collider(Engine& engine, const std::string& filename, co
 	swap(newAsset);
 }
 
-Collider::Collider(Engine& engine, const std::string& filename) : 
-	Asset(engine, filename) 
+Collider::Collider(Engine& engine, const std::string& filename) :
+	Asset(engine, filename)
 {
 }
 

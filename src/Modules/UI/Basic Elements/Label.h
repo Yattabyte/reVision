@@ -30,7 +30,7 @@ public:
 	/** Destroy this label. */
 	~Label();
 	/** Construct a label, giving it the desired text.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	text		the label text. */
 	explicit Label(Engine& engine, const std::string& text = "Label");
 

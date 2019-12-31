@@ -4,7 +4,7 @@
 
 
 PropSync_System::PropSync_System(PropData& frameData) :
-	m_frameData(frameData) 
+	m_frameData(frameData)
 {
 	addComponentType(Prop_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 	addComponentType(Skeleton_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
@@ -12,7 +12,7 @@ PropSync_System::PropSync_System(PropData& frameData) :
 	addComponentType(BoundingBox_Component::Runtime_ID, RequirementsFlag::FLAG_OPTIONAL);
 }
 
-void PropSync_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void PropSync_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	// Resize BOTH buffers to match number of entities this frame, even though not all models have skeletons
 	m_frameData.modelBuffer.resize(components.size());

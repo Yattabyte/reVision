@@ -17,7 +17,7 @@ public:
 	/** Destroy the preference state. */
 	~PreferenceState();
 	/** Construct the preference state.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
 	explicit PreferenceState(Engine& engine, const std::string& filename = "preferences");
 	/** Move a preference state. */

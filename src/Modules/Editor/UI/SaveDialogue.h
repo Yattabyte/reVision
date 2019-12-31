@@ -13,7 +13,7 @@ class SaveDialogue final : public ImGUI_Element {
 public:
 	// Public (De)Constructors
 	/** Construct a level save dialogue.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	editor		reference to the level-editor to use. */
 	SaveDialogue(Engine& engine, LevelEditor_Module& editor);
 

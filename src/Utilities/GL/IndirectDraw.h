@@ -34,7 +34,7 @@ public:
 	inline void bind() noexcept {
 		m_buffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	}
-	/** Bind this buffer and also perform an indirect draw call. 
+	/** Bind this buffer and also perform an indirect draw call.
 	@param	indirect		an indirect pointer. */
 	inline void drawCall(const void* indirect = nullptr) noexcept {
 		bind();

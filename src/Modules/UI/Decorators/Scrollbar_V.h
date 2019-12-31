@@ -21,7 +21,7 @@ public:
 	/** Destroy this scrollbar. */
 	~Scrollbar_V();
 	/** Construct a vertical scrollbar, decorating the supplied component.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	component	the component to decorate. */
 	Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& component);
 

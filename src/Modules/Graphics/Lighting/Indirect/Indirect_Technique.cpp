@@ -5,7 +5,7 @@
 #include <random>
 
 
-Indirect_Technique::~Indirect_Technique() 
+Indirect_Technique::~Indirect_Technique()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -51,7 +51,7 @@ void Indirect_Technique::clearCache(const float& /*deltaTime*/) noexcept
 	m_drawIndex = 0;
 }
 
-void Indirect_Technique::updateCache(const float& deltaTime, ecsWorld& world) 
+void Indirect_Technique::updateCache(const float& deltaTime, ecsWorld& world)
 {
 	// Link together the dimensions of view info to that of the viewport vectors
 	m_frameData.viewInfo.resize(m_sceneCameras.size());
@@ -101,7 +101,7 @@ void Indirect_Technique::renderTechnique(const float& /*deltaTime*/, Viewport& v
 	}
 }
 
-void Indirect_Technique::updateDrawParams(std::vector<glm::ivec2>& camIndicesGen, std::vector<glm::ivec2>& camIndiciesRebounce, std::vector<glm::ivec2>& camIndiciesRecon, std::vector<int>& lightIndices, const size_t& shadowCount, const size_t& perspectivesSize) noexcept 
+void Indirect_Technique::updateDrawParams(std::vector<glm::ivec2>& camIndicesGen, std::vector<glm::ivec2>& camIndiciesRebounce, std::vector<glm::ivec2>& camIndiciesRecon, std::vector<int>& lightIndices, const size_t& shadowCount, const size_t& perspectivesSize) noexcept
 {
 	// Write accumulated data
 	auto& [camBufferIndex, camBufferRebounce, camBufferRecon, visLights, indirectBounce, indirectQuad, indirectQuadRecon] = m_drawData[m_drawIndex];
@@ -129,7 +129,7 @@ void Indirect_Technique::updateDrawParams(std::vector<glm::ivec2>& camIndicesGen
 	indirectQuadRecon.endWriting();
 }
 
-void Indirect_Technique::fillBounceVolume(const size_t& shadowCount, RH_Volume& rhVolume) noexcept 
+void Indirect_Technique::fillBounceVolume(const size_t& shadowCount, RH_Volume& rhVolume) noexcept
 {
 	// Prepare rendering state
 	glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
@@ -154,7 +154,7 @@ void Indirect_Technique::fillBounceVolume(const size_t& shadowCount, RH_Volume& 
 	glDrawArraysIndirect(GL_TRIANGLES, nullptr);
 }
 
-void Indirect_Technique::rebounceVolume(RH_Volume& rhVolume, const DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) noexcept 
+void Indirect_Technique::rebounceVolume(RH_Volume& rhVolume, const DynamicBuffer<>& camBufferRebounce, IndirectDraw<>& indirectQuad) noexcept
 {
 	// Bind common data
 	glDepthMask(GL_TRUE);
@@ -180,7 +180,7 @@ void Indirect_Technique::rebounceVolume(RH_Volume& rhVolume, const DynamicBuffer
 	indirectQuad.drawCall();
 }
 
-void Indirect_Technique::reconstructVolume(Viewport& viewport, const DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon) 
+void Indirect_Technique::reconstructVolume(Viewport& viewport, const DynamicBuffer<>& camBufferRecon, IndirectDraw<>& indirectQuadRecon)
 {
 	// Reconstruct indirect radiance
 	glViewport(0, 0, GLsizei(viewport.m_dimensions.x), GLsizei(viewport.m_dimensions.y));

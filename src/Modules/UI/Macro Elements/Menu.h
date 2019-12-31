@@ -32,7 +32,7 @@ public:
 protected:
 	// Protected Methods
 	/** Create a button with the text and callback specified.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	buttonText	the text to label the button with.
 	@param	callback	the callback to use when the button is pressed. */
 	void addButton(Engine& engine, const char* buttonText, const std::function<void()>& callback);

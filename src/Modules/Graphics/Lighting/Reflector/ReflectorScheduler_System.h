@@ -17,7 +17,7 @@ public:
 	/** Destroy this system. */
 	~ReflectorScheduler_System();
 	/** Construct this system.
-	@param	engine		reference to the engine to use. 
+	@param	engine		reference to the engine to use.
 	@param	frameData	reference to common data that changes frame-to-frame. */
 	ReflectorScheduler_System(Engine& engine, ReflectorData& frameData);
 

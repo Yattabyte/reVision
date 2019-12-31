@@ -41,7 +41,7 @@ public:
 	/** Shutdown the FreeImage library. */
 	static void Deinitialize() noexcept;
 	/** Import an image from disk.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	relativePath	the path to the file.
 	@param	importedData	the container to place the imported data within.
 	@param	resizePolicy	the resize policy to use, such as nearest neighbor or linear interpolation.
@@ -63,7 +63,7 @@ public:
 
 private:
 	/** Import a FreeImage bitmap from disk.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	relativePath	the path to the file.
 	@return					the free image bitmap object. */
 	static FIBITMAP* Import_Bitmap(Engine& engine, const std::string& relativePath);

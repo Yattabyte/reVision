@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 
-Outline_System::~Outline_System() 
+Outline_System::~Outline_System()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -53,7 +53,7 @@ Outline_System::Outline_System(Engine& engine, LevelEditor_Module& editor) :
 	m_hemisphere = Shared_Mesh(engine, "//Models//hemisphere.obj");
 }
 
-void Outline_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void Outline_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	if (m_shader->ready()) {
 		// Collate all component data to generate a draw call
@@ -147,7 +147,7 @@ void Outline_System::updateComponents(const float& /*deltaTime*/, const std::vec
 	}
 }
 
-void Outline_System::tryInsertModel(const Shared_Mesh& mesh) 
+void Outline_System::tryInsertModel(const Shared_Mesh& mesh)
 {
 	if (m_meshMap.find(mesh) == m_meshMap.end()) {
 		// Prop hasn't been uploaded yet
@@ -187,7 +187,7 @@ void Outline_System::waitOnFence() noexcept
 	}
 }
 
-void Outline_System::tryToExpand(const size_t& arraySize) noexcept 
+void Outline_System::tryToExpand(const size_t& arraySize) noexcept
 {
 	if (m_currentSize + arraySize > m_maxCapacity) {
 		// Create new set of VBO's large enough to fit old data + desired data

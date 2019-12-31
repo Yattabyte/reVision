@@ -6,8 +6,8 @@
 #include <sstream>
 
 
-Options_Video::Options_Video(Engine& engine) : 
-	Options_Pane(engine) 
+Options_Video::Options_Video(Engine& engine) :
+	Options_Pane(engine)
 {
 	// Title
 	m_title->setText("Video Options");

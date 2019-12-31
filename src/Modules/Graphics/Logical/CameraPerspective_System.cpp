@@ -8,7 +8,7 @@ CameraPerspective_System::CameraPerspective_System(std::vector<Camera*>& sceneCa
 	addComponentType(Camera_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 }
 
-void CameraPerspective_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void CameraPerspective_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	for (const auto& componentParam : components) {
 		auto* cameraComponent = static_cast<Camera_Component*>(componentParam[0]);

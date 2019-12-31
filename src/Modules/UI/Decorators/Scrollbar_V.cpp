@@ -9,7 +9,7 @@ Scrollbar_V::~Scrollbar_V()
 	glDeleteVertexArrays(1, &m_vaoID);
 }
 
-Scrollbar_V::Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& component) : 
+Scrollbar_V::Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& component) :
 	UI_Decorator(engine, component),
 	m_shader(Shared_Shader(engine, "UI\\ScrollBar"))
 {
@@ -44,7 +44,7 @@ Scrollbar_V::Scrollbar_V(Engine& engine, const std::shared_ptr<UI_Element>& comp
 	addCallback(static_cast<int>(UI_Element::Interact::on_resize), [&] { updateGeometry(); });
 }
 
-void Scrollbar_V::mouseAction(const MouseEvent& mouseEvent) 
+void Scrollbar_V::mouseAction(const MouseEvent& mouseEvent)
 {
 	UI_Decorator::mouseAction(mouseEvent);
 	if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -66,7 +66,7 @@ void Scrollbar_V::mouseAction(const MouseEvent& mouseEvent)
 void Scrollbar_V::renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale)
 {
 	// Quit Early
-	if (!getVisible() || !m_shader->ready()) 
+	if (!getVisible() || !m_shader->ready())
 		return;
 
 	const auto newPosition = position + m_position;
@@ -83,14 +83,14 @@ void Scrollbar_V::renderElement(const float& deltaTime, const glm::vec2& positio
 	UI_Decorator::renderElement(deltaTime, position, newScale);
 }
 
-void Scrollbar_V::setLinear(const float& linear) 
+void Scrollbar_V::setLinear(const float& linear)
 {
 	m_linear = std::clamp<float>(linear, -1.0F, 1.0F);
 	updateElementPosition();
 	enactCallback(static_cast<int>(Scrollbar_V::Interact::on_scroll_change));
 }
 
-float Scrollbar_V::getLinear() const noexcept 
+float Scrollbar_V::getLinear() const noexcept
 {
 	return m_linear;
 }
@@ -117,7 +117,7 @@ void Scrollbar_V::updateGeometry()
 	m_component->setScale(glm::vec2(m_scale.x - 12.5F, m_scale.y));
 }
 
-void Scrollbar_V::updateElementPosition() 
+void Scrollbar_V::updateElementPosition()
 {
 	if (m_children.size() == 3) {
 		// Buttons

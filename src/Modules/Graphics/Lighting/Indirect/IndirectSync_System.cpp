@@ -11,7 +11,7 @@ IndirectSync_System::IndirectSync_System(Indirect_Light_Data& frameData) :
 	addComponentType(Shadow_Component::Runtime_ID, RequirementsFlag::FLAG_REQUIRED);
 }
 
-void IndirectSync_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void IndirectSync_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	// Resize light buffers to match number of entities this frame
 	m_frameData.lightBuffer.resize(components.size());

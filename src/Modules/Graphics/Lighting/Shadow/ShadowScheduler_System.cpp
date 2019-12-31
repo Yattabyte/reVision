@@ -4,7 +4,7 @@
 #include "Engine.h"
 
 
-ShadowScheduler_System::~ShadowScheduler_System() 
+ShadowScheduler_System::~ShadowScheduler_System()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
@@ -23,7 +23,7 @@ ShadowScheduler_System::ShadowScheduler_System(Engine& engine, ShadowData& frame
 	preferences.addCallback(PreferenceState::Preference::C_SHADOW_MAX_PER_FRAME, m_aliveIndicator, [&](const float& f) noexcept { m_maxShadowsCasters = static_cast<unsigned int>(f); });
 }
 
-void ShadowScheduler_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components) 
+void ShadowScheduler_System::updateComponents(const float& /*deltaTime*/, const std::vector<std::vector<ecsBaseComponent*>>& components)
 {
 	// Maintain list of shadows, update with oldest within range
 	// Technique will clear list when ready

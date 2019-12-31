@@ -19,7 +19,7 @@ public:
 	/** Constructs an empty asset. */
 	inline Shared_Image() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	filename		the filename to use.
 	@param	specificSize	an optional size to force the image to.
 	@param	threaded		create in a separate thread.
@@ -35,7 +35,7 @@ class Image final : public Asset {
 public:
 	// Public (De)Constructors
 	/** Construct the Image.
-	@param	engine			reference to the engine to use. 
+	@param	engine			reference to the engine to use.
 	@param	filename		the asset file name (relative to engine directory).
 	@param	specificSize	an optional size to force the image to.
 	@param	policyFill		the pixel fill policy.
