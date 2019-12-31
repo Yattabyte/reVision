@@ -11,6 +11,7 @@
 class Options_Levels final : public Options_Pane {
 public:
 	// Public Interaction Enums
+	/** Enumerations for interacting with this element. */
 	enum class Interact : int {
 		on_levelSelect = (int)UI_Element::Interact::last_interact_index,
 		on_back,

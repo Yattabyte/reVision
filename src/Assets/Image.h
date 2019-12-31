@@ -22,8 +22,9 @@ public:
 	@param	engine			reference to the engine to use. 
 	@param	filename		the filename to use.
 	@param	specificSize	an optional size to force the image to.
-	@param	category		the category of image, if available.
 	@param	threaded		create in a separate thread.
+	@param	policyFill		the fill policy of the image, defaulted to CHECKERED
+	@param	policyResize	the resize policy of the image, defaulted to LINEAR
 	@return					the desired asset. */
 	explicit Shared_Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded = true, const Fill_Policy& policyFill = Fill_Policy::CHECKERED, const Resize_Policy& policyResize = Resize_Policy::LINEAR);
 };

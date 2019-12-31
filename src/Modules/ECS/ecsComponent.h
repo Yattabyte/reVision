@@ -70,7 +70,7 @@ protected:
 	/** Register a specific sub-class component into the component registry for creating and freeing them at runtime.
 	@param	createFn	function for creating a specific component type within an input memory block.
 	@param	freeFn		function for freeing a specific component type from its memory block.
-	@param	newFN		function for creating a new component anywhere. 
+	@param	newFn		function for creating a new component anywhere. 
 	@param	size		the total size of a single component.
 	@param	string		type-name of the component, for name-lookups between since component ID's can change.
 	@return				runtime component ID. */

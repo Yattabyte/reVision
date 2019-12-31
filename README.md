@@ -1,41 +1,45 @@
 # reVision
 
-This project is a work-in-progress game engine. It features real-time multi-threaded asset loading, and physically based 3D graphics.  The engine uses a custom built OpenGL 4.5 deferred renderer equipped with shader support for PBR materials.  
-In addition, most of the engine logic is built upon an entity-component-systems (ECS) framework.  
+This is a work-in-progress game engine that I work on during my spare time.  
+It has multi-threaded asset loading, phyically based 3D graphics, and object physics.  
+My engine uses a custom-built deferred renderer running on OpenGL 4.5, supporting PBR materials, some translucent materials, and skeletal animation.  
+Additionally, game world-state is stored and accessed using an entity-component-systems (ECS) framework.
 
-The active area of development is the in-engine Level Editor, and improvements to the ECS module.
 
 ## Getting Started
 
-The branch labeled "active" is updated almost every day, but may be left unstable.
-The most stable versions can be found under the branch labeled "master".
-Binaries will be found under the "Releases" section, starting at version 5.0.0.
+Starting with version 5.0.0, all major development will now fall under the master branch for easier access.  
+Stable binaries can be found under the "Releases" section.
+
 
 ### Requirements
  * CMake + Git
- * Compiler supporting C++ 17
+ * C++ 17 MSVC or Clang (haven't tested any other compilers)
  * GPU supporting OpenGL 4.5 + GLSL 460
- * Windows 10 (haven't tried any other operating systems yet)
+ * Windows 10 (haven't tested any other x64 OS yet)
+ 
  
 ## Usage
 
-**- Step 1:** Pull a copy of this repository [Revision](https://github.com/Yattabyte/reVision.git)
+**- Step 1:** Pull a copy of this repository: [reVision](https://github.com/Yattabyte/reVision.git)
 
-**- Step 2:** Download [CMake](https://cmake.org/), I recommend using the GUI application
+**- Step 2:** Download [CMake](https://cmake.org/)
 
-**- Step 3:** Run CMake  
-Fill out the fields indicating where the engine's root directory is located.  
-**Note:** This engine depends on several third party open-source or otherwise free libraries.   
-***However,*** I've configured this cmake project to download and configure them automatically. If you wish, you may supply specific directories to your own versions of these libraries, otherwise leave them blank.
+**- Step 3:** Run and configure CMake  
+Fill out the fields indicating where the project root directory is located.  
+**Note:** This project is configured to automatically acquire all it's dependencies if they are missing (GLFW, GLM, etc...)
+Only specify manual directories if you really want to use your own versions.  
+Once you're done making any changes to the configuration, hit both the CONFIGURE + GENERATE buttons, then open the project.  
 ![CMake Configuration](https://i.imgur.com/fKUdpKz.png)  
-Once those fields are filled out as desired, hit the configure, generate, and open project buttons.
 
 **- Step 4:** Building the Dependencies  
-If you've chosen to let CMake handle the external dependencies for you, build all the external projects first like so:
+If you've chosen to let CMake handle acquiring all the project dependencies, then before you can compile the project, you must compile all the dependencies first.  
+**After compiling, go back to CMake and once more press CONFIGURE + GENERATE to account for any new files produced when compiling this dependencies.**  
+**Note:** Repeat this step for both "Debug" and "Release" builds.
 ![VS2017 Build Example](https://i.imgur.com/HJQAXra.png)  
-After, return to CMake and hit configure + generate one last time, adding a few more files that were just generated to the reVision project.
 
-**- Step 5:** Build the rest of the solution.
+**- Step 5:** Build the project
+
 
 ## Versioning
 
@@ -46,11 +50,10 @@ The major version increments following the completetion of a major milestone, pl
 The minor version increments when a large planned feature is implemented or a category of related changes have been completed.  
 The patch version increments when a patch, hotfix, or small feature has been implemented.  
 
-I try to commit every time the version changes, including the new version in the summary.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.  
 This engine relies on several (free) libraries, though they're not bundled with the source code here.  
  * [ASSIMP - Model Importing](http://www.assimp.org/)
  * [Bullet - Physics Back-end](http://bulletphysics.org/wordpress/)
@@ -60,13 +63,15 @@ This engine relies on several (free) libraries, though they're not bundled with 
  * [GLM - Mathematics](https://glm.g-truc.net/0.9.9/index.html)
  * [SoLoud - Sound](https://github.com/jarikomppa/soloud)
  
+ 
 ## Acknowledgments
 
 Thanks to everyone who has helped me over the years!
 
 Special thanks to all the helpful members of the former [Facepunch programming subforum](https://forum.facepunch.com/f/) as well as those who moved on to [Knockout](https://knockout.chat/), the helpful community on the Stack Exchange, [OGLDev](http://ogldev.atspace.co.uk/index.html), [Learn OpenGL](https://learnopengl.com), and the many other people who run their own tutorial series and programming blogs.
 
+
 ## Recent Media
-![editor UI](https://i.imgur.com/NBzqoQB.png)
+![editor UI](https://i.imgur.com/zEh3eb0.png)
 ![file browser](https://i.imgur.com/72YECGP.gif)
 ![menu](https://i.imgur.com/tIWcFf7.gif)

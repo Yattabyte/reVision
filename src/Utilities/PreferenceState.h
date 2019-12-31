@@ -71,7 +71,7 @@ public:
 
 
 	// Public Static Methods
-	/* Retrieve a static list of all user-preferences.
+	/** Retrieve a static list of all user-preferences.
 	@return	std::vector of preference names as strings. */
 	static const std::vector<std::string> Preference_Strings() {
 		static const std::vector<std::string> preferenceStrings = {
@@ -129,7 +129,7 @@ public:
 	/** Saves the preference file to disk, using the same filename as when loaded. */
 	void save();
 	/** Tries to update the container with the value associated with the target key. If key doesn't exist, creates the key-value pair from the value given.
-	@param	<T>			the value class type to cast to (auto-deduced).
+	@tparam	T			the value class type to cast to (auto-deduced).
 	@param	targetKey	the preference key to look up.
 	@param	container	the object to update. */
 	template <typename T>
@@ -145,7 +145,7 @@ public:
 		}
 	}
 	/** Sets a value for a preference with the given ID.
-	@param	<T>			the value class type to cast to (auto-deduced).
+	@tparam	T			the value class type to cast to (auto-deduced).
 	@param	targetKey	the preference key to set the value to.
 	@param	targetValue	the value to tie to the key supplied. */
 	template <typename T>

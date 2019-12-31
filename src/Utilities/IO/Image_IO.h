@@ -12,6 +12,7 @@
 class Engine;
 struct FIBITMAP;
 
+/** Container defining image data. */
 struct Image_Data {
 	std::vector<GLubyte> pixelData;
 	glm::ivec2 dimensions = glm::ivec2(0);
@@ -19,11 +20,13 @@ struct Image_Data {
 	unsigned int bpp = 0;
 };
 
+/** Policies for filling in images when data is missing. */
 enum class Fill_Policy {
 	CHECKERED,
 	SOLID,
 };
 
+/** Policies for resizing an image. */
 enum class Resize_Policy {
 	NEAREST,
 	LINEAR,

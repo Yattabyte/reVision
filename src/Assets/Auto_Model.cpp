@@ -7,6 +7,7 @@
 constexpr const char* EXT_PRIMITIVE = ".obj";
 constexpr const char* DIRECTORY_PRIMITIVE = "\\Models\\";
 
+/** Container for a basic single vertex. */
 struct Single_Primitive_Vertex {
 	glm::vec3 vertex;
 	glm::vec2 uv;

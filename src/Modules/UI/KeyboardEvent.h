@@ -42,11 +42,13 @@ protected:
 
 public:
 	// Enumeration Implementation
+	/** The action states a key can be in: released, pressed, etc. */
 	enum class Action : int {
 		RELEASE,
 		PRESS,
 		REPEAT
 	};
+	/** The name of all keys supported, and an appropriate key code for each of them. */
 	enum class Key : unsigned int {
 		/* Printable keys */
 		SPACE = 32,

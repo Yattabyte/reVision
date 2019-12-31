@@ -11,6 +11,7 @@
 class Scrollbar_V final : public UI_Decorator {
 public:
 	// Public Interaction Enums
+	/** Enumerations for interacting with this element. */
 	enum class Interact : int {
 		on_scroll_change = (int)UI_Element::Interact::last_interact_index
 	};

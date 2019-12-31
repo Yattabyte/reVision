@@ -24,6 +24,8 @@ public:
 
 
 	// Public Methods
+	/** Tick all of this interface's elements and render them. 
+	@param	deltaTime	the amount of time passed since last frame. */
 	void tick(const float& deltaTime);
 
 

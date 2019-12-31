@@ -24,9 +24,12 @@ public:
 
 	// Public Methods
 	/** Tick this module by a specific amount of delta time.
+	@param	world		the ecsWorld to perform the physics simulation on.
 	@param	deltaTime	the amount of time since last frame. */
 	void frameTick(ecsWorld& world, const float& deltaTime);
-	/** Update generic physics based ECS systems using a specific ECS world. */
+	/** Update generic physics based ECS systems using a specific ECS world. 
+	@param	world		the ecsWorld to perform the physics simulation on.
+	@param	deltaTime	the amount of time since last frame. */
 	void updateSystems(ecsWorld& world, const float& deltaTime);
 	/** Retrieves a pointer to the physics-world.
 	@return				reference to the physics world. */

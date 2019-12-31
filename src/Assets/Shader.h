@@ -149,7 +149,7 @@ protected:
 	/** Retrieve a program parameter by the name specified.
 	@param	parameterName		the program parameter name.
 	@return						the parameter value matching the name specified. */
-	GLint getProgramiv(const GLenum& pname) const noexcept;
+	GLint getProgramiv(const GLenum& parameterName) const noexcept;
 	/** Retrieve an error log corresponding to this shader program.
 	@return						an error log for this shader program. */
 	[[nodiscard]] std::vector<GLchar> getErrorLog() const;

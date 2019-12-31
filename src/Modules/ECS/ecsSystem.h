@@ -70,8 +70,8 @@ public:
 
 	// Public Methods
 	/** Generate a system with a specific type and input arguments.
-	@param	<T>		the system class type.
-	@param	...Args	variadic arguments to forward to the system constructor. */
+	@tparam	T		the system class type.
+	@param	...args	variadic arguments to forward to the system constructor. */
 	template <typename T, class...Args>
 	inline void makeSystem(Args && ...args) {
 		if (const auto system = std::make_shared<T>(args...); system->isValid())

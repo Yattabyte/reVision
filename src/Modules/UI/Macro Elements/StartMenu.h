@@ -11,6 +11,7 @@
 class StartMenu final : public Menu {
 public:
 	// Public Interaction Enums
+	/** Enumerations for interacting with this element. */
 	enum class Interact : int {
 		on_start_game = (int)UI_Element::Interact::last_interact_index,
 		on_level_editor,

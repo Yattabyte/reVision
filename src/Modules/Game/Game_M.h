@@ -11,6 +11,7 @@
 class Game_Module final : public Engine_Module {
 public:
 	// Public Enumerations
+	/** State for whether the game is currently active or in the pause menu. */
 	enum class Game_State {
 		in_pauseMenu,
 		in_game,

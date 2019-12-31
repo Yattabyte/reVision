@@ -10,6 +10,7 @@ class UI_Decorator : public UI_Element {
 public:
 	// Public (De)Constructors
 	/** Construct a decorator, decorating the supplied component.
+	@param	engine			the engine to use. 
 	@param	component		the component to decorate. */
 	UI_Decorator(Engine& engine, const std::shared_ptr<UI_Element>& component) noexcept;
 

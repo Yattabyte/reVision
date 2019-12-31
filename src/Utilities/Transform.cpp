@@ -55,10 +55,10 @@ Transform& Transform::operator*=(const Transform& other)
 	return *this;
 }
 
-Transform Transform::operator*(const Transform& o) const 
+Transform Transform::operator*(const Transform& other) const 
 {
-	Transform n(m_position + o.m_position, m_orientation * o.m_orientation, m_scale * o.m_scale);
-	n.m_modelMatrix = m_modelMatrix * o.m_modelMatrix;
+	Transform n(m_position + other.m_position, m_orientation * other.m_orientation, m_scale * other.m_scale);
+	n.m_modelMatrix = m_modelMatrix * other.m_modelMatrix;
 	n.m_inverseModelMatrix = glm::inverse(n.m_modelMatrix);
 	return n;
 }

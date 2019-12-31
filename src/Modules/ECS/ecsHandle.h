@@ -12,7 +12,7 @@ struct ecsHandle {
 	/** Construct an empty handle. */
 	inline ecsHandle() noexcept = default;
 	/** Construct a specific handle.
-	@param	id[32]		specific handle name as char array of size 32. */
+	@param	id			specific handle name as char array of size 32. */
 	explicit ecsHandle(const char id[32]);
 	/** Copy Constructor. 
 	@param	other		an other handle to copy from. */
@@ -44,6 +44,7 @@ struct ecsHandle {
 	bool isValid() const noexcept;
 };
 
+/** Specialized handle for labeling Entities. */
 struct EntityHandle final : ecsHandle {
 	inline ~EntityHandle() = default;
 	inline EntityHandle() noexcept = default;
@@ -53,6 +54,8 @@ struct EntityHandle final : ecsHandle {
 	inline EntityHandle& operator=(EntityHandle&& other) noexcept = default;
 	inline EntityHandle& operator=(const EntityHandle& other) noexcept = default;
 };
+
+/** Specialized handle for labeling Components. */
 struct ComponentHandle final : ecsHandle {
 	inline ~ComponentHandle() = default;
 	inline ComponentHandle() noexcept = default;

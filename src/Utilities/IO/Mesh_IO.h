@@ -14,47 +14,50 @@
 // Forward Declarations
 class Engine;
 
+/** Container mapping vertices to skeleton bones. */
 struct VertexBoneData {
 	int IDs[NUM_BONES_PER_VEREX]{};
 	float Weights[NUM_BONES_PER_VEREX]{};
-	void Reset() noexcept;
+	/** Reset the bone ID's and weights to zero. */
+	void Reset();
+	/** Add a bone to this vertex.
+	@param	BoneID	the ID of the bone in the skeleton.
+	@param	Weight	the weight of the bone. */
 	void AddBoneData(const int& BoneID, const float& Weight) noexcept;
 };
+/** Container for materials' component textures. */
 struct Material_Strings {
-	std::string albedo = "albedo", normal = "normal", metalness = "metalness", roughness = "roughness", height = "height", ao = "ao";
-	inline Material_Strings(const std::string& al, const std::string& n, const std::string& m, const std::string& r, const std::string& h, const std::string& a)
-		: albedo(al), normal(n), metalness(m), roughness(r), height(h), ao(a) {}
+	std::string albedo, normal, metalness, roughness, height, ao;
 };
-template<typename T>
+
+/** Container for model animation key frames. 
+@tparam	T		the data type for the key frame (vec3, quat, etc). */
+template<typename T = glm::vec3>
 struct Animation_Time_Key {
 	double time = 0.0;
 	T value = T();
-	inline Animation_Time_Key() noexcept {};
-	inline Animation_Time_Key(const double& t, const T& v) noexcept : time(t), value(v) {};
 };
+/** Container for a model's animation. */
 struct Node_Animation {
 	std::string nodeName;
 	std::vector<Animation_Time_Key<glm::vec3>> scalingKeys;
 	std::vector<Animation_Time_Key<glm::quat>> rotationKeys;
 	std::vector<Animation_Time_Key<glm::vec3>> positionKeys;
-	inline Node_Animation() noexcept {};
-	inline explicit Node_Animation(const std::string& name) : nodeName(name) {}
 };
+/** Container for a model's node. */
 struct Node {
 	std::string name;
 	glm::mat4 transformation = glm::mat4(1);
 	std::vector<Node> children;
-	inline Node() noexcept {};
-	inline Node(const std::string& n, const glm::mat4& t) : name(n), transformation(t) {}
 };
+/** Container for animation. */
 struct Animation {
 	unsigned int numChannels = 0;
 	double ticksPerSecond = 0.0;
 	double duration = 0.0;
 	std::vector<Node_Animation> channels;
-	inline Animation(const unsigned int& nC = 0, const double& tick = 0, const double& dur = 0) noexcept
-		: numChannels(nC), ticksPerSecond(tick), duration(dur) {}
 };
+/** Container for underlying mesh data. */
 struct Mesh_Geometry {
 	// Per Vertex Attributes
 	std::vector<glm::vec3> vertices;
@@ -75,6 +78,7 @@ struct Mesh_Geometry {
 	std::vector<Animation> animations;
 	Node rootNode;
 };
+/** Container defining a single vertex. */
 struct SingleVertex {
 	glm::vec3 vertex = glm::vec3(0.0f);
 	glm::vec3 normal = glm::vec3(0.0f);
@@ -85,6 +89,7 @@ struct SingleVertex {
 	glm::ivec4 boneIDs = glm::ivec4(0);
 	glm::vec4 weights = glm::vec4(0.0f);
 };
+/** Container defining a collection of vertices. */
 struct GeometryInfo {
 	std::vector<SingleVertex> m_vertices;
 };

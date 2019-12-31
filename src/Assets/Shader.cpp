@@ -11,6 +11,7 @@ constexpr const char* EXT_SHADER_FRAGMENT = ".fsh";
 constexpr const char* EXT_SHADER_BINARY = ".shader";
 constexpr const char* DIRECTORY_SHADER = "\\Shaders\\";
 
+/** Header for shader binaries. */
 struct ShaderHeader {
 	GLenum format;
 	GLsizei length;
@@ -98,10 +99,10 @@ void Shader::Release() noexcept
 	glUseProgram(0);
 }
 
-GLint Shader::getProgramiv(const GLenum& pname) const noexcept
+GLint Shader::getProgramiv(const GLenum& parameterName) const noexcept
 {
 	GLint param;
-	glGetProgramiv(m_glProgramID, pname, &param);
+	glGetProgramiv(m_glProgramID, parameterName, &param);
 	return param;
 }
 

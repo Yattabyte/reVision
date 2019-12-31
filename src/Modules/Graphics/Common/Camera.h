@@ -11,6 +11,7 @@ class Camera {
 public:
 	// Public Structs
 	constexpr static float ConstNearPlane = 0.5f;
+	/** OpenGL-formatted data structure for camera data. */
 	struct GPUData {
 		glm::mat4 pMatrix = glm::mat4(1.0f);
 		glm::mat4 pMatrixInverse = glm::mat4(1.0f);

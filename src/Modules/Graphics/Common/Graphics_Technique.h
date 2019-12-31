@@ -12,6 +12,7 @@ struct Viewport;
 class Graphics_Technique {
 public:
 	// Public Enumerations
+	/** The category of the technique. */
 	enum class Technique_Category : unsigned int {
 		GEOMETRY = 0b0000'0001,
 		PRIMARY_LIGHTING = 0b0000'0010,

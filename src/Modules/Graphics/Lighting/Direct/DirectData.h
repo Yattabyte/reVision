@@ -12,8 +12,8 @@
 
 /** Structure to contain data that changes frame-to-frame, for direct light rendering. */
 struct Direct_Light_Data {
-	/** OpenGL buffer struct for direct lights. */
 	constexpr const static int MAX_PERSPECTIVE_ARRAY = 6;
+	/** OpenGL buffer struct for direct lights. */
 	struct Direct_Light_Buffer {
 		glm::mat4 lightVP[MAX_PERSPECTIVE_ARRAY];
 		glm::mat4 mMatrix = glm::mat4(1.0f);

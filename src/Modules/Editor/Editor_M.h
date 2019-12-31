@@ -113,7 +113,7 @@ public:
 	void deleteComponent(const EntityHandle& entityHandle, const int& componentID);
 	/** Spawn a serialized entity into the level.
 	@param	entityData		the serialized entity data.
-	@param	parent			optional parent's handle. */
+	@param	parentUUID		optional parent's handle. */
 	void addEntity(const std::vector<char>& entityData, const EntityHandle& parentUUID = EntityHandle());
 	/** Bind the editor's FBO to the currently active GL context, for rendering. */
 	void bindFBO() noexcept;

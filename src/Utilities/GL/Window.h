@@ -14,6 +14,7 @@
 struct GLFWwindow;
 class Engine;
 
+/** Encapsulates an operating system's application window. */
 class Window {
 public:
 	// Public (De)Constructors
@@ -35,7 +36,7 @@ public:
 	@return				the coordinates of the mouse. */
 	glm::vec2 getMousePos() const noexcept;
 	/** Set the XY coordinates of the mouse relative to this window. 
-	@param				the coordinates of the mouse. */
+	@param	position	the coordinates of the mouse. */
 	void setMousePos(const glm::vec2& position) noexcept;
 	/** Retrieve the button-press state of a mouse button.
 	@param	buttonID	the enumerated button of the mouse, starting at 0 for left click.

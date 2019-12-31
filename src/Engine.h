@@ -24,7 +24,7 @@
 #include "Utilities/GL/Window.h"
 
 
-constexpr char ENGINE_VERSION[] = "4.20.20";
+constexpr char ENGINE_VERSION[] = "4.20.21";
 struct GLFWwindow;
 
 /** The main game engine object. Encapsulates the entire engine state. */
@@ -50,7 +50,8 @@ public:
 	/** Ticks the engine's overall simulation by a frame from the main thread. */
 	void tick();
 	/** Ticks the engine's overall simulation by a frame from a secondary thread.
-	@param	exitObject	object signaling when to close the thread. */
+	@param	exitObject	object signaling when to close the thread.
+	@param	auxContext	pointer to the auxiliary context to use. */
 	void tickThreaded(std::future<void> exitObject, GLFWwindow* const auxContext);
 	/** Tells the engine to shut down. */
 	void shutDown() noexcept;

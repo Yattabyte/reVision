@@ -15,8 +15,7 @@ struct Node;
 class Skeletal_Animation_System final : public ecsBaseSystem {
 public:
 	// Public (De)Constructors
-	/** Construct a skeletal animation system.
-	@param	engine		reference to the engine to use. */
+	/** Construct a skeletal animation system. */
 	explicit Skeletal_Animation_System();
 
 

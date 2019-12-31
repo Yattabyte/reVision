@@ -54,6 +54,7 @@ private:
 
 protected:
 	// Protected Methods
+	/** Update the geometry of this element. */
 	void updateGeometry();
 
 

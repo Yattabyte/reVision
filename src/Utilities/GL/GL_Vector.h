@@ -7,7 +7,7 @@
 
 
 /** A multi-buffered STL vector like class, storing its data on the GPU using persistently mapped coherent buffers.
-@param	<T>				the type of element to construct an array of. */
+@tparam	T				the type of element to construct an array of. */
 template <typename T, int BufferCount = 3>
 class GL_Vector final : public Buffer_Interface {
 public:

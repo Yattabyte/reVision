@@ -12,8 +12,8 @@
 
 /** Structure to contain data that changes frame-to-frame, for indirect light rendering. */
 struct Indirect_Light_Data {
-	/** OpenGL buffer struct for direct lights. */
 	constexpr const static int MAX_PERSPECTIVE_ARRAY = 6;
+	/** OpenGL buffer struct for direct lights. */
 	struct Indirect_Light_Buffer {
 		glm::mat4 lightVP[MAX_PERSPECTIVE_ARRAY];
 		glm::vec3 LightColor = glm::vec3(1.0f); float padding1;

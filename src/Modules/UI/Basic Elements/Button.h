@@ -25,23 +25,23 @@ public:
 	/** Fully press and release this button, enacting its on_clicked callback. */
 	void pressButton();
 	/** Set this label element's text.
-	@param	text	the text to use. */
+	@param	text		the text to use. */
 	void setText(const std::string& text);
 	/** Retrieve this buttons' labels text.
-	@return			the text this label uses. */
+	@return				the text this label uses. */
 	std::string getText() const;
 	/** Set this label element's text scaling factor.
-	@param	text	the new scaling factor to use. */
+	@param	textScale	the new scaling factor to use. */
 	void setTextScale(const float& textScale) noexcept;
 
 	/** Retrieve this label's text scaling factor.
-	@return			the text scaling factor. */
+	@return				the text scaling factor. */
 	float getTextScale() const noexcept;
 	/** Set the bevel radius for this button.
-	@param radius	the new radius to use. */
+	@param radius		the new radius to use. */
 	void setBevelRadius(const float& radius) noexcept;
 	/** Retrieve the bevel radius from this button.
-	@return			this buttons' bevel radius. */
+	@return				this buttons' bevel radius. */
 	float getBevelRadius() const noexcept;
 
 

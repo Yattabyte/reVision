@@ -28,7 +28,7 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d) noexcept
 [[nodiscard]] inline Node copy_node(const aiNode* oldNode)
 {
 	// Copy Node
-	Node newNode(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
+	Node newNode{ std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation) };
 
 	// Copy Node's Children
 	const auto childCount = oldNode->mNumChildren;
@@ -103,33 +103,34 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 	importedData.animations.resize(animationCount);
 	for (unsigned int a = 0; a < animationCount; ++a) {
 		const auto* animation = scene->mAnimations[a];
-		importedData.animations[a] = Animation(animation->mNumChannels, animation->mTicksPerSecond, animation->mDuration);
+		importedData.animations[a] = Animation{ animation->mNumChannels, animation->mTicksPerSecond, animation->mDuration };
 
 		// Copy Channels
 		const auto channelCount = animation->mNumChannels;
 		importedData.animations[a].channels.resize(channelCount);
 		for (unsigned int c = 0; c < channelCount; ++c) {
 			const auto* channel = animation->mChannels[c];
-			importedData.animations[a].channels[c] = Node_Animation(std::string(channel->mNodeName.data));
+			importedData.animations[a].channels[c] = Node_Animation{ std::string(channel->mNodeName.data) };
 
 			// Copy Keys
 			const auto scalingKeyCount = channel->mNumScalingKeys;
 			importedData.animations[a].channels[c].scalingKeys.resize(scalingKeyCount);
 			for (unsigned int n = 0; n < scalingKeyCount; ++n) {
 				const auto& key = channel->mScalingKeys[n];
-				importedData.animations[a].channels[c].scalingKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+				importedData.animations[a].channels[c].scalingKeys[n] = Animation_Time_Key<glm::vec3>{ key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z) };
 			}
 			const auto rotationKeyCount = channel->mNumRotationKeys;
 			importedData.animations[a].channels[c].rotationKeys.resize(rotationKeyCount);
 			for (unsigned int n = 0; n < rotationKeyCount; ++n) {
 				const auto& key = channel->mRotationKeys[n];
-				importedData.animations[a].channels[c].rotationKeys[n] = Animation_Time_Key<glm::quat>(key.mTime, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
+				importedData.animations[a].channels[c].rotationKeys[n] = Animation_Time_Key<glm::quat>{ key.mTime, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z) };
 			}
 			const auto positionKeyCount = channel->mNumPositionKeys;
 			importedData.animations[a].channels[c].positionKeys.resize(positionKeyCount);
 			for (unsigned int n = 0; n < positionKeyCount; ++n) {
 				const auto& key = channel->mPositionKeys[n];
-				importedData.animations[a].channels[c].positionKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+				importedData.animations[a].channels[c].positionKeys[n] = Animation_Time_Key<glm::vec3>{key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z)
+			};
 			}
 		}
 	}
@@ -177,7 +178,7 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 	// Copy Texture Paths
 	if (materialCount > 1U)
 		for (auto x = 1U; x < materialCount; ++x) {
-			constexpr static auto getMaterial = [](const aiScene& scene, const unsigned int& materialIndex) -> Material_Strings {
+			constexpr static auto getMaterial = [](const aiScene& scene, const unsigned int& materialIndex) {
 				constexpr static auto getTexture = [](const aiMaterial& sceneMaterial, const aiTextureType& textureType, std::string& texturePath) {
 					for (unsigned int x = 0; x < sceneMaterial.GetTextureCount(textureType); ++x) {
 						aiString path;
@@ -187,7 +188,6 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 						}
 					}
 				};
-				//std::string albedo = "albedo.png", normal = "normal.png", metalness = "metalness.png", roughness = "roughness.png", height = "height.png", AO = "ao.png";
 				std::string albedo;
 				std::string normal;
 				std::string metalness;
@@ -218,15 +218,14 @@ bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh
 						}
 					}
 				}
-				return Material_Strings(albedo, normal, metalness, roughness, height, ao);
+				return Material_Strings{ albedo, normal, metalness, roughness, height, ao };
 			};
 
 			// Import Mesh Material
 			importedData.materials.push_back(getMaterial(*scene, x));
 		}
 	else
-		//importedData.materials.push_back(Material_Strings("albedo.png", "normal.png", "metalness.png", "roughness.png", "height.png", "ao.png"));
-		importedData.materials.emplace_back("", "", "", "", "", "");
+		importedData.materials.emplace_back(Material_Strings());
 	return true;
 }
 
@@ -252,12 +251,10 @@ std::vector<std::string> Mesh_IO::Get_Supported_Types()
 	return extensions;
 }
 
-void VertexBoneData::Reset() noexcept
+void VertexBoneData::Reset()
 {
-	for (auto i = 0; i < NUM_BONES_PER_VEREX; ++i) {
-		IDs[i] = 0;
-		Weights[i] = 0.0F;
-	}
+	std::fill(std::begin(IDs), std::end(IDs), 0);
+	std::fill(std::begin(Weights), std::end(Weights), 0.0F);
 }
 
 void VertexBoneData::AddBoneData(const int& BoneID, const float& Weight) noexcept

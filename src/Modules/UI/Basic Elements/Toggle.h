@@ -12,6 +12,7 @@
 class Toggle final : public UI_Element {
 public:
 	// Public Interaction Enums
+	/** Enumerations for interacting with this element. */
 	enum class Interact : int {
 		on_toggle = (int)UI_Element::Interact::last_interact_index
 	};

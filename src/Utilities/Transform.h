@@ -44,7 +44,7 @@ struct Transform {
 	/** Concatenate this transform with another transform, returning its product.
 	@param	other		the other transform to apply to this transform.
 	@return				a new transform based on this transform. */
-	Transform operator*(const Transform& o) const;
+	Transform operator*(const Transform& other) const;
 
 
 	// Public Attributes

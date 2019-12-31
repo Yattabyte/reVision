@@ -13,6 +13,7 @@ If children need to expand to fit inside a parent container, consider using a ve
 class List final : public UI_Element {
 public:
 	// Public Interaction Enums
+	/** Enumerations for interacting with this element. */
 	enum class Interact : int {
 		on_selection = (int)UI_Element::Interact::last_interact_index
 	};

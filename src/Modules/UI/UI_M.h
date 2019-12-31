@@ -59,7 +59,7 @@ public:
 	void applyChar(const unsigned int& character);
 	/** Propagates keyboard key input to all UI elements.
 	@param	key					the keyboard key that was pressed or released.
-	@param	scan-code			the system-specific scan-code of the key.
+	@param	scancode			the system-specific scan-code of the key.
 	@param	action				PRESS, RELEASE or REPEAT.
 	@param	mods				bit field describing which modifier keys were held down. */
 	void applyKey(const int& key, const int& scancode, const int& action, const int& mods);

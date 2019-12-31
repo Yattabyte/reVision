@@ -7,10 +7,10 @@
 #include <vector>
 
 
-/** A std::map that uses a constant char array as the keys, and stores values of type <T>.\n
+/** A std::map that uses a constant char array as the keys, and stores values of type T.\n
 Uses the adapter pattern to hide some of the complexity and reduce the amount of redundant code written.
 Also provides easier insertion, lookup, and boolean find operations.
-@param	<T>		any type to store. */
+@tparam	T		any type to store. */
 template <typename T>
 class MappedChar {
 private:
@@ -25,7 +25,7 @@ private:
 public:
 	// Public Methods
 	/** Insert a new key into the map.
-	@brief	will auto-generate a new zero-initialized <T> to associate with the key.
+	@brief	will auto-generate a new zero-initialized T to associate with the key.
 	@param	key		the new key to insert into the map */
 	inline void insert(const char* key) noexcept {
 		m_map.insert(std::pair<const char*, T>(key, T()));
@@ -65,7 +65,7 @@ public:
 		return m_map.at(key);
 	}
 	/** Retrieve the element associated with the given key.
-	@note			will insert the key into the map if they lookup fails, guaranteed to return a zero-initialized <T>.\nIf this is undesired, used .at().
+	@note			will insert the key into the map if they lookup fails, guaranteed to return a zero-initialized T. If this is undesired, used .at().
 	@param	key		the key associated with the element to retrieve.
 	@return			the element paired with the key supplied. */
 	inline T& operator[](const char* key) {
@@ -118,7 +118,7 @@ public:
 	}
 };
 
-/** A std::map that uses a constant char array as the keys, and stores vectors of type <T>.
+/** A std::map that uses a constant char array as the keys, and stores vectors of type T.
 Extends the MappedChar class, but exists to shorten 'MappedChar<std::vector<T>> myMap' down to 'VectorMap<T> myMap'. */
 template <typename T>
 class VectorMap : public MappedChar<std::vector<T>> {

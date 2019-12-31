@@ -16,8 +16,7 @@ public:
 	/** Destroy the rotation indicator. */
 	~RotationIndicator();
 	/** Construct a rotation indicator.
-	@param	engine		reference to the engine to use. 
-	@param	editor		reference to the level-editor to use. */
+	@param	engine		reference to the engine to use. */
 	explicit RotationIndicator(Engine& engine);
 
 

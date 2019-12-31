@@ -29,7 +29,7 @@ void Mesh::initialize()
 		m_geometry.texCoords = { glm::vec2(0, 0), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec2(0, 0) };
 		m_geometry.materialIndices = { 0U, 0U, 0U, 0U, 0U, 0U };
 		m_geometry.bones.resize(m_geometry.vertices.size());
-		m_geometry.materials.emplace_back("", "", "", "", "", "");
+		m_geometry.materials.emplace_back(Material_Strings{});
 	}
 
 	Asset::finalize();

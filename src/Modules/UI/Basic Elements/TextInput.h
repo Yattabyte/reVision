@@ -13,6 +13,7 @@
 class TextInput final : public UI_Element {
 public:
 	// Public Interaction Enums
+	/** Enumerations for interacting with this element. */
 	enum class Interact : int {
 		on_text_change = (int)UI_Element::Interact::last_interact_index
 	};
@@ -34,7 +35,7 @@ public:
 
 	// Public Methods
 	/** Set the text to display in this field.
-	@param		string		the new text to display. */
+	@param		text		the new text to display. */
 	void setText(const std::string& text);
 	/** Retrieve the text displayed in this field.
 	@return					the text displayed in this field. */

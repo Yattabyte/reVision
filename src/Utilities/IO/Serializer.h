@@ -14,9 +14,8 @@ class Serializer {
 public:
 	/** Serialize a set of labeled value pairs to a char buffer.
 	@note Input values must be a std::pair<std::string, X> where X is the value to be serialized!
-	@param	<FirstMember, ...RemainingMembers>	variadic list of any value to serialized (auto-deducible).
 	@param	first			the first value to serialize.
-	@param	...rest			the rest of the values to serialize.
+	@param	...rest			the rest of the values to serialize (variadic).
 	@return					a char buffer containing serialized data. */
 	template <typename FirstMember, typename ...RemainingMembers>
 	inline static std::vector<char> Serialize_Set(const FirstMember& first, const RemainingMembers& ...rest) {
@@ -34,9 +33,8 @@ public:
 	}
 	/** De-serialize a char buffer into a set of labeled value pairs.
 	@note Input values must be a std::pair<std::string, *X> where X is a pointer to the value to be assigned!
-	@param	<...Members>	variadic list of all value pairs to updated (auto-deducible).
 	@param	memberData		a char buffer containing serialized data.
-	@param	...members		the list of value pairs to update. */
+	@param	...members		the list of value pairs to update (variadic). */
 	template <typename ...Members>
 	inline static void Deserialize_Set(const std::vector<char>& memberData, const Members& ...members) {
 		// Ensure the data buffer is valid
@@ -48,6 +46,7 @@ public:
 				size_t index(0ULL), prevIndex(0ULL);
 				while (index < memberData.size()) {
 					// Get the memory structure
+					/** The underlying structure of the serialized value. */
 					struct Memory_Structure {
 						int struct_size;
 						char payload_name[MAX_NAME_CHARS]{ '\0' };
@@ -74,13 +73,14 @@ public:
 		}
 	}
 	/** Serialize a labeled pair of data into a char buffer.
-	@param	<T>				the data type to serialize (auto-deducible).
+	@tparam	T				the data type to serialize (auto-deducible).
 	@param	name			the label for the data (i.e. the variable name).
 	@param	data			the value to serialize.
 	@return					a char buffer containing serialized data. */
 	template <class T>
 	inline static std::vector<char> Serialize_Value(const std::string& name, const T& data) {
 		// For convenience sake, wrap our output data into a memory-copyable struct
+		/** The underlying structure of the serialized value. */
 		struct Memory_Structure {
 			int struct_size = (int)(sizeof(Memory_Structure));
 			char payload_name[MAX_NAME_CHARS]{ '\0' };
@@ -102,12 +102,13 @@ public:
 		return dataBuffer;
 	}
 	/** De-serialize a char buffer into a labeled pair of data.
-	@param	<T>				the data type to de-serialize.
+	@tparam	T				the data type to de-serialize.
 	@param	dataBuffer		a char buffer containing serialized data.
-	@return					an optional pair containing a label and value <T> if successful. */
+	@return					an optional pair containing a label and value T if successful. */
 	template <class T>
 	static std::optional<std::pair<std::string, T>> Deserialize_Value(const std::vector<char>& dataBuffer) {
 		// The expected structure of the input data
+		/** The underlying structure of the serialized value. */
 		struct Memory_Structure {
 			const int struct_size = (int)sizeof(Memory_Structure);
 			char payload_name[MAX_NAME_CHARS]{ '\0' };
@@ -133,7 +134,7 @@ public:
 private:
 	// Private Methods
 	/** Given a filled member-map, search for the input label and assign the mapped value.
-	@param	<FirstMember, ...RemainingMembers>	variadic list of any value to de-serialized (auto-deducible).
+	@tparam	<FirstMember, ...RemainingMembers>	variadic list of any value to de-serialized (auto-deducible).
 	@param	memberMap		a map of labels to serialized data.
 	@param	first			the first value to de-serialize.
 	@param	...rest			the rest of the values to de-serialize. */
@@ -161,6 +162,7 @@ private:
 template <>
 inline std::vector<char> Serializer::Serialize_Value(const std::string& name, const std::string& data) {
 	// For convenience sake, wrap our output data into a memory-copyable struct
+	/** The underlying structure of the serialized value. */
 	struct Memory_Structure {
 		int struct_size = (int)sizeof(Memory_Structure);
 		char payload_name[MAX_NAME_CHARS]{ '\0' };
@@ -187,6 +189,7 @@ inline std::vector<char> Serializer::Serialize_Value(const std::string& name, co
 template <>
 inline std::optional<std::pair<std::string, std::string>> Serializer::Deserialize_Value(const std::vector<char>& dataBuffer) {
 	// The expected structure of the input data
+	/** The underlying structure of the serialized value. */
 	struct Memory_Structure {
 		int struct_size = (int)sizeof(Memory_Structure);
 		char payload_name[MAX_NAME_CHARS]{ '\0' };

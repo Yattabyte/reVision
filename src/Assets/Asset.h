@@ -44,7 +44,7 @@ public:
 	@return				true if this asset has finished finalizing, false otherwise. */
 	bool ready() const noexcept;
 	/** Check if an input variadic list of shared assets have all completed finalizing. 
-	@param	<>			variadic list of assets to check (auto-deducible).
+	@tparam	<>			variadic list of assets to check (auto-deducible).
 	@param	firstAsset	the first value to check.
 	@param	...rest		the rest of the values to check.
 	@return				true if all the assets have finished finalizing, false otherwise. */

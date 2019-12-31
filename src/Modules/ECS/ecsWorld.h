@@ -72,7 +72,7 @@ public:
 	@return						pointer to the found entity on success, nullptr on failure. */
 	std::shared_ptr<ecsEntity> getEntity(const EntityHandle& UUID) const;
 	/** Try to find a list of entities matching the UUID's provided.
-	@param	UUIDs				list of target entity UUID's.
+	@param	uuids				list of target entity UUID's.
 	@return						list of pointers to the found entities. Dimensions may not match input list (nullptr's omitted). */
 	std::vector<std::shared_ptr<ecsEntity>> getEntities(const std::vector<EntityHandle>& uuids) const;
 	/** Retrieve a list of entity handles, given a root node.
@@ -80,7 +80,7 @@ public:
 	@return						a vector of all level entities. */
 	std::vector<EntityHandle> getEntityHandles(const EntityHandle& rootHandle) const;
 	/** Try to retrieve a component of a specific type from an entity matching the handle supplied.
-	@param	<T>					the category of component being retrieved.
+	@tparam	T					the category of component being retrieved.
 	@param	entityHandle		handle to the entity to retrieve from.
 	@return						the specific component of the type requested on success, nullptr otherwise. */
 	template <typename T>
@@ -95,7 +95,7 @@ public:
 	@return						the specific component on success, nullptr otherwise. */
 	ecsBaseComponent* getComponent(const EntityHandle& entityHandle, const ComponentID& componentID) const;
 	/** Try to retrieve a component of a specific type matching the UUID provided.
-	@param	<T>					the category of component being retrieved.
+	@tparam	T					the category of component being retrieved.
 	@param	componentHandle		the target component's handle.
 	@return						the specific component of the type requested on success, nullptr otherwise. */
 	template <typename T>
@@ -105,7 +105,7 @@ public:
 		return nullptr;
 	}
 	/** Try to find a component matching the UUID provided.
-	@param	UUID				the target component's UUID.
+	@param	componentHandle		the target component's UUID.
 	@return						pointer to the found component on success, nullptr on failure. */
 	ecsBaseComponent* getComponent(const ComponentHandle& componentHandle) const;
 	/** Retrieve the component from an entity matching the class specified.

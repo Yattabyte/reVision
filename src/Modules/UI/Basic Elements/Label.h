@@ -14,6 +14,7 @@
 class Label final : public UI_Element {
 public:
 	// Public Interaction Enums
+	/** Enumerations for interacting with this element. */
 	enum class Interact : int {
 		on_textChanged = (int)UI_Element::Interact::last_interact_index
 	};
@@ -40,25 +41,25 @@ public:
 
 	// Public Methods
 	/** Set this label element's text.
-	@param	text	the text to use. */
+	@param	text		the text to use. */
 	void setText(const std::string& text);
 	/** Retrieve this label's text.
-	@return	the text this label uses. */
+	@return				the text this label uses. */
 	std::string getText() const;
 	/** Set this label element's text scaling factor.
-	@param	text	the new scaling factor to use. */
+	@param	textScale	the new scaling factor to use. */
 	void setTextScale(const float& textScale) noexcept;
 	/** Retrieve this label's text scaling factor.
-	@return	the text scaling factor. */
+	@return				the text scaling factor. */
 	float getTextScale() const noexcept;
 	/** Set this label's color.
-	@param	text	the new color to render with. */
+	@param	color		the new color to render with. */
 	void setColor(const glm::vec3& color) noexcept;
 	/** Retrieve this label's color.
-	@return	the color used by this element. */
+	@return				the color used by this element. */
 	glm::vec3 getColor() const noexcept;
 	/** Set this label element's alignment.
-	@param	text	the alignment (left, center, right). */
+	@param	alignment	the alignment (left, center, right). */
 	void setAlignment(const Alignment& alignment) noexcept;
 	/** Retrieve this label's alignment.
 	@return	the alignment. */

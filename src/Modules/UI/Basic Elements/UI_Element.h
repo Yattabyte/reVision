@@ -18,6 +18,7 @@ class Engine;
 class UI_Element {
 public:
 	// Public Interaction Enums
+	/** Enumerations for interacting with this element. */
 	enum class Interact : int {
 		on_resize,
 		on_reposition,
@@ -47,7 +48,9 @@ public:
 
 	// Public Interface Declaration
 	/** Render this element (and all sub-elements).
-	@param	transform				the transform to use. */
+	@param	deltaTime				the amount of time since last frame.
+	@param	position				the position of the element relative to its parent.
+	@param	scale				the scale of the element relative to its parent. */
 	virtual void renderElement(const float& deltaTime, const glm::vec2& position = glm::vec2(0.0f), const glm::vec2& scale = glm::vec2(1.0f));
 	/** Applies a mouse action across this UI element.
 	@param	mouseEvent				the mouse event occurring. */
@@ -112,7 +115,7 @@ public:
 	@param	width				the minimum width to use. */
 	void setMinWidth(const float& width);
 	/** Set the minimum height of this element.
-	@param	width				the minimum height to use. */
+	@param	height				the minimum height to use. */
 	void setMinHeight(const float& height);
 	/** Set this element as visible or not.
 	@param	visible				whether or not this element should be visible. */
@@ -121,7 +124,7 @@ public:
 	@return						if this element is visible. */
 	bool getVisible() const noexcept;
 	/** Set this element as enabled or not.
-	@param	visible				whether or not this element should be enabled. */
+	@param	enabled				whether or not this element should be enabled. */
 	void setEnabled(const bool& enabled) noexcept;
 	/** Retrieve the enabled state of this element.
 	@return						if this element is enabled. */

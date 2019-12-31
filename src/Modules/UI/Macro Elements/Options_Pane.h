@@ -28,8 +28,11 @@ protected:
 	/** Add an option to the options menu.
 	@param	engine		reference to the engine to use. 
 	@param	element		the element to add to the options menu.
+	@param	ratio		the ratio of how large this option should be.
 	@param	text		the text to title the option.
-	@param	description	the text to describe the option. */
+	@param	description	the text to describe the option. 
+	@param	eventType	the event ID to watch for, calling the callback when changed.
+	@param	callback	the callback function to call when the event fires. */
 	void addOption(Engine& engine, const std::shared_ptr<UI_Element>& element, const float& ratio, const std::string& text, const std::string& description, const int& eventType, const std::function<void()>& callback);
 
 

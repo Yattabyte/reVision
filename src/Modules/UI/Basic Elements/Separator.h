@@ -24,7 +24,7 @@ public:
 
 	// Public Methods
 	/** Set this element's color.
-	@param	text	the new color to render with. */
+	@param	color	the new color to render with. */
 	void setColor(const glm::vec4& color) noexcept;
 	/** Retrieve this element's color.
 	@return			the color used by this element. */

@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0079 NEW)
 include(ExternalProject)
-project(reVision VERSION 4.20.20 DESCRIPTION "Video game engine project.")
+project(reVision VERSION 4.20.21 DESCRIPTION "Video game engine project.")
 
 
 # Get dependency directory locations from the user
@@ -374,6 +374,7 @@ if (DOXYGEN_FOUND)
 		set(DOXYGEN_BUILTIN_STL_SUPPORT YES)
 		set(DOXYGEN_JAVADOC_AUTOBRIEF YES)
 		set(DOXYGEN_USE_MDFILE_AS_MAINPAGE ${PROJECT_SOURCE_DIR}/README.md)
+		set(DOXYGEN_EXCLUDE ${PROJECT_SOURCE_DIR}/external/)
 		doxygen_add_docs(Documentation ${PROJECT_SOURCE_DIR} COMMENT "Generate docs")
 	endif (GENERATE_DOCS)
 endif (DOXYGEN_FOUND)

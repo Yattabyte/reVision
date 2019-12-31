@@ -14,10 +14,12 @@
 
 
 constexpr static const char selectedComponentName[] = "Selected_Component";
+/** Component labeling an entity as "selected by the user". */
 struct Selected_Component final : public ecsComponent<Selected_Component, selectedComponentName> {
 };
 
 constexpr static const char transformName[] = "Transform_Component";
+/** Spatial component, defining a position, scale, and orientation, for both local space and world space. */
 struct Transform_Component final : public ecsComponent<Transform_Component, transformName> {
 	Transform m_localTransform, m_worldTransform;
 
@@ -30,10 +32,12 @@ struct Transform_Component final : public ecsComponent<Transform_Component, tran
 };
 
 constexpr static const char playerSpawnName[] = "PlayerSpawn_Component";
+/** Attribute for entity defining it as a player spawn point. */
 struct PlayerSpawn_Component final : public ecsComponent<PlayerSpawn_Component, playerSpawnName> {
 };
 
 constexpr static const char player3DName[] = "Player3D_Component";
+/** Attribute defining an entity as a player. */
 struct Player3D_Component final : public ecsComponent<Player3D_Component, player3DName> {
 	glm::vec3 m_rotation = glm::vec3(0.0f);
 
@@ -46,6 +50,7 @@ struct Player3D_Component final : public ecsComponent<Player3D_Component, player
 };
 
 constexpr static const char cameraName[] = "Camera_Component";
+/** Component adding a camera. */
 struct Camera_Component final : public ecsComponent<Camera_Component, cameraName> {
 	Camera m_camera;
 	float m_updateTime = 0.0f;
@@ -59,12 +64,13 @@ struct Camera_Component final : public ecsComponent<Camera_Component, cameraName
 };
 
 constexpr static const char boundingSphereName[] = "BoundingSphere_Component";
+/** Component containing bounding information, only used so far for visual occlusion. */
 struct BoundingSphere_Component final : public ecsComponent<BoundingSphere_Component, boundingSphereName>{
 	glm::vec3 m_positionOffset = glm::vec3(0.0f);
 	float m_radius = 1.0f;
 	enum class CameraCollision {
 		OUTSIDE, INSIDE
-	} m_cameraCollision = CameraCollision::OUTSIDE;
+	} m_cameraCollision = CameraCollision::OUTSIDE; // Enumeration for when the user's camera collides with this
 
 	inline std::vector<char> serialize() {
 		return Serializer::Serialize_Set(
@@ -83,11 +89,12 @@ struct BoundingSphere_Component final : public ecsComponent<BoundingSphere_Compo
 };
 
 constexpr static const char boundingBoxName[] = "BoundingBox_Component";
+/** Component containing bounding information, only used so far for visual occlusion. */
 struct BoundingBox_Component final : public ecsComponent<BoundingBox_Component, boundingBoxName>{
 	glm::vec3 m_positionOffset = glm::vec3(0.0f), m_extent = glm::vec3(0), m_min = glm::vec3(0.0f), m_max = glm::vec3(0.0f);
 	enum class CameraCollision {
 		OUTSIDE, INSIDE
-	} m_cameraCollision = CameraCollision::OUTSIDE;
+	} m_cameraCollision = CameraCollision::OUTSIDE; // Enumeration for when the user's camera collides with this
 
 	inline std::vector<char> serialize() {
 		return Serializer::Serialize_Set(
@@ -110,6 +117,7 @@ struct BoundingBox_Component final : public ecsComponent<BoundingBox_Component, 
 };
 
 constexpr static const char colliderName[] = "Collider_Component";
+/** Component allowing for 3D physics. */
 struct Collider_Component final : public ecsComponent<Collider_Component, colliderName> {
 	// Serialized Attributes
 	std::string m_modelName;
@@ -143,6 +151,7 @@ struct Collider_Component final : public ecsComponent<Collider_Component, collid
 };
 
 constexpr static const char propName[] = "Prop_Component";
+/** Component adding a 3D model for rendering. */
 struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 	// Serialized Attributes
 	std::string m_modelName;
@@ -169,6 +178,7 @@ struct Prop_Component final : public ecsComponent<Prop_Component, propName> {
 };
 
 constexpr static const char skeletonName[] = "Skeleton_Component";
+/** Component allowing for an entity with a Prop to have skeletal animation. */
 struct Skeleton_Component final : public ecsComponent<Skeleton_Component, skeletonName> {
 	// Serialized Attributes
 	int m_animation = 0;
@@ -194,6 +204,7 @@ struct Skeleton_Component final : public ecsComponent<Skeleton_Component, skelet
 };
 
 constexpr static const char shadowName[] = "Shadow_Component";
+/** Component allowing an entity with a light to have shadows. */
 struct Shadow_Component final : public ecsComponent<Shadow_Component, shadowName> {
 	int m_shadowSpot = -1;
 	std::vector<Camera> m_cameras;
@@ -201,10 +212,11 @@ struct Shadow_Component final : public ecsComponent<Shadow_Component, shadowName
 };
 
 constexpr static const char lightName[] = "Light_Component";
+/** Component allowing an entity to emit light. */
 struct Light_Component final : public ecsComponent<Light_Component, lightName> {
 	enum class Light_Type : int {
 		DIRECTIONAL, POINT, SPOT
-	} m_type = Light_Type::DIRECTIONAL;
+	} m_type = Light_Type::DIRECTIONAL; // Class of the light
 	glm::vec3 m_color = glm::vec3(1.0f);
 	float m_intensity = 1.0f;
 	float m_radius = 1.0f;
@@ -231,6 +243,7 @@ struct Light_Component final : public ecsComponent<Light_Component, lightName> {
 };
 
 constexpr static const char reflectorName[] = "Reflector_Component";
+/** Component giving an entity a cubemap reflection. */
 struct Reflector_Component final : public ecsComponent<Reflector_Component, reflectorName> {
 	std::vector<Camera> m_cameras;
 	std::vector<float> m_updateTimes;
