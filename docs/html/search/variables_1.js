@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['interpolatekeys',['InterpolateKeys',['../class_skeletal___animation.html#a8560b61402e00c4dd2097e056545bcca',1,'Skeletal_Animation']]]
+  ['name',['Name',['../structecs_component.html#a46597cf0d4601b7c0e9e6fecceaf7c86',1,'ecsComponent']]]
 ];

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -67,7 +67,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_shared___shader___pkg-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Shared_Shader_Pkg Class Reference</div>  </div>
+<div class="title">Shared_Shader_Pkg Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -87,9 +87,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aff303b17a34b26593276d1f8de42261e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___shader___pkg.html#aff303b17a34b26593276d1f8de42261e">Shared_Shader_Pkg</a> ()=default</td></tr>
 <tr class="memdesc:aff303b17a34b26593276d1f8de42261e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an empty asset.  <a href="#aff303b17a34b26593276d1f8de42261e">More...</a><br /></td></tr>
 <tr class="separator:aff303b17a34b26593276d1f8de42261e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a397a2b1e96da43943220d98edae73027"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___shader___pkg.html#a397a2b1e96da43943220d98edae73027">Shared_Shader_Pkg</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename, const bool &amp;threaded=true)</td></tr>
-<tr class="memdesc:a397a2b1e96da43943220d98edae73027"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins the creation process for this asset.  <a href="#a397a2b1e96da43943220d98edae73027">More...</a><br /></td></tr>
-<tr class="separator:a397a2b1e96da43943220d98edae73027"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b8d02bf5d09547c3f8c79ad146ddaa6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___shader___pkg.html#a8b8d02bf5d09547c3f8c79ad146ddaa6">Shared_Shader_Pkg</a> (<a class="el" href="class_engine.html">Engine</a> &amp;engine, const std::string &amp;filename, const bool &amp;threaded=true)</td></tr>
+<tr class="memdesc:a8b8d02bf5d09547c3f8c79ad146ddaa6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins the creation process for this asset.  <a href="#a8b8d02bf5d09547c3f8c79ad146ddaa6">More...</a><br /></td></tr>
+<tr class="separator:a8b8d02bf5d09547c3f8c79ad146ddaa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Shared version of a <a class="el" href="class_shader___pkg.html" title="An accessory asset for loading shader code chunks.">Shader_Pkg</a> asset. </p>
@@ -122,19 +122,16 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a397a2b1e96da43943220d98edae73027"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a397a2b1e96da43943220d98edae73027">&#9670;&nbsp;</a></span>Shared_Shader_Pkg() <span class="overload">[2/2]</span></h2>
+<a id="a8b8d02bf5d09547c3f8c79ad146ddaa6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b8d02bf5d09547c3f8c79ad146ddaa6">&#9670;&nbsp;</a></span>Shared_Shader_Pkg() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Shared_Shader_Pkg::Shared_Shader_Pkg </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> &amp;&#160;</td>
           <td class="paramname"><em>engine</em>, </td>
         </tr>
         <tr>
@@ -155,17 +152,12 @@ Public Member Functions</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Begins the creation process for this asset. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">engine</td><td>the engine being used. </td></tr>
+    <tr><td class="paramname">engine</td><td>reference to the engine to use. </td></tr>
     <tr><td class="paramname">filename</td><td>the filename to use. </td></tr>
     <tr><td class="paramname">threaded</td><td>create in a separate thread. </td></tr>
   </table>

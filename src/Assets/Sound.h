@@ -5,23 +5,23 @@
 #include "Assets/Asset.h"
 
 
-class Engine;
+// Forward Declarations
 class Sound;
 class SoundObj;
 
 /** Shared version of a Sound asset.
 Responsible for the creation, containing, and sharing of assets. */
-class Shared_Sound : public std::shared_ptr<Sound> {
+class Shared_Sound final : public std::shared_ptr<Sound> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Sound() = default;
+	inline Shared_Sound() noexcept = default;
 	/** Begins the creation process for this asset.
-	@param	engine			the engine being used.
+	@param	engine			reference to the engine to use.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Sound(Engine * engine, const std::string & filename, const bool & threaded = true);
+	explicit Shared_Sound(Engine& engine, const std::string& filename, const bool& threaded = true);
 };
 
 /** A sound byte object.
@@ -29,22 +29,33 @@ Represents a sound file loaded from disk.
 @note	requires the SoLoud library to use. */
 class Sound : public Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Sound. */
 	~Sound();
 	/** Construct the Sound.
-	@param	engine			the engine to use.
+	@param	engine			reference to the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Sound(Engine * engine, const std::string & filename);
+	Sound(Engine& engine, const std::string& filename);
 
 
 	// Public Attributes
-	SoundObj * m_soundObj;
+	SoundObj* m_soundObj = nullptr;
 
 
 protected:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Sound(Sound&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Sound(const Sound&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline Sound& operator =(Sound&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline Sound& operator =(const Sound&) noexcept = delete;
+
+
 	// Private Interface Implementation
-	virtual void initialize() override;
+	void initialize() final;
 
 
 	// Private Attributes

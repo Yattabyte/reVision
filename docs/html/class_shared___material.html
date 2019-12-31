@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -67,7 +67,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_shared___material-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Shared_Material Class Reference</div>  </div>
+<div class="title">Shared_Material Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -87,9 +87,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a31d7892154d8ca8273d874594b5abd1f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___material.html#a31d7892154d8ca8273d874594b5abd1f">Shared_Material</a> ()=default</td></tr>
 <tr class="memdesc:a31d7892154d8ca8273d874594b5abd1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an empty asset.  <a href="#a31d7892154d8ca8273d874594b5abd1f">More...</a><br /></td></tr>
 <tr class="separator:a31d7892154d8ca8273d874594b5abd1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68bf8f1abf872bafde6d20a6d289267f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___material.html#a68bf8f1abf872bafde6d20a6d289267f">Shared_Material</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename, const std::vector&lt; std::string &gt; &amp;textures, const bool &amp;threaded=true)</td></tr>
-<tr class="memdesc:a68bf8f1abf872bafde6d20a6d289267f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins the creation process for this asset.  <a href="#a68bf8f1abf872bafde6d20a6d289267f">More...</a><br /></td></tr>
-<tr class="separator:a68bf8f1abf872bafde6d20a6d289267f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af97d522cb20616384d95a75438e42a92"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___material.html#af97d522cb20616384d95a75438e42a92">Shared_Material</a> (<a class="el" href="class_engine.html">Engine</a> &amp;engine, const std::string &amp;filename, const std::vector&lt; std::string &gt; &amp;textures, const bool &amp;threaded=true)</td></tr>
+<tr class="memdesc:af97d522cb20616384d95a75438e42a92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins the creation process for this asset.  <a href="#af97d522cb20616384d95a75438e42a92">More...</a><br /></td></tr>
+<tr class="separator:af97d522cb20616384d95a75438e42a92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Shared version of a <a class="el" href="class_material.html" title="A collection of textures which together form 1 or more PBR surfaces.">Material</a> asset. </p>
@@ -122,8 +122,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a68bf8f1abf872bafde6d20a6d289267f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a68bf8f1abf872bafde6d20a6d289267f">&#9670;&nbsp;</a></span>Shared_Material() <span class="overload">[2/2]</span></h2>
+<a id="af97d522cb20616384d95a75438e42a92"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af97d522cb20616384d95a75438e42a92">&#9670;&nbsp;</a></span>Shared_Material() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -134,7 +134,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">Shared_Material::Shared_Material </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> &amp;&#160;</td>
           <td class="paramname"><em>engine</em>, </td>
         </tr>
         <tr>
@@ -171,7 +171,7 @@ Public Member Functions</h2></td></tr>
 <p>Begins the creation process for this asset. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">engine</td><td>the engine being used. </td></tr>
+    <tr><td class="paramname">engine</td><td>reference to the engine to use. </td></tr>
     <tr><td class="paramname">filename</td><td>the filename to use. </td></tr>
     <tr><td class="paramname">textures</td><td>the textures to use. </td></tr>
     <tr><td class="paramname">threaded</td><td>create in a separate thread. </td></tr>

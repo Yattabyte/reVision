@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,35 +70,42 @@ $(function() {
 <div class="title">SingleVertex Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Container defining a single vertex.  
+ <a href="struct_single_vertex.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_mesh___i_o_8h_source.html">Mesh_IO.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ac4b9ab6f552e4d8d2adcacc998ce3e4e"><td class="memItemLeft" align="right" valign="top"><a id="ac4b9ab6f552e4d8d2adcacc998ce3e4e"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>vertex</b></td></tr>
+glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>vertex</b> = glm::vec3(0.0f)</td></tr>
 <tr class="separator:ac4b9ab6f552e4d8d2adcacc998ce3e4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a248f4b7e9fe428fd47e40c3f356a3c1b"><td class="memItemLeft" align="right" valign="top"><a id="a248f4b7e9fe428fd47e40c3f356a3c1b"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>normal</b></td></tr>
+glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>normal</b> = glm::vec3(0.0f)</td></tr>
 <tr class="separator:a248f4b7e9fe428fd47e40c3f356a3c1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28a7cf8c4daa6b62a5c61fec308462d3"><td class="memItemLeft" align="right" valign="top"><a id="a28a7cf8c4daa6b62a5c61fec308462d3"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>tangent</b></td></tr>
+glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>tangent</b> = glm::vec3(0.0f)</td></tr>
 <tr class="separator:a28a7cf8c4daa6b62a5c61fec308462d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40175443566c3dfd936b81d8896c21ec"><td class="memItemLeft" align="right" valign="top"><a id="a40175443566c3dfd936b81d8896c21ec"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>bitangent</b></td></tr>
+glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>bitangent</b> = glm::vec3(0.0f)</td></tr>
 <tr class="separator:a40175443566c3dfd936b81d8896c21ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad27c2f787e3972ac61c0ab0c78c0db7e"><td class="memItemLeft" align="right" valign="top"><a id="ad27c2f787e3972ac61c0ab0c78c0db7e"></a>
-glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>uv</b></td></tr>
+glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>uv</b> = glm::vec2(0.0f)</td></tr>
 <tr class="separator:ad27c2f787e3972ac61c0ab0c78c0db7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a844f887067e5312d3d9b4a6e64d9bb99"><td class="memItemLeft" align="right" valign="top"><a id="a844f887067e5312d3d9b4a6e64d9bb99"></a>
 GLuint&#160;</td><td class="memItemRight" valign="bottom"><b>matID</b> = 0</td></tr>
 <tr class="separator:a844f887067e5312d3d9b4a6e64d9bb99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeafcfae75f9d817cd9ff11d17b88568d"><td class="memItemLeft" align="right" valign="top"><a id="aeafcfae75f9d817cd9ff11d17b88568d"></a>
-glm::ivec4&#160;</td><td class="memItemRight" valign="bottom"><b>boneIDs</b></td></tr>
+glm::ivec4&#160;</td><td class="memItemRight" valign="bottom"><b>boneIDs</b> = glm::ivec4(0)</td></tr>
 <tr class="separator:aeafcfae75f9d817cd9ff11d17b88568d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a911b6eae54c0a2ddcad7e7218ce43fbe"><td class="memItemLeft" align="right" valign="top"><a id="a911b6eae54c0a2ddcad7e7218ce43fbe"></a>
-glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><b>weights</b></td></tr>
+glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><b>weights</b> = glm::vec4(0.0f)</td></tr>
 <tr class="separator:a911b6eae54c0a2ddcad7e7218ce43fbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Container defining a single vertex. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/Utilities/IO/<a class="el" href="_mesh___i_o_8h_source.html">Mesh_IO.h</a></li>
 </ul>
 </div><!-- contents -->

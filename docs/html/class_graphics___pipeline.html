@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -79,21 +79,18 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af233e54ccf51d57c59d5e17a5565a7e0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#af233e54ccf51d57c59d5e17a5565a7e0">~Graphics_Pipeline</a> ()=default</td></tr>
-<tr class="memdesc:af233e54ccf51d57c59d5e17a5565a7e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this rendering pipeline.  <a href="#af233e54ccf51d57c59d5e17a5565a7e0">More...</a><br /></td></tr>
-<tr class="separator:af233e54ccf51d57c59d5e17a5565a7e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ca82c7e85b6a0cf9a8146230a384901"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#a0ca82c7e85b6a0cf9a8146230a384901">Graphics_Pipeline</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::shared_ptr&lt; <a class="el" href="class_camera.html">Camera</a> &gt; &amp;clientCamera, const std::shared_ptr&lt; std::vector&lt; <a class="el" href="class_camera.html">Camera</a> * &gt;&gt; &amp;cameras, const std::shared_ptr&lt; <a class="el" href="class_r_h___volume.html">RH_Volume</a> &gt; &amp;rhVolume, <a class="el" href="class_e_c_s_system_list.html">ECSSystemList</a> &amp;auxSystems)</td></tr>
-<tr class="memdesc:a0ca82c7e85b6a0cf9a8146230a384901"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a PBR rendering pipeline.  <a href="#a0ca82c7e85b6a0cf9a8146230a384901">More...</a><br /></td></tr>
-<tr class="separator:a0ca82c7e85b6a0cf9a8146230a384901"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65599cd6f029ee42e8085efd61a79261"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#a65599cd6f029ee42e8085efd61a79261">prepareForNextFrame</a> (const float &amp;deltaTime)</td></tr>
-<tr class="memdesc:a65599cd6f029ee42e8085efd61a79261"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare rendering techniques for the next frame, swapping buffers and resetting data.  <a href="#a65599cd6f029ee42e8085efd61a79261">More...</a><br /></td></tr>
-<tr class="separator:a65599cd6f029ee42e8085efd61a79261"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c5339a975acdded60475ec6f177fd6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#a2c5339a975acdded60475ec6f177fd6a">update</a> (const float &amp;deltaTime)</td></tr>
-<tr class="memdesc:a2c5339a975acdded60475ec6f177fd6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update rendering techniques, performing any necessary pre-passes.  <a href="#a2c5339a975acdded60475ec6f177fd6a">More...</a><br /></td></tr>
-<tr class="separator:a2c5339a975acdded60475ec6f177fd6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:affcf66be36d94a5a4762baf9a1f6c368"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#affcf66be36d94a5a4762baf9a1f6c368">render</a> (const float &amp;deltaTime, const std::shared_ptr&lt; <a class="el" href="struct_viewport.html">Viewport</a> &gt; &amp;viewport, const std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;perspectives, const unsigned int &amp;categories=Graphics_Technique::ALL)</td></tr>
-<tr class="memdesc:affcf66be36d94a5a4762baf9a1f6c368"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply this lighting technique.  <a href="#affcf66be36d94a5a4762baf9a1f6c368">More...</a><br /></td></tr>
-<tr class="separator:affcf66be36d94a5a4762baf9a1f6c368"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aedaa3da3e4ad670c4de1adffd952221e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#aedaa3da3e4ad670c4de1adffd952221e">Graphics_Pipeline</a> (<a class="el" href="class_engine.html">Engine</a> &amp;engine, <a class="el" href="class_camera.html">Camera</a> &amp;clientCamera)</td></tr>
+<tr class="memdesc:aedaa3da3e4ad670c4de1adffd952221e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a PBR rendering pipeline.  <a href="#aedaa3da3e4ad670c4de1adffd952221e">More...</a><br /></td></tr>
+<tr class="separator:aedaa3da3e4ad670c4de1adffd952221e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50282b44cbade8dd38b044e62b1ff449"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; int, int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#a50282b44cbade8dd38b044e62b1ff449">begin</a> (const float &amp;deltaTime, <a class="el" href="classecs_world.html">ecsWorld</a> &amp;world, std::vector&lt; <a class="el" href="class_camera.html">Camera</a> &gt; &amp;cameras)</td></tr>
+<tr class="memdesc:a50282b44cbade8dd38b044e62b1ff449"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare the pipeline for rendering.  <a href="#a50282b44cbade8dd38b044e62b1ff449">More...</a><br /></td></tr>
+<tr class="separator:a50282b44cbade8dd38b044e62b1ff449"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa28ed97ab37908a7946f79a89c137f96"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#aa28ed97ab37908a7946f79a89c137f96">end</a> (const float &amp;deltaTime)</td></tr>
+<tr class="memdesc:aa28ed97ab37908a7946f79a89c137f96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flush the pipeline after rendering.  <a href="#aa28ed97ab37908a7946f79a89c137f96">More...</a><br /></td></tr>
+<tr class="separator:aa28ed97ab37908a7946f79a89c137f96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8643dfa25a486fcdf2733a7e87f60ef6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#a8643dfa25a486fcdf2733a7e87f60ef6">render</a> (const float &amp;deltaTime, <a class="el" href="struct_viewport.html">Viewport</a> &amp;viewport, const std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;perspectives, const unsigned int &amp;categories=(unsigned int) Graphics_Technique::Technique_Category::ALL)</td></tr>
+<tr class="memdesc:a8643dfa25a486fcdf2733a7e87f60ef6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply this lighting technique.  <a href="#a8643dfa25a486fcdf2733a7e87f60ef6">More...</a><br /></td></tr>
+<tr class="separator:a8643dfa25a486fcdf2733a7e87f60ef6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7030ac0c52210baae81d75835bbad877"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#a7030ac0c52210baae81d75835bbad877">cullShadows</a> (const float &amp;deltaTime, const std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;perspectives)</td></tr>
 <tr class="memdesc:a7030ac0c52210baae81d75835bbad877"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use geometry techniques to cull shadows.  <a href="#a7030ac0c52210baae81d75835bbad877">More...</a><br /></td></tr>
 <tr class="separator:a7030ac0c52210baae81d75835bbad877"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -103,54 +100,78 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a6f1af017071cb5a7a5fcd361031b2c09"><td class="memItemLeft" align="right" valign="top"><a id="a6f1af017071cb5a7a5fcd361031b2c09"></a>
-<a class="el" href="class_engine.html">Engine</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>m_engine</b> = nullptr</td></tr>
-<tr class="separator:a6f1af017071cb5a7a5fcd361031b2c09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96e80dde95735a1100da1d024d19c079"><td class="memItemLeft" align="right" valign="top"><a id="a96e80dde95735a1100da1d024d19c079"></a>
-std::vector&lt; <a class="el" href="class_geometry___technique.html">Geometry_Technique</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_geometryTechniques</b></td></tr>
-<tr class="separator:a96e80dde95735a1100da1d024d19c079"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3aec416abc75da3e9c48b1cf91b800b"><td class="memItemLeft" align="right" valign="top"><a id="ae3aec416abc75da3e9c48b1cf91b800b"></a>
-std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Technique</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_lightingTechniques</b></td></tr>
-<tr class="separator:ae3aec416abc75da3e9c48b1cf91b800b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f66adb00fcfd7c6895986db0947100a"><td class="memItemLeft" align="right" valign="top"><a id="a7f66adb00fcfd7c6895986db0947100a"></a>
-std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Technique</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_effectTechniques</b></td></tr>
-<tr class="separator:a7f66adb00fcfd7c6895986db0947100a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc9910c5073fefdf911f440ea2d20408"><td class="memItemLeft" align="right" valign="top"><a id="acc9910c5073fefdf911f440ea2d20408"></a>
-std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Technique</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_allTechniques</b></td></tr>
-<tr class="separator:acc9910c5073fefdf911f440ea2d20408"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9da70441c8bf72c336a488df7632a10f"><td class="memItemLeft" align="right" valign="top"><a id="a9da70441c8bf72c336a488df7632a10f"></a>
+<a class="el" href="class_engine.html">Engine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_engine</b></td></tr>
+<tr class="separator:a9da70441c8bf72c336a488df7632a10f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc67d08ec247df5573c7afb557581ae7"><td class="memItemLeft" align="right" valign="top"><a id="acc67d08ec247df5573c7afb557581ae7"></a>
+<a class="el" href="class_prop___technique.html">Prop_Technique</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_propView</b></td></tr>
+<tr class="separator:acc67d08ec247df5573c7afb557581ae7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae11f5d266406bc2d4dc786e952d490e2"><td class="memItemLeft" align="right" valign="top"><a id="ae11f5d266406bc2d4dc786e952d490e2"></a>
+<a class="el" href="class_shadow___technique.html">Shadow_Technique</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_shadowing</b></td></tr>
+<tr class="separator:ae11f5d266406bc2d4dc786e952d490e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54185240e52f3e3ed2ae6e96e68873be"><td class="memItemLeft" align="right" valign="top"><a id="a54185240e52f3e3ed2ae6e96e68873be"></a>
+<a class="el" href="class_direct___technique.html">Direct_Technique</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_directLighting</b></td></tr>
+<tr class="separator:a54185240e52f3e3ed2ae6e96e68873be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe161bdd84598f7080238b846e31ab5a"><td class="memItemLeft" align="right" valign="top"><a id="afe161bdd84598f7080238b846e31ab5a"></a>
+<a class="el" href="class_indirect___technique.html">Indirect_Technique</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_indirectLighting</b></td></tr>
+<tr class="separator:afe161bdd84598f7080238b846e31ab5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a479321ae22554c672bc40d9884f65e2b"><td class="memItemLeft" align="right" valign="top"><a id="a479321ae22554c672bc40d9884f65e2b"></a>
+<a class="el" href="class_reflector___technique.html">Reflector_Technique</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_reflectorLighting</b></td></tr>
+<tr class="separator:a479321ae22554c672bc40d9884f65e2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed2c90877dcd7bf4d75ef56a5e8a07ff"><td class="memItemLeft" align="right" valign="top"><a id="aed2c90877dcd7bf4d75ef56a5e8a07ff"></a>
+<a class="el" href="class_skybox.html">Skybox</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_skybox</b></td></tr>
+<tr class="separator:aed2c90877dcd7bf4d75ef56a5e8a07ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7beed494168bd68766efd5d8cf2cd20"><td class="memItemLeft" align="right" valign="top"><a id="ad7beed494168bd68766efd5d8cf2cd20"></a>
+<a class="el" href="class_s_s_a_o.html">SSAO</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_ssao</b></td></tr>
+<tr class="separator:ad7beed494168bd68766efd5d8cf2cd20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34a0e6f56fd5ae7adb93f52239e05fa0"><td class="memItemLeft" align="right" valign="top"><a id="a34a0e6f56fd5ae7adb93f52239e05fa0"></a>
+<a class="el" href="class_s_s_r.html">SSR</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_ssr</b></td></tr>
+<tr class="separator:a34a0e6f56fd5ae7adb93f52239e05fa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab319b7dc8f21a63c72e36914af69289a"><td class="memItemLeft" align="right" valign="top"><a id="ab319b7dc8f21a63c72e36914af69289a"></a>
+<a class="el" href="class_join___reflections.html">Join_Reflections</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_joinReflections</b></td></tr>
+<tr class="separator:ab319b7dc8f21a63c72e36914af69289a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82f7e9b0ed338055c46bce059df122ce"><td class="memItemLeft" align="right" valign="top"><a id="a82f7e9b0ed338055c46bce059df122ce"></a>
+<a class="el" href="class_bloom.html">Bloom</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_bloom</b></td></tr>
+<tr class="separator:a82f7e9b0ed338055c46bce059df122ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5d00f30fd92a40ab38af0db5b4e6b2e"><td class="memItemLeft" align="right" valign="top"><a id="ab5d00f30fd92a40ab38af0db5b4e6b2e"></a>
+<a class="el" href="class_h_d_r.html">HDR</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_hdr</b></td></tr>
+<tr class="separator:ab5d00f30fd92a40ab38af0db5b4e6b2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5dd44f7e42e4621605622bc77f1b37f7"><td class="memItemLeft" align="right" valign="top"><a id="a5dd44f7e42e4621605622bc77f1b37f7"></a>
+<a class="el" href="class_f_x_a_a.html">FXAA</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_fxaa</b></td></tr>
+<tr class="separator:a5dd44f7e42e4621605622bc77f1b37f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56879402fa7464f5cb011e2d0b707aa0"><td class="memItemLeft" align="right" valign="top"><a id="a56879402fa7464f5cb011e2d0b707aa0"></a>
+<a class="el" href="class_geometry___technique.html">Geometry_Technique</a> *const&#160;</td><td class="memItemRight" valign="bottom"><b>m_geometryTechniques</b> [1] = {&amp;m_propView}</td></tr>
+<tr class="separator:a56879402fa7464f5cb011e2d0b707aa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab02b5c6eb70125dc1b593dbc849b6c37"><td class="memItemLeft" align="right" valign="top"><a id="ab02b5c6eb70125dc1b593dbc849b6c37"></a>
+<a class="el" href="class_graphics___technique.html">Graphics_Technique</a> *const&#160;</td><td class="memItemRight" valign="bottom"><b>m_lightingTechniques</b> [5] = {&amp;m_shadowing, &amp;m_directLighting, &amp;m_indirectLighting, &amp;m_skybox, &amp;m_reflectorLighting}</td></tr>
+<tr class="separator:ab02b5c6eb70125dc1b593dbc849b6c37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8bdd99e384b31a08cbbce7125702c3c"><td class="memItemLeft" align="right" valign="top"><a id="af8bdd99e384b31a08cbbce7125702c3c"></a>
+<a class="el" href="class_graphics___technique.html">Graphics_Technique</a> *const&#160;</td><td class="memItemRight" valign="bottom"><b>m_effectTechniques</b> [6] = {&amp;m_ssao, &amp;m_ssr, &amp;m_joinReflections, &amp;m_bloom, &amp;m_hdr, &amp;m_fxaa}</td></tr>
+<tr class="separator:af8bdd99e384b31a08cbbce7125702c3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5114bfcd35fc41d730f4c782a66aceb9"><td class="memItemLeft" align="right" valign="top"><a id="a5114bfcd35fc41d730f4c782a66aceb9"></a>
+<a class="el" href="class_graphics___technique.html">Graphics_Technique</a> *const&#160;</td><td class="memItemRight" valign="bottom"><b>m_allTechniques</b> [12] = {&amp;m_propView, &amp;m_shadowing, &amp;m_directLighting, &amp;m_indirectLighting, &amp;m_skybox, &amp;m_reflectorLighting, &amp;m_ssao, &amp;m_ssr, &amp;m_joinReflections, &amp;m_bloom, &amp;m_hdr, &amp;m_fxaa }</td></tr>
+<tr class="separator:a5114bfcd35fc41d730f4c782a66aceb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72299838c7322d250c48bbe58b7a074e"><td class="memItemLeft" align="right" valign="top"><a id="a72299838c7322d250c48bbe58b7a074e"></a>
+std::vector&lt; <a class="el" href="class_camera.html">Camera</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_sceneCameras</b></td></tr>
+<tr class="separator:a72299838c7322d250c48bbe58b7a074e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1b149c28a4a3ed7a701afa46403d8eb"><td class="memItemLeft" align="right" valign="top"><a id="af1b149c28a4a3ed7a701afa46403d8eb"></a>
+<a class="el" href="class_g_l___vector.html">GL_Vector</a>&lt; <a class="el" href="struct_camera_1_1_g_p_u_data.html">Camera::GPUData</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_cameraBuffer</b></td></tr>
+<tr class="separator:af1b149c28a4a3ed7a701afa46403d8eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4b17109e41e4d2e00a4d39d1b681b77"><td class="memItemLeft" align="right" valign="top"><a id="af4b17109e41e4d2e00a4d39d1b681b77"></a>
+<a class="el" href="classecs_system_list.html">ecsSystemList</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_worldSystems</b></td></tr>
+<tr class="separator:af4b17109e41e4d2e00a4d39d1b681b77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab83ec67cb7cec691434773bf901545f2"><td class="memItemLeft" align="right" valign="top"><a id="ab83ec67cb7cec691434773bf901545f2"></a>
+<a class="el" href="classecs_system_list.html">ecsSystemList</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_cameraSystems</b></td></tr>
+<tr class="separator:ab83ec67cb7cec691434773bf901545f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3144153cd0627aa54df106246cb89dc1"><td class="memItemLeft" align="right" valign="top"><a id="a3144153cd0627aa54df106246cb89dc1"></a>
+std::shared_ptr&lt; <a class="el" href="classecs_base_system.html">ecsBaseSystem</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_transHierachy</b></td></tr>
+<tr class="separator:a3144153cd0627aa54df106246cb89dc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represents a series of graphics rendering techniques to apply serially. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="af233e54ccf51d57c59d5e17a5565a7e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af233e54ccf51d57c59d5e17a5565a7e0">&#9670;&nbsp;</a></span>~Graphics_Pipeline()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Graphics_Pipeline::~Graphics_Pipeline </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Destroy this rendering pipeline. </p>
-
-</div>
-</div>
-<a id="a0ca82c7e85b6a0cf9a8146230a384901"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ca82c7e85b6a0cf9a8146230a384901">&#9670;&nbsp;</a></span>Graphics_Pipeline()</h2>
+<a id="aedaa3da3e4ad670c4de1adffd952221e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aedaa3da3e4ad670c4de1adffd952221e">&#9670;&nbsp;</a></span>Graphics_Pipeline()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -158,32 +179,14 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
         <tr>
           <td class="memname">Graphics_Pipeline::Graphics_Pipeline </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> &amp;&#160;</td>
           <td class="paramname"><em>engine</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_camera.html">Camera</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>clientCamera</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; std::vector&lt; <a class="el" href="class_camera.html">Camera</a> * &gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>cameras</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_r_h___volume.html">RH_Volume</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>rhVolume</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_e_c_s_system_list.html">ECSSystemList</a> &amp;&#160;</td>
-          <td class="paramname"><em>auxSystems</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_camera.html">Camera</a> &amp;&#160;</td>
+          <td class="paramname"><em>clientCamera</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -196,9 +199,8 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
 <p>Construct a PBR rendering pipeline. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">engine</td><td>the engine to use. </td></tr>
-    <tr><td class="paramname">cameras</td><td>all the cameras active in the scene. </td></tr>
-    <tr><td class="paramname">auxSystems</td><td>container to add extra render-related ecs systems to. </td></tr>
+    <tr><td class="paramname">engine</td><td>reference to the engine to use. </td></tr>
+    <tr><td class="paramname">clientCamera</td><td>the main camera. </td></tr>
   </table>
   </dd>
 </dl>
@@ -206,6 +208,51 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a50282b44cbade8dd38b044e62b1ff449"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50282b44cbade8dd38b044e62b1ff449">&#9670;&nbsp;</a></span>begin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; std::pair&lt; int, int &gt; &gt; Graphics_Pipeline::begin </td>
+          <td>(</td>
+          <td class="paramtype">const float &amp;&#160;</td>
+          <td class="paramname"><em>deltaTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classecs_world.html">ecsWorld</a> &amp;&#160;</td>
+          <td class="paramname"><em>world</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="class_camera.html">Camera</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>cameras</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Prepare the pipeline for rendering. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
+    <tr><td class="paramname">world</td><td>the <a class="el" href="classecs_world.html" title="A set of ECS entities and components forming a single level.">ecsWorld</a> to source data from. </td></tr>
+    <tr><td class="paramname">cameras</td><td>the cameras to render from. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>camera and layer indices to render with. </dd></dl>
+
+</div>
+</div>
 <a id="a7030ac0c52210baae81d75835bbad877"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7030ac0c52210baae81d75835bbad877">&#9670;&nbsp;</a></span>cullShadows()</h2>
 
@@ -236,21 +283,21 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
-    <tr><td class="paramname">perspectives</td><td>the camera and layer indicies to render. </td></tr>
+    <tr><td class="paramname">perspectives</td><td>the camera and layer indices to render. </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a65599cd6f029ee42e8085efd61a79261"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a65599cd6f029ee42e8085efd61a79261">&#9670;&nbsp;</a></span>prepareForNextFrame()</h2>
+<a id="aa28ed97ab37908a7946f79a89c137f96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa28ed97ab37908a7946f79a89c137f96">&#9670;&nbsp;</a></span>end()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void Graphics_Pipeline::prepareForNextFrame </td>
+          <td class="memname">void Graphics_Pipeline::end </td>
           <td>(</td>
           <td class="paramtype">const float &amp;&#160;</td>
           <td class="paramname"><em>deltaTime</em></td><td>)</td>
@@ -259,7 +306,7 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
       </table>
 </div><div class="memdoc">
 
-<p>Prepare rendering techniques for the next frame, swapping buffers and resetting data. </p>
+<p>Flush the pipeline after rendering. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
@@ -269,8 +316,8 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
 
 </div>
 </div>
-<a id="affcf66be36d94a5a4762baf9a1f6c368"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#affcf66be36d94a5a4762baf9a1f6c368">&#9670;&nbsp;</a></span>render()</h2>
+<a id="a8643dfa25a486fcdf2733a7e87f60ef6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8643dfa25a486fcdf2733a7e87f60ef6">&#9670;&nbsp;</a></span>render()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -284,7 +331,7 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="struct_viewport.html">Viewport</a> &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_viewport.html">Viewport</a> &amp;&#160;</td>
           <td class="paramname"><em>viewport</em>, </td>
         </tr>
         <tr>
@@ -297,7 +344,7 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>categories</em> = <code>Graphics_Technique::ALL</code>&#160;</td>
+          <td class="paramname"><em>categories</em> = <code>(unsigned&#160;int)Graphics_Technique::Technique_Category::ALL</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -312,7 +359,7 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
     <tr><td class="paramname">viewport</td><td>the viewport to render into. </td></tr>
-    <tr><td class="paramname">camera</td><td>the camera to render with. </td></tr>
+    <tr><td class="paramname">perspectives</td><td>the camera and layer indices to render with. </td></tr>
     <tr><td class="paramname">categories</td><td>the allowed technique categories to render. </td></tr>
   </table>
   </dd>
@@ -337,32 +384,6 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
 </div><div class="memdoc">
 
 <p>Use geometry techniques to render shadows. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a2c5339a975acdded60475ec6f177fd6a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c5339a975acdded60475ec6f177fd6a">&#9670;&nbsp;</a></span>update()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Graphics_Pipeline::update </td>
-          <td>(</td>
-          <td class="paramtype">const float &amp;&#160;</td>
-          <td class="paramname"><em>deltaTime</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Update rendering techniques, performing any necessary pre-passes. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>

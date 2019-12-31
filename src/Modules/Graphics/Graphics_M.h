@@ -3,77 +3,69 @@
 #define GRAPHICS_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
-#include "Modules/Graphics/Common/RH_Volume.h"
-#include "Modules/Graphics/Common/Viewport.h"
-#include "Utilities/GL/StaticBuffer.h"
-#include "Utilities/MappedChar.h"
+#include "Modules/ECS/ecsWorld.h"
 #include "Assets/Shader.h"
-#include "Assets/Primitive.h"
-#include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/StaticTripleBuffer.h"
-#include "Utilities/GL/GL_ArrayBuffer.h"
+#include "Assets/Auto_Model.h"
+#include "Utilities/GL/IndirectDraw.h"
 
+
+// Forward Declarations
+struct Viewport;
 
 /** A module responsible for rendering.
 @note	performs physically based rendering techniques using deferred rendering. */
-class Graphics_Module : public Engine_Module {
+class Graphics_Module final : public Engine_Module {
 public:
-	// Public (de)Constructors
-	/** Destroy this graphics rendering module. */
-	inline ~Graphics_Module() = default;
-	/** Construct a graphics rendering module. */
-	inline Graphics_Module() = default;
+	// Public (De)Constructors
+	/** Construct a graphics rendering module.
+	@param	engine		reference to the engine to use. */
+	explicit Graphics_Module(Engine& engine);
 
 
 	// Public Interface Implementation
-	virtual void initialize(Engine * engine) override;
-	virtual void deinitialize() override;
-	virtual void frameTick(const float & deltaTime) override;
+	void initialize() final;
+	void deinitialize() final;
 
 
 	// Public Methods
-	/** Render using our graphics pipeline, from the camera buffer specified into the framebuffers and volume specified.
-	@param	deltaTime		the amount of time since last frame.
-	@param	viewport		the view port to render into.
-	@param	categories		the technique categories to allow for rendering, defaults to ALL. */
-	void renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives, const unsigned int & allowedCategories = Graphics_Technique::ALL);
-	/** Use geometry techniques to cull shadows.
+	/** Retrieve a shared pointer to the rendering pipeline.
+	@return					reference to the rendering pipeline. */
+	Graphics_Pipeline& getPipeline() noexcept;
+	/** Convenience function for rendering a given ecsWorld to a given FBO.
+	@param	world			the ecsWorld to source data from.
 	@param	deltaTime		the amount of time passed since last frame.
-	@param	perspectives	the camera and layer indicies to render. */
-	void cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>> & perspectives);	
-	/** Use geometry techniques to render shadows.
-	@param	deltaTime		the amount of time passed since last frame. */
-	void renderShadows(const float & deltaTime);
+	@param	fboID			the FBO to render to. */
+	void renderWorld(ecsWorld& world, const float& deltaTime, const GLuint& fboID = 0);
+	/** Convenience function for rendering a given ecsWorld into the pipeline.
+	@param	world			the ecsWorld to source data from.
+	@param	deltaTime		the amount of time passed since last frame.
+	@param	viewport		the viewport to render into.
+	@param	cameras			the cameras to render from. */
+	void renderWorld(ecsWorld& world, const float& deltaTime, Viewport& viewport, std::vector<Camera>& cameras);
 	/** Generates a perspective matrix for the client camera. */
 	void genPerspectiveMatrix();
-	/** Returns a shared pointer to the primary camera.
+	/** Retrieves a shared pointer to the primary camera.
 	@return					the primary camera. */
-	inline std::shared_ptr<Camera> getClientCamera() const {
-		return m_clientCamera;
-	}
+	Camera& getClientCamera() noexcept;
 
-	
+
 private:
 	// Private Methods
-	/** Copy the client camera's final color buffer to the screen. */
-	void copyToScreen();
+	/** Copy the client camera's final color buffer to a specific framebuffer.
+	@param	fboID			the framebuffer ID. */
+	void copyToFramebuffer(const GLuint& fboID) noexcept;
 
 
 	// Private Attributes
 	glm::ivec2										m_renderSize = glm::ivec2(1);
-	ECSSystemList									m_systems;
-	std::unique_ptr<Graphics_Pipeline>				m_pipeline;
-	std::shared_ptr<Viewport>						m_viewport;
-	std::shared_ptr<Camera>							m_clientCamera;
-	std::shared_ptr<RH_Volume>						m_rhVolume;
+	Camera											m_clientCamera;
+	Viewport										m_viewport;
+	Graphics_Pipeline								m_pipeline;
 	Shared_Shader									m_shader;
-	Shared_Primitive								m_shapeQuad;
-	StaticTripleBuffer								m_quadIndirectBuffer;
+	Shared_Auto_Model								m_shapeQuad;
+	IndirectDraw<1>									m_indirectQuad;
 	std::shared_ptr<bool>							m_aliveIndicator = std::make_shared<bool>(true);
-	std::shared_ptr<std::vector<Camera*>>			m_sceneCameras;
-	std::shared_ptr<GL_ArrayBuffer<Camera::GPUData>> m_cameraBuffer;
 };
 
 #endif // GRAPHICS_MODULE_H

@@ -10,43 +10,26 @@ class KeyboardEvent {
 public:
 	// Public Interaction Enums
 	/** The action states a key can be in: released, pressed, etc. */
-	enum Action;
+	enum class Action : int;
 	/** The name of all keys supported, and an appropriate key code for each of them. */
-	enum Key : unsigned int;
-
-
-	// Public (de)Constructors
-	/** Destroy the keyboard event. */
-	inline ~KeyboardEvent() = default;
-	/** Construct a keyboard event. */
-	inline KeyboardEvent() = default;
+	enum class Key : unsigned int;
 
 
 	// Public Methods
-	/** Retrieve the keycode for the current key pressed. 
+	/** Retrieve the key-code for the current key pressed.
 	@return					the current key pressed. */
-	inline unsigned int getChar() const {
-		return m_currentChar;
-	}
-	/** Set a keycode as the current key being pressed. 
+	unsigned int getChar() const noexcept;
+	/** Set a key-code as the current key being pressed.
 	@param	currentChar		the key to set as pressed. */
-	inline void setChar(const unsigned int & currentChar) {
-		m_currentChar = currentChar;
-	}
+	void setChar(const unsigned int& currentChar) noexcept;
 	/** Retrieve the key action state for a given key type.
 	@param	key				the key to check the state of.
 	@return					the action state for the given key. */
-	inline KeyboardEvent::Action getState(const Key & key) const {
-		if (m_keyStates.find(key) != m_keyStates.end())
-			return m_keyStates.at(key);
-		return KeyboardEvent::Action::RELEASE;
-	}
+	KeyboardEvent::Action getState(const KeyboardEvent::Key& key) const;
 	/** Set the action state for a given key.
 	@param	key				the key to set the state for.
 	@param	action			the state to set for the given key. */
-	inline void setState(const Key & key, const KeyboardEvent::Action & action) {
-		m_keyStates[key] = action;
-	}
+	void setState(const KeyboardEvent::Key& key, const KeyboardEvent::Action& action);
 
 
 protected:
@@ -54,17 +37,19 @@ protected:
 	/** The key being pressed in a char stream. */
 	unsigned int m_currentChar = 0;
 	/** Map of key states over time, e.g. history if one is pressed or released. */
-	std::map<unsigned int, KeyboardEvent::Action> m_keyStates;
+	std::map<KeyboardEvent::Key, KeyboardEvent::Action> m_keyStates;
 
 
 public:
 	// Enumeration Implementation
-	enum Action {
+	/** The action states a key can be in: released, pressed, etc. */
+	enum class Action : int {
 		RELEASE,
 		PRESS,
 		REPEAT
 	};
-	enum Key : unsigned int {
+	/** The name of all keys supported, and an appropriate key code for each of them. */
+	enum class Key : unsigned int {
 		/* Printable keys */
 		SPACE = 32,
 		APOSTROPHE = 39,

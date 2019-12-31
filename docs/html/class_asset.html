@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -65,6 +65,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
@@ -84,29 +85,28 @@ Inheritance diagram for Asset:</div>
  <div class="center">
   <img src="class_asset.png" usemap="#Asset_map" alt=""/>
   <map id="Asset_map" name="Asset_map">
-<area href="class_collider.html" title="A collision shape asset used in physics." alt="Collider" shape="rect" coords="91,56,172,80"/>
-<area href="class_config.html" title="A map for configuration name-value pairs." alt="Config" shape="rect" coords="91,112,172,136"/>
-<area href="class_cubemap.html" title="A cubemap texture object." alt="Cubemap" shape="rect" coords="91,168,172,192"/>
-<area href="class_image.html" title="Contains image data and related attributes." alt="Image" shape="rect" coords="91,224,172,248"/>
-<area href="class_level.html" title="Contains serialized level data information." alt="Level" shape="rect" coords="91,280,172,304"/>
+<area href="class_auto___model.html" title="A basic 3D model used in visual processing." alt="Auto_Model" shape="rect" coords="91,56,172,80"/>
+<area href="class_collider.html" title="A collision shape asset used in physics." alt="Collider" shape="rect" coords="91,112,172,136"/>
+<area href="class_config.html" title="A map for configuration name-value pairs." alt="Config" shape="rect" coords="91,168,172,192"/>
+<area href="class_cubemap.html" title="A cubemap texture object." alt="Cubemap" shape="rect" coords="91,224,172,248"/>
+<area href="class_image.html" title="Contains image data and related attributes." alt="Image" shape="rect" coords="91,280,172,304"/>
 <area href="class_material.html" title="A collection of textures which together form 1 or more PBR surfaces." alt="Material" shape="rect" coords="91,336,172,360"/>
 <area href="class_mesh.html" title="A data set representing a 3D mesh." alt="Mesh" shape="rect" coords="91,392,172,416"/>
 <area href="class_model.html" title="A 3D mesh formated for model rendering." alt="Model" shape="rect" coords="91,448,172,472"/>
-<area href="class_primitive.html" title="A basic untextued 3D model used in visual processing." alt="Primitive" shape="rect" coords="91,504,172,528"/>
-<area href="class_shader.html" title="An entire OpenGL vertex/fragment shader program." alt="Shader" shape="rect" coords="91,560,172,584"/>
-<area href="class_shader___pkg.html" title="An accessory asset for loading shader code chunks." alt="Shader_Pkg" shape="rect" coords="91,616,172,640"/>
-<area href="class_sound.html" title="A sound byte object." alt="Sound" shape="rect" coords="91,672,172,696"/>
-<area href="class_texture.html" title="An encapsulation of an OpenGL texture object." alt="Texture" shape="rect" coords="91,728,172,752"/>
+<area href="class_shader.html" title="An entire OpenGL vertex/fragment shader program." alt="Shader" shape="rect" coords="91,504,172,528"/>
+<area href="class_shader___pkg.html" title="An accessory asset for loading shader code chunks." alt="Shader_Pkg" shape="rect" coords="91,560,172,584"/>
+<area href="class_sound.html" title="A sound byte object." alt="Sound" shape="rect" coords="91,616,172,640"/>
+<area href="class_texture.html" title="An encapsulation of an OpenGL texture object." alt="Texture" shape="rect" coords="91,672,172,696"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:affea7a67e3a2b71c57992a5a46e6ea50"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">~Asset</a> ()=default</td></tr>
-<tr class="memdesc:affea7a67e3a2b71c57992a5a46e6ea50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the asset only when all references are destroyed.  <a href="#affea7a67e3a2b71c57992a5a46e6ea50">More...</a><br /></td></tr>
-<tr class="separator:affea7a67e3a2b71c57992a5a46e6ea50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3391343ebc3486a192673a01f1953bf"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#ae3391343ebc3486a192673a01f1953bf">~Asset</a> ()=default</td></tr>
+<tr class="memdesc:ae3391343ebc3486a192673a01f1953bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the asset only when all references are destroyed.  <a href="#ae3391343ebc3486a192673a01f1953bf">More...</a><br /></td></tr>
+<tr class="separator:ae3391343ebc3486a192673a01f1953bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a693cba605321f0a0e82ada91cde7da12"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">getFileName</a> () const</td></tr>
-<tr class="memdesc:a693cba605321f0a0e82ada91cde7da12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the file name of this asset.  <a href="#a693cba605321f0a0e82ada91cde7da12">More...</a><br /></td></tr>
+<tr class="memdesc:a693cba605321f0a0e82ada91cde7da12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the file name of this asset.  <a href="#a693cba605321f0a0e82ada91cde7da12">More...</a><br /></td></tr>
 <tr class="separator:a693cba605321f0a0e82ada91cde7da12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee909b00b122db46fd6eb2bb2d09faee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">setFileName</a> (const std::string &amp;filename)</td></tr>
 <tr class="memdesc:aee909b00b122db46fd6eb2bb2d09faee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the file name of this asset.  <a href="#aee909b00b122db46fd6eb2bb2d09faee">More...</a><br /></td></tr>
@@ -114,15 +114,22 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4c0cb6447d8dbff78ec803e5752f3c84"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">addCallback</a> (const std::shared_ptr&lt; bool &gt; &amp;alive, const AssetFinalizedCallback &amp;callback)</td></tr>
 <tr class="memdesc:a4c0cb6447d8dbff78ec803e5752f3c84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attaches a callback method to be triggered when the asset finishes loading.  <a href="#a4c0cb6447d8dbff78ec803e5752f3c84">More...</a><br /></td></tr>
 <tr class="separator:a4c0cb6447d8dbff78ec803e5752f3c84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d491e481d7d9920ea5caea1f58b09d0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">existsYet</a> () const</td></tr>
-<tr class="memdesc:a5d491e481d7d9920ea5caea1f58b09d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether or not this asset has completed finalizing.  <a href="#a5d491e481d7d9920ea5caea1f58b09d0">More...</a><br /></td></tr>
-<tr class="separator:a5d491e481d7d9920ea5caea1f58b09d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa80568c24720369dd1713fbd3473dbbb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aa80568c24720369dd1713fbd3473dbbb">ready</a> () const noexcept</td></tr>
+<tr class="memdesc:aa80568c24720369dd1713fbd3473dbbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves whether or not this asset has completed finalizing.  <a href="#aa80568c24720369dd1713fbd3473dbbb">More...</a><br /></td></tr>
+<tr class="separator:aa80568c24720369dd1713fbd3473dbbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a2d587f49b5ece8cc8900d12a041abefe"><td class="memTemplParams" colspan="2">template&lt;typename FirstAsset , typename ... RemainingAssets&gt; </td></tr>
+<tr class="memitem:a2d587f49b5ece8cc8900d12a041abefe"><td class="memTemplItemLeft" align="right" valign="top">static bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_asset.html#a2d587f49b5ece8cc8900d12a041abefe">All_Ready</a> (const FirstAsset &amp;firstAsset, const RemainingAssets &amp;...rest) noexcept</td></tr>
+<tr class="memdesc:a2d587f49b5ece8cc8900d12a041abefe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if an input variadic list of shared assets have all completed finalizing.  <a href="#a2d587f49b5ece8cc8900d12a041abefe">More...</a><br /></td></tr>
+<tr class="separator:a2d587f49b5ece8cc8900d12a041abefe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:aa8dea2fe33a5fd68d13333589695b77d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">Asset</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename)</td></tr>
-<tr class="memdesc:aa8dea2fe33a5fd68d13333589695b77d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create asset that uses the specified file-path.  <a href="#aa8dea2fe33a5fd68d13333589695b77d">More...</a><br /></td></tr>
-<tr class="separator:aa8dea2fe33a5fd68d13333589695b77d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac48e243c306f0c1ad15964632745c39e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#ac48e243c306f0c1ad15964632745c39e">Asset</a> (<a class="el" href="class_engine.html">Engine</a> &amp;engine, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:ac48e243c306f0c1ad15964632745c39e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create asset that uses the specified file-path.  <a href="#ac48e243c306f0c1ad15964632745c39e">More...</a><br /></td></tr>
+<tr class="separator:ac48e243c306f0c1ad15964632745c39e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2efad8f8dead90422e43509425bb4bae"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a2efad8f8dead90422e43509425bb4bae">initialize</a> ()=0</td></tr>
 <tr class="memdesc:a2efad8f8dead90422e43509425bb4bae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the asset.  <a href="#a2efad8f8dead90422e43509425bb4bae">More...</a><br /></td></tr>
 <tr class="separator:a2efad8f8dead90422e43509425bb4bae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,9 +139,9 @@ Protected Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a0329cd6e471217c694abfc632e6c1bbd"><td class="memItemLeft" align="right" valign="top"><a id="a0329cd6e471217c694abfc632e6c1bbd"></a>
-<a class="el" href="class_engine.html">Engine</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>m_engine</b> = nullptr</td></tr>
-<tr class="separator:a0329cd6e471217c694abfc632e6c1bbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bcfdf1bbcca0a0d5ba074f766d3fe0d"><td class="memItemLeft" align="right" valign="top"><a id="a7bcfdf1bbcca0a0d5ba074f766d3fe0d"></a>
+<a class="el" href="class_engine.html">Engine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_engine</b></td></tr>
+<tr class="separator:a7bcfdf1bbcca0a0d5ba074f766d3fe0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ec5667ef2e7cc851b33016be0ad8bb4"><td class="memItemLeft" align="right" valign="top"><a id="a2ec5667ef2e7cc851b33016be0ad8bb4"></a>
 std::atomic_bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_finalized</b> = false</td></tr>
 <tr class="separator:a2ec5667ef2e7cc851b33016be0ad8bb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,8 +167,8 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>AssetManager</b></td
 <dd>
 should be created once, and its pointer passed around using shared pointers. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="affea7a67e3a2b71c57992a5a46e6ea50"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#affea7a67e3a2b71c57992a5a46e6ea50">&#9670;&nbsp;</a></span>~Asset()</h2>
+<a id="ae3391343ebc3486a192673a01f1953bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3391343ebc3486a192673a01f1953bf">&#9670;&nbsp;</a></span>~Asset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -170,7 +177,7 @@ should be created once, and its pointer passed around using shared pointers. </d
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Asset::~Asset </td>
+          <td class="memname">virtual Asset::~Asset </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -178,7 +185,7 @@ should be created once, and its pointer passed around using shared pointers. </d
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -187,8 +194,8 @@ should be created once, and its pointer passed around using shared pointers. </d
 
 </div>
 </div>
-<a id="aa8dea2fe33a5fd68d13333589695b77d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa8dea2fe33a5fd68d13333589695b77d">&#9670;&nbsp;</a></span>Asset()</h2>
+<a id="ac48e243c306f0c1ad15964632745c39e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac48e243c306f0c1ad15964632745c39e">&#9670;&nbsp;</a></span>Asset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -199,7 +206,7 @@ should be created once, and its pointer passed around using shared pointers. </d
         <tr>
           <td class="memname">Asset::Asset </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> &amp;&#160;</td>
           <td class="paramname"><em>engine</em>, </td>
         </tr>
         <tr>
@@ -263,23 +270,57 @@ should be created once, and its pointer passed around using shared pointers. </d
 
 </div>
 </div>
-<a id="a5d491e481d7d9920ea5caea1f58b09d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d491e481d7d9920ea5caea1f58b09d0">&#9670;&nbsp;</a></span>existsYet()</h2>
+<a id="a2d587f49b5ece8cc8900d12a041abefe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d587f49b5ece8cc8900d12a041abefe">&#9670;&nbsp;</a></span>All_Ready()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename FirstAsset , typename ... RemainingAssets&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool Asset::existsYet </td>
+          <td class="memname">static bool Asset::All_Ready </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td class="paramtype">const FirstAsset &amp;&#160;</td>
+          <td class="paramname"><em>firstAsset</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const RemainingAssets &amp;...&#160;</td>
+          <td class="paramname"><em>rest</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Returns whether or not this asset has completed finalizing. </p>
-<dl class="section return"><dt>Returns</dt><dd>true if this asset has finished finalizing, false otherwise. </dd></dl>
+<p>Check if an input variadic list of shared assets have all completed finalizing. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">&lt;&gt;</td><td>variadic list of assets to check (auto-deducible). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">firstAsset</td><td>the first value to check. </td></tr>
+    <tr><td class="paramname">...rest</td><td>the rest of the values to check. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if all the assets have finished finalizing, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -325,7 +366,7 @@ should be created once, and its pointer passed around using shared pointers. </d
       </table>
 </div><div class="memdoc">
 
-<p>Gets the file name of this asset. </p>
+<p>Retrieves the file name of this asset. </p>
 <dl class="section return"><dt>Returns</dt><dd>the file name belonging to this asset. </dd></dl>
 
 </div>
@@ -355,7 +396,35 @@ should be created once, and its pointer passed around using shared pointers. </d
 
 <p>Initializes the asset. </p>
 
-<p>Implemented in <a class="el" href="class_collider.html#ae968d796cd7f6a4bf04a5b8ab7fdbf72">Collider</a>, and <a class="el" href="class_sound.html#a11ed2377b609b19eb25d81163e57a100">Sound</a>.</p>
+<p>Implemented in <a class="el" href="class_sound.html#a278eab64f647b7ad8366f6dc6b88b5cb">Sound</a>.</p>
+
+</div>
+</div>
+<a id="aa80568c24720369dd1713fbd3473dbbb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa80568c24720369dd1713fbd3473dbbb">&#9670;&nbsp;</a></span>ready()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Asset::ready </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Retrieves whether or not this asset has completed finalizing. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if this asset has finished finalizing, false otherwise. </dd></dl>
 
 </div>
 </div>

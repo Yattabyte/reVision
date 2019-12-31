@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,19 +70,18 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="class_game___module.html">Game_Module</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="class_game___module.html#abc1c0346950b8a4d1bdc7480f788ca4f">deinitialize</a>() override</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_engine___module.html#ab31ce873a9023ad9515caeb2d6376530">Engine_Module</a>()=default</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_game___module.html#adc46a5554b0e333f0f24ca881f60ef70">frameTick</a>(const float &amp;deltaTime) override</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_game___module.html#afaa9fe1619dc2e5a4d1c05b7ce007b54">Game_Module</a>()=default</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Game_State</b> enum name (defined in <a class="el" href="class_game___module.html">Game_Module</a>)</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>in_game</b> enum value (defined in <a class="el" href="class_game___module.html">Game_Module</a>)</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>in_pauseMenu</b> enum value (defined in <a class="el" href="class_game___module.html">Game_Module</a>)</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>in_startMenu</b> enum value (defined in <a class="el" href="class_game___module.html">Game_Module</a>)</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_game___module.html#aa418343e08154a473a8170c0b74c77a9">initialize</a>(Engine *engine) override</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_engine</b> (defined in <a class="el" href="class_engine___module.html">Engine_Module</a>)</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_game___module.html#aba83c7c0081309460ca423bbe506f325">renderOverlays</a>(const float &amp;deltaTime)</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_engine___module.html#ab2bc3cf4b727ceff475c0442d2be3426">~Engine_Module</a>()=default</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_game___module.html#a7abff1da7b42b1f6160a954cac95d62c">~Game_Module</a>()=default</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_game___module.html#abd8c98da66822a03596257c03da839f4">deinitialize</a>() final</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_engine___module.html#aca77ea5e864eb43fac7a08247b142a54">Engine_Module</a>(Engine &amp;engine) noexcept</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">explicit</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_game___module.html#a0d95bf13704703f3bace27e0ebe6994f">frameTick</a>(const float &amp;deltaTime)</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_game___module.html#aa4e2594ffd55659cf7412efd4b90f777">Game_Module</a>(Engine &amp;engine)</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"><span class="mlabel">explicit</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_game___module.html#aa89d400c53db716913c9e7809afc6040">Game_State</a> enum name</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_game___module.html#a9268355fe5a5c94a4aa344ff4df06f1e">getWorld</a>() noexcept</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_game___module.html#afb8f258a1bb3ae0bdea74711d476a7a9">initialize</a>() final</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_game___module.html#abd062f94041eda847375ad0d1509fea4">loadLevel</a>(const std::string &amp;levelName)</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_engine</b> (defined in <a class="el" href="class_engine___module.html">Engine_Module</a>)</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_game___module.html#a4d5d5ae1a9a488e0ddc110746b1c72c9">showGame</a>()</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_game___module.html#a0628c9223d1f1ca46c8a8992ee05b4c8">showPauseMenu</a>(const bool &amp;show)</td><td class="entry"><a class="el" href="class_game___module.html">Game_Module</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_engine___module.html#a538d8464650a6112e7605c8e8973cd4c">~Engine_Module</a>()=default</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

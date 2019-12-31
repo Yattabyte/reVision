@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -67,10 +67,9 @@ $(function() {
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_action_state-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ActionState Class Reference</div>  </div>
+<div class="title">ActionState Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -78,22 +77,16 @@ $(function() {
  <a href="class_action_state.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_action_state_8h_source.html">ActionState.h</a>&gt;</code></p>
-<div class="dynheader">
-Inheritance diagram for ActionState:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="class_action_state.png" alt=""/>
- </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a46682c5dc6dfc21581d7386c4e9acde1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#a46682c5dc6dfc21581d7386c4e9acde1">STATE</a> { <b>RELEASE</b>, 
+<tr class="memitem:a3cd7bb30dd3145978049ef6a2bf7bde5"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#a3cd7bb30dd3145978049ef6a2bf7bde5">State</a> : int { <b>RELEASE</b>, 
 <b>PRESS</b>, 
 <b>REPEAT</b>
  }</td></tr>
-<tr class="memdesc:a46682c5dc6dfc21581d7386c4e9acde1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration for whether the action key was pressed, released, or repeating.  <a href="class_action_state.html#a46682c5dc6dfc21581d7386c4e9acde1">More...</a><br /></td></tr>
-<tr class="separator:a46682c5dc6dfc21581d7386c4e9acde1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d2c8adb9708f62dadab88a8ba464c4a"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">ACTION_ENUM</a> { <br />
+<tr class="memdesc:a3cd7bb30dd3145978049ef6a2bf7bde5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration for whether the action key was pressed, released, or repeating.  <a href="class_action_state.html#a3cd7bb30dd3145978049ef6a2bf7bde5">More...</a><br /></td></tr>
+<tr class="separator:a3cd7bb30dd3145978049ef6a2bf7bde5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a068565ba1202e4050493cc6db16ba991"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#a068565ba1202e4050493cc6db16ba991">Action</a> : unsigned int { <br />
 &#160;&#160;<b>MOUSE_X</b>, 
 <b>MOUSE_Y</b>, 
 <b>MOUSE_L</b>, 
@@ -123,123 +116,75 @@ Public Types</h2></td></tr>
 <b>ACTION_COUNT</b>
 <br />
  }</td></tr>
-<tr class="memdesc:a6d2c8adb9708f62dadab88a8ba464c4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration for indexing into actions.  <a href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">More...</a><br /></td></tr>
-<tr class="separator:a6d2c8adb9708f62dadab88a8ba464c4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a068565ba1202e4050493cc6db16ba991"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration for indexing into actions.  <a href="class_action_state.html#a068565ba1202e4050493cc6db16ba991">More...</a><br /></td></tr>
+<tr class="separator:a068565ba1202e4050493cc6db16ba991"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac8affb0a9580259e61a82827afa54248"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#ac8affb0a9580259e61a82827afa54248">~ActionState</a> ()=default</td></tr>
-<tr class="memdesc:ac8affb0a9580259e61a82827afa54248"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the action state.  <a href="#ac8affb0a9580259e61a82827afa54248">More...</a><br /></td></tr>
-<tr class="separator:ac8affb0a9580259e61a82827afa54248"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a064d9a224a78f6388ccc104601483a7a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#a064d9a224a78f6388ccc104601483a7a">ActionState</a> ()</td></tr>
-<tr class="memdesc:a064d9a224a78f6388ccc104601483a7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the action state.  <a href="#a064d9a224a78f6388ccc104601483a7a">More...</a><br /></td></tr>
-<tr class="separator:a064d9a224a78f6388ccc104601483a7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa79f24a5fd998546c1da20f27c9f2001"><td class="memItemLeft" align="right" valign="top"><a id="aa79f24a5fd998546c1da20f27c9f2001"></a>
-<a class="el" href="class_action_state.html#a46682c5dc6dfc21581d7386c4e9acde1">ActionState::STATE</a>&#160;</td><td class="memItemRight" valign="bottom"><b>isAction</b> (const <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">ActionState::ACTION_ENUM</a> &amp;actionEnum)</td></tr>
-<tr class="separator:aa79f24a5fd998546c1da20f27c9f2001"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69544b1049d65f78d106bbe5832de5d3"><td class="memItemLeft" align="right" valign="top"><a id="a69544b1049d65f78d106bbe5832de5d3"></a>
-<a class="el" href="class_action_state.html#a46682c5dc6dfc21581d7386c4e9acde1">ActionState::STATE</a>&#160;</td><td class="memItemRight" valign="bottom"><b>isAction</b> (const <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">ActionState::ACTION_ENUM</a> &amp;actionEnum, std::map&lt; <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">ActionState::ACTION_ENUM</a>, bool &gt; *keyStates) const</td></tr>
-<tr class="separator:a69544b1049d65f78d106bbe5832de5d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cb5c5fa703125bb01bb8ca6af5e2736"><td class="memItemLeft" align="right" valign="top">float &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#a3cb5c5fa703125bb01bb8ca6af5e2736">operator[]</a> (const <a class="el" href="class_action_state.html#a068565ba1202e4050493cc6db16ba991">ActionState::Action</a> &amp;index)</td></tr>
+<tr class="memdesc:a3cb5c5fa703125bb01bb8ca6af5e2736"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the value for a specific action category.  <a href="#a3cb5c5fa703125bb01bb8ca6af5e2736">More...</a><br /></td></tr>
+<tr class="separator:a3cb5c5fa703125bb01bb8ca6af5e2736"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43c15d4abca10f324f961705327f5419"><td class="memItemLeft" align="right" valign="top">const float &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#a43c15d4abca10f324f961705327f5419">operator[]</a> (const <a class="el" href="class_action_state.html#a068565ba1202e4050493cc6db16ba991">ActionState::Action</a> &amp;index) const</td></tr>
+<tr class="memdesc:a43c15d4abca10f324f961705327f5419"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the value for a specific action category.  <a href="#a43c15d4abca10f324f961705327f5419">More...</a><br /></td></tr>
+<tr class="separator:a43c15d4abca10f324f961705327f5419"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe96078407df7559f77a3ea6cfec9d57"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_action_state.html#a3cd7bb30dd3145978049ef6a2bf7bde5">ActionState::State</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#afe96078407df7559f77a3ea6cfec9d57">isAction</a> (const <a class="el" href="class_action_state.html#a068565ba1202e4050493cc6db16ba991">ActionState::Action</a> &amp;actionEnum)</td></tr>
+<tr class="memdesc:afe96078407df7559f77a3ea6cfec9d57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the state for a specific action category.  <a href="#afe96078407df7559f77a3ea6cfec9d57">More...</a><br /></td></tr>
+<tr class="separator:afe96078407df7559f77a3ea6cfec9d57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ae6f1c5b9dbe8fc25388f905641013d2f"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#ae6f1c5b9dbe8fc25388f905641013d2f">Action_Strings</a> ()</td></tr>
 <tr class="memdesc:ae6f1c5b9dbe8fc25388f905641013d2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a static list of all input-actions.  <a href="#ae6f1c5b9dbe8fc25388f905641013d2f">More...</a><br /></td></tr>
 <tr class="separator:ae6f1c5b9dbe8fc25388f905641013d2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:a5cd16d2399747cb78662cba4055698b2"><td class="memItemLeft" align="right" valign="top"><a id="a5cd16d2399747cb78662cba4055698b2"></a>
-std::map&lt; <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">ActionState::ACTION_ENUM</a>, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_keyStates</b></td></tr>
-<tr class="separator:a5cd16d2399747cb78662cba4055698b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A container class that holds the action state for the engine, such as forward/back/left/right and amount. </p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="a6d2c8adb9708f62dadab88a8ba464c4a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6d2c8adb9708f62dadab88a8ba464c4a">&#9670;&nbsp;</a></span>ACTION_ENUM</h2>
+<a id="a068565ba1202e4050493cc6db16ba991"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a068565ba1202e4050493cc6db16ba991">&#9670;&nbsp;</a></span>Action</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">ActionState::ACTION_ENUM</a></td>
+          <td class="memname">enum <a class="el" href="class_action_state.html#a068565ba1202e4050493cc6db16ba991">ActionState::Action</a> : unsigned int</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Enumeration for indexing into actions. </p>
 
 </div>
 </div>
-<a id="a46682c5dc6dfc21581d7386c4e9acde1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46682c5dc6dfc21581d7386c4e9acde1">&#9670;&nbsp;</a></span>STATE</h2>
+<a id="a3cd7bb30dd3145978049ef6a2bf7bde5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3cd7bb30dd3145978049ef6a2bf7bde5">&#9670;&nbsp;</a></span>State</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="class_action_state.html#a46682c5dc6dfc21581d7386c4e9acde1">ActionState::STATE</a></td>
+          <td class="memname">enum <a class="el" href="class_action_state.html#a3cd7bb30dd3145978049ef6a2bf7bde5">ActionState::State</a> : int</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Enumeration for whether the action key was pressed, released, or repeating. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac8affb0a9580259e61a82827afa54248"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8affb0a9580259e61a82827afa54248">&#9670;&nbsp;</a></span>~ActionState()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ActionState::~ActionState </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Destroy the action state. </p>
-
-</div>
-</div>
-<a id="a064d9a224a78f6388ccc104601483a7a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a064d9a224a78f6388ccc104601483a7a">&#9670;&nbsp;</a></span>ActionState()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ActionState::ActionState </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Construct the action state. </p>
 
 </div>
 </div>
@@ -272,8 +217,90 @@ std::map&lt; <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a id="afe96078407df7559f77a3ea6cfec9d57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe96078407df7559f77a3ea6cfec9d57">&#9670;&nbsp;</a></span>isAction()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_action_state.html#a3cd7bb30dd3145978049ef6a2bf7bde5">ActionState::State</a> ActionState::isAction </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_action_state.html#a068565ba1202e4050493cc6db16ba991">ActionState::Action</a> &amp;&#160;</td>
+          <td class="paramname"><em>actionEnum</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieve the state for a specific action category. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">actionEnum</td><td>the action index category to look-up. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the state belonging found at the index, such as pressed, released, or repeating. </dd></dl>
+
+</div>
+</div>
+<a id="a3cb5c5fa703125bb01bb8ca6af5e2736"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3cb5c5fa703125bb01bb8ca6af5e2736">&#9670;&nbsp;</a></span>operator[]() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float &amp; ActionState::operator[] </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_action_state.html#a068565ba1202e4050493cc6db16ba991">ActionState::Action</a> &amp;&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieve the value for a specific action category. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>the action index category to look-up. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the value reference belonging found at the index. </dd></dl>
+
+</div>
+</div>
+<a id="a43c15d4abca10f324f961705327f5419"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43c15d4abca10f324f961705327f5419">&#9670;&nbsp;</a></span>operator[]() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const float &amp; ActionState::operator[] </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_action_state.html#a068565ba1202e4050493cc6db16ba991">ActionState::Action</a> &amp;&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieve the value for a specific action category. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>the action index category to look-up. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the value const reference belonging found at the index. </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Utilities/<a class="el" href="_action_state_8h_source.html">ActionState.h</a></li>
+<li>src/Utilities/ActionState.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

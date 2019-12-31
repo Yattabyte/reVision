@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,12 +70,12 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="class_image___i_o.html">Image_IO</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="class_image___i_o.html#a34044e7028e52b2f23c80c418b7d5b23">Deinitialize</a>()</td><td class="entry"><a class="el" href="class_image___i_o.html">Image_IO</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_image___i_o.html#ab6e0357e09d1cb3fafa964821c4c3ddf">Deinitialize</a>() noexcept</td><td class="entry"><a class="el" href="class_image___i_o.html">Image_IO</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_image___i_o.html#a745f83057bef1bd2aa2cf2fe977b1311">Get_Version</a>()</td><td class="entry"><a class="el" href="class_image___i_o.html">Image_IO</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_image___i_o.html#a74088d7e0f63fc3014068ca82827e7a7">Import_Image</a>(Engine *engine, const std::string &amp;relativePath, Image_Data &amp;importedData, const bool &amp;linear=true)</td><td class="entry"><a class="el" href="class_image___i_o.html">Image_IO</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_image___i_o.html#ab2d534089c1889ce68d519e1faf2aeb4">Initialize</a>()</td><td class="entry"><a class="el" href="class_image___i_o.html">Image_IO</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_image___i_o.html#a067646eee7916f0bcc0f5be5ed9e6802">Import_Image</a>(Engine &amp;engine, const std::string &amp;relativePath, Image_Data &amp;importedData, const Resize_Policy &amp;resizePolicy=Resize_Policy::LINEAR)</td><td class="entry"><a class="el" href="class_image___i_o.html">Image_IO</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_image___i_o.html#a664bcb794e9466a1c0688097ed99eb34">Initialize</a>() noexcept</td><td class="entry"><a class="el" href="class_image___i_o.html">Image_IO</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_image___i_o.html#a2792d5354dfdfc468c44e4e224a22eda">Load_Pixel_Data</a>(FIBITMAP *bitmap, Image_Data &amp;importedData)</td><td class="entry"><a class="el" href="class_image___i_o.html">Image_IO</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_image___i_o.html#a602f4f587351f8463e5c57269a8ca98a">Resize_Image</a>(const glm::ivec2 newSize, Image_Data &amp;importedData, const bool &amp;linear=true)</td><td class="entry"><a class="el" href="class_image___i_o.html">Image_IO</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_image___i_o.html#a832eeade2da278b9d1dd322b6c8f5695">Resize_Image</a>(const glm::ivec2 newSize, Image_Data &amp;importedData, const Resize_Policy &amp;resizePolicy=Resize_Policy::LINEAR)</td><td class="entry"><a class="el" href="class_image___i_o.html">Image_IO</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

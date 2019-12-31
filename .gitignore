@@ -33,14 +33,16 @@
 # Directories
 CMakeFiles/
 Debug/
+Release/
 x64/
 x32/
 Documentation/
 .vs/
 src/reVision.dir/
+external/
+!external/src/glad/
 
 # Other
-CMakeCache.txt
 *.opendb
 *.tlog
 *.idb
@@ -62,7 +64,13 @@ CMakeCache.txt
 *.ipch
 *.lnk
 *.shader
+*.iobj
+*.ipdb
+CMakeCache.txt
 app/nsight_profiler.cfg
+app/imgui.ini
+app/Maps/recent.editor
+src/reVision_project_suppressions.cfg
 CMakeDoxyfile.tpl.bak
 CMakeDoxyfile.in
 PredictedInputCache_Debug_x64.dat

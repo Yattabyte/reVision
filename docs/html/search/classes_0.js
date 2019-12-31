@@ -6,5 +6,6 @@ var searchData=
   ['animation_5ftime_5fkey_3c_20glm_3a_3aquat_20_3e',['Animation_Time_Key&lt; glm::quat &gt;',['../struct_animation___time___key.html',1,'']]],
   ['animation_5ftime_5fkey_3c_20glm_3a_3avec3_20_3e',['Animation_Time_Key&lt; glm::vec3 &gt;',['../struct_animation___time___key.html',1,'']]],
   ['asset',['Asset',['../class_asset.html',1,'']]],
-  ['assetmanager',['AssetManager',['../class_asset_manager.html',1,'']]]
+  ['assetmanager',['AssetManager',['../class_asset_manager.html',1,'']]],
+  ['auto_5fmodel',['Auto_Model',['../class_auto___model.html',1,'']]]
 ];

@@ -1,28 +1,45 @@
 # reVision
 
-This is a work-in-progress game engine, with the bulk of its focus on asset loading and real-time 3D rendering.  
-The engine runs using an OpenGL 4.5 + GLSL 460 deferred renderer equipped for a PBR material workflow.  
-The engine also uses an ECS architecture.
+This is a work-in-progress game engine that I work on during my spare time.  
+It has multi-threaded asset loading, phyically based 3D graphics, and object physics.  
+My engine uses a custom-built deferred renderer running on OpenGL 4.5, supporting PBR materials, some translucent materials, and skeletal animation.  
+Additionally, game world-state is stored and accessed using an entity-component-systems (ECS) framework.
+
 
 ## Getting Started
 
-The branch labeled "active" is updated frequently and contains the most recent builds, but may be unstable.  
-The most stable versions can be found under the branch labeled "master".  
-Binaries can be found under the "Releases" section, and is updated every time I complete a major version.  
+Starting with version 5.0.0, all major development will now fall under the master branch for easier access.  
+Stable binaries can be found under the "Releases" section.
 
-The project has been designed with CMake in mind, as it depends on several external libraries to compile.
 
-Note: the engine requires a graphics card capable of supporting OpenGL 4.5 and GLSL 460 to run.
+### Requirements
+ * CMake + Git
+ * C++ 17 MSVC or Clang (haven't tested any other compilers)
+ * GPU supporting OpenGL 4.5 + GLSL 460
+ * Windows 10 (haven't tested any other x64 OS yet)
+ 
+ 
+## Usage
 
-### Required Libraries
+**- Step 1:** Pull a copy of this repository: [reVision](https://github.com/Yattabyte/reVision.git)
 
-This project requires the following (free) libraries:
-* [ASSIMP - Model Importing](http://www.assimp.org/)
-* [Bullet - Physics Back-end](http://bulletphysics.org/wordpress/)
-* [FreeImage - Image Importing](http://freeimage.sourceforge.net/)
-* [GLEW - OpenGL](http://glew.sourceforge.net/)
-* [GLFW - Windowing](http://www.glfw.org/)
-* [GLM - Mathematics](https://glm.g-truc.net/0.9.9/index.html)
+**- Step 2:** Download [CMake](https://cmake.org/)
+
+**- Step 3:** Run and configure CMake  
+Fill out the fields indicating where the project root directory is located.  
+**Note:** This project is configured to automatically acquire all it's dependencies if they are missing (GLFW, GLM, etc...)
+Only specify manual directories if you really want to use your own versions.  
+Once you're done making any changes to the configuration, hit both the CONFIGURE + GENERATE buttons, then open the project.  
+![CMake Configuration](https://i.imgur.com/fKUdpKz.png)  
+
+**- Step 4:** Building the Dependencies  
+If you've chosen to let CMake handle acquiring all the project dependencies, then before you can compile the project, you must compile all the dependencies first.  
+**After compiling, go back to CMake and once more press CONFIGURE + GENERATE to account for any new files produced when compiling this dependencies.**  
+**Note:** Repeat this step for both "Debug" and "Release" builds.
+![VS2017 Build Example](https://i.imgur.com/HJQAXra.png)  
+
+**- Step 5:** Build the project
+
 
 ## Versioning
 
@@ -33,12 +50,20 @@ The major version increments following the completetion of a major milestone, pl
 The minor version increments when a large planned feature is implemented or a category of related changes have been completed.  
 The patch version increments when a patch, hotfix, or small feature has been implemented.  
 
-I try to commit every time the version changes, including the new version in the summary.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.  
+This engine relies on several (free) libraries, though they're not bundled with the source code here.  
+ * [ASSIMP - Model Importing](http://www.assimp.org/)
+ * [Bullet - Physics Back-end](http://bulletphysics.org/wordpress/)
+ * [FreeImage - Image Importing](http://freeimage.sourceforge.net/)
+ * [GLEW - OpenGL](http://glew.sourceforge.net/)
+ * [GLFW - Windowing](http://www.glfw.org/)
+ * [GLM - Mathematics](https://glm.g-truc.net/0.9.9/index.html)
+ * [SoLoud - Sound](https://github.com/jarikomppa/soloud)
+ 
+ 
 ## Acknowledgments
 
 Thanks to everyone who has helped me over the years!
@@ -46,26 +71,7 @@ Thanks to everyone who has helped me over the years!
 Special thanks to all the helpful members of the former [Facepunch programming subforum](https://forum.facepunch.com/f/) as well as those who moved on to [Knockout](https://knockout.chat/), the helpful community on the Stack Exchange, [OGLDev](http://ogldev.atspace.co.uk/index.html), [Learn OpenGL](https://learnopengl.com), and the many other people who run their own tutorial series and programming blogs.
 
 
-## Installation
-
-Step 1: Download [CMake](https://cmake.org/)
-
-```
-Download CMake from the link above and install it
-```
-
-Step 2: Running CMake
-
-```
-Here, we want to configure it for our project.
-First, fill in the "Where is the source code" field to the main project directory, and the second "build" field to where you want to build the project.
-Second, fill in the main directories for all the required external libraries, like assimp, bullet, etc.
-Third, hit the configure button and choose the compiler you want to generate the solution for. Then hit the generate button after.
-```
-
-Step 3: Building the project
-
-```
-The project comes as a single solution for the engine, and a separate solution for generating the optional Doxygen documentation.
-To avoid duplicating the engine assets for multiple builds (debug, release, x32/x64, etc) they are kept within the 'app' folder. If the executable doesn't have it set already, change it to start in the app folder.
-```
+## Recent Media
+![editor UI](https://i.imgur.com/zEh3eb0.png)
+![file browser](https://i.imgur.com/72YECGP.gif)
+![menu](https://i.imgur.com/tIWcFf7.gif)

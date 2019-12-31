@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -89,22 +89,23 @@ Inheritance diagram for UI_Element:</div>
 <area href="class_label.html" title="UI text label class, affords displaying text on the screen." alt="Label" shape="rect" coords="124,112,238,136"/>
 <area href="class_layout___horizontal.html" title="A layout class which controls the position and sizes of its children, laying them out evenly in a row..." alt="Layout_Horizontal" shape="rect" coords="124,168,238,192"/>
 <area href="class_layout___vertical.html" title="A layout class which controls the position and sizes of its children, laying them out evenly in a col..." alt="Layout_Vertical" shape="rect" coords="124,224,238,248"/>
-<area href="class_list.html" title="A UI container class that laysout its children vertically, in a list." alt="List" shape="rect" coords="124,280,238,304"/>
-<area href="class_menu.html" title="A UI element serving as a menu." alt="Menu" shape="rect" coords="124,336,238,360"/>
-<area href="class_options___pane.html" title="A UI element serving as an options panel, with a title and a description." alt="Options_Pane" shape="rect" coords="124,392,238,416"/>
-<area href="class_panel.html" title="UI panel class, affords containing other elements, and rendering a fixed color." alt="Panel" shape="rect" coords="124,448,238,472"/>
-<area href="class_separator.html" title="UI separator class." alt="Separator" shape="rect" coords="124,504,238,528"/>
-<area href="class_side_list.html" title="UI list class, scrolls horizontally, displays one element at a time." alt="SideList" shape="rect" coords="124,560,238,584"/>
-<area href="class_slider.html" title="A UI component with a bar and a sliding paddle control." alt="Slider" shape="rect" coords="124,616,238,640"/>
-<area href="class_text_input.html" title="UI element which displays an editable text box." alt="TextInput" shape="rect" coords="124,672,238,696"/>
-<area href="class_toggle.html" title="UI toggle switch class, affords being switched left and right." alt="Toggle" shape="rect" coords="124,728,238,752"/>
-<area href="class_u_i___decorator.html" title="A UI decorator object, following the Decorator design pattern." alt="UI_Decorator" shape="rect" coords="124,784,238,808"/>
+<area href="class_list.html" title="A UI container class that layout its children vertically, in a list." alt="List" shape="rect" coords="124,280,238,304"/>
+<area href="class_list___horizontal.html" title="A UI container class that layout its children horizontally, in a list." alt="List_Horizontal" shape="rect" coords="124,336,238,360"/>
+<area href="class_menu.html" title="A UI element serving as a menu." alt="Menu" shape="rect" coords="124,392,238,416"/>
+<area href="class_options___pane.html" title="A UI element serving as an options panel, with a title and a description." alt="Options_Pane" shape="rect" coords="124,448,238,472"/>
+<area href="class_panel.html" title="UI panel class, affords containing other elements, and rendering a fixed color." alt="Panel" shape="rect" coords="124,504,238,528"/>
+<area href="class_separator.html" title="UI separator class." alt="Separator" shape="rect" coords="124,560,238,584"/>
+<area href="class_side_list.html" title="UI list class, scrolls horizontally, displays one element at a time." alt="SideList" shape="rect" coords="124,616,238,640"/>
+<area href="class_slider.html" title="A UI component with a bar and a sliding paddle control." alt="Slider" shape="rect" coords="124,672,238,696"/>
+<area href="class_text_input.html" title="UI element which displays an editable text box." alt="TextInput" shape="rect" coords="124,728,238,752"/>
+<area href="class_toggle.html" title="UI toggle switch class, affords being switched left and right." alt="Toggle" shape="rect" coords="124,784,238,808"/>
+<area href="class_u_i___decorator.html" title="A UI decorator object, following the Decorator design pattern." alt="UI_Decorator" shape="rect" coords="124,840,238,864"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a5eb2528a2edc989f74c5da1a2e8a1043"><td class="memItemLeft" align="right" valign="top"><a id="a5eb2528a2edc989f74c5da1a2e8a1043"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>interact</b> { <br />
+<tr class="memitem:aada525c4c0d7b9a0304d54b614d951bb"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aada525c4c0d7b9a0304d54b614d951bb">Interact</a> : int { <br />
 &#160;&#160;<b>on_resize</b>, 
 <b>on_reposition</b>, 
 <b>on_childrenChange</b>, 
@@ -118,34 +119,50 @@ Public Types</h2></td></tr>
 &#160;&#160;<b>last_interact_index</b> = on_clicked + 1
 <br />
  }</td></tr>
-<tr class="separator:a5eb2528a2edc989f74c5da1a2e8a1043"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:aada525c4c0d7b9a0304d54b614d951bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerations for interacting with this element.  <a href="class_u_i___element.html#aada525c4c0d7b9a0304d54b614d951bb">More...</a><br /></td></tr>
+<tr class="separator:aada525c4c0d7b9a0304d54b614d951bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4c19379dc429254012f0f958e3410103"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a4c19379dc429254012f0f958e3410103">~UI_Element</a> ()=default</td></tr>
-<tr class="memdesc:a4c19379dc429254012f0f958e3410103"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this ui element.  <a href="#a4c19379dc429254012f0f958e3410103">More...</a><br /></td></tr>
-<tr class="separator:a4c19379dc429254012f0f958e3410103"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61dd4805b0984378fecdf4f473cb9f8d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a61dd4805b0984378fecdf4f473cb9f8d">UI_Element</a> (<a class="el" href="class_engine.html">Engine</a> *engine)</td></tr>
-<tr class="memdesc:a61dd4805b0984378fecdf4f473cb9f8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a ui element.  <a href="#a61dd4805b0984378fecdf4f473cb9f8d">More...</a><br /></td></tr>
-<tr class="separator:a61dd4805b0984378fecdf4f473cb9f8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77c938ab130f17374e89b708ecd600c9"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a77c938ab130f17374e89b708ecd600c9">~UI_Element</a> ()=default</td></tr>
+<tr class="memdesc:a77c938ab130f17374e89b708ecd600c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this UI element.  <a href="#a77c938ab130f17374e89b708ecd600c9">More...</a><br /></td></tr>
+<tr class="separator:a77c938ab130f17374e89b708ecd600c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a921f1af6dd05133c342ac3738d5493c2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a921f1af6dd05133c342ac3738d5493c2">UI_Element</a> () noexcept=delete</td></tr>
+<tr class="memdesc:a921f1af6dd05133c342ac3738d5493c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#a921f1af6dd05133c342ac3738d5493c2">More...</a><br /></td></tr>
+<tr class="separator:a921f1af6dd05133c342ac3738d5493c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fa5ecfb7506f9fcd93664c9c5676e3f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a5fa5ecfb7506f9fcd93664c9c5676e3f">UI_Element</a> (<a class="el" href="class_engine.html">Engine</a> &amp;engine) noexcept</td></tr>
+<tr class="memdesc:a5fa5ecfb7506f9fcd93664c9c5676e3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a UI element.  <a href="#a5fa5ecfb7506f9fcd93664c9c5676e3f">More...</a><br /></td></tr>
+<tr class="separator:a5fa5ecfb7506f9fcd93664c9c5676e3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acad1c6798a9e0fff72384e78a2950dc8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#acad1c6798a9e0fff72384e78a2950dc8">UI_Element</a> (<a class="el" href="class_u_i___element.html">UI_Element</a> &amp;&amp;) noexcept=default</td></tr>
+<tr class="memdesc:acad1c6798a9e0fff72384e78a2950dc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <a href="#acad1c6798a9e0fff72384e78a2950dc8">More...</a><br /></td></tr>
+<tr class="separator:acad1c6798a9e0fff72384e78a2950dc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7638888d02e2e89c80de59fc021f806"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#ad7638888d02e2e89c80de59fc021f806">UI_Element</a> (const <a class="el" href="class_u_i___element.html">UI_Element</a> &amp;) noexcept=default</td></tr>
+<tr class="memdesc:ad7638888d02e2e89c80de59fc021f806"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <a href="#ad7638888d02e2e89c80de59fc021f806">More...</a><br /></td></tr>
+<tr class="separator:ad7638888d02e2e89c80de59fc021f806"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab8c5cdf65dea54b91e64ad2bcbeff491"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#ab8c5cdf65dea54b91e64ad2bcbeff491">renderElement</a> (const float &amp;deltaTime, const glm::vec2 &amp;position=glm::vec2(0.0f), const glm::vec2 &amp;scale=glm::vec2(1.0f))</td></tr>
-<tr class="memdesc:ab8c5cdf65dea54b91e64ad2bcbeff491"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render this element (and all subelements).  <a href="#ab8c5cdf65dea54b91e64ad2bcbeff491">More...</a><br /></td></tr>
+<tr class="memdesc:ab8c5cdf65dea54b91e64ad2bcbeff491"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render this element (and all sub-elements).  <a href="#ab8c5cdf65dea54b91e64ad2bcbeff491">More...</a><br /></td></tr>
 <tr class="separator:ab8c5cdf65dea54b91e64ad2bcbeff491"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa6cf2f350b477f6902e8931fd795821"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aaa6cf2f350b477f6902e8931fd795821">mouseAction</a> (const <a class="el" href="class_mouse_event.html">MouseEvent</a> &amp;mouseEvent)</td></tr>
-<tr class="memdesc:aaa6cf2f350b477f6902e8931fd795821"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies a mouse action across this ui element.  <a href="#aaa6cf2f350b477f6902e8931fd795821">More...</a><br /></td></tr>
+<tr class="memitem:aaa6cf2f350b477f6902e8931fd795821"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aaa6cf2f350b477f6902e8931fd795821">mouseAction</a> (const <a class="el" href="struct_mouse_event.html">MouseEvent</a> &amp;mouseEvent)</td></tr>
+<tr class="memdesc:aaa6cf2f350b477f6902e8931fd795821"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies a mouse action across this UI element.  <a href="#aaa6cf2f350b477f6902e8931fd795821">More...</a><br /></td></tr>
 <tr class="separator:aaa6cf2f350b477f6902e8931fd795821"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d73bf13f2ab20802a480586063632e0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a5d73bf13f2ab20802a480586063632e0">keyboardAction</a> (const <a class="el" href="class_keyboard_event.html">KeyboardEvent</a> &amp;keyboardEvent)</td></tr>
-<tr class="memdesc:a5d73bf13f2ab20802a480586063632e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Propogates a keyboard action event from this UI element to its children.  <a href="#a5d73bf13f2ab20802a480586063632e0">More...</a><br /></td></tr>
+<tr class="memdesc:a5d73bf13f2ab20802a480586063632e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Propagates a keyboard action event from this UI element to its children.  <a href="#a5d73bf13f2ab20802a480586063632e0">More...</a><br /></td></tr>
 <tr class="separator:a5d73bf13f2ab20802a480586063632e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ca71fd7dbf6ef891533314ea21273ef"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a0ca71fd7dbf6ef891533314ea21273ef">userAction</a> (<a class="el" href="class_action_state.html">ActionState</a> &amp;actionState)</td></tr>
 <tr class="memdesc:a0ca71fd7dbf6ef891533314ea21273ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process user input from peripheral devices.  <a href="#a0ca71fd7dbf6ef891533314ea21273ef">More...</a><br /></td></tr>
 <tr class="separator:a0ca71fd7dbf6ef891533314ea21273ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5ced04f50fa107364bf820dbfbfbe71"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_u_i___element.html">UI_Element</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#ab5ced04f50fa107364bf820dbfbfbe71">operator=</a> (<a class="el" href="class_u_i___element.html">UI_Element</a> &amp;&amp;) noexcept=delete</td></tr>
+<tr class="memdesc:ab5ced04f50fa107364bf820dbfbfbe71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment.  <a href="#ab5ced04f50fa107364bf820dbfbfbe71">More...</a><br /></td></tr>
+<tr class="separator:ab5ced04f50fa107364bf820dbfbfbe71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8195ca850b02cab1d3c2c34a8f5af0e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_u_i___element.html">UI_Element</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aa8195ca850b02cab1d3c2c34a8f5af0e">operator=</a> (const <a class="el" href="class_u_i___element.html">UI_Element</a> &amp;) noexcept=delete</td></tr>
+<tr class="memdesc:aa8195ca850b02cab1d3c2c34a8f5af0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment.  <a href="#aa8195ca850b02cab1d3c2c34a8f5af0e">More...</a><br /></td></tr>
+<tr class="separator:aa8195ca850b02cab1d3c2c34a8f5af0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abec5f1b45a620183753be36e27b9e258"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#abec5f1b45a620183753be36e27b9e258">addElement</a> (const std::shared_ptr&lt; <a class="el" href="class_u_i___element.html">UI_Element</a> &gt; &amp;child)</td></tr>
 <tr class="memdesc:abec5f1b45a620183753be36e27b9e258"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a child UI element to this one.  <a href="#abec5f1b45a620183753be36e27b9e258">More...</a><br /></td></tr>
 <tr class="separator:abec5f1b45a620183753be36e27b9e258"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78168388089dc3c530bccbaca523a03d"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="class_u_i___element.html">UI_Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a78168388089dc3c530bccbaca523a03d">getElement</a> (const size_t &amp;index) const</td></tr>
-<tr class="memdesc:a78168388089dc3c530bccbaca523a03d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the child element found at the index specified.  <a href="#a78168388089dc3c530bccbaca523a03d">More...</a><br /></td></tr>
-<tr class="separator:a78168388089dc3c530bccbaca523a03d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24f9b1eacf3b1766a2ffe84fabe9ce5f"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="class_u_i___element.html">UI_Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a24f9b1eacf3b1766a2ffe84fabe9ce5f">getElement</a> (const size_t &amp;index) const noexcept</td></tr>
+<tr class="memdesc:a24f9b1eacf3b1766a2ffe84fabe9ce5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the child element found at the index specified.  <a href="#a24f9b1eacf3b1766a2ffe84fabe9ce5f">More...</a><br /></td></tr>
+<tr class="separator:a24f9b1eacf3b1766a2ffe84fabe9ce5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2a8da62c17880f9467cd4591ef1de81"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#ae2a8da62c17880f9467cd4591ef1de81">clearElements</a> ()</td></tr>
 <tr class="memdesc:ae2a8da62c17880f9467cd4591ef1de81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all child UI elements.  <a href="#ae2a8da62c17880f9467cd4591ef1de81">More...</a><br /></td></tr>
 <tr class="separator:ae2a8da62c17880f9467cd4591ef1de81"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -155,21 +172,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2f72e3e898df6e45759b46ea847071e8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a2f72e3e898df6e45759b46ea847071e8">setPosition</a> (const glm::vec2 &amp;position)</td></tr>
 <tr class="memdesc:a2f72e3e898df6e45759b46ea847071e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets this elements' position.  <a href="#a2f72e3e898df6e45759b46ea847071e8">More...</a><br /></td></tr>
 <tr class="separator:a2f72e3e898df6e45759b46ea847071e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8815110beccd425f8558f4d862f63e3f"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a8815110beccd425f8558f4d862f63e3f">getPosition</a> () const</td></tr>
-<tr class="memdesc:a8815110beccd425f8558f4d862f63e3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets this elements' position.  <a href="#a8815110beccd425f8558f4d862f63e3f">More...</a><br /></td></tr>
-<tr class="separator:a8815110beccd425f8558f4d862f63e3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76d45ec9f95490d55867205cab3b5b40"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a76d45ec9f95490d55867205cab3b5b40">getPosition</a> () const noexcept</td></tr>
+<tr class="memdesc:a76d45ec9f95490d55867205cab3b5b40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves this elements' position.  <a href="#a76d45ec9f95490d55867205cab3b5b40">More...</a><br /></td></tr>
+<tr class="separator:a76d45ec9f95490d55867205cab3b5b40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0220e46b9cbd0e066d896b20a87fef9a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a0220e46b9cbd0e066d896b20a87fef9a">setScale</a> (const glm::vec2 &amp;scale)</td></tr>
 <tr class="memdesc:a0220e46b9cbd0e066d896b20a87fef9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets this elements' scale.  <a href="#a0220e46b9cbd0e066d896b20a87fef9a">More...</a><br /></td></tr>
 <tr class="separator:a0220e46b9cbd0e066d896b20a87fef9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a409a80144ec207e90dd5343d3e18de01"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a409a80144ec207e90dd5343d3e18de01">getScale</a> () const</td></tr>
-<tr class="memdesc:a409a80144ec207e90dd5343d3e18de01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets this elements' scale.  <a href="#a409a80144ec207e90dd5343d3e18de01">More...</a><br /></td></tr>
-<tr class="separator:a409a80144ec207e90dd5343d3e18de01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad315ed98b6d09998159a0d6ddd86e4e7"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#ad315ed98b6d09998159a0d6ddd86e4e7">getScale</a> () const noexcept</td></tr>
+<tr class="memdesc:ad315ed98b6d09998159a0d6ddd86e4e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves this elements' scale.  <a href="#ad315ed98b6d09998159a0d6ddd86e4e7">More...</a><br /></td></tr>
+<tr class="separator:ad315ed98b6d09998159a0d6ddd86e4e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a015cb9aad6c2702c7fed596f06671c4c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a015cb9aad6c2702c7fed596f06671c4c">setMaxScale</a> (const glm::vec2 &amp;scale)</td></tr>
 <tr class="memdesc:a015cb9aad6c2702c7fed596f06671c4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets this elements' maximum scale.  <a href="#a015cb9aad6c2702c7fed596f06671c4c">More...</a><br /></td></tr>
 <tr class="separator:a015cb9aad6c2702c7fed596f06671c4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8b2a424c6abe3869be9b568c85429ae"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#ae8b2a424c6abe3869be9b568c85429ae">getMaxScale</a> () const</td></tr>
-<tr class="memdesc:ae8b2a424c6abe3869be9b568c85429ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets this elements' maximum scale.  <a href="#ae8b2a424c6abe3869be9b568c85429ae">More...</a><br /></td></tr>
-<tr class="separator:ae8b2a424c6abe3869be9b568c85429ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e4ed47b70ace77daf32fc34209e2e88"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a0e4ed47b70ace77daf32fc34209e2e88">getMaxScale</a> () const noexcept</td></tr>
+<tr class="memdesc:a0e4ed47b70ace77daf32fc34209e2e88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves this elements' maximum scale.  <a href="#a0e4ed47b70ace77daf32fc34209e2e88">More...</a><br /></td></tr>
+<tr class="separator:a0e4ed47b70ace77daf32fc34209e2e88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4529859610d1c65086b1b077a34f9f95"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a4529859610d1c65086b1b077a34f9f95">setMaxWidth</a> (const float &amp;width)</td></tr>
 <tr class="memdesc:a4529859610d1c65086b1b077a34f9f95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the max width of this element.  <a href="#a4529859610d1c65086b1b077a34f9f95">More...</a><br /></td></tr>
 <tr class="separator:a4529859610d1c65086b1b077a34f9f95"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -179,75 +196,75 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae390b9df878081392c42343918fc9737"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#ae390b9df878081392c42343918fc9737">setMinScale</a> (const glm::vec2 &amp;scale)</td></tr>
 <tr class="memdesc:ae390b9df878081392c42343918fc9737"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets this elements' minimum scale.  <a href="#ae390b9df878081392c42343918fc9737">More...</a><br /></td></tr>
 <tr class="separator:ae390b9df878081392c42343918fc9737"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf5f9232989de52646234eed5f9538fe"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aaf5f9232989de52646234eed5f9538fe">getMinScale</a> () const</td></tr>
-<tr class="memdesc:aaf5f9232989de52646234eed5f9538fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets this elements' minimum scale.  <a href="#aaf5f9232989de52646234eed5f9538fe">More...</a><br /></td></tr>
-<tr class="separator:aaf5f9232989de52646234eed5f9538fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13423ccf494cc62a27e8f388f45c7847"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a13423ccf494cc62a27e8f388f45c7847">getMinScale</a> () const noexcept</td></tr>
+<tr class="memdesc:a13423ccf494cc62a27e8f388f45c7847"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves this elements' minimum scale.  <a href="#a13423ccf494cc62a27e8f388f45c7847">More...</a><br /></td></tr>
+<tr class="separator:a13423ccf494cc62a27e8f388f45c7847"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7a75a826ebfd9ce9a629314100f9e8e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#ab7a75a826ebfd9ce9a629314100f9e8e">setMinWidth</a> (const float &amp;width)</td></tr>
 <tr class="memdesc:ab7a75a826ebfd9ce9a629314100f9e8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the minimum width of this element.  <a href="#ab7a75a826ebfd9ce9a629314100f9e8e">More...</a><br /></td></tr>
 <tr class="separator:ab7a75a826ebfd9ce9a629314100f9e8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40bb442b1beaacfa2fb9116983b43eb4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a40bb442b1beaacfa2fb9116983b43eb4">setMinHeight</a> (const float &amp;height)</td></tr>
 <tr class="memdesc:a40bb442b1beaacfa2fb9116983b43eb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the minimum height of this element.  <a href="#a40bb442b1beaacfa2fb9116983b43eb4">More...</a><br /></td></tr>
 <tr class="separator:a40bb442b1beaacfa2fb9116983b43eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d18607c4c41d982cec5824f4eed1882"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a7d18607c4c41d982cec5824f4eed1882">setVisible</a> (const bool &amp;visible)</td></tr>
-<tr class="memdesc:a7d18607c4c41d982cec5824f4eed1882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this element as visible or not.  <a href="#a7d18607c4c41d982cec5824f4eed1882">More...</a><br /></td></tr>
-<tr class="separator:a7d18607c4c41d982cec5824f4eed1882"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1cbcd86634daedd87db61e1524b04887"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a1cbcd86634daedd87db61e1524b04887">getVisible</a> () const</td></tr>
-<tr class="memdesc:a1cbcd86634daedd87db61e1524b04887"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets this elements' visibility.  <a href="#a1cbcd86634daedd87db61e1524b04887">More...</a><br /></td></tr>
-<tr class="separator:a1cbcd86634daedd87db61e1524b04887"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf034155826cf96ed85035f8a4ca5181"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#adf034155826cf96ed85035f8a4ca5181">setEnabled</a> (const bool &amp;enabled)</td></tr>
-<tr class="memdesc:adf034155826cf96ed85035f8a4ca5181"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this element as enabled or not.  <a href="#adf034155826cf96ed85035f8a4ca5181">More...</a><br /></td></tr>
-<tr class="separator:adf034155826cf96ed85035f8a4ca5181"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ad4d1d4ff44dbffbd41c4f9ddb4d049"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a4ad4d1d4ff44dbffbd41c4f9ddb4d049">getEnabled</a> () const</td></tr>
-<tr class="memdesc:a4ad4d1d4ff44dbffbd41c4f9ddb4d049"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the enabled state of this element.  <a href="#a4ad4d1d4ff44dbffbd41c4f9ddb4d049">More...</a><br /></td></tr>
-<tr class="separator:a4ad4d1d4ff44dbffbd41c4f9ddb4d049"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af931a8dd9ff682cd14d32a2d16f6565e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#af931a8dd9ff682cd14d32a2d16f6565e">setVisible</a> (const bool &amp;visible) noexcept</td></tr>
+<tr class="memdesc:af931a8dd9ff682cd14d32a2d16f6565e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this element as visible or not.  <a href="#af931a8dd9ff682cd14d32a2d16f6565e">More...</a><br /></td></tr>
+<tr class="separator:af931a8dd9ff682cd14d32a2d16f6565e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81980e67b83c3998e177d9aa4d6c0e6a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a81980e67b83c3998e177d9aa4d6c0e6a">getVisible</a> () const noexcept</td></tr>
+<tr class="memdesc:a81980e67b83c3998e177d9aa4d6c0e6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves this elements' visibility.  <a href="#a81980e67b83c3998e177d9aa4d6c0e6a">More...</a><br /></td></tr>
+<tr class="separator:a81980e67b83c3998e177d9aa4d6c0e6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac00ef07497b7d62684cdfb18b92f6481"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#ac00ef07497b7d62684cdfb18b92f6481">setEnabled</a> (const bool &amp;enabled) noexcept</td></tr>
+<tr class="memdesc:ac00ef07497b7d62684cdfb18b92f6481"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this element as enabled or not.  <a href="#ac00ef07497b7d62684cdfb18b92f6481">More...</a><br /></td></tr>
+<tr class="separator:ac00ef07497b7d62684cdfb18b92f6481"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72023cda1dd1053af580e45b88597e1b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a72023cda1dd1053af580e45b88597e1b">getEnabled</a> () const noexcept</td></tr>
+<tr class="memdesc:a72023cda1dd1053af580e45b88597e1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the enabled state of this element.  <a href="#a72023cda1dd1053af580e45b88597e1b">More...</a><br /></td></tr>
+<tr class="separator:a72023cda1dd1053af580e45b88597e1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a778ef35ecc779c6a3a83ae6c4cee2862"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a778ef35ecc779c6a3a83ae6c4cee2862">setHovered</a> ()</td></tr>
 <tr class="memdesc:a778ef35ecc779c6a3a83ae6c4cee2862"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this element as hovered, enacting its callback.  <a href="#a778ef35ecc779c6a3a83ae6c4cee2862">More...</a><br /></td></tr>
 <tr class="separator:a778ef35ecc779c6a3a83ae6c4cee2862"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5acac8165850ba74eb7cfc54638b955"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aa5acac8165850ba74eb7cfc54638b955">getHovered</a> () const</td></tr>
-<tr class="memdesc:aa5acac8165850ba74eb7cfc54638b955"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this element's hovered state.  <a href="#aa5acac8165850ba74eb7cfc54638b955">More...</a><br /></td></tr>
-<tr class="separator:aa5acac8165850ba74eb7cfc54638b955"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae714d13c6e287db74b3eddd31558e3f5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#ae714d13c6e287db74b3eddd31558e3f5">getHovered</a> () const noexcept</td></tr>
+<tr class="memdesc:ae714d13c6e287db74b3eddd31558e3f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this element's hovered state.  <a href="#ae714d13c6e287db74b3eddd31558e3f5">More...</a><br /></td></tr>
+<tr class="separator:ae714d13c6e287db74b3eddd31558e3f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e1c3c7a2e517a6e3ccbef3dda3fb67e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a9e1c3c7a2e517a6e3ccbef3dda3fb67e">setPressed</a> ()</td></tr>
 <tr class="memdesc:a9e1c3c7a2e517a6e3ccbef3dda3fb67e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this element as pressed, enacting its callback.  <a href="#a9e1c3c7a2e517a6e3ccbef3dda3fb67e">More...</a><br /></td></tr>
 <tr class="separator:a9e1c3c7a2e517a6e3ccbef3dda3fb67e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeeabe74d32830fb53b35ab61cdb88fc6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aeeabe74d32830fb53b35ab61cdb88fc6">getPressed</a> () const</td></tr>
-<tr class="memdesc:aeeabe74d32830fb53b35ab61cdb88fc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this element's pressed state.  <a href="#aeeabe74d32830fb53b35ab61cdb88fc6">More...</a><br /></td></tr>
-<tr class="separator:aeeabe74d32830fb53b35ab61cdb88fc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa888bf0a1c3aef2e39f54bc408554f53"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aa888bf0a1c3aef2e39f54bc408554f53">getPressed</a> () const noexcept</td></tr>
+<tr class="memdesc:aa888bf0a1c3aef2e39f54bc408554f53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this element's pressed state.  <a href="#aa888bf0a1c3aef2e39f54bc408554f53">More...</a><br /></td></tr>
+<tr class="separator:aa888bf0a1c3aef2e39f54bc408554f53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c115421bbaa432fc86d065f633dd684"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a0c115421bbaa432fc86d065f633dd684">setReleased</a> ()</td></tr>
 <tr class="memdesc:a0c115421bbaa432fc86d065f633dd684"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this element as released, enacting its callback.  <a href="#a0c115421bbaa432fc86d065f633dd684">More...</a><br /></td></tr>
 <tr class="separator:a0c115421bbaa432fc86d065f633dd684"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f7e80da7f7e485b6498e8a11feadec7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a2f7e80da7f7e485b6498e8a11feadec7">getReleased</a> () const</td></tr>
-<tr class="memdesc:a2f7e80da7f7e485b6498e8a11feadec7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this element's released state.  <a href="#a2f7e80da7f7e485b6498e8a11feadec7">More...</a><br /></td></tr>
-<tr class="separator:a2f7e80da7f7e485b6498e8a11feadec7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44781aaa5f58d6dd4c4611bb8d012ce8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a44781aaa5f58d6dd4c4611bb8d012ce8">getReleased</a> () const noexcept</td></tr>
+<tr class="memdesc:a44781aaa5f58d6dd4c4611bb8d012ce8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this element's released state.  <a href="#a44781aaa5f58d6dd4c4611bb8d012ce8">More...</a><br /></td></tr>
+<tr class="separator:a44781aaa5f58d6dd4c4611bb8d012ce8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a424b9cbbcc353f3dcb31d01a9183ea3a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a424b9cbbcc353f3dcb31d01a9183ea3a">setClicked</a> ()</td></tr>
 <tr class="memdesc:a424b9cbbcc353f3dcb31d01a9183ea3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this element as clicked, enacting its callback.  <a href="#a424b9cbbcc353f3dcb31d01a9183ea3a">More...</a><br /></td></tr>
 <tr class="separator:a424b9cbbcc353f3dcb31d01a9183ea3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9f98ad569c314ccde99bdbd312c1c56"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aa9f98ad569c314ccde99bdbd312c1c56">getClicked</a> () const</td></tr>
-<tr class="memdesc:aa9f98ad569c314ccde99bdbd312c1c56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this element's clicked state.  <a href="#aa9f98ad569c314ccde99bdbd312c1c56">More...</a><br /></td></tr>
-<tr class="separator:aa9f98ad569c314ccde99bdbd312c1c56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca284d59dee5b318b590ded7b653790e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aca284d59dee5b318b590ded7b653790e">clearFocus</a> ()</td></tr>
-<tr class="memdesc:aca284d59dee5b318b590ded7b653790e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset this element, releasing, unpressing, unhovering this element and all its children.  <a href="#aca284d59dee5b318b590ded7b653790e">More...</a><br /></td></tr>
+<tr class="memdesc:aca284d59dee5b318b590ded7b653790e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset this element, releasing, un-pressing, un-hovering this element and all its children.  <a href="#aca284d59dee5b318b590ded7b653790e">More...</a><br /></td></tr>
 <tr class="separator:aca284d59dee5b318b590ded7b653790e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e2be442fceb11c0ac8cac5dc04688be"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a4e2be442fceb11c0ac8cac5dc04688be">mouseWithin</a> (const <a class="el" href="class_mouse_event.html">MouseEvent</a> &amp;mouseEvent) const</td></tr>
-<tr class="memdesc:a4e2be442fceb11c0ac8cac5dc04688be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get whether or not the mouse is within this element.  <a href="#a4e2be442fceb11c0ac8cac5dc04688be">More...</a><br /></td></tr>
-<tr class="separator:a4e2be442fceb11c0ac8cac5dc04688be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cd20c5dc6d509a666d06100b097a1fa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a6cd20c5dc6d509a666d06100b097a1fa">mouseWithin</a> (const <a class="el" href="struct_mouse_event.html">MouseEvent</a> &amp;mouseEvent) const noexcept</td></tr>
+<tr class="memdesc:a6cd20c5dc6d509a666d06100b097a1fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve whether or not the mouse is within this element.  <a href="#a6cd20c5dc6d509a666d06100b097a1fa">More...</a><br /></td></tr>
+<tr class="separator:a6cd20c5dc6d509a666d06100b097a1fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:abdd0dc1853cb6620b218e1fd97cf1c75"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#abdd0dc1853cb6620b218e1fd97cf1c75">withinBBox</a> (const glm::vec2 &amp;box_p1, const glm::vec2 &amp;box_p2, const glm::vec2 &amp;point)</td></tr>
-<tr class="memdesc:abdd0dc1853cb6620b218e1fd97cf1c75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether or not a point is within the bbox specified.  <a href="#abdd0dc1853cb6620b218e1fd97cf1c75">More...</a><br /></td></tr>
-<tr class="separator:abdd0dc1853cb6620b218e1fd97cf1c75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2a02de598a44fdef73f176235313c1c"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#ab2a02de598a44fdef73f176235313c1c">getClicked</a> () noexcept</td></tr>
+<tr class="memdesc:ab2a02de598a44fdef73f176235313c1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this element's clicked state.  <a href="#ab2a02de598a44fdef73f176235313c1c">More...</a><br /></td></tr>
+<tr class="separator:ab2a02de598a44fdef73f176235313c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b06c18daba104ee7c000e1093d167ab"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a4b06c18daba104ee7c000e1093d167ab">withinBBox</a> (const glm::vec2 &amp;box_p1, const glm::vec2 &amp;box_p2, const glm::vec2 &amp;point) noexcept</td></tr>
+<tr class="memdesc:a4b06c18daba104ee7c000e1093d167ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves whether or not a point is within the BBox specified.  <a href="#a4b06c18daba104ee7c000e1093d167ab">More...</a><br /></td></tr>
+<tr class="separator:a4b06c18daba104ee7c000e1093d167ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a6f8cb7234bc25fb29914734bf559268f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a6f8cb7234bc25fb29914734bf559268f">enactCallback</a> (const int &amp;interactionEventID) const</td></tr>
-<tr class="memdesc:a6f8cb7234bc25fb29914734bf559268f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Triggers all callback functions identified by the event ID specified.  <a href="#a6f8cb7234bc25fb29914734bf559268f">More...</a><br /></td></tr>
-<tr class="separator:a6f8cb7234bc25fb29914734bf559268f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb13a2705ff187a09d78fc83608c671f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#adb13a2705ff187a09d78fc83608c671f">enactCallback</a> (const int &amp;interactionEventID)</td></tr>
+<tr class="memdesc:adb13a2705ff187a09d78fc83608c671f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Triggers all callback functions identified by the event ID specified.  <a href="#adb13a2705ff187a09d78fc83608c671f">More...</a><br /></td></tr>
+<tr class="separator:adb13a2705ff187a09d78fc83608c671f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a49209cbf816cedfbd3b13b08aa0621ca"><td class="memItemLeft" align="right" valign="top"><a id="a49209cbf816cedfbd3b13b08aa0621ca"></a>
-<a class="el" href="class_engine.html">Engine</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>m_engine</b> = nullptr</td></tr>
-<tr class="separator:a49209cbf816cedfbd3b13b08aa0621ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38a08afdc4c2327211bb547ba7d7df4a"><td class="memItemLeft" align="right" valign="top"><a id="a38a08afdc4c2327211bb547ba7d7df4a"></a>
+<a class="el" href="class_engine.html">Engine</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_engine</b></td></tr>
+<tr class="separator:a38a08afdc4c2327211bb547ba7d7df4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a425ae0dda5b5d1e8710c4d5be2afbb11"><td class="memItemLeft" align="right" valign="top"><a id="a425ae0dda5b5d1e8710c4d5be2afbb11"></a>
 glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>m_position</b> = glm::vec2(0.0f)</td></tr>
 <tr class="separator:a425ae0dda5b5d1e8710c4d5be2afbb11"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -255,10 +272,10 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>m_position</b> =
 glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>m_scale</b> = glm::vec2(1.0f)</td></tr>
 <tr class="separator:a6e78c733019e17c6a1dacb269da619ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab586ba716d13ebd8820adda36e52cc79"><td class="memItemLeft" align="right" valign="top"><a id="ab586ba716d13ebd8820adda36e52cc79"></a>
-glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>m_maxScale</b> = glm::vec2(std::nanf(0))</td></tr>
+glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>m_maxScale</b> = glm::vec2(std::nanf(&quot;1&quot;))</td></tr>
 <tr class="separator:ab586ba716d13ebd8820adda36e52cc79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bc364e71407ae92ee5e610c03871d8a"><td class="memItemLeft" align="right" valign="top"><a id="a6bc364e71407ae92ee5e610c03871d8a"></a>
-glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>m_minScale</b> = glm::vec2(std::nanf(0))</td></tr>
+glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>m_minScale</b> = glm::vec2(std::nanf(&quot;1&quot;))</td></tr>
 <tr class="separator:a6bc364e71407ae92ee5e610c03871d8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf774365408fb05f4cb99b5c43e8a067"><td class="memItemLeft" align="right" valign="top"><a id="abf774365408fb05f4cb99b5c43e8a067"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_visible</b> = true</td></tr>
@@ -284,9 +301,9 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Interface for UI elements, like buttons, labels, panels, etc. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a4c19379dc429254012f0f958e3410103"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c19379dc429254012f0f958e3410103">&#9670;&nbsp;</a></span>~UI_Element()</h2>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="aada525c4c0d7b9a0304d54b614d951bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aada525c4c0d7b9a0304d54b614d951bb">&#9670;&nbsp;</a></span>Interact</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -295,7 +312,32 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">UI_Element::~UI_Element </td>
+          <td class="memname">enum <a class="el" href="class_u_i___element.html#aada525c4c0d7b9a0304d54b614d951bb">UI_Element::Interact</a> : int</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Enumerations for interacting with this element. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a77c938ab130f17374e89b708ecd600c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a77c938ab130f17374e89b708ecd600c9">&#9670;&nbsp;</a></span>~UI_Element()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual UI_Element::~UI_Element </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -303,38 +345,129 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Destroy this ui element. </p>
+<p>Destroy this UI element. </p>
 
 </div>
 </div>
-<a id="a61dd4805b0984378fecdf4f473cb9f8d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61dd4805b0984378fecdf4f473cb9f8d">&#9670;&nbsp;</a></span>UI_Element()</h2>
+<a id="a921f1af6dd05133c342ac3738d5493c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a921f1af6dd05133c342ac3738d5493c2">&#9670;&nbsp;</a></span>UI_Element() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">UI_Element::UI_Element </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">delete</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default constructor. </p>
+
+</div>
+</div>
+<a id="a5fa5ecfb7506f9fcd93664c9c5676e3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fa5ecfb7506f9fcd93664c9c5676e3f">&#9670;&nbsp;</a></span>UI_Element() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">UI_Element::UI_Element </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> &amp;&#160;</td>
           <td class="paramname"><em>engine</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Construct a ui element. </p>
+<p>Construct a UI element. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">engine</td><td>the engine to use. </td></tr>
+    <tr><td class="paramname">engine</td><td>reference to the engine to use. </td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="acad1c6798a9e0fff72384e78a2950dc8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acad1c6798a9e0fff72384e78a2950dc8">&#9670;&nbsp;</a></span>UI_Element() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">UI_Element::UI_Element </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_u_i___element.html">UI_Element</a> &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move constructor. </p>
+
+</div>
+</div>
+<a id="ad7638888d02e2e89c80de59fc021f806"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7638888d02e2e89c80de59fc021f806">&#9670;&nbsp;</a></span>UI_Element() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">UI_Element::UI_Element </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_u_i___element.html">UI_Element</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy constructor. </p>
 
 </div>
 </div>
@@ -436,12 +569,12 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
       </table>
 </div><div class="memdoc">
 
-<p>Reset this element, releasing, unpressing, unhovering this element and all its children. </p>
+<p>Reset this element, releasing, un-pressing, un-hovering this element and all its children. </p>
 
 </div>
 </div>
-<a id="a6f8cb7234bc25fb29914734bf559268f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6f8cb7234bc25fb29914734bf559268f">&#9670;&nbsp;</a></span>enactCallback()</h2>
+<a id="adb13a2705ff187a09d78fc83608c671f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb13a2705ff187a09d78fc83608c671f">&#9670;&nbsp;</a></span>enactCallback()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -454,7 +587,7 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
           <td>(</td>
           <td class="paramtype">const int &amp;&#160;</td>
           <td class="paramname"><em>interactionEventID</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
@@ -474,19 +607,27 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 
 </div>
 </div>
-<a id="aa9f98ad569c314ccde99bdbd312c1c56"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa9f98ad569c314ccde99bdbd312c1c56">&#9670;&nbsp;</a></span>getClicked()</h2>
+<a id="ab2a02de598a44fdef73f176235313c1c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2a02de598a44fdef73f176235313c1c">&#9670;&nbsp;</a></span>getClicked()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool UI_Element::getClicked </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Retrieve this element's clicked state. </p>
@@ -494,11 +635,14 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 
 </div>
 </div>
-<a id="a78168388089dc3c530bccbaca523a03d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a78168388089dc3c530bccbaca523a03d">&#9670;&nbsp;</a></span>getElement()</h2>
+<a id="a24f9b1eacf3b1766a2ffe84fabe9ce5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24f9b1eacf3b1766a2ffe84fabe9ce5f">&#9670;&nbsp;</a></span>getElement()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">std::shared_ptr&lt; <a class="el" href="class_u_i___element.html">UI_Element</a> &gt; UI_Element::getElement </td>
@@ -508,6 +652,11 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Retrieve the child element found at the index specified. </p>
@@ -521,11 +670,14 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 
 </div>
 </div>
-<a id="a4ad4d1d4ff44dbffbd41c4f9ddb4d049"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ad4d1d4ff44dbffbd41c4f9ddb4d049">&#9670;&nbsp;</a></span>getEnabled()</h2>
+<a id="a72023cda1dd1053af580e45b88597e1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72023cda1dd1053af580e45b88597e1b">&#9670;&nbsp;</a></span>getEnabled()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool UI_Element::getEnabled </td>
@@ -534,18 +686,26 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Get the enabled state of this element. </p>
+<p>Retrieve the enabled state of this element. </p>
 <dl class="section return"><dt>Returns</dt><dd>if this element is enabled. </dd></dl>
 
 </div>
 </div>
-<a id="aa5acac8165850ba74eb7cfc54638b955"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa5acac8165850ba74eb7cfc54638b955">&#9670;&nbsp;</a></span>getHovered()</h2>
+<a id="ae714d13c6e287db74b3eddd31558e3f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae714d13c6e287db74b3eddd31558e3f5">&#9670;&nbsp;</a></span>getHovered()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool UI_Element::getHovered </td>
@@ -554,6 +714,11 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Retrieve this element's hovered state. </p>
@@ -561,11 +726,14 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 
 </div>
 </div>
-<a id="ae8b2a424c6abe3869be9b568c85429ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae8b2a424c6abe3869be9b568c85429ae">&#9670;&nbsp;</a></span>getMaxScale()</h2>
+<a id="a0e4ed47b70ace77daf32fc34209e2e88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e4ed47b70ace77daf32fc34209e2e88">&#9670;&nbsp;</a></span>getMaxScale()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">glm::vec2 UI_Element::getMaxScale </td>
@@ -574,18 +742,26 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Gets this elements' maximum scale. </p>
+<p>Retrieves this elements' maximum scale. </p>
 <dl class="section return"><dt>Returns</dt><dd>this elements' maximum scale. </dd></dl>
 
 </div>
 </div>
-<a id="aaf5f9232989de52646234eed5f9538fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf5f9232989de52646234eed5f9538fe">&#9670;&nbsp;</a></span>getMinScale()</h2>
+<a id="a13423ccf494cc62a27e8f388f45c7847"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a13423ccf494cc62a27e8f388f45c7847">&#9670;&nbsp;</a></span>getMinScale()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">glm::vec2 UI_Element::getMinScale </td>
@@ -594,18 +770,26 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Gets this elements' minimum scale. </p>
+<p>Retrieves this elements' minimum scale. </p>
 <dl class="section return"><dt>Returns</dt><dd>this elements' minimum scale. </dd></dl>
 
 </div>
 </div>
-<a id="a8815110beccd425f8558f4d862f63e3f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8815110beccd425f8558f4d862f63e3f">&#9670;&nbsp;</a></span>getPosition()</h2>
+<a id="a76d45ec9f95490d55867205cab3b5b40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76d45ec9f95490d55867205cab3b5b40">&#9670;&nbsp;</a></span>getPosition()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">glm::vec2 UI_Element::getPosition </td>
@@ -614,18 +798,26 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Gets this elements' position. </p>
+<p>Retrieves this elements' position. </p>
 <dl class="section return"><dt>Returns</dt><dd>this elements' position. </dd></dl>
 
 </div>
 </div>
-<a id="aeeabe74d32830fb53b35ab61cdb88fc6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeeabe74d32830fb53b35ab61cdb88fc6">&#9670;&nbsp;</a></span>getPressed()</h2>
+<a id="aa888bf0a1c3aef2e39f54bc408554f53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa888bf0a1c3aef2e39f54bc408554f53">&#9670;&nbsp;</a></span>getPressed()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool UI_Element::getPressed </td>
@@ -634,6 +826,11 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Retrieve this element's pressed state. </p>
@@ -641,11 +838,14 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 
 </div>
 </div>
-<a id="a2f7e80da7f7e485b6498e8a11feadec7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2f7e80da7f7e485b6498e8a11feadec7">&#9670;&nbsp;</a></span>getReleased()</h2>
+<a id="a44781aaa5f58d6dd4c4611bb8d012ce8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44781aaa5f58d6dd4c4611bb8d012ce8">&#9670;&nbsp;</a></span>getReleased()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool UI_Element::getReleased </td>
@@ -654,6 +854,11 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Retrieve this element's released state. </p>
@@ -661,11 +866,14 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 
 </div>
 </div>
-<a id="a409a80144ec207e90dd5343d3e18de01"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a409a80144ec207e90dd5343d3e18de01">&#9670;&nbsp;</a></span>getScale()</h2>
+<a id="ad315ed98b6d09998159a0d6ddd86e4e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad315ed98b6d09998159a0d6ddd86e4e7">&#9670;&nbsp;</a></span>getScale()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">glm::vec2 UI_Element::getScale </td>
@@ -674,18 +882,26 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Gets this elements' scale. </p>
+<p>Retrieves this elements' scale. </p>
 <dl class="section return"><dt>Returns</dt><dd>this elements' scale. </dd></dl>
 
 </div>
 </div>
-<a id="a1cbcd86634daedd87db61e1524b04887"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1cbcd86634daedd87db61e1524b04887">&#9670;&nbsp;</a></span>getVisible()</h2>
+<a id="a81980e67b83c3998e177d9aa4d6c0e6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81980e67b83c3998e177d9aa4d6c0e6a">&#9670;&nbsp;</a></span>getVisible()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool UI_Element::getVisible </td>
@@ -694,9 +910,14 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Gets this elements' visibility. </p>
+<p>Retrieves this elements' visibility. </p>
 <dl class="section return"><dt>Returns</dt><dd>if this element is visible. </dd></dl>
 
 </div>
@@ -725,7 +946,7 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 </table>
 </div><div class="memdoc">
 
-<p>Propogates a keyboard action event from this UI element to its children. </p>
+<p>Propagates a keyboard action event from this UI element to its children. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">keyboardEvent</td><td>the event to propagate. </td></tr>
@@ -733,7 +954,7 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="class_text_input.html#a1604a0333c5d5762b85c577e482dec6c">TextInput</a>, and <a class="el" href="class_u_i___decorator.html#a511f05bb61cdba203b87ab36db8b977b">UI_Decorator</a>.</p>
+<p>Reimplemented in <a class="el" href="class_text_input.html#a52fccd09fec29596a548bfddbe47846b">TextInput</a>, and <a class="el" href="class_u_i___decorator.html#a48bf5371fdc99c9ca73bdcc57dade0c9">UI_Decorator</a>.</p>
 
 </div>
 </div>
@@ -749,7 +970,7 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
         <tr>
           <td class="memname">void UI_Element::mouseAction </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_mouse_event.html">MouseEvent</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct_mouse_event.html">MouseEvent</a> &amp;&#160;</td>
           <td class="paramname"><em>mouseEvent</em></td><td>)</td>
           <td></td>
         </tr>
@@ -761,36 +982,100 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 </table>
 </div><div class="memdoc">
 
-<p>Applies a mouse action across this ui element. </p>
+<p>Applies a mouse action across this UI element. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">mouseEvent</td><td>the mouse event occuring. </td></tr>
+    <tr><td class="paramname">mouseEvent</td><td>the mouse event occurring. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="class_list.html#ab8ce0b40f006b4a777778c344bb05dd7">List</a>, <a class="el" href="class_side_list.html#a555881bba39c2aae9e4823d52ee28001">SideList</a>, <a class="el" href="class_text_input.html#ac346ce776bc352aedf3d04ece4eb5ccd">TextInput</a>, <a class="el" href="class_slider.html#a3cd075497bd01fad4af2f24e02233b81">Slider</a>, <a class="el" href="class_scrollbar___v.html#a9291016da341676676322a24186ff280">Scrollbar_V</a>, and <a class="el" href="class_u_i___decorator.html#ac26f84ab10e130f5bccefc361412ce37">UI_Decorator</a>.</p>
+<p>Reimplemented in <a class="el" href="class_side_list.html#ab299bf68b9919628fa6c7424a347bf2f">SideList</a>, <a class="el" href="class_list.html#ad9aa3c1fa9d4ad8ac9cb82541255e4c7">List</a>, <a class="el" href="class_list___horizontal.html#a38dfc7cd0988a02cc246df90d96249f9">List_Horizontal</a>, <a class="el" href="class_slider.html#ad6f301bca6d5a35099bd8dd70f4afb0e">Slider</a>, <a class="el" href="class_text_input.html#a961820c078356c692494acd3e5771262">TextInput</a>, <a class="el" href="class_scrollbar___v.html#a5fdf5076c2a4c21322397131640f8353">Scrollbar_V</a>, and <a class="el" href="class_u_i___decorator.html#a6b1bc511c564f0f72af309e20ad028c3">UI_Decorator</a>.</p>
 
 </div>
 </div>
-<a id="a4e2be442fceb11c0ac8cac5dc04688be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e2be442fceb11c0ac8cac5dc04688be">&#9670;&nbsp;</a></span>mouseWithin()</h2>
+<a id="a6cd20c5dc6d509a666d06100b097a1fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cd20c5dc6d509a666d06100b097a1fa">&#9670;&nbsp;</a></span>mouseWithin()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool UI_Element::mouseWithin </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_mouse_event.html">MouseEvent</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct_mouse_event.html">MouseEvent</a> &amp;&#160;</td>
           <td class="paramname"><em>mouseEvent</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Get whether or not the mouse is within this element. </p>
+<p>Retrieve whether or not the mouse is within this element. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if the mouse is within this element. </dd></dl>
+
+</div>
+</div>
+<a id="ab5ced04f50fa107364bf820dbfbfbe71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5ced04f50fa107364bf820dbfbfbe71">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_u_i___element.html">UI_Element</a>&amp; UI_Element::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_u_i___element.html">UI_Element</a> &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">delete</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move assignment. </p>
+
+</div>
+</div>
+<a id="aa8195ca850b02cab1d3c2c34a8f5af0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8195ca850b02cab1d3c2c34a8f5af0e">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_u_i___element.html">UI_Element</a>&amp; UI_Element::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_u_i___element.html">UI_Element</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">delete</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy assignment. </p>
 
 </div>
 </div>
@@ -834,15 +1119,17 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 </table>
 </div><div class="memdoc">
 
-<p>Render this element (and all subelements). </p>
+<p>Render this element (and all sub-elements). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">transform</td><td>transform to use. </td></tr>
+    <tr><td class="paramname">deltaTime</td><td>the amount of time since last frame. </td></tr>
+    <tr><td class="paramname">position</td><td>the position of the element relative to its parent. </td></tr>
+    <tr><td class="paramname">scale</td><td>the scale of the element relative to its parent. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="class_text_input.html#a2d6d64eedb8fe9d32e18ab5c2e1a10fe">TextInput</a>, <a class="el" href="class_side_list.html#aae3722a39c75539128b4718e196e3c0c">SideList</a>, <a class="el" href="class_scrollbar___v.html#a8017ffdb6971f5d678e25171ed8369b0">Scrollbar_V</a>, <a class="el" href="class_label.html#a98bb2d26276053a827fb60761edb90b1">Label</a>, <a class="el" href="class_list.html#a20d01f7651156ce40e358a434b97173f">List</a>, <a class="el" href="class_toggle.html#afe0739e300147f9c9e65c3a227b37ef3">Toggle</a>, <a class="el" href="class_slider.html#ad07184fd7aa7e65fb5af40f724ad244f">Slider</a>, <a class="el" href="class_separator.html#ac32df3cadeb25b92632d82b925762b28">Separator</a>, <a class="el" href="class_panel.html#a36e160ba23f9a3c3db428792d9184f80">Panel</a>, <a class="el" href="class_border.html#a1012d9be22b6450d1dbcb667bad4c856">Border</a>, <a class="el" href="class_button.html#a1565c0c186824d80a7a8b3175ba3dda3">Button</a>, and <a class="el" href="class_u_i___decorator.html#ac250390fd91d486490b5cb6fb95467d4">UI_Decorator</a>.</p>
+<p>Reimplemented in <a class="el" href="class_label.html#a58ee099a0608acab1faf2eee411760e7">Label</a>, <a class="el" href="class_side_list.html#a89dce10120e874edaabac294d13ee157">SideList</a>, <a class="el" href="class_text_input.html#af8983e911aee87d30b3515e2a9d5a40d">TextInput</a>, <a class="el" href="class_list.html#aac78f9e43bebd8da6bfbeca885ffd063">List</a>, <a class="el" href="class_list___horizontal.html#a5d5526f4c342fe050e11786b9fd8aceb">List_Horizontal</a>, <a class="el" href="class_scrollbar___v.html#aff6b8eceaf5aeee0120759f0d6361eb5">Scrollbar_V</a>, <a class="el" href="class_slider.html#ad109e9156fba0f92e7410745c68f9615">Slider</a>, <a class="el" href="class_toggle.html#a799e9fb24ff18a519ead73f8e19a0ff1">Toggle</a>, <a class="el" href="class_border.html#ae799a278c8c4f20200bc60371ee87d06">Border</a>, <a class="el" href="class_panel.html#a186611fc770d5637b70f8835cea5f105">Panel</a>, <a class="el" href="class_separator.html#a2cc9c1dbaf8971a8bb7b3921279f3ec1">Separator</a>, <a class="el" href="class_button.html#aa17c0645db922357819a84a773076b4e">Button</a>, and <a class="el" href="class_u_i___decorator.html#a1a81d07874361ba72d1e03ded8f9f9d5">UI_Decorator</a>.</p>
 
 </div>
 </div>
@@ -865,11 +1152,14 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 
 </div>
 </div>
-<a id="adf034155826cf96ed85035f8a4ca5181"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf034155826cf96ed85035f8a4ca5181">&#9670;&nbsp;</a></span>setEnabled()</h2>
+<a id="ac00ef07497b7d62684cdfb18b92f6481"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac00ef07497b7d62684cdfb18b92f6481">&#9670;&nbsp;</a></span>setEnabled()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void UI_Element::setEnabled </td>
@@ -879,12 +1169,17 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Set this element as enabled or not. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">visible</td><td>whether or not this element should be enabled. </td></tr>
+    <tr><td class="paramname">enabled</td><td>whether or not this element should be enabled. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1007,7 +1302,7 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 <p>Set the minimum height of this element. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">width</td><td>the minimum height to use. </td></tr>
+    <tr><td class="paramname">height</td><td>the minimum height to use. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1156,11 +1451,14 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 
 </div>
 </div>
-<a id="a7d18607c4c41d982cec5824f4eed1882"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7d18607c4c41d982cec5824f4eed1882">&#9670;&nbsp;</a></span>setVisible()</h2>
+<a id="af931a8dd9ff682cd14d32a2d16f6565e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af931a8dd9ff682cd14d32a2d16f6565e">&#9670;&nbsp;</a></span>setVisible()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void UI_Element::setVisible </td>
@@ -1170,6 +1468,11 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Set this element as visible or not. </p>
@@ -1214,12 +1517,12 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="class_list.html#a2f4337ebd4d5bda75eeb661eeb05899d">List</a>, <a class="el" href="class_side_list.html#a4792033afd53ad30fbfdd5f24e05d26c">SideList</a>, <a class="el" href="class_options___pane.html#a3dc5731fb95fd4a0d86031980c4d14aa">Options_Pane</a>, <a class="el" href="class_slider.html#a994d5c9fefc811737ecf275f9f7d2893">Slider</a>, <a class="el" href="class_toggle.html#a8be647c9e6210eccf92bbe74499798bc">Toggle</a>, <a class="el" href="class_menu.html#a40882970040c47640c6d88cd91e47c29">Menu</a>, <a class="el" href="class_u_i___decorator.html#ac4681afc1f49ae8babbf03fe590c5788">UI_Decorator</a>, and <a class="el" href="class_button.html#a669e6e4ccacfd4c8a6d0803943400eea">Button</a>.</p>
+<p>Reimplemented in <a class="el" href="class_side_list.html#a3d8409fb79de4ee8351b84bb852669e1">SideList</a>, <a class="el" href="class_list.html#a48e8eb2b0e85f9b20727c29e0927bd24">List</a>, <a class="el" href="class_list___horizontal.html#a24925419c64a3aa0b7c91ce709dd1ddb">List_Horizontal</a>, <a class="el" href="class_slider.html#a87de49d3b09df958ae3b2e8a00bbda44">Slider</a>, <a class="el" href="class_toggle.html#a0dd2fc470b30ee115f4f0078ddb49420">Toggle</a>, <a class="el" href="class_menu.html#a5900a98fee2d85c4f182cee9fb51f246">Menu</a>, <a class="el" href="class_options___pane.html#af94bbfe4d5bb6317badd3006c21a0a86">Options_Pane</a>, <a class="el" href="class_u_i___decorator.html#a950cc91847038b21d4c7482468635985">UI_Decorator</a>, and <a class="el" href="class_button.html#a8c35230350a661c68e078fa6b88d4741">Button</a>.</p>
 
 </div>
 </div>
-<a id="abdd0dc1853cb6620b218e1fd97cf1c75"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abdd0dc1853cb6620b218e1fd97cf1c75">&#9670;&nbsp;</a></span>withinBBox()</h2>
+<a id="a4b06c18daba104ee7c000e1093d167ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b06c18daba104ee7c000e1093d167ab">&#9670;&nbsp;</a></span>withinBBox()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1253,12 +1556,12 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns whether or not a point is within the bbox specified. </p>
+<p>Retrieves whether or not a point is within the BBox specified. </p>
 
 </div>
 </div>

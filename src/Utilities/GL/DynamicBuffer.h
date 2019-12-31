@@ -7,115 +7,110 @@
 
 
 /** An OpenGL framebuffer encapsulation, which can change in size. */
-class DynamicBuffer : public Buffer_Interface {
+template <int BufferCount = 3>
+class DynamicBuffer final : public Buffer_Interface {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
+	/** Wait for all fences to complete, then destroy this buffer. */
 	inline ~DynamicBuffer() {
-		for (int x = 0; x < 3; ++x) {
-			if (m_fence[x] != nullptr)
-				glDeleteSync(m_fence[x]);
+		for (int x = 0; x < BufferCount; ++x) {
+			WaitForFence(m_writeFence[x]);
+			WaitForFence(m_readFence[x]);
 			if (m_bufferID[x]) {
 				glUnmapNamedBuffer(m_bufferID[x]);
 				glDeleteBuffers(1, &m_bufferID[x]);
 			}
 		}
 	}
-	/** Default. */
-	inline DynamicBuffer(const GLsizeiptr & capacity = 256, const void * data = 0, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT)
-		: m_maxCapacity(capacity), m_mapFlags(mapFlags) {
-		glCreateBuffers(3, m_bufferID);
-		for (int x = 0; x < 3; ++x) {
+	/** Construct a new Dynamic buffer.
+	@param	capacity	the starting capacity of this buffer.
+	@param	data		optional data buffer, must be at least as large.
+	@param	mapFlags	bit-field flags. */
+	inline DynamicBuffer(const GLsizeiptr& capacity = 256, const void* data = nullptr, const GLbitfield& mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT) noexcept
+		: m_mapFlags(mapFlags), m_maxCapacity(capacity) {
+		// Zero-initialize our starting variables
+		for (int x = 0; x < BufferCount; ++x) {
+			m_bufferID[x] = 0;
+			m_bufferPtr[x] = nullptr;
+			m_writeFence[x] = nullptr;
+			m_readFence[x] = nullptr;
+		}
+
+		glCreateBuffers(BufferCount, m_bufferID);
+		for (int x = 0; x < BufferCount; ++x) {
 			glNamedBufferStorage(m_bufferID[x], m_maxCapacity, data, GL_DYNAMIC_STORAGE_BIT | m_mapFlags);
 			m_bufferPtr[x] = glMapNamedBufferRange(m_bufferID[x], 0, m_maxCapacity, m_mapFlags);
 		}
 	}
-	inline DynamicBuffer(const DynamicBuffer & other) 
-		: DynamicBuffer(other.m_maxCapacity, 0, other.m_mapFlags) {		
-		for (int x = 0; x < 3; ++x) 
-			glCopyNamedBufferSubData(other.m_bufferID[x], m_bufferID[x], 0, 0, m_maxCapacity);		
+	/** Construct a new Dynamic buffer, from another buffer.
+	@param	other		another buffer to copy from. */
+	inline DynamicBuffer(const DynamicBuffer& other) noexcept : DynamicBuffer(other.m_maxCapacity, 0, other.m_mapFlags) {
+		for (int x = 0; x < BufferCount; ++x)
+			glCopyNamedBufferSubData(other.m_bufferID[x], m_bufferID[x], 0, 0, m_maxCapacity);
 	}
-	/** Move gl object from 1 instance to another. */
-	inline DynamicBuffer & operator=(DynamicBuffer && o) noexcept {
-		m_bufferID[0] = (std::move(o.m_bufferID[0]));
-		m_bufferID[1] = (std::move(o.m_bufferID[1]));
-		m_bufferID[2] = (std::move(o.m_bufferID[2]));
-		m_bufferPtr[0] = (std::move(o.m_bufferPtr[0]));
-		m_bufferPtr[1] = (std::move(o.m_bufferPtr[1]));
-		m_bufferPtr[2] = (std::move(o.m_bufferPtr[2]));
-		m_maxCapacity = (std::move(o.m_maxCapacity));
-		m_mapFlags = (std::move(o.m_mapFlags));
-		o.m_bufferID[0] = 0;
-		o.m_bufferID[1] = 0;
-		o.m_bufferID[2] = 0;
-		o.m_bufferPtr[0] = nullptr;
-		o.m_bufferPtr[1] = nullptr;
-		o.m_bufferPtr[2] = nullptr;
-		o.m_maxCapacity = 0;
-		o.m_mapFlags = 0;
-		return *this;
+	/** Assignment constructor.
+	@param	other			another buffer to move from. */
+	inline DynamicBuffer(DynamicBuffer&& other) noexcept {
+		(*this) = std::move(other);
 	}
 
 
-	// Public Inteface Implementations
-	inline virtual void bindBuffer(const GLenum & target) const override {
-		glBindBuffer(target, m_bufferID[m_writeIndex]);
+	// Public Interface Implementations
+	inline void bindBuffer(const GLenum& target) const noexcept final {
+		// Ensure writing has finished before reading
+		//WaitForFence(m_writeFence[m_index]);
+		glBindBuffer(target, m_bufferID[m_index]);
 	}
-	inline virtual void bindBufferBase(const GLenum & target, const GLuint & index) const override {
-		glBindBufferBase(target, index, m_bufferID[m_writeIndex]);
+	inline void bindBufferBase(const GLenum& target, const GLuint& index) const noexcept final {
+		// Ensure writing has finished before reading
+		//WaitForFence(m_writeFence[m_index]);
+		glBindBufferBase(target, index, m_bufferID[m_index]);
 	}
 
-	
+
 	// Public Methods
 	/** Expand this buffer to fit the size provided.
-	@param	size		the size to expand up to (if not already larger) */
-	inline void setMaxSize(const GLsizeiptr & size) {
+	@param	size		the size to expand up to (if not already larger). */
+	inline void setMaxSize(const GLsizeiptr& size) noexcept {
 		expandToFit(0, size);
 	}
 	/** Write the supplied data to GPU memory.
 	@param	offset		byte offset from the beginning.
 	@param	size		the size of the data to write.
 	@param	data		the data to write. */
-	inline void write(const GLsizeiptr & offset, const GLsizeiptr & size, const void * data) {
+	inline void write(const GLsizeiptr& offset, const GLsizeiptr& size, const void* data) noexcept {
 		expandToFit(offset, size);
-		std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr[m_writeIndex]) + offset, data, size);
+		std::memcpy(static_cast<unsigned char*>(m_bufferPtr[m_index]) + offset, data, size);
 	}
 	/** Write the supplied data to GPU memory.
 	@param	offset		byte offset from the beginning.
 	@param	size		the size of the data to write.
 	@param	data		the data to write. */
-	inline void write_immediate(const GLsizeiptr & offset, const GLsizeiptr & size, const void * data) {
+	inline void write_immediate(const GLsizeiptr& offset, const GLsizeiptr& size, const void* data) noexcept {
 		expandToFit(offset, size);
 
-		glNamedBufferSubData(m_bufferID[0], offset, size, data);
-		glNamedBufferSubData(m_bufferID[1], offset, size, data);
-		glNamedBufferSubData(m_bufferID[2], offset, size, data);
+		for (const auto& buffer : m_bufferID)
+			glNamedBufferSubData(buffer, offset, size, data);
 	}
-	/** Expands this buffer's container if it can't fit the specified range to write into
-	@note Technically creates a new a new buffer to replace the old one and copies the old data
-	@param	offset	byte offset from the beginning
-	@param	size	the size of the data to write */
-	inline void expandToFit(const GLsizeiptr & offset, const GLsizeiptr & size) {
+	/** Expands this buffer's container if it can't fit the specified range to write into.
+	@note Technically creates a new a new buffer to replace the old one and copies the old data.
+	@param	offset	byte offset from the beginning.
+	@param	size	the size of the data to write. */
+	inline void expandToFit(const GLsizeiptr& offset, const GLsizeiptr& size) noexcept {
 		if (offset + size > m_maxCapacity) {
 			// Create new buffer large enough to fit old data + new data
 			const GLsizeiptr oldSize = m_maxCapacity;
 			m_maxCapacity += offset + (size * 2);
 
-			for (int x = 0; x < 3; ++x) {
-				// Wait for this buffer in particular
-				if (m_fence[x] != nullptr)
-					while (1) {
-						GLenum waitReturn = glClientWaitSync(m_fence[x], GL_SYNC_FLUSH_COMMANDS_BIT, 1);
-						if (waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
-							glDeleteSync(m_fence[x]);
-							m_fence[x] = nullptr;
-							break;
-						}
-					}
+			// Wait for and transfer data from old buffers into new buffers of the new size
+			for (int x = 0; x < BufferCount; ++x) {
+				WaitForFence(m_writeFence[x]);
+				WaitForFence(m_readFence[x]);
 
 				// Create new buffer
 				GLuint newBuffer = 0;
 				glCreateBuffers(1, &newBuffer);
-				glNamedBufferStorage(newBuffer, m_maxCapacity, 0, GL_DYNAMIC_STORAGE_BIT | m_mapFlags);
+				glNamedBufferStorage(newBuffer, m_maxCapacity, nullptr, GL_DYNAMIC_STORAGE_BIT | m_mapFlags);
 
 				// Copy old buffer
 				if (oldSize)
@@ -131,35 +126,81 @@ public:
 			}
 		}
 	}
-	/** Wait for the current fence to pass, for the current frame index. */
-	inline void beginWriting() {
-		if (m_fence[m_writeIndex] != nullptr)
-			while (1) {
-				GLenum waitReturn = glClientWaitSync(m_fence[m_writeIndex], GL_SYNC_FLUSH_COMMANDS_BIT, 1);
-				if (waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
-					glDeleteSync(m_fence[m_writeIndex]);
-					m_fence[m_writeIndex] = nullptr;
-					return;
-				}
-			}
+	/** Prepare this buffer for writing, waiting on any unfinished reads. */
+	inline void beginWriting() const noexcept {
+		// Ensure all reads and writes at this index have finished.
+		WaitForFence(m_writeFence[m_index]);
+		WaitForFence(m_readFence[m_index]);
 	}
-	/** Create a fence for the current point in time. */
-	inline void endWriting() {
-		if (!m_fence[m_writeIndex]) {
-			m_fence[m_writeIndex] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-			m_writeIndex = (m_writeIndex + 1) % 3;
+	/** Signal that this multi-buffer is finished being written to. */
+	inline void endWriting() const noexcept {
+		if (!m_writeFence[m_index])
+			m_writeFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+	}
+	/** Signal that this multi-buffer is finished being read from. */
+	inline void endReading() noexcept {
+		if (!m_readFence[m_index])
+			m_readFence[m_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+		m_index = (m_index + 1) % BufferCount;
+	}
+	/** Movement operator, for moving another buffer into this one.
+	@param	other			another buffer to move the data from, to here. */
+	inline DynamicBuffer& operator=(DynamicBuffer&& other) noexcept {
+		for (int x = 0; x < BufferCount; ++x) {
+			m_bufferID[x] = std::move(other.m_bufferID[x]);
+			m_bufferPtr[x] = std::move(other.m_bufferPtr[x]);
+			m_writeFence[x] = std::move(other.m_writeFence[x]);
+			m_readFence[x] = std::move(other.m_readFence[x]);
+			other.m_bufferID[x] = 0;
+			other.m_bufferPtr[x] = nullptr;
+			other.m_writeFence[x] = nullptr;
+			other.m_readFence[x] = nullptr;
 		}
+
+		m_mapFlags = (std::move(other.m_mapFlags));
+		m_maxCapacity = (std::move(other.m_maxCapacity));
+		m_index = std::move(other.m_index);
+		other.m_mapFlags = 0;
+		other.m_maxCapacity = 0;
+		other.m_index = 0;
+		return *this;
+	}
+	/** Copy operator, for copying another buffer into this one.
+	@param	other			another buffer to copy the data from, to here. */
+	inline DynamicBuffer& operator=(const DynamicBuffer& other) noexcept {
+		m_mapFlags = other.m_mapFlags;
+		m_maxCapacity = other.m_maxCapacity;
+		for (int x = 0; x < BufferCount; ++x)
+			glCopyNamedBufferSubData(other.m_bufferID[x], m_bufferID[x], 0, 0, m_maxCapacity);
+		return *this;
 	}
 
 
 private:
+	// Private Methods
+	/** Wait for the fence at the supplied index to pass.
+	@param	fence			the fence belonging to a particular internal buffer. */
+	static void WaitForFence(GLsync& fence) noexcept {
+		while (fence) {
+			GLbitfield waitFlags = 0;
+			if (const auto waitReturn = glClientWaitSync(fence, waitFlags, 1);
+				waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
+				glDeleteSync(fence);
+				fence = nullptr;
+				return;
+			}
+			waitFlags = GL_SYNC_FLUSH_COMMANDS_BIT;
+		}
+	}
+
+
 	// Private Attributes
-	int m_writeIndex = 0;
-	GLuint m_bufferID[3] = { 0,0,0 };
-	void * m_bufferPtr[3] = { nullptr, nullptr, nullptr };
-	GLsync m_fence[3] = { nullptr, nullptr, nullptr };
-	GLsizeiptr m_maxCapacity = 256;
 	GLbitfield m_mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+	mutable GLsync m_writeFence[BufferCount]{}, m_readFence[BufferCount]{};
+	GLuint m_bufferID[BufferCount]{};
+	void* m_bufferPtr[BufferCount]{};
+	int m_index = 0;
+	GLsizeiptr m_maxCapacity = 256;
 };
 
 #endif // DYNAMICBUFFER_H

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -78,12 +78,6 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4b1639accc9354ac88e9239833b519b7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset_manager.html#a4b1639accc9354ac88e9239833b519b7">~AssetManager</a> ()=default</td></tr>
-<tr class="memdesc:a4b1639accc9354ac88e9239833b519b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the asset manager.  <a href="#a4b1639accc9354ac88e9239833b519b7">More...</a><br /></td></tr>
-<tr class="separator:a4b1639accc9354ac88e9239833b519b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48938b146fa7ad19270a11be5363472a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset_manager.html#a48938b146fa7ad19270a11be5363472a">AssetManager</a> ()=default</td></tr>
-<tr class="memdesc:a48938b146fa7ad19270a11be5363472a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the asset manager.  <a href="#a48938b146fa7ad19270a11be5363472a">More...</a><br /></td></tr>
-<tr class="separator:a48938b146fa7ad19270a11be5363472a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc2ee6a064cdfc0bf56b1619af71c953"><td class="memItemLeft" align="right" valign="top">Shared_Asset&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset_manager.html#adc2ee6a064cdfc0bf56b1619af71c953">shareAsset</a> (const char *assetType, const std::string &amp;filename, const std::function&lt; Shared_Asset(void)&gt; &amp;constructor, const bool &amp;threaded)</td></tr>
 <tr class="memdesc:adc2ee6a064cdfc0bf56b1619af71c953"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if an asset already exists with the given filename, fetching if true.  <a href="#adc2ee6a064cdfc0bf56b1619af71c953">More...</a><br /></td></tr>
 <tr class="separator:adc2ee6a064cdfc0bf56b1619af71c953"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -97,70 +91,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a544e2aa8b646452f304a7a87df4f6a29"><td class="mdescLeft">&#160;</td><td class="mdescRight">From the main thread, calls all notification calls (for completed asset loading).  <a href="#a544e2aa8b646452f304a7a87df4f6a29">More...</a><br /></td></tr>
 <tr class="separator:a544e2aa8b646452f304a7a87df4f6a29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad72d1ad886de2d65a31692396d6edcb7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset_manager.html#ad72d1ad886de2d65a31692396d6edcb7">readyToUse</a> ()</td></tr>
-<tr class="memdesc:ad72d1ad886de2d65a31692396d6edcb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether or not this manager is ready to use.  <a href="#ad72d1ad886de2d65a31692396d6edcb7">More...</a><br /></td></tr>
+<tr class="memdesc:ad72d1ad886de2d65a31692396d6edcb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves whether or not this manager is ready to use.  <a href="#ad72d1ad886de2d65a31692396d6edcb7">More...</a><br /></td></tr>
 <tr class="separator:ad72d1ad886de2d65a31692396d6edcb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a349d0ff98a845102f28e9e0ad3de0cb0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset_manager.html#a349d0ff98a845102f28e9e0ad3de0cb0">hasChanged</a> ()</td></tr>
-<tr class="memdesc:a349d0ff98a845102f28e9e0ad3de0cb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether or not any changes have occured to this manager since the last check.  <a href="#a349d0ff98a845102f28e9e0ad3de0cb0">More...</a><br /></td></tr>
+<tr class="memdesc:a349d0ff98a845102f28e9e0ad3de0cb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves whether or not any changes have occurred to this manager since the last check.  <a href="#a349d0ff98a845102f28e9e0ad3de0cb0">More...</a><br /></td></tr>
 <tr class="separator:a349d0ff98a845102f28e9e0ad3de0cb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Manages the storage and retrieval of assets. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a4b1639accc9354ac88e9239833b519b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b1639accc9354ac88e9239833b519b7">&#9670;&nbsp;</a></span>~AssetManager()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">AssetManager::~AssetManager </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Destroy the asset manager. </p>
-
-</div>
-</div>
-<a id="a48938b146fa7ad19270a11be5363472a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48938b146fa7ad19270a11be5363472a">&#9670;&nbsp;</a></span>AssetManager()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">AssetManager::AssetManager </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Create the asset manager. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="ad0e3cc8f6d3c695e07b9c01025a86312"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad0e3cc8f6d3c695e07b9c01025a86312">&#9670;&nbsp;</a></span>beginWorkOrder()</h2>
 
@@ -195,8 +134,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Returns whether or not any changes have occured to this manager since the last check. </p>
-<dl class="section return"><dt>Returns</dt><dd>true if any changes occured, false otherwise </dd></dl>
+<p>Retrieves whether or not any changes have occurred to this manager since the last check. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if any changes occurred, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -234,7 +173,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Returns whether or not this manager is ready to use. </p>
+<p>Retrieves whether or not this manager is ready to use. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if all work is finished, false otherwise. </dd></dl>
 
 </div>

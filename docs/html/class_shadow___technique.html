@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -67,7 +67,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_shadow___technique-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Shadow_Technique Class Reference</div>  </div>
+<div class="title">Shadow_Technique Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -88,41 +88,59 @@ Inheritance diagram for Shadow_Technique:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af408c983d212727d1edb91a752389463"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shadow___technique.html#af408c983d212727d1edb91a752389463">~Shadow_Technique</a> ()</td></tr>
-<tr class="memdesc:af408c983d212727d1edb91a752389463"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="#af408c983d212727d1edb91a752389463">More...</a><br /></td></tr>
+<tr class="memdesc:af408c983d212727d1edb91a752389463"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this shadow technique.  <a href="#af408c983d212727d1edb91a752389463">More...</a><br /></td></tr>
 <tr class="separator:af408c983d212727d1edb91a752389463"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a449f5ee42b60148b9f3e712269fb89bb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shadow___technique.html#a449f5ee42b60148b9f3e712269fb89bb">Shadow_Technique</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::shared_ptr&lt; std::vector&lt; <a class="el" href="class_camera.html">Camera</a> * &gt;&gt; &amp;cameras, <a class="el" href="class_e_c_s_system_list.html">ECSSystemList</a> &amp;auxilliarySystems)</td></tr>
-<tr class="memdesc:a449f5ee42b60148b9f3e712269fb89bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a449f5ee42b60148b9f3e712269fb89bb">More...</a><br /></td></tr>
-<tr class="separator:a449f5ee42b60148b9f3e712269fb89bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43c64afcdf4f5a87050591c988aad70a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shadow___technique.html#a43c64afcdf4f5a87050591c988aad70a">updateTechnique</a> (const float &amp;deltaTime) override</td></tr>
-<tr class="memdesc:a43c64afcdf4f5a87050591c988aad70a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform any pre-passes and or update any data needed before rendering this frame.  <a href="#a43c64afcdf4f5a87050591c988aad70a">More...</a><br /></td></tr>
-<tr class="separator:a43c64afcdf4f5a87050591c988aad70a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7a6a0d44983033b816363a207aeb02e"><td class="memItemLeft" align="right" valign="top"><a id="aa7a6a0d44983033b816363a207aeb02e"></a>
-std::shared_ptr&lt; <a class="el" href="struct_shadow_data.html">ShadowData</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getShadowData</b> () const</td></tr>
-<tr class="separator:aa7a6a0d44983033b816363a207aeb02e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9d978f577a8c319aab45f40c55b6fe9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shadow___technique.html#af9d978f577a8c319aab45f40c55b6fe9">Shadow_Technique</a> (<a class="el" href="class_engine.html">Engine</a> &amp;engine, std::vector&lt; <a class="el" href="class_camera.html">Camera</a> * &gt; &amp;sceneCameras)</td></tr>
+<tr class="memdesc:af9d978f577a8c319aab45f40c55b6fe9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a shadow technique.  <a href="#af9d978f577a8c319aab45f40c55b6fe9">More...</a><br /></td></tr>
+<tr class="separator:af9d978f577a8c319aab45f40c55b6fe9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d40553c302bc123f08980eafdffc97a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shadow___technique.html#a3d40553c302bc123f08980eafdffc97a">clearCache</a> (const float &amp;deltaTime) noexcept final</td></tr>
+<tr class="memdesc:a3d40553c302bc123f08980eafdffc97a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare this technique for the next frame, swapping any of its buffers.  <a href="#a3d40553c302bc123f08980eafdffc97a">More...</a><br /></td></tr>
+<tr class="separator:a3d40553c302bc123f08980eafdffc97a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc63785a16178f605a8cc6eeeb8417f6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shadow___technique.html#abc63785a16178f605a8cc6eeeb8417f6">updateCache</a> (const float &amp;deltaTime, <a class="el" href="classecs_world.html">ecsWorld</a> &amp;world) final</td></tr>
+<tr class="memdesc:abc63785a16178f605a8cc6eeeb8417f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update any data needed before rendering this frame.  <a href="#abc63785a16178f605a8cc6eeeb8417f6">More...</a><br /></td></tr>
+<tr class="separator:abc63785a16178f605a8cc6eeeb8417f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52da86acd1b8b1273ad375339129f0dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shadow___technique.html#a52da86acd1b8b1273ad375339129f0dd">updatePass</a> (const float &amp;deltaTime) final</td></tr>
+<tr class="memdesc:a52da86acd1b8b1273ad375339129f0dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform any pre-requisite rendering passes.  <a href="#a52da86acd1b8b1273ad375339129f0dd">More...</a><br /></td></tr>
+<tr class="separator:a52da86acd1b8b1273ad375339129f0dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a522945f72e9e66e159886452d4d8dfae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_shadow_data.html">ShadowData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shadow___technique.html#a522945f72e9e66e159886452d4d8dfae">getShadowData</a> () noexcept</td></tr>
+<tr class="memdesc:a522945f72e9e66e159886452d4d8dfae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this technique's shadow data.  <a href="#a522945f72e9e66e159886452d4d8dfae">More...</a><br /></td></tr>
+<tr class="separator:a522945f72e9e66e159886452d4d8dfae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_graphics___technique"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_graphics___technique')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_graphics___technique.html">Graphics_Technique</a></td></tr>
 <tr class="memitem:acbe7a9cb38c785b8694d465aad11aeac inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#acbe7a9cb38c785b8694d465aad11aeac">~Graphics_Technique</a> ()=default</td></tr>
 <tr class="memdesc:acbe7a9cb38c785b8694d465aad11aeac inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual Destructor.  <a href="class_graphics___technique.html#acbe7a9cb38c785b8694d465aad11aeac">More...</a><br /></td></tr>
 <tr class="separator:acbe7a9cb38c785b8694d465aad11aeac inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac74545c0d7ca89d0878887c6d9933d43 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#ac74545c0d7ca89d0878887c6d9933d43">Graphics_Technique</a> (const Technique_Category &amp;category)</td></tr>
-<tr class="memdesc:ac74545c0d7ca89d0878887c6d9933d43 inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="class_graphics___technique.html#ac74545c0d7ca89d0878887c6d9933d43">More...</a><br /></td></tr>
-<tr class="separator:ac74545c0d7ca89d0878887c6d9933d43 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7670af2bb3e088ea5062ee6305ff9ea6 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a7670af2bb3e088ea5062ee6305ff9ea6">getCategory</a> () const</td></tr>
-<tr class="memdesc:a7670af2bb3e088ea5062ee6305ff9ea6 inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the category this technique belongs to.  <a href="class_graphics___technique.html#a7670af2bb3e088ea5062ee6305ff9ea6">More...</a><br /></td></tr>
-<tr class="separator:a7670af2bb3e088ea5062ee6305ff9ea6 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a914bb9fbfe740c951ea8252f5f6bc7c7 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a914bb9fbfe740c951ea8252f5f6bc7c7">setEnabled</a> (const bool &amp;state)</td></tr>
-<tr class="memdesc:a914bb9fbfe740c951ea8252f5f6bc7c7 inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn this technique on or off.  <a href="class_graphics___technique.html#a914bb9fbfe740c951ea8252f5f6bc7c7">More...</a><br /></td></tr>
-<tr class="separator:a914bb9fbfe740c951ea8252f5f6bc7c7 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a67fee4b16dee6bb7ba0fcfc3031556 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a7a67fee4b16dee6bb7ba0fcfc3031556">prepareForNextFrame</a> (const float &amp;deltaTime)</td></tr>
-<tr class="memdesc:a7a67fee4b16dee6bb7ba0fcfc3031556 inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare this technique for the next frame, swapping any of its buffers.  <a href="class_graphics___technique.html#a7a67fee4b16dee6bb7ba0fcfc3031556">More...</a><br /></td></tr>
-<tr class="separator:a7a67fee4b16dee6bb7ba0fcfc3031556 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bd6331a66784d6cddbe0f9b6bd91624 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a1bd6331a66784d6cddbe0f9b6bd91624">renderTechnique</a> (const float &amp;deltaTime, const std::shared_ptr&lt; <a class="el" href="struct_viewport.html">Viewport</a> &gt; &amp;viewport, const std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;perspectives)</td></tr>
-<tr class="memdesc:a1bd6331a66784d6cddbe0f9b6bd91624 inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply this lighting technique.  <a href="class_graphics___technique.html#a1bd6331a66784d6cddbe0f9b6bd91624">More...</a><br /></td></tr>
-<tr class="separator:a1bd6331a66784d6cddbe0f9b6bd91624 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af87d273f26a27442a1e05aff31e6a8cd inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#af87d273f26a27442a1e05aff31e6a8cd">Graphics_Technique</a> () noexcept=default</td></tr>
+<tr class="memdesc:af87d273f26a27442a1e05aff31e6a8cd inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="class_graphics___technique.html#af87d273f26a27442a1e05aff31e6a8cd">More...</a><br /></td></tr>
+<tr class="separator:af87d273f26a27442a1e05aff31e6a8cd inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabafdd27cf7dea88ea1a2b7e23673a7e inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#aabafdd27cf7dea88ea1a2b7e23673a7e">Graphics_Technique</a> (const <a class="el" href="class_graphics___technique.html#ac5ce80e4590b73e75c5e3dc6c2624cc0">Technique_Category</a> &amp;category) noexcept</td></tr>
+<tr class="memdesc:aabafdd27cf7dea88ea1a2b7e23673a7e inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="class_graphics___technique.html#aabafdd27cf7dea88ea1a2b7e23673a7e">More...</a><br /></td></tr>
+<tr class="separator:aabafdd27cf7dea88ea1a2b7e23673a7e inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b42f96c115173a1aeca827b876f1a74 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a2b42f96c115173a1aeca827b876f1a74">Graphics_Technique</a> (<a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;&amp;) noexcept=default</td></tr>
+<tr class="memdesc:a2b42f96c115173a1aeca827b876f1a74 inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <a href="class_graphics___technique.html#a2b42f96c115173a1aeca827b876f1a74">More...</a><br /></td></tr>
+<tr class="separator:a2b42f96c115173a1aeca827b876f1a74 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c811bb039cb07a9c63af7af5e213baa inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a7c811bb039cb07a9c63af7af5e213baa">Graphics_Technique</a> (const <a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;) noexcept=default</td></tr>
+<tr class="memdesc:a7c811bb039cb07a9c63af7af5e213baa inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <a href="class_graphics___technique.html#a7c811bb039cb07a9c63af7af5e213baa">More...</a><br /></td></tr>
+<tr class="separator:a7c811bb039cb07a9c63af7af5e213baa inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a935620770e745aebd21d27e1e0550bf0 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_graphics___technique.html#ac5ce80e4590b73e75c5e3dc6c2624cc0">Technique_Category</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a935620770e745aebd21d27e1e0550bf0">getCategory</a> () const noexcept</td></tr>
+<tr class="memdesc:a935620770e745aebd21d27e1e0550bf0 inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the category this technique belongs to.  <a href="class_graphics___technique.html#a935620770e745aebd21d27e1e0550bf0">More...</a><br /></td></tr>
+<tr class="separator:a935620770e745aebd21d27e1e0550bf0 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33257726988cfc5c923083ce0bba2611 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a33257726988cfc5c923083ce0bba2611">setEnabled</a> (const bool &amp;state) noexcept</td></tr>
+<tr class="memdesc:a33257726988cfc5c923083ce0bba2611 inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn this technique on or off.  <a href="class_graphics___technique.html#a33257726988cfc5c923083ce0bba2611">More...</a><br /></td></tr>
+<tr class="separator:a33257726988cfc5c923083ce0bba2611 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ce294fc9199e846df57f2da4ca2b2a5 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a3ce294fc9199e846df57f2da4ca2b2a5">operator=</a> (<a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;&amp;) noexcept=default</td></tr>
+<tr class="memdesc:a3ce294fc9199e846df57f2da4ca2b2a5 inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment.  <a href="class_graphics___technique.html#a3ce294fc9199e846df57f2da4ca2b2a5">More...</a><br /></td></tr>
+<tr class="separator:a3ce294fc9199e846df57f2da4ca2b2a5 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12c7b8cd30a91b6e6a6162e5153788b5 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a12c7b8cd30a91b6e6a6162e5153788b5">operator=</a> (const <a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;) noexcept=default</td></tr>
+<tr class="memdesc:a12c7b8cd30a91b6e6a6162e5153788b5 inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment.  <a href="class_graphics___technique.html#a12c7b8cd30a91b6e6a6162e5153788b5">More...</a><br /></td></tr>
+<tr class="separator:a12c7b8cd30a91b6e6a6162e5153788b5 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a503440d274b05c3009f455dd14de360f inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a503440d274b05c3009f455dd14de360f">renderTechnique</a> (const float &amp;deltaTime, <a class="el" href="struct_viewport.html">Viewport</a> &amp;viewport, const std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;perspectives)</td></tr>
+<tr class="memdesc:a503440d274b05c3009f455dd14de360f inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply this lighting technique.  <a href="class_graphics___technique.html#a503440d274b05c3009f455dd14de360f">More...</a><br /></td></tr>
+<tr class="separator:a503440d274b05c3009f455dd14de360f inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_types_class_graphics___technique"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_graphics___technique')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_graphics___technique.html">Graphics_Technique</a></td></tr>
-<tr class="memitem:ac5ce80e4590b73e75c5e3dc6c2624cc0 inherit pub_types_class_graphics___technique"><td class="memItemLeft" align="right" valign="top"><a id="ac5ce80e4590b73e75c5e3dc6c2624cc0"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Technique_Category</b> : unsigned int { <br />
+<tr class="memitem:ac5ce80e4590b73e75c5e3dc6c2624cc0 inherit pub_types_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#ac5ce80e4590b73e75c5e3dc6c2624cc0">Technique_Category</a> : unsigned int { <br />
 &#160;&#160;<b>GEOMETRY</b> = 0b0000'0001, 
 <b>PRIMARY_LIGHTING</b> = 0b0000'0010, 
 <b>SECONDARY_LIGHTING</b> = 0b0000'0100, 
@@ -131,13 +149,14 @@ Additional Inherited Members</h2></td></tr>
 &#160;&#160;<b>ALL</b> = 0b1111'1111
 <br />
  }</td></tr>
+<tr class="memdesc:ac5ce80e4590b73e75c5e3dc6c2624cc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The category of the technique.  <a href="class_graphics___technique.html#ac5ce80e4590b73e75c5e3dc6c2624cc0">More...</a><br /></td></tr>
 <tr class="separator:ac5ce80e4590b73e75c5e3dc6c2624cc0 inherit pub_types_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_graphics___technique"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_graphics___technique')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_graphics___technique.html">Graphics_Technique</a></td></tr>
 <tr class="memitem:a91a3066c3cc1125e327f511cc51eeb30 inherit pro_attribs_class_graphics___technique"><td class="memItemLeft" align="right" valign="top"><a id="a91a3066c3cc1125e327f511cc51eeb30"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_enabled</b> = true</td></tr>
 <tr class="separator:a91a3066c3cc1125e327f511cc51eeb30 inherit pro_attribs_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2720145fc863e3838ce9686e5a1479b8 inherit pro_attribs_class_graphics___technique"><td class="memItemLeft" align="right" valign="top"><a id="a2720145fc863e3838ce9686e5a1479b8"></a>
-Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_category</b></td></tr>
+<a class="el" href="class_graphics___technique.html#ac5ce80e4590b73e75c5e3dc6c2624cc0">Technique_Category</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_category</b></td></tr>
 <tr class="separator:a2720145fc863e3838ce9686e5a1479b8 inherit pro_attribs_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -148,9 +167,6 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Shadow_Technique::~Shadow_Technique </td>
@@ -159,19 +175,52 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
-<p>Destructor. </p>
+<p>Destroy this shadow technique. </p>
 
 </div>
 </div>
-<a id="a449f5ee42b60148b9f3e712269fb89bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a449f5ee42b60148b9f3e712269fb89bb">&#9670;&nbsp;</a></span>Shadow_Technique()</h2>
+<a id="af9d978f577a8c319aab45f40c55b6fe9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9d978f577a8c319aab45f40c55b6fe9">&#9670;&nbsp;</a></span>Shadow_Technique()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Shadow_Technique::Shadow_Technique </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> &amp;&#160;</td>
+          <td class="paramname"><em>engine</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="class_camera.html">Camera</a> * &gt; &amp;&#160;</td>
+          <td class="paramname"><em>sceneCameras</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Construct a shadow technique. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">engine</td><td>reference to the engine to use. </td></tr>
+    <tr><td class="paramname">sceneCameras</td><td>reference to the scene cameras to use. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a3d40553c302bc123f08980eafdffc97a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d40553c302bc123f08980eafdffc97a">&#9670;&nbsp;</a></span>clearCache()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -180,22 +229,80 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Shadow_Technique::Shadow_Technique </td>
+          <td class="memname">void Shadow_Technique::clearCache </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
-          <td class="paramname"><em>engine</em>, </td>
+          <td class="paramtype">const float &amp;&#160;</td>
+          <td class="paramname"><em>deltaTime</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Prepare this technique for the next frame, swapping any of its buffers. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="class_graphics___technique.html#ae8a2396d16a684727e95031b48e4f8c5">Graphics_Technique</a>.</p>
+
+</div>
+</div>
+<a id="a522945f72e9e66e159886452d4d8dfae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a522945f72e9e66e159886452d4d8dfae">&#9670;&nbsp;</a></span>getShadowData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_shadow_data.html">ShadowData</a> &amp; Shadow_Technique::getShadowData </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Retrieve this technique's shadow data. </p>
+<dl class="section return"><dt>Returns</dt><dd>the shadow data for this frame. </dd></dl>
+
+</div>
+</div>
+<a id="abc63785a16178f605a8cc6eeeb8417f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc63785a16178f605a8cc6eeeb8417f6">&#9670;&nbsp;</a></span>updateCache()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Shadow_Technique::updateCache </td>
+          <td>(</td>
+          <td class="paramtype">const float &amp;&#160;</td>
+          <td class="paramname"><em>deltaTime</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; std::vector&lt; <a class="el" href="class_camera.html">Camera</a> * &gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>cameras</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_e_c_s_system_list.html">ECSSystemList</a> &amp;&#160;</td>
-          <td class="paramname"><em>auxilliarySystems</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="classecs_world.html">ecsWorld</a> &amp;&#160;</td>
+          <td class="paramname"><em>world</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -205,18 +312,26 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Constructor. </p>
+<p>Update any data needed before rendering this frame. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
+    <tr><td class="paramname">world</td><td>the <a class="el" href="classecs_world.html" title="A set of ECS entities and components forming a single level.">ecsWorld</a> to source data from. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="class_graphics___technique.html#a262e2e68a903a54c06179d470d1a93cf">Graphics_Technique</a>.</p>
 
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a43c64afcdf4f5a87050591c988aad70a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a43c64afcdf4f5a87050591c988aad70a">&#9670;&nbsp;</a></span>updateTechnique()</h2>
+<a id="a52da86acd1b8b1273ad375339129f0dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52da86acd1b8b1273ad375339129f0dd">&#9670;&nbsp;</a></span>updatePass()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -225,7 +340,7 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void Shadow_Technique::updateTechnique </td>
+          <td class="memname">void Shadow_Technique::updatePass </td>
           <td>(</td>
           <td class="paramtype">const float &amp;&#160;</td>
           <td class="paramname"><em>deltaTime</em></td><td>)</td>
@@ -234,12 +349,12 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Perform any pre-passes and or update any data needed before rendering this frame. </p>
+<p>Perform any pre-requisite rendering passes. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
@@ -247,12 +362,13 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   </dd>
 </dl>
 
-<p>Reimplemented from <a class="el" href="class_graphics___technique.html#a6c08424a73c39ad59fb99413dac8475b">Graphics_Technique</a>.</p>
+<p>Reimplemented from <a class="el" href="class_graphics___technique.html#a3f94cdee763f9f63827f46514ae97207">Graphics_Technique</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Modules/Graphics/Lighting/Shadow/<a class="el" href="_shadow___technique_8h_source.html">Shadow_Technique.h</a></li>
+<li>src/Modules/Graphics/Lighting/Shadow/Shadow_Technique.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

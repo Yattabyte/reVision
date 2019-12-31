@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,6 +70,11 @@ $(function() {
 <div class="title">Mesh_Geometry Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Container for underlying mesh data.  
+ <a href="struct_mesh___geometry.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_mesh___i_o_8h_source.html">Mesh_IO.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -91,6 +96,9 @@ std::vector&lt; glm::vec2 &gt;&#160;</td><td class="memItemRight" valign="bottom
 <tr class="memitem:a44c530b00db38665dcc01286e4569709"><td class="memItemLeft" align="right" valign="top"><a id="a44c530b00db38665dcc01286e4569709"></a>
 std::vector&lt; GLuint &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>materialIndices</b></td></tr>
 <tr class="separator:a44c530b00db38665dcc01286e4569709"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72c727c25573bce1c7eb6e08def4c60d"><td class="memItemLeft" align="right" valign="top"><a id="a72c727c25573bce1c7eb6e08def4c60d"></a>
+std::vector&lt; GLuint &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>meshIndices</b></td></tr>
+<tr class="separator:a72c727c25573bce1c7eb6e08def4c60d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a116446e12c807092953c8d247b15228c"><td class="memItemLeft" align="right" valign="top"><a id="a116446e12c807092953c8d247b15228c"></a>
 std::vector&lt; <a class="el" href="struct_material___strings.html">Material_Strings</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>materials</b></td></tr>
 <tr class="separator:a116446e12c807092953c8d247b15228c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -106,11 +114,13 @@ std::map&lt; std::string, size_t &gt;&#160;</td><td class="memItemRight" valign=
 <tr class="memitem:ad40b1e0ba48cf65470a9a849c4188893"><td class="memItemLeft" align="right" valign="top"><a id="ad40b1e0ba48cf65470a9a849c4188893"></a>
 std::vector&lt; <a class="el" href="struct_animation.html">Animation</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>animations</b></td></tr>
 <tr class="separator:ad40b1e0ba48cf65470a9a849c4188893"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a924cdddda1d1255d4624d956ba3d694b"><td class="memItemLeft" align="right" valign="top"><a id="a924cdddda1d1255d4624d956ba3d694b"></a>
-<a class="el" href="struct_node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>rootNode</b></td></tr>
-<tr class="separator:a924cdddda1d1255d4624d956ba3d694b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38a445d02019465f2505b8cf6e593593"><td class="memItemLeft" align="right" valign="top"><a id="a38a445d02019465f2505b8cf6e593593"></a>
+<a class="el" href="struct_node.html">Node</a>&#160;</td><td class="memItemRight" valign="bottom"><b>rootNode</b></td></tr>
+<tr class="separator:a38a445d02019465f2505b8cf6e593593"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Container for underlying mesh data. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/Utilities/IO/<a class="el" href="_mesh___i_o_8h_source.html">Mesh_IO.h</a></li>
 </ul>
 </div><!-- contents -->

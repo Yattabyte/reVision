@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,9 +71,9 @@ $(function() {
 <p>This is the complete list of members for <a class="el" href="class_texture.html">Texture</a>, including all inherited members.</p>
 <table class="directory">
   <tr class="even"><td class="entry"><a class="el" href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">addCallback</a>(const std::shared_ptr&lt; bool &gt; &amp;alive, const AssetFinalizedCallback &amp;callback)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">Asset</a>(Engine *engine, const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_texture.html#af48cda04f61378c6222209279850f17f">bind</a>(const unsigned int &amp;texture_unit)</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">existsYet</a>() const</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_asset.html#a2d587f49b5ece8cc8900d12a041abefe">All_Ready</a>(const FirstAsset &amp;firstAsset, const RemainingAssets &amp;...rest) noexcept</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_asset.html#ac48e243c306f0c1ad15964632745c39e">Asset</a>(Engine &amp;engine, const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_texture.html#a7a40cc64497c5374a7c714e9cb6b712b">bind</a>(const unsigned int &amp;texture_unit) noexcept</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_asset.html#a5e1908711e1f42dbcb88d9a1617877bf">finalize</a>()</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">getFileName</a>() const</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_anis</b> (defined in <a class="el" href="class_texture.html">Texture</a>)</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
@@ -85,13 +85,13 @@ $(function() {
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_glTexID</b> (defined in <a class="el" href="class_texture.html">Texture</a>)</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>m_image</b> (defined in <a class="el" href="class_texture.html">Texture</a>)</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_mipmap</b> (defined in <a class="el" href="class_texture.html">Texture</a>)</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_pboID</b> (defined in <a class="el" href="class_texture.html">Texture</a>)</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_type</b> (defined in <a class="el" href="class_texture.html">Texture</a>)</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_type</b> (defined in <a class="el" href="class_texture.html">Texture</a>)</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_asset.html#aa80568c24720369dd1713fbd3473dbbb">ready</a>() const noexcept</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">setFileName</a>(const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Shared_Texture</b> (defined in <a class="el" href="class_texture.html">Texture</a>)</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_texture.html#a85ef5d991947ad2395ab884b6227ba02">Texture</a>(Engine *engine, const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_texture.html#ac907e83e87792da80c962c15cac9f967">Texture</a>(Engine *engine, const std::string &amp;filename, const GLuint &amp;type, const bool &amp;mipmap, const bool &amp;anis)</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">~Asset</a>()=default</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_texture.html#abb391ab962e58d904b1cac7693abaa31">Texture</a>(Engine &amp;engine, const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_texture.html#a8a3e7d69b70a04d9dfe9fee5a063587d">Texture</a>(Engine &amp;engine, const std::string &amp;filename, const GLuint &amp;type, const bool &amp;mipmap, const bool &amp;anisotropy)</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_asset.html#ae3391343ebc3486a192673a01f1953bf">~Asset</a>()=default</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_texture.html#a09c4bcb7462f64c1d20fa69dba3cee8a">~Texture</a>()</td><td class="entry"><a class="el" href="class_texture.html">Texture</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->

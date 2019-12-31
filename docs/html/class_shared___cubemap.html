@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -67,7 +67,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_shared___cubemap-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Shared_Cubemap Class Reference</div>  </div>
+<div class="title">Shared_Cubemap Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -87,9 +87,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4c7b23016f01358de223768e664c1d74"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___cubemap.html#a4c7b23016f01358de223768e664c1d74">Shared_Cubemap</a> ()=default</td></tr>
 <tr class="memdesc:a4c7b23016f01358de223768e664c1d74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an empty asset.  <a href="#a4c7b23016f01358de223768e664c1d74">More...</a><br /></td></tr>
 <tr class="separator:a4c7b23016f01358de223768e664c1d74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d85211594b9223516edabee7ab92b9f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___cubemap.html#a9d85211594b9223516edabee7ab92b9f">Shared_Cubemap</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename, const bool &amp;threaded=true)</td></tr>
-<tr class="memdesc:a9d85211594b9223516edabee7ab92b9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins the creation process for this asset.  <a href="#a9d85211594b9223516edabee7ab92b9f">More...</a><br /></td></tr>
-<tr class="separator:a9d85211594b9223516edabee7ab92b9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9375b092e6c0d52f8835c9b35bd1f919"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___cubemap.html#a9375b092e6c0d52f8835c9b35bd1f919">Shared_Cubemap</a> (<a class="el" href="class_engine.html">Engine</a> &amp;engine, const std::string &amp;filename, const bool &amp;threaded=true)</td></tr>
+<tr class="memdesc:a9375b092e6c0d52f8835c9b35bd1f919"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins the creation process for this asset.  <a href="#a9375b092e6c0d52f8835c9b35bd1f919">More...</a><br /></td></tr>
+<tr class="separator:a9375b092e6c0d52f8835c9b35bd1f919"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Shared version of a <a class="el" href="class_cubemap.html" title="A cubemap texture object.">Cubemap</a> asset. </p>
@@ -122,19 +122,16 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a9d85211594b9223516edabee7ab92b9f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d85211594b9223516edabee7ab92b9f">&#9670;&nbsp;</a></span>Shared_Cubemap() <span class="overload">[2/2]</span></h2>
+<a id="a9375b092e6c0d52f8835c9b35bd1f919"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9375b092e6c0d52f8835c9b35bd1f919">&#9670;&nbsp;</a></span>Shared_Cubemap() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Shared_Cubemap::Shared_Cubemap </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> &amp;&#160;</td>
           <td class="paramname"><em>engine</em>, </td>
         </tr>
         <tr>
@@ -155,17 +152,12 @@ Public Member Functions</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Begins the creation process for this asset. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">engine</td><td>the engine being used. </td></tr>
+    <tr><td class="paramname">engine</td><td>reference to the engine to use. </td></tr>
     <tr><td class="paramname">filename</td><td>the filename to use. </td></tr>
     <tr><td class="paramname">threaded</td><td>create in a separate thread. </td></tr>
   </table>

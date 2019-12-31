@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -64,30 +64,39 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="struct_animation___time___key-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Animation_Time_Key&lt; T &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Container for model animation key frames.  
+ <a href="struct_animation___time___key.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_mesh___i_o_8h_source.html">Mesh_IO.h</a>&gt;</code></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr class="memitem:ae6d452c496f411695ed4796817f7c59e"><td class="memItemLeft" align="right" valign="top"><a id="ae6d452c496f411695ed4796817f7c59e"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Animation_Time_Key</b> (const double &amp;t, const T &amp;v)</td></tr>
-<tr class="separator:ae6d452c496f411695ed4796817f7c59e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a740b409185fd7212320dbca934ca24df"><td class="memItemLeft" align="right" valign="top"><a id="a740b409185fd7212320dbca934ca24df"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>time</b> = 0</td></tr>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>time</b> = 0.0</td></tr>
 <tr class="separator:a740b409185fd7212320dbca934ca24df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0256ccde70f292d11a0482f965d2d31"><td class="memItemLeft" align="right" valign="top"><a id="ab0256ccde70f292d11a0482f965d2d31"></a>
-T&#160;</td><td class="memItemRight" valign="bottom"><b>value</b></td></tr>
+T&#160;</td><td class="memItemRight" valign="bottom"><b>value</b> = T()</td></tr>
 <tr class="separator:ab0256ccde70f292d11a0482f965d2d31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename T = glm::vec3&gt;<br />
+struct Animation_Time_Key&lt; T &gt;</h3>
+
+<p>Container for model animation key frames. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>the data type for the key frame (vec3, quat, etc). </td></tr>
+  </table>
+  </dd>
+</dl>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/Utilities/IO/<a class="el" href="_mesh___i_o_8h_source.html">Mesh_IO.h</a></li>
 </ul>
 </div><!-- contents -->

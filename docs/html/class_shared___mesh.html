@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -67,7 +67,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_shared___mesh-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Shared_Mesh Class Reference</div>  </div>
+<div class="title">Shared_Mesh Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -87,9 +87,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a95243f16e894045089f5a742d7eceb7f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___mesh.html#a95243f16e894045089f5a742d7eceb7f">Shared_Mesh</a> ()=default</td></tr>
 <tr class="memdesc:a95243f16e894045089f5a742d7eceb7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an empty asset.  <a href="#a95243f16e894045089f5a742d7eceb7f">More...</a><br /></td></tr>
 <tr class="separator:a95243f16e894045089f5a742d7eceb7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb83d4eacc4a53f74a91df8574b582c4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___mesh.html#acb83d4eacc4a53f74a91df8574b582c4">Shared_Mesh</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename, const bool &amp;threaded=true)</td></tr>
-<tr class="memdesc:acb83d4eacc4a53f74a91df8574b582c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins the creation process for this asset.  <a href="#acb83d4eacc4a53f74a91df8574b582c4">More...</a><br /></td></tr>
-<tr class="separator:acb83d4eacc4a53f74a91df8574b582c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20b4dc4b3ce4c7945ba0ee6acd6914be"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___mesh.html#a20b4dc4b3ce4c7945ba0ee6acd6914be">Shared_Mesh</a> (<a class="el" href="class_engine.html">Engine</a> &amp;engine, const std::string &amp;filename, const bool &amp;threaded=true)</td></tr>
+<tr class="memdesc:a20b4dc4b3ce4c7945ba0ee6acd6914be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins the creation process for this asset.  <a href="#a20b4dc4b3ce4c7945ba0ee6acd6914be">More...</a><br /></td></tr>
+<tr class="separator:a20b4dc4b3ce4c7945ba0ee6acd6914be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Shared version of a <a class="el" href="class_mesh.html" title="A data set representing a 3D mesh.">Mesh</a> asset. </p>
@@ -122,8 +122,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="acb83d4eacc4a53f74a91df8574b582c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb83d4eacc4a53f74a91df8574b582c4">&#9670;&nbsp;</a></span>Shared_Mesh() <span class="overload">[2/2]</span></h2>
+<a id="a20b4dc4b3ce4c7945ba0ee6acd6914be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20b4dc4b3ce4c7945ba0ee6acd6914be">&#9670;&nbsp;</a></span>Shared_Mesh() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -134,7 +134,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">Shared_Mesh::Shared_Mesh </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> &amp;&#160;</td>
           <td class="paramname"><em>engine</em>, </td>
         </tr>
         <tr>
@@ -165,7 +165,7 @@ Public Member Functions</h2></td></tr>
 <p>Begins the creation process for this asset. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">engine</td><td>the engine being used. </td></tr>
+    <tr><td class="paramname">engine</td><td>reference to the engine to use. </td></tr>
     <tr><td class="paramname">filename</td><td>the filename to use. </td></tr>
     <tr><td class="paramname">threaded</td><td>create in a separate thread. </td></tr>
   </table>

@@ -8,25 +8,36 @@ class Engine;
 /** An interface for engine modules to implement. */
 class Engine_Module {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy this engine module. */
-	inline ~Engine_Module() = default;
-	/** Construct an engine module. */
-	inline Engine_Module() = default;
+	inline virtual ~Engine_Module() = default;
+	/** Construct an engine module.
+	@param	engine	reference to the engine to use. */
+	explicit Engine_Module(Engine& engine) noexcept;
 
-	
+
 	// Public Interface Declarations
 	/** Initialize the module. */
-	inline virtual void initialize(Engine * engine) { m_engine = engine; };
-	/** Deinitialize the module. */
-	virtual void deinitialize() {}
-	/** Tick the ui by a frame.
-	@param	deltaTime	the amount of time passed since last frame. */
-	inline virtual void frameTick(const float &) {}
+	virtual void initialize();
+	/** De-initialize the module. */
+	virtual void deinitialize();
 
 
 protected:
-	Engine * m_engine = nullptr;
+	// Protected Attributes
+	Engine& m_engine;
+
+
+private:
+	// Private and deleted
+	/** Disallow module move constructor. */
+	inline Engine_Module(Engine_Module&&) noexcept = delete;
+	/** Disallow module copy constructor. */
+	inline Engine_Module(const Engine_Module&) noexcept = delete;
+	/** Disallow module move assignment. */
+	inline Engine_Module& operator =(Engine_Module&&) noexcept = delete;
+	/** Disallow module copy assignment. */
+	inline Engine_Module& operator =(const Engine_Module&) noexcept = delete;
 };
 
 #endif // ENGINE_MODULE_H

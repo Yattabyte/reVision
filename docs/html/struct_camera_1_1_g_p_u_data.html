@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -74,6 +74,11 @@ $(function() {
 <div class="title">Camera::GPUData Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>OpenGL-formatted data structure for camera data.  
+ <a href="struct_camera_1_1_g_p_u_data.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_camera_8h_source.html">Camera.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -96,7 +101,7 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>pvMatrix</b> = g
 glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>EyePosition</b> = glm::vec3(0.0f)</td></tr>
 <tr class="separator:a205b30910d4864f0a8b9d0ad7cc547d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca0877af82052f71aa8f5ab3d146e4e8"><td class="memItemLeft" align="right" valign="top"><a id="aca0877af82052f71aa8f5ab3d146e4e8"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>padding1</b></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>padding1</b> = 0</td></tr>
 <tr class="separator:aca0877af82052f71aa8f5ab3d146e4e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a329345253891039d5a9a1417bc7ce688"><td class="memItemLeft" align="right" valign="top"><a id="a329345253891039d5a9a1417bc7ce688"></a>
 glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>Dimensions</b> = glm::vec2(1.0f)</td></tr>
@@ -111,10 +116,12 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>FarPlane</b> = 1.0f<
 float&#160;</td><td class="memItemRight" valign="bottom"><b>FOV</b> = 90.0f</td></tr>
 <tr class="separator:abb6c2ce2115b19e77bd7c2ca8e785d65"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9c2c3371cea5effce342f1a543b85f3"><td class="memItemLeft" align="right" valign="top"><a id="ac9c2c3371cea5effce342f1a543b85f3"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>padding2</b></td></tr>
+glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>padding2</b> = glm::vec3(0, 0, 0)</td></tr>
 <tr class="separator:ac9c2c3371cea5effce342f1a543b85f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>OpenGL-formatted data structure for camera data. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/Modules/Graphics/Common/<a class="el" href="_camera_8h_source.html">Camera.h</a></li>
 </ul>
 </div><!-- contents -->

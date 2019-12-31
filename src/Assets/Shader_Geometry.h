@@ -4,58 +4,65 @@
 
 #include "Assets/Asset.h"
 #include "Assets/Shader.h"
-#include "Utilities/GL/glad/glad.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include <string>
 
 
-class Engine;
+// Forward Declarations
 class Shader_Geometry;
 
 /** Shared version of a Shader_Geometry asset.
 Responsible for the creation, containing, and sharing of assets. */
-class Shared_Shader_Geometry : public std::shared_ptr<Shader_Geometry> {
+class Shared_Shader_Geometry final : public std::shared_ptr<Shader_Geometry> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Shader_Geometry() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			the engine being used.
+	@param	engine			reference to the engine to use.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Shader_Geometry(Engine * engine, const std::string & filename, const bool & threaded = true);
+	Shared_Shader_Geometry(Engine& engine, const std::string& filename, const bool& threaded = true);
 };
 
 /** An entire OpenGL vertex/geometry/fragment shader program.
-An encapsulation of an opengl vertex & geometry & fragment shader program, extending the Shader asset.
+An encapsulation of an OpenGL vertex & geometry & fragment shader program, extending the Shader asset.
 Responsible for loading the files associated with this program from disk, and forming the program.
 Also provides support for explicitly setting uniform values for a given attribute location.
 Supports binary representation. */
 class Shader_Geometry : public Shader {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the Shader. */
 	~Shader_Geometry();
 	/** Construct the Shader.
-	@param	engine			the engine to use.
+	@param	engine			reference to the engine to use.
 	@param	filename		the asset file name (relative to engine directory). */
-	Shader_Geometry(Engine * engine, const std::string & filename);
+	Shader_Geometry(Engine& engine, const std::string& filename);
 
-	
+
 	// Public Attributes
 	ShaderObj m_geometryShader = ShaderObj(GL_GEOMETRY_SHADER);
 
 
 protected:
 	// Interface Implementation
-	virtual bool initShaders(const std::string & relativePath) override;
+	bool initShaders(const std::string& relativePath) final;
 
 
 private:
+	// Private but deleted
+	/** Disallow asset move constructor. */
+	inline Shader_Geometry(Shader_Geometry&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Shader_Geometry(const Shader_Geometry&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline Shader_Geometry& operator =(Shader_Geometry&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline Shader_Geometry& operator =(const Shader_Geometry&) noexcept = delete;
+
+
 	// Private Interface Implementation
-	virtual void initialize() override;
+	void initialize() final;
 
 
 	// Private Attributes

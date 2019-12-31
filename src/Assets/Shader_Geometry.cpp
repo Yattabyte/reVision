@@ -4,34 +4,34 @@
 #include "Engine.h"
 
 
-constexpr char* EXT_SHADER_GEOMETRY = ".gsh";
-constexpr char* DIRECTORY_SHADER = "\\Shaders\\";
+constexpr const char* EXT_SHADER_GEOMETRY = ".gsh";
+constexpr const char* DIRECTORY_SHADER = "\\Shaders\\";
 
-Shared_Shader_Geometry::Shared_Shader_Geometry(Engine * engine, const std::string & filename, const bool & threaded)
+Shared_Shader_Geometry::Shared_Shader_Geometry(Engine& engine, const std::string& filename, const bool& threaded)
 {
-	(*(std::shared_ptr<Shader_Geometry>*)(this)) = std::dynamic_pointer_cast<Shader_Geometry>(
-		engine->getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Shader_Geometry>(engine.getManager_Assets().shareAsset(
 			typeid(Shader_Geometry).name(),
 			filename,
-			[engine, filename]() { return std::make_shared<Shader_Geometry>(engine, filename); },
+			[&engine, filename]() { return std::make_shared<Shader_Geometry>(engine, filename); },
 			threaded
 		));
+	swap(newAsset);
 }
 
 Shader_Geometry::~Shader_Geometry()
 {
-	if (existsYet()) 
+	if (ready())
 		glDeleteProgram(m_glProgramID);
 }
 
-Shader_Geometry::Shader_Geometry(Engine * engine, const std::string & filename) : Shader(engine, filename) {}
+Shader_Geometry::Shader_Geometry(Engine& engine, const std::string& filename) : Shader(engine, filename) {}
 
 void Shader_Geometry::initialize()
 {
 	// Attempt to load cache, otherwise load manually
 	m_glProgramID = glCreateProgram();
-	bool success = false;
 	if (!loadCachedBinary(DIRECTORY_SHADER + getFileName())) {
+		bool success = false;
 		// Create Geometry shader
 		if (initShaders(DIRECTORY_SHADER + getFileName())) {
 			glLinkProgram(m_glProgramID);
@@ -44,7 +44,7 @@ void Shader_Geometry::initialize()
 		if (!success) {
 			// Initialize default
 			const std::vector<GLchar> infoLog = getErrorLog();
-			m_engine->getManager_Messages().error("Shader_Geometry \"" + m_filename + "\" failed to initialize. Reason: \n" + std::string(infoLog.data(), infoLog.size()));
+			m_engine.getManager_Messages().error("Shader_Geometry \"" + m_filename + "\" failed to initialize. Reason: \n" + std::string(infoLog.data(), infoLog.size()));
 		}
 	}
 
@@ -53,7 +53,7 @@ void Shader_Geometry::initialize()
 	Asset::finalize();
 }
 
-bool Shader_Geometry::initShaders(const std::string & relativePath)
+bool Shader_Geometry::initShaders(const std::string& relativePath)
 {
 	const std::string filename = getFileName();
 

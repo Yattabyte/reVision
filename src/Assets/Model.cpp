@@ -1,21 +1,22 @@
 #include "Assets/Model.h"
 #include "Engine.h"
+#include "glm/geometric.hpp"
 
 
-constexpr char* DIRECTORY_MODEL = "\\Models\\";
+constexpr const char* DIRECTORY_MODEL = "\\Models\\";
 
-Shared_Model::Shared_Model(Engine * engine, const std::string & filename, const bool & threaded)
+Shared_Model::Shared_Model(Engine& engine, const std::string& filename, const bool& threaded)
 {
-	(*(std::shared_ptr<Model>*)(this)) = std::dynamic_pointer_cast<Model>(
-		engine->getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Model>(engine.getManager_Assets().shareAsset(
 			typeid(Model).name(),
 			filename,
-			[engine, filename]() { return std::make_shared<Model>(engine, filename); },
+			[&engine, filename]() { return std::make_shared<Model>(engine, filename); },
 			threaded
 		));
+	swap(newAsset);
 }
 
-Model::Model(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
+Model::Model(Engine& engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Model::initialize()
 {
@@ -45,19 +46,20 @@ void Model::initialize()
 	}
 
 	// Calculate the mesh's min, max, center, and radius
-	calculateAABB(m_data.m_vertices, m_bboxMin, m_bboxMax, m_bboxCenter, m_radius);
-	
+	calculateAABB(m_data.m_vertices, m_bboxMin, m_bboxMax, m_bboxScale, m_bboxCenter, m_radius);
+
 	// Finalize
 	Asset::finalize();
 }
 
-void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3 & minOut, glm::vec3 & maxOut, glm::vec3 & centerOut, float & radiusOut)
+void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3& minOut, glm::vec3& maxOut, glm::vec3& scaleOut, glm::vec3& centerOut, float& radiusOut)
 {
-	if (mesh.size() >= 1) {
-		const glm::vec3 & vector = mesh[0].vertex;
-		float minX = vector.x, maxX = vector.x, minY = vector.y, maxY = vector.y, minZ = vector.z, maxZ = vector.z;
-		for (size_t x = 1, total = mesh.size(); x < total; ++x) {
-			const glm::vec3 &vertex = mesh[x].vertex;
+	if (!mesh.empty()) {
+		const auto& vector = mesh[0].vertex;
+		auto minX = vector.x, maxX = vector.x, minY = vector.y, maxY = vector.y, minZ = vector.z, maxZ = vector.z;
+		const auto total = mesh.size();
+		for (size_t x = 1; x < total; ++x) {
+			const glm::vec3& vertex = mesh[x].vertex;
 			if (vertex.x < minX)
 				minX = vertex.x;
 			else if (vertex.x > maxX)
@@ -74,19 +76,22 @@ void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3 & min
 
 		minOut = glm::vec3(minX, minY, minZ);
 		maxOut = glm::vec3(maxX, maxY, maxZ);
-		centerOut = ((maxOut - minOut) / 2.0f) + minOut;
-		radiusOut = glm::distance(minOut, maxOut) / 2.0f;
+		scaleOut = (maxOut - minOut) / 2.0F;
+		centerOut = ((maxOut - minOut) / 2.0F) + minOut;
+		radiusOut = glm::distance(minOut, maxOut) / 2.0F;
 	}
 }
 
-void Model::loadMaterial(const std::string & relativePath, Shared_Material & modelMaterial, const std::vector<Material_Strings>& materials)
+void Model::loadMaterial(const std::string& relativePath, Shared_Material& modelMaterial, const std::vector<Material_Strings>& materials)
 {
 	// Retrieve texture directories from the mesh file
-	const size_t slash1Index = relativePath.find_last_of('/'), slash2Index = relativePath.find_last_of('\\');
+	const size_t slash1Index = relativePath.find_last_of('/');
+	const size_t slash2Index = relativePath.find_last_of('\\');
 	const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
 	const std::string meshDirectory = relativePath.substr(0, furthestFolderIndex + 1);
-	std::vector<std::string> textures(materials.size() * (size_t)MAX_PHYSICAL_IMAGES);
-	for (size_t tx = 0, mx = 0; tx < textures.size() && mx < materials.size(); tx += MAX_PHYSICAL_IMAGES, ++mx) {
+	std::vector<std::string> textures(materials.size() * static_cast<size_t>(MAX_PHYSICAL_IMAGES));
+	const auto texturesSize = textures.size(), materialsSize = materials.size();
+	for (size_t tx = 0, mx = 0; tx < texturesSize && mx < materialsSize; tx += MAX_PHYSICAL_IMAGES, ++mx) {
 		if (!materials[mx].albedo.empty())
 			textures[tx + 0] = meshDirectory + materials[mx].albedo;
 		if (!materials[mx].normal.empty())
@@ -102,6 +107,6 @@ void Model::loadMaterial(const std::string & relativePath, Shared_Material & mod
 	}
 
 	// Attempt to find a .mat file if it exists
-	std::string materialFilename = relativePath.substr(0, relativePath.find_first_of("."));
+	std::string materialFilename = relativePath.substr(0, relativePath.find_first_of('.'));
 	modelMaterial = Shared_Material(m_engine, materialFilename, textures);
 }

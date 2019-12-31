@@ -2,56 +2,87 @@
 #ifndef GRAPHICS_PIPELINE_H
 #define GRAPHICS_PIPELINE_H
 
-#include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Geometry/Geometry_Technique.h"
-#include "Modules/Graphics/Common/RH_Volume.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include "Modules/Graphics/Common/Viewport.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/Graphics/Geometry/Prop/Prop_Technique.h"
+#include "Modules/Graphics/Lighting/Shadow/Shadow_Technique.h"
+#include "Modules/Graphics/Lighting/Direct/Direct_Technique.h"
+#include "Modules/Graphics/Lighting/Indirect/Indirect_Technique.h"
+#include "Modules/Graphics/Lighting/Reflector/Reflector_Technique.h"
+#include "Modules/Graphics/Effects/Skybox.h"
+#include "Modules/Graphics/Effects/SSAO.h"
+#include "Modules/Graphics/Effects/SSR.h"
+#include "Modules/Graphics/Effects/Join_Reflections.h"
+#include "Modules/Graphics/Effects/Bloom.h"
+#include "Modules/Graphics/Effects/HDR.h"
+#include "Modules/Graphics/Effects/FXAA.h"
+#include "Modules/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsWorld.h"
+#include "Utilities/GL/GL_Vector.h"
 #include <vector>
 
 
+// Forward Declarations
 class Engine;
 
 /** Represents a series of graphics rendering techniques to apply serially. */
 class Graphics_Pipeline {
 public:
-	// Public (de)Constructors
-	/** Destroy this rendering pipeline. */
-	inline ~Graphics_Pipeline() = default;
+	// Public (De)Constructors
 	/** Construct a PBR rendering pipeline.
-	@param	engine			the engine to use.
-	@param	cameras			all the cameras active in the scene.
-	@param	auxSystems		container to add extra render-related ecs systems to. */
-	Graphics_Pipeline(Engine * engine, const std::shared_ptr<Camera> & clientCamera, const std::shared_ptr<std::vector<Camera*>> & cameras, const std::shared_ptr<RH_Volume> & rhVolume, ECSSystemList & auxSystems);
+	@param	engine			reference to the engine to use.
+	@param	clientCamera	the main camera. */
+	Graphics_Pipeline(Engine& engine, Camera& clientCamera);
 
 
 	// Public Methods
-	/** Prepare rendering techniques for the next frame, swapping buffers and resetting data.
+	/** Prepare the pipeline for rendering.
+	@param	deltaTime		the amount of time passed since last frame.
+	@param	world			the ecsWorld to source data from.
+	@param	cameras			the cameras to render from.
+	@return					camera and layer indices to render with. */
+	std::vector<std::pair<int, int>> begin(const float& deltaTime, ecsWorld& world, std::vector<Camera>& cameras);
+	/** Flush the pipeline after rendering.
 	@param	deltaTime		the amount of time passed since last frame. */
-	void prepareForNextFrame(const float & deltaTime);
-	/** Update rendering techniques, performing any necessary pre-passes. 
-	@param	deltaTime		the amount of time passed since last frame. */
-	void update(const float & deltaTime);
+	void end(const float& deltaTime);
 	/** Apply this lighting technique.
 	@param	deltaTime		the amount of time passed since last frame.
 	@param	viewport		the viewport to render into.
-	@param	camera			the camera to render with.
+	@param	perspectives	the camera and layer indices to render with.
 	@param	categories		the allowed technique categories to render. */
-	void render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives, const unsigned int & categories = Graphics_Technique::ALL);
+	void render(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories = (unsigned int)Graphics_Technique::Technique_Category::ALL);
 	/** Use geometry techniques to cull shadows.
 	@param	deltaTime		the amount of time passed since last frame.
-	@param	perspectives	the camera and layer indicies to render. */
-	void cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>> & perspectives);
+	@param	perspectives	the camera and layer indices to render. */
+	void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives);
 	/** Use geometry techniques to render shadows.
 	@param	deltaTime		the amount of time passed since last frame. */
-	void renderShadows(const float & deltaTime);
+	void renderShadows(const float& deltaTime);
 
 
 protected:
 	// Protected Attributes
-	Engine * m_engine = nullptr;
-	std::vector<Geometry_Technique*> m_geometryTechniques;
-	std::vector<Graphics_Technique*> m_lightingTechniques, m_effectTechniques, m_allTechniques;
+	Engine& m_engine;
+	Prop_Technique m_propView;
+	Shadow_Technique m_shadowing;
+	Direct_Technique m_directLighting;
+	Indirect_Technique m_indirectLighting;
+	Reflector_Technique m_reflectorLighting;
+	Skybox m_skybox;
+	SSAO m_ssao;
+	SSR m_ssr;
+	Join_Reflections m_joinReflections;
+	Bloom m_bloom;
+	HDR m_hdr;
+	FXAA m_fxaa;
+	Geometry_Technique* const m_geometryTechniques[1] = {&m_propView};
+	Graphics_Technique* const m_lightingTechniques[5] = {&m_shadowing, &m_directLighting, &m_indirectLighting, &m_skybox, &m_reflectorLighting};
+	Graphics_Technique* const m_effectTechniques[6] = {&m_ssao, &m_ssr, &m_joinReflections, &m_bloom, &m_hdr, &m_fxaa};
+	Graphics_Technique* const m_allTechniques[12] = {&m_propView, &m_shadowing, &m_directLighting, &m_indirectLighting, &m_skybox, &m_reflectorLighting, &m_ssao, &m_ssr, &m_joinReflections, &m_bloom, &m_hdr, &m_fxaa };
+	std::vector<Camera*> m_sceneCameras;
+	GL_Vector<Camera::GPUData> m_cameraBuffer;
+	ecsSystemList m_worldSystems, m_cameraSystems;
+	std::shared_ptr<ecsBaseSystem> m_transHierachy;
 };
 
 #endif // GRAPHICS_PIPELINE_H

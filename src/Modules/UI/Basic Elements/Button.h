@@ -7,72 +7,42 @@
 
 
 /** UI button class, affords being pushed and released. */
-class Button : public UI_Element {
+class Button final : public UI_Element {
 public:
-	// Public (de)Constructors
-	/** Destroy the button. */
-	inline ~Button() = default;
-	/** Creates a button with specific text inside. 
-	@param	engine		the engine.
+	// Public (De)Constructors
+	/** Creates a button with specific text inside.
+	@param	engine		reference to the engine to use.
 	@param	text		the button text. */
-	inline Button(Engine * engine, const std::string & text = "Button")
-		: UI_Element(engine) {
-		// All buttons have labels
-		m_label = std::make_shared<Label>(engine, text);
-		m_label->setAlignment(Label::align_center);
-		m_label->setTextScale(12.5f);
-		addElement(m_label);
-
-		// Callbacks
-		addCallback(on_resize, [&]() { m_label->setScale(getScale()); });
-	}
+	explicit Button(Engine& engine, const std::string& text = "Button");
 
 
 	// Public Interface Implementation
-	inline virtual void userAction(ActionState & actionState) override {
-		// Only thing a user can do is press the button
-		if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS)
-			pressButton();
-	}
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		// Update Colors
-		glm::vec4 color(0.75);
-		if (m_pressed)
-			color *= 0.5f;
-		if (m_hovered)
-			color *= 1.5f;
-		m_label->setColor(color);
-
-		// Render Children
-		UI_Element::renderElement(deltaTime, position, scale);
-	}
+	void userAction(ActionState& actionState) final;
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) final;
 
 
 	// Public Methods
 	/** Fully press and release this button, enacting its on_clicked callback. */
-	inline void pressButton() {
-		enactCallback(UI_Element::on_clicked);
-	}
+	void pressButton();
 	/** Set this label element's text.
-	@param	text	the text to use. */
-	inline void setText(const std::string & text) {
-		m_label->setText(text);
-	}
+	@param	text		the text to use. */
+	void setText(const std::string& text);
 	/** Retrieve this buttons' labels text.
-	@return			the text this label uses. */
-	inline std::string getText() const {
-		return m_label->getText();
-	}
+	@return				the text this label uses. */
+	std::string getText() const;
+	/** Set this label element's text scaling factor.
+	@param	textScale	the new scaling factor to use. */
+	void setTextScale(const float& textScale) noexcept;
+
+	/** Retrieve this label's text scaling factor.
+	@return				the text scaling factor. */
+	float getTextScale() const noexcept;
 	/** Set the bevel radius for this button.
-	@param radius	the new radius to use. */
-	inline void setBevelRadius(const float & radius) {
-		m_bevelRadius = radius;
-	}
-	/** Get the bevel radius from this button.
-	@return			this buttons' bevel radius. */
-	inline float getBevelRadius() const {
-		return m_bevelRadius;
-	}
+	@param radius		the new radius to use. */
+	void setBevelRadius(const float& radius) noexcept;
+	/** Retrieve the bevel radius from this button.
+	@return				this buttons' bevel radius. */
+	float getBevelRadius() const noexcept;
 
 
 protected:

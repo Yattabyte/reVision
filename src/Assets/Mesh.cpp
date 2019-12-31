@@ -1,20 +1,22 @@
 #include "Assets/Mesh.h"
 #include "Utilities/IO/Mesh_IO.h"
 #include "Engine.h"
+#include "glm/glm.hpp"
+#include "glm/geometric.hpp"
 
 
-Shared_Mesh::Shared_Mesh(Engine * engine, const std::string & filename, const bool & threaded)
+Shared_Mesh::Shared_Mesh(Engine& engine, const std::string& filename, const bool& threaded)
 {
-	(*(std::shared_ptr<Mesh>*)(this)) = std::dynamic_pointer_cast<Mesh>(
-		engine->getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Mesh>(engine.getManager_Assets().shareAsset(
 			typeid(Mesh).name(),
 			filename,
-			[engine, filename]() { return std::make_shared<Mesh>(engine, filename); },
+			[&engine, filename]() { return std::make_shared<Mesh>(engine, filename); },
 			threaded
 		));
+	swap(newAsset);
 }
 
-Mesh::Mesh(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
+Mesh::Mesh(Engine& engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Mesh::initialize()
 {
@@ -25,6 +27,9 @@ void Mesh::initialize()
 		m_geometry.tangents = { glm::vec3(0, 1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0) };
 		m_geometry.bitangents = { glm::vec3(0, 0, 1), glm::vec3(0, 0, 1), glm::vec3(0, 0, 1), glm::vec3(0, 0, 1), glm::vec3(0, 0, 1), glm::vec3(0, 0, 1) };
 		m_geometry.texCoords = { glm::vec2(0, 0), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec2(0, 0), glm::vec2(0, 0) };
+		m_geometry.materialIndices = { 0U, 0U, 0U, 0U, 0U, 0U };
+		m_geometry.bones.resize(m_geometry.vertices.size());
+		m_geometry.materials.emplace_back(Material_Strings{});
 	}
 
 	Asset::finalize();

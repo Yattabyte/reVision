@@ -1,0 +1,44 @@
+newmtl StingrayPBS3SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 0.00
+map_Kd drum1_base_color.png
+map_Bump drum1_normal.png
+map_Ks drum1_metallic.png
+map_Ns drum1_roughness.png
+map_Ka drum1_ambient.png
+newmtl StingrayPBS4SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 0.00
+map_Kd drum2_base_color.png
+map_Bump drum2_normal.png
+map_Ks drum2_metallic.png
+map_Ns drum2_roughness.png
+map_Ka drum2_ambient.png
+newmtl StingrayPBS5SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 0.00
+map_Kd drum3_base_color.png
+map_Bump drum3_normal.png
+map_Ks drum3_metallic.png
+map_Ns drum3_roughness.png
+map_Ka drum3_ambient.png
+newmtl initialShadingGroup
+illum 4
+Kd 0.10 0.10 0.10
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+map_Kd drum2_roughness.png
+map_Bump drum2_roughness.png
+map_Ks drum2_roughness.png
+map_Ns drum2_roughness.png
+map_Ka drum2_roughness.png

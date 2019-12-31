@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -67,24 +67,33 @@ $(function() {
 <div class="title">reVision </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>This is a work-in-progress game engine, with the bulk of its focus on asset loading and real-time 3D rendering.</p>
-<p>The engine runs using an OpenGL 4.5 + GLSL 460 deferred renderer equipped for a PBR material workflow.</p>
-<p>The engine also uses an ECS architecture.</p>
+<div class="textblock"><p>This is a work-in-progress game engine that I work on during my spare time.</p>
+<p>It has multi-threaded asset loading, phyically based 3D graphics, and object physics.</p>
+<p>My engine uses a custom-built deferred renderer running on OpenGL 4.5, supporting PBR materials, some translucent materials, and skeletal animation.</p>
+<p>Additionally, game world-state is stored and accessed using an entity-component-systems (ECS) framework.</p>
 <h2>Getting Started</h2>
-<p>The branch labeled "active" is updated frequently and contains the most recent builds, but may be unstable.</p>
-<p>The most stable versions can be found under the branch labeled "master".</p>
-<p>Binaries can be found under the "Releases" section, and is updated every time I complete a major version.</p>
-<p>The project has been designed with CMake in mind, as it depends on several external libraries to compile.</p>
-<p>Note: the engine requires a graphics card capable of supporting OpenGL 4.5 and GLSL 460 to run.</p>
-<h3>Required Libraries</h3>
-<p>This project requires the following (free) libraries:</p><ul>
-<li><a href="http://www.assimp.org/">ASSIMP - Model Importing</a></li>
-<li><a href="http://bulletphysics.org/wordpress/">Bullet - Physics Back-end</a></li>
-<li><a href="http://freeimage.sourceforge.net/">FreeImage - Image Importing</a></li>
-<li><a href="http://glew.sourceforge.net/">GLEW - OpenGL</a></li>
-<li><a href="http://www.glfw.org/">GLFW - Windowing</a></li>
-<li><a href="https://glm.g-truc.net/0.9.9/index.html">GLM - Mathematics</a></li>
+<p>Starting with version 5.0.0, all major development will now fall under the master branch for easier access.</p>
+<p>Stable binaries can be found under the "Releases" section.</p>
+<h3>Requirements</h3>
+<ul>
+<li>CMake + Git</li>
+<li>C++ 17 MSVC or Clang (haven't tested any other compilers)</li>
+<li>GPU supporting OpenGL 4.5 + GLSL 460</li>
+<li>Windows 10 (haven't tested any other x64 OS yet)</li>
 </ul>
+<h2>Usage</h2>
+<p><b>- Step 1:</b> Pull a copy of this repository: <a href="https://github.com/Yattabyte/reVision.git">reVision</a></p>
+<p><b>- Step 2:</b> Download <a href="https://cmake.org/">CMake</a></p>
+<p><b>- Step 3:</b> Run and configure CMake</p>
+<p>Fill out the fields indicating where the project root directory is located.</p>
+<p><b>Note:</b> This project is configured to automatically acquire all it's dependencies if they are missing (GLFW, GLM, etc...) Only specify manual directories if you really want to use your own versions.</p>
+<p>Once you're done making any changes to the configuration, hit both the CONFIGURE + GENERATE buttons, then open the project.</p>
+<img src="https://i.imgur.com/fKUdpKz.png" alt="CMake Configuration" class="inline"/>
+<p><b>- Step 4:</b> Building the Dependencies</p>
+<p>If you've chosen to let CMake handle acquiring all the project dependencies, then before you can compile the project, you must compile all the dependencies first.</p>
+<p><b>After compiling, go back to CMake and once more press CONFIGURE + GENERATE to account for any new files produced when compiling this dependencies.</b></p>
+<p><b>Note:</b> Repeat this step for both "Debug" and "Release" builds. <img src="https://i.imgur.com/HJQAXra.png" alt="VS2017 Build Example" class="inline"/>
+<p><b>- Step 5:</b> Build the project</p>
 <h2>Versioning</h2>
 <p>The engine version goes as such:</p>
 <p><code>(Major #).(Minor #).(Patch #).</code></p>
@@ -92,17 +101,26 @@ $(function() {
 <p>The major version increments following the completetion of a major milestone, plus changes are pushed into the master branch and a new version is released.</p>
 <p>The minor version increments when a large planned feature is implemented or a category of related changes have been completed.</p>
 <p>The patch version increments when a patch, hotfix, or small feature has been implemented.</p>
-<p>I try to commit every time the version changes, including the new version in the summary.</p>
 <h2>License</h2>
-<p>This project is licensed under the MIT License - see the LICENSE.md file for details</p>
+<p>This project is licensed under the MIT License - see the LICENSE.md file for details.</p>
+<p>This engine relies on several (free) libraries, though they're not bundled with the source code here.</p>
+<ul>
+<li><a href="http://www.assimp.org/">ASSIMP - Model Importing</a></li>
+<li><a href="http://bulletphysics.org/wordpress/">Bullet - Physics Back-end</a></li>
+<li><a href="http://freeimage.sourceforge.net/">FreeImage - Image Importing</a></li>
+<li><a href="http://glew.sourceforge.net/">GLEW - OpenGL</a></li>
+<li><a href="http://www.glfw.org/">GLFW - Windowing</a></li>
+<li><a href="https://glm.g-truc.net/0.9.9/index.html">GLM - Mathematics</a></li>
+<li><a href="https://github.com/jarikomppa/soloud">SoLoud - Sound</a></li>
+</ul>
 <h2>Acknowledgments</h2>
 <p>Thanks to everyone who has helped me over the years!</p>
 <p>Special thanks to all the helpful members of the former <a href="https://forum.facepunch.com/f/">Facepunch programming subforum</a> as well as those who moved on to <a href="https://knockout.chat/">Knockout</a>, the helpful community on the Stack Exchange, <a href="http://ogldev.atspace.co.uk/index.html">OGLDev</a>, <a href="https://learnopengl.com">Learn OpenGL</a>, and the many other people who run their own tutorial series and programming blogs.</p>
-<h2>Installation</h2>
-<p>Step 1: Download <a href="https://cmake.org/">CMake</a></p>
-<div class="fragment"><div class="line">Download CMake from the link above and install it</div></div><!-- fragment --><p>Step 2: Running CMake</p>
-<div class="fragment"><div class="line">Here, we want to configure it for our project.</div><div class="line">First, fill in the &quot;Where is the source code&quot; field to the main project directory, and the second &quot;build&quot; field to where you want to build the project.</div><div class="line">Second, fill in the main directories for all the required external libraries, like assimp, bullet, etc.</div><div class="line">Third, hit the configure button and choose the compiler you want to generate the solution for. Then hit the generate button after.</div></div><!-- fragment --><p>Step 3: Building the project</p>
-<div class="fragment"><div class="line">The project comes as a single solution for the engine, and a separate solution for generating the optional Doxygen documentation.</div><div class="line">To avoid duplicating the engine assets for multiple builds (debug, release, x32/x64, etc) they are kept within the &#39;app&#39; folder. If the executable doesn&#39;t have it set already, change it to start in the app folder.</div></div><!-- fragment --> </div></div><!-- PageDoc -->
+<h2>Recent Media</h2>
+<img src="https://i.imgur.com/zEh3eb0.png" alt="editor UI" class="inline"/>
+ <img src="https://i.imgur.com/72YECGP.gif" alt="file browser" class="inline"/>
+ <img src="https://i.imgur.com/tIWcFf7.gif" alt="menu" class="inline"/>
+ </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

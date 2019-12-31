@@ -1,37 +1,37 @@
 #include "Assets/Sound.h"
-#include "Engine.h"
 #include "soloud_wav.h"
+#include "Engine.h"
 
 
-constexpr char* DIRECTORY_SOUNDS = "Sounds\\";
+constexpr const char* DIRECTORY_SOUNDS = "Sounds\\";
 
-Shared_Sound::Shared_Sound(Engine * engine, const std::string & filename, const bool & threaded)
+Shared_Sound::Shared_Sound(Engine& engine, const std::string& filename, const bool& threaded)
 {
-	(*(std::shared_ptr<Sound>*)(this)) = std::dynamic_pointer_cast<Sound>(
-		engine->getManager_Assets().shareAsset(
+	auto newAsset = std::dynamic_pointer_cast<Sound>(engine.getManager_Assets().shareAsset(
 			typeid(Sound).name(),
 			filename,
-			[engine, filename]() { return std::make_shared<Sound>(engine, filename); },
+			[&engine, filename]() { return std::make_shared<Sound>(engine, filename); },
 			threaded
 		));
+	swap(newAsset);
 }
 
 Sound::~Sound()
 {
-	if (m_finalized) 
-		delete (SoLoud::Wav*)m_soundObj;
+	if (m_finalized)
+		delete reinterpret_cast<SoLoud::Wav*>(m_soundObj);
 }
 
-Sound::Sound(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
+Sound::Sound(Engine& engine, const std::string& filename) : Asset(engine, filename) {}
 
 void Sound::initialize()
 {
 	// Forward asset creation
-	SoLoud::Wav * wave = new SoLoud::Wav();
-	auto & msgMgr = m_engine->getManager_Messages();
+	auto* wave = new SoLoud::Wav();
+	auto& msgMgr = m_engine.getManager_Messages();
 	const auto path = DIRECTORY_SOUNDS + getFileName();
 	switch (wave->load(path.c_str())) {
-	case SoLoud::SO_NO_ERROR: 
+	case SoLoud::SO_NO_ERROR:
 		// No error
 		break;
 	case SoLoud::INVALID_PARAMETER:
@@ -44,10 +44,11 @@ void Sound::initialize()
 		msgMgr.error("Sound \"" + m_filename + "\" file exists, but could not be loaded.");
 		break;
 	case SoLoud::UNKNOWN_ERROR:
+		[[fallthrough]];
 	default:
 		msgMgr.error("Sound \"" + m_filename + "\" has encountered an unknown error.");
 		break;
-	}; 
-	m_soundObj = (SoundObj*)wave;
+	};
+	m_soundObj = reinterpret_cast<SoundObj*>(wave);
 	Asset::finalize();
 }

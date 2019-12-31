@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -78,30 +78,56 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ab2d534089c1889ce68d519e1faf2aeb4"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_image___i_o.html#ab2d534089c1889ce68d519e1faf2aeb4">Initialize</a> ()</td></tr>
-<tr class="memdesc:ab2d534089c1889ce68d519e1faf2aeb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialzie the freeimage library.  <a href="#ab2d534089c1889ce68d519e1faf2aeb4">More...</a><br /></td></tr>
-<tr class="separator:ab2d534089c1889ce68d519e1faf2aeb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34044e7028e52b2f23c80c418b7d5b23"><td class="memItemLeft" align="right" valign="top"><a id="a34044e7028e52b2f23c80c418b7d5b23"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_image___i_o.html#a34044e7028e52b2f23c80c418b7d5b23">Deinitialize</a> ()</td></tr>
-<tr class="memdesc:a34044e7028e52b2f23c80c418b7d5b23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shutdown the freeimage library. <br /></td></tr>
-<tr class="separator:a34044e7028e52b2f23c80c418b7d5b23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74088d7e0f63fc3014068ca82827e7a7"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_image___i_o.html#a74088d7e0f63fc3014068ca82827e7a7">Import_Image</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;relativePath, <a class="el" href="struct_image___data.html">Image_Data</a> &amp;importedData, const bool &amp;linear=true)</td></tr>
-<tr class="memdesc:a74088d7e0f63fc3014068ca82827e7a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Import an image from disk.  <a href="#a74088d7e0f63fc3014068ca82827e7a7">More...</a><br /></td></tr>
-<tr class="separator:a74088d7e0f63fc3014068ca82827e7a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a664bcb794e9466a1c0688097ed99eb34"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_image___i_o.html#a664bcb794e9466a1c0688097ed99eb34">Initialize</a> () noexcept</td></tr>
+<tr class="memdesc:a664bcb794e9466a1c0688097ed99eb34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the FreeImage library.  <a href="#a664bcb794e9466a1c0688097ed99eb34">More...</a><br /></td></tr>
+<tr class="separator:a664bcb794e9466a1c0688097ed99eb34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6e0357e09d1cb3fafa964821c4c3ddf"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_image___i_o.html#ab6e0357e09d1cb3fafa964821c4c3ddf">Deinitialize</a> () noexcept</td></tr>
+<tr class="memdesc:ab6e0357e09d1cb3fafa964821c4c3ddf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shutdown the FreeImage library.  <a href="#ab6e0357e09d1cb3fafa964821c4c3ddf">More...</a><br /></td></tr>
+<tr class="separator:ab6e0357e09d1cb3fafa964821c4c3ddf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a067646eee7916f0bcc0f5be5ed9e6802"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_image___i_o.html#a067646eee7916f0bcc0f5be5ed9e6802">Import_Image</a> (<a class="el" href="class_engine.html">Engine</a> &amp;engine, const std::string &amp;relativePath, <a class="el" href="struct_image___data.html">Image_Data</a> &amp;importedData, const Resize_Policy &amp;resizePolicy=Resize_Policy::LINEAR)</td></tr>
+<tr class="memdesc:a067646eee7916f0bcc0f5be5ed9e6802"><td class="mdescLeft">&#160;</td><td class="mdescRight">Import an image from disk.  <a href="#a067646eee7916f0bcc0f5be5ed9e6802">More...</a><br /></td></tr>
+<tr class="separator:a067646eee7916f0bcc0f5be5ed9e6802"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2792d5354dfdfc468c44e4e224a22eda"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_image___i_o.html#a2792d5354dfdfc468c44e4e224a22eda">Load_Pixel_Data</a> (FIBITMAP *bitmap, <a class="el" href="struct_image___data.html">Image_Data</a> &amp;importedData)</td></tr>
 <tr class="memdesc:a2792d5354dfdfc468c44e4e224a22eda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load pixel data from a bitmap object.  <a href="#a2792d5354dfdfc468c44e4e224a22eda">More...</a><br /></td></tr>
 <tr class="separator:a2792d5354dfdfc468c44e4e224a22eda"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a602f4f587351f8463e5c57269a8ca98a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_image___i_o.html#a602f4f587351f8463e5c57269a8ca98a">Resize_Image</a> (const glm::ivec2 newSize, <a class="el" href="struct_image___data.html">Image_Data</a> &amp;importedData, const bool &amp;linear=true)</td></tr>
-<tr class="memdesc:a602f4f587351f8463e5c57269a8ca98a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resize and update an image.  <a href="#a602f4f587351f8463e5c57269a8ca98a">More...</a><br /></td></tr>
-<tr class="separator:a602f4f587351f8463e5c57269a8ca98a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a832eeade2da278b9d1dd322b6c8f5695"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_image___i_o.html#a832eeade2da278b9d1dd322b6c8f5695">Resize_Image</a> (const glm::ivec2 newSize, <a class="el" href="struct_image___data.html">Image_Data</a> &amp;importedData, const Resize_Policy &amp;resizePolicy=Resize_Policy::LINEAR)</td></tr>
+<tr class="memdesc:a832eeade2da278b9d1dd322b6c8f5695"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resize and update an image.  <a href="#a832eeade2da278b9d1dd322b6c8f5695">More...</a><br /></td></tr>
+<tr class="separator:a832eeade2da278b9d1dd322b6c8f5695"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a745f83057bef1bd2aa2cf2fe977b1311"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_image___i_o.html#a745f83057bef1bd2aa2cf2fe977b1311">Get_Version</a> ()</td></tr>
-<tr class="memdesc:a745f83057bef1bd2aa2cf2fe977b1311"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the plugin version.  <a href="#a745f83057bef1bd2aa2cf2fe977b1311">More...</a><br /></td></tr>
+<tr class="memdesc:a745f83057bef1bd2aa2cf2fe977b1311"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the plugin version.  <a href="#a745f83057bef1bd2aa2cf2fe977b1311">More...</a><br /></td></tr>
 <tr class="separator:a745f83057bef1bd2aa2cf2fe977b1311"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A static helper class used for reading/writing images. </p>
 <p>Uses the FreeImage texture importer: <a href="http://freeimage.sourceforge.net/">http://freeimage.sourceforge.net/</a> </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="ab6e0357e09d1cb3fafa964821c4c3ddf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6e0357e09d1cb3fafa964821c4c3ddf">&#9670;&nbsp;</a></span>Deinitialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Image_IO::Deinitialize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Shutdown the FreeImage library. </p>
+
+</div>
+</div>
 <a id="a745f83057bef1bd2aa2cf2fe977b1311"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a745f83057bef1bd2aa2cf2fe977b1311">&#9670;&nbsp;</a></span>Get_Version()</h2>
 
@@ -125,13 +151,13 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </table>
 </div><div class="memdoc">
 
-<p>Get the plugin version. </p>
-<dl class="section return"><dt>Returns</dt><dd>the plugin version </dd></dl>
+<p>Retrieve the plugin version. </p>
+<dl class="section return"><dt>Returns</dt><dd>the plugin version. </dd></dl>
 
 </div>
 </div>
-<a id="a74088d7e0f63fc3014068ca82827e7a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74088d7e0f63fc3014068ca82827e7a7">&#9670;&nbsp;</a></span>Import_Image()</h2>
+<a id="a067646eee7916f0bcc0f5be5ed9e6802"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a067646eee7916f0bcc0f5be5ed9e6802">&#9670;&nbsp;</a></span>Import_Image()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -142,7 +168,7 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
         <tr>
           <td class="memname">bool Image_IO::Import_Image </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> &amp;&#160;</td>
           <td class="paramname"><em>engine</em>, </td>
         </tr>
         <tr>
@@ -160,8 +186,8 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const bool &amp;&#160;</td>
-          <td class="paramname"><em>linear</em> = <code>true</code>&#160;</td>
+          <td class="paramtype">const Resize_Policy &amp;&#160;</td>
+          <td class="paramname"><em>resizePolicy</em> = <code>Resize_Policy::LINEAR</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -179,19 +205,19 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>Import an image from disk. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">engine</td><td>the engine to import to </td></tr>
-    <tr><td class="paramname">relativePath</td><td>the path to the file </td></tr>
-    <tr><td class="paramname">importedData</td><td>the container to place the imported data within </td></tr>
-    <tr><td class="paramname">linear</td><td>set to true to use linear filtering, false to use nearest </td></tr>
+    <tr><td class="paramname">engine</td><td>reference to the engine to use. </td></tr>
+    <tr><td class="paramname">relativePath</td><td>the path to the file. </td></tr>
+    <tr><td class="paramname">importedData</td><td>the container to place the imported data within. </td></tr>
+    <tr><td class="paramname">resizePolicy</td><td>the resize policy to use, such as nearest neighbor or linear interpolation. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true on successfull import, false otherwise (error reported to engine) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true on successful import, false otherwise (error reported to engine). </dd></dl>
 
 </div>
 </div>
-<a id="ab2d534089c1889ce68d519e1faf2aeb4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab2d534089c1889ce68d519e1faf2aeb4">&#9670;&nbsp;</a></span>Initialize()</h2>
+<a id="a664bcb794e9466a1c0688097ed99eb34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a664bcb794e9466a1c0688097ed99eb34">&#9670;&nbsp;</a></span>Initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -208,12 +234,12 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initialzie the freeimage library. </p>
+<p>Initialize the FreeImage library. </p>
 
 </div>
 </div>
@@ -254,16 +280,16 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>Load pixel data from a bitmap object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">bitmap</td><td>the FreeImage bitmap to read from </td></tr>
-    <tr><td class="paramname">importedData</td><td>the container to place the imported data within </td></tr>
+    <tr><td class="paramname">bitmap</td><td>the FreeImage bitmap to read from. </td></tr>
+    <tr><td class="paramname">importedData</td><td>the container to place the imported data within. </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a602f4f587351f8463e5c57269a8ca98a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a602f4f587351f8463e5c57269a8ca98a">&#9670;&nbsp;</a></span>Resize_Image()</h2>
+<a id="a832eeade2da278b9d1dd322b6c8f5695"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a832eeade2da278b9d1dd322b6c8f5695">&#9670;&nbsp;</a></span>Resize_Image()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -286,8 +312,8 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const bool &amp;&#160;</td>
-          <td class="paramname"><em>linear</em> = <code>true</code>&#160;</td>
+          <td class="paramtype">const Resize_Policy &amp;&#160;</td>
+          <td class="paramname"><em>resizePolicy</em> = <code>Resize_Policy::LINEAR</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -305,9 +331,9 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>Resize and update an image. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">newSize</td><td>the desired image size </td></tr>
-    <tr><td class="paramname">importedData</td><td>the container holding the image data (gets updated with new data) </td></tr>
-    <tr><td class="paramname">linear</td><td>set to true to use linear filtering, false to use nearest </td></tr>
+    <tr><td class="paramname">newSize</td><td>the desired image size. </td></tr>
+    <tr><td class="paramname">importedData</td><td>the container holding the image data (gets updated with new data). </td></tr>
+    <tr><td class="paramname">resizePolicy</td><td>the resize policy to use, such as nearest neighbor or linear interpolation. </td></tr>
   </table>
   </dd>
 </dl>

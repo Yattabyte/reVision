@@ -1,88 +1,105 @@
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
-#include "Engine.h"
 
 /* Rendering Techniques Used */
-#include "Modules/Graphics/Geometry/Prop/Prop_Technique.h"
-#include "Modules/Graphics/Lighting/Shadow/Shadow_Technique.h"
-#include "Modules/Graphics/Lighting/Directional/Directional_Technique.h"
-#include "Modules/Graphics/Lighting/Point/Point_Technique.h"
-#include "Modules/Graphics/Lighting/Spot/Spot_Technique.h"
-#include "Modules/Graphics/Lighting/Reflector/Reflector_Technique.h"
-#include "Modules/Graphics/Effects/Skybox.h"
-#include "Modules/Graphics/Effects/Radiance_Hints.h"
-#include "Modules/Graphics/Effects/SSAO.h"
-#include "Modules/Graphics/Effects/SSR.h"
-#include "Modules/Graphics/Effects/Join_Reflections.h"
-#include "Modules/Graphics/Effects/Bloom.h"
-#include "Modules/Graphics/Effects/HDR.h"
-#include "Modules/Graphics/Effects/FXAA.h"
+#include "Modules/Graphics/Logical/Transform_System.h"
+#include "Modules/Graphics/Logical/CameraPerspective_System.h"
+#include "Modules/Graphics/Logical/ReflectorPerspective_System.h"
+#include "Modules/Graphics/Logical/ShadowPerspective_System.h"
+#include "Modules/Graphics/Logical/FrustumCull_System.h"
+#include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
 
 
-Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<Camera> & clientCamera, const std::shared_ptr<std::vector<Camera*>> & cameras, const std::shared_ptr<RH_Volume> & rhVolume, ECSSystemList & auxilliarySystems)
-	: m_engine(engine)
+Graphics_Pipeline::Graphics_Pipeline(Engine& engine, Camera& clientCamera) :
+	m_engine(engine),
+	m_propView(engine, m_sceneCameras),
+	m_shadowing(engine, m_sceneCameras),
+	m_directLighting(engine, m_shadowing.getShadowData(), clientCamera, m_sceneCameras),
+	m_indirectLighting(engine, m_shadowing.getShadowData(), clientCamera, m_sceneCameras),
+	m_reflectorLighting(engine, m_sceneCameras),
+	m_skybox(engine),
+	m_ssao(engine),
+	m_ssr(engine),
+	m_joinReflections(engine),
+	m_bloom(engine),
+	m_hdr(engine),
+	m_fxaa(engine),
+	m_transHierachy(std::make_shared<Transform_System>(engine))
 {
-	auto propView = new Prop_Technique(m_engine, cameras, auxilliarySystems);
-	auto shadowing = new Shadow_Technique(m_engine, cameras, auxilliarySystems);
-	auto directionalLighting = new Directional_Technique(m_engine, shadowing->getShadowData(), rhVolume, clientCamera, cameras, auxilliarySystems);
-	auto pointLighting = new Point_Technique(m_engine, shadowing->getShadowData(), cameras, auxilliarySystems);
-	auto spotLighting = new Spot_Technique(m_engine, shadowing->getShadowData(), cameras, auxilliarySystems);
-	auto reflectorLighting = new Reflector_Technique(m_engine, cameras, auxilliarySystems);
-	auto radianceHints = new Radiance_Hints(m_engine, rhVolume);
-	auto skybox = new Skybox(m_engine);
-	auto ssao = new SSAO(m_engine);
-	auto ssr = new SSR(m_engine);
-	auto joinReflections = new Join_Reflections(m_engine);
-	auto bloom = new Bloom(m_engine);
-	auto hdr = new HDR(m_engine);
-	auto fxaa = new FXAA(m_engine);
-
-	m_geometryTechniques = {
-		propView
-	};
-	m_lightingTechniques = {
-		shadowing, directionalLighting, pointLighting, spotLighting, skybox, reflectorLighting
-	};
-	m_effectTechniques = {
-		radianceHints, ssao, ssr, joinReflections, bloom, hdr, fxaa
-	};
-
-	// Join All
-	m_allTechniques.reserve(m_geometryTechniques.size() + m_lightingTechniques.size() + m_effectTechniques.size());
-	for each (const auto & tech in m_geometryTechniques)
-		m_allTechniques.push_back(tech);
-	for each (const auto & tech in m_lightingTechniques)
-		m_allTechniques.push_back(tech);
-	for each (const auto & tech in m_effectTechniques)
-		m_allTechniques.push_back(tech);
+	// Create Systems
+	m_worldSystems.addSystem(m_transHierachy);
+	m_worldSystems.makeSystem<FrustumCull_System>(m_sceneCameras);
+	m_worldSystems.makeSystem<Skeletal_Animation_System>();
+	m_cameraSystems.makeSystem<CameraPerspective_System>(m_sceneCameras);
+	m_cameraSystems.makeSystem<ShadowPerspective_System>(m_sceneCameras);
+	m_cameraSystems.makeSystem<ReflectorPerspective_System>(m_sceneCameras);
 }
 
-void Graphics_Pipeline::prepareForNextFrame(const float & deltaTime)
+std::vector<std::pair<int, int>> Graphics_Pipeline::begin(const float& deltaTime, ecsWorld& world, std::vector<Camera>& cameras)
 {
-	for each (auto * tech in m_allTechniques)
-		tech->prepareForNextFrame(deltaTime);
+	// Add input cameras to shared list
+	m_sceneCameras.clear();
+	m_sceneCameras.reserve(cameras.size());
+	std::vector<std::pair<int, int>> perspectives;
+	int count(0);
+	for (auto& camera : cameras) {
+		camera.updateFrustum();
+		m_sceneCameras.push_back(&camera);
+		perspectives.emplace_back( count, count );
+		count++;
+	}
+
+	// Add cameras from world to shared list
+	world.updateSystems(m_cameraSystems, deltaTime);
+
+	// Update world systems
+	std::dynamic_pointer_cast<Transform_System>(m_transHierachy)->m_world = &world;
+	world.updateSystems(m_worldSystems, deltaTime);
+
+	// Update rendering techniques
+	for (auto& tech : m_allTechniques)
+		tech->updateCache(deltaTime, world);
+
+	// Write camera data to camera GPU buffer
+	m_cameraBuffer.beginWriting();
+	m_cameraBuffer.resize(m_sceneCameras.size());
+	const auto sceneCameraCount = m_sceneCameras.size();
+	for (size_t x = 0ULL; x < sceneCameraCount; ++x)
+		m_cameraBuffer[x] = *m_sceneCameras[x]->get();
+	m_cameraBuffer.endWriting();
+
+	// Apply pre-rendering passes
+	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	for (auto& tech : m_allTechniques)
+		tech->updatePass(deltaTime);
+
+	return perspectives;
 }
 
-void Graphics_Pipeline::update(const float & deltaTime)
+void Graphics_Pipeline::end(const float& deltaTime)
 {
-	for each (auto * tech in m_allTechniques)
-		tech->updateTechnique(deltaTime);
+	m_cameraBuffer.endReading();
+	for (auto& tech : m_allTechniques)
+		tech->clearCache(deltaTime);
 }
 
-void Graphics_Pipeline::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives, const unsigned int & allowedCategories)
+void Graphics_Pipeline::render(const float& deltaTime, Viewport& viewport, const std::vector<std::pair<int, int>>& perspectives, const unsigned int& categories)
 {
-	for each (auto * tech in m_allTechniques)
-		if (allowedCategories & tech->getCategory())
-			tech->renderTechnique(deltaTime, viewport, perspectives);	
+	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	for (auto& tech : m_allTechniques)
+		if ((categories & static_cast<unsigned int>(tech->getCategory())) != 0U)
+			tech->renderTechnique(deltaTime, viewport, perspectives);
 }
 
-void Graphics_Pipeline::cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>>& perspectives)
+void Graphics_Pipeline::cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives)
 {
-	for each (auto * tech in m_geometryTechniques)
+	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	for (auto& tech : m_geometryTechniques)
 		tech->cullShadows(deltaTime, perspectives);
 }
 
-void Graphics_Pipeline::renderShadows(const float & deltaTime)
+void Graphics_Pipeline::renderShadows(const float& deltaTime)
 {
-	for each (auto * tech in m_geometryTechniques)
+	m_cameraBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	for (auto& tech : m_geometryTechniques)
 		tech->renderShadows(deltaTime);
 }

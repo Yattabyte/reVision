@@ -14,7 +14,7 @@ configure_file(Engine.h.in Engine.h)
 ############
 set(Module reVision)
 # Create a library using those source files	
-add_executable(${Module} 	${ROOT})	
+add_executable(${Module} ${ROOT})	
 # Set working directory to the project directory
 set_target_properties(${Module} PROPERTIES 
 	RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -26,17 +26,16 @@ target_compile_Definitions(${Module}
 	PRIVATE		$<$<CONFIG:DEBUG>:DEBUG>
 	PUBLIC		FREEIMAGE_LIB
 )
-set_target_properties(${Module} PROPERTIES 
-	VS_DEBUGGER_WORKING_DIRECTORY "$(SolutionDir)app"
-	CXX_STANDARD 17
-	CXX_STANDARD_REQUIRED YES
-)
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT reVision)
-
-if (MSVC_VERSION GREATER_EQUAL "1900")
-    include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
-    if (_cpp_latest_flag_supported)
-        add_compile_options("/std:c++latest")
-    endif()
-endif()
+set_target_properties(${Module} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(SolutionDir)app")
+target_sources(${Module} PRIVATE ${PROJECT_SOURCE_DIR}/external/src/glad/glad/glad.c)
+if (EXISTS ${PROJECT_SOURCE_DIR}/external/src/IMGUI/imgui.cpp)
+	target_sources(${Module}
+		PRIVATE ${PROJECT_SOURCE_DIR}/external/src/IMGUI/imgui.cpp
+		PRIVATE ${PROJECT_SOURCE_DIR}/external/src/IMGUI/imgui_demo.cpp
+		PRIVATE ${PROJECT_SOURCE_DIR}/external/src/IMGUI/imgui_draw.cpp
+		PRIVATE ${PROJECT_SOURCE_DIR}/external/src/IMGUI/imgui_widgets.cpp
+		PRIVATE ${PROJECT_SOURCE_DIR}/external/src/IMGUI/examples/imgui_impl_glfw.cpp
+		PRIVATE ${PROJECT_SOURCE_DIR}/external/src/IMGUI/examples/imgui_impl_opengl3.cpp
+	)
+endif (EXISTS ${PROJECT_SOURCE_DIR}/external/src/IMGUI/imgui.cpp)

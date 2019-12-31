@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -79,9 +79,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a144ce8dcafd13ca66acb5a1636cfc297"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_transform.html#a144ce8dcafd13ca66acb5a1636cfc297">Transform</a> ()=default</td></tr>
-<tr class="memdesc:a144ce8dcafd13ca66acb5a1636cfc297"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor.  <a href="#a144ce8dcafd13ca66acb5a1636cfc297">More...</a><br /></td></tr>
-<tr class="separator:a144ce8dcafd13ca66acb5a1636cfc297"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a578e23ae0960757c8466e09033ac6bb5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_transform.html#a578e23ae0960757c8466e09033ac6bb5">Transform</a> () noexcept</td></tr>
+<tr class="memdesc:a578e23ae0960757c8466e09033ac6bb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor.  <a href="#a578e23ae0960757c8466e09033ac6bb5">More...</a><br /></td></tr>
+<tr class="separator:a578e23ae0960757c8466e09033ac6bb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49122aef1b00d592a17f0cfe1f7aeee9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_transform.html#a49122aef1b00d592a17f0cfe1f7aeee9">Transform</a> (const glm::vec3 &amp;position, const glm::quat &amp;orientation, const glm::vec3 &amp;scale)</td></tr>
 <tr class="memdesc:a49122aef1b00d592a17f0cfe1f7aeee9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a transformation object with any of the supplied parameters.  <a href="#a49122aef1b00d592a17f0cfe1f7aeee9">More...</a><br /></td></tr>
 <tr class="separator:a49122aef1b00d592a17f0cfe1f7aeee9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -91,12 +91,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a377194ad810fc2e6d05e3008eb8c7655"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_transform.html#a377194ad810fc2e6d05e3008eb8c7655">update</a> ()</td></tr>
 <tr class="memdesc:a377194ad810fc2e6d05e3008eb8c7655"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recalculates the transformation matrix (and inverse) using this transformations current data.  <a href="#a377194ad810fc2e6d05e3008eb8c7655">More...</a><br /></td></tr>
 <tr class="separator:a377194ad810fc2e6d05e3008eb8c7655"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5171e6bc2bfbe6f779957b276f28da8"><td class="memItemLeft" align="right" valign="top"><a id="ab5171e6bc2bfbe6f779957b276f28da8"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="struct_transform.html">Transform</a> &amp;other)</td></tr>
-<tr class="separator:ab5171e6bc2bfbe6f779957b276f28da8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac75179dc5b379791ef05c27de5bd1b8a"><td class="memItemLeft" align="right" valign="top"><a id="ac75179dc5b379791ef05c27de5bd1b8a"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="struct_transform.html">Transform</a> &amp;other)</td></tr>
-<tr class="separator:ac75179dc5b379791ef05c27de5bd1b8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d48fe2cdc0edd515600ca60410a2048"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_transform.html">Transform</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_transform.html#a3d48fe2cdc0edd515600ca60410a2048">inverse</a> ()</td></tr>
+<tr class="memdesc:a3d48fe2cdc0edd515600ca60410a2048"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate and return an inverse transform.  <a href="#a3d48fe2cdc0edd515600ca60410a2048">More...</a><br /></td></tr>
+<tr class="separator:a3d48fe2cdc0edd515600ca60410a2048"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebcf7c13fd74b75e660dcd7bf5a059d1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_transform.html#aebcf7c13fd74b75e660dcd7bf5a059d1">operator==</a> (const <a class="el" href="struct_transform.html">Transform</a> &amp;other) const noexcept</td></tr>
+<tr class="memdesc:aebcf7c13fd74b75e660dcd7bf5a059d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve if this transform is equal to another transform.  <a href="#aebcf7c13fd74b75e660dcd7bf5a059d1">More...</a><br /></td></tr>
+<tr class="separator:aebcf7c13fd74b75e660dcd7bf5a059d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2384a25ecbc775f30d778b625f8d3c5f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_transform.html#a2384a25ecbc775f30d778b625f8d3c5f">operator!=</a> (const <a class="el" href="struct_transform.html">Transform</a> &amp;other) const noexcept</td></tr>
+<tr class="memdesc:a2384a25ecbc775f30d778b625f8d3c5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve if this transform is not equal to another transform.  <a href="#a2384a25ecbc775f30d778b625f8d3c5f">More...</a><br /></td></tr>
+<tr class="separator:a2384a25ecbc775f30d778b625f8d3c5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15edf244ae4ff7870f0e53e14063c257"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_transform.html">Transform</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_transform.html#a15edf244ae4ff7870f0e53e14063c257">operator *=</a> (const <a class="el" href="struct_transform.html">Transform</a> &amp;other)</td></tr>
+<tr class="memdesc:a15edf244ae4ff7870f0e53e14063c257"><td class="mdescLeft">&#160;</td><td class="mdescRight">Concatenate this transform with another transform.  <a href="#a15edf244ae4ff7870f0e53e14063c257">More...</a><br /></td></tr>
+<tr class="separator:a15edf244ae4ff7870f0e53e14063c257"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5beb9bfc585f8114e53d11cb37aa2bde"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_transform.html">Transform</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_transform.html#a5beb9bfc585f8114e53d11cb37aa2bde">operator *</a> (const <a class="el" href="struct_transform.html">Transform</a> &amp;other) const</td></tr>
+<tr class="memdesc:a5beb9bfc585f8114e53d11cb37aa2bde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Concatenate this transform with another transform, returning its product.  <a href="#a5beb9bfc585f8114e53d11cb37aa2bde">More...</a><br /></td></tr>
+<tr class="separator:a5beb9bfc585f8114e53d11cb37aa2bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -120,8 +129,8 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_inverseModelMa
 <div class="textblock"><p>A 3D transformation object. </p>
 <p>Takes in position, orientation, and scaling attributes, and calculates a transformation matrix. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a144ce8dcafd13ca66acb5a1636cfc297"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a144ce8dcafd13ca66acb5a1636cfc297">&#9670;&nbsp;</a></span>Transform() <span class="overload">[1/3]</span></h2>
+<a id="a578e23ae0960757c8466e09033ac6bb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a578e23ae0960757c8466e09033ac6bb5">&#9670;&nbsp;</a></span>Transform() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -138,7 +147,7 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_inverseModelMa
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -152,9 +161,6 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_inverseModelMa
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Transform::Transform </td>
@@ -180,11 +186,6 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_inverseModelMa
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Constructs a transformation object with any of the supplied parameters. </p>
@@ -218,7 +219,7 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_inverseModelMa
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -234,8 +235,82 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_inverseModelMa
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a377194ad810fc2e6d05e3008eb8c7655"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a377194ad810fc2e6d05e3008eb8c7655">&#9670;&nbsp;</a></span>update()</h2>
+<a id="a3d48fe2cdc0edd515600ca60410a2048"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d48fe2cdc0edd515600ca60410a2048">&#9670;&nbsp;</a></span>inverse()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_transform.html">Transform</a> Transform::inverse </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculate and return an inverse transform. </p>
+<dl class="section return"><dt>Returns</dt><dd>an inverse version of this transform. </dd></dl>
+
+</div>
+</div>
+<a id="a5beb9bfc585f8114e53d11cb37aa2bde"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5beb9bfc585f8114e53d11cb37aa2bde">&#9670;&nbsp;</a></span>operator *()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_transform.html">Transform</a> Transform::operator * </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_transform.html">Transform</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Concatenate this transform with another transform, returning its product. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>the other transform to apply to this transform. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a new transform based on this transform. </dd></dl>
+
+</div>
+</div>
+<a id="a15edf244ae4ff7870f0e53e14063c257"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15edf244ae4ff7870f0e53e14063c257">&#9670;&nbsp;</a></span>operator *=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_transform.html">Transform</a> &amp; Transform::operator *= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_transform.html">Transform</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Concatenate this transform with another transform. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>the other transform to apply to this transform. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>reference to this transform. </dd></dl>
+
+</div>
+</div>
+<a id="a2384a25ecbc775f30d778b625f8d3c5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2384a25ecbc775f30d778b625f8d3c5f">&#9670;&nbsp;</a></span>operator!=()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -244,25 +319,88 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_inverseModelMa
   <td class="mlabels-left">
       <table class="memname">
         <tr>
+          <td class="memname">bool Transform::operator!= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_transform.html">Transform</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Retrieve if this transform is not equal to another transform. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>the other transform to compare against. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if this transform is not equal the other transform, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="aebcf7c13fd74b75e660dcd7bf5a059d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aebcf7c13fd74b75e660dcd7bf5a059d1">&#9670;&nbsp;</a></span>operator==()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Transform::operator== </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_transform.html">Transform</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Retrieve if this transform is equal to another transform. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>the other transform to compare against. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if this transform equals the other transform, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="a377194ad810fc2e6d05e3008eb8c7655"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a377194ad810fc2e6d05e3008eb8c7655">&#9670;&nbsp;</a></span>update()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
           <td class="memname">void Transform::update </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Recalculates the transformation matrix (and inverse) using this transformations current data. </p>
 
 </div>
 </div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<hr/>The documentation for this struct was generated from the following files:<ul>
 <li>src/Utilities/<a class="el" href="_transform_8h_source.html">Transform.h</a></li>
+<li>src/Utilities/Transform.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

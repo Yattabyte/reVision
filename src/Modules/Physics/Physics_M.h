@@ -3,40 +3,47 @@
 #define PHYSICS_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/ECS/ecsSystem.h"
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
 
 
 /** A module responsible for physics. */
-class Physics_Module : public Engine_Module {
+class Physics_Module final : public Engine_Module {
 public:
-	// Public (de)Constructors
-	inline ~Physics_Module() = default;
-	inline Physics_Module() = default;
+	// Public (De)Constructors
+	/** Construct a physics module.
+	@param	engine		reference to the engine to use. */
+	explicit Physics_Module(Engine& engine);
 
 
 	// Public Interface Implementations
-	virtual void initialize(Engine * engine) override;
-	virtual void deinitialize() override;
-	virtual void frameTick(const float & deltaTime) override;
+	void initialize() final;
+	void deinitialize() final;
 
 
 	// Public Methods
-	/** Returns a pointer to the physics-world.
-	@return				the physics world. */
-	inline btDiscreteDynamicsWorld * getWorld() { return m_world; }	
+	/** Tick this module by a specific amount of delta time.
+	@param	world		the ecsWorld to perform the physics simulation on.
+	@param	deltaTime	the amount of time since last frame. */
+	void frameTick(ecsWorld& world, const float& deltaTime);
+	/** Update generic physics based ECS systems using a specific ECS world.
+	@param	world		the ecsWorld to perform the physics simulation on.
+	@param	deltaTime	the amount of time since last frame. */
+	void updateSystems(ecsWorld& world, const float& deltaTime);
+	/** Retrieves a pointer to the physics-world.
+	@return				reference to the physics world. */
+	btDiscreteDynamicsWorld& getWorld() noexcept;
 
 
 private:
 	// Private Attributes
-	bool m_enabled = false;
-	btBroadphaseInterface * m_broadphase = nullptr;
-	btDefaultCollisionConfiguration * m_collisionConfiguration = nullptr;
-	btCollisionDispatcher * m_dispatcher = nullptr;
-	btSequentialImpulseConstraintSolver * m_solver = nullptr;
-	btDiscreteDynamicsWorld * m_world = nullptr;
-	ECSSystemList m_physicsSystems; 
+	btDbvtBroadphase m_broadphase;
+	btDefaultCollisionConfiguration m_collisionConfiguration;
+	btCollisionDispatcher m_dispatcher;
+	btSequentialImpulseConstraintSolver m_solver;
+	btDiscreteDynamicsWorld m_world;
+	ecsSystemList m_physicsSystems;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

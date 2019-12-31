@@ -3,64 +3,53 @@
 #define	IMAGE_H
 
 #include "Assets/Asset.h"
-#include "Utilities/GL/glad/glad.h"
+#include "Utilities/IO/Image_IO.h"
 #include "glm/glm.hpp"
-#include <any>
 #include <optional>
 
 
-class Engine;
+// Forward Declarations
 class Image;
-
-/** Public Policy Enumerations. */
-const enum Fill_Policy : GLenum {
-	Checkered,
-	Solid,
-};
-const enum Resize_Policy : GLenum {
-	Nearest,
-	Linear,
-};
 
 /** Shared version of an Image asset.
 Responsible for the creation, containing, and sharing of assets. */
-class Shared_Image : public std::shared_ptr<Image> {
+class Shared_Image final : public std::shared_ptr<Image> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Image() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			the engine being used.
+	@param	engine			reference to the engine to use.
 	@param	filename		the filename to use.
 	@param	specificSize	an optional size to force the image to.
-	@param	category		the category of image, if available.
 	@param	threaded		create in a separate thread.
+	@param	policyFill		the fill policy of the image, defaulted to CHECKERED
+	@param	policyResize	the resize policy of the image, defaulted to LINEAR
 	@return					the desired asset. */
-	explicit Shared_Image(Engine * engine, const std::string & filename, const std::optional<glm::ivec2> & specificSize, const bool & threaded = true, const GLenum & policyFill = Fill_Policy::Checkered, const GLenum & policyResize = Resize_Policy::Linear);
+	explicit Shared_Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const bool& threaded = true, const Fill_Policy& policyFill = Fill_Policy::CHECKERED, const Resize_Policy& policyResize = Resize_Policy::LINEAR);
 };
 
 /** Contains image data and related attributes.
-Resonsible for fetching and processing an image from disk and optionally resizing it. */
-class Image : public Asset {
+Responsible for fetching and processing an image from disk and optionally resizing it. */
+class Image final : public Asset {
 public:
-	// Public (de)Constructors
-	/** Destroy the Image. */
-	~Image();
-	/** Construct the Image. 
-	@param	engine			the engine to use.
-	@param	filename		the asset file name (relative to engine directory). 
+	// Public (De)Constructors
+	/** Construct the Image.
+	@param	engine			reference to the engine to use.
+	@param	filename		the asset file name (relative to engine directory).
 	@param	specificSize	an optional size to force the image to.
-	@param	category		the category of image, if available. */
-	Image(Engine * engine, const std::string & filename, const std::optional<glm::ivec2> & specificSize, const GLenum & policyFill, const GLenum & policyResize);
+	@param	policyFill		the pixel fill policy.
+	@param	policyResize	the image resize policy. */
+	Image(Engine& engine, const std::string& filename, const std::optional<glm::ivec2>& specificSize, const Fill_Policy& policyFill, const Resize_Policy& policyResize);
 
 
 	// Public Attributes
 	glm::ivec2 m_size = glm::ivec2(0);
-	GLubyte	* m_pixelData = nullptr;
+	std::vector<GLubyte> m_pixelData;
 	GLint m_pitch = 0;
 	GLuint m_bpp = 0;
-	GLenum m_policyFill = Fill_Policy::Checkered;
-	GLenum m_policyResize = Resize_Policy::Linear;
+	Fill_Policy m_policyFill = Fill_Policy::CHECKERED;
+	Resize_Policy m_policyResize = Resize_Policy::LINEAR;
 
 
 private:
@@ -75,7 +64,7 @@ private:
 
 
 	// Private Interface Implementation
-	virtual void initialize() override;
+	void initialize() final;
 
 
 	// Private Attributes

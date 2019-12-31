@@ -10,5 +10,5 @@ void main()
 	BloomColor					= vec3(0.0f);
 	const vec3 LightingColor	= texture(LightTexture, vec3(TexCoord, gl_Layer)).rgb;
 	if (dot(LightingColor, vec3(0.2126, 0.7152, 0.0722)) > 1.0)
-		BloomColor 				= min(LightingColor, vec3(0.2126, 0.7152, 0.0722) * 8);	
+		BloomColor 				= LightingColor;
 }

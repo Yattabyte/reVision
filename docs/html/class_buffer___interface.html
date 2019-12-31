@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,7 +71,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>An interface for opengl buffers.  
+<p>An interface for OpenGL buffers.  
  <a href="class_buffer___interface.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_buffer___interface_8h_source.html">Buffer_Interface.h</a>&gt;</code></p>
@@ -81,37 +81,49 @@ Inheritance diagram for Buffer_Interface:</div>
  <div class="center">
   <img src="class_buffer___interface.png" usemap="#Buffer_5FInterface_map" alt=""/>
   <map id="Buffer_5FInterface_map" name="Buffer_5FInterface_map">
-<area href="class_dynamic_buffer.html" title="An OpenGL framebuffer encapsulation, which can change in size." alt="DynamicBuffer" shape="rect" coords="333,56,656,80"/>
-<area href="class_g_l___array_buffer.html" title="A data buffer that resides locally as well as on the GPU." alt="GL_ArrayBuffer&lt; T &gt;" shape="rect" coords="333,112,656,136"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; Camera::GPUData &gt;" shape="rect" coords="333,168,656,192"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; DirectionalData::Directional_Buffer &gt;" shape="rect" coords="333,224,656,248"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; PointData::Point_Buffer &gt;" shape="rect" coords="333,280,656,304"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; PropData::Model_Buffer &gt;" shape="rect" coords="333,336,656,360"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; PropData::Skeleton_Buffer &gt;" shape="rect" coords="333,392,656,416"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; ReflectorData::Reflector_Buffer &gt;" shape="rect" coords="333,448,656,472"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; SpotData::Spot_Buffer &gt;" shape="rect" coords="333,504,656,528"/>
-<area href="class_static_buffer.html" title="Encapsulates an OpenGL buffer that is fixed in size." alt="StaticBuffer" shape="rect" coords="333,560,656,584"/>
-<area href="class_static_triple_buffer.html" title="Encapsulates an OpenGL buffer that is fixed in size." alt="StaticTripleBuffer" shape="rect" coords="333,616,656,640"/>
+<area href="class_dynamic_buffer.html" title="An OpenGL framebuffer encapsulation, which can change in size." alt="DynamicBuffer&lt; BufferCount &gt;" shape="rect" coords="340,56,670,80"/>
+<area href="class_dynamic_buffer.html" alt="DynamicBuffer&lt; 1 &gt;" shape="rect" coords="340,112,670,136"/>
+<area href="class_g_l___vector.html" title="A multi-buffered STL vector like class, storing its data on the GPU using persistently mapped coheren..." alt="GL_Vector&lt; T, BufferCount &gt;" shape="rect" coords="340,168,670,192"/>
+<area href="class_g_l___vector.html" alt="GL_Vector&lt; Camera::GPUData &gt;" shape="rect" coords="340,224,670,248"/>
+<area href="class_g_l___vector.html" alt="GL_Vector&lt; Direct_Light_Data::Direct_Light_Buffer &gt;" shape="rect" coords="340,280,670,304"/>
+<area href="class_g_l___vector.html" alt="GL_Vector&lt; Indirect_Light_Data::Indirect_Light_Buffer &gt;" shape="rect" coords="340,336,670,360"/>
+<area href="class_g_l___vector.html" alt="GL_Vector&lt; PropData::Model_Buffer &gt;" shape="rect" coords="340,392,670,416"/>
+<area href="class_g_l___vector.html" alt="GL_Vector&lt; PropData::Skeleton_Buffer &gt;" shape="rect" coords="340,448,670,472"/>
+<area href="class_g_l___vector.html" alt="GL_Vector&lt; ReflectorData::Reflector_Buffer &gt;" shape="rect" coords="340,504,670,528"/>
+<area href="class_static_buffer.html" title="Encapsulates an OpenGL buffer that is fixed in size." alt="StaticBuffer" shape="rect" coords="340,560,670,584"/>
+<area href="class_static_multi_buffer.html" title="Encapsulates an OpenGL buffer that is fixed in size." alt="StaticMultiBuffer&lt; BufferCount &gt;" shape="rect" coords="340,616,670,640"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a79bb5d606d3dd10c219a48bff8bf19d1"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#a79bb5d606d3dd10c219a48bff8bf19d1">~Buffer_Interface</a> ()=default</td></tr>
-<tr class="memdesc:a79bb5d606d3dd10c219a48bff8bf19d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this buffer.  <a href="#a79bb5d606d3dd10c219a48bff8bf19d1">More...</a><br /></td></tr>
+<tr class="memdesc:a79bb5d606d3dd10c219a48bff8bf19d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual Destructor.  <a href="#a79bb5d606d3dd10c219a48bff8bf19d1">More...</a><br /></td></tr>
 <tr class="separator:a79bb5d606d3dd10c219a48bff8bf19d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab834dee66f3f9cee83a60d6c1387fb03"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#ab834dee66f3f9cee83a60d6c1387fb03">Buffer_Interface</a> ()=default</td></tr>
-<tr class="memdesc:ab834dee66f3f9cee83a60d6c1387fb03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a buffer.  <a href="#ab834dee66f3f9cee83a60d6c1387fb03">More...</a><br /></td></tr>
-<tr class="separator:ab834dee66f3f9cee83a60d6c1387fb03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6809378e3531666363bd5de16f3a9c05"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#a6809378e3531666363bd5de16f3a9c05">bindBuffer</a> (const GLenum &amp;target) const =0</td></tr>
-<tr class="memdesc:a6809378e3531666363bd5de16f3a9c05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to the target specified.  <a href="#a6809378e3531666363bd5de16f3a9c05">More...</a><br /></td></tr>
-<tr class="separator:a6809378e3531666363bd5de16f3a9c05"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca8d4908daa0a15a01d879ae8997c825"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#aca8d4908daa0a15a01d879ae8997c825">bindBufferBase</a> (const GLenum &amp;target, const GLuint &amp;index) const =0</td></tr>
-<tr class="memdesc:aca8d4908daa0a15a01d879ae8997c825"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to a particular binding point, such as for shaders to read.  <a href="#aca8d4908daa0a15a01d879ae8997c825">More...</a><br /></td></tr>
-<tr class="separator:aca8d4908daa0a15a01d879ae8997c825"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3342500fb51fa199908287a74afe6e9b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#a3342500fb51fa199908287a74afe6e9b">Buffer_Interface</a> () noexcept=default</td></tr>
+<tr class="memdesc:a3342500fb51fa199908287a74afe6e9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#a3342500fb51fa199908287a74afe6e9b">More...</a><br /></td></tr>
+<tr class="separator:a3342500fb51fa199908287a74afe6e9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf2033c3fbfc0013c83e250e6030aa35"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#adf2033c3fbfc0013c83e250e6030aa35">Buffer_Interface</a> (<a class="el" href="class_buffer___interface.html">Buffer_Interface</a> &amp;&amp;) noexcept=default</td></tr>
+<tr class="memdesc:adf2033c3fbfc0013c83e250e6030aa35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <a href="#adf2033c3fbfc0013c83e250e6030aa35">More...</a><br /></td></tr>
+<tr class="separator:adf2033c3fbfc0013c83e250e6030aa35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94add5d3bb775174dfe8604b3f173ba5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#a94add5d3bb775174dfe8604b3f173ba5">Buffer_Interface</a> (const <a class="el" href="class_buffer___interface.html">Buffer_Interface</a> &amp;) noexcept=default</td></tr>
+<tr class="memdesc:a94add5d3bb775174dfe8604b3f173ba5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <a href="#a94add5d3bb775174dfe8604b3f173ba5">More...</a><br /></td></tr>
+<tr class="separator:a94add5d3bb775174dfe8604b3f173ba5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f76deb8d63cb934e809df8053307477"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_buffer___interface.html">Buffer_Interface</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#a2f76deb8d63cb934e809df8053307477">operator=</a> (<a class="el" href="class_buffer___interface.html">Buffer_Interface</a> &amp;&amp;) noexcept=default</td></tr>
+<tr class="memdesc:a2f76deb8d63cb934e809df8053307477"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment.  <a href="#a2f76deb8d63cb934e809df8053307477">More...</a><br /></td></tr>
+<tr class="separator:a2f76deb8d63cb934e809df8053307477"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a425bf447931b677a9f533b4604faad2a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_buffer___interface.html">Buffer_Interface</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#a425bf447931b677a9f533b4604faad2a">operator=</a> (const <a class="el" href="class_buffer___interface.html">Buffer_Interface</a> &amp;) noexcept=default</td></tr>
+<tr class="memdesc:a425bf447931b677a9f533b4604faad2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment.  <a href="#a425bf447931b677a9f533b4604faad2a">More...</a><br /></td></tr>
+<tr class="separator:a425bf447931b677a9f533b4604faad2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b96de3b328ec2b9d0a97eb76938305a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#a0b96de3b328ec2b9d0a97eb76938305a">bindBuffer</a> (const GLenum &amp;target) const noexcept=0</td></tr>
+<tr class="memdesc:a0b96de3b328ec2b9d0a97eb76938305a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to the target specified.  <a href="#a0b96de3b328ec2b9d0a97eb76938305a">More...</a><br /></td></tr>
+<tr class="separator:a0b96de3b328ec2b9d0a97eb76938305a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3186b054889c98e8100b33f7a804dfb"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#aa3186b054889c98e8100b33f7a804dfb">bindBufferBase</a> (const GLenum &amp;target, const GLuint &amp;index) const noexcept=0</td></tr>
+<tr class="memdesc:aa3186b054889c98e8100b33f7a804dfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to a particular binding point, such as for shaders to read.  <a href="#aa3186b054889c98e8100b33f7a804dfb">More...</a><br /></td></tr>
+<tr class="separator:aa3186b054889c98e8100b33f7a804dfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>An interface for opengl buffers. </p>
+<div class="textblock"><p>An interface for OpenGL buffers. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a79bb5d606d3dd10c219a48bff8bf19d1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a79bb5d606d3dd10c219a48bff8bf19d1">&#9670;&nbsp;</a></span>~Buffer_Interface()</h2>
@@ -131,17 +143,17 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Destroy this buffer. </p>
+<p>Virtual Destructor. </p>
 
 </div>
 </div>
-<a id="ab834dee66f3f9cee83a60d6c1387fb03"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab834dee66f3f9cee83a60d6c1387fb03">&#9670;&nbsp;</a></span>Buffer_Interface()</h2>
+<a id="a3342500fb51fa199908287a74afe6e9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3342500fb51fa199908287a74afe6e9b">&#9670;&nbsp;</a></span>Buffer_Interface() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -158,18 +170,74 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Construct a buffer. </p>
+<p>Default constructor. </p>
+
+</div>
+</div>
+<a id="adf2033c3fbfc0013c83e250e6030aa35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf2033c3fbfc0013c83e250e6030aa35">&#9670;&nbsp;</a></span>Buffer_Interface() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Buffer_Interface::Buffer_Interface </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_buffer___interface.html">Buffer_Interface</a> &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move constructor. </p>
+
+</div>
+</div>
+<a id="a94add5d3bb775174dfe8604b3f173ba5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94add5d3bb775174dfe8604b3f173ba5">&#9670;&nbsp;</a></span>Buffer_Interface() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Buffer_Interface::Buffer_Interface </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_buffer___interface.html">Buffer_Interface</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy constructor. </p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6809378e3531666363bd5de16f3a9c05"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6809378e3531666363bd5de16f3a9c05">&#9670;&nbsp;</a></span>bindBuffer()</h2>
+<a id="a0b96de3b328ec2b9d0a97eb76938305a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b96de3b328ec2b9d0a97eb76938305a">&#9670;&nbsp;</a></span>bindBuffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -187,7 +255,7 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -200,12 +268,12 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; T &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; PointData::Point_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; SpotData::Spot_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; PropData::Model_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; Camera::GPUData &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; ReflectorData::Reflector_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; PropData::Skeleton_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; DirectionalData::Directional_Buffer &gt;</a>, <a class="el" href="class_static_triple_buffer.html#ad24b054ca77b974f2218a804477f2ae1">StaticTripleBuffer</a>, <a class="el" href="class_dynamic_buffer.html#acfb5ba643c0af6e195d297009a6da3af">DynamicBuffer</a>, and <a class="el" href="class_static_buffer.html#a4814aad463d66be9a365a0a90198db0d">StaticBuffer</a>.</p>
+<p>Implemented in <a class="el" href="class_static_multi_buffer.html#afe7227d567e41a4ced89449bafb67cf7">StaticMultiBuffer&lt; BufferCount &gt;</a>, <a class="el" href="class_g_l___vector.html#aa375cf5230869a605cba1c87983d8d4f">GL_Vector&lt; T, BufferCount &gt;</a>, <a class="el" href="class_g_l___vector.html#aa375cf5230869a605cba1c87983d8d4f">GL_Vector&lt; Indirect_Light_Data::Indirect_Light_Buffer &gt;</a>, <a class="el" href="class_g_l___vector.html#aa375cf5230869a605cba1c87983d8d4f">GL_Vector&lt; Direct_Light_Data::Direct_Light_Buffer &gt;</a>, <a class="el" href="class_g_l___vector.html#aa375cf5230869a605cba1c87983d8d4f">GL_Vector&lt; PropData::Model_Buffer &gt;</a>, <a class="el" href="class_g_l___vector.html#aa375cf5230869a605cba1c87983d8d4f">GL_Vector&lt; Camera::GPUData &gt;</a>, <a class="el" href="class_g_l___vector.html#aa375cf5230869a605cba1c87983d8d4f">GL_Vector&lt; ReflectorData::Reflector_Buffer &gt;</a>, <a class="el" href="class_g_l___vector.html#aa375cf5230869a605cba1c87983d8d4f">GL_Vector&lt; PropData::Skeleton_Buffer &gt;</a>, <a class="el" href="class_dynamic_buffer.html#aa0b0b19a4a4c648edb77e13edfaa53f7">DynamicBuffer&lt; BufferCount &gt;</a>, <a class="el" href="class_dynamic_buffer.html#aa0b0b19a4a4c648edb77e13edfaa53f7">DynamicBuffer&lt; 1 &gt;</a>, and <a class="el" href="class_static_buffer.html#acdfef968baa80941c504ad9df495f1a5">StaticBuffer</a>.</p>
 
 </div>
 </div>
-<a id="aca8d4908daa0a15a01d879ae8997c825"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca8d4908daa0a15a01d879ae8997c825">&#9670;&nbsp;</a></span>bindBufferBase()</h2>
+<a id="aa3186b054889c98e8100b33f7a804dfb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa3186b054889c98e8100b33f7a804dfb">&#9670;&nbsp;</a></span>bindBufferBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -233,7 +301,7 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -247,7 +315,63 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; T &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; PointData::Point_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; SpotData::Spot_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; PropData::Model_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; Camera::GPUData &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; ReflectorData::Reflector_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; PropData::Skeleton_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; DirectionalData::Directional_Buffer &gt;</a>, <a class="el" href="class_static_triple_buffer.html#a6de3547174883283ee7b62b085bd30e4">StaticTripleBuffer</a>, <a class="el" href="class_dynamic_buffer.html#a76bfa975dddba9c1e348f5f5c93ab88b">DynamicBuffer</a>, and <a class="el" href="class_static_buffer.html#a11feee2244e5f9ab0c2422ac69ff5d5d">StaticBuffer</a>.</p>
+<p>Implemented in <a class="el" href="class_static_multi_buffer.html#aec0057a9554970ea01ff6219d49d361c">StaticMultiBuffer&lt; BufferCount &gt;</a>, <a class="el" href="class_g_l___vector.html#ae4f676a609e24103ee6cebe4cd1b5684">GL_Vector&lt; T, BufferCount &gt;</a>, <a class="el" href="class_g_l___vector.html#ae4f676a609e24103ee6cebe4cd1b5684">GL_Vector&lt; Indirect_Light_Data::Indirect_Light_Buffer &gt;</a>, <a class="el" href="class_g_l___vector.html#ae4f676a609e24103ee6cebe4cd1b5684">GL_Vector&lt; Direct_Light_Data::Direct_Light_Buffer &gt;</a>, <a class="el" href="class_g_l___vector.html#ae4f676a609e24103ee6cebe4cd1b5684">GL_Vector&lt; PropData::Model_Buffer &gt;</a>, <a class="el" href="class_g_l___vector.html#ae4f676a609e24103ee6cebe4cd1b5684">GL_Vector&lt; Camera::GPUData &gt;</a>, <a class="el" href="class_g_l___vector.html#ae4f676a609e24103ee6cebe4cd1b5684">GL_Vector&lt; ReflectorData::Reflector_Buffer &gt;</a>, <a class="el" href="class_g_l___vector.html#ae4f676a609e24103ee6cebe4cd1b5684">GL_Vector&lt; PropData::Skeleton_Buffer &gt;</a>, <a class="el" href="class_dynamic_buffer.html#a4870fa798b67a6d12165c9c65ff62801">DynamicBuffer&lt; BufferCount &gt;</a>, <a class="el" href="class_dynamic_buffer.html#a4870fa798b67a6d12165c9c65ff62801">DynamicBuffer&lt; 1 &gt;</a>, and <a class="el" href="class_static_buffer.html#ab82ed8b101ba81868d999603363535ae">StaticBuffer</a>.</p>
+
+</div>
+</div>
+<a id="a2f76deb8d63cb934e809df8053307477"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f76deb8d63cb934e809df8053307477">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_buffer___interface.html">Buffer_Interface</a>&amp; Buffer_Interface::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_buffer___interface.html">Buffer_Interface</a> &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move assignment. </p>
+
+</div>
+</div>
+<a id="a425bf447931b677a9f533b4604faad2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a425bf447931b677a9f533b4604faad2a">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_buffer___interface.html">Buffer_Interface</a>&amp; Buffer_Interface::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_buffer___interface.html">Buffer_Interface</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy assignment. </p>
 
 </div>
 </div>

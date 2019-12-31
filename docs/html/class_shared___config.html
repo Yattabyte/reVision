@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -67,7 +67,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_shared___config-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Shared_Config Class Reference</div>  </div>
+<div class="title">Shared_Config Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -87,9 +87,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a262a95828db30ad93f3d912814ea351c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___config.html#a262a95828db30ad93f3d912814ea351c">Shared_Config</a> ()=default</td></tr>
 <tr class="memdesc:a262a95828db30ad93f3d912814ea351c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an empty asset.  <a href="#a262a95828db30ad93f3d912814ea351c">More...</a><br /></td></tr>
 <tr class="separator:a262a95828db30ad93f3d912814ea351c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5611252beef12b8a417c1486dd0da31"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___config.html#ad5611252beef12b8a417c1486dd0da31">Shared_Config</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename, const std::vector&lt; std::string &gt; &amp;cfg_strings, const bool &amp;threaded=true)</td></tr>
-<tr class="memdesc:ad5611252beef12b8a417c1486dd0da31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins the creation process for this asset.  <a href="#ad5611252beef12b8a417c1486dd0da31">More...</a><br /></td></tr>
-<tr class="separator:ad5611252beef12b8a417c1486dd0da31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f9453c470615913b1520970f85cbfa7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___config.html#a3f9453c470615913b1520970f85cbfa7">Shared_Config</a> (<a class="el" href="class_engine.html">Engine</a> &amp;engine, const std::string &amp;filename, const std::vector&lt; std::string &gt; &amp;cfg_strings, const bool &amp;threaded=true)</td></tr>
+<tr class="memdesc:a3f9453c470615913b1520970f85cbfa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins the creation process for this asset.  <a href="#a3f9453c470615913b1520970f85cbfa7">More...</a><br /></td></tr>
+<tr class="separator:a3f9453c470615913b1520970f85cbfa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Shared version of a <a class="el" href="class_config.html" title="A map for configuration name-value pairs.">Config</a> asset. </p>
@@ -122,19 +122,16 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ad5611252beef12b8a417c1486dd0da31"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5611252beef12b8a417c1486dd0da31">&#9670;&nbsp;</a></span>Shared_Config() <span class="overload">[2/2]</span></h2>
+<a id="a3f9453c470615913b1520970f85cbfa7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f9453c470615913b1520970f85cbfa7">&#9670;&nbsp;</a></span>Shared_Config() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Shared_Config::Shared_Config </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> &amp;&#160;</td>
           <td class="paramname"><em>engine</em>, </td>
         </tr>
         <tr>
@@ -161,17 +158,12 @@ Public Member Functions</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Begins the creation process for this asset. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">engine</td><td>the engine being used. </td></tr>
+    <tr><td class="paramname">engine</td><td>reference to the engine to use. </td></tr>
     <tr><td class="paramname">filename</td><td>the filename to use. </td></tr>
     <tr><td class="paramname">cfg_strings</td><td>the configuration strings to use. </td></tr>
     <tr><td class="paramname">threaded</td><td>create in a separate thread. </td></tr>

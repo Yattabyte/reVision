@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -67,17 +67,22 @@ $(function() {
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="struct_shadow___component-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Shadow_Component Struct Reference</div>  </div>
+<div class="title">Shadow_Component Struct Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Component allowing an entity with a light to have shadows.  
+ <a href="struct_shadow___component.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="component__types_8h_source.html">component_types.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Shadow_Component:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="struct_shadow___component.png" usemap="#Shadow_5FComponent_map" alt=""/>
   <map id="Shadow_5FComponent_map" name="Shadow_5FComponent_map">
-<area href="struct_e_c_s_component.html" alt="ECSComponent&lt; Shadow_Component &gt;" shape="rect" coords="0,56,239,80"/>
-<area href="struct_base_e_c_s_component.html" title="A base type component." alt="BaseECSComponent" shape="rect" coords="0,0,239,24"/>
+<area href="structecs_component.html" alt="ecsComponent&lt; Shadow_Component, shadowName &gt;" shape="rect" coords="0,56,318,80"/>
+<area href="structecs_base_component.html" title="A base class representing components in an ECS architecture." alt="ecsBaseComponent" shape="rect" coords="0,0,318,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -86,45 +91,95 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a35a4bad1bdac61b48c7de8fd1d6f7531"><td class="memItemLeft" align="right" valign="top"><a id="a35a4bad1bdac61b48c7de8fd1d6f7531"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>m_shadowSpot</b> = -1</td></tr>
 <tr class="separator:a35a4bad1bdac61b48c7de8fd1d6f7531"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_attribs_struct_base_e_c_s_component"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_struct_base_e_c_s_component')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a></td></tr>
-<tr class="memitem:adcaf0c71c06aa94e59cadc1afcd4032a inherit pub_attribs_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="adcaf0c71c06aa94e59cadc1afcd4032a"></a>
-EntityHandle&#160;</td><td class="memItemRight" valign="bottom"><b>entity</b> = NULL_ENTITY_HANDLE</td></tr>
-<tr class="separator:adcaf0c71c06aa94e59cadc1afcd4032a inherit pub_attribs_struct_base_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fe981c517773d075ffd4dec16cf511d"><td class="memItemLeft" align="right" valign="top"><a id="a7fe981c517773d075ffd4dec16cf511d"></a>
+std::vector&lt; <a class="el" href="class_camera.html">Camera</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_cameras</b></td></tr>
+<tr class="separator:a7fe981c517773d075ffd4dec16cf511d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f7ffe9d3a55903150ee3f1a5d001ee2"><td class="memItemLeft" align="right" valign="top"><a id="a4f7ffe9d3a55903150ee3f1a5d001ee2"></a>
+std::vector&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_updateTimes</b></td></tr>
+<tr class="separator:a4f7ffe9d3a55903150ee3f1a5d001ee2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_attribs_structecs_base_component"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_structecs_base_component')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="structecs_base_component.html">ecsBaseComponent</a></td></tr>
+<tr class="memitem:ad4b341c18806816a16d3a2a473b85477 inherit pub_attribs_structecs_base_component"><td class="memItemLeft" align="right" valign="top">ComponentID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#ad4b341c18806816a16d3a2a473b85477">m_runtimeID</a></td></tr>
+<tr class="memdesc:ad4b341c18806816a16d3a2a473b85477 inherit pub_attribs_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runtime generated ID per class.  <a href="structecs_base_component.html#ad4b341c18806816a16d3a2a473b85477">More...</a><br /></td></tr>
+<tr class="separator:ad4b341c18806816a16d3a2a473b85477 inherit pub_attribs_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad374106ec176173c460ff7c27c708491 inherit pub_attribs_structecs_base_component"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#ad374106ec176173c460ff7c27c708491">m_size</a></td></tr>
+<tr class="memdesc:ad374106ec176173c460ff7c27c708491 inherit pub_attribs_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total component byte-size.  <a href="structecs_base_component.html#ad374106ec176173c460ff7c27c708491">More...</a><br /></td></tr>
+<tr class="separator:ad374106ec176173c460ff7c27c708491 inherit pub_attribs_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a060895ae52e26fb209b44267c5941477 inherit pub_attribs_structecs_base_component"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#a060895ae52e26fb209b44267c5941477">m_name</a></td></tr>
+<tr class="memdesc:a060895ae52e26fb209b44267c5941477 inherit pub_attribs_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specific class name.  <a href="structecs_base_component.html#a060895ae52e26fb209b44267c5941477">More...</a><br /></td></tr>
+<tr class="separator:a060895ae52e26fb209b44267c5941477 inherit pub_attribs_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a986133846efc2f8efe1cb8e8bdaef670 inherit pub_attribs_structecs_base_component"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_component_handle.html">ComponentHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#a986133846efc2f8efe1cb8e8bdaef670">m_handle</a></td></tr>
+<tr class="memdesc:a986133846efc2f8efe1cb8e8bdaef670 inherit pub_attribs_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">This component's UUID.  <a href="structecs_base_component.html#a986133846efc2f8efe1cb8e8bdaef670">More...</a><br /></td></tr>
+<tr class="separator:a986133846efc2f8efe1cb8e8bdaef670 inherit pub_attribs_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf8b92ba6c707e0a4cfb7a29466cb4ff inherit pub_attribs_structecs_base_component"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_entity_handle.html">EntityHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#acf8b92ba6c707e0a4cfb7a29466cb4ff">m_entity</a></td></tr>
+<tr class="memdesc:acf8b92ba6c707e0a4cfb7a29466cb4ff inherit pub_attribs_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">This component's parent-entity's UUID.  <a href="structecs_base_component.html#acf8b92ba6c707e0a4cfb7a29466cb4ff">More...</a><br /></td></tr>
+<tr class="separator:acf8b92ba6c707e0a4cfb7a29466cb4ff inherit pub_attribs_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_static_methods_struct_base_e_c_s_component"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_struct_base_e_c_s_component')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a></td></tr>
-<tr class="memitem:a5a5266f640b43c08278a4d1039cca11a inherit pub_static_methods_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="a5a5266f640b43c08278a4d1039cca11a"></a>
-static const uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>registerComponentType</b> (ECSComponentCreateFunction createfn, ECSComponentFreeFunction freefn, const size_t &amp;size)</td></tr>
-<tr class="separator:a5a5266f640b43c08278a4d1039cca11a inherit pub_static_methods_struct_base_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad60ecd8dfdbce4709fcfbbaf9d095f23 inherit pub_static_methods_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="ad60ecd8dfdbce4709fcfbbaf9d095f23"></a>
-static ECSComponentCreateFunction&#160;</td><td class="memItemRight" valign="bottom"><b>getTypeCreateFunction</b> (const uint32_t &amp;id)</td></tr>
-<tr class="separator:ad60ecd8dfdbce4709fcfbbaf9d095f23 inherit pub_static_methods_struct_base_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc19797cb819e79d4aee79fe660415be inherit pub_static_methods_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="abc19797cb819e79d4aee79fe660415be"></a>
-static ECSComponentFreeFunction&#160;</td><td class="memItemRight" valign="bottom"><b>getTypeFreeFunction</b> (const uint32_t &amp;id)</td></tr>
-<tr class="separator:abc19797cb819e79d4aee79fe660415be inherit pub_static_methods_struct_base_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa481c55bd8624a7efcc560ce439838e inherit pub_static_methods_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="aaa481c55bd8624a7efcc560ce439838e"></a>
-static size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getTypeSize</b> (const uint32_t &amp;id)</td></tr>
-<tr class="separator:aaa481c55bd8624a7efcc560ce439838e inherit pub_static_methods_struct_base_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f260a0eb3398432834dbc76fb3366de inherit pub_static_methods_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="a1f260a0eb3398432834dbc76fb3366de"></a>
-static const bool&#160;</td><td class="memItemRight" valign="bottom"><b>isTypeValid</b> (const uint32_t &amp;id)</td></tr>
-<tr class="separator:a1f260a0eb3398432834dbc76fb3366de inherit pub_static_methods_struct_base_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_static_attribs_struct_e_c_s_component"><td colspan="2" onclick="javascript:toggleInherit('pub_static_attribs_struct_e_c_s_component')"><img src="closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="struct_e_c_s_component.html">ECSComponent&lt; Shadow_Component &gt;</a></td></tr>
-<tr class="memitem:a0f13ee7a0f2f40ceb48f2e7739ee081f inherit pub_static_attribs_struct_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="a0f13ee7a0f2f40ceb48f2e7739ee081f"></a>
-static const ECSComponentCreateFunction&#160;</td><td class="memItemRight" valign="bottom"><b>CREATE_FUNCTION</b></td></tr>
-<tr class="separator:a0f13ee7a0f2f40ceb48f2e7739ee081f inherit pub_static_attribs_struct_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83c38574e296ac5e057c33d589f420ad inherit pub_static_attribs_struct_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="a83c38574e296ac5e057c33d589f420ad"></a>
-static const ECSComponentFreeFunction&#160;</td><td class="memItemRight" valign="bottom"><b>FREE_FUNCTION</b></td></tr>
-<tr class="separator:a83c38574e296ac5e057c33d589f420ad inherit pub_static_attribs_struct_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab061a1ceffef92ab5fdfe86755f6703c inherit pub_static_attribs_struct_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="ab061a1ceffef92ab5fdfe86755f6703c"></a>
-static const uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>ID</b></td></tr>
-<tr class="separator:ab061a1ceffef92ab5fdfe86755f6703c inherit pub_static_attribs_struct_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a906cf75f60c45e9612d582d3b7fbaa17 inherit pub_static_attribs_struct_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="a906cf75f60c45e9612d582d3b7fbaa17"></a>
-static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>SIZE</b></td></tr>
-<tr class="separator:a906cf75f60c45e9612d582d3b7fbaa17 inherit pub_static_attribs_struct_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_structecs_component"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structecs_component')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structecs_component.html">ecsComponent&lt; Shadow_Component, shadowName &gt;</a></td></tr>
+<tr class="memitem:a45e1c158336056ec797f4c53d9c60f75 inherit pub_methods_structecs_component"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_component.html#a45e1c158336056ec797f4c53d9c60f75">ecsComponent</a> () noexcept</td></tr>
+<tr class="memdesc:a45e1c158336056ec797f4c53d9c60f75 inherit pub_methods_structecs_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct this specific component.  <a href="structecs_component.html#a45e1c158336056ec797f4c53d9c60f75">More...</a><br /></td></tr>
+<tr class="separator:a45e1c158336056ec797f4c53d9c60f75 inherit pub_methods_structecs_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88f2ee3db1dc16102b4edb939b48215c inherit pub_methods_structecs_component"><td class="memItemLeft" align="right" valign="top">std::vector&lt; char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_component.html#a88f2ee3db1dc16102b4edb939b48215c">to_buffer</a> () final</td></tr>
+<tr class="memdesc:a88f2ee3db1dc16102b4edb939b48215c inherit pub_methods_structecs_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save this component to a char buffer.  <a href="structecs_component.html#a88f2ee3db1dc16102b4edb939b48215c">More...</a><br /></td></tr>
+<tr class="separator:a88f2ee3db1dc16102b4edb939b48215c inherit pub_methods_structecs_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_structecs_base_component"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structecs_base_component')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structecs_base_component.html">ecsBaseComponent</a></td></tr>
+<tr class="memitem:a465caaf41ea0e94833991fe56f938b37 inherit pub_methods_structecs_base_component"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#a465caaf41ea0e94833991fe56f938b37">~ecsBaseComponent</a> ()=default</td></tr>
+<tr class="memdesc:a465caaf41ea0e94833991fe56f938b37 inherit pub_methods_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this base <a class="el" href="structecs_component.html" title="A specialized, specific type of component.">ecsComponent</a>.  <a href="structecs_base_component.html#a465caaf41ea0e94833991fe56f938b37">More...</a><br /></td></tr>
+<tr class="separator:a465caaf41ea0e94833991fe56f938b37 inherit pub_methods_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac35be71da99d1fa9a8b802a0bd3216c0 inherit pub_methods_structecs_base_component"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#ac35be71da99d1fa9a8b802a0bd3216c0">ecsBaseComponent</a> (const ComponentID &amp;ID, const size_t &amp;size, const char *name) noexcept</td></tr>
+<tr class="memdesc:ac35be71da99d1fa9a8b802a0bd3216c0 inherit pub_methods_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a base <a class="el" href="structecs_component.html" title="A specialized, specific type of component.">ecsComponent</a>.  <a href="structecs_base_component.html#ac35be71da99d1fa9a8b802a0bd3216c0">More...</a><br /></td></tr>
+<tr class="separator:ac35be71da99d1fa9a8b802a0bd3216c0 inherit pub_methods_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f47e70ee08f635a5cef6cf75cf703e2 inherit pub_methods_structecs_base_component"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#a8f47e70ee08f635a5cef6cf75cf703e2">ecsBaseComponent</a> (<a class="el" href="structecs_base_component.html">ecsBaseComponent</a> &amp;&amp;) noexcept=default</td></tr>
+<tr class="memdesc:a8f47e70ee08f635a5cef6cf75cf703e2 inherit pub_methods_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move a base <a class="el" href="structecs_component.html" title="A specialized, specific type of component.">ecsComponent</a>.  <a href="structecs_base_component.html#a8f47e70ee08f635a5cef6cf75cf703e2">More...</a><br /></td></tr>
+<tr class="separator:a8f47e70ee08f635a5cef6cf75cf703e2 inherit pub_methods_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66052334c1cd72a7b1ca0e6c2f570674 inherit pub_methods_structecs_base_component"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#a66052334c1cd72a7b1ca0e6c2f570674">ecsBaseComponent</a> (const <a class="el" href="structecs_base_component.html">ecsBaseComponent</a> &amp;) noexcept=default</td></tr>
+<tr class="memdesc:a66052334c1cd72a7b1ca0e6c2f570674 inherit pub_methods_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy a base <a class="el" href="structecs_component.html" title="A specialized, specific type of component.">ecsComponent</a>.  <a href="structecs_base_component.html#a66052334c1cd72a7b1ca0e6c2f570674">More...</a><br /></td></tr>
+<tr class="separator:a66052334c1cd72a7b1ca0e6c2f570674 inherit pub_methods_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0aaa8bb8262866585adbc4d02b38e0b6 inherit pub_methods_structecs_base_component"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structecs_base_component.html">ecsBaseComponent</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#a0aaa8bb8262866585adbc4d02b38e0b6">operator=</a> (<a class="el" href="structecs_base_component.html">ecsBaseComponent</a> &amp;&amp;) noexcept=default</td></tr>
+<tr class="memdesc:a0aaa8bb8262866585adbc4d02b38e0b6 inherit pub_methods_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disallow base <a class="el" href="structecs_component.html" title="A specialized, specific type of component.">ecsComponent</a> move assignment.  <a href="structecs_base_component.html#a0aaa8bb8262866585adbc4d02b38e0b6">More...</a><br /></td></tr>
+<tr class="separator:a0aaa8bb8262866585adbc4d02b38e0b6 inherit pub_methods_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:addf85545e0bae460f4bfb2c24607dae1 inherit pub_methods_structecs_base_component"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structecs_base_component.html">ecsBaseComponent</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#addf85545e0bae460f4bfb2c24607dae1">operator=</a> (const <a class="el" href="structecs_base_component.html">ecsBaseComponent</a> &amp;) noexcept=default</td></tr>
+<tr class="memdesc:addf85545e0bae460f4bfb2c24607dae1 inherit pub_methods_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disallow base <a class="el" href="structecs_component.html" title="A specialized, specific type of component.">ecsComponent</a> copy assignment.  <a href="structecs_base_component.html#addf85545e0bae460f4bfb2c24607dae1">More...</a><br /></td></tr>
+<tr class="separator:addf85545e0bae460f4bfb2c24607dae1 inherit pub_methods_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_static_methods_structecs_component"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_structecs_component')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="structecs_component.html">ecsComponent&lt; Shadow_Component, shadowName &gt;</a></td></tr>
+<tr class="memitem:ad7d4e8e631d24aabb72aa4e6633c1f39 inherit pub_static_methods_structecs_component"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_component.html#ad7d4e8e631d24aabb72aa4e6633c1f39">serialize</a> () noexcept</td></tr>
+<tr class="memdesc:ad7d4e8e631d24aabb72aa4e6633c1f39 inherit pub_static_methods_structecs_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default serialization method, doing nothing.  <a href="structecs_component.html#ad7d4e8e631d24aabb72aa4e6633c1f39">More...</a><br /></td></tr>
+<tr class="separator:ad7d4e8e631d24aabb72aa4e6633c1f39 inherit pub_static_methods_structecs_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e0aed8a485d9dd73427893bc2e18f0b inherit pub_static_methods_structecs_component"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_component.html#a4e0aed8a485d9dd73427893bc2e18f0b">deserialize</a> (const std::vector&lt; char &gt; &amp;) noexcept</td></tr>
+<tr class="memdesc:a4e0aed8a485d9dd73427893bc2e18f0b inherit pub_static_methods_structecs_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default de-serialization method, doing nothing.  <a href="structecs_component.html#a4e0aed8a485d9dd73427893bc2e18f0b">More...</a><br /></td></tr>
+<tr class="separator:a4e0aed8a485d9dd73427893bc2e18f0b inherit pub_static_methods_structecs_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_static_methods_structecs_base_component"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_structecs_base_component')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="structecs_base_component.html">ecsBaseComponent</a></td></tr>
+<tr class="memitem:a3e436ac9828ec98bb93dbd453ecfb3a0 inherit pub_static_methods_structecs_base_component"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="structecs_base_component.html">ecsBaseComponent</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#a3e436ac9828ec98bb93dbd453ecfb3a0">from_buffer</a> (const std::vector&lt; char &gt; &amp;data, size_t &amp;dataRead)</td></tr>
+<tr class="memdesc:a3e436ac9828ec98bb93dbd453ecfb3a0 inherit pub_static_methods_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recover and generate a component from a char buffer.  <a href="structecs_base_component.html#a3e436ac9828ec98bb93dbd453ecfb3a0">More...</a><br /></td></tr>
+<tr class="separator:a3e436ac9828ec98bb93dbd453ecfb3a0 inherit pub_static_methods_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_static_attribs_structecs_component"><td colspan="2" onclick="javascript:toggleInherit('pub_static_attribs_structecs_component')"><img src="closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="structecs_component.html">ecsComponent&lt; Shadow_Component, shadowName &gt;</a></td></tr>
+<tr class="memitem:a46597cf0d4601b7c0e9e6fecceaf7c86 inherit pub_static_attribs_structecs_component"><td class="memItemLeft" align="right" valign="top">static constexpr const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_component.html#a46597cf0d4601b7c0e9e6fecceaf7c86">Name</a></td></tr>
+<tr class="memdesc:a46597cf0d4601b7c0e9e6fecceaf7c86 inherit pub_static_attribs_structecs_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runtime class name of this component, also stored in base-component.  <a href="structecs_component.html#a46597cf0d4601b7c0e9e6fecceaf7c86">More...</a><br /></td></tr>
+<tr class="separator:a46597cf0d4601b7c0e9e6fecceaf7c86 inherit pub_static_attribs_structecs_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d7f74f53185191482e797c21b307e35 inherit pub_static_attribs_structecs_component"><td class="memItemLeft" align="right" valign="top">static const ComponentID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_component.html#a8d7f74f53185191482e797c21b307e35">Runtime_ID</a></td></tr>
+<tr class="memdesc:a8d7f74f53185191482e797c21b307e35 inherit pub_static_attribs_structecs_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runtime generated ID per class, also stored in base-component.  <a href="structecs_component.html#a8d7f74f53185191482e797c21b307e35">More...</a><br /></td></tr>
+<tr class="separator:a8d7f74f53185191482e797c21b307e35 inherit pub_static_attribs_structecs_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_structecs_component"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_structecs_component')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="structecs_component.html">ecsComponent&lt; Shadow_Component, shadowName &gt;</a></td></tr>
+<tr class="memitem:a0746684c753bf0aba22bcef164ac4da8 inherit pro_methods_structecs_component"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_component.html#a0746684c753bf0aba22bcef164ac4da8">recover_data</a> (const std::vector&lt; char &gt; &amp;data) final</td></tr>
+<tr class="memdesc:a0746684c753bf0aba22bcef164ac4da8 inherit pro_methods_structecs_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recover previously serialized data.  <a href="structecs_component.html#a0746684c753bf0aba22bcef164ac4da8">More...</a><br /></td></tr>
+<tr class="separator:a0746684c753bf0aba22bcef164ac4da8 inherit pro_methods_structecs_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_static_methods_structecs_base_component"><td colspan="2" onclick="javascript:toggleInherit('pro_static_methods_structecs_base_component')"><img src="closed.png" alt="-"/>&#160;Static Protected Member Functions inherited from <a class="el" href="structecs_base_component.html">ecsBaseComponent</a></td></tr>
+<tr class="memitem:a81684eb8270d0e870c76c1f0f4e15ad8 inherit pro_static_methods_structecs_base_component"><td class="memItemLeft" align="right" valign="top">static ComponentID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#a81684eb8270d0e870c76c1f0f4e15ad8">registerType</a> (const ComponentCreateFunction &amp;createFn, const ComponentFreeFunction &amp;freeFn, const ComponentNewFunction &amp;newFn, const size_t &amp;size, const char *string)</td></tr>
+<tr class="memdesc:a81684eb8270d0e870c76c1f0f4e15ad8 inherit pro_static_methods_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a specific sub-class component into the component registry for creating and freeing them at runtime.  <a href="structecs_base_component.html#a81684eb8270d0e870c76c1f0f4e15ad8">More...</a><br /></td></tr>
+<tr class="separator:a81684eb8270d0e870c76c1f0f4e15ad8 inherit pro_static_methods_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_static_attribs_structecs_base_component"><td colspan="2" onclick="javascript:toggleInherit('pro_static_attribs_structecs_base_component')"><img src="closed.png" alt="-"/>&#160;Static Protected Attributes inherited from <a class="el" href="structecs_base_component.html">ecsBaseComponent</a></td></tr>
+<tr class="memitem:a57bb66690f385aa7f187748f1d891853 inherit pro_static_attribs_structecs_base_component"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::tuple&lt; ComponentCreateFunction, ComponentFreeFunction, ComponentNewFunction, size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#a57bb66690f385aa7f187748f1d891853">m_componentRegistry</a> = {}</td></tr>
+<tr class="memdesc:a57bb66690f385aa7f187748f1d891853 inherit pro_static_attribs_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runtime container mapping indices to creation/destruction functions for components.  <a href="structecs_base_component.html#a57bb66690f385aa7f187748f1d891853">More...</a><br /></td></tr>
+<tr class="separator:a57bb66690f385aa7f187748f1d891853 inherit pro_static_attribs_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af029e800b4e911422275467f86d49968 inherit pro_static_attribs_structecs_base_component"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_mapped_char.html">MappedChar</a>&lt; ComponentID &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structecs_base_component.html#af029e800b4e911422275467f86d49968">m_nameRegistry</a> = <a class="el" href="class_mapped_char.html">MappedChar</a>&lt;ComponentID&gt;()</td></tr>
+<tr class="memdesc:af029e800b4e911422275467f86d49968 inherit pro_static_attribs_structecs_base_component"><td class="mdescLeft">&#160;</td><td class="mdescRight">A map between component class name's and it's runtime variables like ID and size.  <a href="structecs_base_component.html#af029e800b4e911422275467f86d49968">More...</a><br /></td></tr>
+<tr class="separator:af029e800b4e911422275467f86d49968 inherit pro_static_attribs_structecs_base_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
-<li>src/Modules/Graphics/Lighting/<a class="el" href="_graphics_2_lighting_2components_8h_source.html">components.h</a></li>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Component allowing an entity with a light to have shadows. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
+<li>src/Modules/ECS/<a class="el" href="component__types_8h_source.html">component_types.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

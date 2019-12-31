@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,28 +71,97 @@ $(function() {
 <div class="title">VertexBoneData Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Container mapping vertices to skeleton bones.  
+ <a href="struct_vertex_bone_data.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_mesh___i_o_8h_source.html">Mesh_IO.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0f7a585850b3aeac5335dbff6a1cdb0c"><td class="memItemLeft" align="right" valign="top"><a id="a0f7a585850b3aeac5335dbff6a1cdb0c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>VertexBoneData</b> (const <a class="el" href="struct_vertex_bone_data.html">VertexBoneData</a> &amp;vbd)</td></tr>
-<tr class="separator:a0f7a585850b3aeac5335dbff6a1cdb0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6bb0273263c92bc0a9f5e1ef10ba5a2b"><td class="memItemLeft" align="right" valign="top"><a id="a6bb0273263c92bc0a9f5e1ef10ba5a2b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Reset</b> ()</td></tr>
+<tr class="memitem:a6bb0273263c92bc0a9f5e1ef10ba5a2b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_vertex_bone_data.html#a6bb0273263c92bc0a9f5e1ef10ba5a2b">Reset</a> ()</td></tr>
+<tr class="memdesc:a6bb0273263c92bc0a9f5e1ef10ba5a2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the bone ID's and weights to zero.  <a href="#a6bb0273263c92bc0a9f5e1ef10ba5a2b">More...</a><br /></td></tr>
 <tr class="separator:a6bb0273263c92bc0a9f5e1ef10ba5a2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32114aaf9defc5cf9b2c511d45284770"><td class="memItemLeft" align="right" valign="top"><a id="a32114aaf9defc5cf9b2c511d45284770"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>AddBoneData</b> (const int &amp;BoneID, const float &amp;Weight)</td></tr>
-<tr class="separator:a32114aaf9defc5cf9b2c511d45284770"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c243c1190f950987b395e80ea902e00"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_vertex_bone_data.html#a4c243c1190f950987b395e80ea902e00">AddBoneData</a> (const int &amp;BoneID, const float &amp;Weight) noexcept</td></tr>
+<tr class="memdesc:a4c243c1190f950987b395e80ea902e00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a bone to this vertex.  <a href="#a4c243c1190f950987b395e80ea902e00">More...</a><br /></td></tr>
+<tr class="separator:a4c243c1190f950987b395e80ea902e00"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:aeaff4abf25c7afffefa1593b1c0a4a9a"><td class="memItemLeft" align="right" valign="top"><a id="aeaff4abf25c7afffefa1593b1c0a4a9a"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>IDs</b> [NUM_BONES_PER_VEREX]</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>IDs</b> [NUM_BONES_PER_VEREX] {}</td></tr>
 <tr class="separator:aeaff4abf25c7afffefa1593b1c0a4a9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42a8b75c50e1cab2a606653383b5ca1a"><td class="memItemLeft" align="right" valign="top"><a id="a42a8b75c50e1cab2a606653383b5ca1a"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>Weights</b> [NUM_BONES_PER_VEREX]</td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>Weights</b> [NUM_BONES_PER_VEREX] {}</td></tr>
 <tr class="separator:a42a8b75c50e1cab2a606653383b5ca1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Container mapping vertices to skeleton bones. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a4c243c1190f950987b395e80ea902e00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c243c1190f950987b395e80ea902e00">&#9670;&nbsp;</a></span>AddBoneData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VertexBoneData::AddBoneData </td>
+          <td>(</td>
+          <td class="paramtype">const int &amp;&#160;</td>
+          <td class="paramname"><em>BoneID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const float &amp;&#160;</td>
+          <td class="paramname"><em>Weight</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add a bone to this vertex. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">BoneID</td><td>the ID of the bone in the skeleton. </td></tr>
+    <tr><td class="paramname">Weight</td><td>the weight of the bone. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6bb0273263c92bc0a9f5e1ef10ba5a2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bb0273263c92bc0a9f5e1ef10ba5a2b">&#9670;&nbsp;</a></span>Reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VertexBoneData::Reset </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reset the bone ID's and weights to zero. </p>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following files:<ul>
 <li>src/Utilities/IO/<a class="el" href="_mesh___i_o_8h_source.html">Mesh_IO.h</a></li>
 <li>src/Utilities/IO/Mesh_IO.cpp</li>

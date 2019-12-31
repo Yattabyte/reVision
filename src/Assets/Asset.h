@@ -2,16 +2,17 @@
 #ifndef	ASSET_H
 #define	ASSET_H
 
-#include "Utilities/GL/glad/glad.h"
 #include <atomic>
 #include <functional>
-#include <map>
-#include <stdio.h>
+#include <memory>
 #include <string>
-#include <utility>
+#include <type_traits>
 #include <vector>
+#include <glad/glad.h>
+#undef APIENTRY
 
 
+// Forward Declarations
 class Asset;
 class Engine;
 using Shared_Asset = std::shared_ptr<Asset>;
@@ -23,31 +24,52 @@ Represents some form of data to be loaded from disk, such as shaders, models, le
 @note	should be created once, and its pointer passed around using shared pointers. */
 class Asset {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Destroy the asset only when all references are destroyed. */
-	inline ~Asset() = default;
+	inline virtual ~Asset() = default;
 
 
-	// Public Methods	
-	/** Gets the file name of this asset.
+	// Public Methods
+	/** Retrieves the file name of this asset.
 	@return				the file name belonging to this asset. */
 	std::string getFileName() const;
 	/** Sets the file name of this asset.
 	@param	filename	the file name to set this asset to. */
-	void setFileName(const std::string & filename);	
+	void setFileName(const std::string& filename);
 	/** Attaches a callback method to be triggered when the asset finishes loading.
 	@param	alive		a shared pointer indicating whether the caller is still alive or not.
 	@param	callback	the method to be triggered. */
-	void addCallback(const std::shared_ptr<bool> & alive, const AssetFinalizedCallback & callback);
-	/** Returns whether or not this asset has completed finalizing.
+	void addCallback(const std::shared_ptr<bool>& alive, const AssetFinalizedCallback& callback);
+	/** Retrieves whether or not this asset has completed finalizing.
 	@return				true if this asset has finished finalizing, false otherwise. */
-	bool existsYet() const;
+	bool ready() const noexcept;
+	/** Check if an input variadic list of shared assets have all completed finalizing.
+	@tparam	<>			variadic list of assets to check (auto-deducible).
+	@param	firstAsset	the first value to check.
+	@param	...rest		the rest of the values to check.
+	@return				true if all the assets have finished finalizing, false otherwise. */
+	template <typename FirstAsset, typename ...RemainingAssets>
+	inline static bool All_Ready(const FirstAsset& firstAsset, const RemainingAssets& ...rest) noexcept {
+		// Ensure all inputs are shared assets
+		static_assert(!std::is_base_of<std::shared_ptr<Asset>, FirstAsset>::value, "Asset::All_Ready(...) parameter is not a Shared_Asset!");
+
+		// Proceed only if the first asset is ready, recursively
+		if (firstAsset->ready()) {
+			// For each remaining member of the parameter pack, recursively call this function
+			if constexpr (sizeof...(rest) > 0)
+				return All_Ready(rest...);
+			else
+				return true;
+		}
+
+		return false;
+	}
 
 
 protected:
 	// Protected Constructors
 	/** Create asset that uses the specified file-path. */
-	Asset(Engine * engine, const std::string & filename);
+	Asset(Engine& engine, const std::string& filename);
 
 
 	// Protected Interface
@@ -55,26 +77,32 @@ protected:
 	virtual void initialize() = 0;
 	friend class AssetManager;
 
-	
+
 	// Protected Methods
 	/** Declares this asset ready-to-use. */
 	void finalize();
 
 
 	// Protected Attributes
-	Engine * m_engine = nullptr;
+	Engine& m_engine;
 	std::atomic_bool m_finalized = false;
 	mutable GLsync m_fence = nullptr;
 	std::string m_filename = "";
 	std::vector<std::pair<std::shared_ptr<bool>, std::function<void()>>> m_callbacks;
 
-	
+
 private:
 	// Private but deleted
-	/** Disallow asset assignment. */
-	inline Asset(const Asset &) = delete;
-	/** Disallow asset assignment. */
-	inline const Asset &operator =(const Asset &) = delete;
+	/** Disallow asset default constructor. */
+	inline Asset() noexcept = delete;
+	/** Disallow asset move constructor. */
+	inline Asset(Asset&&) noexcept = delete;
+	/** Disallow asset copy constructor. */
+	inline Asset(const Asset&) noexcept = delete;
+	/** Disallow asset move assignment. */
+	inline Asset& operator =(Asset&&) noexcept = delete;
+	/** Disallow asset copy assignment. */
+	inline Asset& operator =(const Asset&) noexcept = delete;
 };
 
 #endif // ASSET_H

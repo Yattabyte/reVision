@@ -4,50 +4,17 @@
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 #include "assimp/version.h"
+#include "glm/gtc/matrix_transform.hpp"
 #include <atomic>
 #include <algorithm>
 #include <string>
 #include <cctype>
 
 
-constexpr size_t MAX_IMPORTERS = 4;
-struct Importer_Pool {
-	Assimp::Importer* pool[MAX_IMPORTERS];
-	size_t available = MAX_IMPORTERS;
-	std::mutex poolMutex;
-
-	Importer_Pool() {
-		std::generate(pool, pool + MAX_IMPORTERS, []() {return new Assimp::Importer(); });
-	}
-
-	/** Borrow a single importer.
-	@return		returns a single importer*/
-	Assimp::Importer * rentImporter() {
-		// Check if any of our importers are free to be used
-		std::unique_lock<std::mutex> readGuard(poolMutex);
-		if (available)
-			return pool[--available];
-		// Otherwise create a new one
-		else
-			return new Assimp::Importer();
-	}
-
-	void returnImporter(Assimp::Importer * returnedImporter) {
-		// Check if we have enough importers, free extra
-		std::unique_lock<std::mutex> readGuard(poolMutex);
-		if (available >= 4)
-			delete returnedImporter;
-		else
-			pool[available++] = returnedImporter;
-	}
-};
-
-static Importer_Pool importer_pool;
-
 /** Convert an aiMatrix to glm::mat4.
-@param	d	the aiMatrix to convert from
-@return		the glm::mat4 converted to */
-inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4 &d)
+@param	d	the aiMatrix to convert from.
+@return		the glm::mat4 converted to. */
+inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4& d) noexcept
 {
 	return glm::mat4(d.a1, d.b1, d.c1, d.d1,
 		d.a2, d.b2, d.c2, d.d2,
@@ -55,27 +22,33 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4 &d)
 		d.a4, d.b4, d.c4, d.d4);
 }
 
-inline Node * copy_node(const aiNode * oldNode)
+/** Copy a node into a new node.
+@param	oldNode		the old node to copy from.
+@return				the new node. */
+[[nodiscard]] inline Node copy_node(const aiNode* oldNode)
 {
-	Node * newNode = new Node(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
-	// Copy Children
-	newNode->children.resize(oldNode->mNumChildren);
-	for (unsigned int c = 0; c < oldNode->mNumChildren; ++c)
-		newNode->children[c] = copy_node(oldNode->mChildren[c]);
+	// Copy Node
+	Node newNode{ std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation) };
+
+	// Copy Node's Children
+	const auto childCount = oldNode->mNumChildren;
+	newNode.children.resize(childCount);
+	for (unsigned int c = 0; c < childCount; ++c)
+		newNode.children[c] = copy_node(oldNode->mChildren[c]);
 	return newNode;
 }
 
-bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Mesh_Geometry & data_container)
+bool Mesh_IO::Import_Model(Engine& engine, const std::string& relativePath, Mesh_Geometry& importedData)
 {
 	// Check if the file exists
 	if (!Engine::File_Exists(relativePath)) {
-		engine->getManager_Messages().error("The file \"" + relativePath + "\" does not exist.");
+		engine.getManager_Messages().error("The file \"" + relativePath + "\" does not exist.");
 		return false;
 	}
 
 	// Get Importer Resource
-	Assimp::Importer * importer = importer_pool.rentImporter();
-	const aiScene* scene = importer->ReadFile(
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(
 		Engine::Get_Current_Dir() + relativePath,
 		aiProcess_LimitBoneWeights |
 		aiProcess_Triangulate |
@@ -88,154 +61,171 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 	);
 
 	// Check if scene imported successfully
-	if (!scene) {
-		engine->getManager_Messages().error("The file \"" + relativePath + "\" exists, but is corrupted.");
+	if (scene == nullptr) {
+		engine.getManager_Messages().error("The file \"" + relativePath + "\" exists, but is corrupted.");
 		return false;
 	}
 
 	// Import geometry
-	for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
-		const aiMesh * mesh = scene->mMeshes[a];
-		const GLuint meshMaterialOffset = std::max(0u, scene->mNumMaterials > 1 ? mesh->mMaterialIndex - 1u : 0u);
-		for (int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
-			const aiFace & face = mesh->mFaces[x];
-			for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
-				const int & index = face.mIndices[b];
-				data_container.vertices.push_back(glm::vec3(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z));
+	const auto meshCount = scene->mNumMeshes;
+	const auto materialCount = scene->mNumMaterials;
+	for (unsigned int a = 0; a < meshCount; ++a) {
+		const aiMesh* mesh = scene->mMeshes[a];
+		const GLuint meshMaterialOffset = std::max(0U, materialCount > 1 ? mesh->mMaterialIndex - 1U : 0U);
+		const auto faceCount = mesh->mNumFaces;
+		for (unsigned int x = 0; x < faceCount; ++x) {
+			const aiFace& face = mesh->mFaces[x];
+			const auto indCount = face.mNumIndices;
+			for (unsigned int b = 0; b < indCount; ++b) {
+				const auto& index = face.mIndices[b];
+				importedData.vertices.emplace_back(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z);
 
-				const aiVector3D normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-				data_container.normals.push_back(glm::normalize(glm::vec3(normal.x, normal.y, normal.z)));
+				const auto normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0F, 1.0F, 1.0F);
+				importedData.normals.push_back(glm::normalize(glm::vec3(normal.x, normal.y, normal.z)));
 
-				const aiVector3D tangent = mesh->HasTangentsAndBitangents() ? mesh->mTangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-				data_container.tangents.push_back(glm::normalize(glm::vec3(tangent.x, tangent.y, tangent.z)));
+				const auto tangent = mesh->HasTangentsAndBitangents() ? mesh->mTangents[index] : aiVector3D(1.0F, 1.0F, 1.0F);
+				importedData.tangents.push_back(glm::normalize(glm::vec3(tangent.x, tangent.y, tangent.z)));
 
-				const aiVector3D bitangent = mesh->HasTangentsAndBitangents() ? mesh->mBitangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-				data_container.bitangents.push_back(glm::normalize(glm::vec3(bitangent.x, bitangent.y, bitangent.z)));
+				const auto bitangent = mesh->HasTangentsAndBitangents() ? mesh->mBitangents[index] : aiVector3D(1.0F, 1.0F, 1.0F);
+				importedData.bitangents.push_back(glm::normalize(glm::vec3(bitangent.x, bitangent.y, bitangent.z)));
 
-				const aiVector3D uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
-				data_container.texCoords.push_back(glm::vec2(uvmap.x, uvmap.y));
+				const auto uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
+				importedData.texCoords.emplace_back(uvmap.x, uvmap.y);
 
-				data_container.materialIndices.push_back(meshMaterialOffset);
+				importedData.materialIndices.push_back(meshMaterialOffset);
+				importedData.meshIndices.push_back(a);
 			}
 		}
 	}
 
 	// Copy Animations
-	data_container.animations.resize(scene->mNumAnimations);
-	for (int a = 0, total = scene->mNumAnimations; a < total; ++a) {
-		auto * animation = scene->mAnimations[a];
-		data_container.animations[a] = Animation(animation->mNumChannels, animation->mTicksPerSecond, animation->mDuration);
+	const auto animationCount = scene->mNumAnimations;
+	importedData.animations.resize(animationCount);
+	for (unsigned int a = 0; a < animationCount; ++a) {
+		const auto* animation = scene->mAnimations[a];
+		importedData.animations[a] = Animation{ animation->mNumChannels, animation->mTicksPerSecond, animation->mDuration };
 
 		// Copy Channels
-		data_container.animations[a].channels.resize(animation->mNumChannels);
-		for (unsigned int c = 0; c < scene->mAnimations[a]->mNumChannels; ++c) {
-			auto * channel = scene->mAnimations[a]->mChannels[c];
-			data_container.animations[a].channels[c] = new Node_Animation(std::string(channel->mNodeName.data));
+		const auto channelCount = animation->mNumChannels;
+		importedData.animations[a].channels.resize(channelCount);
+		for (unsigned int c = 0; c < channelCount; ++c) {
+			const auto* channel = animation->mChannels[c];
+			importedData.animations[a].channels[c] = Node_Animation{ std::string(channel->mNodeName.data) };
 
 			// Copy Keys
-			data_container.animations[a].channels[c]->scalingKeys.resize(channel->mNumScalingKeys);
-			for (unsigned int n = 0; n < channel->mNumScalingKeys; ++n) {
-				auto & key = channel->mScalingKeys[n];
-				data_container.animations[a].channels[c]->scalingKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+			const auto scalingKeyCount = channel->mNumScalingKeys;
+			importedData.animations[a].channels[c].scalingKeys.resize(scalingKeyCount);
+			for (unsigned int n = 0; n < scalingKeyCount; ++n) {
+				const auto& key = channel->mScalingKeys[n];
+				importedData.animations[a].channels[c].scalingKeys[n] = Animation_Time_Key<glm::vec3>{ key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z) };
 			}
-			data_container.animations[a].channels[c]->rotationKeys.resize(channel->mNumRotationKeys);
-			for (unsigned int n = 0; n < channel->mNumRotationKeys; ++n) {
-				auto & key = channel->mRotationKeys[n];
-				data_container.animations[a].channels[c]->rotationKeys[n] = Animation_Time_Key<glm::quat>(key.mTime, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
+			const auto rotationKeyCount = channel->mNumRotationKeys;
+			importedData.animations[a].channels[c].rotationKeys.resize(rotationKeyCount);
+			for (unsigned int n = 0; n < rotationKeyCount; ++n) {
+				const auto& key = channel->mRotationKeys[n];
+				importedData.animations[a].channels[c].rotationKeys[n] = Animation_Time_Key<glm::quat>{ key.mTime, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z) };
 			}
-			data_container.animations[a].channels[c]->positionKeys.resize(channel->mNumPositionKeys);
-			for (unsigned int n = 0; n < channel->mNumPositionKeys; ++n) {
-				auto & key = channel->mPositionKeys[n];
-				data_container.animations[a].channels[c]->positionKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+			const auto positionKeyCount = channel->mNumPositionKeys;
+			importedData.animations[a].channels[c].positionKeys.resize(positionKeyCount);
+			for (unsigned int n = 0; n < positionKeyCount; ++n) {
+				const auto& key = channel->mPositionKeys[n];
+				importedData.animations[a].channels[c].positionKeys[n] = Animation_Time_Key<glm::vec3>{key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z)
+			};
 			}
 		}
 	}
 
 	// Copy Root Node and bones
-	data_container.rootNode = copy_node(scene->mRootNode);
-	data_container.bones.resize(data_container.vertices.size());
+	const auto VertexCount = importedData.vertices.size();
+	importedData.rootNode = copy_node(scene->mRootNode);
+	importedData.bones.resize(VertexCount);
 	int vertexOffset = 0;
-	for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
-		const aiMesh * mesh = scene->mMeshes[a];
-
-		for (int B = 0, numBones = mesh->mNumBones; B < numBones; B++) {
+	for (unsigned int a = 0U; a < meshCount; ++a) {
+		const aiMesh* mesh = scene->mMeshes[a];
+		const auto boneCount = mesh->mNumBones;
+		for (unsigned int b = 0U; b < boneCount; ++b) {
 			size_t BoneIndex = 0;
-			std::string BoneName(mesh->mBones[B]->mName.data);
+			std::string BoneName(mesh->mBones[b]->mName.data);
 
-			if (data_container.boneMap.find(BoneName) == data_container.boneMap.end()) {
-				BoneIndex = data_container.boneTransforms.size();
-				data_container.boneTransforms.push_back(glm::mat4(1.0f));
+			if (importedData.boneMap.find(BoneName) == importedData.boneMap.end()) {
+				BoneIndex = importedData.boneTransforms.size();
+				importedData.boneTransforms.emplace_back(1.0F);
 			}
 			else
-				BoneIndex = data_container.boneMap[BoneName];
+				BoneIndex = importedData.boneMap[BoneName];
 
-			data_container.boneMap[BoneName] = BoneIndex;
-			data_container.boneTransforms[BoneIndex] = aiMatrix_to_Mat4x4(mesh->mBones[B]->mOffsetMatrix);
+			importedData.boneMap[BoneName] = BoneIndex;
+			importedData.boneTransforms[BoneIndex] = aiMatrix_to_Mat4x4(mesh->mBones[b]->mOffsetMatrix);
 
-			for (unsigned int j = 0; j < mesh->mBones[B]->mNumWeights; j++) {
-				int VertexID = vertexOffset + mesh->mBones[B]->mWeights[j].mVertexId;
-				float Weight = mesh->mBones[B]->mWeights[j].mWeight;
-				data_container.bones[VertexID].AddBoneData((int)BoneIndex, Weight);
+			const auto weightCount = mesh->mBones[b]->mNumWeights;
+			for (unsigned int j = 0U; j < weightCount; ++j) {
+				const int& VertexID = vertexOffset + mesh->mBones[b]->mWeights[j].mVertexId;
+				const float& Weight = mesh->mBones[b]->mWeights[j].mWeight;
+				if (VertexID < VertexCount)
+					importedData.bones[VertexID].AddBoneData(static_cast<int>(BoneIndex), Weight);
 			}
 		}
 
-		for (int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
-			const aiFace& face = mesh->mFaces[x];
-			for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b)
+		const auto faceCount = mesh->mNumFaces;
+		for (unsigned int x = 0U; x < faceCount; ++x) {
+			const auto& face = mesh->mFaces[x];
+			const auto indexCount = face.mNumIndices;
+			for (unsigned int b = 0U; b < indexCount; ++b)
 				vertexOffset++;
 		}
 	}
 
 	// Copy Texture Paths
-	if (scene->mNumMaterials > 1u)
-		for (unsigned int x = 1; x < scene->mNumMaterials; ++x) {
-			constexpr static auto getMaterial = [](const aiScene * scene, const unsigned int & materialIndex) -> Material_Strings {
-				constexpr static auto getTexture = [](const aiMaterial * sceneMaterial, const aiTextureType & textureType, std::string & texturePath) {
-					aiString path;
-					for (unsigned int x = 0; x < sceneMaterial->GetTextureCount(textureType); ++x) {
-						if (sceneMaterial->GetTexture(textureType, x, &path) == AI_SUCCESS) {
+	if (materialCount > 1U)
+		for (auto x = 1U; x < materialCount; ++x) {
+			constexpr static auto getMaterial = [](const aiScene& scene, const unsigned int& materialIndex) {
+				constexpr static auto getTexture = [](const aiMaterial& sceneMaterial, const aiTextureType& textureType, std::string& texturePath) {
+					for (unsigned int x = 0; x < sceneMaterial.GetTextureCount(textureType); ++x) {
+						aiString path;
+						if (sceneMaterial.GetTexture(textureType, x, &path) == AI_SUCCESS) {
 							texturePath = path.C_Str();
 							return;
 						}
 					}
 				};
-				//std::string albedo = "albedo.png", normal = "normal.png", metalness = "metalness.png", roughness = "roughness.png", height = "height.png", ao = "ao.png";
-				std::string albedo, normal, metalness, roughness, height, ao;
+				std::string albedo;
+				std::string normal;
+				std::string metalness;
+				std::string roughness;
+				std::string height;
+				std::string ao;
 				if (materialIndex >= 0) {
-					const auto * sceneMaterial = scene->mMaterials[materialIndex];
-					getTexture(sceneMaterial, aiTextureType_DIFFUSE, albedo);
-					getTexture(sceneMaterial, aiTextureType_NORMALS, normal);
-					getTexture(sceneMaterial, aiTextureType_SPECULAR, metalness);
-					getTexture(sceneMaterial, aiTextureType_SHININESS, roughness);
-					getTexture(sceneMaterial, aiTextureType_HEIGHT, height);
-					getTexture(sceneMaterial, aiTextureType_AMBIENT, ao);
+					if (const auto* sceneMaterial = scene.mMaterials[materialIndex]) {
+						getTexture(*sceneMaterial, aiTextureType_DIFFUSE, albedo);
+						getTexture(*sceneMaterial, aiTextureType_NORMALS, normal);
+						getTexture(*sceneMaterial, aiTextureType_SPECULAR, metalness);
+						getTexture(*sceneMaterial, aiTextureType_SHININESS, roughness);
+						getTexture(*sceneMaterial, aiTextureType_HEIGHT, height);
+						getTexture(*sceneMaterial, aiTextureType_AMBIENT, ao);
 
-					constexpr static auto findStringIC = [](const std::string & strHaystack, const std::string & strNeedle) {
-						auto it = std::search(
-							strHaystack.begin(), strHaystack.end(),
-							strNeedle.begin(), strNeedle.end(),
-							[](char ch1, char ch2) { return std::toupper(ch1) == std::toupper(ch2); }
-						);
-						return (it != strHaystack.end());
-					};
-					if (normal.empty() && findStringIC(height, "normal")) {
-						auto temp = normal;
-						normal = height;
-						height = temp;
+						constexpr static auto findStringIC = [](const std::string& strHaystack, const std::string& strNeedle) {
+							auto it = std::search(
+								strHaystack.begin(), strHaystack.end(),
+								strNeedle.begin(), strNeedle.end(),
+								[](char ch1, char ch2) noexcept { return std::toupper(ch1) == std::toupper(ch2); }
+							);
+							return (it != strHaystack.end());
+						};
+						if (normal.empty() && findStringIC(height, "normal")) {
+							auto temp = normal;
+							normal = height;
+							height = temp;
+						}
 					}
 				}
-				return Material_Strings(albedo, normal, metalness, roughness, height, ao);
+				return Material_Strings{ albedo, normal, metalness, roughness, height, ao };
 			};
 
 			// Import Mesh Material
-			data_container.materials.push_back(getMaterial(scene, x));
+			importedData.materials.push_back(getMaterial(*scene, x));
 		}
 	else
-		//data_container.materials.push_back(Material_Strings("albedo.png", "normal.png", "metalness.png", "roughness.png", "height.png", "ao.png"));
-		data_container.materials.push_back(Material_Strings("","","","","",""));
-
-	// Free Importer Resource
-	importer_pool.returnImporter(importer);
+		importedData.materials.emplace_back(Material_Strings());
 	return true;
 }
 
@@ -244,30 +234,33 @@ std::string Mesh_IO::Get_Version()
 	return std::to_string(aiGetVersionMajor()) + "." + std::to_string(aiGetVersionMinor()) + "." + std::to_string(aiGetVersionRevision());
 }
 
-VertexBoneData::VertexBoneData()
+std::vector<std::string> Mesh_IO::Get_Supported_Types()
 {
-	Reset();
-}
+	aiString ext;
+	Assimp::Importer importer;
+	importer.GetExtensionList(ext);
 
-VertexBoneData::VertexBoneData(const VertexBoneData & vbd)
-{
-	Reset();
-	for (size_t i = 0; i < 4; ++i) {
-		IDs[i] = vbd.IDs[i];
-		Weights[i] = vbd.Weights[i];
+	std::vector<std::string> extensions;
+	std::string allExt(ext.C_Str());
+	auto spot = allExt.find(';');
+	while (spot != std::string::npos) {
+		extensions.push_back(allExt.substr(1, spot - 1));
+		allExt = allExt.substr(spot + 1, allExt.size() - spot);
+		spot = allExt.find(';');
 	}
+	return extensions;
 }
 
-inline void VertexBoneData::Reset()
+void VertexBoneData::Reset()
 {
-	memset(IDs, 0, sizeof(IDs));
-	memset(Weights, 0, sizeof(Weights));
+	std::fill(std::begin(IDs), std::end(IDs), 0);
+	std::fill(std::begin(Weights), std::end(Weights), 0.0F);
 }
 
-inline void VertexBoneData::AddBoneData(const int & BoneID, const float & Weight)
+void VertexBoneData::AddBoneData(const int& BoneID, const float& Weight) noexcept
 {
-	for (size_t i = 0; i < 4; ++i)
-		if (Weights[i] == 0.0) {
+	for (auto i = 0; i < NUM_BONES_PER_VEREX; ++i)
+		if (Weights[i] == 0.0F) {
 			IDs[i] = BoneID;
 			Weights[i] = Weight;
 			return;

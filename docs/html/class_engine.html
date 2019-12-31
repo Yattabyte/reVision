@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -89,68 +89,80 @@ Public Types</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a8ef7030a089ecb30bbfcb9e43094717a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a8ef7030a089ecb30bbfcb9e43094717a">~Engine</a> ()</td></tr>
-<tr class="memdesc:a8ef7030a089ecb30bbfcb9e43094717a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys the engine.  <a href="#a8ef7030a089ecb30bbfcb9e43094717a">More...</a><br /></td></tr>
+<tr class="memdesc:a8ef7030a089ecb30bbfcb9e43094717a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys the game engine.  <a href="#a8ef7030a089ecb30bbfcb9e43094717a">More...</a><br /></td></tr>
 <tr class="separator:a8ef7030a089ecb30bbfcb9e43094717a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c98683b0a3aa28d8ab72a8bcd0d52f2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a8c98683b0a3aa28d8ab72a8bcd0d52f2">Engine</a> ()</td></tr>
-<tr class="memdesc:a8c98683b0a3aa28d8ab72a8bcd0d52f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zero-initialize the engine.  <a href="#a8c98683b0a3aa28d8ab72a8bcd0d52f2">More...</a><br /></td></tr>
-<tr class="separator:a8c98683b0a3aa28d8ab72a8bcd0d52f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41e6241f80cc43271d73c319dd24c967"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a41e6241f80cc43271d73c319dd24c967">Engine</a> () noexcept</td></tr>
+<tr class="memdesc:a41e6241f80cc43271d73c319dd24c967"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the game engine.  <a href="#a41e6241f80cc43271d73c319dd24c967">More...</a><br /></td></tr>
+<tr class="separator:a41e6241f80cc43271d73c319dd24c967"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a862870af01354ec1327bae82074e836f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a862870af01354ec1327bae82074e836f">tick</a> ()</td></tr>
 <tr class="memdesc:a862870af01354ec1327bae82074e836f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ticks the engine's overall simulation by a frame from the main thread.  <a href="#a862870af01354ec1327bae82074e836f">More...</a><br /></td></tr>
 <tr class="separator:a862870af01354ec1327bae82074e836f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6a8bc268e2fc517e859cae1f149927c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#ab6a8bc268e2fc517e859cae1f149927c">tickThreaded</a> (std::future&lt; void &gt; exitObject, GLFWwindow *const window)</td></tr>
-<tr class="memdesc:ab6a8bc268e2fc517e859cae1f149927c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ticks the engine's overall simulation by a frame from a secondary thread.  <a href="#ab6a8bc268e2fc517e859cae1f149927c">More...</a><br /></td></tr>
-<tr class="separator:ab6a8bc268e2fc517e859cae1f149927c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a000f99ef9755f3415ee4fb101019e373"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a000f99ef9755f3415ee4fb101019e373">shouldClose</a> ()</td></tr>
-<tr class="memdesc:a000f99ef9755f3415ee4fb101019e373"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the engine wants to shut down.  <a href="#a000f99ef9755f3415ee4fb101019e373">More...</a><br /></td></tr>
-<tr class="separator:a000f99ef9755f3415ee4fb101019e373"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb4493849a14880965dc52e33a3c4b39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#aeb4493849a14880965dc52e33a3c4b39">shutDown</a> ()</td></tr>
-<tr class="memdesc:aeb4493849a14880965dc52e33a3c4b39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tells the engine to shut down.  <a href="#aeb4493849a14880965dc52e33a3c4b39">More...</a><br /></td></tr>
-<tr class="separator:aeb4493849a14880965dc52e33a3c4b39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4993158ea8a023949db8d33767e1a39a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a4993158ea8a023949db8d33767e1a39a">tickThreaded</a> (std::future&lt; void &gt; exitObject, GLFWwindow *const auxContext)</td></tr>
+<tr class="memdesc:a4993158ea8a023949db8d33767e1a39a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ticks the engine's overall simulation by a frame from a secondary thread.  <a href="#a4993158ea8a023949db8d33767e1a39a">More...</a><br /></td></tr>
+<tr class="separator:a4993158ea8a023949db8d33767e1a39a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f24ad2767b0d326a435238d5e373e21"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a6f24ad2767b0d326a435238d5e373e21">shutDown</a> () noexcept</td></tr>
+<tr class="memdesc:a6f24ad2767b0d326a435238d5e373e21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tells the engine to shut down.  <a href="#a6f24ad2767b0d326a435238d5e373e21">More...</a><br /></td></tr>
+<tr class="separator:a6f24ad2767b0d326a435238d5e373e21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afae0634f43fd9a0d07248112c0c7ed5e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#afae0634f43fd9a0d07248112c0c7ed5e">setMouseInputMode</a> (const <a class="el" href="class_engine.html#a6439c90b0682b279c4be4763d90881f3">MouseInputMode</a> &amp;mode)</td></tr>
 <tr class="memdesc:afae0634f43fd9a0d07248112c0c7ed5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the input mode for the mouse, useful for changing between 2D and 3D views.  <a href="#afae0634f43fd9a0d07248112c0c7ed5e">More...</a><br /></td></tr>
 <tr class="separator:afae0634f43fd9a0d07248112c0c7ed5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e788df8dd3c989a7e26896cbfc5a50e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_engine.html#a6439c90b0682b279c4be4763d90881f3">MouseInputMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a4e788df8dd3c989a7e26896cbfc5a50e">getMouseInputMode</a> () const</td></tr>
-<tr class="memdesc:a4e788df8dd3c989a7e26896cbfc5a50e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the mouse input mode, such as free-look or normal cursor.  <a href="#a4e788df8dd3c989a7e26896cbfc5a50e">More...</a><br /></td></tr>
-<tr class="separator:a4e788df8dd3c989a7e26896cbfc5a50e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2190e510b436458765eeacca511d5fc1"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a2190e510b436458765eeacca511d5fc1">getTime</a> () const</td></tr>
-<tr class="memdesc:a2190e510b436458765eeacca511d5fc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the current time.  <a href="#a2190e510b436458765eeacca511d5fc1">More...</a><br /></td></tr>
-<tr class="separator:a2190e510b436458765eeacca511d5fc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48f724b864a6a5251791af8b4cf0d55e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; glm::ivec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a48f724b864a6a5251791af8b4cf0d55e">getResolutions</a> () const</td></tr>
-<tr class="memdesc:a48f724b864a6a5251791af8b4cf0d55e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a list of available resolutions.  <a href="#a48f724b864a6a5251791af8b4cf0d55e">More...</a><br /></td></tr>
-<tr class="separator:a48f724b864a6a5251791af8b4cf0d55e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2064c3142815e4396db1e016f474b8ff"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_action_state.html">ActionState</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a2064c3142815e4396db1e016f474b8ff">getActionState</a> ()</td></tr>
-<tr class="memdesc:a2064c3142815e4396db1e016f474b8ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's action state.  <a href="#a2064c3142815e4396db1e016f474b8ff">More...</a><br /></td></tr>
-<tr class="separator:a2064c3142815e4396db1e016f474b8ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa86a65ad825186658bd35cc7dca0b42c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_preference_state.html">PreferenceState</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#aa86a65ad825186658bd35cc7dca0b42c">getPreferenceState</a> ()</td></tr>
-<tr class="memdesc:aa86a65ad825186658bd35cc7dca0b42c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's preference state.  <a href="#aa86a65ad825186658bd35cc7dca0b42c">More...</a><br /></td></tr>
-<tr class="separator:aa86a65ad825186658bd35cc7dca0b42c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae63c610667d58f693d9aeadfaa12b5de"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_asset_manager.html">AssetManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#ae63c610667d58f693d9aeadfaa12b5de">getManager_Assets</a> ()</td></tr>
-<tr class="memdesc:ae63c610667d58f693d9aeadfaa12b5de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's asset manager.  <a href="#ae63c610667d58f693d9aeadfaa12b5de">More...</a><br /></td></tr>
-<tr class="separator:ae63c610667d58f693d9aeadfaa12b5de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07fb517385f84afb4658f6cd17b5cb0b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_message_manager.html">MessageManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a07fb517385f84afb4658f6cd17b5cb0b">getManager_Messages</a> ()</td></tr>
-<tr class="memdesc:a07fb517385f84afb4658f6cd17b5cb0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's message manager.  <a href="#a07fb517385f84afb4658f6cd17b5cb0b">More...</a><br /></td></tr>
-<tr class="separator:a07fb517385f84afb4658f6cd17b5cb0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7dc308182bb00da2565385136209e943"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_sound_manager.html">SoundManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a7dc308182bb00da2565385136209e943">getManager_Sounds</a> ()</td></tr>
-<tr class="memdesc:a7dc308182bb00da2565385136209e943"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's sound manager.  <a href="#a7dc308182bb00da2565385136209e943">More...</a><br /></td></tr>
-<tr class="separator:a7dc308182bb00da2565385136209e943"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a694a658470ae930c618a8324114f417b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_game___module.html">Game_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a694a658470ae930c618a8324114f417b">getModule_Game</a> ()</td></tr>
-<tr class="memdesc:a694a658470ae930c618a8324114f417b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's game module.  <a href="#a694a658470ae930c618a8324114f417b">More...</a><br /></td></tr>
-<tr class="separator:a694a658470ae930c618a8324114f417b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1cf11b0e504f06b7387b466aa8b2c6f8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_graphics___module.html">Graphics_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a1cf11b0e504f06b7387b466aa8b2c6f8">getModule_Graphics</a> ()</td></tr>
-<tr class="memdesc:a1cf11b0e504f06b7387b466aa8b2c6f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's graphics module.  <a href="#a1cf11b0e504f06b7387b466aa8b2c6f8">More...</a><br /></td></tr>
-<tr class="separator:a1cf11b0e504f06b7387b466aa8b2c6f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6aeff8eef39d12373e832ef910adc39f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_u_i___module.html">UI_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a6aeff8eef39d12373e832ef910adc39f">getModule_UI</a> ()</td></tr>
-<tr class="memdesc:a6aeff8eef39d12373e832ef910adc39f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's user-interface module.  <a href="#a6aeff8eef39d12373e832ef910adc39f">More...</a><br /></td></tr>
-<tr class="separator:a6aeff8eef39d12373e832ef910adc39f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd0ade806ea02ed6880287539f8bfd60"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_physics___module.html">Physics_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#afd0ade806ea02ed6880287539f8bfd60">getModule_Physics</a> ()</td></tr>
-<tr class="memdesc:afd0ade806ea02ed6880287539f8bfd60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's physics module.  <a href="#afd0ade806ea02ed6880287539f8bfd60">More...</a><br /></td></tr>
-<tr class="separator:afd0ade806ea02ed6880287539f8bfd60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8de342ede7271b767a8efed1798c88a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_world___module.html">World_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#aa8de342ede7271b767a8efed1798c88a">getModule_World</a> ()</td></tr>
-<tr class="memdesc:aa8de342ede7271b767a8efed1798c88a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's world module.  <a href="#aa8de342ede7271b767a8efed1798c88a">More...</a><br /></td></tr>
-<tr class="separator:aa8de342ede7271b767a8efed1798c88a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7a2db3d6b9a20d6926aea3a4ede25a4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#af7a2db3d6b9a20d6926aea3a4ede25a4">goToMainMenu</a> ()</td></tr>
+<tr class="memdesc:af7a2db3d6b9a20d6926aea3a4ede25a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Switch the UI over to the main menu.  <a href="#af7a2db3d6b9a20d6926aea3a4ede25a4">More...</a><br /></td></tr>
+<tr class="separator:af7a2db3d6b9a20d6926aea3a4ede25a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f3334e5b4d8aaa4dfa259776b86cd24"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a1f3334e5b4d8aaa4dfa259776b86cd24">goToGame</a> ()</td></tr>
+<tr class="memdesc:a1f3334e5b4d8aaa4dfa259776b86cd24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Switch the UI over to the game.  <a href="#a1f3334e5b4d8aaa4dfa259776b86cd24">More...</a><br /></td></tr>
+<tr class="separator:a1f3334e5b4d8aaa4dfa259776b86cd24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74b6d231b08dcefa032614cace50b00c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a74b6d231b08dcefa032614cace50b00c">goToEditor</a> ()</td></tr>
+<tr class="memdesc:a74b6d231b08dcefa032614cace50b00c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Switch the UI over to the level editor.  <a href="#a74b6d231b08dcefa032614cace50b00c">More...</a><br /></td></tr>
+<tr class="separator:a74b6d231b08dcefa032614cace50b00c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a72bbb5a3fb39b067f329637f7d1808"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a6a72bbb5a3fb39b067f329637f7d1808">shouldClose</a> () const noexcept</td></tr>
+<tr class="memdesc:a6a72bbb5a3fb39b067f329637f7d1808"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the engine wants to shut down.  <a href="#a6a72bbb5a3fb39b067f329637f7d1808">More...</a><br /></td></tr>
+<tr class="separator:a6a72bbb5a3fb39b067f329637f7d1808"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea5e0424ec6d1f4ed28f5fb606b34770"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_engine.html#a6439c90b0682b279c4be4763d90881f3">MouseInputMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#aea5e0424ec6d1f4ed28f5fb606b34770">getMouseInputMode</a> () const noexcept</td></tr>
+<tr class="memdesc:aea5e0424ec6d1f4ed28f5fb606b34770"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the mouse input mode.  <a href="#aea5e0424ec6d1f4ed28f5fb606b34770">More...</a><br /></td></tr>
+<tr class="separator:aea5e0424ec6d1f4ed28f5fb606b34770"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65688f58a05a3612cde021aa5acfab13"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_window.html">Window</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a65688f58a05a3612cde021aa5acfab13">getWindow</a> () noexcept</td></tr>
+<tr class="memdesc:a65688f58a05a3612cde021aa5acfab13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the application window for this engine.  <a href="#a65688f58a05a3612cde021aa5acfab13">More...</a><br /></td></tr>
+<tr class="separator:a65688f58a05a3612cde021aa5acfab13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46738eb5ed6fc99db094bfbc5b87306f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_action_state.html">ActionState</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a46738eb5ed6fc99db094bfbc5b87306f">getActionState</a> () noexcept</td></tr>
+<tr class="memdesc:a46738eb5ed6fc99db094bfbc5b87306f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this engine's action state.  <a href="#a46738eb5ed6fc99db094bfbc5b87306f">More...</a><br /></td></tr>
+<tr class="separator:a46738eb5ed6fc99db094bfbc5b87306f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec4d9c1c3cc43c6b096e0020c993e004"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_preference_state.html">PreferenceState</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#aec4d9c1c3cc43c6b096e0020c993e004">getPreferenceState</a> () noexcept</td></tr>
+<tr class="memdesc:aec4d9c1c3cc43c6b096e0020c993e004"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this engine's preference state.  <a href="#aec4d9c1c3cc43c6b096e0020c993e004">More...</a><br /></td></tr>
+<tr class="separator:aec4d9c1c3cc43c6b096e0020c993e004"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0514a6648bda393131683793ceaaf43c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_asset_manager.html">AssetManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a0514a6648bda393131683793ceaaf43c">getManager_Assets</a> () noexcept</td></tr>
+<tr class="memdesc:a0514a6648bda393131683793ceaaf43c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this engine's asset manager.  <a href="#a0514a6648bda393131683793ceaaf43c">More...</a><br /></td></tr>
+<tr class="separator:a0514a6648bda393131683793ceaaf43c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad9c2a62da2ee32c740e94bcdc958fa5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_message_manager.html">MessageManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#aad9c2a62da2ee32c740e94bcdc958fa5">getManager_Messages</a> () noexcept</td></tr>
+<tr class="memdesc:aad9c2a62da2ee32c740e94bcdc958fa5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this engine's message manager.  <a href="#aad9c2a62da2ee32c740e94bcdc958fa5">More...</a><br /></td></tr>
+<tr class="separator:aad9c2a62da2ee32c740e94bcdc958fa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acaba6705d0d2beb11712cd8f4d3cdabb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_sound_manager.html">SoundManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#acaba6705d0d2beb11712cd8f4d3cdabb">getManager_Sounds</a> () noexcept</td></tr>
+<tr class="memdesc:acaba6705d0d2beb11712cd8f4d3cdabb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this engine's sound manager.  <a href="#acaba6705d0d2beb11712cd8f4d3cdabb">More...</a><br /></td></tr>
+<tr class="separator:acaba6705d0d2beb11712cd8f4d3cdabb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a076a4ee793e3974aeeb5b66dbf0ffe1a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_e_c_s___module.html">ECS_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a076a4ee793e3974aeeb5b66dbf0ffe1a">getModule_ECS</a> () noexcept</td></tr>
+<tr class="memdesc:a076a4ee793e3974aeeb5b66dbf0ffe1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this engine's ECS module.  <a href="#a076a4ee793e3974aeeb5b66dbf0ffe1a">More...</a><br /></td></tr>
+<tr class="separator:a076a4ee793e3974aeeb5b66dbf0ffe1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f8c17c91d394e8bc2163731a0c3e356"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_game___module.html">Game_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a6f8c17c91d394e8bc2163731a0c3e356">getModule_Game</a> () noexcept</td></tr>
+<tr class="memdesc:a6f8c17c91d394e8bc2163731a0c3e356"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this engine's game module.  <a href="#a6f8c17c91d394e8bc2163731a0c3e356">More...</a><br /></td></tr>
+<tr class="separator:a6f8c17c91d394e8bc2163731a0c3e356"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5961f09f3b7fbeacc1cffddaadbd2884"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_level_editor___module.html">LevelEditor_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a5961f09f3b7fbeacc1cffddaadbd2884">getModule_LevelEditor</a> () noexcept</td></tr>
+<tr class="memdesc:a5961f09f3b7fbeacc1cffddaadbd2884"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this engine's editor module.  <a href="#a5961f09f3b7fbeacc1cffddaadbd2884">More...</a><br /></td></tr>
+<tr class="separator:a5961f09f3b7fbeacc1cffddaadbd2884"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8bcf93a8b580fb133feec6af3adb380"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_graphics___module.html">Graphics_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#ab8bcf93a8b580fb133feec6af3adb380">getModule_Graphics</a> () noexcept</td></tr>
+<tr class="memdesc:ab8bcf93a8b580fb133feec6af3adb380"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this engine's graphics module.  <a href="#ab8bcf93a8b580fb133feec6af3adb380">More...</a><br /></td></tr>
+<tr class="separator:ab8bcf93a8b580fb133feec6af3adb380"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42ad33dc63e55b7a56a45f453333c470"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_u_i___module.html">UI_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a42ad33dc63e55b7a56a45f453333c470">getModule_UI</a> () noexcept</td></tr>
+<tr class="memdesc:a42ad33dc63e55b7a56a45f453333c470"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this engine's user-interface module.  <a href="#a42ad33dc63e55b7a56a45f453333c470">More...</a><br /></td></tr>
+<tr class="separator:a42ad33dc63e55b7a56a45f453333c470"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64dee5aaf3a9d89ab879df5915e3902c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_physics___module.html">Physics_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a64dee5aaf3a9d89ab879df5915e3902c">getModule_Physics</a> () noexcept</td></tr>
+<tr class="memdesc:a64dee5aaf3a9d89ab879df5915e3902c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve this engine's physics module.  <a href="#a64dee5aaf3a9d89ab879df5915e3902c">More...</a><br /></td></tr>
+<tr class="separator:a64dee5aaf3a9d89ab879df5915e3902c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
+<tr class="memitem:ab8e324b4b63af3838087c8b98cab5420"><td class="memItemLeft" align="right" valign="top">static float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#ab8e324b4b63af3838087c8b98cab5420">GetSystemTime</a> () noexcept</td></tr>
+<tr class="memdesc:ab8e324b4b63af3838087c8b98cab5420"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the current time.  <a href="#ab8e324b4b63af3838087c8b98cab5420">More...</a><br /></td></tr>
+<tr class="separator:ab8e324b4b63af3838087c8b98cab5420"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7336cc5d876f9511ff372f2b18fdb534"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a7336cc5d876f9511ff372f2b18fdb534">Get_Current_Dir</a> ()</td></tr>
 <tr class="memdesc:a7336cc5d876f9511ff372f2b18fdb534"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the application's running directory.  <a href="#a7336cc5d876f9511ff372f2b18fdb534">More...</a><br /></td></tr>
 <tr class="separator:a7336cc5d876f9511ff372f2b18fdb534"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,11 +179,19 @@ Static Public Member Functions</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">enum <a class="el" href="class_engine.html#a6439c90b0682b279c4be4763d90881f3">Engine::MouseInputMode</a></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Different mouse input modes. </p>
@@ -194,15 +214,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Destroys the engine. </p>
+<p>Destroys the game engine. </p>
 
 </div>
 </div>
-<a id="a8c98683b0a3aa28d8ab72a8bcd0d52f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8c98683b0a3aa28d8ab72a8bcd0d52f2">&#9670;&nbsp;</a></span>Engine()</h2>
+<a id="a41e6241f80cc43271d73c319dd24c967"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41e6241f80cc43271d73c319dd24c967">&#9670;&nbsp;</a></span>Engine()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Engine::Engine </td>
@@ -211,9 +234,14 @@ Static Public Member Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Zero-initialize the engine. </p>
+<p>Construct the game engine. </p>
 
 </div>
 </div>
@@ -281,8 +309,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a2064c3142815e4396db1e016f474b8ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2064c3142815e4396db1e016f474b8ff">&#9670;&nbsp;</a></span>getActionState()</h2>
+<a id="a46738eb5ed6fc99db094bfbc5b87306f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46738eb5ed6fc99db094bfbc5b87306f">&#9670;&nbsp;</a></span>getActionState()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -291,7 +319,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_action_state.html">ActionState</a>&amp; Engine::getActionState </td>
+          <td class="memname"><a class="el" href="class_action_state.html">ActionState</a> &amp; Engine::getActionState </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -299,17 +327,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns this engine's action state. </p>
+<p>Retrieve this engine's action state. </p>
+<dl class="section return"><dt>Returns</dt><dd>the engine's action state. </dd></dl>
 
 </div>
 </div>
-<a id="ae63c610667d58f693d9aeadfaa12b5de"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae63c610667d58f693d9aeadfaa12b5de">&#9670;&nbsp;</a></span>getManager_Assets()</h2>
+<a id="a0514a6648bda393131683793ceaaf43c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0514a6648bda393131683793ceaaf43c">&#9670;&nbsp;</a></span>getManager_Assets()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -318,7 +347,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_asset_manager.html">AssetManager</a>&amp; Engine::getManager_Assets </td>
+          <td class="memname"><a class="el" href="class_asset_manager.html">AssetManager</a> &amp; Engine::getManager_Assets </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -326,17 +355,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns this engine's asset manager. </p>
+<p>Retrieve this engine's asset manager. </p>
+<dl class="section return"><dt>Returns</dt><dd>this engine's asset manager. </dd></dl>
 
 </div>
 </div>
-<a id="a07fb517385f84afb4658f6cd17b5cb0b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07fb517385f84afb4658f6cd17b5cb0b">&#9670;&nbsp;</a></span>getManager_Messages()</h2>
+<a id="aad9c2a62da2ee32c740e94bcdc958fa5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad9c2a62da2ee32c740e94bcdc958fa5">&#9670;&nbsp;</a></span>getManager_Messages()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -345,7 +375,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_message_manager.html">MessageManager</a>&amp; Engine::getManager_Messages </td>
+          <td class="memname"><a class="el" href="class_message_manager.html">MessageManager</a> &amp; Engine::getManager_Messages </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -353,17 +383,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns this engine's message manager. </p>
+<p>Retrieve this engine's message manager. </p>
+<dl class="section return"><dt>Returns</dt><dd>this engine's message manager. </dd></dl>
 
 </div>
 </div>
-<a id="a7dc308182bb00da2565385136209e943"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7dc308182bb00da2565385136209e943">&#9670;&nbsp;</a></span>getManager_Sounds()</h2>
+<a id="acaba6705d0d2beb11712cd8f4d3cdabb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acaba6705d0d2beb11712cd8f4d3cdabb">&#9670;&nbsp;</a></span>getManager_Sounds()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -372,7 +403,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_sound_manager.html">SoundManager</a>&amp; Engine::getManager_Sounds </td>
+          <td class="memname"><a class="el" href="class_sound_manager.html">SoundManager</a> &amp; Engine::getManager_Sounds </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -380,17 +411,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns this engine's sound manager. </p>
+<p>Retrieve this engine's sound manager. </p>
+<dl class="section return"><dt>Returns</dt><dd>this engine's sound manager. </dd></dl>
 
 </div>
 </div>
-<a id="a694a658470ae930c618a8324114f417b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a694a658470ae930c618a8324114f417b">&#9670;&nbsp;</a></span>getModule_Game()</h2>
+<a id="a076a4ee793e3974aeeb5b66dbf0ffe1a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a076a4ee793e3974aeeb5b66dbf0ffe1a">&#9670;&nbsp;</a></span>getModule_ECS()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -399,7 +431,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_game___module.html">Game_Module</a>&amp; Engine::getModule_Game </td>
+          <td class="memname"><a class="el" href="class_e_c_s___module.html">ECS_Module</a> &amp; Engine::getModule_ECS </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -407,17 +439,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns this engine's game module. </p>
+<p>Retrieve this engine's ECS module. </p>
+<dl class="section return"><dt>Returns</dt><dd>this engine's ECS module. </dd></dl>
 
 </div>
 </div>
-<a id="a1cf11b0e504f06b7387b466aa8b2c6f8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1cf11b0e504f06b7387b466aa8b2c6f8">&#9670;&nbsp;</a></span>getModule_Graphics()</h2>
+<a id="a6f8c17c91d394e8bc2163731a0c3e356"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f8c17c91d394e8bc2163731a0c3e356">&#9670;&nbsp;</a></span>getModule_Game()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -426,7 +459,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_graphics___module.html">Graphics_Module</a>&amp; Engine::getModule_Graphics </td>
+          <td class="memname"><a class="el" href="class_game___module.html">Game_Module</a> &amp; Engine::getModule_Game </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -434,17 +467,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns this engine's graphics module. </p>
+<p>Retrieve this engine's game module. </p>
+<dl class="section return"><dt>Returns</dt><dd>this engine's game module. </dd></dl>
 
 </div>
 </div>
-<a id="afd0ade806ea02ed6880287539f8bfd60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd0ade806ea02ed6880287539f8bfd60">&#9670;&nbsp;</a></span>getModule_Physics()</h2>
+<a id="ab8bcf93a8b580fb133feec6af3adb380"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8bcf93a8b580fb133feec6af3adb380">&#9670;&nbsp;</a></span>getModule_Graphics()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -453,7 +487,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_physics___module.html">Physics_Module</a>&amp; Engine::getModule_Physics </td>
+          <td class="memname"><a class="el" href="class_graphics___module.html">Graphics_Module</a> &amp; Engine::getModule_Graphics </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -461,17 +495,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns this engine's physics module. </p>
+<p>Retrieve this engine's graphics module. </p>
+<dl class="section return"><dt>Returns</dt><dd>this engine's graphics module. </dd></dl>
 
 </div>
 </div>
-<a id="a6aeff8eef39d12373e832ef910adc39f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6aeff8eef39d12373e832ef910adc39f">&#9670;&nbsp;</a></span>getModule_UI()</h2>
+<a id="a5961f09f3b7fbeacc1cffddaadbd2884"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5961f09f3b7fbeacc1cffddaadbd2884">&#9670;&nbsp;</a></span>getModule_LevelEditor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -480,7 +515,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_u_i___module.html">UI_Module</a>&amp; Engine::getModule_UI </td>
+          <td class="memname"><a class="el" href="class_level_editor___module.html">LevelEditor_Module</a> &amp; Engine::getModule_LevelEditor </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -488,17 +523,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns this engine's user-interface module. </p>
+<p>Retrieve this engine's editor module. </p>
+<dl class="section return"><dt>Returns</dt><dd>this engine's level editor module. </dd></dl>
 
 </div>
 </div>
-<a id="aa8de342ede7271b767a8efed1798c88a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa8de342ede7271b767a8efed1798c88a">&#9670;&nbsp;</a></span>getModule_World()</h2>
+<a id="a64dee5aaf3a9d89ab879df5915e3902c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64dee5aaf3a9d89ab879df5915e3902c">&#9670;&nbsp;</a></span>getModule_Physics()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -507,7 +543,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_world___module.html">World_Module</a>&amp; Engine::getModule_World </td>
+          <td class="memname"><a class="el" href="class_physics___module.html">Physics_Module</a> &amp; Engine::getModule_Physics </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -515,17 +551,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns this engine's world module. </p>
+<p>Retrieve this engine's physics module. </p>
+<dl class="section return"><dt>Returns</dt><dd>this engine's physics module. </dd></dl>
 
 </div>
 </div>
-<a id="a4e788df8dd3c989a7e26896cbfc5a50e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e788df8dd3c989a7e26896cbfc5a50e">&#9670;&nbsp;</a></span>getMouseInputMode()</h2>
+<a id="a42ad33dc63e55b7a56a45f453333c470"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42ad33dc63e55b7a56a45f453333c470">&#9670;&nbsp;</a></span>getModule_UI()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -534,7 +571,35 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_engine.html#a6439c90b0682b279c4be4763d90881f3">MouseInputMode</a> Engine::getMouseInputMode </td>
+          <td class="memname"><a class="el" href="class_u_i___module.html">UI_Module</a> &amp; Engine::getModule_UI </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Retrieve this engine's user-interface module. </p>
+<dl class="section return"><dt>Returns</dt><dd>this engine's UI module. </dd></dl>
+
+</div>
+</div>
+<a id="aea5e0424ec6d1f4ed28f5fb606b34770"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea5e0424ec6d1f4ed28f5fb606b34770">&#9670;&nbsp;</a></span>getMouseInputMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_engine.html#a6439c90b0682b279c4be4763d90881f3">Engine::MouseInputMode</a> Engine::getMouseInputMode </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -542,17 +607,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Set the mouse input mode, such as free-look or normal cursor. </p>
+<p>Retrieve the mouse input mode. </p>
+<dl class="section return"><dt>Returns</dt><dd>the mouse input mode, such as free-look or normal cursor. </dd></dl>
 
 </div>
 </div>
-<a id="aa86a65ad825186658bd35cc7dca0b42c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa86a65ad825186658bd35cc7dca0b42c">&#9670;&nbsp;</a></span>getPreferenceState()</h2>
+<a id="aec4d9c1c3cc43c6b096e0020c993e004"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec4d9c1c3cc43c6b096e0020c993e004">&#9670;&nbsp;</a></span>getPreferenceState()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -561,7 +627,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_preference_state.html">PreferenceState</a>&amp; Engine::getPreferenceState </td>
+          <td class="memname"><a class="el" href="class_preference_state.html">PreferenceState</a> &amp; Engine::getPreferenceState </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -569,50 +635,126 @@ Static Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns this engine's preference state. </p>
+<p>Retrieve this engine's preference state. </p>
+<dl class="section return"><dt>Returns</dt><dd>this engine's preference state. </dd></dl>
 
 </div>
 </div>
-<a id="a48f724b864a6a5251791af8b4cf0d55e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48f724b864a6a5251791af8b4cf0d55e">&#9670;&nbsp;</a></span>getResolutions()</h2>
+<a id="ab8e324b4b63af3838087c8b98cab5420"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8e324b4b63af3838087c8b98cab5420">&#9670;&nbsp;</a></span>GetSystemTime()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; glm::ivec3 &gt; Engine::getResolutions </td>
+          <td class="memname">float Engine::GetSystemTime </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
-</div><div class="memdoc">
-
-<p>Return a list of available resolutions. </p>
-
-</div>
-</div>
-<a id="a2190e510b436458765eeacca511d5fc1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2190e510b436458765eeacca511d5fc1">&#9670;&nbsp;</a></span>getTime()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Engine::getTime </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Retrieve the current time. </p>
+<dl class="section return"><dt>Returns</dt><dd>the current time. </dd></dl>
+
+</div>
+</div>
+<a id="a65688f58a05a3612cde021aa5acfab13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65688f58a05a3612cde021aa5acfab13">&#9670;&nbsp;</a></span>getWindow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_window.html">Window</a> &amp; Engine::getWindow </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Retrieve the application window for this engine. </p>
+<dl class="section return"><dt>Returns</dt><dd>the engine's window. </dd></dl>
+
+</div>
+</div>
+<a id="a74b6d231b08dcefa032614cace50b00c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74b6d231b08dcefa032614cace50b00c">&#9670;&nbsp;</a></span>goToEditor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Engine::goToEditor </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Switch the UI over to the level editor. </p>
+
+</div>
+</div>
+<a id="a1f3334e5b4d8aaa4dfa259776b86cd24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f3334e5b4d8aaa4dfa259776b86cd24">&#9670;&nbsp;</a></span>goToGame()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Engine::goToGame </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Switch the UI over to the game. </p>
+
+</div>
+</div>
+<a id="af7a2db3d6b9a20d6926aea3a4ede25a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7a2db3d6b9a20d6926aea3a4ede25a4">&#9670;&nbsp;</a></span>goToMainMenu()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Engine::goToMainMenu </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Switch the UI over to the main menu. </p>
 
 </div>
 </div>
@@ -642,19 +784,27 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a000f99ef9755f3415ee4fb101019e373"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a000f99ef9755f3415ee4fb101019e373">&#9670;&nbsp;</a></span>shouldClose()</h2>
+<a id="a6a72bbb5a3fb39b067f329637f7d1808"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a72bbb5a3fb39b067f329637f7d1808">&#9670;&nbsp;</a></span>shouldClose()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool Engine::shouldClose </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Checks if the engine wants to shut down. </p>
@@ -662,11 +812,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aeb4493849a14880965dc52e33a3c4b39"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb4493849a14880965dc52e33a3c4b39">&#9670;&nbsp;</a></span>shutDown()</h2>
+<a id="a6f24ad2767b0d326a435238d5e373e21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f24ad2767b0d326a435238d5e373e21">&#9670;&nbsp;</a></span>shutDown()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void Engine::shutDown </td>
@@ -675,6 +828,11 @@ Static Public Member Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Tells the engine to shut down. </p>
@@ -697,13 +855,11 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Ticks the engine's overall simulation by a frame from the main thread. </p>
-<p><em>-------------------------------------------------&mdash;BEGIN FRAME-------------------------------------------------&mdash;</em>///</p>
-<p><em>--------------------------------------------------&mdash;END FRAME--------------------------------------------------&mdash;</em>/// </p>
 
 </div>
 </div>
-<a id="ab6a8bc268e2fc517e859cae1f149927c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab6a8bc268e2fc517e859cae1f149927c">&#9670;&nbsp;</a></span>tickThreaded()</h2>
+<a id="a4993158ea8a023949db8d33767e1a39a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4993158ea8a023949db8d33767e1a39a">&#9670;&nbsp;</a></span>tickThreaded()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -718,7 +874,7 @@ Static Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">GLFWwindow *const&#160;</td>
-          <td class="paramname"><em>window</em>&#160;</td>
+          <td class="paramname"><em>auxContext</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -731,7 +887,8 @@ Static Public Member Functions</h2></td></tr>
 <p>Ticks the engine's overall simulation by a frame from a secondary thread. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">exitObject</td><td>object signaling when to close the thread </td></tr>
+    <tr><td class="paramname">exitObject</td><td>object signaling when to close the thread. </td></tr>
+    <tr><td class="paramname">auxContext</td><td>pointer to the auxiliary context to use. </td></tr>
   </table>
   </dd>
 </dl>

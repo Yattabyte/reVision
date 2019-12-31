@@ -3,31 +3,22 @@
 #define ACTION_STATE_H
 
 #include <map>
+#include <string>
 #include <vector>
 
 
 /** A container class that holds the action state for the engine, such as forward/back/left/right and amount. */
-class ActionState : public std::map<unsigned int, float> {
+class ActionState final {
 public:
-	// Public (de)Constructors
-	/** Destroy the action state. */
-	inline ~ActionState() = default;
-	/** Construct the action state. */
-	inline ActionState() {
-		for (unsigned int x = 0; x < ACTION_COUNT; ++x)
-			insert(std::pair<unsigned int, float>(x, 0.0f));
-	}
-
-
 	// Public Static Enumerations
 	/** Enumeration for whether the action key was pressed, released, or repeating. */
-	const enum STATE {
+	enum class State : int {
 		RELEASE,
 		PRESS,
-		REPEAT		
+		REPEAT
 	};
 	/** Enumeration for indexing into actions. */
-	const enum ACTION_ENUM {
+	enum class Action : unsigned int {
 		MOUSE_X,
 		MOUSE_Y,
 		MOUSE_L,
@@ -81,31 +72,27 @@ public:
 			"UI_ESCAPE",
 		};
 		return actionStrings;
-	};	
+	};
 
 
 	// Public Methods
-	inline ActionState::STATE isAction(const ActionState::ACTION_ENUM & actionEnum) {
-		return isAction(actionEnum, &m_keyStates);
-	}
-	inline ActionState::STATE isAction(const ActionState::ACTION_ENUM & actionEnum, std::map<ActionState::ACTION_ENUM, bool> * keyStates) const {
-		if (find(actionEnum) != end())
-			if (at(actionEnum) > 0.5f) {
-				if (!(*keyStates)[actionEnum]) {
-					(*keyStates)[actionEnum] = true;
-					return PRESS;
-				}
-				return REPEAT;
-			}
-			else
-				(*keyStates)[actionEnum] = false;
-		return RELEASE;
-	}
+	/** Retrieve the value for a specific action category.
+	@param	index		the action index category to look-up.
+	@return				the value reference belonging found at the index. */
+	float& operator[](const ActionState::Action& index);
+	/** Retrieve the value for a specific action category.
+	@param	index		the action index category to look-up.
+	@return				the value const reference belonging found at the index. */
+	const float& operator[](const ActionState::Action& index) const;
+	/** Retrieve the state for a specific action category.
+	@param	actionEnum	the action index category to look-up.
+	@return				the state belonging found at the index, such as pressed, released, or repeating. */
+	ActionState::State isAction(const ActionState::Action& actionEnum);
 
 
-protected:
+private:
 	// Protected Attributes
-	std::map<ActionState::ACTION_ENUM, bool> m_keyStates;
+	std::map<ActionState::Action, std::pair<bool, float>> m_keyStates;
 };
 
 #endif // ACTION_STATE_H

@@ -9,112 +9,46 @@
 
 
 /** UI toggle switch class, affords being switched left and right. */
-class Toggle : public UI_Element {
+class Toggle final : public UI_Element {
 public:
 	// Public Interaction Enums
-	const enum interact {
-		on_toggle = UI_Element::last_interact_index
+	/** Enumerations for interacting with this element. */
+	enum class Interact : int {
+		on_toggle = (int)UI_Element::Interact::last_interact_index
 	};
 
 
-	// Public (de)Constructors
-	/** Destroy the toggle switch. */
-	inline ~Toggle() = default;
+	// Public (De)Constructors
 	/** Construct a toggle switch with a given on/off state.
-	@param	engine		the engine to use.
+	@param	engine		reference to the engine to use.
 	@param	state		the on/off state to use. */
-	inline Toggle(Engine * engine, const bool & state = true)
-		: UI_Element(engine) {
-		// Make a background panel for cosemetic purposes
-		auto panel = std::make_shared<Panel>(engine);
-		panel->setColor(glm::vec4(0.3f));
-		m_backPanel = std::make_shared<Border>(engine, panel);
-		addElement(m_backPanel);
-
-		// Create the sliding paddle
-		m_paddle = std::make_shared<Panel>(engine);
-		m_paddle->setColor(glm::vec4(0.75f));
-		panel->addElement(m_paddle);
-		
-		// Add a label indicating the toggle state
-		m_label = std::make_shared<Label>(engine);
-		m_label->setAlignment(Label::align_right);
-		m_label->setTextScale(12.0f);
-		m_label->setColor(glm::vec3(0.75f));
-		addElement(m_label);
-		
-		// Callbacks
-		addCallback(on_clicked, [&]() { setToggled(!m_toggledOn); });
-		addCallback(on_resize, [&]() { updateGeometry(); });
-		
-		// Configure THIS element
-		setToggled(state);
-	}
+	explicit Toggle(Engine& engine, const bool& state = true);
 
 
 	// Public Interface Implementation
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		// Update Colors
-		glm::vec4 color(0.75);
-		if (m_pressed)
-			color *= 0.5f;
-		if (m_hovered)
-			color *= 1.5f;
-		m_paddle->setColor(color);
-
-		// Render Children
-		UI_Element::renderElement(deltaTime, position, scale);
-	}
-	inline virtual void userAction(ActionState & actionState) override {
-		if (actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
-			setToggled(false);
-		else if (actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS)
-			setToggled(true);
-		else if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS)
-			setToggled(!m_toggledOn);
-	}
+	void renderElement(const float& deltaTime, const glm::vec2& position, const glm::vec2& scale) final;
+	void userAction(ActionState& actionState) final;
 
 
 	// Public Methods
 	/** Set this slider's text.
 	@param	text	the text to use. */
-	inline void setText(const std::string & text) {
-		m_label->setText(text);		
-	}
+	void setText(const std::string& text);
 	/** Retrieve this slider's text.
 	@return			the text this label uses. */
-	inline std::string getText() const {
-		return m_label->getText();
-	}
+	std::string getText() const;
 	/** Set the toggle state of this button.
 	@param	state	the new state to use. */
-	inline void setToggled(const bool & state) {
-		m_toggledOn = state;
-		setText(m_toggledOn ? "ON" : "OFF");
-		updateGeometry();
-		enactCallback(on_toggle);
-	}
-	/** Return the toggle state of this button. 
+	void setToggled(const bool& state);
+	/** Retrieve the toggle state of this button.
 	@return			whether or not this toggle is on or off. */
-	inline bool getToggled() const {
-		return m_toggledOn;
-	}
+	bool isToggled() const noexcept;
 
 
 protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */
-	inline void updateGeometry() {
-		// Shorten the back panel by 50 units, and it is offset to the right by 50 units
-		m_backPanel->setPosition({ 50, 0 });
-		m_backPanel->setScale(glm::vec2(getScale().x - m_backPanel->getPosition().x, getScale().y));
-		// Move the label to the left side of the back panel
-		m_label->setPosition(-glm::vec2(getScale().x - 25, 0));
-		m_label->setScale({ 50, 28 });
-		// The paddle fills HALF of the back panel, and is positioned on one of the 2 sides of it.
-		m_paddle->setScale(glm::vec2((getScale().x - 50) / 2.0f, getScale().y - 2.0f) - 2.0f);
-		m_paddle->setPosition(glm::vec2(m_paddle->getScale().x, 0) * (m_toggledOn ? 1.0f : -1.0f));
-	}
+	void updateGeometry();
 
 
 	// Protected Attributes

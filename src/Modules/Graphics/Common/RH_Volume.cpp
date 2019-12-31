@@ -1,31 +1,32 @@
 #include "Modules/Graphics/Common/RH_Volume.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include "Engine.h"
 #include <algorithm>
 
 
-RH_Volume::~RH_Volume() 
+RH_Volume::~RH_Volume()
 {
 	// Update indicator
-	m_aliveIndicator = false;
+	*m_aliveIndicator = false;
 	glDeleteFramebuffers(2, m_fboIDS);
 	glDeleteTextures(RH_TEXTURE_COUNT, m_textureIDS[0]);
 	glDeleteTextures(RH_TEXTURE_COUNT, m_textureIDS[1]);
 }
 
-RH_Volume::RH_Volume(Engine * engine) 
-	: m_engine(engine)
+RH_Volume::RH_Volume(Engine& engine) :
+	m_engine(engine)
 {
 	// Preferences
-	auto & preferences = m_engine->getPreferenceState();
+	auto& preferences = engine.getPreferenceState();
 	m_resolution = 16;
-	preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_resolution);
-	preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { resize(f); });
+	preferences.getOrSetValue(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_resolution);
+	preferences.addCallback(PreferenceState::Preference::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float& f) noexcept { resize(f); });
 
 	glCreateFramebuffers(2, m_fboIDS);
 	for (int bounce = 0; bounce < 2; ++bounce) {
 		glCreateTextures(GL_TEXTURE_3D, RH_TEXTURE_COUNT, m_textureIDS[bounce]);
 		for (int channel = 0; channel < RH_TEXTURE_COUNT; ++channel) {
-			glTextureImage3DEXT(m_textureIDS[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, 0);
+			glTextureImage3DEXT(m_textureIDS[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, static_cast<GLsizei>(m_resolution), static_cast<GLsizei>(m_resolution), static_cast<GLsizei>(m_resolution), 0, GL_RGBA, GL_FLOAT, nullptr);
 			glTextureParameteri(m_textureIDS[bounce][channel], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTextureParameteri(m_textureIDS[bounce][channel], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glTextureParameteri(m_textureIDS[bounce][channel], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -43,14 +44,14 @@ RH_Volume::RH_Volume(Engine * engine)
 	}
 }
 
-void RH_Volume::updateVolume(const Camera * camera)
+void RH_Volume::updateVolume(const Camera& camera)
 {
-	const glm::mat4 InverseView = camera->get()->vMatrixInverse;
-	const auto & ViewDimensions = camera->get()->Dimensions;
+	const glm::mat4 InverseView = camera->vMatrixInverse;
+	const auto& ViewDimensions = camera->Dimensions;
 	const float AspectRatio = ViewDimensions.x / ViewDimensions.y;
-	const float tanHalfHFOV = glm::radians(camera->get()->FOV) / 2.0f;
+	const float tanHalfHFOV = glm::radians(camera->FOV) / 2.0F;
 	const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / AspectRatio);
-	const float frustumSlice[2] = { camera->get()->NearPlane, (camera->get()->FarPlane * 0.25f) };
+	const float frustumSlice[2] = { camera->NearPlane, (camera->FarPlane * 0.25F) };
 	const float frustumPoints[4] = {
 		frustumSlice[0] * tanHalfHFOV,
 		frustumSlice[1] * tanHalfHFOV,
@@ -58,52 +59,52 @@ void RH_Volume::updateVolume(const Camera * camera)
 		frustumSlice[1] * tanHalfVFOV
 	};
 	float largestCoordinate = std::max(abs(frustumSlice[0]), abs(frustumSlice[1]));
-	for (int x = 0; x < 4; ++x)
-		largestCoordinate = std::max(largestCoordinate, abs(frustumPoints[x]));
-	const glm::vec3 centerOfVolume(0, 0, ((frustumSlice[1] - frustumSlice[0]) / 2.0f) + frustumSlice[0]);
+	for (const float frustumPoint : frustumPoints)
+		largestCoordinate = std::max(largestCoordinate, abs(frustumPoint));
+	const glm::vec3 centerOfVolume(0, 0, ((frustumSlice[1] - frustumSlice[0]) / 2.0F) + frustumSlice[0]);
 	const float radius = glm::distance(glm::vec3(largestCoordinate), centerOfVolume);
 	const glm::vec3 aabb(radius);
 	m_unitSize = (radius - -radius) / m_resolution;
-	const glm::vec3 frustumpos = (InverseView * glm::vec4(centerOfVolume, 1.0f));
+	const glm::vec3 frustumpos = (InverseView * glm::vec4(centerOfVolume, 1.0F));
 	// Snap volume position to grid
-	m_center = glm::floor((frustumpos + (m_unitSize / 2.0f)) / m_unitSize) * m_unitSize;
+	m_center = glm::floor((frustumpos + (m_unitSize / 2.0F)) / m_unitSize) * m_unitSize;
 	m_min = -aabb + m_center;
 	m_max = aabb + m_center;
 }
 
-void RH_Volume::resize(const float & resolution)
+void RH_Volume::resize(const float& resolution) noexcept
 {
 	m_resolution = resolution;
-	for (int bounce = 0; bounce < 2; ++bounce)
-		for (int channel = 0; channel < RH_TEXTURE_COUNT; ++channel)
-			glTextureImage3DEXT(m_textureIDS[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, 0);
+	for (auto& bounce : m_textureIDS)
+		for (const unsigned int channel : bounce)
+			glTextureImage3DEXT(channel, GL_TEXTURE_3D, 0, GL_RGBA16F, static_cast<GLsizei>(m_resolution), static_cast<GLsizei>(m_resolution), static_cast<GLsizei>(m_resolution), 0, GL_RGBA, GL_FLOAT, nullptr);
 }
 
-void RH_Volume::clear()
+void RH_Volume::clear() noexcept
 {
-	GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	for (int bounce = 0; bounce < 2; ++bounce) 
+	constexpr GLfloat clearColor[] = { 0.0F, 0.0F, 0.0F, 0.0F };
+	for (const auto& bounce : m_fboIDS)
 		for (GLint x = 0; x < RH_TEXTURE_COUNT; ++x)
-			glClearNamedFramebufferfv(m_fboIDS[bounce], GL_COLOR, x, clearColor);
+			glClearNamedFramebufferfv(bounce, GL_COLOR, x, clearColor);
 }
 
-void RH_Volume::writePrimary()
+void RH_Volume::writePrimary() noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDS[0]);
 }
 
-void RH_Volume::readPrimary(const GLuint & binding) 
+void RH_Volume::readPrimary(const GLuint& binding) noexcept
 {
 	for (GLuint x = 0; x < RH_TEXTURE_COUNT; ++x)
 		glBindTextureUnit(binding + x, m_textureIDS[0][x]);
 }
 
-void RH_Volume::writeSecondary()
+void RH_Volume::writeSecondary() noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDS[1]);
 }
 
-void RH_Volume::readSecondary(const GLuint & binding)
+void RH_Volume::readSecondary(const GLuint& binding) noexcept
 {
 	for (GLuint x = 0; x < RH_TEXTURE_COUNT; ++x)
 		glBindTextureUnit(binding + x, m_textureIDS[1][x]);

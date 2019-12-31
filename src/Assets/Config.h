@@ -4,53 +4,50 @@
 
 #include "Assets/Asset.h"
 #include <map>
-#include <vector>
 
 
-class Engine;
+// Forward Declarations
 class Config;
 
 /** Shared version of a Config asset.
 Responsible for the creation, containing, and sharing of assets. */
-class Shared_Config : public std::shared_ptr<Config> {
+class Shared_Config final : public std::shared_ptr<Config> {
 public:
-	// Public (de)Constructors
+	// Public (De)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Config() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			the engine being used.
+	@param	engine			reference to the engine to use.
 	@param	filename		the filename to use.
 	@param	cfg_strings		the configuration strings to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Config(Engine * engine, const std::string & filename, const std::vector<std::string> & cfg_strings, const bool & threaded = true);
+	Shared_Config(Engine& engine, const std::string& filename, const std::vector<std::string>& cfg_strings, const bool& threaded = true);
 };
 
 /** A map for configuration name-value pairs.
-Represents a series of values coresponding to strings, like user prefences or binds. */
-class Config : public Asset {
+Represents a series of values corresponding to strings, like user preferences or binds. */
+class Config final : public Asset {
 public:
-	// Public (de)Constructors
-	/** Destroy the Config. */
-	inline ~Config() = default;
-	/** Construct the config with a particular set of variable names. 
-	@param	engine		the engine to use.
-	@param	filename	the asset file name (relative to engine directory). 
+	// Public (De)Constructors
+	/** Construct the config with a particular set of variable names.
+	@param	engine		reference to the engine to use.
+	@param	filename	the asset file name (relative to engine directory).
 	@param	strings		the configuration strings to use. */
-	Config(Engine * engine, const std::string & filename, const std::vector<std::string> & strings);
+	Config(Engine& engine, const std::string& filename, const std::vector<std::string>& strings);
 
 
 	// Public Methods
 	/** Assigns the specified value to the specified key.
 	@param	cfg_key		the key to apply this new value to.
 	@param	cfg_value	the new value to give to this key. */
-	void setValue(const unsigned int & cfg_key, const float & cfg_value);
+	void setValue(const unsigned int& cfg_key, const float& cfg_value);
 	/** Retrieves the value assigned to the supplied key.
 	@param	cfg_key		the key in which to fetch the value from.
 	@return				the value assigned to supplied key (NaN if the supplied key doesn't exist). */
-	float getValue(const unsigned int & cfg_key) const;
+	float getValue(const unsigned int& cfg_key) const;
 	/** Writes the configuration file back to disk within the \\Config\\ folder. */
-	void saveConfig();
+	void saveConfig() const;
 
 
 	// Public Attributes
@@ -60,11 +57,11 @@ public:
 
 private:
 	// Private Interface Implementation
-	virtual void initialize() override;
+	void initialize() final;
 
 
 	// Private Attributes
 	friend class Shared_Config;
-}; 
+};
 
 #endif //CONFIG_H

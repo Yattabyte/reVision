@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['join_5freflections',['Join_Reflections',['../class_join___reflections.html',1,'Join_Reflections'],['../class_join___reflections.html#a49a919114a4cf2b5a2a9b4620a2ad453',1,'Join_Reflections::Join_Reflections()']]]
+  ['join',['join',['../struct_editor___command.html#a7426cacb70e078a7df947a14dfaef956',1,'Editor_Command']]],
+  ['join_5freflections',['Join_Reflections',['../class_join___reflections.html',1,'Join_Reflections'],['../class_join___reflections.html#a160a6c58ff1456ef84a7d1389024d22b',1,'Join_Reflections::Join_Reflections()']]]
 ];

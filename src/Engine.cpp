@@ -1,425 +1,262 @@
 #include "Engine.h"
+#include "imgui.h"
 #include "LinearMath/btScalar.h"
 #include <direct.h>
-
-// OpenGL Dependent Systems //
-#include "Utilities/GL/glad/glad.h"
-#include "GLFW/glfw3.h"
 
 // Importers Used //
 #include "Utilities/IO/Image_IO.h"
 #include "Utilities/IO/Mesh_IO.h"
 
-constexpr int DESIRED_OGL_VER_MAJOR = 4;
-constexpr int DESIRED_OGL_VER_MINOR = 5;
-
 
 Engine::~Engine()
 {
-	// Update indicator
-	m_messageManager.statement("Shutting down...");
-	m_aliveIndicator = false;
-	m_moduleWorld.deinitialize();
-	m_moduleGraphics.deinitialize();
-	m_moduleUI.deinitialize();
 	m_modulePhysics.deinitialize();
+	m_moduleUI.deinitialize();
+	m_moduleGraphics.deinitialize();
+	m_moduleEditor.deinitialize();
 	m_moduleGame.deinitialize();
+	m_moduleStartScreen.deinitialize();
+	m_moduleECS.deinitialize();
+
 	Image_IO::Deinitialize();
-	glfwDestroyWindow(m_window);
-	glfwTerminate();
+	m_messageManager.statement("Shutting down...");
 }
 
-Engine::Engine() :
+Engine::Engine() noexcept :
 	// Initialize engine-dependent members first
-	m_inputBindings(this),
-	m_preferenceState(this)
+	m_preferenceState(*this),
+	m_inputBindings(*this),
+	m_window(*this),
+	m_moduleECS(*this),
+	m_moduleStartScreen(*this),
+	m_moduleGame(*this),
+	m_moduleEditor(*this),
+	m_moduleGraphics(*this),
+	m_moduleUI(*this),
+	m_modulePhysics(*this)
 {
-	// Initialize aN OGL context
-	initWindow();
 	Image_IO::Initialize();
 	m_inputBindings.loadFile("binds");
 
 	printBoilerPlate();
-	m_moduleWorld.initialize(this);
-	m_moduleGraphics.initialize(this);
-	m_moduleUI.initialize(this);
-	m_modulePhysics.initialize(this);
-	m_moduleGame.initialize(this);
+	m_moduleECS.initialize();
+	m_moduleGraphics.initialize();
+	m_moduleUI.initialize();
+	m_modulePhysics.initialize();
+	m_moduleStartScreen.initialize();
+	m_moduleEditor.initialize();
+	m_moduleGame.initialize();
 
-	initThreads();
-}
-
-void Engine::initWindow()
-{
-	// Initialize GLFW
-	if (!glfwInit()) {
-		m_messageManager.error("GLFW unable to initialize, shutting down...");
-		glfwTerminate();
-		exit(-1);
-	}
-
-	// Create main window
-	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
-	glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
-	glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
-	glfwWindowHint(GLFW_ALPHA_BITS, 0);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DESIRED_OGL_VER_MAJOR);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DESIRED_OGL_VER_MINOR);
-	glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-	glfwWindowHint(GLFW_AUTO_ICONIFY, GL_TRUE);
-	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-	glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
-	glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
-#ifdef DEBUG
-	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
-#endif
-	m_window = glfwCreateWindow(1, 1, "", NULL, NULL);
-	glfwMakeContextCurrent(m_window);
-	glfwSetWindowIcon(m_window, 0, NULL);
-	glfwSetCursorPos(m_window, 0, 0);
-
-	// Initialize GLAD
-	if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 0) {
-		m_messageManager.error("GLAD unable to initialize, shutting down...");
-		glfwTerminate();
-		exit(-1);
-	}
-
-	// Preference Values
-	m_refreshRate = float(glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate);
-	m_windowSize.x = glfwGetVideoMode(glfwGetPrimaryMonitor())->width;
-	m_windowSize.y = glfwGetVideoMode(glfwGetPrimaryMonitor())->height;
-	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_windowSize.x);
-	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_windowSize.y);
-	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_refreshRate);
-	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_FULLSCREEN, m_useFullscreen);
-	m_preferenceState.getOrSetValue(PreferenceState::C_VSYNC, m_vsync);
-
-	// Preference Callbacks
-	m_preferenceState.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-		m_windowSize.x = int(f);
-		configureWindow();
-	});
-	m_preferenceState.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
-		m_windowSize.y = int(f);
-		configureWindow();
-	});
-	m_preferenceState.addCallback(PreferenceState::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float &f) {
-		m_refreshRate = f;
-		configureWindow();
-	});
-	m_preferenceState.addCallback(PreferenceState::C_WINDOW_FULLSCREEN, m_aliveIndicator, [&](const float &f) {
-		m_useFullscreen = f;
-		configureWindow();
-	});
-	m_preferenceState.addCallback(PreferenceState::C_VSYNC, m_aliveIndicator, [&](const float &f) {
-		m_vsync = f;
-		glfwSwapInterval((int)f);
-	});
-	configureWindow();
-	glfwSwapInterval((int)m_vsync);
-	glfwSetInputMode(m_window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
-	glfwSetWindowUserPointer(m_window, this);
-	glfwSetWindowSizeCallback(m_window, [](GLFWwindow * window, int width, int height) {
-		auto & preferences = ((Engine*)glfwGetWindowUserPointer(window))->getPreferenceState();
-		preferences.setValue(PreferenceState::C_WINDOW_WIDTH, width);
-		preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, height);
-	});
-	glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xPos, double yPos) {
-		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyCursorPos(xPos, yPos);
-	});
-	glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) {
-		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyCursorButton(button, action, mods);
-	});
-	glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int character) {
-		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyChar(character);
-	});
-	glfwSetKeyCallback(m_window, [](GLFWwindow* window, int a, int b, int c, int d) {
-		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyKey(a, b, c, d);
-	});
-#ifdef DEBUG
-	if (GLAD_GL_KHR_debug) {
-		GLint v;
-		glGetIntegerv(GL_CONTEXT_FLAGS, &v);
-		if (v && GL_CONTEXT_FLAG_DEBUG_BIT) {
-			glEnable(GL_DEBUG_OUTPUT);
-			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-			m_messageManager.statement(">>> KHR DEBUG MODE ENABLED <<<");
-			auto myCallback = [](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *msg, const void *data) {
-				char* _source;
-				char* _type;
-				char* _severity;
-				switch (source) {
-				case GL_DEBUG_SOURCE_API:
-					_source = "API";
-					break;
-
-				case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-					_source = "WINDOW SYSTEM";
-					break;
-
-				case GL_DEBUG_SOURCE_SHADER_COMPILER:
-					_source = "SHADER COMPILER";
-					break;
-
-				case GL_DEBUG_SOURCE_THIRD_PARTY:
-					_source = "THIRD PARTY";
-					break;
-
-				case GL_DEBUG_SOURCE_APPLICATION:
-					_source = "APPLICATION";
-					break;
-
-				case GL_DEBUG_SOURCE_OTHER:
-					_source = "UNKNOWN";
-					break;
-
-				default:
-					_source = "UNKNOWN";
-					break;
-				}
-
-				switch (type) {
-				case GL_DEBUG_TYPE_ERROR:
-					_type = "ERROR";
-					break;
-
-				case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-					_type = "DEPRECATED BEHAVIOR";
-					break;
-
-				case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-					_type = "UDEFINED BEHAVIOR";
-					break;
-
-				case GL_DEBUG_TYPE_PORTABILITY:
-					_type = "PORTABILITY";
-					break;
-
-				case GL_DEBUG_TYPE_PERFORMANCE:
-					_type = "PERFORMANCE";
-					break;
-
-				case GL_DEBUG_TYPE_OTHER:
-					_type = "OTHER";
-					break;
-
-				case GL_DEBUG_TYPE_MARKER:
-					_type = "MARKER";
-					break;
-
-				default:
-					_type = "UNKNOWN";
-					break;
-				}
-
-				switch (severity) {
-				case GL_DEBUG_SEVERITY_HIGH:
-					_severity = "HIGH";
-					break;
-
-				case GL_DEBUG_SEVERITY_MEDIUM:
-					_severity = "MEDIUM";
-					break;
-
-				case GL_DEBUG_SEVERITY_LOW:
-					_severity = "LOW";
-					break;
-
-				case GL_DEBUG_SEVERITY_NOTIFICATION:
-					_severity = "NOTIFICATION";
-					break;
-
-				default:
-					_severity = "UNKNOWN";
-					break;
-				}
-
-				if (severity != GL_DEBUG_SEVERITY_NOTIFICATION && severity != GL_DEBUG_SEVERITY_LOW)
-					((MessageManager*)(data))->error(
-						std::to_string(id) + ": " + std::string(_type) + " of " + std::string(_severity) + " severity, raised from " + std::string(_source) + ": " + std::string(msg, length));
-			};
-			glDebugMessageCallbackKHR(myCallback, &m_messageManager);
-		}
-	}
-#endif
-}
-
-void Engine::initThreads()
-{
-	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());
-	for (unsigned int x = 0; x < maxThreads; ++x) {
-		// Create an invisible window for multi-threaded GL operations
-		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
-		glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
-		glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
-		glfwWindowHint(GLFW_ALPHA_BITS, 0);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DESIRED_OGL_VER_MAJOR);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DESIRED_OGL_VER_MINOR);
-		glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-		glfwWindowHint(GLFW_AUTO_ICONIFY, GL_TRUE);
-		glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-		std::promise<void> exitSignal;
-		std::future<void> exitObject = exitSignal.get_future();
-		std::thread workerThread(&Engine::tickThreaded, this, std::move(exitObject), std::move(glfwCreateWindow(1, 1, "", NULL, m_window)));
-		workerThread.detach();
-		m_threads.push_back(std::move(std::make_pair(std::move(workerThread), std::move(exitSignal))));
-	}
+	goToMainMenu();
 }
 
 void Engine::printBoilerPlate()
 {
-	m_messageManager.statement("*****************************************");
-	m_messageManager.statement("* > reVision Engine:\t\t\t*");
+	m_messageManager.statement("+~-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-~\\");
+	m_messageManager.statement("  > reVision Engine:");
+	m_messageManager.statement("  -------------------------------");
 #ifdef NDEBUG
-	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + " (RELEASE)\t*");
+	m_messageManager.statement("  " + std::string(ENGINE_VERSION) + " (RELEASE)");
 #else
-	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + " (DEBUG)\t\t*");
+	m_messageManager.statement("  " + std::string(ENGINE_VERSION) + " (DEBUG)");
 #endif // DEBUG
-	m_messageManager.statement("*  - Build Date   July 15th, 2019\t*");
-	m_messageManager.statement("*****************************************");
-	m_messageManager.statement("* > Library Info:\t\t\t*");
-	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t\t*");
-	m_messageManager.statement("*  - Bullet       " + std::to_string(BT_BULLET_VERSION) + "\t\t\t*");
-	m_messageManager.statement("*  - FreeImage    " + Image_IO::Get_Version() + "\t\t*");
-	m_messageManager.statement("*  - GLAD         " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor) + "\t\t\t*");
-	m_messageManager.statement("*  - GLFW         " + std::string(glfwGetVersionString(), 5) + "\t\t\t*");
-	m_messageManager.statement("*  - GLM          " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION) + "\t\t*");;
-	m_messageManager.statement("*  - SoLoud       " + std::to_string(m_soundManager.GetVersion()) + "\t\t*");
-	m_messageManager.statement("*****************************************");
-	m_messageManager.statement("* > Graphics Info:\t\t\t*");
-	m_messageManager.statement("*  - " + std::string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))) + "\t\t*");
-	m_messageManager.statement("*  - OpenGL " + std::string(reinterpret_cast<char const *>(glGetString(GL_VERSION))) + "\t\t*");
-	m_messageManager.statement("*  - GLSL " + std::string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))) + "\t\t\t*");
-	m_messageManager.statement("*****************************************");
+	m_messageManager.statement("  " + std::string(__TIMESTAMP__));
+	m_messageManager.statement("");
+	m_messageManager.statement("  > Library Info:");
+	m_messageManager.statement("  -------------------------------");
+	m_messageManager.statement("  ASSIMP       " + Mesh_IO::Get_Version());
+	m_messageManager.statement("  Bullet       " + std::to_string(BT_BULLET_VERSION));
+	m_messageManager.statement("  Dear ImGui   " + std::string(ImGui::GetVersion()));
+	m_messageManager.statement("  FreeImage    " + Image_IO::Get_Version());
+	m_messageManager.statement("  GLAD         " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor));
+	m_messageManager.statement("  GLFW         " + Window::GetVersion());
+	m_messageManager.statement("  GLM          " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
+	m_messageManager.statement("  SoLoud       " + std::to_string(SoundManager::GetVersion()));
+	m_messageManager.statement("");
+	m_messageManager.statement("  > Graphics Info:");
+	m_messageManager.statement("  -------------------------------");
+	m_messageManager.statement("  " + std::string(reinterpret_cast<char const*>(glGetString(GL_RENDERER))));
+	m_messageManager.statement("  OpenGL " + std::string(reinterpret_cast<char const*>(glGetString(GL_VERSION))));
+	m_messageManager.statement("  GLSL " + std::string(reinterpret_cast<char const*>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+	m_messageManager.statement("+~-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-~/");
 }
 
 void Engine::tick()
 {
-	///*----------------------------------------------------BEGIN FRAME----------------------------------------------------*///
-	const float thisTime = (float)glfwGetTime(), deltaTime = thisTime - m_lastTime;
+	const float thisTime = GetSystemTime();
+	const float deltaTime = thisTime - m_lastTime;
 	m_lastTime = thisTime;
 
-	// Update Managers
+	processInputs();
 	m_assetManager.notifyObservers();
-	
-	// Updated mouse states, manually
-	double mouseX, mouseY;
-	glfwGetCursorPos(m_window, &mouseX, &mouseY);
-	m_actionState[ActionState::MOUSE_L] = (float)glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT);
-	m_actionState[ActionState::MOUSE_R] = (float)glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT);
-	m_actionState[ActionState::MOUSE_X] = (float)mouseX;
-	m_actionState[ActionState::MOUSE_Y] = (float)mouseY;
-	if (m_mouseInputMode == FREE_LOOK)
-		glfwSetCursorPos(m_window, 0, 0);	
-
-	// Update key binding states, manually
-	if (const auto &bindings = m_inputBindings.getBindings())
-		if (bindings->existsYet())
-			for each (const auto &pair in bindings.get()->m_configuration)
-				m_actionState[pair.first] = glfwGetKey(m_window, (int)pair.second) ? 1.0f : 0.0f;
-
-	// Update UI module based on action state, manually
 	m_moduleUI.applyActionState(m_actionState);
-	
-	// Update all modules
-	Engine_Module * modules[5] = { &m_moduleWorld, &m_modulePhysics, &m_moduleGame, &m_moduleGraphics, &m_moduleUI };
-	for each (auto * module in modules)
-		module->frameTick(deltaTime);
-	m_moduleGame.renderOverlays(deltaTime); // This is done last so they can appear over-top
 
-	// Swap buffers and end
-	glfwSwapBuffers(m_window);
-	glfwPollEvents();
-	///*-----------------------------------------------------END FRAME-----------------------------------------------------*///
+	// Tick relevant systems
+	if (m_engineState == Engine_State::in_startMenu)
+		m_moduleStartScreen.frameTick(deltaTime);
+	else if (m_engineState == Engine_State::in_game)
+		m_moduleGame.frameTick(deltaTime);
+	else if (m_engineState == Engine_State::in_editor)
+		m_moduleEditor.frameTick(deltaTime);
+	m_moduleUI.frameTick(deltaTime);
+
+	m_window.swapBuffers();
 }
 
-void Engine::tickThreaded(std::future<void> exitObject, GLFWwindow * const window)
+void Engine::tickThreaded(std::future<void> exitObject, GLFWwindow* const auxContext)
 {
-	glfwMakeContextCurrent(window);
+	Window::MakeCurrent(auxContext);
 
 	// Check if thread should shutdown
 	while (exitObject.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
 		m_assetManager.beginWorkOrder();
 }
 
-bool Engine::shouldClose()
+bool Engine::shouldClose() const noexcept
 {
-	return glfwWindowShouldClose(m_window);
+	return m_window.shouldClose();
 }
 
-void Engine::shutDown()
+void Engine::shutDown() noexcept
 {
-	glfwSetWindowShouldClose(m_window, GLFW_TRUE);
+	m_window.close();
 }
 
-void Engine::setMouseInputMode(const MouseInputMode & mode)
+void Engine::setMouseInputMode(const MouseInputMode& mode)
 {
 	m_mouseInputMode = mode;
 	switch (mode) {
-	case NORMAL:
-		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	case MouseInputMode::NORMAL:
+		m_window.setMouseMode3D(false);
 		break;
-	case FREE_LOOK:
-		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		glfwSetCursorPos(m_window, m_actionState[ActionState::LOOK_X], m_actionState[ActionState::LOOK_Y]);
+	case MouseInputMode::FREE_LOOK:
+		m_window.setMouseMode3D(true);
+		m_window.setMousePos({ m_actionState[ActionState::Action::LOOK_X], m_actionState[ActionState::Action::LOOK_Y] });
+		m_actionState[ActionState::Action::LOOK_X] = m_actionState[ActionState::Action::MOUSE_X];
+		m_actionState[ActionState::Action::LOOK_Y] = m_actionState[ActionState::Action::MOUSE_Y];
 		break;
 	}
 }
 
-float Engine::getTime() const
+void Engine::goToMainMenu()
 {
-	return (float)glfwGetTime();
+	m_engineState = Engine_State::in_startMenu;
+	m_moduleStartScreen.showStartMenu();
 }
 
-std::vector<glm::ivec3> Engine::getResolutions() const
+void Engine::goToGame()
 {
-	int count(0);
-	const GLFWvidmode* modes = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);
-	std::vector<glm::ivec3> resolutions(count);
-	for (int x = 0; x < count; ++x)
-		resolutions[x] = { modes[x].width, modes[x].height, modes[x].refreshRate };
-	return resolutions;
+	m_engineState = Engine_State::in_game;
+	m_moduleGame.showGame();
+}
+
+void Engine::goToEditor()
+{
+	m_engineState = Engine_State::in_editor;
+	m_moduleEditor.showEditor();
+}
+
+Engine::MouseInputMode Engine::getMouseInputMode() const noexcept
+{
+	return m_mouseInputMode;
+}
+
+Window& Engine::getWindow() noexcept
+{
+	return m_window;
+}
+
+float Engine::GetSystemTime() noexcept
+{
+	return Window::GetSystemTime();
+}
+
+ActionState& Engine::getActionState() noexcept
+{
+	return m_actionState;
+}
+
+PreferenceState& Engine::getPreferenceState() noexcept
+{
+	return m_preferenceState;
+}
+
+AssetManager& Engine::getManager_Assets() noexcept
+{
+	return m_assetManager;
+}
+
+MessageManager& Engine::getManager_Messages() noexcept
+{
+	return m_messageManager;
+}
+
+SoundManager& Engine::getManager_Sounds() noexcept
+{
+	return m_soundManager;
+}
+
+ECS_Module& Engine::getModule_ECS() noexcept
+{
+	return m_moduleECS;
+}
+
+Game_Module& Engine::getModule_Game() noexcept
+{
+	return m_moduleGame;
+}
+
+LevelEditor_Module& Engine::getModule_LevelEditor() noexcept
+{
+	return m_moduleEditor;
+}
+
+Graphics_Module& Engine::getModule_Graphics() noexcept
+{
+	return m_moduleGraphics;
+}
+
+UI_Module& Engine::getModule_UI() noexcept
+{
+	return m_moduleUI;
+}
+
+Physics_Module& Engine::getModule_Physics() noexcept
+{
+	return m_modulePhysics;
 }
 
 std::string Engine::Get_Current_Dir()
 {
 	// Technique to return the running directory of the application
 	char cCurrentPath[FILENAME_MAX];
-	if (_getcwd(cCurrentPath, sizeof(cCurrentPath)))
-		cCurrentPath[sizeof(cCurrentPath) - 1ull] = char('\0');
+	if (_getcwd(cCurrentPath, sizeof(cCurrentPath)) != nullptr)
+		cCurrentPath[sizeof(cCurrentPath) - 1ULL] = '\0';
 	return std::string(cCurrentPath);
 }
 
-bool Engine::File_Exists(const std::string & name)
+bool Engine::File_Exists(const std::string& name)
 {
 	// Technique to return whether or not a given file or folder exists
-	struct stat buffer;
+	struct stat buffer{};
 	return (stat((Engine::Get_Current_Dir() + name).c_str(), &buffer) == 0);
 }
 
-void Engine::configureWindow()
+void Engine::processInputs()
 {
-	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	const int maxWidth = mainMode->width, maxHeight = mainMode->height;
-	glfwSetWindowSize(m_window, m_windowSize.x, m_windowSize.y);
-	glfwSetWindowPos(m_window, (maxWidth - m_windowSize.x) / 2, (maxHeight - m_windowSize.y) / 2);
-	glfwSetWindowMonitor(
-		m_window,
-		m_useFullscreen ? glfwGetPrimaryMonitor() : NULL,
-		0, 0,
-		m_windowSize.x, m_windowSize.y,
-		(int)m_refreshRate
-	);
+	// Updated mouse states, manually
+	auto& actionState = getActionState();
+	const auto cursorPos = m_window.getMousePos();
+	actionState[ActionState::Action::MOUSE_L] = static_cast<float>(m_window.getMouseKey(0));
+	actionState[ActionState::Action::MOUSE_R] = static_cast<float>(m_window.getMouseKey(1));
+	actionState[ActionState::Action::MOUSE_X] = cursorPos.x;
+	actionState[ActionState::Action::MOUSE_Y] = cursorPos.y;
+	if (m_mouseInputMode == MouseInputMode::FREE_LOOK)
+		m_window.setMousePos({ 0, 0 });
+
+	// Update key binding states, manually
+	if (const auto& bindings = m_inputBindings.getBindings())
+		if (bindings->ready())
+			for (const auto& pair : bindings.get()->m_configuration)
+				m_actionState[ActionState::Action(pair.first)] = static_cast<float>(m_window.getKey(static_cast<int>(pair.second)));
 }

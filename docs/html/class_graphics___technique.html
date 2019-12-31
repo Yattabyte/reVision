@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -83,26 +83,24 @@ Inheritance diagram for Graphics_Technique:</div>
  <div class="center">
   <img src="class_graphics___technique.png" usemap="#Graphics_5FTechnique_map" alt=""/>
   <map id="Graphics_5FTechnique_map" name="Graphics_5FTechnique_map">
-<area href="class_bloom.html" title="A post-processing technique for generating bloom from a lighting buffer." alt="Bloom" shape="rect" coords="148,56,286,80"/>
-<area href="class_directional___technique.html" title="A core lighting technique responsible for all directional lights." alt="Directional_Technique" shape="rect" coords="148,112,286,136"/>
-<area href="class_f_x_a_a.html" title="A post-processing technique for applying fxaa to the currently bound 2D image." alt="FXAA" shape="rect" coords="148,168,286,192"/>
-<area href="class_geometry___technique.html" title="A rendering technique category responsible for displaying and shadowing geometry." alt="Geometry_Technique" shape="rect" coords="148,224,286,248"/>
-<area href="class_h_d_r.html" title="A post-processing technique for tone-mapping and gamma correcting the final lighting product." alt="HDR" shape="rect" coords="148,280,286,304"/>
-<area href="class_join___reflections.html" title="A core-rendering technique for writing the final scene reflections back into the lighting." alt="Join_Reflections" shape="rect" coords="148,336,286,360"/>
-<area href="class_point___technique.html" title="A core lighting technique responsible for all point lights." alt="Point_Technique" shape="rect" coords="148,392,286,416"/>
-<area href="class_radiance___hints.html" title="A core-rendering technique for approximating indirect diffuse lighting (irradiant light,..." alt="Radiance_Hints" shape="rect" coords="148,448,286,472"/>
-<area href="class_reflector___technique.html" title="A core lighting technique responsible for all parallax reflectors." alt="Reflector_Technique" shape="rect" coords="148,504,286,528"/>
-<area href="class_shadow___technique.html" title="A rendering technique responsible for rendering/updating shadow casters in the scene." alt="Shadow_Technique" shape="rect" coords="148,560,286,584"/>
-<area href="class_skybox.html" title="A core-rendering technique for writing the frame time to the screen." alt="Skybox" shape="rect" coords="148,616,286,640"/>
-<area href="class_spot___technique.html" title="A core lighting technique responsible for all spot lights." alt="Spot_Technique" shape="rect" coords="148,672,286,696"/>
-<area href="class_s_s_a_o.html" title="A core-rendering technique for deriving an ambient occlusion factor from the viewport itself." alt="SSAO" shape="rect" coords="148,728,286,752"/>
-<area href="class_s_s_r.html" title="A core-rendering technique for deriving extra reflection information from the viewport itself." alt="SSR" shape="rect" coords="148,784,286,808"/>
+<area href="class_bloom.html" title="A post-processing technique for generating bloom from a lighting buffer." alt="Bloom" shape="rect" coords="141,56,272,80"/>
+<area href="class_direct___technique.html" title="A core lighting technique responsible for direct-diffuse and direct-specular lighting." alt="Direct_Technique" shape="rect" coords="141,112,272,136"/>
+<area href="class_f_x_a_a.html" title="A post-processing technique for applying FXAA to the currently bound 2D image." alt="FXAA" shape="rect" coords="141,168,272,192"/>
+<area href="class_geometry___technique.html" title="A rendering technique category responsible for displaying and shadowing geometry." alt="Geometry_Technique" shape="rect" coords="141,224,272,248"/>
+<area href="class_h_d_r.html" title="A post-processing technique for tone-mapping and gamma correcting the final lighting product." alt="HDR" shape="rect" coords="141,280,272,304"/>
+<area href="class_indirect___technique.html" title="A core lighting technique responsible for indirect-diffuse lighting." alt="Indirect_Technique" shape="rect" coords="141,336,272,360"/>
+<area href="class_join___reflections.html" title="A core-rendering technique for writing the final scene reflections back into the lighting." alt="Join_Reflections" shape="rect" coords="141,392,272,416"/>
+<area href="class_reflector___technique.html" title="A core lighting technique responsible for all parallax reflectors." alt="Reflector_Technique" shape="rect" coords="141,448,272,472"/>
+<area href="class_shadow___technique.html" title="A rendering technique responsible for rendering/updating shadow casters in the scene." alt="Shadow_Technique" shape="rect" coords="141,504,272,528"/>
+<area href="class_skybox.html" title="A core-rendering technique for writing the frame time to the screen." alt="Skybox" shape="rect" coords="141,560,272,584"/>
+<area href="class_s_s_a_o.html" title="A core-rendering technique for deriving an ambient occlusion factor from the viewport itself." alt="SSAO" shape="rect" coords="141,616,272,640"/>
+<area href="class_s_s_r.html" title="A core-rendering technique for deriving extra reflection information from the viewport itself." alt="SSR" shape="rect" coords="141,672,272,696"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ac5ce80e4590b73e75c5e3dc6c2624cc0"><td class="memItemLeft" align="right" valign="top"><a id="ac5ce80e4590b73e75c5e3dc6c2624cc0"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Technique_Category</b> : unsigned int { <br />
+<tr class="memitem:ac5ce80e4590b73e75c5e3dc6c2624cc0"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#ac5ce80e4590b73e75c5e3dc6c2624cc0">Technique_Category</a> : unsigned int { <br />
 &#160;&#160;<b>GEOMETRY</b> = 0b0000'0001, 
 <b>PRIMARY_LIGHTING</b> = 0b0000'0010, 
 <b>SECONDARY_LIGHTING</b> = 0b0000'0100, 
@@ -111,6 +109,7 @@ Public Types</h2></td></tr>
 &#160;&#160;<b>ALL</b> = 0b1111'1111
 <br />
  }</td></tr>
+<tr class="memdesc:ac5ce80e4590b73e75c5e3dc6c2624cc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The category of the technique.  <a href="class_graphics___technique.html#ac5ce80e4590b73e75c5e3dc6c2624cc0">More...</a><br /></td></tr>
 <tr class="separator:ac5ce80e4590b73e75c5e3dc6c2624cc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -118,24 +117,42 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acbe7a9cb38c785b8694d465aad11aeac"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#acbe7a9cb38c785b8694d465aad11aeac">~Graphics_Technique</a> ()=default</td></tr>
 <tr class="memdesc:acbe7a9cb38c785b8694d465aad11aeac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual Destructor.  <a href="#acbe7a9cb38c785b8694d465aad11aeac">More...</a><br /></td></tr>
 <tr class="separator:acbe7a9cb38c785b8694d465aad11aeac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac74545c0d7ca89d0878887c6d9933d43"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#ac74545c0d7ca89d0878887c6d9933d43">Graphics_Technique</a> (const Technique_Category &amp;category)</td></tr>
-<tr class="memdesc:ac74545c0d7ca89d0878887c6d9933d43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#ac74545c0d7ca89d0878887c6d9933d43">More...</a><br /></td></tr>
-<tr class="separator:ac74545c0d7ca89d0878887c6d9933d43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7670af2bb3e088ea5062ee6305ff9ea6"><td class="memItemLeft" align="right" valign="top">Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a7670af2bb3e088ea5062ee6305ff9ea6">getCategory</a> () const</td></tr>
-<tr class="memdesc:a7670af2bb3e088ea5062ee6305ff9ea6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the category this technique belongs to.  <a href="#a7670af2bb3e088ea5062ee6305ff9ea6">More...</a><br /></td></tr>
-<tr class="separator:a7670af2bb3e088ea5062ee6305ff9ea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a914bb9fbfe740c951ea8252f5f6bc7c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a914bb9fbfe740c951ea8252f5f6bc7c7">setEnabled</a> (const bool &amp;state)</td></tr>
-<tr class="memdesc:a914bb9fbfe740c951ea8252f5f6bc7c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn this technique on or off.  <a href="#a914bb9fbfe740c951ea8252f5f6bc7c7">More...</a><br /></td></tr>
-<tr class="separator:a914bb9fbfe740c951ea8252f5f6bc7c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a67fee4b16dee6bb7ba0fcfc3031556"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a7a67fee4b16dee6bb7ba0fcfc3031556">prepareForNextFrame</a> (const float &amp;deltaTime)</td></tr>
-<tr class="memdesc:a7a67fee4b16dee6bb7ba0fcfc3031556"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare this technique for the next frame, swapping any of its buffers.  <a href="#a7a67fee4b16dee6bb7ba0fcfc3031556">More...</a><br /></td></tr>
-<tr class="separator:a7a67fee4b16dee6bb7ba0fcfc3031556"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c08424a73c39ad59fb99413dac8475b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a6c08424a73c39ad59fb99413dac8475b">updateTechnique</a> (const float &amp;deltaTime)</td></tr>
-<tr class="memdesc:a6c08424a73c39ad59fb99413dac8475b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform any pre-passes and or update any data needed before rendering this frame.  <a href="#a6c08424a73c39ad59fb99413dac8475b">More...</a><br /></td></tr>
-<tr class="separator:a6c08424a73c39ad59fb99413dac8475b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bd6331a66784d6cddbe0f9b6bd91624"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a1bd6331a66784d6cddbe0f9b6bd91624">renderTechnique</a> (const float &amp;deltaTime, const std::shared_ptr&lt; <a class="el" href="struct_viewport.html">Viewport</a> &gt; &amp;viewport, const std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;perspectives)</td></tr>
-<tr class="memdesc:a1bd6331a66784d6cddbe0f9b6bd91624"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply this lighting technique.  <a href="#a1bd6331a66784d6cddbe0f9b6bd91624">More...</a><br /></td></tr>
-<tr class="separator:a1bd6331a66784d6cddbe0f9b6bd91624"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af87d273f26a27442a1e05aff31e6a8cd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#af87d273f26a27442a1e05aff31e6a8cd">Graphics_Technique</a> () noexcept=default</td></tr>
+<tr class="memdesc:af87d273f26a27442a1e05aff31e6a8cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#af87d273f26a27442a1e05aff31e6a8cd">More...</a><br /></td></tr>
+<tr class="separator:af87d273f26a27442a1e05aff31e6a8cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabafdd27cf7dea88ea1a2b7e23673a7e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#aabafdd27cf7dea88ea1a2b7e23673a7e">Graphics_Technique</a> (const <a class="el" href="class_graphics___technique.html#ac5ce80e4590b73e75c5e3dc6c2624cc0">Technique_Category</a> &amp;category) noexcept</td></tr>
+<tr class="memdesc:aabafdd27cf7dea88ea1a2b7e23673a7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#aabafdd27cf7dea88ea1a2b7e23673a7e">More...</a><br /></td></tr>
+<tr class="separator:aabafdd27cf7dea88ea1a2b7e23673a7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b42f96c115173a1aeca827b876f1a74"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a2b42f96c115173a1aeca827b876f1a74">Graphics_Technique</a> (<a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;&amp;) noexcept=default</td></tr>
+<tr class="memdesc:a2b42f96c115173a1aeca827b876f1a74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <a href="#a2b42f96c115173a1aeca827b876f1a74">More...</a><br /></td></tr>
+<tr class="separator:a2b42f96c115173a1aeca827b876f1a74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c811bb039cb07a9c63af7af5e213baa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a7c811bb039cb07a9c63af7af5e213baa">Graphics_Technique</a> (const <a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;) noexcept=default</td></tr>
+<tr class="memdesc:a7c811bb039cb07a9c63af7af5e213baa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <a href="#a7c811bb039cb07a9c63af7af5e213baa">More...</a><br /></td></tr>
+<tr class="separator:a7c811bb039cb07a9c63af7af5e213baa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a935620770e745aebd21d27e1e0550bf0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_graphics___technique.html#ac5ce80e4590b73e75c5e3dc6c2624cc0">Technique_Category</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a935620770e745aebd21d27e1e0550bf0">getCategory</a> () const noexcept</td></tr>
+<tr class="memdesc:a935620770e745aebd21d27e1e0550bf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the category this technique belongs to.  <a href="#a935620770e745aebd21d27e1e0550bf0">More...</a><br /></td></tr>
+<tr class="separator:a935620770e745aebd21d27e1e0550bf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33257726988cfc5c923083ce0bba2611"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a33257726988cfc5c923083ce0bba2611">setEnabled</a> (const bool &amp;state) noexcept</td></tr>
+<tr class="memdesc:a33257726988cfc5c923083ce0bba2611"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn this technique on or off.  <a href="#a33257726988cfc5c923083ce0bba2611">More...</a><br /></td></tr>
+<tr class="separator:a33257726988cfc5c923083ce0bba2611"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ce294fc9199e846df57f2da4ca2b2a5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a3ce294fc9199e846df57f2da4ca2b2a5">operator=</a> (<a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;&amp;) noexcept=default</td></tr>
+<tr class="memdesc:a3ce294fc9199e846df57f2da4ca2b2a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment.  <a href="#a3ce294fc9199e846df57f2da4ca2b2a5">More...</a><br /></td></tr>
+<tr class="separator:a3ce294fc9199e846df57f2da4ca2b2a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12c7b8cd30a91b6e6a6162e5153788b5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a12c7b8cd30a91b6e6a6162e5153788b5">operator=</a> (const <a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;) noexcept=default</td></tr>
+<tr class="memdesc:a12c7b8cd30a91b6e6a6162e5153788b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment.  <a href="#a12c7b8cd30a91b6e6a6162e5153788b5">More...</a><br /></td></tr>
+<tr class="separator:a12c7b8cd30a91b6e6a6162e5153788b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8a2396d16a684727e95031b48e4f8c5"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#ae8a2396d16a684727e95031b48e4f8c5">clearCache</a> (const float &amp;deltaTime)</td></tr>
+<tr class="memdesc:ae8a2396d16a684727e95031b48e4f8c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare this technique for the next frame, swapping any of its buffers.  <a href="#ae8a2396d16a684727e95031b48e4f8c5">More...</a><br /></td></tr>
+<tr class="separator:ae8a2396d16a684727e95031b48e4f8c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a262e2e68a903a54c06179d470d1a93cf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a262e2e68a903a54c06179d470d1a93cf">updateCache</a> (const float &amp;deltaTime, <a class="el" href="classecs_world.html">ecsWorld</a> &amp;world)</td></tr>
+<tr class="memdesc:a262e2e68a903a54c06179d470d1a93cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update any data needed before rendering this frame.  <a href="#a262e2e68a903a54c06179d470d1a93cf">More...</a><br /></td></tr>
+<tr class="separator:a262e2e68a903a54c06179d470d1a93cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f94cdee763f9f63827f46514ae97207"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a3f94cdee763f9f63827f46514ae97207">updatePass</a> (const float &amp;deltaTime)</td></tr>
+<tr class="memdesc:a3f94cdee763f9f63827f46514ae97207"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform any pre-requisite rendering passes.  <a href="#a3f94cdee763f9f63827f46514ae97207">More...</a><br /></td></tr>
+<tr class="separator:a3f94cdee763f9f63827f46514ae97207"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a503440d274b05c3009f455dd14de360f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a503440d274b05c3009f455dd14de360f">renderTechnique</a> (const float &amp;deltaTime, <a class="el" href="struct_viewport.html">Viewport</a> &amp;viewport, const std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;perspectives)</td></tr>
+<tr class="memdesc:a503440d274b05c3009f455dd14de360f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply this lighting technique.  <a href="#a503440d274b05c3009f455dd14de360f">More...</a><br /></td></tr>
+<tr class="separator:a503440d274b05c3009f455dd14de360f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -143,12 +160,37 @@ Protected Attributes</h2></td></tr>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_enabled</b> = true</td></tr>
 <tr class="separator:a91a3066c3cc1125e327f511cc51eeb30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2720145fc863e3838ce9686e5a1479b8"><td class="memItemLeft" align="right" valign="top"><a id="a2720145fc863e3838ce9686e5a1479b8"></a>
-Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_category</b></td></tr>
+<a class="el" href="class_graphics___technique.html#ac5ce80e4590b73e75c5e3dc6c2624cc0">Technique_Category</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_category</b></td></tr>
 <tr class="separator:a2720145fc863e3838ce9686e5a1479b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An interface for core graphics effect techniques. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="ac5ce80e4590b73e75c5e3dc6c2624cc0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5ce80e4590b73e75c5e3dc6c2624cc0">&#9670;&nbsp;</a></span>Technique_Category</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="class_graphics___technique.html#ac5ce80e4590b73e75c5e3dc6c2624cc0">Graphics_Technique::Technique_Category</a> : unsigned int</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The category of the technique. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="acbe7a9cb38c785b8694d465aad11aeac"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acbe7a9cb38c785b8694d465aad11aeac">&#9670;&nbsp;</a></span>~Graphics_Technique()</h2>
 
@@ -176,8 +218,8 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
 
 </div>
 </div>
-<a id="ac74545c0d7ca89d0878887c6d9933d43"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac74545c0d7ca89d0878887c6d9933d43">&#9670;&nbsp;</a></span>Graphics_Technique()</h2>
+<a id="af87d273f26a27442a1e05aff31e6a8cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af87d273f26a27442a1e05aff31e6a8cd">&#9670;&nbsp;</a></span>Graphics_Technique() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -188,14 +230,41 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
         <tr>
           <td class="memname">Graphics_Technique::Graphics_Technique </td>
           <td>(</td>
-          <td class="paramtype">const Technique_Category &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default constructor. </p>
+
+</div>
+</div>
+<a id="aabafdd27cf7dea88ea1a2b7e23673a7e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabafdd27cf7dea88ea1a2b7e23673a7e">&#9670;&nbsp;</a></span>Graphics_Technique() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Graphics_Technique::Graphics_Technique </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_graphics___technique.html#ac5ce80e4590b73e75c5e3dc6c2624cc0">Technique_Category</a> &amp;&#160;</td>
           <td class="paramname"><em>category</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">explicit</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -204,9 +273,8 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
 
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7670af2bb3e088ea5062ee6305ff9ea6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7670af2bb3e088ea5062ee6305ff9ea6">&#9670;&nbsp;</a></span>getCategory()</h2>
+<a id="a2b42f96c115173a1aeca827b876f1a74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b42f96c115173a1aeca827b876f1a74">&#9670;&nbsp;</a></span>Graphics_Technique() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -215,25 +283,26 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Technique_Category Graphics_Technique::getCategory </td>
+          <td class="memname">Graphics_Technique::Graphics_Technique </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;&amp;&#160;</td>
           <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Retrieve the category this technique belongs to. </p>
+<p>Move constructor. </p>
 
 </div>
 </div>
-<a id="a7a67fee4b16dee6bb7ba0fcfc3031556"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7a67fee4b16dee6bb7ba0fcfc3031556">&#9670;&nbsp;</a></span>prepareForNextFrame()</h2>
+<a id="a7c811bb039cb07a9c63af7af5e213baa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c811bb039cb07a9c63af7af5e213baa">&#9670;&nbsp;</a></span>Graphics_Technique() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -242,7 +311,36 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void Graphics_Technique::prepareForNextFrame </td>
+          <td class="memname">Graphics_Technique::Graphics_Technique </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy constructor. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae8a2396d16a684727e95031b48e4f8c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8a2396d16a684727e95031b48e4f8c5">&#9670;&nbsp;</a></span>clearCache()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Graphics_Technique::clearCache </td>
           <td>(</td>
           <td class="paramtype">const float &amp;&#160;</td>
           <td class="paramname"><em>deltaTime</em></td><td>)</td>
@@ -251,7 +349,7 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -264,12 +362,12 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="class_s_s_a_o.html#a33209b4de7cb98e56bebd308d3475421">SSAO</a>, <a class="el" href="class_reflector___technique.html#afeb4f94e4f4a3e1de9394cdf7ff3f5ea">Reflector_Technique</a>, <a class="el" href="class_directional___technique.html#a0c831c0a3947dffd8d1a5693db20fed4">Directional_Technique</a>, <a class="el" href="class_skybox.html#a28e74798896bb74689d62f10d1f96587">Skybox</a>, <a class="el" href="class_s_s_r.html#abe24e0e50ef2e17b864810927ec0a7a7">SSR</a>, <a class="el" href="class_prop___technique.html#aff030186444be0c58624e2952497c146">Prop_Technique</a>, <a class="el" href="class_point___technique.html#a0cc6d1e9fb4311c19d751b46b9ea9b33">Point_Technique</a>, <a class="el" href="class_spot___technique.html#a9e56641fd2263134941c02f25ea199d5">Spot_Technique</a>, <a class="el" href="class_radiance___hints.html#ab640761cc6ecfc26d2f5d62f51683d36">Radiance_Hints</a>, <a class="el" href="class_bloom.html#a0f48e4991ab6200dcea56d440ea6f7ef">Bloom</a>, <a class="el" href="class_f_x_a_a.html#a5abe33567276ad4722805a570d6cbb95">FXAA</a>, <a class="el" href="class_h_d_r.html#a8cc3d1b61bbac9aefe2f2c7e0baf93f4">HDR</a>, and <a class="el" href="class_join___reflections.html#ab7d0c9dd5762d9c8f4caf087311aedd4">Join_Reflections</a>.</p>
+<p>Reimplemented in <a class="el" href="class_indirect___technique.html#ad2555f600b1f95b335314ccaa23cca8b">Indirect_Technique</a>, <a class="el" href="class_reflector___technique.html#a7791e9d1dd1319fd9c957c75429b0e49">Reflector_Technique</a>, <a class="el" href="class_direct___technique.html#ace734a277233169a6ccee540535fa233">Direct_Technique</a>, <a class="el" href="class_join___reflections.html#a136088e66d5b0ba80d56efb8386950d0">Join_Reflections</a>, <a class="el" href="class_skybox.html#af95a0cd8bfc70b88d83b2faeab6d7604">Skybox</a>, <a class="el" href="class_s_s_a_o.html#afe3ea2a5eb90b49460b9a1ae020d62a6">SSAO</a>, <a class="el" href="class_prop___technique.html#ac3233b5614357f96ec1eaf39fe9918de">Prop_Technique</a>, <a class="el" href="class_shadow___technique.html#a3d40553c302bc123f08980eafdffc97a">Shadow_Technique</a>, <a class="el" href="class_bloom.html#aad367e6a1f1302bb77edc9224438b69a">Bloom</a>, <a class="el" href="class_f_x_a_a.html#a345fbd58bc596c979c3cbfd39d05bc46">FXAA</a>, <a class="el" href="class_h_d_r.html#af52e6f1dfdddfe63cc1a3a1305b49f5a">HDR</a>, and <a class="el" href="class_s_s_r.html#a09460c33e4f2e518380b8db309907be6">SSR</a>.</p>
 
 </div>
 </div>
-<a id="a1bd6331a66784d6cddbe0f9b6bd91624"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1bd6331a66784d6cddbe0f9b6bd91624">&#9670;&nbsp;</a></span>renderTechnique()</h2>
+<a id="a935620770e745aebd21d27e1e0550bf0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a935620770e745aebd21d27e1e0550bf0">&#9670;&nbsp;</a></span>getCategory()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -278,7 +376,90 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void Graphics_Technique::renderTechnique </td>
+          <td class="memname"><a class="el" href="class_graphics___technique.html#ac5ce80e4590b73e75c5e3dc6c2624cc0">Graphics_Technique::Technique_Category</a> Graphics_Technique::getCategory </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Retrieve the category this technique belongs to. </p>
+
+</div>
+</div>
+<a id="a3ce294fc9199e846df57f2da4ca2b2a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ce294fc9199e846df57f2da4ca2b2a5">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_graphics___technique.html">Graphics_Technique</a>&amp; Graphics_Technique::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move assignment. </p>
+
+</div>
+</div>
+<a id="a12c7b8cd30a91b6e6a6162e5153788b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12c7b8cd30a91b6e6a6162e5153788b5">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_graphics___technique.html">Graphics_Technique</a>&amp; Graphics_Technique::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_graphics___technique.html">Graphics_Technique</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy assignment. </p>
+
+</div>
+</div>
+<a id="a503440d274b05c3009f455dd14de360f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a503440d274b05c3009f455dd14de360f">&#9670;&nbsp;</a></span>renderTechnique()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Graphics_Technique::renderTechnique </td>
           <td>(</td>
           <td class="paramtype">const float &amp;&#160;</td>
           <td class="paramname"><em>deltaTime</em>, </td>
@@ -286,7 +467,7 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="struct_viewport.html">Viewport</a> &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_viewport.html">Viewport</a> &amp;&#160;</td>
           <td class="paramname"><em>viewport</em>, </td>
         </tr>
         <tr>
@@ -303,7 +484,7 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -313,16 +494,17 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
     <tr><td class="paramname">viewport</td><td>the viewport to render from. </td></tr>
+    <tr><td class="paramname">perspectives</td><td>the viewing perspectives to render from. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="class_directional___technique.html#af78f684247fa5abeb12c7d6f6e60dad9">Directional_Technique</a>, <a class="el" href="class_s_s_a_o.html#a4ff15e2e189dd98b0c4084c09736fb8b">SSAO</a>, <a class="el" href="class_reflector___technique.html#a8a6a3a543aaaf85389930debdf0d97a7">Reflector_Technique</a>, <a class="el" href="class_skybox.html#ad0d94f774eb33abb7ead4d85de8b1f63">Skybox</a>, <a class="el" href="class_s_s_r.html#a707598c7d7541b827b9558725303e2b2">SSR</a>, <a class="el" href="class_prop___technique.html#acfddc6d57525b6f378f5127ef23da1d0">Prop_Technique</a>, <a class="el" href="class_point___technique.html#a91ab51c565aa7919b81ef8dd3321bc01">Point_Technique</a>, <a class="el" href="class_spot___technique.html#a5d7d30aa052b11c29297e37248eaa2bf">Spot_Technique</a>, <a class="el" href="class_radiance___hints.html#a37be339eb3182dcb1ea88caebd0c22dd">Radiance_Hints</a>, <a class="el" href="class_bloom.html#acf1340584a7128c183fc4ca04c08d333">Bloom</a>, <a class="el" href="class_f_x_a_a.html#aa573cc811b36a3401ea36842522e0c5a">FXAA</a>, <a class="el" href="class_h_d_r.html#a71b99c5f2258ea5b49f40a4cfe8ed8f5">HDR</a>, <a class="el" href="class_join___reflections.html#add1a110a37e2900352a0eeb94f96e29d">Join_Reflections</a>, and <a class="el" href="class_geometry___technique.html#aad324bbac411834483c825b41b82110e">Geometry_Technique</a>.</p>
+<p>Reimplemented in <a class="el" href="class_indirect___technique.html#a42bbfea72e326d2281be67d0f2d0a108">Indirect_Technique</a>, <a class="el" href="class_reflector___technique.html#afadb07467c97c42ee82e6151d7ba3f0b">Reflector_Technique</a>, <a class="el" href="class_direct___technique.html#ad63afbb0ced187d3d4005b0652b78f63">Direct_Technique</a>, <a class="el" href="class_prop___technique.html#a4edc8505dd2274fa735b76e6237af605">Prop_Technique</a>, <a class="el" href="class_join___reflections.html#a095236d05ffd866356ade47ce4b52721">Join_Reflections</a>, <a class="el" href="class_skybox.html#abcf6a4449d2a1cd7a866caa1712071be">Skybox</a>, <a class="el" href="class_s_s_a_o.html#a7db78fc1ff86320b09dc7098c8ba2f49">SSAO</a>, <a class="el" href="class_bloom.html#a14a8c2cf9788b7bf8e0cbdf0fd0360bd">Bloom</a>, <a class="el" href="class_f_x_a_a.html#a675dfa0330b898f0dc9e01cc77d7bc4e">FXAA</a>, <a class="el" href="class_h_d_r.html#a9dd070cb16c0d406fff43ff5e8e206ce">HDR</a>, <a class="el" href="class_s_s_r.html#afe3bb92efc26f41f5f2293a0209bd1f8">SSR</a>, and <a class="el" href="class_geometry___technique.html#a99369cccf811d839e7f17d5e88266b6f">Geometry_Technique</a>.</p>
 
 </div>
 </div>
-<a id="a914bb9fbfe740c951ea8252f5f6bc7c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a914bb9fbfe740c951ea8252f5f6bc7c7">&#9670;&nbsp;</a></span>setEnabled()</h2>
+<a id="a33257726988cfc5c923083ce0bba2611"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33257726988cfc5c923083ce0bba2611">&#9670;&nbsp;</a></span>setEnabled()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -340,7 +522,7 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -355,8 +537,8 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
 
 </div>
 </div>
-<a id="a6c08424a73c39ad59fb99413dac8475b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c08424a73c39ad59fb99413dac8475b">&#9670;&nbsp;</a></span>updateTechnique()</h2>
+<a id="a262e2e68a903a54c06179d470d1a93cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a262e2e68a903a54c06179d470d1a93cf">&#9670;&nbsp;</a></span>updateCache()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -365,7 +547,54 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void Graphics_Technique::updateTechnique </td>
+          <td class="memname">void Graphics_Technique::updateCache </td>
+          <td>(</td>
+          <td class="paramtype">const float &amp;&#160;</td>
+          <td class="paramname"><em>deltaTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classecs_world.html">ecsWorld</a> &amp;&#160;</td>
+          <td class="paramname"><em>world</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Update any data needed before rendering this frame. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
+    <tr><td class="paramname">world</td><td>the <a class="el" href="classecs_world.html" title="A set of ECS entities and components forming a single level.">ecsWorld</a> to source data from. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented in <a class="el" href="class_indirect___technique.html#a7d00bc5a36164c7697167be60c4ea321">Indirect_Technique</a>, <a class="el" href="class_reflector___technique.html#a756742dd6327c488ee5ad26500cad91d">Reflector_Technique</a>, <a class="el" href="class_direct___technique.html#a089e5ccb39412ac069ca4ab5faa22577">Direct_Technique</a>, <a class="el" href="class_prop___technique.html#a9ca05903ed4676141326d323e1cedd45">Prop_Technique</a>, and <a class="el" href="class_shadow___technique.html#abc63785a16178f605a8cc6eeeb8417f6">Shadow_Technique</a>.</p>
+
+</div>
+</div>
+<a id="a3f94cdee763f9f63827f46514ae97207"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f94cdee763f9f63827f46514ae97207">&#9670;&nbsp;</a></span>updatePass()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Graphics_Technique::updatePass </td>
           <td>(</td>
           <td class="paramtype">const float &amp;&#160;</td>
           <td class="paramname"><em>deltaTime</em></td><td>)</td>
@@ -374,12 +603,12 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Perform any pre-passes and or update any data needed before rendering this frame. </p>
+<p>Perform any pre-requisite rendering passes. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
@@ -387,12 +616,13 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="class_directional___technique.html#a8294ac37bcf090959055a9d1cd184b3d">Directional_Technique</a>, <a class="el" href="class_reflector___technique.html#af9a0df5b7ed3148e26c1826bdcc56764">Reflector_Technique</a>, <a class="el" href="class_point___technique.html#a529863095f41210d4e6d3f052da543f8">Point_Technique</a>, <a class="el" href="class_spot___technique.html#aef995e9b986da863931d565052ee1823">Spot_Technique</a>, and <a class="el" href="class_shadow___technique.html#a43c64afcdf4f5a87050591c988aad70a">Shadow_Technique</a>.</p>
+<p>Reimplemented in <a class="el" href="class_reflector___technique.html#a0f04b3a573a80b7f16bc2a3c5ecf6462">Reflector_Technique</a>, and <a class="el" href="class_shadow___technique.html#a52da86acd1b8b1273ad375339129f0dd">Shadow_Technique</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/Modules/Graphics/Common/<a class="el" href="_graphics___technique_8h_source.html">Graphics_Technique.h</a></li>
+<li>src/Modules/Graphics/Common/Graphics_Technique.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

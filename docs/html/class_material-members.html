@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">4.0.0</span>
+   &#160;<span id="projectnumber">5.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,8 +71,8 @@ $(function() {
 <p>This is the complete list of members for <a class="el" href="class_material.html">Material</a>, including all inherited members.</p>
 <table class="directory">
   <tr class="even"><td class="entry"><a class="el" href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">addCallback</a>(const std::shared_ptr&lt; bool &gt; &amp;alive, const AssetFinalizedCallback &amp;callback)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">Asset</a>(Engine *engine, const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">existsYet</a>() const</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_asset.html#a2d587f49b5ece8cc8900d12a041abefe">All_Ready</a>(const FirstAsset &amp;firstAsset, const RemainingAssets &amp;...rest) noexcept</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_asset.html#ac48e243c306f0c1ad15964632745c39e">Asset</a>(Engine &amp;engine, const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_asset.html#a5e1908711e1f42dbcb88d9a1617877bf">finalize</a>()</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_material.html#a50b939faaec9f620aab37a8811cddb72">Get_Material_Textures</a>(const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_material.html">Material</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">getFileName</a>() const</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
@@ -85,11 +85,11 @@ $(function() {
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_materialData</b> (defined in <a class="el" href="class_material.html">Material</a>)</td><td class="entry"><a class="el" href="class_material.html">Material</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>m_size</b> (defined in <a class="el" href="class_material.html">Material</a>)</td><td class="entry"><a class="el" href="class_material.html">Material</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_textures</b> (defined in <a class="el" href="class_material.html">Material</a>)</td><td class="entry"><a class="el" href="class_material.html">Material</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_material.html#ac0a46cb087a1fc1c103b2d2f729099e3">Material</a>(Engine *engine, const std::string &amp;filename, const std::vector&lt; std::string &gt; &amp;textures)</td><td class="entry"><a class="el" href="class_material.html">Material</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">setFileName</a>(const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>Shared_Material</b> (defined in <a class="el" href="class_material.html">Material</a>)</td><td class="entry"><a class="el" href="class_material.html">Material</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">~Asset</a>()=default</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_material.html#a2c19452d71f54075df8f5405b03129f4">~Material</a>()</td><td class="entry"><a class="el" href="class_material.html">Material</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_material.html#a605204a2b1c45e39ebc97a08a83dd056">Material</a>(Engine &amp;engine, const std::string &amp;filename, const std::vector&lt; std::string &gt; &amp;textures)</td><td class="entry"><a class="el" href="class_material.html">Material</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_asset.html#aa80568c24720369dd1713fbd3473dbbb">ready</a>() const noexcept</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">setFileName</a>(const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Shared_Material</b> (defined in <a class="el" href="class_material.html">Material</a>)</td><td class="entry"><a class="el" href="class_material.html">Material</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_asset.html#ae3391343ebc3486a192673a01f1953bf">~Asset</a>()=default</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
